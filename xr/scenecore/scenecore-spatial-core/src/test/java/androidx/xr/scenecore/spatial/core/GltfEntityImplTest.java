@@ -85,8 +85,8 @@ public class GltfEntityImplTest {
                         () -> mXrExtensions.getSpatialState(activity),
                         /* unscaledGravityAlignedActivitySpace= */ false,
                         mExecutor);
-        mEntityManager.addSystemSpaceActivityPose(new PerceptionSpaceScenePoseImpl(mActivitySpace,
-                mActivitySpace));
+        mEntityManager.addSystemSpaceActivityPose(
+                new PerceptionSpaceScenePoseImpl(mActivitySpace, mActivitySpace));
 
         mGltfEntity = createGltfEntity(activity);
     }
@@ -230,16 +230,12 @@ public class GltfEntityImplTest {
     @Test
     public void getPoseInActivitySpace_nullParent_throwsException() {
         mGltfEntity.setParent(null);
-        assertThrows(
-                IllegalStateException.class,
-                () -> mGltfEntity.getPose(Space.ACTIVITY));
+        assertThrows(IllegalStateException.class, () -> mGltfEntity.getPose(Space.ACTIVITY));
     }
 
     @Test
     public void getPoseInRealWorldSpace_nullParent_throwsException() {
         mGltfEntity.setParent(null);
-        assertThrows(
-                IllegalStateException.class,
-                () -> mGltfEntity.getPose(Space.REAL_WORLD));
+        assertThrows(IllegalStateException.class, () -> mGltfEntity.getPose(Space.REAL_WORLD));
     }
 }

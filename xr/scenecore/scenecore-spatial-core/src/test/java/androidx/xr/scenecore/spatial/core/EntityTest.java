@@ -641,16 +641,12 @@ public final class EntityTest {
     @Test
     public void getPoseInActivitySpace_nullParent_throwsException() {
         mEntity.setParent(null);
-        assertThrows(
-                IllegalStateException.class,
-                () -> mEntity.getPose(Space.ACTIVITY));
+        assertThrows(IllegalStateException.class, () -> mEntity.getPose(Space.ACTIVITY));
     }
 
     @Test
     public void getPoseInRealWorldSpace_nullParent_throwsException() {
         mEntity.setParent(null);
-        assertThrows(
-                IllegalStateException.class,
-                () -> mEntity.getPose(Space.REAL_WORLD));
+        assertThrows(IllegalStateException.class, () -> mEntity.getPose(Space.REAL_WORLD));
     }
 }

@@ -110,8 +110,8 @@ public final class SurfaceEntityImplTest {
                         spatialStateProvider,
                         false,
                         executor);
-        mEntityManager.addSystemSpaceActivityPose(new PerceptionSpaceScenePoseImpl(parentEntity,
-                parentEntity));
+        mEntityManager.addSystemSpaceActivityPose(
+                new PerceptionSpaceScenePoseImpl(parentEntity, parentEntity));
 
         int stereoMode = SurfaceEntity.StereoMode.MONO;
         Pose pose = Pose.Identity;
@@ -359,9 +359,7 @@ public final class SurfaceEntityImplTest {
         Shape.Quad quadShape = new Shape.Quad(new FloatSize2d(1.0f, 1.0f)); // 1m x 1m local
         mSurfaceEntity = createDefaultSurfaceEntity(quadShape);
         mSurfaceEntity.setParent(null);
-        assertThrows(
-                IllegalStateException.class,
-                () -> mSurfaceEntity.getPose(Space.ACTIVITY));
+        assertThrows(IllegalStateException.class, () -> mSurfaceEntity.getPose(Space.ACTIVITY));
     }
 
     @Test
@@ -369,8 +367,6 @@ public final class SurfaceEntityImplTest {
         Shape.Sphere sphereShape = new Shape.Sphere(1.0f); // radius 1m
         mSurfaceEntity = createDefaultSurfaceEntity(sphereShape);
         mSurfaceEntity.setParent(null);
-        assertThrows(
-                IllegalStateException.class,
-                () -> mSurfaceEntity.getPose(Space.REAL_WORLD));
+        assertThrows(IllegalStateException.class, () -> mSurfaceEntity.getPose(Space.REAL_WORLD));
     }
 }

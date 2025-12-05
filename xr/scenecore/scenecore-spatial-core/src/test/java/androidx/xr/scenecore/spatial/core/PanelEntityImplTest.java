@@ -408,17 +408,13 @@ public class PanelEntityImplTest {
     public void getPoseInActivitySpace_nullParent_throwsException() {
         PanelEntityImpl panelEntity = createPanelEntity(K_VGA_RESOLUTION_PX);
         panelEntity.setParent(null);
-        assertThrows(
-                IllegalStateException.class,
-                () -> panelEntity.getPose(Space.ACTIVITY));
+        assertThrows(IllegalStateException.class, () -> panelEntity.getPose(Space.ACTIVITY));
     }
 
     @Test
     public void getPoseInRealWorldSpace_nullParent_throwsException() {
         PanelEntityImpl panelEntity = createPanelEntity(K_VGA_RESOLUTION_PX);
         panelEntity.setParent(null);
-        assertThrows(
-                IllegalStateException.class,
-                () -> panelEntity.getPose(Space.REAL_WORLD));
+        assertThrows(IllegalStateException.class, () -> panelEntity.getPose(Space.REAL_WORLD));
     }
 }

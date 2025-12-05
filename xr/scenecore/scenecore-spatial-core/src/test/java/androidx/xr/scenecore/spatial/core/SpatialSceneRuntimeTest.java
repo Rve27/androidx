@@ -1071,8 +1071,7 @@ public class SpatialSceneRuntimeTest {
 
     @Test
     public void createMovableComponent_returnsComponent() {
-        MovableComponent movableComponent =
-                mRuntime.createMovableComponent(true, true, false);
+        MovableComponent movableComponent = mRuntime.createMovableComponent(true, true, false);
 
         assertThat(movableComponent).isNotNull();
     }
@@ -1654,8 +1653,7 @@ public class SpatialSceneRuntimeTest {
 
     @Test
     public void transformPoseTo_sameDestAndSourceEntity_returnsUnchangedPose() throws Exception {
-        Pose pose =
-                new Pose(new Vector3(1f, 2f, 3f), new Quaternion(1f, 2f, 3f, 4f));
+        Pose pose = new Pose(new Vector3(1f, 2f, 3f), new Quaternion(1f, 2f, 3f, 4f));
         Pose identity = new Pose();
 
         PanelEntity panelEntity = createPanelEntity(pose);

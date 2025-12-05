@@ -804,9 +804,7 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
 
     @Override
     public @NonNull MovableComponent createMovableComponent(
-            boolean systemMovable,
-            boolean scaleInZ,
-            boolean userAnchorable) {
+            boolean systemMovable, boolean scaleInZ, boolean userAnchorable) {
         return new MovableComponentImpl(
                 systemMovable,
                 scaleInZ,
