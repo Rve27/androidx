@@ -15,7 +15,7 @@
  */
 @file:Suppress("RestrictedApiAndroidX")
 
-package androidx.wear.compose.remote.integration.demos.previews
+package androidx.wear.compose.remote.material3.previews
 
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.creation.compose.capture.RemoteImageVector
