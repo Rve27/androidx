@@ -105,11 +105,13 @@ public abstract class BaseEntity extends BaseScenePose implements Entity {
         }
     }
 
-    @Nullable protected Context getContext() {
+    @Nullable
+    protected Context getContext() {
         return mContext;
     }
 
-    @Nullable protected Activity getActivity() {
+    @Nullable
+    protected Activity getActivity() {
         if (mContext instanceof Activity) {
             return (Activity) mContext;
         }
