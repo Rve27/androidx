@@ -215,8 +215,6 @@ import androidx.compose.ui.text.font.createFontFamilyResolver
 import androidx.compose.ui.text.input.PlatformTextInputService
 import androidx.compose.ui.text.input.TextInputService
 import androidx.compose.ui.text.input.TextInputServiceAndroid
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
@@ -229,7 +227,6 @@ import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.util.trace
 import androidx.compose.ui.viewinterop.AndroidViewHolder
 import androidx.compose.ui.viewinterop.InteropView
-import androidx.core.os.ConfigurationCompat
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.InputDeviceCompat.SOURCE_ROTARY_ENCODER
 import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
@@ -624,11 +621,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
      */
     var configuration: Configuration by
         mutableStateOf(Configuration(context.resources.configuration))
-
-    override val localeList: LocaleList by derivedStateOf {
-        val platformLocaleListCompat = ConfigurationCompat.getLocales(configuration)
-        LocaleList(List(platformLocaleListCompat.size()) { Locale(platformLocaleListCompat[it]!!) })
-    }
 
     private val _autofill = if (autofillSupported()) AndroidAutofill(this, autofillTree) else null
 
