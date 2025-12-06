@@ -20,7 +20,6 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.ScenePose
-import com.google.common.util.concurrent.ListenableFuture
 
 /**
  * Base implementation of SceneCore ScenePose.
@@ -50,11 +49,11 @@ internal abstract class BaseScenePose : ScenePose {
                 "getActivitySpaceScale is not implemented for this ScenePose."
             )
 
-    override fun hitTest(
+    override suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
-    ): ListenableFuture<HitTestResult> {
+    ): HitTestResult {
         throw UnsupportedOperationException("hitTest is not implemented for this ScenePose.")
     }
 

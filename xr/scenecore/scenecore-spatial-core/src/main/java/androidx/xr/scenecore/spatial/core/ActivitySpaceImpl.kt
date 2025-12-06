@@ -18,7 +18,6 @@ package androidx.xr.scenecore.spatial.core
 
 import android.app.Activity
 import androidx.annotation.RestrictTo
-import androidx.concurrent.futures.ResolvableFuture
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose
@@ -38,14 +37,15 @@ import com.android.extensions.xr.node.Node
 import com.android.extensions.xr.node.Vec3
 import com.android.extensions.xr.space.Bounds
 import com.android.extensions.xr.space.SpatialState
-import com.google.common.util.concurrent.ListenableFuture
 import java.util.Collections
 import java.util.HashSet
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Supplier
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.math.abs
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * Implementation of SceneCore's ActivitySpace.
@@ -270,39 +270,42 @@ public class ActivitySpaceImpl(
         this.spatialModeChangeListener = spatialModeChangeListener
     }
 
-    internal class HitTestResultConsumer(private val future: ResolvableFuture<HitTestResult>) :
-        com.android.extensions.xr.function.Consumer<com.android.extensions.xr.space.HitTestResult> {
-
-        override fun accept(hitTestResultExt: com.android.extensions.xr.space.HitTestResult) {
-            future.set(RuntimeUtils.getHitTestResult(hitTestResultExt))
-        }
-    }
-
-    override fun hitTest(
+    override suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
-    ): ListenableFuture<HitTestResult> {
-        val hitTestFuture = ResolvableFuture.create<HitTestResult>()
-        val hitTestConsumer = HitTestResultConsumer(hitTestFuture)
+    ): HitTestResult = suspendCancellableCoroutine { continuation ->
+        val consumer =
+            com.android.extensions.xr.function.Consumer<
+                com.android.extensions.xr.space.HitTestResult
+            > { result ->
+                if (continuation.isActive) {
+                    continuation.resume(RuntimeUtils.getHitTestResult(result))
+                }
+            }
 
-        mExtensions.hitTest(
-            activity,
-            Vec3(origin.x, origin.y, origin.z),
-            Vec3(direction.x, direction.y, direction.z),
-            RuntimeUtils.getHitTestFilter(hitTestFilter),
-            mExecutor,
-            hitTestConsumer,
-        )
-        return hitTestFuture
+        try {
+            mExtensions.hitTest(
+                activity,
+                Vec3(origin.x, origin.y, origin.z),
+                Vec3(direction.x, direction.y, direction.z),
+                RuntimeUtils.getHitTestFilter(hitTestFilter),
+                mExecutor,
+                consumer,
+            )
+        } catch (e: Throwable) {
+            if (continuation.isActive) {
+                continuation.resumeWithException(e)
+            }
+        }
     }
 
-    override fun hitTestRelativeToActivityPose(
+    override suspend fun hitTestRelativeToActivityPose(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
         scenePose: ScenePose,
-    ): ListenableFuture<HitTestResult> {
+    ): HitTestResult {
 
         // Get the Translation of the origin relative to the ActivitySpace.
         val originInActivitySpace = scenePose.transformPoseTo(Pose(origin), this).translation
@@ -314,52 +317,35 @@ public class ActivitySpaceImpl(
         val directionInActivitySpace =
             directionPoseInActivitySpace.compose(scenePose.activitySpacePose.inverse).translation
 
-        val updatedHitTestFuture = ResolvableFuture.create<HitTestResult>()
-
         // Perform the hit test then convert the result to be relative to the provided ScenePose.
-        val hitTestFuture = hitTest(originInActivitySpace, directionInActivitySpace, hitTestFilter)
-        hitTestFuture.addListener(
-            {
-                try {
-                    // Convert the hit test result to be relative to the provided ScenePose.
-                    val result = hitTestFuture.get()
-                    // No need to do a conversion if the hit test result is not a hit.
-                    if (result.distance == Float.POSITIVE_INFINITY) {
-                        updatedHitTestFuture.set(result)
-                    }
-                    // Update the hit position and surface normal to be relative to the
-                    // ScenePose.
-                    val updatedHitPosition =
-                        if (result.hitPosition == null) {
-                            null
-                        } else {
-                            transformPoseTo(Pose(result.hitPosition!!), scenePose).translation
-                        }
-                    val updatedSurfaceNormal =
-                        if (result.surfaceNormal == null) {
-                            null
-                        } else {
-                            transformPoseTo(Pose(Vector3(result.surfaceNormal!!)), scenePose)
-                                .compose(this.transformPoseTo(Pose.Identity, scenePose).inverse)
-                                .translation
-                        }
-                    updatedHitTestFuture.set(
-                        HitTestResult(
-                            updatedHitPosition,
-                            updatedSurfaceNormal,
-                            result.surfaceType,
-                            result.distance,
-                        )
-                    )
-                } catch (e: InterruptedException) {
-                    // Failed to get hit test result
-                    updatedHitTestFuture.setException(e)
-                } catch (e: ExecutionException) {
-                    updatedHitTestFuture.setException(e)
-                }
-            },
-            mExecutor,
+        val result = hitTest(originInActivitySpace, directionInActivitySpace, hitTestFilter)
+
+        // No need to do a conversion if the hit test result is not a hit.
+        if (result.distance == Float.POSITIVE_INFINITY) {
+            return result
+        }
+
+        // Update the hit position and surface normal to be relative to the
+        // ScenePose.
+        val updatedHitPosition =
+            if (result.hitPosition == null) {
+                null
+            } else {
+                transformPoseTo(Pose(result.hitPosition!!), scenePose).translation
+            }
+        val updatedSurfaceNormal =
+            if (result.surfaceNormal == null) {
+                null
+            } else {
+                transformPoseTo(Pose(Vector3(result.surfaceNormal!!)), scenePose)
+                    .compose(this.transformPoseTo(Pose.Identity, scenePose).inverse)
+                    .translation
+            }
+        return HitTestResult(
+            updatedHitPosition,
+            updatedSurfaceNormal,
+            result.surfaceType,
+            result.distance,
         )
-        return updatedHitTestFuture
     }
 }

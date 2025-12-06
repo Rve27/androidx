@@ -20,7 +20,6 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.ScenePose
-import com.google.common.util.concurrent.ListenableFuture
 
 internal class OpenXrScenePose(
     private val activitySpace: ActivitySpaceImpl,
@@ -41,11 +40,11 @@ internal class OpenXrScenePose(
     override val activitySpaceScale: Vector3
         get() = openXrScenePoseHelper.getActivitySpaceScale(Vector3(1f, 1f, 1f))
 
-    override fun hitTest(
+    override suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
-    ): ListenableFuture<HitTestResult> =
+    ): HitTestResult =
         activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
 
     /** Returns the pose relative to the OpenXR reference space (may be null if not ready). */

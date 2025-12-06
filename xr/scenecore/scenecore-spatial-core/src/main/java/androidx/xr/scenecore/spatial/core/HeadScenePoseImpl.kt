@@ -22,7 +22,6 @@ import androidx.xr.scenecore.impl.perception.PerceptionLibrary
 import androidx.xr.scenecore.runtime.HeadScenePose
 import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.ScenePose
-import com.google.common.util.concurrent.ListenableFuture
 
 /**
  * An ScenePose representing the head of the user. This can be used to determine the location of the
@@ -48,11 +47,11 @@ internal class HeadScenePoseImpl(
         // This WorldPose is assumed to always have a scale of 1.0f in the OpenXR reference space.
         get() = openXrScenePoseHelper.getActivitySpaceScale(Vector3(1f, 1f, 1f))
 
-    override fun hitTest(
+    override suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
-    ): ListenableFuture<HitTestResult> =
+    ): HitTestResult =
         activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
 
     /** Gets the pose in the OpenXR reference space. Can be null if it is not yet ready. */
