@@ -27,16 +27,22 @@ import androidx.xr.runtime.testing.math.assertVector3
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary
 import androidx.xr.scenecore.impl.perception.PerceptionLibraryConstants
 import androidx.xr.scenecore.impl.perception.Session
+import androidx.xr.scenecore.runtime.HitTestResult
+import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.runtime.Space
 import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService
 import com.android.extensions.xr.ShadowXrExtensions
 import com.android.extensions.xr.XrExtensions
 import com.android.extensions.xr.node.Node
+import com.android.extensions.xr.node.Vec3
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.Futures.immediateFuture
 import java.util.concurrent.ScheduledExecutorService
 import kotlin.test.expect
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -563,6 +569,95 @@ class EntityTest {
     @Test
     fun setAlpha_invalidSpace_throwsException() {
         assertThrows(IllegalArgumentException::class.java) { entity.setAlpha(0.5f, 999) }
+    }
+
+    @Test
+    fun hitTest_returnsTransformedHitTest() = runBlocking {
+        val distance = 2.0f
+        val hitPosition = Vec3(1.0f, 2.0f, 3.0f)
+        val surfaceNormal = Vec3(0.0f, 1.0f, 0.0f)
+        val surfaceType = com.android.extensions.xr.space.HitTestResult.SURFACE_PANEL
+        val extensionsHitTestResult =
+            com.android.extensions.xr.space.HitTestResult.Builder(
+                    distance,
+                    hitPosition,
+                    true,
+                    surfaceType,
+                )
+                .setSurfaceNormal(surfaceNormal)
+                .build()
+        entity.setPose(
+            Pose(Vector3(1f, 1f, 1f), Quaternion.fromEulerAngles(Vector3(90f, 0f, 0f))),
+            Space.ACTIVITY,
+        )
+        ShadowXrExtensions.extract(xrExtensions!!)
+            .setHitTestResult(activity, extensionsHitTestResult)
+
+        val deferredHitTestResult =
+            async(start = CoroutineStart.UNDISPATCHED) {
+                entity.hitTest(
+                    Vector3(1f, 1f, 1f),
+                    Vector3(1f, 1f, 1f),
+                    ScenePose.HitTestFilter.SELF_SCENE,
+                )
+            }
+
+        fakeScheduledExecutorService.runAll()
+        val hitTestResult = deferredHitTestResult.await()
+
+        assertThat(hitTestResult).isNotNull()
+        assertThat(hitTestResult.distance).isEqualTo(distance)
+        // Since the entity is rotated 90 degrees about the x axis, the hit position should be
+        // rotated 90 degrees about the x axis.
+        assertVector3(hitTestResult.hitPosition!!, Vector3(0f, 2f, -1f))
+        assertVector3(hitTestResult.surfaceNormal!!, Vector3(0f, 0f, -1f))
+        assertThat(hitTestResult.surfaceType)
+            .isEqualTo(HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_PLANE)
+    }
+
+    @Test
+    fun hitTest_withScaledActivitySpace_returnsTransformedHitTest() = runBlocking {
+        val distance = 2.0f
+        val hitPosition = Vec3(0.5f, 1.0f, 1.5f)
+        val surfaceNormal = Vec3(0.0f, 1.0f, 0.0f)
+        val surfaceType = com.android.extensions.xr.space.HitTestResult.SURFACE_PANEL
+        (spatialSceneRuntime.activitySpace as ActivitySpaceImpl).setOpenXrReferenceSpaceTransform(
+            Matrix4.fromScale(2f)
+        )
+        val extensionsHitTestResult =
+            com.android.extensions.xr.space.HitTestResult.Builder(
+                    distance,
+                    hitPosition,
+                    true,
+                    surfaceType,
+                )
+                .setSurfaceNormal(surfaceNormal)
+                .build()
+        entity.setPose(
+            Pose(Vector3(0.5f, 0.5f, 0.5f), Quaternion.fromEulerAngles(Vector3(90f, 0f, 0f))),
+            Space.ACTIVITY,
+        )
+        ShadowXrExtensions.extract(xrExtensions!!)
+            .setHitTestResult(activity, extensionsHitTestResult)
+
+        val deferredHitTestResult =
+            async(start = CoroutineStart.UNDISPATCHED) {
+                entity.hitTest(
+                    Vector3(1f, 1f, 1f),
+                    Vector3(1f, 1f, 1f),
+                    ScenePose.HitTestFilter.SELF_SCENE,
+                )
+            }
+        fakeScheduledExecutorService.runAll()
+        val hitTestResult = deferredHitTestResult.await()
+
+        assertThat(hitTestResult.distance).isEqualTo(distance)
+        // Since the entity is rotated 90 degrees about the x axis, the hit position should be
+        // rotated 90 degrees about the x axis.
+        assertVector3(hitTestResult.hitPosition!!, Vector3(0f, 1f, -0.5f))
+        assertVector3(hitTestResult.surfaceNormal!!, Vector3(0f, 0f, -1f))
+        assertThat(hitTestResult.surfaceType)
+            .isEqualTo(HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_PLANE)
     }
 
     @Test

@@ -17,7 +17,6 @@
 package androidx.xr.scenecore.spatial.core
 
 import android.content.Context
-import androidx.concurrent.futures.ResolvableFuture
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
@@ -27,7 +26,6 @@ import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.LoggingEntity
 import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.runtime.SpaceValue
-import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.Executor
 
 /** Implementation of a RealityCore Entity that logs its function calls. */
@@ -66,24 +64,20 @@ internal class LoggingEntityImpl(context: Context) : BaseEntity(context), Loggin
     // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
     // warning, however, we get a build error - go/bugpattern/RestrictTo.
     @Suppress("RestrictTo")
-    override fun hitTest(
+    override suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
-    ): ListenableFuture<HitTestResult> {
+    ): HitTestResult {
         Log.info {
             "Hit testing Logging Entity with origin: $origin direction: $direction hitTestFilter: $hitTestFilter"
         }
-        val future = ResolvableFuture.create<HitTestResult>()
-        future.set(
-            HitTestResult(
-                Vector3(),
-                Vector3(),
-                HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_UNKNOWN,
-                1f,
-            )
+        return HitTestResult(
+            Vector3(),
+            Vector3(),
+            HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_UNKNOWN,
+            1f,
         )
-        return future
     }
 
     override fun addChild(child: Entity) {

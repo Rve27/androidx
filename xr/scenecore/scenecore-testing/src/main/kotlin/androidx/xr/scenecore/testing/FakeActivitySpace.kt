@@ -26,8 +26,6 @@ import androidx.xr.scenecore.runtime.HitTestResult
 import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.runtime.Space
 import androidx.xr.scenecore.runtime.SpaceValue
-import com.google.common.util.concurrent.Futures.immediateFuture
-import com.google.common.util.concurrent.ListenableFuture
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicReference
 
@@ -129,13 +127,12 @@ public class FakeActivitySpace(public val unscaledGravityAlignedActivitySpace: B
             distance = 0f,
         )
 
-    @Suppress("AsyncSuffixFuture")
-    override fun hitTestRelativeToActivityPose(
+    override suspend fun hitTestRelativeToActivityPose(
         origin: Vector3,
         direction: Vector3,
         @ScenePose.HitTestFilterValue hitTestFilter: Int,
         scenePose: ScenePose,
-    ): ListenableFuture<HitTestResult> = immediateFuture(activitySpaceHitTestResult)
+    ): HitTestResult = activitySpaceHitTestResult
 
     override val recommendedContentBoxInFullSpace: BoundingBox
         get() =
