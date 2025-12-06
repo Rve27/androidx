@@ -94,6 +94,9 @@ import kotlin.math.max
  *
  * Lists are continuous, vertical indexes of text or images.
  *
+ * This overload of list item does not handle any user interaction. See other overloads for handling
+ * general click actions, single-selection, or multi-selection.
+ *
  * ![Lists
  * image](https://developer.android.com/images/reference/androidx/compose/material3/lists.png)
  *
@@ -138,7 +141,7 @@ fun ListItem(
 ) {
     val decoratedHeadlineContent: @Composable () -> Unit = {
         ProvideTextStyleFromToken(
-            colors.headlineColor(enabled = true),
+            colors.contentColor(enabled = true, selected = false, dragged = false),
             ListTokens.ItemLabelTextFont,
             headlineContent,
         )
@@ -147,7 +150,11 @@ fun ListItem(
         supportingContent?.let {
             {
                 ProvideTextStyleFromToken(
-                    colors.supportingColor(),
+                    colors.supportingContentColor(
+                        enabled = true,
+                        selected = false,
+                        dragged = false,
+                    ),
                     ListTokens.ItemSupportingTextFont,
                     it,
                 )
@@ -155,14 +162,25 @@ fun ListItem(
         }
     val decoratedOverlineContent: @Composable (() -> Unit)? =
         overlineContent?.let {
-            { ProvideTextStyleFromToken(colors.overlineColor(), ListTokens.ItemOverlineFont, it) }
+            {
+                ProvideTextStyleFromToken(
+                    colors.overlineContentColor(enabled = true, selected = false, dragged = false),
+                    ListTokens.ItemOverlineFont,
+                    it,
+                )
+            }
         }
     val decoratedLeadingContent: @Composable (() -> Unit)? =
         leadingContent?.let {
             {
                 Box(Modifier.padding(end = LeadingContentEndPadding)) {
                     CompositionLocalProvider(
-                        LocalContentColor provides colors.leadingIconColor(enabled = true),
+                        LocalContentColor provides
+                            colors.leadingContentColor(
+                                enabled = true,
+                                selected = false,
+                                dragged = false,
+                            ),
                         content = it,
                     )
                 }
@@ -173,7 +191,11 @@ fun ListItem(
             {
                 Box(Modifier.padding(start = TrailingContentStartPadding)) {
                     ProvideTextStyleFromToken(
-                        colors.trailingIconColor(enabled = true),
+                        colors.trailingContentColor(
+                            enabled = true,
+                            selected = false,
+                            dragged = false,
+                        ),
                         ListTokens.ItemTrailingSupportingTextFont,
                         content = it,
                     )
@@ -184,8 +206,8 @@ fun ListItem(
     Surface(
         modifier = Modifier.semantics(mergeDescendants = true) {}.then(modifier),
         shape = ListItemDefaults.shape,
-        color = colors.containerColor(),
-        contentColor = colors.headlineColor(enabled = true),
+        color = colors.containerColor(enabled = true, selected = false, dragged = false),
+        contentColor = colors.contentColor(enabled = true, selected = false, dragged = false),
         tonalElevation = tonalElevation,
         shadowElevation = shadowElevation,
     ) {
@@ -208,6 +230,9 @@ fun ListItem(
  * action. See other overloads for handling single-selection, multi-selection, or no interaction
  * handling.
  *
+ * @sample androidx.compose.material3.samples.ClickableListItemSample
+ * @sample androidx.compose.material3.samples.ClickableListItemWithClickableChildSample
+ * @sample androidx.compose.material3.samples.ListItemWithModeChangeOnLongClickSample
  * @param onClick called when this list item is clicked.
  * @param modifier the [Modifier] to be applied to this list item.
  * @param enabled controls the enabled state of this list item. When `false`, this component will
@@ -222,13 +247,12 @@ fun ListItem(
  *   accounting for [contentPadding].
  * @param onLongClick called when this list item is long clicked (long-pressed).
  * @param onLongClickLabel semantic / accessibility label for the [onLongClick] action.
- * @param shapes the [InteractiveListItemShapes] that this list item will use to morph between
- *   depending on the user's interaction with the list item. See
- *   [InteractiveListItemDefaults.shapes].
- * @param colors the [InteractiveListItemColors] that will be used to resolve the colors used for
- *   this list item in different states. See [InteractiveListItemDefaults.colors].
- * @param elevation the [InteractiveListItemElevation] used to resolve the elevation for this list
- *   item in different states. See [InteractiveListItemDefaults.elevation].
+ * @param shapes the [ListItemShapes] that this list item will use to morph between depending on the
+ *   user's interaction with the list item. See [ListItemDefaults.shapes].
+ * @param colors the [ListItemColors] that will be used to resolve the colors used for this list
+ *   item in different states. See [ListItemDefaults.colors].
+ * @param elevation the [ListItemElevation] used to resolve the elevation for this list item in
+ *   different states. See [ListItemDefaults.elevation].
  * @param contentPadding the padding to be applied to the content of this list item.
  * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
  *   emitting [Interaction]s for this list item. You can use this to change the list item's
@@ -238,7 +262,7 @@ fun ListItem(
  */
 @ExperimentalMaterial3ExpressiveApi
 @Composable
-internal fun ListItem(
+fun ListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -246,13 +270,13 @@ internal fun ListItem(
     trailingContent: @Composable (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
-    verticalAlignment: Alignment.Vertical = InteractiveListItemDefaults.verticalAlignment(),
+    verticalAlignment: Alignment.Vertical = ListItemDefaults.verticalAlignment(),
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
-    shapes: InteractiveListItemShapes = InteractiveListItemDefaults.shapes(),
-    colors: InteractiveListItemColors = InteractiveListItemDefaults.colors(),
-    elevation: InteractiveListItemElevation = InteractiveListItemDefaults.elevation(),
-    contentPadding: PaddingValues = InteractiveListItemDefaults.ContentPadding,
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
+    colors: ListItemColors = ListItemDefaults.colors(),
+    elevation: ListItemElevation = ListItemDefaults.elevation(),
+    contentPadding: PaddingValues = ListItemDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) {
@@ -286,6 +310,7 @@ internal fun ListItem(
  * This overload of [ListItem] represents a single-selection item, analogous to a [RadioButton]. See
  * other overloads for handling general click actions, multi-selection, or no interaction handling.
  *
+ * @sample androidx.compose.material3.samples.SingleSelectionListItemSample
  * @param selected whether or not this list item is selected.
  * @param onClick called when this list item is clicked.
  * @param modifier the [Modifier] to be applied to this list item.
@@ -301,13 +326,12 @@ internal fun ListItem(
  *   accounting for [contentPadding].
  * @param onLongClick called when this list item is long clicked (long-pressed).
  * @param onLongClickLabel semantic / accessibility label for the [onLongClick] action.
- * @param shapes the [InteractiveListItemShapes] that this list item will use to morph between
- *   depending on the user's interaction with the list item. See
- *   [InteractiveListItemDefaults.shapes].
- * @param colors the [InteractiveListItemColors] that will be used to resolve the colors used for
- *   this list item in different states. See [InteractiveListItemDefaults.colors].
- * @param elevation the [InteractiveListItemElevation] used to resolve the elevation for this list
- *   item in different states. See [InteractiveListItemDefaults.elevation].
+ * @param shapes the [ListItemShapes] that this list item will use to morph between depending on the
+ *   user's interaction with the list item. See [ListItemDefaults.shapes].
+ * @param colors the [ListItemColors] that will be used to resolve the colors used for this list
+ *   item in different states. See [ListItemDefaults.colors].
+ * @param elevation the [ListItemElevation] used to resolve the elevation for this list item in
+ *   different states. See [ListItemDefaults.elevation].
  * @param contentPadding the padding to be applied to the content of this list item.
  * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
  *   emitting [Interaction]s for this list item. You can use this to change the list item's
@@ -317,7 +341,7 @@ internal fun ListItem(
  */
 @ExperimentalMaterial3ExpressiveApi
 @Composable
-internal fun ListItem(
+fun ListItem(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -326,13 +350,13 @@ internal fun ListItem(
     trailingContent: @Composable (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
-    verticalAlignment: Alignment.Vertical = InteractiveListItemDefaults.verticalAlignment(),
+    verticalAlignment: Alignment.Vertical = ListItemDefaults.verticalAlignment(),
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
-    shapes: InteractiveListItemShapes = InteractiveListItemDefaults.shapes(),
-    colors: InteractiveListItemColors = InteractiveListItemDefaults.colors(),
-    elevation: InteractiveListItemElevation = InteractiveListItemDefaults.elevation(),
-    contentPadding: PaddingValues = InteractiveListItemDefaults.ContentPadding,
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
+    colors: ListItemColors = ListItemDefaults.colors(),
+    elevation: ListItemElevation = ListItemDefaults.elevation(),
+    contentPadding: PaddingValues = ListItemDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) {
@@ -370,6 +394,8 @@ internal fun ListItem(
  * [Checkbox]. See other overloads for handling general click actions, single-selection, or no
  * interaction handling.
  *
+ * @sample androidx.compose.material3.samples.MultiSelectionListItemSample
+ * @sample androidx.compose.material3.samples.ListItemWithModeChangeOnLongClickSample
  * @param checked whether this list item is toggled on or off.
  * @param onCheckedChange called when this toggleable list item is clicked.
  * @param modifier the [Modifier] to be applied to this list item.
@@ -385,13 +411,12 @@ internal fun ListItem(
  *   accounting for [contentPadding].
  * @param onLongClick called when this list item is long clicked (long-pressed).
  * @param onLongClickLabel semantic / accessibility label for the [onLongClick] action.
- * @param shapes the [InteractiveListItemShapes] that this list item will use to morph between
- *   depending on the user's interaction with the list item. See
- *   [InteractiveListItemDefaults.shapes].
- * @param colors the [InteractiveListItemColors] that will be used to resolve the colors used for
- *   this list item in different states. See [InteractiveListItemDefaults.colors].
- * @param elevation the [InteractiveListItemElevation] used to resolve the elevation for this list
- *   item in different states. See [InteractiveListItemDefaults.elevation].
+ * @param shapes the [ListItemShapes] that this list item will use to morph between depending on the
+ *   user's interaction with the list item. See [ListItemDefaults.shapes].
+ * @param colors the [ListItemColors] that will be used to resolve the colors used for this list
+ *   item in different states. See [ListItemDefaults.colors].
+ * @param elevation the [ListItemElevation] used to resolve the elevation for this list item in
+ *   different states. See [ListItemDefaults.elevation].
  * @param contentPadding the padding to be applied to the content of this list item.
  * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
  *   emitting [Interaction]s for this list item. You can use this to change the list item's
@@ -401,7 +426,7 @@ internal fun ListItem(
  */
 @ExperimentalMaterial3ExpressiveApi
 @Composable
-internal fun ListItem(
+fun ListItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -410,13 +435,13 @@ internal fun ListItem(
     trailingContent: @Composable (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
-    verticalAlignment: Alignment.Vertical = InteractiveListItemDefaults.verticalAlignment(),
+    verticalAlignment: Alignment.Vertical = ListItemDefaults.verticalAlignment(),
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
-    shapes: InteractiveListItemShapes = InteractiveListItemDefaults.shapes(),
-    colors: InteractiveListItemColors = InteractiveListItemDefaults.colors(),
-    elevation: InteractiveListItemElevation = InteractiveListItemDefaults.elevation(),
-    contentPadding: PaddingValues = InteractiveListItemDefaults.ContentPadding,
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
+    colors: ListItemColors = ListItemDefaults.colors(),
+    elevation: ListItemElevation = ListItemDefaults.elevation(),
+    contentPadding: PaddingValues = ListItemDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) {
@@ -454,10 +479,11 @@ internal fun ListItem(
  * trigger an action. See other overloads for handling single-selection, multi-selection, or no
  * interaction handling.
  *
+ * @sample androidx.compose.material3.samples.SegmentedListItemWithExpansionSample
  * @param onClick called when this list item is clicked.
- * @param shapes the [InteractiveListItemShapes] that this list item will use to morph between
- *   depending on the user's interaction with the list item. The base shape depends on the index of
- *   the item within the overall list. See [InteractiveListItemDefaults.segmentedShapes].
+ * @param shapes the [ListItemShapes] that this list item will use to morph between depending on the
+ *   user's interaction with the list item. The base shape depends on the index of the item within
+ *   the overall list. See [ListItemDefaults.segmentedShapes].
  * @param modifier the [Modifier] to be applied to this list item.
  * @param enabled controls the enabled state of this list item. When `false`, this component will
  *   not respond to user input, and it will appear visually disabled and disabled to accessibility
@@ -471,10 +497,10 @@ internal fun ListItem(
  *   accounting for [contentPadding].
  * @param onLongClick called when this list item is long clicked (long-pressed).
  * @param onLongClickLabel semantic / accessibility label for the [onLongClick] action.
- * @param colors the [InteractiveListItemColors] that will be used to resolve the colors used for
- *   this list item in different states. See [InteractiveListItemDefaults.segmentedColors].
- * @param elevation the [InteractiveListItemElevation] used to resolve the elevation for this list
- *   item in different states. See [InteractiveListItemDefaults.elevation].
+ * @param colors the [ListItemColors] that will be used to resolve the colors used for this list
+ *   item in different states. See [ListItemDefaults.segmentedColors].
+ * @param elevation the [ListItemElevation] used to resolve the elevation for this list item in
+ *   different states. See [ListItemDefaults.elevation].
  * @param contentPadding the padding to be applied to the content of this list item.
  * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
  *   emitting [Interaction]s for this list item. You can use this to change the list item's
@@ -484,21 +510,21 @@ internal fun ListItem(
  */
 @ExperimentalMaterial3ExpressiveApi
 @Composable
-internal fun SegmentedListItem(
+fun SegmentedListItem(
     onClick: () -> Unit,
-    shapes: InteractiveListItemShapes,
+    shapes: ListItemShapes,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
-    verticalAlignment: Alignment.Vertical = InteractiveListItemDefaults.verticalAlignment(),
+    verticalAlignment: Alignment.Vertical = ListItemDefaults.verticalAlignment(),
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
-    colors: InteractiveListItemColors = InteractiveListItemDefaults.segmentedColors(),
-    elevation: InteractiveListItemElevation = InteractiveListItemDefaults.elevation(),
-    contentPadding: PaddingValues = InteractiveListItemDefaults.ContentPadding,
+    colors: ListItemColors = ListItemDefaults.segmentedColors(),
+    elevation: ListItemElevation = ListItemDefaults.elevation(),
+    contentPadding: PaddingValues = ListItemDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) {
@@ -533,11 +559,12 @@ internal fun SegmentedListItem(
  * [RadioButton]. See other overloads for handling general click actions, multi-selection, or no
  * interaction handling.
  *
+ * @sample androidx.compose.material3.samples.SingleSelectionSegmentedListItemSample
  * @param selected whether or not this list item is selected.
  * @param onClick called when this list item is clicked.
- * @param shapes the [InteractiveListItemShapes] that this list item will use to morph between
- *   depending on the user's interaction with the list item. The base shape depends on the index of
- *   the item within the overall list. See [InteractiveListItemDefaults.segmentedShapes].
+ * @param shapes the [ListItemShapes] that this list item will use to morph between depending on the
+ *   user's interaction with the list item. The base shape depends on the index of the item within
+ *   the overall list. See [ListItemDefaults.segmentedShapes].
  * @param modifier the [Modifier] to be applied to this list item.
  * @param enabled controls the enabled state of this list item. When `false`, this component will
  *   not respond to user input, and it will appear visually disabled and disabled to accessibility
@@ -551,10 +578,10 @@ internal fun SegmentedListItem(
  *   accounting for [contentPadding].
  * @param onLongClick called when this list item is long clicked (long-pressed).
  * @param onLongClickLabel semantic / accessibility label for the [onLongClick] action.
- * @param colors the [InteractiveListItemColors] that will be used to resolve the colors used for
- *   this list item in different states. See [InteractiveListItemDefaults.segmentedColors].
- * @param elevation the [InteractiveListItemElevation] used to resolve the elevation for this list
- *   item in different states. See [InteractiveListItemDefaults.elevation].
+ * @param colors the [ListItemColors] that will be used to resolve the colors used for this list
+ *   item in different states. See [ListItemDefaults.segmentedColors].
+ * @param elevation the [ListItemElevation] used to resolve the elevation for this list item in
+ *   different states. See [ListItemDefaults.elevation].
  * @param contentPadding the padding to be applied to the content of this list item.
  * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
  *   emitting [Interaction]s for this list item. You can use this to change the list item's
@@ -564,22 +591,22 @@ internal fun SegmentedListItem(
  */
 @ExperimentalMaterial3ExpressiveApi
 @Composable
-internal fun SegmentedListItem(
+fun SegmentedListItem(
     selected: Boolean,
     onClick: () -> Unit,
-    shapes: InteractiveListItemShapes,
+    shapes: ListItemShapes,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
-    verticalAlignment: Alignment.Vertical = InteractiveListItemDefaults.verticalAlignment(),
+    verticalAlignment: Alignment.Vertical = ListItemDefaults.verticalAlignment(),
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
-    colors: InteractiveListItemColors = InteractiveListItemDefaults.segmentedColors(),
-    elevation: InteractiveListItemElevation = InteractiveListItemDefaults.elevation(),
-    contentPadding: PaddingValues = InteractiveListItemDefaults.ContentPadding,
+    colors: ListItemColors = ListItemDefaults.segmentedColors(),
+    elevation: ListItemElevation = ListItemDefaults.elevation(),
+    contentPadding: PaddingValues = ListItemDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) {
@@ -617,11 +644,12 @@ internal fun SegmentedListItem(
  * a [Checkbox]. See other overloads for handling general click actions, single-selection, or no
  * interaction handling.
  *
+ * @sample androidx.compose.material3.samples.MultiSelectionSegmentedListItemSample
  * @param checked whether this list item is toggled on or off.
  * @param onCheckedChange called when this toggleable list item is clicked.
- * @param shapes the [InteractiveListItemShapes] that this list item will use to morph between
- *   depending on the user's interaction with the list item. The base shape depends on the index of
- *   the item within the overall list. See [InteractiveListItemDefaults.segmentedShapes].
+ * @param shapes the [ListItemShapes] that this list item will use to morph between depending on the
+ *   user's interaction with the list item. The base shape depends on the index of the item within
+ *   the overall list. See [ListItemDefaults.segmentedShapes].
  * @param modifier the [Modifier] to be applied to this list item.
  * @param enabled controls the enabled state of this list item. When `false`, this component will
  *   not respond to user input, and it will appear visually disabled and disabled to accessibility
@@ -635,10 +663,10 @@ internal fun SegmentedListItem(
  *   accounting for [contentPadding].
  * @param onLongClick called when this list item is long clicked (long-pressed).
  * @param onLongClickLabel semantic / accessibility label for the [onLongClick] action.
- * @param colors the [InteractiveListItemColors] that will be used to resolve the colors used for
- *   this list item in different states. See [InteractiveListItemDefaults.segmentedColors].
- * @param elevation the [InteractiveListItemElevation] used to resolve the elevation for this list
- *   item in different states. See [InteractiveListItemDefaults.elevation].
+ * @param colors the [ListItemColors] that will be used to resolve the colors used for this list
+ *   item in different states. See [ListItemDefaults.segmentedColors].
+ * @param elevation the [ListItemElevation] used to resolve the elevation for this list item in
+ *   different states. See [ListItemDefaults.elevation].
  * @param contentPadding the padding to be applied to the content of this list item.
  * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
  *   emitting [Interaction]s for this list item. You can use this to change the list item's
@@ -648,22 +676,22 @@ internal fun SegmentedListItem(
  */
 @ExperimentalMaterial3ExpressiveApi
 @Composable
-internal fun SegmentedListItem(
+fun SegmentedListItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    shapes: InteractiveListItemShapes,
+    shapes: ListItemShapes,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
-    verticalAlignment: Alignment.Vertical = InteractiveListItemDefaults.verticalAlignment(),
+    verticalAlignment: Alignment.Vertical = ListItemDefaults.verticalAlignment(),
     onLongClick: (() -> Unit)? = null,
     onLongClickLabel: String? = null,
-    colors: InteractiveListItemColors = InteractiveListItemDefaults.segmentedColors(),
-    elevation: InteractiveListItemElevation = InteractiveListItemDefaults.elevation(),
-    contentPadding: PaddingValues = InteractiveListItemDefaults.ContentPadding,
+    colors: ListItemColors = ListItemDefaults.segmentedColors(),
+    elevation: ListItemElevation = ListItemDefaults.elevation(),
+    contentPadding: PaddingValues = ListItemDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) {
@@ -1290,9 +1318,9 @@ private fun InteractiveListItem(
     onLongClick: (() -> Unit)?,
     onLongClickLabel: String?,
     interactionSource: MutableInteractionSource?,
-    colors: InteractiveListItemColors,
-    shapes: InteractiveListItemShapes,
-    elevation: InteractiveListItemElevation,
+    colors: ListItemColors,
+    shapes: ListItemShapes,
+    elevation: ListItemElevation,
     contentPadding: PaddingValues,
 ) {
     @Suppress("NAME_SHADOWING")

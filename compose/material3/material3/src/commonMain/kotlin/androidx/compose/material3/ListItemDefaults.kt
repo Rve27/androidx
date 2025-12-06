@@ -26,7 +26,6 @@ import androidx.compose.material3.tokens.ReorderListTokens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,6 +37,15 @@ import androidx.compose.ui.unit.Dp
 
 /** Contains the default values used by list items. */
 object ListItemDefaults {
+    /** The default padding applied to all content within a list item. */
+    val ContentPadding: PaddingValues =
+        PaddingValues(
+            start = InteractiveListStartPadding,
+            end = InteractiveListEndPadding,
+            top = InteractiveListTopPadding,
+            bottom = InteractiveListBottomPadding,
+        )
+
     /** The default elevation of a list item */
     val Elevation: Dp = ListTokens.ItemContainerElevation
 
@@ -54,10 +62,467 @@ object ListItemDefaults {
         @Composable @ReadOnlyComposable get() = ListTokens.ItemLabelTextColor.value
 
     /**
-     * Creates a [ListItemColors] that represents the default container and content colors used in a
-     * [ListItem].
+     * Creates a [ListItemColors] that represents the default colors for a [ListItem] in different
+     * states.
      */
     @Composable fun colors() = MaterialTheme.colorScheme.defaultListItemColors
+
+    /**
+     * Creates a [ListItemColors] that represents the default colors for a [ListItem] in different
+     * states.
+     *
+     * @param containerColor the container color of the list item.
+     * @param contentColor the content color of the list item.
+     * @param leadingContentColor the leading content color of the list item.
+     * @param trailingContentColor the trailing content color of the list item.
+     * @param overlineContentColor the overline content color of the list item.
+     * @param supportingContentColor the supporting content color of the list item.
+     * @param disabledContainerColor the container color of the list item when disabled.
+     * @param disabledContentColor the content color of the list item when disabled.
+     * @param disabledLeadingContentColor the leading content color of the list item when disabled.
+     * @param disabledTrailingContentColor the trailing content color of the list item when
+     *   disabled.
+     * @param disabledOverlineContentColor the overline content color of the list item when
+     *   disabled.
+     * @param disabledSupportingContentColor the supporting content color of the list item when
+     *   disabled.
+     * @param selectedContainerColor the container color of the list item when selected.
+     * @param selectedContentColor the content color of the list item when selected.
+     * @param selectedLeadingContentColor the leading content color of the list item when selected.
+     * @param selectedTrailingContentColor the trailing content color of the list item when
+     *   selected.
+     * @param selectedOverlineContentColor the overline content color of the list item when
+     *   selected.
+     * @param selectedSupportingContentColor the supporting content color of the list item when
+     *   selected.
+     * @param draggedContainerColor the container color of the list item when dragged.
+     * @param draggedContentColor the content color of the list item when dragged.
+     * @param draggedLeadingContentColor the leading content color of the list item when dragged.
+     * @param draggedTrailingContentColor the trailing content color of the list item when dragged.
+     * @param draggedOverlineContentColor the overline content color of the list item when dragged.
+     * @param draggedSupportingContentColor the supporting content color of the list item when
+     *   dragged.
+     */
+    @Composable
+    fun colors(
+        // default
+        containerColor: Color = Color.Unspecified,
+        contentColor: Color = Color.Unspecified,
+        leadingContentColor: Color = Color.Unspecified,
+        trailingContentColor: Color = Color.Unspecified,
+        overlineContentColor: Color = Color.Unspecified,
+        supportingContentColor: Color = Color.Unspecified,
+        // disabled
+        disabledContainerColor: Color = Color.Unspecified,
+        disabledContentColor: Color = Color.Unspecified,
+        disabledLeadingContentColor: Color = Color.Unspecified,
+        disabledTrailingContentColor: Color = Color.Unspecified,
+        disabledOverlineContentColor: Color = Color.Unspecified,
+        disabledSupportingContentColor: Color = Color.Unspecified,
+        // selected
+        selectedContainerColor: Color = Color.Unspecified,
+        selectedContentColor: Color = Color.Unspecified,
+        selectedLeadingContentColor: Color = Color.Unspecified,
+        selectedTrailingContentColor: Color = Color.Unspecified,
+        selectedOverlineContentColor: Color = Color.Unspecified,
+        selectedSupportingContentColor: Color = Color.Unspecified,
+        // dragged
+        draggedContainerColor: Color = Color.Unspecified,
+        draggedContentColor: Color = Color.Unspecified,
+        draggedLeadingContentColor: Color = Color.Unspecified,
+        draggedTrailingContentColor: Color = Color.Unspecified,
+        draggedOverlineContentColor: Color = Color.Unspecified,
+        draggedSupportingContentColor: Color = Color.Unspecified,
+    ): ListItemColors {
+        return MaterialTheme.colorScheme.defaultListItemColors.copy(
+            containerColor = containerColor,
+            contentColor = contentColor,
+            leadingContentColor = leadingContentColor,
+            trailingContentColor = trailingContentColor,
+            overlineContentColor = overlineContentColor,
+            supportingContentColor = supportingContentColor,
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor,
+            disabledLeadingContentColor = disabledLeadingContentColor,
+            disabledTrailingContentColor = disabledTrailingContentColor,
+            disabledOverlineContentColor = disabledOverlineContentColor,
+            disabledSupportingContentColor = disabledSupportingContentColor,
+            selectedContainerColor = selectedContainerColor,
+            selectedContentColor = selectedContentColor,
+            selectedLeadingContentColor = selectedLeadingContentColor,
+            selectedTrailingContentColor = selectedTrailingContentColor,
+            selectedOverlineContentColor = selectedOverlineContentColor,
+            selectedSupportingContentColor = selectedSupportingContentColor,
+            draggedContainerColor = draggedContainerColor,
+            draggedContentColor = draggedContentColor,
+            draggedLeadingContentColor = draggedLeadingContentColor,
+            draggedTrailingContentColor = draggedTrailingContentColor,
+            draggedOverlineContentColor = draggedOverlineContentColor,
+            draggedSupportingContentColor = draggedSupportingContentColor,
+        )
+    }
+
+    internal val ColorScheme.defaultListItemColors: ListItemColors
+        get() {
+            return defaultListItemColorsCached
+                ?: ListItemColors(
+                        // default
+                        containerColor = fromToken(ListTokens.ItemContainerColor),
+                        contentColor = fromToken(ListTokens.ItemLabelTextColor),
+                        leadingContentColor = fromToken(ListTokens.ItemLeadingIconColor),
+                        trailingContentColor = fromToken(ListTokens.ItemTrailingIconColor),
+                        overlineContentColor = fromToken(ListTokens.ItemOverlineColor),
+                        supportingContentColor = fromToken(ListTokens.ItemSupportingTextColor),
+                        // selected
+                        selectedContainerColor = fromToken(ListTokens.ItemSelectedContainerColor),
+                        selectedContentColor = fromToken(ListTokens.ItemSelectedLabelTextColor),
+                        selectedLeadingContentColor =
+                            fromToken(ListTokens.ItemSelectedLeadingIconColor),
+                        selectedTrailingContentColor =
+                            fromToken(ListTokens.ItemSelectedTrailingIconColor),
+                        selectedOverlineContentColor =
+                            fromToken(ListTokens.ItemSelectedOverlineColor),
+                        selectedSupportingContentColor =
+                            fromToken(ListTokens.ItemSelectedSupportingTextColor),
+                        // disabled
+                        disabledContainerColor = fromToken(ListTokens.ItemContainerColor),
+                        disabledContentColor =
+                            fromToken(ListTokens.ItemDisabledLabelTextColor)
+                                .copy(alpha = ListTokens.ItemDisabledLabelTextOpacity),
+                        disabledLeadingContentColor =
+                            fromToken(ListTokens.ItemDisabledLeadingIconColor)
+                                .copy(alpha = ListTokens.ItemDisabledLeadingIconOpacity),
+                        disabledTrailingContentColor =
+                            fromToken(ListTokens.ItemDisabledTrailingIconColor)
+                                .copy(alpha = ListTokens.ItemDisabledTrailingIconOpacity),
+                        disabledOverlineContentColor =
+                            fromToken(ListTokens.ItemDisabledOverlineColor)
+                                .copy(alpha = ListTokens.ItemDisabledOverlineOpacity),
+                        disabledSupportingContentColor =
+                            fromToken(ListTokens.ItemDisabledSupportingTextColor)
+                                .copy(alpha = ListTokens.ItemDisabledSupportingTextOpacity),
+                        // dragged
+                        draggedContainerColor = fromToken(ReorderListTokens.ItemContainerColor),
+                        draggedContentColor = fromToken(ReorderListTokens.ItemLabelTextColor),
+                        draggedLeadingContentColor =
+                            fromToken(ReorderListTokens.ItemLeadingIconColor),
+                        draggedTrailingContentColor =
+                            fromToken(ReorderListTokens.ItemTrailingIconColor),
+                        draggedOverlineContentColor =
+                            fromToken(ReorderListTokens.ItemOverlineColor),
+                        draggedSupportingContentColor =
+                            fromToken(ReorderListTokens.ItemSupportingTextColor),
+                    )
+                    .also { defaultListItemColorsCached = it }
+        }
+
+    /**
+     * Creates a [ListItemColors] that represents the default colors for a [SegmentedListItem] in
+     * different states.
+     */
+    @ExperimentalMaterial3ExpressiveApi
+    @Composable
+    fun segmentedColors(): ListItemColors = MaterialTheme.colorScheme.defaultSegmentedListItemColors
+
+    /**
+     * Creates a [ListItemColors] that represents the default colors for a [SegmentedListItem] in
+     * different states.
+     *
+     * @param containerColor the container color of the list item.
+     * @param contentColor the content color of the list item.
+     * @param leadingContentColor the leading content color of the list item.
+     * @param trailingContentColor the trailing content color of the list item.
+     * @param overlineContentColor the overline content color of the list item.
+     * @param supportingContentColor the supporting content color of the list item.
+     * @param disabledContainerColor the container color of the list item when disabled.
+     * @param disabledContentColor the content color of the list item when disabled.
+     * @param disabledLeadingContentColor the leading content color of the list item when disabled.
+     * @param disabledTrailingContentColor the trailing content color of the list item when
+     *   disabled.
+     * @param disabledOverlineContentColor the overline content color of the list item when
+     *   disabled.
+     * @param disabledSupportingContentColor the supporting content color of the list item when
+     *   disabled.
+     * @param selectedContainerColor the container color of the list item when selected.
+     * @param selectedContentColor the content color of the list item when selected.
+     * @param selectedLeadingContentColor the leading content color of the list item when selected.
+     * @param selectedTrailingContentColor the trailing content color of the list item when
+     *   selected.
+     * @param selectedOverlineContentColor the overline content color of the list item when
+     *   selected.
+     * @param selectedSupportingContentColor the supporting content color of the list item when
+     *   selected.
+     * @param draggedContainerColor the container color of the list item when dragged.
+     * @param draggedContentColor the content color of the list item when dragged.
+     * @param draggedLeadingContentColor the leading content color of the list item when dragged.
+     * @param draggedTrailingContentColor the trailing content color of the list item when dragged.
+     * @param draggedOverlineContentColor the overline content color of the list item when dragged.
+     * @param draggedSupportingContentColor the supporting content color of the list item when
+     *   dragged.
+     */
+    @ExperimentalMaterial3ExpressiveApi
+    @Composable
+    fun segmentedColors(
+        // default
+        containerColor: Color = Color.Unspecified,
+        contentColor: Color = Color.Unspecified,
+        leadingContentColor: Color = Color.Unspecified,
+        trailingContentColor: Color = Color.Unspecified,
+        overlineContentColor: Color = Color.Unspecified,
+        supportingContentColor: Color = Color.Unspecified,
+        // disabled
+        disabledContainerColor: Color = Color.Unspecified,
+        disabledContentColor: Color = Color.Unspecified,
+        disabledLeadingContentColor: Color = Color.Unspecified,
+        disabledTrailingContentColor: Color = Color.Unspecified,
+        disabledOverlineContentColor: Color = Color.Unspecified,
+        disabledSupportingContentColor: Color = Color.Unspecified,
+        // selected
+        selectedContainerColor: Color = Color.Unspecified,
+        selectedContentColor: Color = Color.Unspecified,
+        selectedLeadingContentColor: Color = Color.Unspecified,
+        selectedTrailingContentColor: Color = Color.Unspecified,
+        selectedOverlineContentColor: Color = Color.Unspecified,
+        selectedSupportingContentColor: Color = Color.Unspecified,
+        // dragged
+        draggedContainerColor: Color = Color.Unspecified,
+        draggedContentColor: Color = Color.Unspecified,
+        draggedLeadingContentColor: Color = Color.Unspecified,
+        draggedTrailingContentColor: Color = Color.Unspecified,
+        draggedOverlineContentColor: Color = Color.Unspecified,
+        draggedSupportingContentColor: Color = Color.Unspecified,
+    ): ListItemColors {
+        return MaterialTheme.colorScheme.defaultSegmentedListItemColors.copy(
+            containerColor = containerColor,
+            contentColor = contentColor,
+            leadingContentColor = leadingContentColor,
+            trailingContentColor = trailingContentColor,
+            overlineContentColor = overlineContentColor,
+            supportingContentColor = supportingContentColor,
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor,
+            disabledLeadingContentColor = disabledLeadingContentColor,
+            disabledTrailingContentColor = disabledTrailingContentColor,
+            disabledOverlineContentColor = disabledOverlineContentColor,
+            disabledSupportingContentColor = disabledSupportingContentColor,
+            selectedContainerColor = selectedContainerColor,
+            selectedContentColor = selectedContentColor,
+            selectedLeadingContentColor = selectedLeadingContentColor,
+            selectedTrailingContentColor = selectedTrailingContentColor,
+            selectedOverlineContentColor = selectedOverlineContentColor,
+            selectedSupportingContentColor = selectedSupportingContentColor,
+            draggedContainerColor = draggedContainerColor,
+            draggedContentColor = draggedContentColor,
+            draggedLeadingContentColor = draggedLeadingContentColor,
+            draggedTrailingContentColor = draggedTrailingContentColor,
+            draggedOverlineContentColor = draggedOverlineContentColor,
+            draggedSupportingContentColor = draggedSupportingContentColor,
+        )
+    }
+
+    internal val ColorScheme.defaultSegmentedListItemColors: ListItemColors
+        get() {
+            return defaultSegmentedListItemColorsCached
+                ?: ListItemColors(
+                        // default
+                        containerColor = fromToken(ListTokens.ItemSegmentedContainerColor),
+                        contentColor = fromToken(ListTokens.ItemLabelTextColor),
+                        leadingContentColor = fromToken(ListTokens.ItemLeadingIconColor),
+                        trailingContentColor = fromToken(ListTokens.ItemTrailingIconColor),
+                        overlineContentColor = fromToken(ListTokens.ItemOverlineColor),
+                        supportingContentColor = fromToken(ListTokens.ItemSupportingTextColor),
+                        // selected
+                        selectedContainerColor = fromToken(ListTokens.ItemSelectedContainerColor),
+                        selectedContentColor = fromToken(ListTokens.ItemSelectedLabelTextColor),
+                        selectedLeadingContentColor =
+                            fromToken(ListTokens.ItemSelectedLeadingIconColor),
+                        selectedTrailingContentColor =
+                            fromToken(ListTokens.ItemSelectedTrailingIconColor),
+                        selectedOverlineContentColor =
+                            fromToken(ListTokens.ItemSelectedOverlineColor),
+                        selectedSupportingContentColor =
+                            fromToken(ListTokens.ItemSelectedSupportingTextColor),
+                        // disabled
+                        disabledContainerColor = fromToken(ListTokens.ItemSegmentedContainerColor),
+                        disabledContentColor =
+                            fromToken(ListTokens.ItemDisabledLabelTextColor)
+                                .copy(alpha = ListTokens.ItemDisabledLabelTextOpacity),
+                        disabledLeadingContentColor =
+                            fromToken(ListTokens.ItemDisabledLeadingIconColor)
+                                .copy(alpha = ListTokens.ItemDisabledLeadingIconOpacity),
+                        disabledTrailingContentColor =
+                            fromToken(ListTokens.ItemDisabledTrailingIconColor)
+                                .copy(alpha = ListTokens.ItemDisabledTrailingIconOpacity),
+                        disabledOverlineContentColor =
+                            fromToken(ListTokens.ItemDisabledOverlineColor)
+                                .copy(alpha = ListTokens.ItemDisabledOverlineOpacity),
+                        disabledSupportingContentColor =
+                            fromToken(ListTokens.ItemDisabledSupportingTextColor)
+                                .copy(alpha = ListTokens.ItemDisabledSupportingTextOpacity),
+                        // dragged
+                        draggedContainerColor = fromToken(ReorderListTokens.ItemContainerColor),
+                        draggedContentColor = fromToken(ReorderListTokens.ItemLabelTextColor),
+                        draggedLeadingContentColor =
+                            fromToken(ReorderListTokens.ItemLeadingIconColor),
+                        draggedTrailingContentColor =
+                            fromToken(ReorderListTokens.ItemTrailingIconColor),
+                        draggedOverlineContentColor =
+                            fromToken(ReorderListTokens.ItemOverlineColor),
+                        draggedSupportingContentColor =
+                            fromToken(ReorderListTokens.ItemSupportingTextColor),
+                    )
+                    .also { defaultSegmentedListItemColorsCached = it }
+        }
+
+    /**
+     * Creates a [ListItemShapes] that represents the default shapes for a [ListItem] in different
+     * states.
+     */
+    @ExperimentalMaterial3ExpressiveApi
+    @Composable
+    fun shapes(): ListItemShapes = MaterialTheme.shapes.defaultListItemShapes
+
+    /**
+     * Creates a [ListItemShapes] that represents the default shapes for a [ListItem] in different
+     * states.
+     *
+     * @param shape the default shape of the list item.
+     * @param selectedShape the shape of the list item when selected.
+     * @param pressedShape the shape of the list item when pressed.
+     * @param focusedShape the shape of the list item when focused.
+     * @param hoveredShape the shape of the list item when hovered.
+     * @param draggedShape the shape of the list item when dragged.
+     */
+    @ExperimentalMaterial3ExpressiveApi
+    @Composable
+    fun shapes(
+        shape: Shape? = null,
+        selectedShape: Shape? = null,
+        pressedShape: Shape? = null,
+        focusedShape: Shape? = null,
+        hoveredShape: Shape? = null,
+        draggedShape: Shape? = null,
+    ): ListItemShapes =
+        MaterialTheme.shapes.defaultListItemShapes.copy(
+            shape = shape,
+            selectedShape = selectedShape,
+            pressedShape = pressedShape,
+            focusedShape = focusedShape,
+            hoveredShape = hoveredShape,
+            draggedShape = draggedShape,
+        )
+
+    /**
+     * Constructor for [ListItemShapes] to be used by a [SegmentedListItem] which has an [index] in
+     * a list that has a total of [count] items.
+     *
+     * @param index the index for this list item in the overall list.
+     * @param count the total count of list items in the overall list.
+     * @param defaultShapes the default [ListItemShapes] that should be used for standalone items or
+     *   items in the middle of the list.
+     */
+    @ExperimentalMaterial3ExpressiveApi
+    @Composable
+    fun segmentedShapes(
+        index: Int,
+        count: Int,
+        defaultShapes: ListItemShapes = shapes(),
+    ): ListItemShapes {
+        val overrideShape = ListTokens.ContainerShape.value
+        return remember(index, count, defaultShapes, overrideShape) {
+            when {
+                count == 1 -> defaultShapes
+
+                index == 0 -> {
+                    val defaultBaseShape = defaultShapes.shape
+                    if (defaultBaseShape is CornerBasedShape && overrideShape is CornerBasedShape) {
+                        defaultShapes.copy(
+                            shape =
+                                defaultBaseShape.copy(
+                                    topStart = overrideShape.topStart,
+                                    topEnd = overrideShape.topEnd,
+                                )
+                        )
+                    } else {
+                        defaultShapes
+                    }
+                }
+
+                index == count - 1 -> {
+                    val defaultBaseShape = defaultShapes.shape
+                    if (defaultBaseShape is CornerBasedShape && overrideShape is CornerBasedShape) {
+                        defaultShapes.copy(
+                            shape =
+                                defaultBaseShape.copy(
+                                    bottomStart = overrideShape.bottomStart,
+                                    bottomEnd = overrideShape.bottomEnd,
+                                )
+                        )
+                    } else {
+                        defaultShapes
+                    }
+                }
+
+                else -> defaultShapes
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+    internal val Shapes.defaultListItemShapes: ListItemShapes
+        get() {
+            return defaultListItemShapesCached
+                ?: ListItemShapes(
+                        shape = fromToken(ListTokens.ItemContainerExpressiveShape),
+                        selectedShape = fromToken(ListTokens.ItemSelectedContainerExpressiveShape),
+                        pressedShape = fromToken(ListTokens.ItemPressedContainerExpressiveShape),
+                        focusedShape = fromToken(ListTokens.ItemFocusedContainerExpressiveShape),
+                        hoveredShape = fromToken(ListTokens.ItemHoveredContainerExpressiveShape),
+                        draggedShape = fromToken(ReorderListTokens.ItemShape),
+                    )
+                    .also { defaultListItemShapesCached = it }
+        }
+
+    /**
+     * Creates a [ListItemElevation] that represents the elevation for a [ListItem] in different
+     * states.
+     *
+     * @param elevation the default elevation of the list item.
+     * @param draggedElevation the elevation of the list item when dragged.
+     */
+    @ExperimentalMaterial3ExpressiveApi
+    fun elevation(
+        elevation: Dp = ListTokens.ItemContainerElevation,
+        draggedElevation: Dp = ListTokens.ItemDraggedContainerElevation,
+    ): ListItemElevation =
+        ListItemElevation(elevation = elevation, draggedElevation = draggedElevation)
+
+    /** The vertical space between different [SegmentedListItem]s. */
+    @ExperimentalMaterial3ExpressiveApi val SegmentedGap: Dp = ListTokens.SegmentedGap
+
+    /**
+     * Returns the default vertical alignment of children content within a [ListItem]. This is
+     * equivalent to [Alignment.CenterVertically] for shorter items and [Alignment.Top] for taller
+     * items.
+     */
+    @ExperimentalMaterial3ExpressiveApi
+    @Composable
+    fun verticalAlignment(): Alignment.Vertical {
+        val density = LocalDensity.current
+        return remember(density) {
+            Alignment.Vertical { size, space ->
+                val breakpoint =
+                    with(density) { InteractiveListVerticalAlignmentBreakpoint.roundToPx() }
+                val baseAlignment =
+                    if (space < breakpoint) {
+                        Alignment.CenterVertically
+                    } else {
+                        Alignment.Top
+                    }
+                baseAlignment.align(size, space)
+            }
+        }
+    }
 
     /**
      * Creates a [ListItemColors] that represents the default container and content colors used in a
@@ -89,123 +554,15 @@ object ListItemDefaults {
     ): ListItemColors =
         MaterialTheme.colorScheme.defaultListItemColors.copy(
             containerColor = containerColor,
-            headlineColor = headlineColor,
-            leadingIconColor = leadingIconColor,
-            overlineColor = overlineColor,
-            supportingTextColor = supportingColor,
-            trailingIconColor = trailingIconColor,
-            disabledHeadlineColor = disabledHeadlineColor,
-            disabledLeadingIconColor = disabledLeadingIconColor,
-            disabledTrailingIconColor = disabledTrailingIconColor,
+            contentColor = headlineColor,
+            leadingContentColor = leadingIconColor,
+            overlineContentColor = overlineColor,
+            supportingContentColor = supportingColor,
+            trailingContentColor = trailingIconColor,
+            disabledContentColor = disabledHeadlineColor,
+            disabledLeadingContentColor = disabledLeadingIconColor,
+            disabledTrailingContentColor = disabledTrailingIconColor,
         )
-
-    internal val ColorScheme.defaultListItemColors: ListItemColors
-        get() {
-            return defaultListItemColorsCached
-                ?: ListItemColors(
-                        containerColor = fromToken(ListTokens.ItemContainerColor),
-                        headlineColor = fromToken(ListTokens.ItemLabelTextColor),
-                        leadingIconColor = fromToken(ListTokens.ItemLeadingIconColor),
-                        overlineColor = fromToken(ListTokens.ItemOverlineColor),
-                        supportingTextColor = fromToken(ListTokens.ItemSupportingTextColor),
-                        trailingIconColor = fromToken(ListTokens.ItemTrailingIconColor),
-                        disabledHeadlineColor =
-                            fromToken(ListTokens.ItemDisabledLabelTextColor)
-                                .copy(alpha = ListTokens.ItemDisabledLabelTextOpacity),
-                        disabledLeadingIconColor =
-                            fromToken(ListTokens.ItemDisabledLeadingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledLeadingIconOpacity),
-                        disabledTrailingIconColor =
-                            fromToken(ListTokens.ItemDisabledTrailingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledTrailingIconOpacity),
-                    )
-                    .also { defaultListItemColorsCached = it }
-        }
-}
-
-/**
- * Represents the container and content colors used in a list item in different states.
- *
- * @param containerColor the container color of this list item when enabled.
- * @param headlineColor the headline text content color of this list item when enabled.
- * @param leadingIconColor the color of this list item's leading content when enabled.
- * @param overlineColor the overline text color of this list item
- * @param supportingTextColor the supporting text color of this list item
- * @param trailingIconColor the color of this list item's trailing content when enabled.
- * @param disabledHeadlineColor the content color of this list item when not enabled.
- * @param disabledLeadingIconColor the color of this list item's leading content when not enabled.
- * @param disabledTrailingIconColor the color of this list item's trailing content when not enabled.
- * @constructor create an instance with arbitrary colors. See [ListItemDefaults.colors] for the
- *   default colors used in a [ListItem].
- */
-@Immutable
-class ListItemColors
-constructor(
-    val containerColor: Color,
-    val headlineColor: Color,
-    val leadingIconColor: Color,
-    val overlineColor: Color,
-    val supportingTextColor: Color,
-    val trailingIconColor: Color,
-    val disabledHeadlineColor: Color,
-    val disabledLeadingIconColor: Color,
-    val disabledTrailingIconColor: Color,
-) {
-    /**
-     * Returns a copy of this ListItemColors, optionally overriding some of the values. This uses
-     * the Color.Unspecified to mean “use the value from the source”
-     */
-    fun copy(
-        containerColor: Color = this.containerColor,
-        headlineColor: Color = this.headlineColor,
-        leadingIconColor: Color = this.leadingIconColor,
-        overlineColor: Color = this.overlineColor,
-        supportingTextColor: Color = this.supportingTextColor,
-        trailingIconColor: Color = this.trailingIconColor,
-        disabledHeadlineColor: Color = this.disabledHeadlineColor,
-        disabledLeadingIconColor: Color = this.disabledLeadingIconColor,
-        disabledTrailingIconColor: Color = this.disabledTrailingIconColor,
-    ) =
-        ListItemColors(
-            containerColor = containerColor.takeOrElse { this.containerColor },
-            headlineColor = headlineColor.takeOrElse { this.headlineColor },
-            leadingIconColor = leadingIconColor.takeOrElse { this.leadingIconColor },
-            overlineColor = overlineColor.takeOrElse { this.overlineColor },
-            supportingTextColor = supportingTextColor.takeOrElse { this.supportingTextColor },
-            trailingIconColor = trailingIconColor.takeOrElse { this.trailingIconColor },
-            disabledHeadlineColor = disabledHeadlineColor.takeOrElse { this.disabledHeadlineColor },
-            disabledLeadingIconColor =
-                disabledLeadingIconColor.takeOrElse { this.disabledLeadingIconColor },
-            disabledTrailingIconColor =
-                disabledTrailingIconColor.takeOrElse { this.disabledTrailingIconColor },
-        )
-
-    /** The container color of this [ListItem] based on enabled state */
-    internal fun containerColor(): Color {
-        return containerColor
-    }
-
-    /** The color of this [ListItem]'s headline text based on enabled state */
-    @Stable
-    internal fun headlineColor(enabled: Boolean): Color {
-        return if (enabled) headlineColor else disabledHeadlineColor
-    }
-
-    /** The color of this [ListItem]'s leading content based on enabled state */
-    @Stable
-    internal fun leadingIconColor(enabled: Boolean): Color =
-        if (enabled) leadingIconColor else disabledLeadingIconColor
-
-    /** The color of this [ListItem]'s overline text based on enabled state */
-    @Stable internal fun overlineColor(): Color = overlineColor
-
-    /** The color of this [ListItem]'s supporting text based on enabled state */
-    @Stable internal fun supportingColor(): Color = supportingTextColor
-
-    /** The color of this [ListItem]'s trailing content based on enabled state */
-    @Stable
-    internal fun trailingIconColor(enabled: Boolean): Color =
-        if (enabled) trailingIconColor else disabledTrailingIconColor
 }
 
 /**
@@ -247,9 +604,8 @@ constructor(
  * @param draggedSupportingContentColor the color of the supporting content of the list item when
  *   dragged.
  */
-@ExperimentalMaterial3ExpressiveApi
 @Immutable
-internal class InteractiveListItemColors(
+class ListItemColors(
     // default
     val containerColor: Color,
     val contentColor: Color,
@@ -279,6 +635,47 @@ internal class InteractiveListItemColors(
     val draggedOverlineContentColor: Color,
     val draggedSupportingContentColor: Color,
 ) {
+    constructor(
+        containerColor: Color,
+        headlineColor: Color,
+        leadingIconColor: Color,
+        overlineColor: Color,
+        supportingTextColor: Color,
+        trailingIconColor: Color,
+        disabledHeadlineColor: Color,
+        disabledLeadingIconColor: Color,
+        disabledTrailingIconColor: Color,
+    ) : this(
+        // default
+        containerColor = containerColor,
+        contentColor = headlineColor,
+        leadingContentColor = leadingIconColor,
+        trailingContentColor = trailingIconColor,
+        overlineContentColor = overlineColor,
+        supportingContentColor = supportingTextColor,
+        // disabled
+        disabledContainerColor = Color.Unspecified,
+        disabledContentColor = disabledHeadlineColor,
+        disabledLeadingContentColor = disabledLeadingIconColor,
+        disabledTrailingContentColor = disabledTrailingIconColor,
+        disabledOverlineContentColor = Color.Unspecified,
+        disabledSupportingContentColor = Color.Unspecified,
+        // selected
+        selectedContainerColor = Color.Unspecified,
+        selectedContentColor = Color.Unspecified,
+        selectedLeadingContentColor = Color.Unspecified,
+        selectedTrailingContentColor = Color.Unspecified,
+        selectedOverlineContentColor = Color.Unspecified,
+        selectedSupportingContentColor = Color.Unspecified,
+        // dragged
+        draggedContainerColor = Color.Unspecified,
+        draggedContentColor = Color.Unspecified,
+        draggedLeadingContentColor = Color.Unspecified,
+        draggedTrailingContentColor = Color.Unspecified,
+        draggedOverlineContentColor = Color.Unspecified,
+        draggedSupportingContentColor = Color.Unspecified,
+    )
+
     /**
      * Returns the container color of the list item based on the current state.
      *
@@ -370,8 +767,8 @@ internal class InteractiveListItemColors(
         }
 
     /**
-     * Returns a copy of this [InteractiveListItemColors], optionally overriding some of the values.
-     * This uses [Color.Unspecified] to mean “use the value from the source”.
+     * Returns a copy of this [ListItemColors], optionally overriding some of the values. This uses
+     * [Color.Unspecified] to mean “use the value from the source”.
      */
     fun copy(
         // default
@@ -402,8 +799,8 @@ internal class InteractiveListItemColors(
         draggedTrailingContentColor: Color = this.draggedTrailingContentColor,
         draggedOverlineContentColor: Color = this.draggedOverlineContentColor,
         draggedSupportingContentColor: Color = this.draggedSupportingContentColor,
-    ): InteractiveListItemColors {
-        return InteractiveListItemColors(
+    ): ListItemColors {
+        return ListItemColors(
             containerColor = containerColor.takeOrElse { this.containerColor },
             contentColor = contentColor.takeOrElse { this.contentColor },
             leadingContentColor = leadingContentColor.takeOrElse { this.leadingContentColor },
@@ -448,7 +845,7 @@ internal class InteractiveListItemColors(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is InteractiveListItemColors) return false
+        if (other == null || other !is ListItemColors) return false
 
         if (containerColor != other.containerColor) return false
         if (contentColor != other.contentColor) return false
@@ -505,6 +902,65 @@ internal class InteractiveListItemColors(
         result = 31 * result + draggedSupportingContentColor.hashCode()
         return result
     }
+
+    @Deprecated("Renamed to contentColor")
+    val headlineColor: Color
+        get() = contentColor
+
+    @Deprecated("Renamed to leadingContentColor")
+    val leadingIconColor: Color
+        get() = leadingContentColor
+
+    @Deprecated("Renamed to overlineContentColor")
+    val overlineColor: Color
+        get() = overlineContentColor
+
+    @Deprecated("Renamed to supportingContentColor")
+    val supportingTextColor: Color
+        get() = supportingContentColor
+
+    @Deprecated("Renamed to trailingContentColor")
+    val trailingIconColor: Color
+        get() = trailingContentColor
+
+    @Deprecated("Renamed to disabledContentColor")
+    val disabledHeadlineColor: Color
+        get() = disabledContentColor
+
+    @Deprecated("Renamed to disabledLeadingContentColor")
+    val disabledLeadingIconColor: Color
+        get() = disabledLeadingContentColor
+
+    @Deprecated("Renamed to disabledTrailingContentColor")
+    val disabledTrailingIconColor: Color
+        get() = disabledTrailingContentColor
+
+    @Deprecated("Use overload with parameters for selected and dragged colors")
+    @Suppress("DEPRECATION")
+    fun copy(
+        containerColor: Color = this.containerColor,
+        headlineColor: Color = this.headlineColor,
+        leadingIconColor: Color = this.leadingIconColor,
+        overlineColor: Color = this.overlineColor,
+        supportingTextColor: Color = this.supportingTextColor,
+        trailingIconColor: Color = this.trailingIconColor,
+        disabledHeadlineColor: Color = this.disabledHeadlineColor,
+        disabledLeadingIconColor: Color = this.disabledLeadingIconColor,
+        disabledTrailingIconColor: Color = this.disabledTrailingIconColor,
+    ) =
+        ListItemColors(
+            containerColor = containerColor.takeOrElse { this.containerColor },
+            headlineColor = headlineColor.takeOrElse { this.headlineColor },
+            leadingIconColor = leadingIconColor.takeOrElse { this.leadingIconColor },
+            overlineColor = overlineColor.takeOrElse { this.overlineColor },
+            supportingTextColor = supportingTextColor.takeOrElse { this.supportingTextColor },
+            trailingIconColor = trailingIconColor.takeOrElse { this.trailingIconColor },
+            disabledHeadlineColor = disabledHeadlineColor.takeOrElse { this.disabledHeadlineColor },
+            disabledLeadingIconColor =
+                disabledLeadingIconColor.takeOrElse { this.disabledLeadingIconColor },
+            disabledTrailingIconColor =
+                disabledTrailingIconColor.takeOrElse { this.disabledTrailingIconColor },
+        )
 }
 
 /**
@@ -519,7 +975,7 @@ internal class InteractiveListItemColors(
  */
 @ExperimentalMaterial3ExpressiveApi
 @Immutable
-internal class InteractiveListItemShapes(
+class ListItemShapes(
     val shape: Shape,
     val selectedShape: Shape,
     val pressedShape: Shape,
@@ -527,9 +983,7 @@ internal class InteractiveListItemShapes(
     val hoveredShape: Shape,
     val draggedShape: Shape,
 ) {
-    /**
-     * Returns a copy of this [InteractiveListItemShapes], optionally overriding some of the values.
-     */
+    /** Returns a copy of this [ListItemShapes], optionally overriding some of the values. */
     fun copy(
         shape: Shape? = this.shape,
         selectedShape: Shape? = this.selectedShape,
@@ -537,8 +991,8 @@ internal class InteractiveListItemShapes(
         focusedShape: Shape? = this.focusedShape,
         hoveredShape: Shape? = this.hoveredShape,
         draggedShape: Shape? = this.draggedShape,
-    ): InteractiveListItemShapes =
-        InteractiveListItemShapes(
+    ): ListItemShapes =
+        ListItemShapes(
             shape = shape.takeOrElse { this.shape },
             selectedShape = selectedShape.takeOrElse { this.selectedShape },
             pressedShape = pressedShape.takeOrElse { this.pressedShape },
@@ -551,7 +1005,7 @@ internal class InteractiveListItemShapes(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is InteractiveListItemShapes) return false
+        if (other == null || other !is ListItemShapes) return false
 
         if (shape != other.shape) return false
         if (selectedShape != other.selectedShape) return false
@@ -575,7 +1029,7 @@ internal class InteractiveListItemShapes(
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private val InteractiveListItemShapes.hasRoundedCornerShapes: Boolean
+private val ListItemShapes.hasRoundedCornerShapes: Boolean
     get() =
         shape is RoundedCornerShape &&
             selectedShape is RoundedCornerShape &&
@@ -586,7 +1040,7 @@ private val InteractiveListItemShapes.hasRoundedCornerShapes: Boolean
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-internal fun InteractiveListItemShapes.shapeForInteraction(
+internal fun ListItemShapes.shapeForInteraction(
     selected: Boolean,
     pressed: Boolean,
     focused: Boolean,
@@ -619,10 +1073,10 @@ internal fun InteractiveListItemShapes.shapeForInteraction(
  */
 @ExperimentalMaterial3ExpressiveApi
 @Immutable
-internal class InteractiveListItemElevation(val elevation: Dp, val draggedElevation: Dp) {
+class ListItemElevation(val elevation: Dp, val draggedElevation: Dp) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is InteractiveListItemElevation) return false
+        if (other == null || other !is ListItemElevation) return false
 
         if (elevation != other.elevation) return false
         if (draggedElevation != other.draggedElevation) return false
@@ -634,478 +1088,5 @@ internal class InteractiveListItemElevation(val elevation: Dp, val draggedElevat
         var result = elevation.hashCode()
         result = 31 * result + draggedElevation.hashCode()
         return result
-    }
-}
-
-/** Contains the default values for interactive [ListItem]s. */
-@ExperimentalMaterial3ExpressiveApi
-@Immutable
-internal object InteractiveListItemDefaults {
-    /** The default padding applied to all content within a list item. */
-    val ContentPadding: PaddingValues =
-        PaddingValues(
-            start = InteractiveListStartPadding,
-            end = InteractiveListEndPadding,
-            top = InteractiveListTopPadding,
-            bottom = InteractiveListBottomPadding,
-        )
-
-    /**
-     * Creates an [InteractiveListItemColors] that represents the default colors for an interactive
-     * [ListItem] in different states.
-     */
-    @Composable
-    fun colors(): InteractiveListItemColors {
-        return MaterialTheme.colorScheme.defaultInteractiveListItemColors
-    }
-
-    /**
-     * Creates an [InteractiveListItemColors] that represents the default colors for an interactive
-     * [ListItem] in different states.
-     *
-     * @param containerColor the container color of the list item.
-     * @param contentColor the content color of the list item.
-     * @param leadingContentColor the leading content color of the list item.
-     * @param trailingContentColor the trailing content color of the list item.
-     * @param overlineContentColor the overline content color of the list item.
-     * @param supportingContentColor the supporting content color of the list item.
-     * @param disabledContainerColor the container color of the list item when disabled.
-     * @param disabledContentColor the content color of the list item when disabled.
-     * @param disabledLeadingContentColor the leading content color of the list item when disabled.
-     * @param disabledTrailingContentColor the trailing content color of the list item when
-     *   disabled.
-     * @param disabledOverlineContentColor the overline content color of the list item when
-     *   disabled.
-     * @param disabledSupportingContentColor the supporting content color of the list item when
-     *   disabled.
-     * @param selectedContainerColor the container color of the list item when selected.
-     * @param selectedContentColor the content color of the list item when selected.
-     * @param selectedLeadingContentColor the leading content color of the list item when selected.
-     * @param selectedTrailingContentColor the trailing content color of the list item when
-     *   selected.
-     * @param selectedOverlineContentColor the overline content color of the list item when
-     *   selected.
-     * @param selectedSupportingContentColor the supporting content color of the list item when
-     *   selected.
-     * @param draggedContainerColor the container color of the list item when dragged.
-     * @param draggedContentColor the content color of the list item when dragged.
-     * @param draggedLeadingContentColor the leading content color of the list item when dragged.
-     * @param draggedTrailingContentColor the trailing content color of the list item when dragged.
-     * @param draggedOverlineContentColor the overline content color of the list item when dragged.
-     * @param draggedSupportingContentColor the supporting content color of the list item when
-     *   dragged.
-     */
-    @Composable
-    fun colors(
-        // default
-        containerColor: Color = Color.Unspecified,
-        contentColor: Color = Color.Unspecified,
-        leadingContentColor: Color = Color.Unspecified,
-        trailingContentColor: Color = Color.Unspecified,
-        overlineContentColor: Color = Color.Unspecified,
-        supportingContentColor: Color = Color.Unspecified,
-        // disabled
-        disabledContainerColor: Color = Color.Unspecified,
-        disabledContentColor: Color = Color.Unspecified,
-        disabledLeadingContentColor: Color = Color.Unspecified,
-        disabledTrailingContentColor: Color = Color.Unspecified,
-        disabledOverlineContentColor: Color = Color.Unspecified,
-        disabledSupportingContentColor: Color = Color.Unspecified,
-        // selected
-        selectedContainerColor: Color = Color.Unspecified,
-        selectedContentColor: Color = Color.Unspecified,
-        selectedLeadingContentColor: Color = Color.Unspecified,
-        selectedTrailingContentColor: Color = Color.Unspecified,
-        selectedOverlineContentColor: Color = Color.Unspecified,
-        selectedSupportingContentColor: Color = Color.Unspecified,
-        // dragged
-        draggedContainerColor: Color = Color.Unspecified,
-        draggedContentColor: Color = Color.Unspecified,
-        draggedLeadingContentColor: Color = Color.Unspecified,
-        draggedTrailingContentColor: Color = Color.Unspecified,
-        draggedOverlineContentColor: Color = Color.Unspecified,
-        draggedSupportingContentColor: Color = Color.Unspecified,
-    ): InteractiveListItemColors {
-        return MaterialTheme.colorScheme.defaultInteractiveListItemColors.copy(
-            containerColor = containerColor,
-            contentColor = contentColor,
-            leadingContentColor = leadingContentColor,
-            trailingContentColor = trailingContentColor,
-            overlineContentColor = overlineContentColor,
-            supportingContentColor = supportingContentColor,
-            disabledContainerColor = disabledContainerColor,
-            disabledContentColor = disabledContentColor,
-            disabledLeadingContentColor = disabledLeadingContentColor,
-            disabledTrailingContentColor = disabledTrailingContentColor,
-            disabledOverlineContentColor = disabledOverlineContentColor,
-            disabledSupportingContentColor = disabledSupportingContentColor,
-            selectedContainerColor = selectedContainerColor,
-            selectedContentColor = selectedContentColor,
-            selectedLeadingContentColor = selectedLeadingContentColor,
-            selectedTrailingContentColor = selectedTrailingContentColor,
-            selectedOverlineContentColor = selectedOverlineContentColor,
-            selectedSupportingContentColor = selectedSupportingContentColor,
-            draggedContainerColor = draggedContainerColor,
-            draggedContentColor = draggedContentColor,
-            draggedLeadingContentColor = draggedLeadingContentColor,
-            draggedTrailingContentColor = draggedTrailingContentColor,
-            draggedOverlineContentColor = draggedOverlineContentColor,
-            draggedSupportingContentColor = draggedSupportingContentColor,
-        )
-    }
-
-    internal val ColorScheme.defaultInteractiveListItemColors: InteractiveListItemColors
-        get() {
-            return defaultInteractiveListItemColorsCached
-                ?: InteractiveListItemColors(
-                        // default
-                        containerColor = fromToken(ListTokens.ItemContainerColor),
-                        contentColor = fromToken(ListTokens.ItemLabelTextColor),
-                        leadingContentColor = fromToken(ListTokens.ItemLeadingIconColor),
-                        trailingContentColor = fromToken(ListTokens.ItemTrailingIconColor),
-                        overlineContentColor = fromToken(ListTokens.ItemOverlineColor),
-                        supportingContentColor = fromToken(ListTokens.ItemSupportingTextColor),
-                        // selected
-                        selectedContainerColor = fromToken(ListTokens.ItemSelectedContainerColor),
-                        selectedContentColor = fromToken(ListTokens.ItemSelectedLabelTextColor),
-                        selectedLeadingContentColor =
-                            fromToken(ListTokens.ItemSelectedLeadingIconColor),
-                        selectedTrailingContentColor =
-                            fromToken(ListTokens.ItemSelectedTrailingIconColor),
-                        selectedOverlineContentColor =
-                            fromToken(ListTokens.ItemSelectedOverlineColor),
-                        selectedSupportingContentColor =
-                            fromToken(ListTokens.ItemSelectedSupportingTextColor),
-                        // disabled
-                        disabledContainerColor = fromToken(ListTokens.ItemContainerColor),
-                        disabledContentColor =
-                            fromToken(ListTokens.ItemDisabledLabelTextColor)
-                                .copy(alpha = ListTokens.ItemDisabledLabelTextOpacity),
-                        disabledLeadingContentColor =
-                            fromToken(ListTokens.ItemDisabledLeadingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledLeadingIconOpacity),
-                        disabledTrailingContentColor =
-                            fromToken(ListTokens.ItemDisabledTrailingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledTrailingIconOpacity),
-                        disabledOverlineContentColor =
-                            fromToken(ListTokens.ItemDisabledOverlineColor)
-                                .copy(alpha = ListTokens.ItemDisabledOverlineOpacity),
-                        disabledSupportingContentColor =
-                            fromToken(ListTokens.ItemDisabledSupportingTextColor)
-                                .copy(alpha = ListTokens.ItemDisabledSupportingTextOpacity),
-                        // dragged
-                        draggedContainerColor = fromToken(ReorderListTokens.ItemContainerColor),
-                        draggedContentColor = fromToken(ReorderListTokens.ItemLabelTextColor),
-                        draggedLeadingContentColor =
-                            fromToken(ReorderListTokens.ItemLeadingIconColor),
-                        draggedTrailingContentColor =
-                            fromToken(ReorderListTokens.ItemTrailingIconColor),
-                        draggedOverlineContentColor =
-                            fromToken(ReorderListTokens.ItemOverlineColor),
-                        draggedSupportingContentColor =
-                            fromToken(ReorderListTokens.ItemSupportingTextColor),
-                    )
-                    .also { defaultInteractiveListItemColorsCached = it }
-        }
-
-    /**
-     * Creates an [InteractiveListItemColors] that represents the default colors for an interactive
-     * [SegmentedListItem] in different states.
-     */
-    @Composable
-    fun segmentedColors(): InteractiveListItemColors =
-        MaterialTheme.colorScheme.defaultSegmentedInteractiveListItemColors
-
-    /**
-     * Creates an [InteractiveListItemColors] that represents the default colors for an interactive
-     * [SegmentedListItem] in different states.
-     *
-     * @param containerColor the container color of the list item.
-     * @param contentColor the content color of the list item.
-     * @param leadingContentColor the leading content color of the list item.
-     * @param trailingContentColor the trailing content color of the list item.
-     * @param overlineContentColor the overline content color of the list item.
-     * @param supportingContentColor the supporting content color of the list item.
-     * @param disabledContainerColor the container color of the list item when disabled.
-     * @param disabledContentColor the content color of the list item when disabled.
-     * @param disabledLeadingContentColor the leading content color of the list item when disabled.
-     * @param disabledTrailingContentColor the trailing content color of the list item when
-     *   disabled.
-     * @param disabledOverlineContentColor the overline content color of the list item when
-     *   disabled.
-     * @param disabledSupportingContentColor the supporting content color of the list item when
-     *   disabled.
-     * @param selectedContainerColor the container color of the list item when selected.
-     * @param selectedContentColor the content color of the list item when selected.
-     * @param selectedLeadingContentColor the leading content color of the list item when selected.
-     * @param selectedTrailingContentColor the trailing content color of the list item when
-     *   selected.
-     * @param selectedOverlineContentColor the overline content color of the list item when
-     *   selected.
-     * @param selectedSupportingContentColor the supporting content color of the list item when
-     *   selected.
-     * @param draggedContainerColor the container color of the list item when dragged.
-     * @param draggedContentColor the content color of the list item when dragged.
-     * @param draggedLeadingContentColor the leading content color of the list item when dragged.
-     * @param draggedTrailingContentColor the trailing content color of the list item when dragged.
-     * @param draggedOverlineContentColor the overline content color of the list item when dragged.
-     * @param draggedSupportingContentColor the supporting content color of the list item when
-     *   dragged.
-     */
-    @Composable
-    fun segmentedColors(
-        // default
-        containerColor: Color = Color.Unspecified,
-        contentColor: Color = Color.Unspecified,
-        leadingContentColor: Color = Color.Unspecified,
-        trailingContentColor: Color = Color.Unspecified,
-        overlineContentColor: Color = Color.Unspecified,
-        supportingContentColor: Color = Color.Unspecified,
-        // disabled
-        disabledContainerColor: Color = Color.Unspecified,
-        disabledContentColor: Color = Color.Unspecified,
-        disabledLeadingContentColor: Color = Color.Unspecified,
-        disabledTrailingContentColor: Color = Color.Unspecified,
-        disabledOverlineContentColor: Color = Color.Unspecified,
-        disabledSupportingContentColor: Color = Color.Unspecified,
-        // selected
-        selectedContainerColor: Color = Color.Unspecified,
-        selectedContentColor: Color = Color.Unspecified,
-        selectedLeadingContentColor: Color = Color.Unspecified,
-        selectedTrailingContentColor: Color = Color.Unspecified,
-        selectedOverlineContentColor: Color = Color.Unspecified,
-        selectedSupportingContentColor: Color = Color.Unspecified,
-        // dragged
-        draggedContainerColor: Color = Color.Unspecified,
-        draggedContentColor: Color = Color.Unspecified,
-        draggedLeadingContentColor: Color = Color.Unspecified,
-        draggedTrailingContentColor: Color = Color.Unspecified,
-        draggedOverlineContentColor: Color = Color.Unspecified,
-        draggedSupportingContentColor: Color = Color.Unspecified,
-    ): InteractiveListItemColors {
-        return MaterialTheme.colorScheme.defaultSegmentedInteractiveListItemColors.copy(
-            containerColor = containerColor,
-            contentColor = contentColor,
-            leadingContentColor = leadingContentColor,
-            trailingContentColor = trailingContentColor,
-            overlineContentColor = overlineContentColor,
-            supportingContentColor = supportingContentColor,
-            disabledContainerColor = disabledContainerColor,
-            disabledContentColor = disabledContentColor,
-            disabledLeadingContentColor = disabledLeadingContentColor,
-            disabledTrailingContentColor = disabledTrailingContentColor,
-            disabledOverlineContentColor = disabledOverlineContentColor,
-            disabledSupportingContentColor = disabledSupportingContentColor,
-            selectedContainerColor = selectedContainerColor,
-            selectedContentColor = selectedContentColor,
-            selectedLeadingContentColor = selectedLeadingContentColor,
-            selectedTrailingContentColor = selectedTrailingContentColor,
-            selectedOverlineContentColor = selectedOverlineContentColor,
-            selectedSupportingContentColor = selectedSupportingContentColor,
-            draggedContainerColor = draggedContainerColor,
-            draggedContentColor = draggedContentColor,
-            draggedLeadingContentColor = draggedLeadingContentColor,
-            draggedTrailingContentColor = draggedTrailingContentColor,
-            draggedOverlineContentColor = draggedOverlineContentColor,
-            draggedSupportingContentColor = draggedSupportingContentColor,
-        )
-    }
-
-    internal val ColorScheme.defaultSegmentedInteractiveListItemColors: InteractiveListItemColors
-        get() {
-            return defaultSegmentedInteractiveListItemColorsCached
-                ?: InteractiveListItemColors(
-                        // default
-                        containerColor = fromToken(ListTokens.ItemSegmentedContainerColor),
-                        contentColor = fromToken(ListTokens.ItemLabelTextColor),
-                        leadingContentColor = fromToken(ListTokens.ItemLeadingIconColor),
-                        trailingContentColor = fromToken(ListTokens.ItemTrailingIconColor),
-                        overlineContentColor = fromToken(ListTokens.ItemOverlineColor),
-                        supportingContentColor = fromToken(ListTokens.ItemSupportingTextColor),
-                        // selected
-                        selectedContainerColor = fromToken(ListTokens.ItemSelectedContainerColor),
-                        selectedContentColor = fromToken(ListTokens.ItemSelectedLabelTextColor),
-                        selectedLeadingContentColor =
-                            fromToken(ListTokens.ItemSelectedLeadingIconColor),
-                        selectedTrailingContentColor =
-                            fromToken(ListTokens.ItemSelectedTrailingIconColor),
-                        selectedOverlineContentColor =
-                            fromToken(ListTokens.ItemSelectedOverlineColor),
-                        selectedSupportingContentColor =
-                            fromToken(ListTokens.ItemSelectedSupportingTextColor),
-                        // disabled
-                        disabledContainerColor = fromToken(ListTokens.ItemSegmentedContainerColor),
-                        disabledContentColor =
-                            fromToken(ListTokens.ItemDisabledLabelTextColor)
-                                .copy(alpha = ListTokens.ItemDisabledLabelTextOpacity),
-                        disabledLeadingContentColor =
-                            fromToken(ListTokens.ItemDisabledLeadingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledLeadingIconOpacity),
-                        disabledTrailingContentColor =
-                            fromToken(ListTokens.ItemDisabledTrailingIconColor)
-                                .copy(alpha = ListTokens.ItemDisabledTrailingIconOpacity),
-                        disabledOverlineContentColor =
-                            fromToken(ListTokens.ItemDisabledOverlineColor)
-                                .copy(alpha = ListTokens.ItemDisabledOverlineOpacity),
-                        disabledSupportingContentColor =
-                            fromToken(ListTokens.ItemDisabledSupportingTextColor)
-                                .copy(alpha = ListTokens.ItemDisabledSupportingTextOpacity),
-                        // dragged
-                        draggedContainerColor = fromToken(ReorderListTokens.ItemContainerColor),
-                        draggedContentColor = fromToken(ReorderListTokens.ItemLabelTextColor),
-                        draggedLeadingContentColor =
-                            fromToken(ReorderListTokens.ItemLeadingIconColor),
-                        draggedTrailingContentColor =
-                            fromToken(ReorderListTokens.ItemTrailingIconColor),
-                        draggedOverlineContentColor =
-                            fromToken(ReorderListTokens.ItemOverlineColor),
-                        draggedSupportingContentColor =
-                            fromToken(ReorderListTokens.ItemSupportingTextColor),
-                    )
-                    .also { defaultSegmentedInteractiveListItemColorsCached = it }
-        }
-
-    /**
-     * Creates an [InteractiveListItemShapes] that represents the default shapes for an interactive
-     * [ListItem] in different states.
-     */
-    @Composable
-    fun shapes(): InteractiveListItemShapes = MaterialTheme.shapes.defaultInteractiveListItemShapes
-
-    /**
-     * Creates an [InteractiveListItemShapes] that represents the default shapes for an interactive
-     * [ListItem] in different states.
-     *
-     * @param shape the default shape of the list item.
-     * @param selectedShape the shape of the list item when selected.
-     * @param pressedShape the shape of the list item when pressed.
-     * @param focusedShape the shape of the list item when focused.
-     * @param hoveredShape the shape of the list item when hovered.
-     * @param draggedShape the shape of the list item when dragged.
-     */
-    @Composable
-    fun shapes(
-        shape: Shape? = null,
-        selectedShape: Shape? = null,
-        pressedShape: Shape? = null,
-        focusedShape: Shape? = null,
-        hoveredShape: Shape? = null,
-        draggedShape: Shape? = null,
-    ): InteractiveListItemShapes =
-        MaterialTheme.shapes.defaultInteractiveListItemShapes.copy(
-            shape = shape,
-            selectedShape = selectedShape,
-            pressedShape = pressedShape,
-            focusedShape = focusedShape,
-            hoveredShape = hoveredShape,
-            draggedShape = draggedShape,
-        )
-
-    /**
-     * Constructor for [InteractiveListItemShapes] to be used by a [SegmentedListItem] which has an
-     * [index] in a list that has a total of [count] items.
-     *
-     * @param index the index for this list item in the overall list.
-     * @param count the total count of list items in the overall list.
-     * @param defaultShapes the default [InteractiveListItemShapes] that should be used for
-     *   standalone items or items in the middle of the list.
-     */
-    @Composable
-    fun segmentedShapes(
-        index: Int,
-        count: Int,
-        defaultShapes: InteractiveListItemShapes = shapes(),
-    ): InteractiveListItemShapes {
-        val overrideShape = ListTokens.ContainerShape.value
-        return remember(index, count, defaultShapes, overrideShape) {
-            when {
-                count == 1 -> defaultShapes
-
-                index == 0 -> {
-                    val defaultBaseShape = defaultShapes.shape
-                    if (defaultBaseShape is CornerBasedShape && overrideShape is CornerBasedShape) {
-                        defaultShapes.copy(
-                            shape =
-                                defaultBaseShape.copy(
-                                    topStart = overrideShape.topStart,
-                                    topEnd = overrideShape.topEnd,
-                                )
-                        )
-                    } else {
-                        defaultShapes
-                    }
-                }
-
-                index == count - 1 -> {
-                    val defaultBaseShape = defaultShapes.shape
-                    if (defaultBaseShape is CornerBasedShape && overrideShape is CornerBasedShape) {
-                        defaultShapes.copy(
-                            shape =
-                                defaultBaseShape.copy(
-                                    bottomStart = overrideShape.bottomStart,
-                                    bottomEnd = overrideShape.bottomEnd,
-                                )
-                        )
-                    } else {
-                        defaultShapes
-                    }
-                }
-
-                else -> defaultShapes
-            }
-        }
-    }
-
-    internal val Shapes.defaultInteractiveListItemShapes: InteractiveListItemShapes
-        get() {
-            return defaultInteractiveListItemShapesCached
-                ?: InteractiveListItemShapes(
-                        shape = fromToken(ListTokens.ItemContainerExpressiveShape),
-                        selectedShape = fromToken(ListTokens.ItemSelectedContainerExpressiveShape),
-                        pressedShape = fromToken(ListTokens.ItemPressedContainerExpressiveShape),
-                        focusedShape = fromToken(ListTokens.ItemFocusedContainerExpressiveShape),
-                        hoveredShape = fromToken(ListTokens.ItemHoveredContainerExpressiveShape),
-                        draggedShape = fromToken(ReorderListTokens.ItemShape),
-                    )
-                    .also { defaultInteractiveListItemShapesCached = it }
-        }
-
-    /**
-     * Creates an [InteractiveListItemElevation] that represents the elevation for an interactive
-     * [ListItem] in different states.
-     *
-     * @param elevation the default elevation of the list item.
-     * @param draggedElevation the elevation of the list item when dragged.
-     */
-    fun elevation(
-        elevation: Dp = ListTokens.ItemContainerElevation,
-        draggedElevation: Dp = ListTokens.ItemDraggedContainerElevation,
-    ): InteractiveListItemElevation =
-        InteractiveListItemElevation(elevation = elevation, draggedElevation = draggedElevation)
-
-    /** The vertical space between different [SegmentedListItem]s. */
-    val SegmentedGap: Dp = ListTokens.SegmentedGap
-
-    /**
-     * Returns the default vertical alignment of children content within a [ListItem]. This is
-     * equivalent to [Alignment.CenterVertically] for shorter items and [Alignment.Top] for taller
-     * items.
-     */
-    @Composable
-    fun verticalAlignment(): Alignment.Vertical {
-        val density = LocalDensity.current
-        return remember(density) {
-            Alignment.Vertical { size, space ->
-                val breakpoint =
-                    with(density) { InteractiveListVerticalAlignmentBreakpoint.roundToPx() }
-                val baseAlignment =
-                    if (space < breakpoint) {
-                        Alignment.CenterVertically
-                    } else {
-                        Alignment.Top
-                    }
-                baseAlignment.align(size, space)
-            }
-        }
     }
 }
