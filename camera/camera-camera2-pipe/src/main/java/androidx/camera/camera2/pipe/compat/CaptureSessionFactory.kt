@@ -17,7 +17,9 @@
 package androidx.camera.camera2.pipe.compat
 
 import android.annotation.SuppressLint
+import android.hardware.camera2.MultiResolutionImageReader
 import android.hardware.camera2.params.InputConfiguration
+import android.hardware.camera2.params.OutputConfiguration
 import android.os.Build
 import android.view.Surface
 import androidx.annotation.RequiresApi
@@ -29,6 +31,7 @@ import androidx.camera.camera2.pipe.core.HandlerExecutor
 import androidx.camera.camera2.pipe.core.Log
 import androidx.camera.camera2.pipe.core.Threads
 import androidx.camera.camera2.pipe.graph.StreamGraphImpl
+import androidx.camera.camera2.pipe.graph.StreamGraphImpl.OutputConfig
 import dagger.Module
 import dagger.Provides
 import javax.inject.Inject
@@ -380,11 +383,53 @@ internal fun buildOutputConfigurations(
     val deferredOutputs = mutableMapOf<StreamId, OutputConfigurationWrapper>()
     var postviewOutput: OutputConfigurationWrapper? = null
 
+    val outputConfigurationMap = mutableMapOf<OutputConfig, OutputConfiguration>()
+    for ((streamId, imageSource) in streamGraph.imageSourceMap) {
+        val stream = checkNotNull(streamGraph[streamId])
+        val outputs = stream.outputs
+        if (outputs.size == 1) {
+            continue
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // Create OutputConfigurations for multi-output streams.
+            //
+            // The camera framework stipulates that each OutputConfiguration should be configured
+            // with its "internal" Surfaces. We can create these OutputConfigurations with a
+            // dedicated API - createInstancesForMultiResolutionOutput(). This API returns a list of
+            // OutputConfigurations in the same order as the order of the MultiResolutionStreamInfos
+            // used to create the MultiResolutionImageReader. As such, we can line up our
+            // OutputStreams with the returned OutputConfigurations one-by-one.
+            val multiResImageReader =
+                checkNotNull(imageSource.unwrapAs(MultiResolutionImageReader::class))
+            val outputConfigurations =
+                OutputConfiguration.createInstancesForMultiResolutionOutput(multiResImageReader)
+                    .toList()
+            check(outputConfigurations.size == outputs.size)
+
+            for (outputIdx in outputs.indices) {
+                val outputStream = outputs[outputIdx]
+                val outputConfiguration = outputConfigurations[outputIdx]
+                // TODO: b/470146651 - Validate the paired OutputConfiguration on newer API levels.
+
+                val outputConfig = checkNotNull(streamGraph.outputConfigMap[outputStream])
+                check(outputConfig.externalOutputConfig == null) {
+                    "External OutputConfiguration shouldn't be set in " +
+                        "multi-output streams configured with ImageSource.Config"
+                }
+
+                outputConfigurationMap[outputConfig] = outputConfiguration
+            }
+        } else {
+            throw IllegalArgumentException("Cannot configure multiple outputs pre-S!")
+        }
+    }
+
     for (outputConfig in streamGraph.outputConfigs) {
         val outputSurfaces = outputConfig.streams.mapNotNull { surfaces[it.id] }
 
-        val externalConfig = outputConfig.externalOutputConfig
-        if (externalConfig != null) {
+        val androidOutputConfiguration =
+            outputConfig.externalOutputConfig ?: outputConfigurationMap[outputConfig]
+        if (androidOutputConfiguration != null) {
             check(outputSurfaces.size == outputConfig.streams.size) {
                 val missingStreams = outputConfig.streams.filter { !surfaces.contains(it.id) }
                 "Surfaces are not yet available for $outputConfig!" +
@@ -392,7 +437,7 @@ internal fun buildOutputConfigurations(
             }
             allOutputs.add(
                 AndroidOutputConfiguration(
-                    externalConfig,
+                    androidOutputConfiguration,
                     surfaceSharing = false, // No way to read this value.
                     maxSharedSurfaceCount = 1, // Hardcoded
                     physicalCameraId = null, // No way to read this value.
