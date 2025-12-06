@@ -309,27 +309,28 @@ internal class DataStoreImpl<T>(
         if (currentState is Data && latestVersion == cachedVersion) {
             return currentState
         }
+        val getVersion: suspend (Boolean) -> (Int) = { hasLock ->
+            if (hasLock) {
+                coordinator.getVersion()
+            } else {
+                cachedVersion
+            }
+        }
         val (newState, acquiredLock) =
             if (requireLock) {
                 coordinator.lock {
                     try {
-                        readDataOrHandleCorruption(
-                            hasWriteFileLock = true,
-                            cachedVersionIfNoLock = coordinator.getVersion(),
-                        )
+                        readDataOrHandleCorruption(hasWriteFileLock = true, getVersion = getVersion)
                     } catch (ex: Throwable) {
-                        ReadException<T>(ex, coordinator.getVersion())
+                        ReadException<T>(ex, getVersion.invoke(requireLock))
                     } to true
                 }
             } else {
                 coordinator.tryLock { locked ->
                     try {
-                        readDataOrHandleCorruption(locked, cachedVersionIfNoLock = cachedVersion)
+                        readDataOrHandleCorruption(locked, getVersion)
                     } catch (ex: Throwable) {
-                        ReadException<T>(
-                            ex,
-                            if (locked) coordinator.getVersion() else cachedVersion,
-                        )
+                        ReadException<T>(ex, getVersion.invoke(locked))
                     } to locked
                 }
             }
@@ -353,7 +354,7 @@ internal class DataStoreImpl<T>(
             val curData =
                 readDataOrHandleCorruption(
                     hasWriteFileLock = true,
-                    cachedVersionIfNoLock = coordinator.getVersion(),
+                    getVersion = { coordinator.getVersion() },
                 )
             val newData = withContext(callerContext) { transform(curData.value) }
 
@@ -388,19 +389,18 @@ internal class DataStoreImpl<T>(
 
     private suspend fun readDataOrHandleCorruption(
         hasWriteFileLock: Boolean,
-        cachedVersionIfNoLock: Int,
+        getVersion: suspend (Boolean) -> (Int),
     ): Data<T> {
         try {
             return if (hasWriteFileLock) {
                 val data = readDataFromFileOrDefault()
-                Data(data, data.hashCode(), version = coordinator.getVersion())
+                Data(data, data.hashCode(), version = getVersion.invoke(hasWriteFileLock))
             } else {
                 coordinator.tryLock { locked ->
                     val data = readDataFromFileOrDefault()
                     // The cached version is provided via the param is the last version that was
                     // successfully read and cached by this datastore instance.
-                    val version = if (locked) coordinator.getVersion() else cachedVersionIfNoLock
-                    Data(data, data.hashCode(), version)
+                    Data(data, data.hashCode(), getVersion.invoke(locked))
                 }
             }
         } catch (ex: CorruptionException) {
@@ -412,7 +412,7 @@ internal class DataStoreImpl<T>(
                     // Confirms the file is still corrupted before overriding
                     try {
                         newData = readDataFromFileOrDefault()
-                        version = coordinator.getVersion()
+                        version = getVersion.invoke(hasWriteFileLock)
                     } catch (ignoredEx: CorruptionException) {
                         version = writeData(newData, updateCache = true)
                     }
@@ -454,13 +454,15 @@ internal class DataStoreImpl<T>(
             initTasksList.toList()
 
         override suspend fun doRun() {
+            val getVersion: suspend (Boolean) -> (Int) = {
+                // We don't have the cached value case during initialization, so we just get the
+                // version from the coordinator.
+                coordinator.getVersion()
+            }
             val initData =
                 if ((initTasks == null) || initTasks!!.isEmpty()) {
                     // if there are no init tasks, we can directly read
-                    readDataOrHandleCorruption(
-                        hasWriteFileLock = false,
-                        cachedVersionIfNoLock = coordinator.getVersion(),
-                    )
+                    readDataOrHandleCorruption(hasWriteFileLock = false, getVersion = getVersion)
                 } else {
                     // if there are init tasks, we need to obtain a lock to ensure migrations
                     // run as 1 chunk
@@ -470,7 +472,7 @@ internal class DataStoreImpl<T>(
                         var currentData =
                             readDataOrHandleCorruption(
                                     hasWriteFileLock = true,
-                                    cachedVersionIfNoLock = coordinator.getVersion(),
+                                    getVersion = getVersion,
                                 )
                                 .value
 
