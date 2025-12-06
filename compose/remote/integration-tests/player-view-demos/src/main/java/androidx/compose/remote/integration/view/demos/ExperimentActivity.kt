@@ -78,6 +78,10 @@ import androidx.compose.remote.integration.view.demos.examples.DemoPaths.pathTes
 import androidx.compose.remote.integration.view.demos.examples.LayoutModifierDemo1
 import androidx.compose.remote.integration.view.demos.examples.LayoutModifierDemo2
 import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents1
+import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents2
+import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents3
+import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents4
+import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents5
 import androidx.compose.remote.integration.view.demos.examples.RcSimpleClock1
 import androidx.compose.remote.integration.view.demos.examples.RcTextDemo
 import androidx.compose.remote.integration.view.demos.examples.RcTextDemo2
@@ -291,6 +295,10 @@ class ExperimentActivity : ComponentActivity() {
                 ),
             "Procedural..." to
                 listOf(
+                    getpc("2 VText") { RcCanvasComponents5() },
+                    getpc("Canvas + HText") { RcCanvasComponents4() },
+                    getpc("Canvas + VText") { RcCanvasComponents3() },
+                    getpc("Canvas + Scroll") { RcCanvasComponents2() },
                     getpc("Canvas") { RcCanvasComponents1() },
                     getpc("Fireworks") { shaderFireworks() },
                     getpc("Layout modifier 2") { LayoutModifierDemo2() },
