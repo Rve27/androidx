@@ -30,8 +30,7 @@ import androidx.xr.scenecore.impl.perception.Session
 import androidx.xr.scenecore.runtime.ActivitySpace
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.HitTestResult
-import androidx.xr.scenecore.runtime.ScenePose.HitTestFilter
-import androidx.xr.scenecore.runtime.ScenePose.HitTestFilterValue
+import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.runtime.SceneRuntime
 import androidx.xr.scenecore.runtime.Space
 import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider
@@ -53,7 +52,11 @@ import com.android.extensions.xr.space.SpatialCapabilities
 import com.android.extensions.xr.space.SpatialState
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.Futures.immediateFuture
-import com.google.common.util.concurrent.ListenableFuture
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.test.DefaultAsserter.fail
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -218,12 +221,12 @@ class ActivitySpaceImplTest : SystemSpaceEntityImplTest() {
 
     @Test
     @Throws(Exception::class)
-    fun hitTest_returnsHitTest() {
+    fun hitTest_returnsHitTest() = runBlocking {
         val distance = 2.0f
         val hitPosition = Vec3(1.0f, 2.0f, 3.0f)
         val surfaceNormal = Vec3(4.0f, 5.0f, 6.0f)
         val surfaceType = com.android.extensions.xr.space.HitTestResult.SURFACE_PANEL
-        @HitTestFilterValue val hitTestFilter = HitTestFilter.SELF_SCENE
+        @ScenePose.HitTestFilterValue val hitTestFilter = ScenePose.HitTestFilter.SELF_SCENE
 
         val hitTestResultBuilder =
             com.android.extensions.xr.space.HitTestResult.Builder(
@@ -235,16 +238,47 @@ class ActivitySpaceImplTest : SystemSpaceEntityImplTest() {
         val extensionsHitTestResult = hitTestResultBuilder.setSurfaceNormal(surfaceNormal).build()
         ShadowXrExtensions.extract(xrExtensions).setHitTestResult(activity, extensionsHitTestResult)
 
-        val hitTestResultFuture: ListenableFuture<HitTestResult> =
-            activitySpace.hitTest(Vector3(1f, 1f, 1f), Vector3(1f, 1f, 1f), hitTestFilter)
+        val deferredHitTestResult =
+            async(start = CoroutineStart.UNDISPATCHED) {
+                activitySpace.hitTest(Vector3(1f, 1f, 1f), Vector3(1f, 1f, 1f), hitTestFilter)
+            }
         fakeExecutor.runAll()
-        val hitTestResult = hitTestResultFuture.get()
+        val hitTestResult = deferredHitTestResult.await()
 
         assertThat(hitTestResult.distance).isEqualTo(distance)
         assertVector3(hitTestResult.hitPosition!!, Vector3(1f, 2f, 3f))
         assertVector3(hitTestResult.surfaceNormal!!, Vector3(4f, 5f, 6f))
         assertThat(hitTestResult.surfaceType)
             .isEqualTo(HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_PLANE)
+    }
+
+    @Test
+    fun hitTest_jobCancelled_throwsCancellationException() = runBlocking {
+        val extensionsHitTestResult =
+            com.android.extensions.xr.space.HitTestResult.Builder(
+                    2.0f,
+                    Vec3(1.0f, 2.0f, 3.0f),
+                    true,
+                    com.android.extensions.xr.space.HitTestResult.SURFACE_PANEL,
+                )
+                .build()
+        ShadowXrExtensions.extract(xrExtensions).setHitTestResult(activity, extensionsHitTestResult)
+        @ScenePose.HitTestFilterValue val hitTestFilter = ScenePose.HitTestFilter.SELF_SCENE
+
+        val deferredHitTestResult =
+            async(start = CoroutineStart.UNDISPATCHED) {
+                activitySpace.hitTest(Vector3(1f, 1f, 1f), Vector3(1f, 1f, 1f), hitTestFilter)
+            }
+
+        deferredHitTestResult.cancel()
+        fakeExecutor.runAll()
+
+        try {
+            deferredHitTestResult.await()
+            fail("Excepted CancellationException was not thrown")
+        } catch (e: CancellationException) {
+            // expected, this is not reached
+        }
     }
 
     @Test
