@@ -19,8 +19,10 @@ package androidx.credentials.providerevents
 import android.app.Activity
 import android.graphics.Bitmap
 import android.os.Looper
+import androidx.credentials.providerevents.exception.ClearExportProviderConfigurationException
 import androidx.credentials.providerevents.exception.ImportCredentialsProviderConfigurationException
 import androidx.credentials.providerevents.exception.RegisterExportProviderConfigurationException
+import androidx.credentials.providerevents.transfer.ClearExportRequest
 import androidx.credentials.providerevents.transfer.CredentialTypes
 import androidx.credentials.providerevents.transfer.ExportEntry
 import androidx.credentials.providerevents.transfer.ImportCredentialsRequest
@@ -80,6 +82,17 @@ class ProviderEventsManagerTest {
                         )
                     )
                 )
+            }
+        }
+
+    @Test
+    fun clearExport_throws() =
+        runBlocking<Unit> {
+            if (Looper.myLooper() == null) {
+                Looper.prepare()
+            }
+            assertThrows<ClearExportProviderConfigurationException> {
+                providerEventsManager.clearExport(ClearExportRequest())
             }
         }
 
