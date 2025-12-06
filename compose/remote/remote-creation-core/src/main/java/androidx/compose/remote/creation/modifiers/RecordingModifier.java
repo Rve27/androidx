@@ -210,6 +210,37 @@ public class RecordingModifier {
         return this;
     }
 
+    /**
+     * Add a horizontal scroll modifier
+     * @return
+     */
+    public @NonNull RecordingModifier horizontalScroll() {
+        mList.add(new ClipModifier(new RectShape(0, 0, 0, 0)));
+        mList.add(new ScrollModifier(ScrollModifier.HORIZONTAL, 0f, 0));
+        return this;
+    }
+
+    /**
+     * Add a vertical scroll modifier
+     * @return
+     */
+    public @NonNull RecordingModifier verticalScroll() {
+        mList.add(new ClipModifier(new RectShape(0, 0, 0, 0)));
+        mList.add(new ScrollModifier(ScrollModifier.VERTICAL, 0f, 0));
+        return this;
+    }
+
+    /**
+     * Add a vertical scroll modifier
+     * @param position
+     * @return
+     */
+    public @NonNull RecordingModifier verticalScroll(float position) {
+        mList.add(new ClipModifier(new RectShape(0, 0, 0, 0)));
+        mList.add(new ScrollModifier(ScrollModifier.VERTICAL, position, 0));
+        return this;
+    }
+
 
     /**
      * Add a background modifier (flat color background)
