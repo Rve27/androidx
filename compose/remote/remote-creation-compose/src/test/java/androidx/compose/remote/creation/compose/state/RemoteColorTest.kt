@@ -359,6 +359,14 @@ class RemoteColorTest {
         assertThat(red).isNotSameInstanceAs(green)
     }
 
+    @Test
+    fun extensionFunctionMatches() {
+        assertThat(androidx.compose.ui.graphics.Color.Black.rc.constantValue)
+            .isEqualTo(Color.valueOf(Color.BLACK))
+        assertThat(androidx.compose.ui.graphics.Color.Transparent.rc.constantValue)
+            .isEqualTo(Color.valueOf(Color.TRANSPARENT))
+    }
+
     private fun makeAndPaintCoreDocument() =
         CoreDocument().apply {
             val buffer = creationState.document.buffer
