@@ -56,6 +56,7 @@ import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteDp
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemotePaint
+import androidx.compose.remote.creation.compose.state.rb
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
@@ -106,7 +107,7 @@ import androidx.wear.compose.material3.TextConfiguration
 public fun RemoteButton(
     vararg onClick: Action,
     modifier: RemoteModifier = RemoteModifier,
-    enabled: RemoteBoolean = RemoteBoolean(true),
+    enabled: RemoteBoolean = true.rb,
     colors: RemoteButtonColors = RemoteButtonDefaults.buttonColors(),
     shape: RemoteShape = RemoteButtonDefaults.shape,
     contentPadding: RemotePaddingValues = RemoteButtonDefaults.ContentPadding,
@@ -163,7 +164,7 @@ public fun RemoteButton(
 public fun RemoteButton(
     vararg onClick: Action,
     modifier: RemoteModifier = RemoteModifier,
-    enabled: RemoteBoolean = RemoteBoolean(true),
+    enabled: RemoteBoolean = true.rb,
     containerPainter: RemotePainter,
     disabledContainerPainter: RemotePainter =
         RemoteButtonDefaults.disabledContainerPainter(containerPainter),
@@ -256,7 +257,7 @@ public fun RemoteButton(
     modifier: RemoteModifier = RemoteModifier,
     secondaryLabel: @Composable @RemoteComposable (RemoteRowScope.() -> Unit)? = null,
     icon: (@Composable () -> Unit)? = null,
-    enabled: RemoteBoolean = RemoteBoolean(true),
+    enabled: RemoteBoolean = true.rb,
     containerPainter: RemotePainter? = null,
     disabledContainerPainter: RemotePainter? = null,
     colors: RemoteButtonColors =
@@ -601,17 +602,17 @@ public class RemoteButtonColors(
     public val disabledIconColor: RemoteColor,
 ) {
     @Stable
-    internal fun contentColor(enabled: RemoteBoolean = RemoteBoolean(true)): RemoteColor {
+    internal fun contentColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(ifTrue = contentColor, ifFalse = disabledContentColor)
     }
 
     @Stable
-    internal fun containerColor(enabled: RemoteBoolean = RemoteBoolean(true)): RemoteColor {
+    internal fun containerColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(ifTrue = containerColor, ifFalse = disabledContainerColor)
     }
 
     @Stable
-    internal fun secondaryContentColor(enabled: RemoteBoolean = RemoteBoolean(true)): RemoteColor {
+    internal fun secondaryContentColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(
             ifTrue = secondaryContentColor,
             ifFalse = disabledSecondaryContentColor,
