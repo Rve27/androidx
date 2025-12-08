@@ -14,26 +14,32 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark.driver
+package androidx.tracing
 
-import androidx.tracing.PooledTracePacketArray
-import androidx.tracing.TraceSink
-
-/** A sink that does very little. We simply drop the trace packets without writing it to a file. */
-class NoOpSink : TraceSink() {
-    override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
-        pooledPacketArray.recycle()
-    }
-
-    override fun flush() {
+/** A [EventMetadata] instance that does nothing. */
+internal object EmptyEventMetadata : EventMetadata() {
+    override fun addMetadataEntry(name: String, value: Boolean) {
         // Does nothing
     }
 
-    override fun onDroppedTraceEvent() {
+    override fun addMetadataEntry(name: String, value: Long) {
         // Does nothing
     }
 
-    override fun close() {
+    override fun addMetadataEntry(name: String, value: Double) {
+        // Does nothing
+    }
+
+    override fun addMetadataEntry(name: String, value: String) {
+        // Does nothing
+    }
+
+    override fun addCategory(name: String) {
+        // Does nothing
+    }
+
+    @DelicateTracingApi
+    override fun dispatchToTraceSink() {
         // Does nothing
     }
 }

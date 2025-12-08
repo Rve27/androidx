@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark.driver
+package androidx.tracing
 
-import androidx.tracing.PooledTracePacketArray
-import androidx.tracing.TraceSink
+import androidx.annotation.RestrictTo
 
-/** A sink that does very little. We simply drop the trace packets without writing it to a file. */
-class NoOpSink : TraceSink() {
-    override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
-        pooledPacketArray.recycle()
-    }
+// This was originally a part of the Kotlin Stdlib (but now is @Deprecated(HIDDEN) for non JVM
+// Platforms)
+// By defining this as an expect function we can do the right thing by using the right platform
+// primitive going forward. On Darwin we can acquire a lock, and on JavaScript we can simply return
+// the result of `block()`.
 
-    override fun flush() {
-        // Does nothing
-    }
-
-    override fun onDroppedTraceEvent() {
-        // Does nothing
-    }
-
-    override fun close() {
-        // Does nothing
-    }
-}
+/** Executes the given function [block] while holding the monitor of the given object [lock]. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public expect fun <R> synchronized(lock: Any, block: () -> R): R

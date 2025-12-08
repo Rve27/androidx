@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark.driver
+package androidx.tracing
 
-import androidx.tracing.PooledTracePacketArray
-import androidx.tracing.TraceSink
+import kotlin.jvm.optionals.getOrNull
 
-/** A sink that does very little. We simply drop the trace packets without writing it to a file. */
-class NoOpSink : TraceSink() {
-    override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
-        pooledPacketArray.recycle()
-    }
-
-    override fun flush() {
-        // Does nothing
-    }
-
-    override fun onDroppedTraceEvent() {
-        // Does nothing
-    }
-
-    override fun close() {
-        // Does nothing
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun TraceContext.currentProcessTrack(): ProcessTrack {
+    return if (isProcessInitialized) {
+        process
+    } else {
+        val handle = ProcessHandle.current()
+        val id = handle.pid().toInt()
+        val name = handle.info().command().getOrNull() ?: "Process pid($id)"
+        createProcessTrack(id = id, name = name)
+        process
     }
 }
