@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark.driver
+package androidx.tracing
 
-import androidx.tracing.PooledTracePacketArray
-import androidx.tracing.TraceSink
+import kotlin.coroutines.CoroutineContext
 
-/** A sink that does very little. We simply drop the trace packets without writing it to a file. */
-class NoOpSink : TraceSink() {
-    override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
-        pooledPacketArray.recycle()
-    }
-
-    override fun flush() {
-        // Does nothing
-    }
-
-    override fun onDroppedTraceEvent() {
-        // Does nothing
-    }
-
+/**
+ * The [PropagationToken] instance that should be returned when context propagation is unsupported
+ * by the underlying [Tracer].
+ */
+public object PropagationUnsupportedToken : PropagationToken, AutoCloseable {
     override fun close() {
         // Does nothing
+    }
+
+    @DelicateTracingApi
+    override fun contextElementOrNull(): CoroutineContext.Element? {
+        return null
     }
 }

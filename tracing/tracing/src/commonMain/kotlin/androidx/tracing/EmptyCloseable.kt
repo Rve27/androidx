@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark.driver
+package androidx.tracing
 
-import androidx.tracing.PooledTracePacketArray
-import androidx.tracing.TraceSink
-
-/** A sink that does very little. We simply drop the trace packets without writing it to a file. */
-class NoOpSink : TraceSink() {
-    override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
-        pooledPacketArray.recycle()
-    }
-
-    override fun flush() {
-        // Does nothing
-    }
-
-    override fun onDroppedTraceEvent() {
-        // Does nothing
-    }
-
+/** An [AutoCloseable] that does nothing. */
+@PublishedApi
+internal object EmptyCloseable : AutoCloseable {
     override fun close() {
-        // Does nothing
+        // Does nothing.
     }
 }
