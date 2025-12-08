@@ -362,8 +362,8 @@ public class ImpressApiImpl : ImpressApi {
      *   is provided, this will attempt to play the first animation it finds
      * @param looping True if the animation should loop. Note that if the animation is looped, the
      *   returned Future will never fire successfully.
-     * @return a ListenableFuture which fires when the animation stops. It will return an exception
-     *   if the animation can't play.
+     * @return a [Void] result when the animation stops. An exception is thrown if the animation
+     *   can't play.
      */
     override suspend fun animateGltfModel(
         impressNode: ImpressNode,
