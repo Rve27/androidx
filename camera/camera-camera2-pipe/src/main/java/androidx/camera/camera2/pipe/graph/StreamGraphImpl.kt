@@ -38,8 +38,8 @@ import androidx.camera.camera2.pipe.StreamGraph
 import androidx.camera.camera2.pipe.StreamId
 import androidx.camera.camera2.pipe.compat.Api24Compat
 import androidx.camera.camera2.pipe.config.CameraGraphScope
-import androidx.camera.camera2.pipe.internal.ImageSourceMap
 import androidx.camera.camera2.pipe.media.ImageSource
+import androidx.camera.camera2.pipe.media.ImageSources
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlinx.atomicfu.atomic
@@ -55,14 +55,14 @@ internal class StreamGraphImpl
 constructor(
     val cameraMetadata: CameraMetadata,
     val graphConfig: CameraGraph.Config,
+    val imageSources: ImageSources,
     private val cameraControllerProvider: Provider<CameraController>,
-    private val imageSourceMapProvider: Provider<ImageSourceMap>,
-) : StreamGraph {
+) : StreamGraph, AutoCloseable {
     private val _streamMap: Map<CameraStream.Config, CameraStream>
 
     internal val outputConfigs: List<OutputConfig>
+    internal val imageSourceMap: Map<StreamId, ImageSource>
 
-    // TODO: Build InputStream(s)
     override val inputs: List<InputStream>
     override val streams: List<CameraStream>
     override val streamIds: Set<StreamId>
@@ -97,7 +97,7 @@ constructor(
     }
 
     override fun getImageSource(streamId: StreamId): ImageSource? {
-        return imageSourceMapProvider.get().imageSources[streamId]
+        return imageSourceMap[streamId]
     }
 
     init {
@@ -204,6 +204,16 @@ constructor(
                 it.streams.minOf { stream -> streams.indexOf(stream) }
             }
         outputs = streams.flatMap { it.outputs }
+
+        imageSourceMap = buildMap {
+            for (config in graphConfig.streams) {
+                val imageSourceConfig = config.imageSourceConfig ?: continue
+
+                val cameraStream = checkNotNull(_streamMap[config])
+                val imageSource = imageSources.createImageSource(cameraStream, imageSourceConfig)
+                this[cameraStream.id] = imageSource
+            }
+        }
     }
 
     class OutputConfig(
@@ -404,6 +414,13 @@ constructor(
 
         // Return outputs in original order if no video streams found
         return unsortedOutputs
+    }
+
+    override fun close() {
+        val imageSources = imageSourceMap.values
+        for (imageSource in imageSources) {
+            imageSource.close()
+        }
     }
 
     companion object {
