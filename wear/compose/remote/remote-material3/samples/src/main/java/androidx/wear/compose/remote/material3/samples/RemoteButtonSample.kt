@@ -18,6 +18,8 @@
 package androidx.wear.compose.remote.material3.samples
 
 import androidx.annotation.Sampled
+import androidx.compose.remote.core.operations.TextFromFloat
+import androidx.compose.remote.creation.compose.action.ValueChange
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
@@ -25,6 +27,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.rememberRemoteIntValue
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.remote.material3.RemoteButton
@@ -34,7 +37,15 @@ import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 @Sampled
 @Composable
 fun RemoteButtonSimpleSample(modifier: RemoteModifier = RemoteModifier) {
-    RemoteButton(modifier = modifier) { RemoteText(RemoteString("Tap me!")) }
+    val tapCount = rememberRemoteIntValue { 0 }
+    val countSuffix =
+        RemoteString(" (") +
+            tapCount.toRemoteString(10, TextFromFloat.PAD_PRE_NONE) +
+            RemoteString(" taps)")
+
+    RemoteButton(ValueChange(tapCount, tapCount + 1), modifier = modifier) {
+        RemoteText(RemoteString("Tap me!") + countSuffix)
+    }
 }
 
 @WearPreviewDevices
