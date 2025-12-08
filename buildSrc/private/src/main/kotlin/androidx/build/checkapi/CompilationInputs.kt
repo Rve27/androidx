@@ -215,6 +215,8 @@ internal data class SourceSetInputs(
     val sourcePaths: FileCollection,
     /** Compile dependencies for this source set */
     val dependencyClasspath: FileCollection,
+    /** The platforms which this source set can be a part of a compilation for. */
+    val kotlinPlatforms: Set<KotlinPlatformType>,
 )
 
 /** Inputs for a single compilation of a multiplatform project (just the android or jvm target) */
@@ -302,11 +304,14 @@ internal class MultiplatformCompilationInputs(
                                 { it.compileDependencyFiles },
                                 { fc1, fc2 -> fc1 + fc2 },
                             )
+                        val kotlinPlatforms =
+                            allAssociatedCompilations.map { it.platformType }.toSet()
                         SourceSetInputs(
                             sourceSet.name,
                             sourceSet.dependsOn.map { it.name },
                             sourceSet.kotlin.sourceDirectories,
                             sourceSetDependencies,
+                            kotlinPlatforms,
                         )
                     }
                 }
