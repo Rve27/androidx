@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark.driver
+package androidx.tracing
 
-import androidx.tracing.PooledTracePacketArray
-import androidx.tracing.TraceSink
-
-/** A sink that does very little. We simply drop the trace packets without writing it to a file. */
-class NoOpSink : TraceSink() {
-    override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
-        pooledPacketArray.recycle()
-    }
-
-    override fun flush() {
-        // Does nothing
-    }
-
-    override fun onDroppedTraceEvent() {
-        // Does nothing
-    }
-
-    override fun close() {
-        // Does nothing
-    }
+/** Represents an object that can be reused using a [Pool]. This avoids GC churn. */
+public abstract class Poolable<T : Poolable<T>>
+internal constructor(internal open val owner: Pool<T>) {
+    /** Recycles the object, and hands it back to the pool. */
+    public abstract fun recycle()
 }

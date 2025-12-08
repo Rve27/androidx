@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.tracing.benchmark.driver
+package androidx.tracing
 
-import androidx.tracing.PooledTracePacketArray
-import androidx.tracing.TraceSink
-
-/** A sink that does very little. We simply drop the trace packets without writing it to a file. */
-class NoOpSink : TraceSink() {
-    override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
-        pooledPacketArray.recycle()
+internal class PerfettoCounter(private val category: String, private val track: CounterTrack) :
+    Counter() {
+    override fun name(): String {
+        return track.name
     }
 
-    override fun flush() {
-        // Does nothing
+    override fun setValue(value: Long) {
+        track.setCounter(value = value)
     }
 
-    override fun onDroppedTraceEvent() {
-        // Does nothing
-    }
-
-    override fun close() {
-        // Does nothing
+    override fun setValue(value: Double) {
+        track.setCounter(value = value)
     }
 }
