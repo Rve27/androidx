@@ -113,11 +113,7 @@ class RemoteButtonTest {
                     disabledIconColor = RemoteColor(Color.Black),
                 )
             Center(RemoteModifier.fillMaxSize()) {
-                RemoteButton(
-                    modifier = RemoteModifier.buttonSizeModifier(),
-                    contentPadding = RemotePaddingValues(40.rdp),
-                    colors = colors,
-                ) {
+                RemoteButton(modifier = RemoteModifier.buttonSizeModifier(), colors = colors) {
                     RemoteText("button_overrides_colors".rs)
                 }
             }
@@ -133,7 +129,7 @@ class RemoteButtonTest {
             Center(RemoteModifier.fillMaxSize()) {
                 RemoteButton(
                     modifier = RemoteModifier.buttonSizeModifier(),
-                    contentPadding = RemotePaddingValues(150.rdp),
+                    contentPadding = RemotePaddingValues(50.rdp),
                 ) {
                     RemoteText("button_overrides_padding".rs)
                 }
@@ -330,14 +326,14 @@ class RemoteButtonTest {
             """
 DATA_TEXT<42> = "button_enabled"
 ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
-  ROW [-3:-1] = [0.0, 0.0, 28.0, 12.0] VISIBLE
+  ROW [-3:-1] = [0.0, 0.0, 73.5, 31.5] VISIBLE
     MODIFIERS
       HEIGHT_IN = [52.0, 3.4028235E38]
       WIDTH_IN = [12.0, 3.4028235E38]
       DRAW_CONTENT
       CLICK_MODIFIER
       SEMANTICS = SEMANTICS BUTTON
-      PADDING = [14.0, 6.0, 14.0, 6.0]
+      PADDING = [36.75, 15.75, 36.75, 15.75]
     TEXT_LAYOUT [-5:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE (42:"null")
       MODIFIERS"""
                 .trimIndent()
@@ -363,13 +359,13 @@ ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
             """
 DATA_TEXT<42> = "button_disabled"
 ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
-  ROW [-3:-1] = [0.0, 0.0, 28.0, 12.0] VISIBLE
+  ROW [-3:-1] = [0.0, 0.0, 73.5, 31.5] VISIBLE
     MODIFIERS
       HEIGHT_IN = [52.0, 3.4028235E38]
       WIDTH_IN = [12.0, 3.4028235E38]
       DRAW_CONTENT
       SEMANTICS = SEMANTICS BUTTON disabled
-      PADDING = [14.0, 6.0, 14.0, 6.0]
+      PADDING = [36.75, 15.75, 36.75, 15.75]
     TEXT_LAYOUT [-5:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE (42:"null")
       MODIFIERS"""
                 .trimIndent()
