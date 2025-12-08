@@ -562,3 +562,9 @@ private class Memorize(val idProvider: (creationState: RemoteComposeCreationStat
         return result
     }
 }
+
+/** Extension property to convert a [Color] to a [RemoteColor]. */
+public val androidx.compose.ui.graphics.Color.rc: RemoteColor
+    get() {
+        return RemoteColor(this)
+    }

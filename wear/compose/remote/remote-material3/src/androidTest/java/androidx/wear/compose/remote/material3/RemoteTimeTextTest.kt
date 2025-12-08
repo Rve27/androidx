@@ -24,7 +24,7 @@ import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocum
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
-import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
@@ -58,7 +58,7 @@ class RemoteTimeTextTest {
     @Test
     fun timeOnly() = runTest {
         runDocumentTest {
-            RemoteTimeText(modifier = RemoteModifier.fillMaxSize(), time = RemoteString("10:09"))
+            RemoteTimeText(modifier = RemoteModifier.fillMaxSize(), time = "10:09".rs)
         }
     }
 
@@ -67,9 +67,9 @@ class RemoteTimeTextTest {
         runDocumentTest {
             RemoteTimeText(
                 modifier = RemoteModifier.fillMaxSize(),
-                time = RemoteString("10:09"),
-                leadingText = RemoteString("paused"),
-                trailingText = RemoteString("eta 13 min"),
+                time = "10:09".rs,
+                leadingText = "paused".rs,
+                trailingText = "eta 13 min".rs,
             )
         }
     }
@@ -79,7 +79,7 @@ class RemoteTimeTextTest {
         runDocumentTest {
             RemoteTimeText(
                 modifier = RemoteModifier.fillMaxSize(),
-                time = RemoteString("10:09"),
+                time = "10:09".rs,
                 fontSize = 15.sp,
                 fontFamily = FontFamily.SansSerif,
             )

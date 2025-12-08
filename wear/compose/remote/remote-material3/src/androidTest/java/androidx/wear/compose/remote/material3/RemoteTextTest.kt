@@ -25,6 +25,7 @@ import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rememberRemoteColor
 import androidx.compose.remote.creation.compose.state.rememberRemoteString
 import androidx.compose.remote.creation.compose.state.rf
+import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
@@ -213,18 +214,18 @@ class RemoteTextTest {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
             RemoteColumn(RemoteModifier.fillMaxSize()) {
                 RemoteText(
-                    text = RemoteString("None"),
+                    text = "None".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
                     fontSize = 32.sp,
                 )
                 RemoteText(
-                    text = RemoteString("Underline"),
+                    text = "Underline".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
                     fontSize = 32.sp,
                     style = LocalTextStyle.current.copy(textDecoration = TextDecoration.Underline),
                 )
                 RemoteText(
-                    text = RemoteString("LineThrough"),
+                    text = "LineThrough".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
                     fontSize = 32.sp,
                     style = LocalTextStyle.current.copy(textDecoration = TextDecoration.LineThrough),

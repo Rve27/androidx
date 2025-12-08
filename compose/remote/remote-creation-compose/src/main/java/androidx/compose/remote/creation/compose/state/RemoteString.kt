@@ -134,6 +134,16 @@ public abstract class RemoteString : BaseRemoteState<String>() {
     }
 
     /**
+     * Concatenates this [RemoteString] with a [String].
+     *
+     * @param v The [String] to concatenate.
+     * @return A new [MutableRemoteString] representing the concatenated string.
+     */
+    public operator fun plus(v: String): RemoteString {
+        return this + RemoteString(v)
+    }
+
+    /**
      * Returns a [RemoteString] that evaluates to a substring of this [RemoteString].
      *
      * @param start The inclusive index of the character at which the substring starts.
@@ -873,3 +883,9 @@ public fun rememberRemoteString(content: () -> String): MutableRemoteString {
 @Composable
 public fun rememberSystemRemoteString(name: String, content: () -> String): MutableRemoteString =
     rememberRemoteString(name = name, domain = RemoteDomains.SYSTEM, content)
+
+/** Extension property to convert a [String] to a [RemoteString]. */
+public val String.rs: RemoteString
+    get() {
+        return RemoteString(this)
+    }
