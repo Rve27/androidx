@@ -20,6 +20,8 @@ import android.graphics.Matrix
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.RectF
+import android.os.SystemClock
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.pdf.annotation.highlights.InProgressHighlightsView
@@ -180,6 +182,77 @@ class InProgressHighlightViewTest {
         }
     }
 
+    @Test
+    fun touchEvents_dragAndUp_createsAnnotation() {
+        setupActivity()
+        ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
+            startIdlingResource.increment()
+
+            scenario.onActivity {
+                val downEvent = obtainMotionEvent(50f, 50f, MotionEvent.ACTION_DOWN)
+                highlightView.onTouchEvent(downEvent)
+                downEvent.recycle()
+            }
+            Espresso.onIdle()
+
+            scenario.onActivity {
+                val moveEvent = obtainMotionEvent(70f, 70f, MotionEvent.ACTION_MOVE)
+                highlightView.onTouchEvent(moveEvent)
+                moveEvent.recycle()
+            }
+
+            finishIdlingResource.increment()
+            scenario.onActivity {
+                val upEvent = obtainMotionEvent(90f, 90f, MotionEvent.ACTION_UP)
+                highlightView.onTouchEvent(upEvent)
+                upEvent.recycle()
+            }
+
+            Espresso.onIdle()
+
+            assertThat(testHighlightListener.isStarted).isTrue()
+            val createdAnnotation =
+                testHighlightListener.finishedAnnotations[testHighlightListener.startedId]
+            assertThat(createdAnnotation).isNotNull()
+            assertThat(createdAnnotation).isInstanceOf(StampAnnotation::class.java)
+            with(createdAnnotation as StampAnnotation) {
+                assertThat(pageNum).isEqualTo(0)
+                assertThat(bounds).isEqualTo(RectF(50f, 50f, 90f, 90f))
+            }
+        }
+    }
+
+    @Test
+    fun touchEvents_cancelEvent_abortsHighlight() {
+        setupActivity()
+        ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
+            startIdlingResource.increment()
+
+            scenario.onActivity {
+                val downEvent = obtainMotionEvent(50f, 50f, MotionEvent.ACTION_DOWN)
+                highlightView.onTouchEvent(downEvent)
+                downEvent.recycle()
+            }
+            Espresso.onIdle()
+
+            assertThat(testHighlightListener.isStarted).isTrue()
+
+            scenario.onActivity {
+                val moveEvent = obtainMotionEvent(70f, 70f, MotionEvent.ACTION_MOVE)
+                highlightView.onTouchEvent(moveEvent)
+                moveEvent.recycle()
+
+                val cancelEvent = obtainMotionEvent(90f, 90f, MotionEvent.ACTION_CANCEL)
+                highlightView.onTouchEvent(cancelEvent)
+                cancelEvent.recycle()
+            }
+
+            Espresso.onIdle()
+
+            assertThat(testHighlightListener.finishedAnnotations).isEmpty()
+        }
+    }
+
     private fun setupActivity() {
         val pageText =
             PdfPageTextContent(bounds = listOf(RectF(10f, 10f, 100f, 100f)), text = "Sample Text")
@@ -196,8 +269,28 @@ class InProgressHighlightViewTest {
                         )
                     pdfDocument = fakePdfDocument
                     addInProgressTextHighlightsListener(testHighlightListener)
+                    pageInfoProvider = FakePageInfoProvider()
                 }
             activity.container.addView(highlightView)
+        }
+    }
+
+    private fun obtainMotionEvent(x: Float, y: Float, action: Int): MotionEvent {
+        val now = SystemClock.uptimeMillis()
+        return MotionEvent.obtain(now, now, action, x, y, 0)
+    }
+
+    private class FakePageInfoProvider : PageInfoProvider {
+        override fun getPageInfoFromViewCoordinates(
+            viewX: Float,
+            viewY: Float,
+        ): PageInfoProvider.PageInfo {
+            return PageInfoProvider.PageInfo(
+                pageNum = 0,
+                pageBounds = RectF(0f, 0f, 500f, 500f),
+                pageToViewTransform = Matrix(),
+                viewToPageTransform = Matrix(),
+            )
         }
     }
 

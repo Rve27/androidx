@@ -23,10 +23,12 @@ import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.os.HandlerCompat
 import androidx.pdf.PdfDocument
 import androidx.pdf.R
+import androidx.pdf.annotation.PageInfoProvider
 import androidx.pdf.annotation.highlights.models.HighlightState
 import androidx.pdf.annotation.highlights.models.InProgressHighlightId
 import androidx.pdf.annotation.highlights.utils.calculateHighlightRects
@@ -54,9 +56,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             invalidate()
         }
 
+    var pageInfoProvider: PageInfoProvider? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            touchHandler = value?.let { WetHighlightsViewTouchHandler(it) }
+        }
+
     var highlightColor: Int = context.getColor(R.color.default_highlight_color)
 
     private var viewScope: CoroutineScope? = null
+    private var touchHandler: WetHighlightsViewTouchHandler? = null
     private val inProgressTextHighlightsListeners =
         mutableListOf<InProgressTextHighlightsListener>()
     private val activeHighlights = mutableMapOf<InProgressHighlightId, HighlightState>()
@@ -75,6 +85,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         super.onDetachedFromWindow()
         viewScope?.coroutineContext?.get(Job)?.cancel()
         viewScope = null
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return touchHandler?.handleTouchEvent(this, event) ?: super.onTouchEvent(event)
     }
 
     override fun onDraw(canvas: Canvas) {
