@@ -18,9 +18,15 @@ package androidx.wear.compose.navigation3
 
 import android.content.res.Configuration
 import android.os.Build
+import android.window.BackEvent
+import androidx.activity.BackEventCompat
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -78,13 +84,13 @@ import androidx.wear.compose.material3.Text
 import com.google.common.truth.Truth.assertThat
 import kotlin.String
 import kotlinx.coroutines.test.StandardTestDispatcher
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
-@SdkSuppress(maxSdkVersion = 35)
 class SwipeDismissableSceneStrategyTest {
     @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
@@ -140,7 +146,7 @@ class SwipeDismissableSceneStrategyTest {
 
     @Test
     fun navigates_back_to_previous_level_after_swipe() {
-        rule.setContent { TestNavDisplay() }
+        rule.setContentWithBackPressedDispatcher { TestNavDisplay() }
 
         rule.onNodeWithTag(FIRST_SCREEN).assertIsDisplayed()
         // navigate to second entry
@@ -155,7 +161,7 @@ class SwipeDismissableSceneStrategyTest {
 
     @Test
     fun does_not_navigate_back_to_previous_level_when_swipe_disabled() {
-        rule.setContent {
+        rule.setContentWithBackPressedDispatcher {
             TestNavDisplay(
                 sceneStrategy =
                     rememberSwipeDismissableSceneStrategy(
@@ -233,10 +239,24 @@ class SwipeDismissableSceneStrategyTest {
         // As the finger is still 'down', the background should be visible.
         rule.onNodeWithText(FIRST_SCREEN).assertExists()
         rule.onNodeWithText(SECOND_SCREEN).assertExists()
+    }
 
-        // Assert that the foreground screen still holds the focus
-        // Child is the one which has items and it needs to hold the focus to perform scrolling.
+    @Test
+    fun focus_updates_after_swipe_gesture() {
+        rule.setContentWithBackPressedDispatcher { WithTouchSlop(0f) { TestNavDisplay() } }
+
+        rule.onNodeWithTag(FIRST_SCREEN).onChild().assertIsFocused()
+
+        // Click to move to next destination.
+        rule.onNodeWithText(FIRST_SCREEN).performClick()
+        rule.waitForIdle()
+
         rule.onNodeWithTag(SECOND_SCREEN).onChild().assertIsFocused()
+
+        // swipe back to starting screen
+        rule.swipeRight()
+
+        rule.onNodeWithTag(FIRST_SCREEN).onChild().assertIsFocused()
     }
 
     @Test
@@ -487,6 +507,111 @@ class SwipeDismissableSceneStrategyTest {
         }
     }
 
+    // The following test verifies the PredictiveBackNavHost animation and targets API 36+.
+    @Test
+    @SdkSuppress(minSdkVersion = 36)
+    fun press_back_during_animation_does_not_reset_animation() {
+        rule.setContentWithBackPressedDispatcher { TestNavDisplay() }
+        // Click to move to next destination then swipe back.
+        rule.onNodeWithText(FIRST_SCREEN).performClick()
+
+        rule.waitForIdle()
+
+        rule.mainClock.autoAdvance = false
+
+        val navHostWidth = rule.onNodeWithTag(SCENE_TAG).fetchSemanticsNode().size.width
+
+        rule.runOnIdle { backPressedDispatcher.onBackPressed() }
+
+        // Animation now starts. Since we control animation clock manually, here we will
+        // fast-forward few frames.
+        repeat(3) { rule.mainClock.advanceTimeByFrame() }
+        var previousLeft =
+            rule.onNodeWithTag(TEST_TAG_SECOND_CONTAINER).fetchSemanticsNode().boundsInWindow.left
+
+        // Press back while animation is running
+        rule.runOnIdle { backPressedDispatcher.onBackPressed() }
+
+        // Make sure animation continues after pressing back button
+        do {
+            rule.mainClock.advanceTimeByFrame()
+
+            val currentLeft =
+                rule
+                    .onNodeWithTag(TEST_TAG_SECOND_CONTAINER)
+                    .fetchSemanticsNode()
+                    .boundsInWindow
+                    .left
+            assertTrue(previousLeft < currentLeft)
+            previousLeft = currentLeft
+        } while (currentLeft < 0.9 * navHostWidth)
+        rule.mainClock.autoAdvance = true
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = 36)
+    fun navigate_interrupted_with_pop() {
+        val backStack = mutableStateListOf<Any>(FIRST_KEY)
+        val testDuration = 300
+        rule.setContentWithBackPressedDispatcher {
+            NavDisplay(
+                backStack = backStack,
+                transitionSpec = {
+                    slideInHorizontally(tween(testDuration)) { it / 2 } togetherWith
+                        slideOutHorizontally(tween(testDuration)) { -it / 2 }
+                },
+                popTransitionSpec = {
+                    slideInHorizontally(tween(testDuration)) { -it / 2 } togetherWith
+                        slideOutHorizontally(tween(testDuration)) { it / 2 }
+                },
+                sceneStrategy =
+                    SwipeDismissableSceneStrategy(
+                        rememberSwipeDismissableSceneStrategyState(),
+                        Modifier.testTag(SCENE_TAG),
+                    ),
+                entryProvider =
+                    entryProvider {
+                        entry(FIRST_KEY) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(text = FIRST_SCREEN)
+                            }
+                        }
+                        entry(SECOND_KEY) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.TopStart,
+                            ) {
+                                Text(text = SECOND_SCREEN)
+                            }
+                        }
+                    },
+            )
+        }
+
+        rule.waitForIdle()
+
+        rule.mainClock.autoAdvance = false
+
+        // navigate to Second
+        rule.runOnIdle { backStack.add(SECOND_KEY) }
+
+        // run half the transitions
+        rule.mainClock.advanceTimeBy(testDuration.toLong() / 2)
+
+        // interrupt navigation with pop
+        rule.runOnIdle { backStack.removeLastOrNull() }
+
+        // run half the transitions
+        rule.mainClock.advanceTimeBy(testDuration.toLong() / 2)
+
+        // ensure text on the left side of the screen is visible (ensure screen slides out from
+        // left to right)
+        rule.onNodeWithText(SECOND_SCREEN).assertIsDisplayed()
+    }
+
     @Composable
     private fun TestNavDisplay(
         backStack: SnapshotStateList<Any> = mutableStateListOf(FIRST_KEY),
@@ -524,23 +649,50 @@ class SwipeDismissableSceneStrategyTest {
         backCompleted()
     }
 
-    /** swipes right on the view with TEST_TAG */
+    /**
+     * Depending on API level, either swipes right on the view with SCENE_TAG, or emulates
+     * system-level swipe using backPressedDispatcher
+     */
     private fun ComposeContentTestRule.swipeRight() {
-        onNodeWithTag(SCENE_TAG).performTouchInput { swipeRight() }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            runOnIdle {
+                backPressedDispatcher.dispatchOnBackStarted(
+                    BackEventCompat(0.1f, 0.1f, 0.1f, BackEvent.EDGE_LEFT)
+                )
+                backPressedDispatcher.dispatchOnBackProgressed(
+                    BackEventCompat(0.1f, 0.1f, 0.8f, BackEvent.EDGE_LEFT)
+                )
+                backPressedDispatcher.onBackPressed()
+            }
+        } else {
+            onNodeWithTag(SCENE_TAG).performTouchInput { swipeRight() }
+        }
     }
 
     /**
-     * Drags without releasing the finger.
+     * Dragss without releasing the finger.
      *
-     * either drags right on the view with TEST_TAG
+     * Depending on API level, either drags right on the view with SCENE_TAG, or emulates
+     * system-level drag using backPressedDispatcher
      */
     private fun ComposeContentTestRule.dragRight() {
-        rule
-            .onNodeWithTag(SCENE_TAG)
-            .performTouchInput({
-                down(Offset(x = 0f, y = height / 2f))
-                moveTo(Offset(x = width / 4f, y = height / 2f))
-            })
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            runOnIdle {
+                backPressedDispatcher.dispatchOnBackStarted(
+                    BackEventCompat(0.1f, 0.1f, 0.1f, BackEvent.EDGE_LEFT)
+                )
+                backPressedDispatcher.dispatchOnBackProgressed(
+                    BackEventCompat(0.1f, 0.1f, 0.8f, BackEvent.EDGE_LEFT)
+                )
+            }
+        } else {
+            rule
+                .onNodeWithTag(SCENE_TAG)
+                .performTouchInput({
+                    down(Offset(x = 0f, y = height / 2f))
+                    moveTo(Offset(x = width / 4f, y = height / 2f))
+                })
+        }
     }
 
     private fun buildEntryProvider(backStack: SnapshotStateList<Any>) = entryProvider {
@@ -557,7 +709,10 @@ class SwipeDismissableSceneStrategyTest {
             }
         }
         entry(SECOND_KEY) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier.fillMaxSize().testTag(TEST_TAG_SECOND_CONTAINER),
+                contentAlignment = Alignment.Center,
+            ) {
                 ScalingLazyColumn(modifier = Modifier.testTag(SECOND_SCREEN)) {
                     item { Text(SECOND_SCREEN) }
                 }
@@ -570,4 +725,5 @@ class SwipeDismissableSceneStrategyTest {
     val SECOND_KEY = "Second"
     val SECOND_SCREEN = "SecondTag"
     val SCENE_TAG = "SceneModifierTag"
+    val TEST_TAG_SECOND_CONTAINER = "SecondContainerTag"
 }
