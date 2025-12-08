@@ -781,6 +781,22 @@ class RemoteStringTest {
             .containsExactly("a", "b", "c", "d", "e", "f")
     }
 
+    @Test
+    fun extensionFunctionMatches() {
+        assertThat("a".rs.constantValue).isEqualTo("a")
+        assertThat("b".rs.constantValue).isEqualTo("b")
+    }
+
+    @Test
+    fun operatorPlusString() {
+        val str = "12345".rs + "678"
+        val len = str.length
+        val lenId = len.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getInteger(lenId)).isEqualTo(8)
+    }
+
     private fun makeAndPaintCoreDocument() =
         CoreDocument().apply {
             val buffer = creationState.document.buffer

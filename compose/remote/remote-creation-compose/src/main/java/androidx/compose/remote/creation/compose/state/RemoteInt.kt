@@ -932,3 +932,9 @@ public fun ValueChange(valueId: MutableRemoteInt, value: RemoteInt): Action {
     val id2 = Utils.idFromLong(value.id)
     return ValueIntegerExpressionChange(id1, id2)
 }
+
+/** Extension property to convert a [Int] to a [RemoteInt]. */
+public val Int.ri: RemoteInt
+    get() {
+        return RemoteInt(this)
+    }
