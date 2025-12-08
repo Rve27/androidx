@@ -43,7 +43,7 @@ class PageIndicatorTest {
     @Test
     public fun horizontalPageIndicator_supports_testtag_circular() {
         rule.setContentWithTheme {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 HorizontalPageIndicator(
                     modifier = Modifier.testTag(TEST_TAG),
                     pagerState = pagerState_start,
@@ -56,7 +56,7 @@ class PageIndicatorTest {
     @Test
     public fun verticalPageIndicator_supports_testtag_circular() {
         rule.setContentWithTheme {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 VerticalPageIndicator(
                     modifier = Modifier.testTag(TEST_TAG),
                     pagerState = pagerState_start,
@@ -74,7 +74,7 @@ class PageIndicatorTest {
     @Test
     public fun horizontalPageIndicator_in_between_positions_circular() {
         rule.setContentWithTheme {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 HorizontalPageIndicator(
                     modifier = Modifier.testTag(TEST_TAG),
                     pagerState = pagerState_middle,
@@ -110,7 +110,7 @@ class PageIndicatorTest {
     @Test
     public fun verticalPageIndicator_in_between_positions_circular() {
         rule.setContentWithTheme {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 VerticalPageIndicator(
                     modifier = Modifier.testTag(TEST_TAG),
                     pagerState = pagerState_middle,
@@ -145,7 +145,7 @@ class PageIndicatorTest {
         val spacing = PageIndicatorSpacing
         val padding = PaddingDefaults.edgePadding
         rule.setContent {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 HorizontalPageIndicator(
                     modifier = Modifier.testTag(TEST_TAG),
                     pagerState =
@@ -172,7 +172,7 @@ class PageIndicatorTest {
         val padding = PaddingDefaults.edgePadding
 
         rule.setContent {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 HorizontalPageIndicator(
                     modifier = Modifier.testTag(TEST_TAG),
                     pagerState =
@@ -204,7 +204,7 @@ class PageIndicatorTest {
     @Test
     public fun horizontalPageIndicator_single_page_circular() {
         rule.setContentWithTheme {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 HorizontalPageIndicator(
                     modifier = Modifier.testTag(TEST_TAG),
                     pagerState =
@@ -239,7 +239,7 @@ class PageIndicatorTest {
         layoutDirection: LayoutDirection
     ) {
         rule.setContentWithTheme {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 DeviceConfigurationOverride(
                     DeviceConfigurationOverride.LayoutDirection(layoutDirection)
                 ) {
@@ -274,7 +274,7 @@ class PageIndicatorTest {
         layoutDirection: LayoutDirection
     ) {
         rule.setContentWithTheme {
-            ScreenConfiguration(screenSizeDp = 150, isRound = true) {
+            ScreenConfiguration(desiredScreenSizeDp = 150, isRound = true) {
                 DeviceConfigurationOverride(
                     DeviceConfigurationOverride.LayoutDirection(layoutDirection)
                 ) {
