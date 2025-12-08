@@ -20,6 +20,7 @@ import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
@@ -100,22 +101,44 @@ public class SwipeDismissableSceneStrategy<T : Any>(
     public val modifier: Modifier = Modifier,
     public val isUserSwipeEnabled: Boolean = true,
 ) : SceneStrategy<T> {
+
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         if (entries.isEmpty()) return null
+
+        val currentEntry = entries.last()
         val previousEntries = entries.dropLast(1)
-        val backEnabled = isUserSwipeEnabled && previousEntries.isNotEmpty()
+        val background = previousEntries.lastOrNull()
+        val backEnabled = isUserSwipeEnabled && background != null
 
-        val swipeToDismissBoxState = state.swipeToDismissBoxState
-        requireNotNull(swipeToDismissBoxState) { "SwipeToDismissBoxState cannot be null." }
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            // api 36+, support predictive back
+            PredictiveBackScene(
+                modifier = modifier,
+                currentEntry = currentEntry,
+                previousEntries = previousEntries,
+                backEnabled = backEnabled,
+            )
+        } else {
+            val swipeToDismissBoxState = state.swipeToDismissBoxState
+            requireNotNull(swipeToDismissBoxState) { "SwipeToDismissBoxState cannot be null." }
 
-        // api < 35, delegates to BasicSwipeToDismissBox
-        return SwipeToDismissScene(
-            onBack = onBack,
-            modifier = modifier,
-            currentBackStack = entries,
-            swipeToDismissBoxState = swipeToDismissBoxState,
-            isUserSwipeEnabled = backEnabled,
-        )
-        // TODO add PredictiveBackScene here for API 36+
+            // api < 35, delegates to BasicSwipeToDismissBox
+            return SwipeToDismissScene(
+                onBack = onBack,
+                modifier = modifier,
+                currentEntry = currentEntry,
+                background = background,
+                currentBackStack = entries,
+                previousEntries = previousEntries,
+                swipeToDismissBoxState = swipeToDismissBoxState,
+                backEnabled = backEnabled,
+            )
+        }
     }
+}
+
+@Composable
+internal fun isRoundDevice(): Boolean {
+    val configuration = LocalConfiguration.current
+    return remember(configuration) { configuration.isScreenRound }
 }
