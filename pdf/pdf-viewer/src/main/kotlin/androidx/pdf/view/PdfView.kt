@@ -179,8 +179,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             pageLayoutManager?.let {
                 val lastVisiblePage = fullyVisiblePages.lower
                 updateLayoutStrategy()
-                // Restore scroll position after layout change.
-                scrollToPage(lastVisiblePage)
+                // Restore scroll position, prioritizing active selection.
+                val firstSelectedBound = currentSelection?.bounds?.firstOrNull()
+                if (firstSelectedBound != null) {
+                    scrollToPage(firstSelectedBound.pageNum)
+                    updateSelectionActionModeVisibility()
+                } else {
+                    scrollToPage(lastVisiblePage)
+                }
             }
         }
 
