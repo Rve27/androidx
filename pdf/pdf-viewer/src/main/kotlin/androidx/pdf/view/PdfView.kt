@@ -586,7 +586,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /** Listener interface to receive updates when the [currentSelection] changes */
     public interface OnSelectionChangedListener {
         /** Called when the [Selection] has changed */
-        public fun onSelectionChanged(newSelection: Selection?)
+        @MainThread public fun onSelectionChanged(newSelection: Selection?)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -610,7 +610,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      */
     public fun interface OnFirstContentLoadListener {
         /** Called when the content of the document has been loaded for the first time. */
-        public fun onFirstContentLoad()
+        @MainThread public fun onFirstContentLoad()
     }
 
     private val onFirstContentLoadListeners = mutableListOf<OnFirstContentLoadListener>()

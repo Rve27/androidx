@@ -372,7 +372,7 @@ package androidx.pdf.view {
   }
 
   public static fun interface PdfView.OnFirstContentLoadListener {
-    method public void onFirstContentLoad();
+    method @MainThread public void onFirstContentLoad();
   }
 
   public static interface PdfView.OnGestureStateChangedListener {
@@ -380,7 +380,7 @@ package androidx.pdf.view {
   }
 
   public static interface PdfView.OnSelectionChangedListener {
-    method public void onSelectionChanged(androidx.pdf.selection.Selection? newSelection);
+    method @MainThread public void onSelectionChanged(androidx.pdf.selection.Selection? newSelection);
   }
 
   public static interface PdfView.OnViewportChangedListener {
