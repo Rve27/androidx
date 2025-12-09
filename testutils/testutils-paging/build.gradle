@@ -42,13 +42,12 @@ androidXMultiplatform {
     mingwX64()
 
     defaultPlatform(PlatformIdentifier.JVM)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":paging:paging-common"))
-                implementation(libs.kotlinTest)
-            }
+        commonMain.dependencies {
+            implementation(project(":paging:paging-common"))
+            implementation(libs.kotlinTest)
         }
     }
 }

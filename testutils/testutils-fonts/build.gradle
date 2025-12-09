@@ -33,9 +33,7 @@ androidXMultiplatform {
         androidResources.enable = true
     }
     desktop()
-}
-
-dependencies {
+    applyAndroidXDefaultHierarchyTemplate()
 }
 
 androidx {
