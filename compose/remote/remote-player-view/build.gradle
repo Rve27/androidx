@@ -38,11 +38,11 @@ android {
 }
 
 dependencies {
-    api("androidx.annotation:annotation:1.8.1")
+    api("androidx.annotation:annotation:1.9.1")
     api(libs.jspecify)
     implementation(project(":compose:remote:remote-player-core"))
     implementation(project(":compose:remote:remote-core"))
-    implementation(project(":customview:customview"))
+    implementation("androidx.customview:customview:1.2.0")
     implementation(libs.androidx.core)
     testImplementation(libs.junit)
 
