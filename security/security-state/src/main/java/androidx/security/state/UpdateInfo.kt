@@ -16,60 +16,95 @@
 
 package androidx.security.state
 
+import android.annotation.SuppressLint
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.annotation.RestrictTo
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Objects
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-
-private object DateSerializer : KSerializer<Date> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)
-
-    private val dateFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-
-    override fun serialize(encoder: Encoder, value: Date): Unit =
-        encoder.encodeString(dateFormat.format(value))
-
-    override fun deserialize(decoder: Decoder): Date = dateFormat.parse(decoder.decodeString())!!
-}
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Serializable
 public class SerializableUpdateInfo(
-    private val uri: String,
     private val component: String,
     private val securityPatchLevel: String,
-    @Serializable(with = DateSerializer::class) private val publishedDate: Date,
+    private val publishedDateMillis: Long,
+    private val lastCheckTimeMillis: Long,
 ) {
     public fun toUpdateInfo(): UpdateInfo =
-        UpdateInfo(uri, component, securityPatchLevel, publishedDate)
+        UpdateInfo(component, securityPatchLevel, publishedDateMillis, lastCheckTimeMillis)
 }
 
 /** Represents information about an available update for a component. */
+@SuppressLint("BanParcelableUsage")
 public class UpdateInfo(
-    /** Uri of the content provider from OTA update client serving update information data. */
-    public val uri: String,
-    /** Component for which the update information is provided. */
-    public val component: String,
+    /**
+     * Component for which the update information is provided.
+     *
+     * The value should be one of the constants allowed by [SecurityPatchState.Component], such as
+     * [SecurityPatchState.COMPONENT_SYSTEM].
+     */
+    @get:SecurityPatchState.Component public val component: String,
+
     /**
      * Security patch level of the available update ready to be applied by the reporting client. Use
      * [SecurityPatchState.getComponentSecurityPatchLevel] method to get encapsulated value.
      */
     public val securityPatchLevel: String,
-    /** Date when the available update was published. */
-    public val publishedDate: Date,
-) {
+
+    /** Timestamp when the available update was published, in milliseconds since the epoch. */
+    public val publishedDateMillis: Long,
+
+    /**
+     * The timestamp when this specific update was checked or discovered, in milliseconds since the
+     * epoch.
+     *
+     * This timestamp allows the system to track the freshness of individual update records, which
+     * is useful when different components are checked on different schedules.
+     */
+    public val lastCheckTimeMillis: Long,
+) : Parcelable {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun toSerializableUpdateInfo(): SerializableUpdateInfo =
-        SerializableUpdateInfo(uri, component, securityPatchLevel, publishedDate)
+        SerializableUpdateInfo(
+            component,
+            securityPatchLevel,
+            publishedDateMillis,
+            lastCheckTimeMillis,
+        )
+
+    internal constructor(
+        parcel: Parcel
+    ) : this(
+        component = parcel.readString() ?: "",
+        securityPatchLevel = parcel.readString() ?: "",
+        publishedDateMillis = parcel.readLong(),
+        lastCheckTimeMillis = parcel.readLong(),
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(component)
+        parcel.writeString(securityPatchLevel)
+        parcel.writeLong(publishedDateMillis)
+        parcel.writeLong(lastCheckTimeMillis)
+    }
+
+    override fun describeContents(): Int = 0
+
+    public companion object {
+        @JvmField
+        public val CREATOR: Parcelable.Creator<UpdateInfo> =
+            object : Parcelable.Creator<UpdateInfo> {
+                override fun createFromParcel(parcel: Parcel): UpdateInfo {
+                    return UpdateInfo(parcel)
+                }
+
+                override fun newArray(size: Int): Array<UpdateInfo?> {
+                    return arrayOfNulls(size)
+                }
+            }
+    }
 
     /**
      * Returns a string representation of the update information.
@@ -78,7 +113,7 @@ public class UpdateInfo(
      */
     public override fun toString(): String =
         "UpdateInfo(" +
-            "uri=$uri, component=$component, SPL=$securityPatchLevel, date=$publishedDate)"
+            "component=$component, securityPatchLevel=$securityPatchLevel, publishedDateMillis=$publishedDateMillis, lastCheckTimeMillis=$lastCheckTimeMillis)"
 
     /**
      * Compares this UpdateInfo with another object for equality.
@@ -89,10 +124,10 @@ public class UpdateInfo(
      */
     public override fun equals(other: Any?): Boolean =
         other is UpdateInfo &&
-            uri == other.uri &&
             component == other.component &&
             securityPatchLevel == other.securityPatchLevel &&
-            publishedDate == other.publishedDate
+            publishedDateMillis == other.publishedDateMillis &&
+            lastCheckTimeMillis == other.lastCheckTimeMillis
 
     /**
      * Provides a hash code for an UpdateInfo object.
@@ -100,22 +135,14 @@ public class UpdateInfo(
      * @return A hash code produced by the properties of the update info.
      */
     public override fun hashCode(): Int =
-        Objects.hash(uri, component, securityPatchLevel, publishedDate)
+        Objects.hash(component, securityPatchLevel, publishedDateMillis, lastCheckTimeMillis)
 
     /** Builder class for creating an instance of UpdateInfo. */
     public class Builder {
-        @set:JvmSynthetic private var uri: String = ""
         @set:JvmSynthetic private var component: String = ""
         @set:JvmSynthetic private var securityPatchLevel: String = ""
-        @set:JvmSynthetic private var publishedDate: Date = Date(0) // 1970-01-01
-
-        /**
-         * Sets the URI of the update.
-         *
-         * @param uri The URI to set.
-         * @return The builder instance for chaining.
-         */
-        public fun setUri(uri: String): Builder = apply { this.uri = uri }
+        @set:JvmSynthetic private var publishedDateMillis: Long = 0L
+        @set:JvmSynthetic private var lastCheckTimeMillis: Long = 0L
 
         /**
          * Sets the component associated with the update.
@@ -138,11 +165,21 @@ public class UpdateInfo(
         /**
          * Sets the publication date of the update.
          *
-         * @param publishedDate The date to set.
+         * @param publishedDateMillis The timestamp in milliseconds since the epoch.
          * @return The builder instance for chaining.
          */
-        public fun setPublishedDate(publishedDate: Date): Builder = apply {
-            this.publishedDate = publishedDate
+        public fun setPublishedDateMillis(publishedDateMillis: Long): Builder = apply {
+            this.publishedDateMillis = publishedDateMillis
+        }
+
+        /**
+         * Sets the timestamp when this update was checked or discovered.
+         *
+         * @param lastCheckTimeMillis The timestamp in milliseconds since the epoch.
+         * @return The builder instance for chaining.
+         */
+        public fun setLastCheckTimeMillis(lastCheckTimeMillis: Long): Builder = apply {
+            this.lastCheckTimeMillis = lastCheckTimeMillis
         }
 
         /**
@@ -151,6 +188,6 @@ public class UpdateInfo(
          * @return The constructed UpdateInfo.
          */
         public fun build(): UpdateInfo =
-            UpdateInfo(uri, component, securityPatchLevel, publishedDate)
+            UpdateInfo(component, securityPatchLevel, publishedDateMillis, lastCheckTimeMillis)
     }
 }

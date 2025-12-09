@@ -190,7 +190,10 @@ constructor(
         open = true,
         value = [COMPONENT_SYSTEM, COMPONENT_SYSTEM_MODULES, COMPONENT_KERNEL, COMPONENT_VENDOR],
     )
-    internal annotation class Component
+    @SuppressLint(
+        "PublicTypedef"
+    ) // Exposed so that external clients (UpdateInfo) can see the valid values.
+    public annotation class Component
 
     /** Severity of reported security issues. */
     public enum class Severity {
