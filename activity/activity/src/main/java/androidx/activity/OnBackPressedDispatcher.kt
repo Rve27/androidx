@@ -169,7 +169,7 @@ class OnBackPressedDispatcher(
 
         if (ActivityFlags.isOnBackPressedLifecycleOrderMaintained) {
             // Start disabled; will be enabled by lifecycle events.
-            eventHandler.isBackEnabled = false
+            eventHandler.isLifecycleActive = false
 
             // Add handler immediately to fix its position in the dispatch queue.
             eventDispatcher.addHandler(eventHandler)
@@ -181,9 +181,11 @@ class OnBackPressedDispatcher(
                 override fun onStateChanged(source: LifecycleOwner, event: Event) {
                     // Sync enabled state with the lifecycle.
                     if (ActivityFlags.isOnBackPressedLifecycleOrderMaintained) {
-                        eventHandler.isBackEnabled =
-                            event.targetState.isAtLeast(State.STARTED) &&
-                                onBackPressedCallback.isEnabled
+                        if (event == Event.ON_START) {
+                            eventHandler.isLifecycleActive = true
+                        } else if (event == Event.ON_STOP) {
+                            eventHandler.isLifecycleActive = false
+                        }
                     } else {
                         if (event == Event.ON_START) {
                             // Register the INNER callback only when the lifecycle enters STARTED.
