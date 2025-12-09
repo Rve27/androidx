@@ -34,13 +34,7 @@ androidXMultiplatform {
     watchos()
 
     defaultPlatform(PlatformIdentifier.JVM)
-
-    sourceSets {
-        commonMain {
-            dependencies {
-            }
-        }
-    }
+    applyAndroidXDefaultHierarchyTemplate()
 }
 
 androidx {

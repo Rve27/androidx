@@ -45,12 +45,11 @@ androidXMultiplatform {
     wasmJs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
-        commonMain {
-            dependencies {
-                api(project(":navigationevent:navigationevent"))
-            }
+        commonMain.dependencies {
+            api(project(":navigationevent:navigationevent"))
         }
     }
 }
