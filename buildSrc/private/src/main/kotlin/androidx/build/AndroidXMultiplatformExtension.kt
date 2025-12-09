@@ -22,6 +22,7 @@ import androidx.build.clang.KonanBuildService
 import androidx.build.clang.MultiTargetNativeCompilation
 import androidx.build.clang.NativeLibraryBundler
 import androidx.build.clang.configureCinterop
+import com.android.build.api.dsl.KotlinMultiplatformAndroidCompilation
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.gradle.api.KotlinMultiplatformAndroidPlugin
 import groovy.lang.Closure
@@ -38,6 +39,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -721,6 +723,25 @@ abstract class AndroidXMultiplatformExtension(val project: Project) {
             createTarget = { configure -> kotlinExtension.wasmJs(configure) },
             block = block,
         )
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun applyAndroidXDefaultHierarchyTemplate() =
+        kotlinExtension.applyDefaultHierarchyTemplate {
+            common {
+                group("jvmAndAndroid") {
+                    // TODO(b/442950553): Switch to withAndroidTarget when bug is fixed
+                    withCompilations { it is KotlinMultiplatformAndroidCompilation }
+                    withJvm()
+                }
+                group("nonJvm") {
+                    withNative()
+                    group("web") {
+                        withWasmJs()
+                        withJs()
+                    }
+                }
+            }
+        }
 
     private fun <T> Project.configureWebTarget(
         platform: PlatformIdentifier,

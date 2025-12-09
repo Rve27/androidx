@@ -38,58 +38,20 @@ androidXMultiplatform {
     linuxX64Stubs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":compose:runtime:runtime"))
-                implementation(project(":compose:ui:ui-util"))
-            }
+        commonMain.dependencies {
+            implementation(project(":compose:runtime:runtime"))
+            implementation(project(":compose:ui:ui-util"))
         }
 
-        commonTest {
-            dependencies {
-                implementation(libs.kotlinTest)
-            }
+        commonTest.dependencies {
+            implementation(libs.kotlinTest)
         }
 
-        jvmMain {
-            dependsOn(commonMain)
-        }
-
-        jvmTest {
-            dependsOn(commonTest)
-        }
-
-        androidMain {
-            dependsOn(jvmMain)
-            dependencies {
-                api("androidx.annotation:annotation:1.8.1")
-            }
-        }
-
-        commonStubsMain {
-            dependsOn(commonMain)
-        }
-
-        jvmStubsMain {
-            dependsOn(jvmMain)
-            dependsOn(commonStubsMain)
-        }
-
-        linuxx64StubsMain {
-            dependsOn(commonStubsMain)
-        }
-
-        androidDeviceTest {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(libs.testRunner)
-            }
-        }
-
-        androidHostTest {
-            dependsOn(jvmTest)
+        androidMain.dependencies {
+            api("androidx.annotation:annotation:1.8.1")
         }
     }
 }
