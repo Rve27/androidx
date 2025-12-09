@@ -221,6 +221,10 @@ class WindowInfoCompositionLocalTest {
 
     @Test
     fun windowIsFocused_whenDialogIsDismissed() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465540988",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         // Arrange.
         lateinit var mainWindowInfo: WindowInfo
         var mainWindowFocusGain = CountDownLatch(1)
