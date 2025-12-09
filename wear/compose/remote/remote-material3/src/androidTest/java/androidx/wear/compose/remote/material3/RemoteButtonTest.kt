@@ -42,6 +42,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.wear.compose.remote.material3.Material3ImageTest.Companion.createImage
+import androidx.wear.compose.remote.material3.previews.RemoteButtonEnabled
+import androidx.wear.compose.remote.material3.previews.RemoteButtonWithBorder
+import androidx.wear.compose.remote.material3.previews.RemoteButtonWithIcon
+import androidx.wear.compose.remote.material3.previews.RemoteButtonWithIconAndSecondaryLabel
+import androidx.wear.compose.remote.material3.previews.RemoteButtonWithSecondaryLabel
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -71,13 +76,7 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            Center(RemoteModifier.fillMaxSize()) {
-                RemoteButton(
-                    modifier = RemoteModifier.buttonSizeModifier(),
-                    enabled = true.rb,
-                    content = { RemoteText("button_enabled".rs) },
-                )
-            }
+            Center(RemoteModifier.fillMaxSize()) { RemoteButtonEnabled() }
         }
     }
 
@@ -182,15 +181,7 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            Center(RemoteModifier.fillMaxSize()) {
-                RemoteButton(
-                    modifier = RemoteModifier.buttonSizeModifier(),
-                    border = 8.rdp,
-                    borderColor = RemoteColor(Color.Green),
-                ) {
-                    RemoteText("button_with_border".rs)
-                }
-            }
+            Center(RemoteModifier.fillMaxSize()) { RemoteButtonWithBorder() }
         }
     }
 
@@ -265,20 +256,7 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            Center(RemoteModifier.fillMaxSize()) {
-                RemoteButton(
-                    modifier = RemoteModifier.buttonSizeModifier(),
-                    icon = {
-                        RemoteIcon(
-                            imageVector = TestImageVectors.VolumeUp,
-                            contentDescription = null,
-                            tint = RemoteButtonDefaults.buttonColors().iconColor,
-                        )
-                    },
-                    secondaryLabel = { RemoteText("secondaryLabel".rs) },
-                    label = { RemoteText("label".rs) },
-                )
-            }
+            Center(RemoteModifier.fillMaxSize()) { RemoteButtonWithIconAndSecondaryLabel() }
         }
     }
 
@@ -288,19 +266,7 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            Center(RemoteModifier.fillMaxSize()) {
-                RemoteButton(
-                    modifier = RemoteModifier.buttonSizeModifier(),
-                    icon = {
-                        RemoteIcon(
-                            imageVector = TestImageVectors.VolumeUp,
-                            contentDescription = null,
-                            tint = RemoteButtonDefaults.buttonColors().iconColor,
-                        )
-                    },
-                    label = { RemoteText("label".rs) },
-                )
-            }
+            Center(RemoteModifier.fillMaxSize()) { RemoteButtonWithIcon() }
         }
     }
 
@@ -310,13 +276,7 @@ class RemoteButtonTest {
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {
-            Center(RemoteModifier.fillMaxSize()) {
-                RemoteButton(
-                    modifier = RemoteModifier.buttonSizeModifier(),
-                    secondaryLabel = { RemoteText("secondaryLabel".rs) },
-                    label = { RemoteText("label".rs) },
-                )
-            }
+            Center(RemoteModifier.fillMaxSize()) { RemoteButtonWithSecondaryLabel() }
         }
     }
 
