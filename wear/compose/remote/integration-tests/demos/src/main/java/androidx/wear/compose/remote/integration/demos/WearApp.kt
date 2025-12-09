@@ -24,6 +24,7 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.compose.remote.integration.demos.components.RemoteButtonDemos
+import androidx.wear.compose.remote.integration.demos.components.RemoteIconButtonDemos
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @Composable
@@ -40,6 +41,7 @@ fun WearApp(
                 MainScreen(navigateToRoute = navController::navigate)
             }
             composable(route = Screen.RemoteButtonDemosScreen.route) { RemoteButtonDemos() }
+            composable(route = Screen.RemoteIconButtonDemosScreen.route) { RemoteIconButtonDemos() }
         }
     }
 }
