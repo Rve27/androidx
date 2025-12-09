@@ -26,7 +26,6 @@ androidXMultiplatform {
     watchos()
 
     defaultPlatform(PlatformIdentifier.JVM)
-    applyAndroidXDefaultHierarchyTemplate()
 }
 
 jvmJar {

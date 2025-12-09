@@ -33,7 +33,6 @@ androidXMultiplatform {
     linux()
     mac()
 
-    applyAndroidXDefaultHierarchyTemplate()
     sourceSets {
         commonMain.dependencies {
                 api(libs.kotlinCoroutinesCore)

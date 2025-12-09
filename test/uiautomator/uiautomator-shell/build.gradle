@@ -64,7 +64,6 @@ androidXMultiplatform {
     }
 
     defaultPlatform(PlatformIdentifier.ANDROID)
-    applyAndroidXDefaultHierarchyTemplate()
 }
 
 androidx {
