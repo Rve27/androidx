@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("RestrictedApiAndroidX")
 
 package androidx.wear.compose.remote.integration.demos
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+sealed class Screen(val route: String) {
+    object MainScreen : Screen("mainScreen")
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent { WearApp() }
-    }
+    object RemoteButtonDemosScreen : Screen("remoteButtonDemosScreen")
 }
