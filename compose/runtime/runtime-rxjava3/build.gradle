@@ -38,7 +38,6 @@ androidXMultiplatform {
     desktop()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
-    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
