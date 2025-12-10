@@ -1,19 +1,9 @@
 // Baseline format: 1.0
-AddedMethod: androidx.collection.ScatterMapKt#toMutableScatterMap(androidx.collection.ScatterMap<K,V>):
-    Added method androidx.collection.ScatterMapKt.toMutableScatterMap(androidx.collection.ScatterMap<K,V>)
-AddedMethod: androidx.collection.ScatterMapKt#toMutableScatterMap(java.util.Map<K,? extends V>):
-    Added method androidx.collection.ScatterMapKt.toMutableScatterMap(java.util.Map<K,? extends V>)
-AddedMethod: androidx.collection.ScatterSetKt#toMutableScatterSet(androidx.collection.ScatterSet<E>):
-    Added method androidx.collection.ScatterSetKt.toMutableScatterSet(androidx.collection.ScatterSet<E>)
-AddedMethod: androidx.collection.ScatterSetKt#toMutableScatterSet(java.util.Collection<? extends E>):
-    Added method androidx.collection.ScatterSetKt.toMutableScatterSet(java.util.Collection<? extends E>)
-
-
-RemovedMethod: androidx.collection.ScatterMapKt#MutableScatterMap(androidx.collection.ScatterMap<K,V>):
-    Binary breaking change: Removed method androidx.collection.ScatterMapKt.MutableScatterMap(androidx.collection.ScatterMap<K,V>)
-RemovedMethod: androidx.collection.ScatterMapKt#MutableScatterMap(java.util.Map<K,? extends V>):
-    Binary breaking change: Removed method androidx.collection.ScatterMapKt.MutableScatterMap(java.util.Map<K,? extends V>)
-RemovedMethod: androidx.collection.ScatterSetKt#MutableScatterSet(androidx.collection.ScatterSet<E>):
-    Binary breaking change: Removed method androidx.collection.ScatterSetKt.MutableScatterSet(androidx.collection.ScatterSet<E>)
-RemovedMethod: androidx.collection.ScatterSetKt#MutableScatterSet(java.util.Set<? extends E>):
-    Binary breaking change: Removed method androidx.collection.ScatterSetKt.MutableScatterSet(java.util.Set<? extends E>)
+AddedMethod: androidx.collection.ScatterMapKt#toScatterMap(androidx.collection.ScatterMap<K,V>):
+    Added method androidx.collection.ScatterMapKt.toScatterMap(androidx.collection.ScatterMap<K,V>)
+AddedMethod: androidx.collection.ScatterMapKt#toScatterMap(java.util.Map<K,? extends V>):
+    Added method androidx.collection.ScatterMapKt.toScatterMap(java.util.Map<K,? extends V>)
+AddedMethod: androidx.collection.ScatterSetKt#toScatterSet(androidx.collection.ScatterSet<E>):
+    Added method androidx.collection.ScatterSetKt.toScatterSet(androidx.collection.ScatterSet<E>)
+AddedMethod: androidx.collection.ScatterSetKt#toScatterSet(java.util.Collection<? extends E>):
+    Added method androidx.collection.ScatterSetKt.toScatterSet(java.util.Collection<? extends E>)
