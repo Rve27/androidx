@@ -68,7 +68,6 @@ androidXMultiplatform {
     watchos()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
-    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         configureEach {
