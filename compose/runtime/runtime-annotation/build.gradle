@@ -44,7 +44,6 @@ androidXMultiplatform {
     wasmJs()
 
     defaultPlatform(PlatformIdentifier.JVM)
-    applyAndroidXDefaultHierarchyTemplate()
 }
 
 androidx {
