@@ -91,20 +91,20 @@ public fun <E> mutableScatterSetOf(vararg elements: E): MutableScatterSet<E> =
 /**
  * Returns a new [MutableScatterSet] with the specified contents.
  *
- * The [MutableScatterSet] is created an initial capacity sufficient to hold the content in the
- * specified [Set].
+ * The [MutableScatterSet] is created with an initial capacity sufficient to hold the content in the
+ * specified [Collection].
  */
-public fun <E> MutableScatterSet(from: Set<E>): MutableScatterSet<E> =
-    MutableScatterSet<E>(from.size).apply { plusAssign(from) }
+public fun <E> Collection<E>.toMutableScatterSet(): MutableScatterSet<E> =
+    MutableScatterSet<E>(size).also { it.addAll(this) }
 
 /**
  * Returns a new [MutableScatterSet] with the specified contents.
  *
- * The [MutableScatterSet] is created an initial capacity sufficient to hold the content in the
+ * The [MutableScatterSet] is created with an initial capacity sufficient to hold the content in the
  * specified [ScatterSet].
  */
-public fun <E> MutableScatterSet(from: ScatterSet<E>): MutableScatterSet<E> =
-    MutableScatterSet<E>(from.size).apply { plusAssign(from) }
+public fun <E> ScatterSet<E>.toMutableScatterSet(): MutableScatterSet<E> =
+    MutableScatterSet<E>(size).also { it.addAll(this) }
 
 /**
  * [ScatterSet] is a container with a [Set]-like interface based on a flat hash table
