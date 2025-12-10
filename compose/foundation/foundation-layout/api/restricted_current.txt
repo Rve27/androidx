@@ -363,6 +363,12 @@ package androidx.compose.foundation.layout {
     method public static void rows(androidx.compose.foundation.layout.GridConfigurationScope, androidx.compose.foundation.layout.GridTrackSpec... specs);
   }
 
+  @kotlin.PublishedApi internal final class GridMeasurePolicy implements androidx.compose.ui.layout.MeasurePolicy {
+    ctor public GridMeasurePolicy(androidx.compose.runtime.State<? extends kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.GridConfigurationScope,kotlin.Unit>> configState);
+    method @KotlinOnly public androidx.compose.ui.layout.MeasureResult measure(androidx.compose.ui.layout.MeasureScope, java.util.List<androidx.compose.ui.layout.Measurable> measurables, androidx.compose.ui.unit.Constraints constraints);
+    method @BytecodeOnly public androidx.compose.ui.layout.MeasureResult measure-3p2s80s(androidx.compose.ui.layout.MeasureScope, java.util.List<? extends androidx.compose.ui.layout.Measurable!>, long);
+  }
+
   @androidx.compose.foundation.layout.LayoutScopeMarker @androidx.compose.runtime.Immutable @kotlin.jvm.JvmDefaultWithCompatibility public interface GridScope {
     method @androidx.compose.runtime.Stable public androidx.compose.ui.Modifier gridItem(androidx.compose.ui.Modifier, optional int row, optional int column, optional int rowSpan, optional int columnSpan, optional androidx.compose.ui.Alignment alignment);
     method @androidx.compose.runtime.Stable public androidx.compose.ui.Modifier gridItem(androidx.compose.ui.Modifier, kotlin.ranges.IntRange rows, kotlin.ranges.IntRange columns, optional androidx.compose.ui.Alignment alignment);

@@ -135,6 +135,12 @@ abstract interface androidx.compose.foundation.layout/WindowInsets { // androidx
 
 sealed interface androidx.compose.foundation.layout/GridTrackSpec // androidx.compose.foundation.layout/GridTrackSpec|null[0]
 
+final class androidx.compose.foundation.layout/GridMeasurePolicy : androidx.compose.ui.layout/MeasurePolicy { // androidx.compose.foundation.layout/GridMeasurePolicy|null[0]
+    constructor <init>(androidx.compose.runtime/State<kotlin/Function1<androidx.compose.foundation.layout/GridConfigurationScope, kotlin/Unit>>) // androidx.compose.foundation.layout/GridMeasurePolicy.<init>|<init>(androidx.compose.runtime.State<kotlin.Function1<androidx.compose.foundation.layout.GridConfigurationScope,kotlin.Unit>>){}[0]
+
+    final fun (androidx.compose.ui.layout/MeasureScope).measure(kotlin.collections/List<androidx.compose.ui.layout/Measurable>, androidx.compose.ui.unit/Constraints): androidx.compose.ui.layout/MeasureResult // androidx.compose.foundation.layout/GridMeasurePolicy.measure|measure@androidx.compose.ui.layout.MeasureScope(kotlin.collections.List<androidx.compose.ui.layout.Measurable>;androidx.compose.ui.unit.Constraints){}[0]
+}
+
 final value class androidx.compose.foundation.layout/Fr { // androidx.compose.foundation.layout/Fr|null[0]
     constructor <init>(kotlin/Float) // androidx.compose.foundation.layout/Fr.<init>|<init>(kotlin.Float){}[0]
 
