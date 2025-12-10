@@ -1377,6 +1377,50 @@ class GridTest : LayoutTest() {
         }
 
     @Test
+    fun testGrid_contentBasedSizing() {
+        val childSize = Ref<IntSize>()
+        val latch = CountDownLatch(1)
+        val dummyPosition = Ref<Offset>()
+
+        show {
+            Grid(
+                config = {
+                    // Col 1: MinContent (should match min intrinsic width)
+                    column(GridTrackSize.MinContent)
+                    // Col 2: MaxContent (should match max intrinsic width)
+                    column(GridTrackSize.MaxContent)
+                    row(GridTrackSize.Fixed(50.dp))
+                }
+            ) {
+                // Item 1: Min=50, Max=100
+                IntrinsicItem(
+                    minWidth = 50,
+                    minIntrinsicWidth = 50,
+                    maxIntrinsicWidth = 100,
+                    modifier = Modifier.gridItem(1, 1).fillMaxSize(),
+                )
+
+                // Item 2: Min=50, Max=100
+                IntrinsicItem(
+                    minWidth = 50,
+                    minIntrinsicWidth = 50,
+                    maxIntrinsicWidth = 100,
+                    modifier =
+                        Modifier.gridItem(1, 2)
+                            .fillMaxSize()
+                            .saveLayoutInfo(childSize, dummyPosition, latch),
+                )
+            }
+        }
+        assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+        // Col 1 should be 50 (min)
+        // Col 2 should be 100 (max)
+        // Item 2 in Col 2 should have width 100
+        assertEquals(100, childSize.value?.width)
+    }
+
+    @Test
     fun testGrid_nestedGrid() =
         with(density) {
             val outerSize = 100

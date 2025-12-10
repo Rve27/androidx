@@ -1097,7 +1097,14 @@ private fun calculateColumnWidths(
                     calculateMinIntrinsicWidth(itemsByColumn[index], crossAxisAvailable)
                 }
 
-                // Auto, MinContent, MaxContent (Implicit tracks fall here)
+                GridTrackSize.TypeMinContent ->
+                    calculateMinIntrinsicWidth(itemsByColumn[index], crossAxisAvailable)
+                GridTrackSize.TypeMaxContent ->
+                    calculateMaxIntrinsicWidth(itemsByColumn[index], crossAxisAvailable)
+                // Auto typically behaves like MaxContent in most contexts (fit the content
+                // comfortably).
+                GridTrackSize.TypeAuto ->
+                    calculateMaxIntrinsicWidth(itemsByColumn[index], crossAxisAvailable)
                 // Measure the max intrinsic width of all items in this column.
                 else -> calculateMaxIntrinsicWidth(itemsByColumn[index], crossAxisAvailable)
             }
@@ -1259,7 +1266,26 @@ private fun calculateRowHeights(
                     )
                 }
 
-                // Auto, MinContent, MaxContent (Implicit tracks fall here)
+                GridTrackSize.TypeMinContent ->
+                    calculateMinIntrinsicHeight(
+                        items = itemsByRow[index],
+                        columnWidths = columnWidths,
+                        fallbackWidth = constraints.maxWidth,
+                    )
+                GridTrackSize.TypeMaxContent ->
+                    calculateMaxIntrinsicHeight(
+                        items = itemsByRow[index],
+                        columnWidths = columnWidths,
+                        fallbackWidth = constraints.maxWidth,
+                    )
+                // Auto typically behaves like MaxContent in most contexts (fit the content
+                // comfortably).
+                GridTrackSize.TypeAuto ->
+                    calculateMaxIntrinsicHeight(
+                        items = itemsByRow[index],
+                        columnWidths = columnWidths,
+                        fallbackWidth = constraints.maxWidth,
+                    )
                 else ->
                     calculateMaxIntrinsicHeight(
                         items = itemsByRow[index],

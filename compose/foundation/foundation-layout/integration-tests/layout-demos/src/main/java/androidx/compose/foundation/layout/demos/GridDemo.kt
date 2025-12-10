@@ -56,6 +56,8 @@ fun GridDemo() {
         Spacer(Modifier.height(32.dp))
         FlexibleSizingDemo()
         Spacer(Modifier.height(32.dp))
+        ContentBasedSizingDemo()
+        Spacer(Modifier.height(32.dp))
         NegativeIndicesDemo()
         Spacer(Modifier.height(32.dp))
         GapsDemo()
@@ -109,6 +111,27 @@ private fun FlexibleSizingDemo() {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ContentBasedSizingDemo() {
+    DemoHeader("Intrinsic Sizing (Min vs Max Content)")
+    Grid(
+        config = {
+            column(GridTrackSize.MinContent)
+            column(GridTrackSize.MaxContent)
+            column(GridTrackSize.Flex(1.fr))
+            column(GridTrackSize.Auto)
+            row(GridTrackSize.Auto)
+            gap(8.dp)
+        },
+        modifier = Modifier.demoContainer(borderColor = Color.Black),
+    ) {
+        GridDemoItem(text = "Min Content\nWraps", row = 1, column = 1, color = Color.Red)
+        GridDemoItem(text = "Max Content Expands", row = 1, column = 2, color = Color.Blue)
+        GridDemoItem(text = "Flex Fills\nRemainder", row = 1, column = 3, color = Color.Green)
+        GridDemoItem(text = "Auto\nContent", row = 1, column = 4, color = Color.Yellow)
     }
 }
 
