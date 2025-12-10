@@ -89,6 +89,10 @@ class IntegrationTest {
     private lateinit var appFunctionCaller: AppFunctionCaller
     private val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
 
+    private val targetAppApkFile =
+        InstrumentationRegistry.getArguments().getString("TARGET_APP_APK")
+            ?: throw IllegalStateException("TARGET_APP_APK argument not found")
+
     @Before
     fun setup() = doBlocking {
         appFunctionCaller = AppFunctionCaller(targetContext)
@@ -99,7 +103,7 @@ class IntegrationTest {
                 Manifest.permission.EXECUTE_APP_FUNCTIONS,
             )
         }
-        InstallHelper.install(TARGET_APP_APK_FILE)
+        InstallHelper.install(targetAppApkFile)
         targetContext.awaitAppFunctionsIndexed(TARGET_APP_PACKAGE)
     }
 
@@ -1718,8 +1722,6 @@ class IntegrationTest {
 
     private companion object {
         const val TARGET_APP_PACKAGE = "androidx.appfunctions.integration.testapp"
-        const val TARGET_APP_APK_FILE = "TargetApp.apk"
-
         const val ONE_OF_FUNCTION_ID =
             "androidx.appfunctions.integration.testapp.OneOfFunctions#oneOfFunction"
 
