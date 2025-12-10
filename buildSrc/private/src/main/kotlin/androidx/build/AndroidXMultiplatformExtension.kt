@@ -111,7 +111,7 @@ abstract class AndroidXMultiplatformExtension(val project: Project) {
     private val kotlinExtensionDelegate = lazy {
         project.validateMultiplatformPluginHasNotBeenApplied()
         project.plugins.apply(KotlinMultiplatformPluginWrapper::class.java)
-        project.multiplatformExtension!!
+        project.multiplatformExtension!!.also { it.applyAndroidXDefaultHierarchyTemplate() }
     }
     private val kotlinExtension: KotlinMultiplatformExtension by kotlinExtensionDelegate
     private val agpKmpExtensionDelegate = lazy {
@@ -725,8 +725,8 @@ abstract class AndroidXMultiplatformExtension(val project: Project) {
         )
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    fun applyAndroidXDefaultHierarchyTemplate() =
-        kotlinExtension.applyDefaultHierarchyTemplate {
+    private fun KotlinMultiplatformExtension.applyAndroidXDefaultHierarchyTemplate() =
+        applyDefaultHierarchyTemplate {
             common {
                 group("jvmAndAndroid") {
                     // TODO(b/442950553): Switch to withAndroidTarget when bug is fixed

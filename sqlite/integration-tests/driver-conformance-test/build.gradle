@@ -94,7 +94,6 @@ androidXMultiplatform {
     tvos()
     watchos()
 
-    applyAndroidXDefaultHierarchyTemplate()
     sourceSets {
         commonTest.dependencies {
             implementation(project(":sqlite:sqlite"))

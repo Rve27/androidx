@@ -19,7 +19,6 @@ androidXMultiplatform {
     // default platform is not JVM but we need to use it because it is
     // the only platform built on all machines
     defaultPlatform(PlatformIdentifier.JVM)
-    applyAndroidXDefaultHierarchyTemplate()
     ios {
         compilations.main {
             cinterops {
