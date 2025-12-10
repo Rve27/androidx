@@ -16,7 +16,7 @@
 
 package androidx.datastore.core
 
-import androidx.datastore.core.handlers.NoOpCorruptionHandler
+import androidx.datastore.core.handlers.ReThrowCorruptionHandler
 
 /** Public factory for creating DataStore instances. */
 actual object DataStoreFactory {
@@ -28,7 +28,7 @@ actual object DataStoreFactory {
     ): DataStore<T> {
         return DataStoreImpl(
             storage = storage,
-            corruptionHandler = corruptionHandler ?: NoOpCorruptionHandler(),
+            corruptionHandler = corruptionHandler ?: ReThrowCorruptionHandler(),
             initTasksList = listOf(DataMigrationInitializer.getInitializer(migrations)),
             scope = scope,
         )
