@@ -12,7 +12,11 @@ package androidx.security.state.provider {
 
   public abstract class UpdateInfoService extends android.app.Service {
     ctor public UpdateInfoService();
+    method protected abstract suspend Object? fetchUpdates(kotlin.coroutines.Continuation<? super java.util.List<androidx.security.state.UpdateInfo>>);
     method public final android.os.IBinder? onBind(android.content.Intent? intent);
+    method protected void onFetchFailed(Exception e);
+    method protected boolean shouldFetchUpdates();
+    method protected boolean shouldThrottle();
   }
 
 }
