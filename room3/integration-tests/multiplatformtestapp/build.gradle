@@ -44,6 +44,7 @@ androidXMultiplatform {
     tvos()
     watchos()
 
+    applyAndroidXDefaultHierarchyTemplate()
     sourceSets {
         commonTest {
             dependencies {

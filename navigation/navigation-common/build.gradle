@@ -49,6 +49,7 @@ androidXMultiplatform {
 //    ios()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         configureEach {

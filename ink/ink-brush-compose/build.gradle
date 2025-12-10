@@ -28,6 +28,7 @@ androidXMultiplatform {
     }
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
 

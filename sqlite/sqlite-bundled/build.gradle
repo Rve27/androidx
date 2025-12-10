@@ -201,6 +201,7 @@ androidXMultiplatform {
     watchos()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     targets.configureEach { target ->
         if (target.platformType == KotlinPlatformType.native) {

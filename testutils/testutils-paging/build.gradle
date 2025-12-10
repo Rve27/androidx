@@ -42,6 +42,7 @@ androidXMultiplatform {
     mingwX64()
 
     defaultPlatform(PlatformIdentifier.JVM)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {

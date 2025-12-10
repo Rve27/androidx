@@ -26,6 +26,7 @@ androidXMultiplatform {
         }
     }
 
+    applyAndroidXDefaultHierarchyTemplate()
     sourceSets {
         iosMain.dependencies {
             api(project(":benchmark:benchmark-darwin"))
