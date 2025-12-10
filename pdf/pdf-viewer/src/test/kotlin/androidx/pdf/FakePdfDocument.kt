@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,11 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.net.Uri
 import android.os.Build
-import android.os.ParcelFileDescriptor
 import android.util.Size
 import android.util.SparseArray
 import androidx.annotation.OpenForTesting
 import androidx.annotation.RequiresExtension
-import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.KeyedPdfAnnotation
-import androidx.pdf.annotation.models.AnnotationResult
-import androidx.pdf.annotation.models.EditId
-import androidx.pdf.annotation.models.EditsResult
-import androidx.pdf.annotation.models.PdfAnnotation
-import androidx.pdf.annotation.models.PdfAnnotationData
-import androidx.pdf.annotation.models.PdfEdit
-import androidx.pdf.annotation.models.PdfEditEntry
-import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.PdfPageGotoLinkContent
@@ -48,38 +38,16 @@ import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
-import java.util.UUID
-import kotlin.random.Random
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 
-/**
- * Fake implementation of [PdfDocument], for testing
- *
- * Provides an implementation of [getPageInfo] and [getPageInfos] that produces the dimensions
- * provided as [pages]. Provides an implementation of [getPageBitmapSource] that produces a random
- * solid RGB color bitmap for each page in [pages]. All other methods are fulfilled with no-op
- * implementations that return empty values.
- *
- * Requests made against an instance can be tracked:
- * - Using [layoutReach] to detect the maximum page whose dimensions have been requested
- *   corresponding [PdfDocument.BitmapSource]
- * - Using [bitmapRequests] to examine the type of bitmaps that have been requested for any page
- *
- * @param pages a list of [android.graphics.Point] defining the number of pages in the fake PDF and
- *   their dimensions. If a value is null, the document will throw CancellationException for
- *   getPageInfo call.
- * @param formType one of [PDF_FORM_TYPE_ACRO_FORM], [PDF_FORM_TYPE_XFA_FULL],
- *   [PDF_FORM_TYPE_XFA_FOREGROUND], or [PDF_FORM_TYPE_NONE] depending on the type of PDF form this
- *   fake PDF should represent
- * @param isLinearized true if this fake PDF is linearized
- */
+/** Fake implementation of [PdfDocument], for testing. */
 @OpenForTesting
-internal open class FakeEditablePdfDocument(
-    /** A list of (x, y) page dimensions in content coordinates */
+internal open class FakePdfDocument(
     internal val pages: List<Point?> = listOf(),
     override val formType: Int = PDF_FORM_TYPE_NONE,
     override val isLinearized: Boolean = false,
@@ -88,8 +56,8 @@ internal open class FakeEditablePdfDocument(
     private val pageLinks: Map<Int, PdfDocument.PdfPageLinks> = mapOf(),
     private val textContents: List<PdfPageTextContent> = emptyList(),
     private val pageFormWidgetInfos: Map<Int, List<FormWidgetInfo>> = mapOf(),
-    initialEdits: List<PdfAnnotation> = emptyList(),
-) : EditablePdfDocument() {
+    private val annotationsPerPage: Map<Int, List<KeyedPdfAnnotation>> = mapOf(),
+) : PdfDocument {
     override val pageCount: Int = pages.size
 
     @get:Synchronized @set:Synchronized internal var layoutReach: Int = 0
@@ -113,12 +81,6 @@ internal open class FakeEditablePdfDocument(
 
     internal var editHistory: MutableList<FormEditInfo> = mutableListOf()
 
-    private val edits = mutableMapOf<EditId, PdfAnnotationData>()
-
-    init {
-        initialEdits.forEach { addEdit(it) }
-    }
-
     override fun getPageBitmapSource(pageNumber: Int): PdfDocument.BitmapSource {
         return FakeBitmapSource(pageNumber)
     }
@@ -136,7 +98,15 @@ internal open class FakeEditablePdfDocument(
         return pageFormWidgetInfos[pageNum]?.filter { it.widgetType in types } ?: emptyList()
     }
 
-    override suspend fun applyEdit(record: FormEditInfo) {
+    override fun addOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
+        return
+    }
+
+    override fun removeOnPdfContentInvalidatedListener(
+        listener: PdfDocument.OnPdfContentInvalidatedListener
+    ) {
         return
     }
 
@@ -145,7 +115,7 @@ internal open class FakeEditablePdfDocument(
     }
 
     override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> {
-        TODO("Not yet implemented")
+        return annotationsPerPage.getOrDefault(pageNum, emptyList())
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
@@ -221,7 +191,7 @@ internal open class FakeEditablePdfDocument(
         layoutReach = maxOf(pageNumber, layoutReach)
         val size = pages[pageNumber]
         if (size == null) {
-            throw kotlinx.coroutines.CancellationException()
+            throw CancellationException()
         }
         if (pageInfoFlags.value and PdfDocument.INCLUDE_FORM_WIDGET_INFO != 0L) {
             return PdfDocument.PageInfo(
@@ -238,47 +208,8 @@ internal open class FakeEditablePdfDocument(
         // No-op, fake
     }
 
-    override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
-        annotations.forEach { edits[it.editId] = it }
-        return AnnotationResult(annotations, listOf())
-    }
-
-    override suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult {
-        TODO("Not yet implemented")
-    }
-
-    override fun <T : PdfEdit> addPdfEditEntry(entry: PdfEditEntry<T>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun addEdit(edit: PdfEdit): EditId {
-        require(edit is PdfAnnotation) { "This fake only supports PdfAnnotation edits" }
-        val id = EditId(edit.pageNum, UUID.randomUUID().toString())
-        edits[id] = PdfAnnotationData(id, edit)
-        return id
-    }
-
-    override fun removeEdit(editId: EditId): PdfEdit {
-        val edit = edits[editId]?.edit
-        edits.remove(editId)
-        return edit!!
-    }
-
-    override fun updateEdit(editId: EditId, edit: PdfEdit): PdfEdit {
-        require(edit is PdfAnnotation) { "This fake only supports PdfAnnotation edits" }
-        if (edits.containsKey(editId)) {
-            edits[editId] = PdfAnnotationData(editId, edit)
-        }
-        return edit
-    }
-
-    override suspend fun commitEdits(): EditsResult {
-        return EditsResult(edits.values.map { it.editId }, listOf())
-    }
-
     /**
-     * A fake [PdfDocument.BitmapSource] that produces random RGB [android.graphics.Bitmap]s of the
-     * requested size
+     * A fake [PdfDocument.BitmapSource] that produces random RGB [Bitmap]s of the requested size
      */
     private inner class FakeBitmapSource(override val pageNumber: Int) : PdfDocument.BitmapSource {
 
@@ -290,15 +221,13 @@ internal open class FakeEditablePdfDocument(
                 else scaledPageSizePx
             val bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
             bitmap.apply {
-                val colorRng = Random(System.currentTimeMillis())
-                eraseColor(
-                    Color.argb(
-                        255,
-                        colorRng.nextInt(256),
-                        colorRng.nextInt(256),
-                        colorRng.nextInt(256),
-                    )
-                )
+                // Use a deterministic, varied color based on the page number to ensure
+                // consistent and distinct screenshots.
+                val r = ((pageNumber + 1) * 50) % 255
+                val g = ((pageNumber + 1) * 90) % 255
+                val b = ((pageNumber + 1) * 30) % 255
+                val color = Color.rgb(r, g, b)
+                eraseColor(color)
             }
             return bitmap
         }
@@ -329,43 +258,12 @@ internal open class FakeEditablePdfDocument(
         }
     }
 
-    override suspend fun <T : PdfEditEntry<out PdfEdit>> getEditsForPage(pageNum: Int): List<T> {
-        @Suppress("UNCHECKED_CAST")
-        return edits.values.filter { it.annotation.pageNum == pageNum } as List<T>
-    }
-
-    override fun addOnPdfContentInvalidatedListener(
-        listener: PdfDocument.OnPdfContentInvalidatedListener
-    ) {
-        TODO("Not yet implemented")
-    }
-
-    override fun removeOnPdfContentInvalidatedListener(
-        listener: PdfDocument.OnPdfContentInvalidatedListener
-    ) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getAllEdits(): PdfEdits = PdfEdits(edits.values.groupBy { it.annotation.pageNum })
-
-    override fun clearUncommittedEdits() {
-        TODO("Not yet implemented")
-    }
-
-    override fun createWriteHandle(): PdfWriteHandle {
-        return object : PdfWriteHandle {
-            override suspend fun writeTo(destination: ParcelFileDescriptor) {}
-
-            override fun close() {}
-        }
-    }
-
     companion object {
         const val URI_WITH_VALID_SCHEME = "https://www.example.com"
         const val VALID_PAGE_NUMBER = 4
 
-        fun newInstance(): FakeEditablePdfDocument =
-            FakeEditablePdfDocument(
+        fun newInstance(): FakePdfDocument =
+            FakePdfDocument(
                 pages = List(10) { Point(100, 200) },
                 formType = PdfDocument.PDF_FORM_TYPE_ACRO_FORM,
                 textContents =
@@ -406,7 +304,7 @@ internal open class FakeEditablePdfDocument(
                         0 to
                             listOf(
                                 FormWidgetInfo(
-                                    widgetType = FormWidgetInfo.Companion.WIDGET_TYPE_RADIOBUTTON,
+                                    widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
                                     widgetIndex = 0,
                                     widgetRect = Rect(50, 500, 100, 600),
                                     textValue = "false",
@@ -416,7 +314,7 @@ internal open class FakeEditablePdfDocument(
                         1 to
                             listOf(
                                 FormWidgetInfo(
-                                    widgetType = FormWidgetInfo.Companion.WIDGET_TYPE_LISTBOX,
+                                    widgetType = FormWidgetInfo.WIDGET_TYPE_LISTBOX,
                                     widgetIndex = 0,
                                     widgetRect = Rect(50, 400, 100, 550),
                                     textValue = "Banana",
@@ -445,6 +343,7 @@ internal class Tiles(scaledPageSizePx: Size) : SizeParams(scaledPageSizePx) {
     fun withTile(region: Rect) = _tiles.add(region)
 }
 
+// Duplicated from PdfRenderer to avoid a hard dependency on SDK 35
 /** Represents a PDF with no form fields */
 internal const val PDF_FORM_TYPE_NONE = 0
 
@@ -463,10 +362,7 @@ internal const val PDF_FORM_TYPE_XFA_FOREGROUND = 3
  * uses a polling loop to wait for a certain number of pages to be laid out, up to [timeoutMillis]
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-internal suspend fun FakeEditablePdfDocument.waitForLayout(
-    untilPage: Int,
-    timeoutMillis: Long = 1000,
-) {
+internal suspend fun FakePdfDocument.waitForLayout(untilPage: Int, timeoutMillis: Long = 1000) {
     // Jump to Dispatchers.Default, as TestDispatcher will skip delays and timeouts
     withContext(Dispatchers.Default.limitedParallelism(1)) {
         withTimeout(timeoutMillis) {
@@ -483,10 +379,7 @@ internal suspend fun FakeEditablePdfDocument.waitForLayout(
  * uses a polling loop to wait for a certain number of pages to be rendered, up to [timeoutMillis]
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-internal suspend fun FakeEditablePdfDocument.waitForRender(
-    untilPage: Int,
-    timeoutMillis: Long = 1000,
-) {
+internal suspend fun FakePdfDocument.waitForRender(untilPage: Int, timeoutMillis: Long = 1000) {
     // Jump to Dispatchers.Default, as TestDispatcher will skip delays and timeouts
     withContext(Dispatchers.Default.limitedParallelism(1)) {
         withTimeout(timeoutMillis) {
@@ -498,7 +391,7 @@ internal suspend fun FakeEditablePdfDocument.waitForRender(
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal suspend fun FakeEditablePdfDocument.waitForFormDataFetch(
+internal suspend fun FakePdfDocument.waitForFormDataFetch(
     untilPage: Int,
     timeoutMillis: Long = 1000,
 ) {
@@ -512,7 +405,7 @@ internal suspend fun FakeEditablePdfDocument.waitForFormDataFetch(
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal suspend fun FakeEditablePdfDocument.waitForApplyEdit(
+internal suspend fun FakePdfDocument.waitForApplyEdit(
     expectedNumEdits: Int,
     timeoutMillis: Long = 1000,
 ) {
