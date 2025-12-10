@@ -368,7 +368,11 @@ public class FakeSceneRuntime(
     override fun createInteractableComponent(
         executor: Executor,
         listener: InputEventListener,
-    ): InteractableComponent = FakeInteractableComponent()
+    ): InteractableComponent {
+        val interactableComponent = FakeInteractableComponent()
+        interactableComponent.inputEventListenersMap[listener] = executor
+        return interactableComponent
+    }
 
     override fun createAnchorPlacementForPlanes(
         planeTypeFilter: Set<@JvmSuppressWildcards PlaneType>,

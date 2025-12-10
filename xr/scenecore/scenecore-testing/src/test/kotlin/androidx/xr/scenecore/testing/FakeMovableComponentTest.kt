@@ -55,14 +55,9 @@ class FakeMovableComponentTest {
     @Test
     fun move_notifiesListener() {
         val listenerCalled = AtomicBoolean(false)
-        val mockListener =
-            object : MoveEventListener {
-                override fun onMoveEvent(event: MoveEvent) {
-                    listenerCalled.set(true)
-                }
-            }
+        val moveListener = MoveEventListener { listenerCalled.set(true) }
 
-        underTest.addMoveEventListener(fakeExecutor, mockListener)
+        underTest.addMoveEventListener(fakeExecutor, moveListener)
 
         // For simplicity in the fake, we'll use some default values for fields
         // not directly provided by this simplified move signature.
@@ -99,15 +94,10 @@ class FakeMovableComponentTest {
     @Test
     fun move_doesNotNotifyWhenListenerRemoved() {
         val listenerCalled = AtomicBoolean(false)
-        val mockListener =
-            object : MoveEventListener {
-                override fun onMoveEvent(event: MoveEvent) {
-                    listenerCalled.set(true)
-                }
-            }
+        val moveListener = MoveEventListener { listenerCalled.set(true) }
 
-        underTest.addMoveEventListener(fakeExecutor, mockListener)
-        underTest.removeMoveEventListener(mockListener)
+        underTest.addMoveEventListener(fakeExecutor, moveListener)
+        underTest.removeMoveEventListener(moveListener)
 
         // For simplicity in the fake, we'll use some default values for fields
         // not directly provided by this simplified move signature.
