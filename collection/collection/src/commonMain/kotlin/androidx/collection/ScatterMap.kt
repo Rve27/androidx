@@ -216,22 +216,22 @@ public fun <K, V> mutableScatterMapOf(vararg pairs: Pair<K, V>): MutableScatterM
     MutableScatterMap<K, V>(pairs.size).apply { putAll(pairs) }
 
 /**
- * Returns a new [MutableScatterMap] with the same mappings as the specified [Map].
+ * Returns a new [MutableScatterMap] with the specified mappings.
  *
- * The [MutableScatterMap] is created an initial capacity sufficient to hold the mappings in the
- * specified [Map].
+ * The [MutableScatterMap] is created with an initial capacity sufficient to hold the mappings in
+ * the specified [Map].
  */
-public fun <K, V> MutableScatterMap(from: Map<K, V>): MutableScatterMap<K, V> =
-    MutableScatterMap<K, V>(from.size).apply { putAll(from) }
+public fun <K, V> Map<K, V>.toMutableScatterMap(): MutableScatterMap<K, V> =
+    MutableScatterMap<K, V>(size).also { it.putAll(this) }
 
 /**
- * Returns a new [MutableScatterMap] with the same mappings as the specified [ScatterMap].
+ * Returns a new [MutableScatterMap] with the specified mappings.
  *
- * The [MutableScatterMap] is created an initial capacity sufficient to hold the mappings in the
- * specified [Map].
+ * The [MutableScatterMap] is created with an initial capacity sufficient to hold the mappings in
+ * the specified [ScatterMap].
  */
-public fun <K, V> MutableScatterMap(from: ScatterMap<K, V>): MutableScatterMap<K, V> =
-    MutableScatterMap<K, V>(from.size).apply { putAll(from) }
+public fun <K, V> ScatterMap<K, V>.toMutableScatterMap(): MutableScatterMap<K, V> =
+    MutableScatterMap<K, V>(size).also { it.putAll(this) }
 
 /**
  * [ScatterMap] is a container with a [Map]-like interface based on a flat hash table implementation
