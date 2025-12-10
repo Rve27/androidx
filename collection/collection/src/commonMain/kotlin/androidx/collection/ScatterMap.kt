@@ -215,6 +215,10 @@ public fun <K, V> mutableScatterMapOf(): MutableScatterMap<K, V> = MutableScatte
 public fun <K, V> mutableScatterMapOf(vararg pairs: Pair<K, V>): MutableScatterMap<K, V> =
     MutableScatterMap<K, V>(pairs.size).apply { putAll(pairs) }
 
+/** Returns a new read-only [ScatterMap] with the specified mappings. */
+public fun <K, V> Map<K, V>.toScatterMap(): ScatterMap<K, V> =
+    if (isEmpty()) emptyScatterMap() else toMutableScatterMap()
+
 /**
  * Returns a new [MutableScatterMap] with the specified mappings.
  *
@@ -223,6 +227,10 @@ public fun <K, V> mutableScatterMapOf(vararg pairs: Pair<K, V>): MutableScatterM
  */
 public fun <K, V> Map<K, V>.toMutableScatterMap(): MutableScatterMap<K, V> =
     MutableScatterMap<K, V>(size).also { it.putAll(this) }
+
+/** Returns a new read-only [ScatterMap] with the specified mappings. */
+public fun <K, V> ScatterMap<K, V>.toScatterMap(): ScatterMap<K, V> =
+    if (isEmpty()) emptyScatterMap() else toMutableScatterMap()
 
 /**
  * Returns a new [MutableScatterMap] with the specified mappings.

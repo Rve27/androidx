@@ -2326,6 +2326,8 @@ package androidx.collection {
     method public static <K, V> androidx.collection.MutableScatterMap<K,V> mutableScatterMapOf(kotlin.Pair<? extends K,? extends V>... pairs);
     method public static <K, V> androidx.collection.MutableScatterMap<K,V> toMutableScatterMap(androidx.collection.ScatterMap<K,V>);
     method public static <K, V> androidx.collection.MutableScatterMap<K,V> toMutableScatterMap(java.util.Map<K,? extends V>);
+    method public static <K, V> androidx.collection.ScatterMap<K,V> toScatterMap(androidx.collection.ScatterMap<K,V>);
+    method public static <K, V> androidx.collection.ScatterMap<K,V> toScatterMap(java.util.Map<K,? extends V>);
   }
 
   public abstract sealed exhaustive class ScatterSet<E> {
@@ -2371,6 +2373,8 @@ package androidx.collection {
     method public static <E> androidx.collection.ScatterSet<E> scatterSetOf(E... elements);
     method public static <E> androidx.collection.MutableScatterSet<E> toMutableScatterSet(androidx.collection.ScatterSet<E>);
     method public static <E> androidx.collection.MutableScatterSet<E> toMutableScatterSet(java.util.Collection<? extends E>);
+    method public static <E> androidx.collection.ScatterSet<E> toScatterSet(androidx.collection.ScatterSet<E>);
+    method public static <E> androidx.collection.ScatterSet<E> toScatterSet(java.util.Collection<? extends E>);
   }
 
   public final class SieveCache<K, V> {

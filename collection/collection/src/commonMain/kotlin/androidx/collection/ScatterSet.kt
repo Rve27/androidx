@@ -88,6 +88,10 @@ public fun <E> mutableScatterSetOf(element1: E, element2: E, element3: E): Mutab
 public fun <E> mutableScatterSetOf(vararg elements: E): MutableScatterSet<E> =
     MutableScatterSet<E>(elements.size).apply { plusAssign(elements) }
 
+/** Returns a new read-only [ScatterSet] with the specified contents. */
+public fun <E> Collection<E>.toScatterSet(): ScatterSet<E> =
+    if (isEmpty()) emptyScatterSet() else toMutableScatterSet()
+
 /**
  * Returns a new [MutableScatterSet] with the specified contents.
  *
@@ -96,6 +100,10 @@ public fun <E> mutableScatterSetOf(vararg elements: E): MutableScatterSet<E> =
  */
 public fun <E> Collection<E>.toMutableScatterSet(): MutableScatterSet<E> =
     MutableScatterSet<E>(size).also { it.addAll(this) }
+
+/** Returns a new read-only [ScatterSet] with the specified contents. */
+public fun <E> ScatterSet<E>.toScatterSet(): ScatterSet<E> =
+    if (isEmpty()) emptyScatterSet() else toMutableScatterSet()
 
 /**
  * Returns a new [MutableScatterSet] with the specified contents.
