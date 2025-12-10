@@ -37,6 +37,7 @@ androidXMultiplatform {
     wasmJs()
     js()
 
+    applyAndroidXDefaultHierarchyTemplate()
     sourceSets {
         commonMain.dependencies {
             api(project(":datastore:datastore-core"))

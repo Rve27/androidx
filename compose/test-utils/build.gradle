@@ -37,6 +37,7 @@ androidXMultiplatform {
     }
     desktop()
 
+    applyAndroidXDefaultHierarchyTemplate()
     sourceSets {
         commonMain {
             dependencies {

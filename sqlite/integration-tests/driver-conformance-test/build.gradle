@@ -95,27 +95,56 @@ androidXMultiplatform {
     watchos()
 
     sourceSets {
-        commonTest.dependencies {
-            implementation(project(":sqlite:sqlite"))
-            implementation(project(":sqlite:sqlite-bundled"))
-            implementation(libs.kotlinTest)
-            implementation(libs.kotlinCoroutinesTest)
-            implementation(project(":kruth:kruth"))
+        commonMain {
+            dependencies {
+            }
         }
-        androidDeviceTest.dependencies {
-            implementation(project(":sqlite:sqlite-framework"))
-            implementation(libs.kotlinTestJunit)
-            implementation(libs.testRunner)
-            implementation(libs.testCore)
+        commonTest {
+            dependencies {
+                implementation(project(":sqlite:sqlite"))
+                implementation(project(":sqlite:sqlite-bundled"))
+                implementation(libs.kotlinTest)
+                implementation(libs.kotlinCoroutinesTest)
+                implementation(project(":kruth:kruth"))
+            }
         }
-        jvmTest.dependencies {
-            implementation(libs.kotlinTestJunit)
+        androidDeviceTest {
+            dependsOn(commonTest)
+            dependencies {
+                implementation(project(":sqlite:sqlite-framework"))
+                implementation(libs.kotlinTestJunit)
+                implementation(libs.testRunner)
+                implementation(libs.testCore)
+            }
         }
-        nativeTest.dependencies {
-            implementation(project(":sqlite:sqlite-framework"))
+        jvmTest {
+            dependsOn(commonTest)
+            dependencies {
+                implementation(libs.kotlinTestJunit)
+            }
+        }
+        nativeTest {
+            dependsOn(commonTest)
+            dependencies {
+                implementation(project(":sqlite:sqlite-framework"))
+            }
+        }
+        iosTest {
+            dependsOn(nativeTest)
+        }
+        nonIosNativeTest {
+            dependsOn(nativeTest)
         }
         targets.configureEach { target ->
             if (target.platformType == KotlinPlatformType.native) {
+                target.compilations["test"].defaultSourceSet {
+                    if (target.konanTarget.family == Family.IOS) {
+                            dependsOn(iosTest)
+                    } else {
+                            dependsOn(nonIosNativeTest)
+                    }
+                }
+
                 // Configure the native SQLite text extension,
                 // see GenerateLoadableExtensionSource.groovy impl
                 if (extensionCompilation.canCompileOnCurrentHost(target.konanTarget)) {

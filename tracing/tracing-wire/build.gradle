@@ -30,6 +30,7 @@ androidXMultiplatform {
         namespace = "androidx.tracing.wire"
     }
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
