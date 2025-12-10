@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,11 @@ import androidx.xr.compose.unit.VolumeConstraints
  */
 @Composable
 @SubspaceComposable
-@Deprecated("Use SpatialSpacer() instead", replaceWith = ReplaceWith("SpatialSpacer(modifier)"))
-public fun SpatialLayoutSpacer(modifier: SubspaceModifier = SubspaceModifier) {
-    SubspaceLayout(modifier = modifier, measurePolicy = SpacerMeasurePolicy)
+public fun SpatialSpacer(modifier: SubspaceModifier = SubspaceModifier) {
+    SubspaceLayout(modifier = modifier, measurePolicy = SpatialSpacerMeasurePolicy)
 }
 
-private object SpacerMeasurePolicy : SubspaceMeasurePolicy {
+private object SpatialSpacerMeasurePolicy : SubspaceMeasurePolicy {
     override fun SubspaceMeasureScope.measure(
         measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,
