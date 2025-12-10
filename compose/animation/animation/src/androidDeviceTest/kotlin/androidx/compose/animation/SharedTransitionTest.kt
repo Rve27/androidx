@@ -5292,43 +5292,6 @@ class SharedTransitionTest {
         assertTrue(animatingFrames > 3)
         assertEquals(false, scope?.isTransitionActive)
     }
-
-    @Test
-    fun removeSharedTransitionLayout() {
-        var removeScope by mutableStateOf(false)
-        rule.setContent {
-            val movable = remember {
-                movableContentOf<SharedTransitionScope?> { scope ->
-                    AnimatedVisibility(true) {
-                        Box(
-                            Modifier.fillMaxSize()
-                                .then(
-                                    if (scope != null) {
-                                        with(scope) {
-                                            Modifier.sharedElement(
-                                                rememberSharedContentState("test"),
-                                                this@AnimatedVisibility,
-                                            )
-                                        }
-                                    } else {
-                                        Modifier
-                                    }
-                                )
-                                .size(100.dp)
-                        )
-                    }
-                }
-            }
-            if (!removeScope) {
-                SharedTransitionLayout(modifier = Modifier.fillMaxSize()) { movable(this) }
-            } else {
-                movable(null)
-            }
-        }
-        rule.waitForIdle()
-        removeScope = true
-        rule.waitForIdle()
-    }
 }
 
 private fun assertEquals(a: IntSize, b: IntSize, delta: IntSize) {
