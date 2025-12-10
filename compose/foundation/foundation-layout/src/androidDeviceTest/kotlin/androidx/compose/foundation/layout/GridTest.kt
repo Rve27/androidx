@@ -1227,6 +1227,156 @@ class GridTest : LayoutTest() {
         }
 
     @Test
+    fun testGrid_alignment() =
+        with(density) {
+            val cellSize = 100
+            val itemSize = 40
+            // Center: (100 - 40) / 2 = 30
+            val expectedOffset = 30f
+            val cellSizeDp = cellSize.toDp()
+            val itemSizeDp = itemSize.toDp()
+
+            val positionedLatch = CountDownLatch(1)
+            val childPosition = Ref<Offset>()
+            val dummySize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(cellSizeDp))
+                        row(GridTrackSize.Fixed(cellSizeDp))
+                    }
+                ) {
+                    // Item smaller than cell, aligned center
+                    Box(
+                        Modifier.gridItem(1, 1, alignment = Alignment.Center)
+                            .size(itemSizeDp)
+                            .saveLayoutInfo(dummySize, childPosition, positionedLatch)
+                    )
+                }
+            }
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(expectedOffset, expectedOffset), childPosition.value)
+        }
+
+    @Test
+    fun testGrid_alignment_spanning() =
+        with(density) {
+            val colSize = 50
+            val rowSize = 60
+            val gap = 10
+            val itemSize = 40
+
+            // Calculate total area dimensions including the gap
+            val spannedWidth = (colSize * 2) + gap
+            val spannedHeight = (rowSize * 2) + gap
+
+            // Alignment.BottomEnd calculation:
+            // x = ContainerWidth - ItemWidth
+            // y = ContainerHeight - ItemHeight
+            val expectedX = (spannedWidth - itemSize).toFloat()
+            val expectedY = (spannedHeight - itemSize).toFloat()
+
+            val positionedLatch = CountDownLatch(1)
+            val childPosition = Ref<Offset>()
+            val dummySize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        repeat(2) { column(GridTrackSize.Fixed(colSize.toDp())) }
+                        repeat(2) { row(GridTrackSize.Fixed(rowSize.toDp())) }
+                        gap(gap.toDp())
+                    }
+                ) {
+                    Box(
+                        Modifier.gridItem(
+                                1,
+                                1,
+                                rowSpan = 2,
+                                columnSpan = 2,
+                                alignment = Alignment.BottomEnd,
+                            )
+                            .size(itemSize.toDp())
+                            .saveLayoutInfo(dummySize, childPosition, positionedLatch)
+                    )
+                }
+            }
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+            assertEquals(Offset(expectedX, expectedY), childPosition.value)
+        }
+
+    @Test
+    fun testGrid_alignment_rtl() =
+        with(density) {
+            val cellSize = 100
+            val itemSize = 40
+            val cellSizeDp = cellSize.toDp()
+            val itemSizeDp = itemSize.toDp()
+
+            val positionedLatch = CountDownLatch(2)
+            val startAlignedPos = Ref<Offset>()
+            val absLeftAlignedPos = Ref<Offset>()
+
+            show {
+                // Force RTL layout direction
+                androidx.compose.runtime.CompositionLocalProvider(
+                    androidx.compose.ui.platform.LocalLayoutDirection provides
+                        androidx.compose.ui.unit.LayoutDirection.Rtl
+                ) {
+                    Grid(
+                        config = {
+                            column(GridTrackSize.Fixed(cellSizeDp))
+                            row(GridTrackSize.Fixed(cellSizeDp))
+                        }
+                    ) {
+                        // 1. Alignment.TopStart (Relative 2D Alignment)
+                        // In RTL, "Start" is visually on the RIGHT.
+                        // Cell Width 100. Item 40.
+                        // Expect visual position: 100 - 40 = 60px from visual Left.
+                        Box(
+                            Modifier.gridItem(1, 1, alignment = Alignment.TopStart)
+                                .size(itemSizeDp)
+                                .saveLayoutInfo(Ref(), startAlignedPos, positionedLatch)
+                        )
+
+                        // 2. AbsoluteAlignment.TopLeft (Absolute 2D Alignment)
+                        // "Left" is always visually Left, regardless of layout direction.
+                        // Expect visual position: 0px from visual Left.
+                        Box(
+                            // Use TopLeft (2D) instead of Left (1D) to satisfy the Alignment
+                            // type requirement
+                            Modifier.gridItem(
+                                    1,
+                                    1,
+                                    alignment = androidx.compose.ui.AbsoluteAlignment.TopLeft,
+                                )
+                                .size(itemSizeDp)
+                                .saveLayoutInfo(Ref(), absLeftAlignedPos, positionedLatch)
+                        )
+                    }
+                }
+            }
+
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+
+            // 1. Start (Right side of container)
+            assertEquals(
+                "Alignment.TopStart in RTL should be visually on the Right (60px from left)",
+                Offset(60f, 0f),
+                startAlignedPos.value,
+            )
+
+            // 2. Absolute Left (Left side of container)
+            assertEquals(
+                "AbsoluteAlignment.TopLeft in RTL should visually remain on the Left (0px)",
+                Offset(0f, 0f),
+                absLeftAlignedPos.value,
+            )
+        }
+
+    @Test
     fun testGrid_nestedGrid() =
         with(density) {
             val outerSize = 100

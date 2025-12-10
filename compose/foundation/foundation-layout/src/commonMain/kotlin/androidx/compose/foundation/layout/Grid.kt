@@ -639,7 +639,7 @@ internal class GridMeasurePolicy(
                 if (placeable != null) {
                     val x = columnOffsets[gridItem.column] + gridItem.offsetX
                     val y = rowOffsets[gridItem.row] + gridItem.offsetY
-                    placeable.placeRelative(x, y)
+                    placeable.place(x, y)
                 }
             }
         }
@@ -838,7 +838,7 @@ private fun resolveGridItemIndices(
                 column = placementCol,
                 rowSpan = rowSpan,
                 columnSpan = colSpan,
-                alignment = Alignment.TopStart, // TODO Handle alignment in followup cl
+                alignment = data?.alignment ?: Alignment.TopStart,
             )
         )
     }
@@ -1578,7 +1578,20 @@ private fun measureItems(
             val constraints = Constraints(maxWidth = width, maxHeight = height)
             val placeable = item.measurable.measure(constraints)
 
+            // Calculate Alignment Offset
+            val containerSize = IntSize(width, height)
+            val contentSize = IntSize(placeable.width, placeable.height)
+            val alignmentOffset =
+                item.alignment.align(
+                    size = contentSize,
+                    space = containerSize,
+                    layoutDirection = layoutDirection,
+                )
+
             item.placeable = placeable
+            // Alignment.align already accounts for RTL (Start = right side) relative to 0,0.
+            item.offsetX = alignmentOffset.x
+            item.offsetY = alignmentOffset.y
         }
     }
 }

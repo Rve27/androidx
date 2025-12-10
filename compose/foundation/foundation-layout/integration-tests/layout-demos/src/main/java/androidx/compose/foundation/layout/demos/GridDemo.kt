@@ -60,6 +60,7 @@ fun GridDemo() {
         Spacer(Modifier.height(32.dp))
         GapsDemo()
         Spacer(Modifier.height(32.dp))
+        AlignmentDemo()
     }
 }
 
@@ -148,6 +149,54 @@ private fun GapsDemo() {
             val row = (it / 3) + 1
             val col = (it % 3) + 1
             GridDemoItem(text = "Item ${it + 1}", measureSize = false, row = row, column = col)
+        }
+    }
+}
+
+@Composable
+private fun AlignmentDemo() {
+    DemoHeader("Cell Content Alignment")
+    Grid(
+        config = {
+            repeat(3) { column(GridTrackSize.Fixed(100.dp)) }
+            repeat(3) { row(GridTrackSize.Fixed(100.dp)) }
+            gap(4.dp)
+        },
+        modifier = Modifier.demoContainer(borderColor = Color.Red),
+    ) {
+        val alignments =
+            listOf(
+                Alignment.TopStart to "TopStart",
+                Alignment.TopCenter to "TopCenter",
+                Alignment.TopEnd to "TopEnd",
+                Alignment.CenterStart to "CenterStart",
+                Alignment.Center to "Center",
+                Alignment.CenterEnd to "CenterEnd",
+                Alignment.BottomStart to "BottomStart",
+                Alignment.BottomCenter to "BottomCenter",
+                Alignment.BottomEnd to "BottomEnd",
+            )
+
+        alignments.forEachIndexed { index, (alignment, name) ->
+            val row = (index / 3) + 1
+            val col = (index % 3) + 1
+
+            Box(
+                Modifier.gridItem(row, col)
+                    .fillMaxSize()
+                    .background(Color.LightGray.copy(alpha = 0.2f))
+                    .border(1.dp, Color.DarkGray.copy(alpha = 0.1f))
+            )
+
+            Box(
+                Modifier.gridItem(row, col, alignment = alignment)
+                    .size(60.dp, 40.dp)
+                    .background(Color.Yellow.copy(alpha = 0.7f))
+                    .border(1.dp, Color.Red),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(name, fontSize = 10.sp)
+            }
         }
     }
 }
