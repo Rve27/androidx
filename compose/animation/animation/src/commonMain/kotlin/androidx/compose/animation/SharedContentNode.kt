@@ -33,7 +33,6 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.modifier.ModifierLocalModifierNode
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.modifier.modifierLocalOf
@@ -83,15 +82,11 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
     ObserverModifierNode,
     BoundsProvider {
 
-    private var boundsBeforeDetached: Rect? = null
     override val lastBoundsInSharedTransitionScope: Rect?
         get() {
             // If the node was detached, or detached and re-attached between the query and
             // last placement, the last position is no longer attainable. Early return.
-            if (!isAttached) return null
-
-            // Is attached, but not yet placed
-            if (!isPlaced) return boundsBeforeDetached
+            if (!isAttached || !isPlaced) return null
             // TODO: Use the local bounding box and convert the size back to local size to
             // animate constraints when we build support for matrix transform in lookahead
             // coordinates, hence shared elements.
@@ -167,13 +162,6 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
 
     override fun onDetach() {
         super.onDetach()
-        boundsBeforeDetached =
-            // Grab the bounds position using positionInRoot to leverage cached positions from
-            // RectList.
-            Rect(
-                approachCoordinates.positionInRoot() - rootCoords.positionInRoot(),
-                approachCoordinates.size.toSize(),
-            )
         layer = null
         sharedElementEntry.parentState = null
         sharedElementEntry.boundsProvider = null
@@ -183,7 +171,6 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
 
     override fun onReset() {
         super.onReset()
-        boundsBeforeDetached = null
         // Reset layer
         layer?.let { requireGraphicsContext().releaseGraphicsLayer(it) }
         layer = requireGraphicsContext().createGraphicsLayer()
@@ -309,7 +296,6 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
             }
         return layout(w, h) {
             isPlaced = true
-            boundsBeforeDetached = null
 
             val matchState = sharedElement.state
             if (!sharedElementEntry.isEnabled) {
