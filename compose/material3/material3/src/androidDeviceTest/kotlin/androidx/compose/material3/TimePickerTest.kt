@@ -922,6 +922,62 @@ class TimePickerTest {
         }
     }
 
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun timeInput_showsError_forInvalidHour() {
+        val state = TimePickerState(initialHour = 10, initialMinute = 0, is24Hour = true)
+        rule.setMaterialContent(lightColorScheme()) { TimeInput(state = state) }
+
+        // Enter invalid hour
+        rule.onNodeWithText("10").performKeyInput {
+            pressKey(Key.Two)
+            pressKey(Key.Seven)
+        }
+
+        // Check that error is shown
+        rule.runOnIdle {
+            assertThat(state.isHourInputValid).isFalse()
+            state.selection = TimePickerSelectionMode.Hour
+        }
+
+        // Enter valid hour
+        rule.onAllNodesWithText("27").onFirst().performKeyInput {
+            pressKey(Key.Backspace)
+            pressKey(Key.Backspace)
+            pressKey(Key.One)
+            pressKey(Key.Two)
+        }
+
+        rule.runOnIdle { assertThat(state.isHourInputValid).isTrue() }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun timeInput_showsError_forInvalidMinute() {
+        val state = TimePickerState(initialHour = 10, initialMinute = 0, is24Hour = true)
+        state.selection = TimePickerSelectionMode.Minute
+        rule.setMaterialContent(lightColorScheme()) { TimeInput(state = state) }
+
+        rule.onNodeWithText("00").performKeyInput {
+            pressKey(Key.Nine)
+            pressKey(Key.Nine)
+        }
+
+        rule.waitForIdle()
+        rule.runOnIdle { assertThat(state.isMinuteInputValid).isFalse() }
+
+        // Enter valid minute
+        rule.onNodeWithText("99").performKeyInput {
+            pressKey(Key.Backspace)
+            pressKey(Key.Backspace)
+            pressKey(Key.One)
+            pressKey(Key.Two)
+        }
+
+        rule.runOnIdle { assertThat(state.isMinuteInputValid).isTrue() }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun clockFace_12HourMinutes_everyValue() {
         val state =
