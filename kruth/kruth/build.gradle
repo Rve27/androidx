@@ -45,7 +45,6 @@ androidXMultiplatform {
     js()
 
     defaultPlatform(PlatformIdentifier.JVM)
-    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
