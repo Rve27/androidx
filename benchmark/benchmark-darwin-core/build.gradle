@@ -19,7 +19,6 @@ androidXMultiplatform {
     // default platform is not JVM but we need to use it because it is
     // the only platform built on all machines
     defaultPlatform(PlatformIdentifier.JVM)
-    applyAndroidXDefaultHierarchyTemplate()
     ios {
         compilations.main {
             cinterops {
@@ -32,6 +31,20 @@ androidXMultiplatform {
         }
         binaries.framework {
             baseName = "AndroidXBenchmarkXCTest"
+        }
+    }
+    sourceSets {
+        // Need a source file to force a klib creation.
+        // see: https://youtrack.jetbrains.com/issue/KT-52344
+        darwinMain {
+            dependsOn(commonMain)
+        }
+        targets.configureEach { target ->
+            if (target.platformType == KotlinPlatformType.native) {
+                target.compilations["main"].defaultSourceSet {
+                    dependsOn(darwinMain)
+                }
+            }
         }
     }
 }

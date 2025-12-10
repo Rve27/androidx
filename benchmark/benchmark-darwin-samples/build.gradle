@@ -26,10 +26,21 @@ androidXMultiplatform {
         }
     }
 
-    applyAndroidXDefaultHierarchyTemplate()
     sourceSets {
-        iosMain.dependencies {
-            api(project(":benchmark:benchmark-darwin"))
+        iosMain {
+            dependsOn(commonMain)
+            dependencies {
+                api(project(":benchmark:benchmark-darwin"))
+            }
+        }
+        iosArm64Main {
+            dependsOn(iosMain)
+        }
+        iosSimulatorArm64Main {
+            dependsOn(iosMain)
+        }
+        iosX64Main {
+            dependsOn(iosMain)
         }
     }
 
