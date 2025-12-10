@@ -58,6 +58,8 @@ fun GridDemo() {
         Spacer(Modifier.height(32.dp))
         NegativeIndicesDemo()
         Spacer(Modifier.height(32.dp))
+        GapsDemo()
+        Spacer(Modifier.height(32.dp))
     }
 }
 
@@ -125,6 +127,28 @@ fun NegativeIndicesDemo() {
         GridDemoItem("BL", row = -1, column = 1, color = Color.Green)
         GridDemoItem("BR", row = -1, column = -1, color = Color.Yellow)
         GridDemoItem("Center", row = 2, column = 2, color = Color.Gray)
+    }
+}
+
+@Composable
+private fun GapsDemo() {
+    DemoHeader("Gaps Demo")
+    Grid(
+        config = {
+            column(GridTrackSize.Fixed(100.dp))
+            column(GridTrackSize.Flex(1.fr))
+            column(GridTrackSize.Fixed(200.dp))
+            row(GridTrackSize.Fixed(60.dp))
+            row(GridTrackSize.Fixed(100.dp))
+            gap(row = 12.dp, column = 6.dp)
+        },
+        modifier = Modifier.demoContainer(borderColor = Color.Cyan),
+    ) {
+        repeat(6) {
+            val row = (it / 3) + 1
+            val col = (it % 3) + 1
+            GridDemoItem(text = "Item ${it + 1}", measureSize = false, row = row, column = col)
+        }
     }
 }
 

@@ -1067,6 +1067,166 @@ class GridTest : LayoutTest() {
     }
 
     @Test
+    fun testGrid_gaps() =
+        with(density) {
+            val size = 50
+            val gap = 10
+            val gapDp = gap.toDp()
+            val sizeDp = size.toDp()
+
+            val positionedLatch = CountDownLatch(2)
+            val childPosition = Array(2) { Ref<Offset>() }
+            // Use explicit dummy refs instead of passing null to avoid overload ambiguity
+            val dummySize = Array(2) { Ref<IntSize>() }
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(sizeDp))
+                        column(GridTrackSize.Fixed(sizeDp))
+                        row(GridTrackSize.Fixed(sizeDp))
+                        gap(gapDp)
+                    }
+                ) {
+                    // Item 1: (0, 0)
+                    Box(
+                        Modifier.gridItem(1, 1)
+                            .fillMaxSize()
+                            .saveLayoutInfo(dummySize[0], childPosition[0], positionedLatch)
+                    )
+                    // Item 2: (50 + 10, 0) = (60, 0)
+                    Box(
+                        Modifier.gridItem(1, 2)
+                            .fillMaxSize()
+                            .saveLayoutInfo(dummySize[1], childPosition[1], positionedLatch)
+                    )
+                }
+            }
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), childPosition[0].value)
+            assertEquals(Offset((size + gap).toFloat(), 0f), childPosition[1].value)
+        }
+
+    @Test
+    fun testGrid_flexWithGaps() =
+        with(density) {
+            val size = 50
+            val gap = 10
+            // Available space for tracks: 50 - 10 = 40.
+            // 1.fr + 1.fr = 2 parts. 40 / 2 = 20 per track.
+            val expectedColWidth = (size - gap) / 2
+
+            val positionedLatch = CountDownLatch(2)
+            val childSize = Array(2) { Ref<IntSize>() }
+            val childPosition = Array(2) { Ref<Offset>() }
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Flex(1.fr))
+                        column(GridTrackSize.Flex(1.fr))
+                        row(GridTrackSize.Fixed(size.toDp()))
+                        gap(gap.toDp())
+                    },
+                    modifier = Modifier.requiredSize(size.toDp()),
+                ) {
+                    Box(
+                        Modifier.gridItem(1, 1)
+                            .fillMaxSize()
+                            .saveLayoutInfo(childSize[0], childPosition[0], positionedLatch)
+                    )
+                    Box(
+                        Modifier.gridItem(1, 2)
+                            .fillMaxSize()
+                            .saveLayoutInfo(childSize[1], childPosition[1], positionedLatch)
+                    )
+                }
+            }
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+            assertEquals(IntSize(expectedColWidth, size), childSize[0].value)
+            assertEquals(IntSize(expectedColWidth, size), childSize[1].value)
+            assertEquals(Offset(0f, 0f), childPosition[0].value)
+            assertEquals(Offset((expectedColWidth + gap).toFloat(), 0f), childPosition[1].value)
+        }
+
+    @Test
+    fun testGrid_spanningWithGaps() {
+        val size = 50
+        val gap = 10
+        // Spanning 2 columns: size + gap + size = 50 + 10 + 50 = 110
+        val expectedWidth = size * 2 + gap
+
+        val positionedLatch = CountDownLatch(1)
+        val childSize = Ref<IntSize>()
+        val dummyPos = Ref<Offset>()
+
+        show {
+            Grid(
+                config = {
+                    repeat(3) { column(GridTrackSize.Fixed(size.toDp())) }
+                    row(GridTrackSize.Fixed(size.toDp()))
+                    gap(gap.toDp())
+                }
+            ) {
+                Box(
+                    Modifier.gridItem(row = 1, column = 1, columnSpan = 2)
+                        .fillMaxSize()
+                        .saveLayoutInfo(childSize, dummyPos, positionedLatch)
+                )
+            }
+        }
+        assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+        assertEquals(IntSize(expectedWidth, size), childSize.value)
+    }
+
+    @Test
+    fun testGrid_gapPrecedence_specificOverridesGeneric() =
+        with(density) {
+            // Scenario:
+            // gap(10) sets both.
+            // rowGap(20) overrides row gap.
+            // columnGap(5) overrides column gap.
+            // Result: RowGap = 20, ColumnGap = 5.
+
+            val size = 50
+            val baseGap = 10
+            val rowGapOverride = 20
+            val colGapOverride = 5
+
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(3)
+            val pos = Array(3) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        repeat(2) { column(GridTrackSize.Fixed(sizeDp)) }
+                        repeat(2) { row(GridTrackSize.Fixed(sizeDp)) }
+
+                        gap(baseGap.toDp()) // Sets both to 10
+                        rowGap(rowGapOverride.toDp()) // Overrides row to 20
+                        columnGap(colGapOverride.toDp()) // Overrides col to 5
+                    }
+                ) {
+                    // (0,0)
+                    Box(Modifier.gridItem(1, 1).size(sizeDp).saveLayoutInfo(dummy, pos[0], latch))
+                    // (0,1) -> X should be Size + ColGap(5)
+                    Box(Modifier.gridItem(1, 2).size(sizeDp).saveLayoutInfo(dummy, pos[1], latch))
+                    // (1,0) -> Y should be Size + RowGap(20)
+                    Box(Modifier.gridItem(2, 1).size(sizeDp).saveLayoutInfo(dummy, pos[2], latch))
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset((size + colGapOverride).toFloat(), 0f), pos[1].value)
+            assertEquals(Offset(0f, (size + rowGapOverride).toFloat()), pos[2].value)
+        }
+
+    @Test
     fun testGrid_nestedGrid() =
         with(density) {
             val outerSize = 100

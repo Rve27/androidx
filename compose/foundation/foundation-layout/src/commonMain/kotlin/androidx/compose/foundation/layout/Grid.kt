@@ -630,8 +630,9 @@ internal class GridMeasurePolicy(
         val layoutWidth = constraints.constrainWidth(trackSizes.totalWidth)
         val layoutHeight = constraints.constrainHeight(trackSizes.totalHeight)
         return layout(layoutWidth, layoutHeight) {
-            val columnOffsets = calculateTrackOffsets(trackSizes.columnWidths)
-            val rowOffsets = calculateTrackOffsets(trackSizes.rowHeights)
+            val columnOffsets =
+                calculateTrackOffsets(trackSizes.columnWidths, trackSizes.columnGapPx)
+            val rowOffsets = calculateTrackOffsets(trackSizes.rowHeights, trackSizes.rowGapPx)
             resolvedGridItemsResult.gridItems.forEach { gridItem ->
                 val placeable = gridItem.placeable
                 // Only place if measurement succeeded (guard against edge cases)
@@ -686,14 +687,28 @@ private class GridConfigurationScopeImpl(density: Density) :
         rowSpecs.add(size.encodedValue)
     }
 
-    // Gap implementation added in follow up cl
-    override fun gap(all: Dp) {}
+    override fun gap(all: Dp) {
+        require(all.value >= 0f) { "Gap must be non-negative" }
+        columnGap = all
+        rowGap = all
+    }
 
-    override fun gap(row: Dp, column: Dp) {}
+    override fun gap(row: Dp, column: Dp) {
+        require(row.value >= 0f) { "Row gap must be non-negative" }
+        require(column.value >= 0f) { "Column gap must be non-negative" }
+        rowGap = row
+        columnGap = column
+    }
 
-    override fun columnGap(gap: Dp) {}
+    override fun columnGap(gap: Dp) {
+        require(gap.value >= 0f) { "Column gap must be non-negative" }
+        columnGap = gap
+    }
 
-    override fun rowGap(gap: Dp) {}
+    override fun rowGap(gap: Dp) {
+        require(gap.value >= 0f) { "Row gap must be non-negative" }
+        rowGap = gap
+    }
 }
 
 /**
@@ -950,6 +965,7 @@ private fun calculateGridTrackSizes(
             itemsByColumn = itemsByColumn,
             constraints = constraints,
             gridItems = gridItems,
+            columnGap = colGapPx,
         )
 
     // --- Phase 2: Calculate Row Heights ---
@@ -968,15 +984,19 @@ private fun calculateGridTrackSizes(
             constraints = constraints,
             columnWidths = columnWidths,
             gridItems = gridItems,
+            rowGap = rowGapPx,
         )
+
+    val totalColumnGap = max(0, columnSpecs.size - 1) * colGapPx
+    val totalRowGap = max(0, rowSpecs.size - 1) * rowGapPx
 
     return GridTrackSizes(
         columnWidths = columnWidths,
         rowHeights = rowHeights,
         columnGapPx = colGapPx,
         rowGapPx = rowGapPx,
-        totalWidth = totalTrackWidth,
-        totalHeight = totalTrackHeight,
+        totalWidth = totalTrackWidth + totalColumnGap,
+        totalHeight = totalTrackHeight + totalRowGap,
     )
 }
 
@@ -1009,6 +1029,7 @@ private fun calculateGridTrackSizes(
  * @param itemsByColumn Optimization lookup: List of items starting in each column index.
  * @param constraints Parent constraints (used for fallback behavior and cross-axis limits).
  * @param gridItems All items in the grid (used for spanning logic).
+ * @param columnGap The spacing between columns.
  * @return The total used width in pixels (sum of all column widths).
  */
 private fun calculateColumnWidths(
@@ -1020,10 +1041,23 @@ private fun calculateColumnWidths(
     itemsByColumn: Array<MutableObjectList<GridItem>?>,
     constraints: Constraints,
     gridItems: MutableObjectList<GridItem>,
+    columnGap: Int,
 ): Int {
     if (totalCount == 0) return 0
 
     var totalFlex = 0f
+    // Calculate total space consumed by gaps.
+    // e.g., 3 columns have 2 gaps. (N-1) * gap.
+    val totalGapSpace = (columnGap * (totalCount - 1)).coerceAtLeast(0)
+
+    // Calculate space available for actual tracks (Total - Gaps).
+    // If availableSpace is Infinity, availableTrackSpace value becomes Constraints.Infinity
+    val availableTrackSpace =
+        if (availableSpace == Constraints.Infinity) {
+            Constraints.Infinity
+        } else {
+            (availableSpace - totalGapSpace).coerceAtLeast(0)
+        }
 
     // Height constraint used when measuring intrinsic width.
     // Usually Infinity (standard intrinsic measurement), unless parent enforces strict height.
@@ -1044,8 +1078,8 @@ private fun calculateColumnWidths(
                 GridTrackSize.TypeFixed -> with(density) { spec.value.dp.roundToPx() }
 
                 GridTrackSize.TypePercentage -> {
-                    if (availableSpace != Constraints.Infinity) {
-                        (spec.value * availableSpace).roundToInt()
+                    if (availableTrackSpace != Constraints.Infinity) {
+                        (spec.value * availableTrackSpace).roundToInt()
                     } else {
                         // If the Grid is in a horizontally scrolling container
                         // (infinite width), we cannot calculate a percentage of "Infinity".
@@ -1080,6 +1114,7 @@ private fun calculateColumnWidths(
         isRowAxis = false,
         constraints = constraints,
         crossAxisSizes = null, // Not needed for column width calculation
+        gap = columnGap,
     )
 
     var usedSpace = 0
@@ -1090,7 +1125,8 @@ private fun calculateColumnWidths(
     // --- Pass 2: Flex Distribution ---
     // If we have finite width and unused space, distribute it to Flex columns.
     val remainingSpace =
-        if (availableSpace == Constraints.Infinity) 0 else max(0, availableSpace - usedSpace)
+        if (availableTrackSpace == Constraints.Infinity) 0
+        else max(0, availableTrackSpace - usedSpace)
 
     var totalAddedFromFlex = 0
     if (totalFlex > 0 && remainingSpace > 0) {
@@ -1151,6 +1187,7 @@ private fun calculateColumnWidths(
  * @param constraints Parent constraints (used for max height limits).
  * @param columnWidths The resolved widths of columns. **Critical** for measuring text height.
  * @param gridItems All items in the grid (used for spanning logic).
+ * @param rowGap The spacing between rows.
  * @return The total used height in pixels (sum of all row heights).
  */
 private fun calculateRowHeights(
@@ -1163,10 +1200,23 @@ private fun calculateRowHeights(
     constraints: Constraints,
     columnWidths: IntArray,
     gridItems: MutableObjectList<GridItem>,
+    rowGap: Int,
 ): Int {
     if (totalCount == 0) return 0
 
     var totalFlex = 0f
+    // Calculate total space consumed by gaps.
+    // e.g., 3 columns have 2 gaps. (N-1) * gap.
+    val totalGapSpace = (rowGap * (totalCount - 1)).coerceAtLeast(0)
+
+    // Calculate space available for actual tracks (Total - Gaps).
+    // If availableSpace is Infinity, availableTrackSpace value becomes Constraints.Infinity
+    val availableTrackSpace =
+        if (availableSpace == Constraints.Infinity) {
+            Constraints.Infinity
+        } else {
+            (availableSpace - totalGapSpace).coerceAtLeast(0)
+        }
 
     // --- Pass 1: Base Sizes (Single-Span Items) ---
     // We iterate through every row index (both explicit and implicit).
@@ -1182,8 +1232,8 @@ private fun calculateRowHeights(
                 GridTrackSize.TypeFixed -> with(density) { spec.value.dp.roundToPx() }
 
                 GridTrackSize.TypePercentage -> {
-                    if (availableSpace != Constraints.Infinity) {
-                        (spec.value * availableSpace).roundToInt()
+                    if (availableTrackSpace != Constraints.Infinity) {
+                        (spec.value * availableTrackSpace).roundToInt()
                     } else {
                         // If the Grid is in a vertically scrolling container
                         // (infinite height), we cannot calculate a percentage of "Infinity".
@@ -1230,6 +1280,7 @@ private fun calculateRowHeights(
         isRowAxis = true,
         constraints = constraints,
         crossAxisSizes = columnWidths,
+        gap = rowGap,
     )
 
     var usedSpace = 0
@@ -1241,7 +1292,8 @@ private fun calculateRowHeights(
     //
     // If we have finite height and unused space, distribute it to Flex rows.
     val remainingSpace =
-        if (availableSpace == Constraints.Infinity) 0 else max(0, availableSpace - usedSpace)
+        if (availableTrackSpace == Constraints.Infinity) 0
+        else max(0, availableTrackSpace - usedSpace)
 
     var totalAddedFromFlex = 0
     if (totalFlex > 0 && remainingSpace > 0) {
@@ -1363,6 +1415,7 @@ private fun calculateMinIntrinsicHeight(
  * @param crossAxisSizes The calculated sizes of the *opposite* axis (e.g., Column Widths when
  *   calculating Row Heights). This is crucial for correctly measuring the intrinsic height of items
  *   that wrap text based on specific column widths.
+ * @param gap The spacing between tracks.
  */
 private fun distributeSpanningSpace(
     explicitSpecs: LongList,
@@ -1371,6 +1424,7 @@ private fun distributeSpanningSpace(
     isRowAxis: Boolean,
     constraints: Constraints,
     crossAxisSizes: IntArray?,
+    gap: Int,
 ) {
     gridItems.forEach { item ->
         val trackIndex = if (isRowAxis) item.row else item.column
@@ -1417,7 +1471,9 @@ private fun distributeSpanningSpace(
                     for (i in colStart until colEnd) {
                         itemWidth += crossAxisSizes[i]
                     }
-                    // TODO: Add gap handling
+                    // Add the gaps that are included in the span.
+                    val spannedGaps = max(0, item.columnSpan - 1) * gap
+                    itemWidth += spannedGaps
                 } else {
                     // If we don't know column widths, constrain only by parent max.
                     itemWidth = constraints.maxWidth
@@ -1499,14 +1555,22 @@ private fun measureItems(
             for (i in col until colLimit) {
                 width += trackSizes.columnWidths[i]
             }
-            // TODO: Add gaps for spanned columns
+            // Add gaps for spanned columns
+            val colSpanActual = colLimit - col
+            if (colSpanActual > 1) {
+                width += (colSpanActual - 1) * trackSizes.columnGapPx
+            }
 
             var height = 0
             val rowLimit = (row + item.rowSpan).coerceAtMost(rowCount)
             for (i in row until rowLimit) {
                 height += trackSizes.rowHeights[i]
             }
-            // TODO: Add gaps for spanned rows
+            // Add gaps for spanned rows
+            val rowSpanActual = rowLimit - row
+            if (rowSpanActual > 1) {
+                height += (rowSpanActual - 1) * trackSizes.rowGapPx
+            }
 
             // Use loose constraints to allow alignment to work.
             // If strict fixed constraints are used, child size == cell size, so alignment is
@@ -1523,23 +1587,24 @@ private fun measureItems(
  * Computes the cumulative starting position (offset) for each track.
  *
  * This function converts a list of track sizes (e.g., column widths or row heights) into absolute
- * coordinates by accumulating the size of previous tracks.
+ * coordinates by accumulating the size of previous tracks and the specified [gapPx] between them.
  *
  * Example logic:
  * - Offset[0] = 0
- * - Offset[1] = Size[0]
- * - Offset[2] = Size[0] + Size[1]
+ * - Offset[1] = Size[0] + Gap
+ * - Offset[2] = Size[0] + Gap + Size[1] + Gap
  *
  * @param sizes An array containing the size of each individual track.
+ * @param gapPx The spacing in pixels to insert between consecutive tracks.
  * @return An [IntArray] of the same length as [sizes], where index `i` contains the starting
  *   coordinate of that track.
  */
-private fun calculateTrackOffsets(sizes: IntArray): IntArray {
+private fun calculateTrackOffsets(sizes: IntArray, gapPx: Int): IntArray {
     val offsets = IntArray(sizes.size)
     var current = 0
     for (i in sizes.indices) {
         offsets[i] = current
-        current += sizes[i]
+        current += sizes[i] + gapPx
     }
     return offsets
 }
