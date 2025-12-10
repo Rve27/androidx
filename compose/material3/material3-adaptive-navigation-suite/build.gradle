@@ -39,6 +39,7 @@ androidXMultiplatform {
     jvmStubs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain {

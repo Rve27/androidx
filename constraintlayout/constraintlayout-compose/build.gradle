@@ -34,6 +34,7 @@ androidXMultiplatform {
         namespace = "androidx.constraintlayout.compose"
         androidResources.enable = true
     }
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {

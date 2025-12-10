@@ -37,6 +37,7 @@ androidXMultiplatform {
     }
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         androidMain.dependencies {

@@ -47,6 +47,7 @@ androidXMultiplatform {
     wasmJs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
+    applyAndroidXDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
