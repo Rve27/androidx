@@ -18,6 +18,7 @@ package androidx.compose.foundation.layout
 
 import androidx.annotation.FloatRange
 import androidx.collection.LongList
+import androidx.collection.MutableIntSet
 import androidx.collection.MutableObjectList
 import androidx.collection.mutableLongListOf
 import androidx.compose.foundation.layout.GridScope.Companion.GridIndexUnspecified
@@ -590,7 +591,7 @@ internal class GridMeasurePolicy(
         // 1. Run Configuration DSL
         val gridConfig = GridConfigurationScopeImpl(this).apply(configState.value)
 
-        // 2. Resolve Grid Item Indices (Resolve explicit) (Auto placement added in followup cl)
+        // 2. Resolve Grid Item Indices (Resolve explicit and Auto placement)
         // This calculates the concrete index (row, col) for every item and determines total grid
         // size.
         val resolvedGridItemsResult =
@@ -782,6 +783,14 @@ private class GridTrackSizes(
  * **Algorithm Overview:**
  * 1. **Explicit Placement:** Items with both `row` and `column` manually specified are placed
  *    first. They anchor the grid and do not move.
+ * 2. **Auto-Placement Cursor:** A "cursor" (current row/column pointer) tracks the next available
+ *    position.
+ * 3. **Filling Gaps:** The algorithm iterates through the remaining items. For each item:
+ * - It advances the cursor to the first slot that can accommodate the item's span without
+ *   overlapping existing items.
+ * - It respects the [flow] direction (Row-major vs Column-major).
+ * - It creates "Implicit Tracks" (expanding the grid bounds) if an item is placed outside the
+ *   currently defined area.
  *
  * @param measurables The raw list of children to place.
  * @param columnSpecs The explicit column definitions (used to determine wrapping points).
@@ -789,8 +798,6 @@ private class GridTrackSizes(
  * @param flow The direction ([GridFlow.Row] or [GridFlow.Column]) to fill the grid.
  * @return A [ResolvedGridItemIndicesResult] containing the final positions and the *total* grid
  *   dimensions (Explicit + Implicit).
- *
- * TODO: handle auto placement
  */
 private fun resolveGridItemIndices(
     measurables: List<Measurable>,
@@ -799,8 +806,50 @@ private fun resolveGridItemIndices(
     flow: GridFlow,
 ): ResolvedGridItemIndicesResult {
     val gridItems = MutableObjectList<GridItem>(measurables.size)
+
+    // Key = (row shl 16) | (column & 0xFFFF)
+    // Supports up to 65,535 rows/cols (well within MaxGridIndex).
+    val occupiedCells = MutableIntSet()
+
     val explicitColCount = columnSpecs.size
     val explicitRowCount = rowSpecs.size
+
+    // Track the effective size of the grid (starts at explicit size, expands if items are placed
+    // outside)
+    var maxRow = explicitRowCount
+    var maxCol = explicitColCount
+
+    // Pack into Int (Row in high 16 bits, Col in low 16 bits)
+    // Supports up to 65,535 rows/cols.
+    fun packCoordinate(row: Int, column: Int): Int = (row shl 16) or (column and 0xFFFF)
+
+    // Checks if the target area (defined by start position and span) overlaps with any existing
+    // item.
+    fun isAreaOccupied(startRow: Int, startCol: Int, rowSpan: Int, colSpan: Int): Boolean {
+        // Fast-path: Check boundary limits first
+        if (startRow + rowSpan > MaxGridIndex || startCol + colSpan > MaxGridIndex) return true
+        for (r in startRow until startRow + rowSpan) {
+            for (c in startCol until startCol + colSpan) {
+                if (occupiedCells.contains(packCoordinate(r, c))) return true
+            }
+        }
+        return false
+    }
+
+    // Marks the cells in the area as occupied.
+    fun markAreaOccupied(startRow: Int, startCol: Int, rowSpan: Int, colSpan: Int) {
+        for (r in startRow until startRow + rowSpan) {
+            for (c in startCol until startCol + colSpan) {
+                occupiedCells.add(packCoordinate(r, c))
+            }
+        }
+    }
+
+    // The "Cursor" tracks the position of the last auto-placed item.
+    // Subsequent auto-placed items attempt to start searching from here to avoid re-scanning the
+    // whole grid.
+    var autoPlacementCursorRow = 0
+    var autoPlacementCursorCol = 0
 
     measurables.fastForEach { measurable ->
         val data = measurable.parentData as? GridItemNode
@@ -823,12 +872,102 @@ private fun resolveGridItemIndices(
             finalRow = requestedRow
             finalCol = requestedCol
         }
-        // TODO Handle Fixed Row, Or Fixed Column or Fully Auto added in followup cl
+        // 2. Fixed Row (Search for Column)
+        else if (requestedRow != -1) {
+            // Search for the first available column in the specified row.
+            finalRow = requestedRow
+            var candidateCol = 0
+
+            // If flowing by Row, and we are on the cursor's row, start searching from cursor
+            if (flow == GridFlow.Row && requestedRow == autoPlacementCursorRow) {
+                candidateCol = autoPlacementCursorCol
+            }
+            while (candidateCol < MaxGridIndex) {
+                if (!isAreaOccupied(requestedRow, candidateCol, rowSpan, colSpan)) {
+                    finalCol = candidateCol
+                    break
+                }
+                candidateCol++
+            }
+        }
+        // 3. Fixed Column (Search for Row)
+        else if (requestedCol != -1) {
+            // Search for the first available row in the specified column.
+            finalCol = requestedCol
+            var candidateRow = 0
+            // If flowing by Column, and we are on the cursor's col, start searching from cursor
+            if (flow == GridFlow.Column && requestedCol == autoPlacementCursorCol) {
+                candidateRow = autoPlacementCursorRow
+            }
+            while (candidateRow < MaxGridIndex) {
+                if (!isAreaOccupied(candidateRow, requestedCol, rowSpan, colSpan)) {
+                    finalRow = candidateRow
+                    break
+                }
+                candidateRow++
+            }
+        }
+        // 4. Fully Auto (Search for Slot)
+        else {
+            // Start searching from the current cursor position.
+            var candidateRow = autoPlacementCursorRow
+            var candidateCol = autoPlacementCursorCol
+
+            while (candidateRow < MaxGridIndex && candidateCol < MaxGridIndex) {
+                // Wrapping Logic
+                // If the item doesn't fit in the current track (explicit bounds), wrap to next.
+                if (flow == GridFlow.Row) {
+                    // If we have explicit columns and exceed them...
+                    if (explicitColCount > 0 && candidateCol + colSpan > explicitColCount) {
+                        // If we are NOT at start, wrap.
+                        // If we ARE at start (0) and still don't fit, we must overflow (create
+                        // implicit track).
+                        if (candidateCol > 0) {
+                            candidateCol = 0
+                            candidateRow++
+                            continue // Re-evaluate wrapping at new position
+                        }
+                    }
+                } else { // GridFlow.Column
+                    if (explicitRowCount > 0 && candidateRow + rowSpan > explicitRowCount) {
+                        if (candidateRow > 0) {
+                            candidateRow = 0
+                            candidateCol++
+                            continue
+                        }
+                    }
+                }
+
+                if (!isAreaOccupied(candidateRow, candidateCol, rowSpan, colSpan)) {
+                    finalRow = candidateRow
+                    finalCol = candidateCol
+                    break
+                }
+
+                // Increment
+                if (flow == GridFlow.Row) {
+                    candidateCol++
+                    // If we drift too far right without wrapping (infinite grid), force wrap safety
+                    if (candidateCol > MaxGridIndex) {
+                        candidateCol = 0
+                        candidateRow++
+                    }
+                } else {
+                    candidateRow++
+                    if (candidateRow > MaxGridIndex) {
+                        candidateRow = 0
+                        candidateCol++
+                    }
+                }
+            }
+        }
 
         // If auto-placement failed to find a spot (e.g. MaxGridIndex reached),
         // we default to 0,0 to avoid crashing, though visual overlap will occur.
         val placementRow = max(0, finalRow)
         val placementCol = max(0, finalCol)
+
+        markAreaOccupied(placementRow, placementCol, rowSpan, colSpan)
 
         // Populate the mutable GridItem
         gridItems.add(
@@ -841,9 +980,26 @@ private fun resolveGridItemIndices(
                 alignment = data?.alignment ?: Alignment.TopStart,
             )
         )
+
+        // Expand total grid bounds if necessary
+        maxRow = max(maxRow, placementRow + rowSpan)
+        maxCol = max(maxCol, placementCol + colSpan)
+
+        // Update Cursor (Only for non-explicit placements)
+        // Only update cursor if the item was NOT fully explicit.
+        // Explicit items are "out of flow" and shouldn't drag the cursor with them.
+        if (requestedRow == -1 || requestedCol == -1) {
+            if (flow == GridFlow.Row) {
+                autoPlacementCursorRow = placementRow
+                autoPlacementCursorCol = placementCol + colSpan
+            } else {
+                autoPlacementCursorRow = placementRow + rowSpan
+                autoPlacementCursorCol = placementCol
+            }
+        }
     }
 
-    return ResolvedGridItemIndicesResult(gridItems, IntSize(explicitColCount, explicitRowCount))
+    return ResolvedGridItemIndicesResult(gridItems, IntSize(maxCol, maxRow))
 }
 
 /**

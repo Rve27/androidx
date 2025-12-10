@@ -17,11 +17,14 @@ package androidx.compose.foundation.layout.demos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Grid
+import androidx.compose.foundation.layout.GridFlow
 import androidx.compose.foundation.layout.GridScope
 import androidx.compose.foundation.layout.GridTrackSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.columns
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
@@ -60,9 +64,78 @@ fun GridDemo() {
         Spacer(Modifier.height(32.dp))
         NegativeIndicesDemo()
         Spacer(Modifier.height(32.dp))
-        GapsDemo()
+        GapsAndContentDemo()
         Spacer(Modifier.height(32.dp))
         AlignmentDemo()
+        Spacer(Modifier.height(32.dp))
+        AutoPlacementDemo()
+        Spacer(Modifier.height(32.dp))
+        InfiniteConstraintsDemo()
+        Spacer(Modifier.height(32.dp))
+        MinContentSafetyDemo()
+    }
+}
+
+@Composable
+private fun AutoPlacementDemo() {
+    DemoHeader("Auto Placement & Flow")
+
+    Text(
+        "1. Flow = Row (Fixed Cols, Implicit Rows)",
+        fontSize = 12.sp,
+        fontStyle = FontStyle.Italic,
+        modifier = Modifier.padding(bottom = 4.dp),
+    )
+    Grid(
+        config = {
+            repeat(3) { column(GridTrackSize.Fixed(80.dp)) } // 3 Explicit Columns
+            gap(4.dp)
+            flow = GridFlow.Row // Default
+        },
+        modifier = Modifier.demoContainer(borderColor = Color.Blue),
+    ) {
+        // 1. Simple auto items
+        repeat(3) { index ->
+            GridDemoItem(text = "${index + 1}", color = Color.Cyan, measureSize = false)
+        }
+
+        // 2. Auto item with Span (Takes 2 spots)
+        GridDemoItem(text = "Span 2", columnSpan = 2, color = Color.Magenta, measureSize = false)
+
+        // 3. More auto items (Wrapping to next row)
+        repeat(2) { index ->
+            GridDemoItem(text = "${index + 5}", color = Color.Cyan, measureSize = false)
+        }
+    }
+
+    Spacer(Modifier.height(24.dp))
+
+    Text(
+        "2. Flow = Column (Fixed Rows, Implicit Cols)",
+        fontSize = 12.sp,
+        fontStyle = FontStyle.Italic,
+        modifier = Modifier.padding(bottom = 4.dp),
+    )
+    // Scrollable container to allow implicit columns to grow horizontally
+    Box(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())) {
+        Grid(
+            config = {
+                flow = GridFlow.Column
+                repeat(3) { row(50.dp) } // 3 Explicit Rows
+                gap(4.dp)
+            },
+            modifier = Modifier.border(1.dp, Color.Magenta.copy(alpha = 0.5f)).padding(8.dp),
+        ) {
+            repeat(10) { index ->
+                GridDemoItem(
+                    text = "${index + 1}",
+                    color = if (index % 2 == 0) Color.Yellow else Color.Green,
+                    measureSize = false,
+                    // Explicit size helps visualization in 'Auto' implicit tracks
+                    modifier = Modifier.size(60.dp, 40.dp),
+                )
+            }
+        }
     }
 }
 
@@ -115,6 +188,25 @@ private fun FlexibleSizingDemo() {
 }
 
 @Composable
+fun NegativeIndicesDemo() {
+    DemoHeader("Negative Indices")
+    Grid(
+        config = {
+            repeat(3) { column(60.dp) }
+            repeat(3) { row(60.dp) }
+            gap(4.dp)
+        },
+        modifier = Modifier.border(1.dp, Color.Gray),
+    ) {
+        GridDemoItem(text = "TL", row = 1, column = 1, color = Color.Red)
+        GridDemoItem("TR", row = 1, column = -1, color = Color.Blue)
+        GridDemoItem("BL", row = -1, column = 1, color = Color.Green)
+        GridDemoItem("BR", row = -1, column = -1, color = Color.Yellow)
+        GridDemoItem("Center", row = 2, column = 2, color = Color.Gray)
+    }
+}
+
+@Composable
 private fun ContentBasedSizingDemo() {
     DemoHeader("Intrinsic Sizing (Min vs Max Content)")
     Grid(
@@ -136,27 +228,8 @@ private fun ContentBasedSizingDemo() {
 }
 
 @Composable
-fun NegativeIndicesDemo() {
-    DemoHeader("Negative Indices")
-    Grid(
-        config = {
-            repeat(3) { column(60.dp) }
-            repeat(3) { row(60.dp) }
-            gap(4.dp)
-        },
-        modifier = Modifier.border(1.dp, Color.Gray),
-    ) {
-        GridDemoItem(text = "TL", row = 1, column = 1, color = Color.Red)
-        GridDemoItem("TR", row = 1, column = -1, color = Color.Blue)
-        GridDemoItem("BL", row = -1, column = 1, color = Color.Green)
-        GridDemoItem("BR", row = -1, column = -1, color = Color.Yellow)
-        GridDemoItem("Center", row = 2, column = 2, color = Color.Gray)
-    }
-}
-
-@Composable
-private fun GapsDemo() {
-    DemoHeader("Gaps Demo")
+private fun GapsAndContentDemo() {
+    DemoHeader("Gaps & Content Sizing")
     Grid(
         config = {
             column(GridTrackSize.Fixed(100.dp))
@@ -220,6 +293,65 @@ private fun AlignmentDemo() {
             ) {
                 Text(name, fontSize = 10.sp)
             }
+        }
+    }
+}
+
+@Composable
+private fun InfiniteConstraintsDemo() {
+    DemoHeader("Infinite Constraints")
+    Text(
+        "Percentage tracks fall back to Auto sizing when placed in an infinite container.",
+        fontSize = 12.sp,
+        fontStyle = FontStyle.Italic,
+        modifier = Modifier.padding(bottom = 4.dp),
+    )
+
+    Row(
+        Modifier.fillMaxWidth()
+            .border(1.dp, Color.Gray)
+            .padding(8.dp)
+            .horizontalScroll(rememberScrollState())
+    ) {
+        Grid(
+            config = {
+                column(GridTrackSize.Percentage(0.5f))
+                row(GridTrackSize.Auto)
+                gap(4.dp)
+            },
+            modifier = Modifier.border(1.dp, Color.Blue),
+        ) {
+            GridDemoItem(
+                text = "I am 150dp wide\n(Percentage -> Auto)",
+                modifier = Modifier.width(150.dp),
+                color = Color.Cyan,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MinContentSafetyDemo() {
+    DemoHeader("Min-Content Flex")
+    Text(
+        "Flex tracks implement minmax(min-content, 1fr).",
+        fontSize = 12.sp,
+        fontStyle = FontStyle.Italic,
+        modifier = Modifier.padding(bottom = 4.dp),
+    )
+    Box(Modifier.width(50.dp).border(2.dp, Color.Red).padding(2.dp)) {
+        Grid(
+            config = {
+                column(GridTrackSize.Flex(1.fr))
+                row(GridTrackSize.Auto)
+            },
+            modifier = Modifier.border(1.dp, Color.Green),
+        ) {
+            GridDemoItem(
+                text = "Min 120dp",
+                modifier = Modifier.width(120.dp),
+                color = Color.Magenta,
+            )
         }
     }
 }

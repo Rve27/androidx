@@ -16,6 +16,8 @@
 
 package androidx.compose.foundation.layout
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -370,6 +372,42 @@ class GridTest : LayoutTest() {
         }
 
     @Test
+    fun testGrid_flexRespectsMinContent() =
+        with(density) {
+            val minContentSize = 100
+            val totalSize = 150 // Only 50px left for flex
+            val latch = CountDownLatch(2)
+            val sizes = Array(2) { Ref<IntSize>() }
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.MinContent)
+                        column(GridTrackSize.Flex(1.fr))
+                        row(GridTrackSize.Fixed(50.dp))
+                    },
+                    modifier = Modifier.width(totalSize.toDp()),
+                ) {
+                    // Item 1 (MinContent): Needs 100px
+                    IntrinsicItem(
+                        minWidth = minContentSize,
+                        minIntrinsicWidth = minContentSize,
+                        maxIntrinsicWidth = minContentSize,
+                        modifier = Modifier.gridItem(1, 1).saveLayoutInfo(sizes[0], Ref(), latch),
+                    )
+                    // Item 2 (Flex): Gets remaining 50px
+                    Box(
+                        Modifier.gridItem(1, 2).fillMaxSize().saveLayoutInfo(sizes[1], Ref(), latch)
+                    )
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(minContentSize, sizes[0].value?.width)
+            assertEquals(totalSize - minContentSize, sizes[1].value?.width)
+        }
+
+    @Test
     fun testGrid_flexTrack_minContent_lowerBound() =
         with(density) {
             val containerWidth = 50
@@ -477,594 +515,58 @@ class GridTest : LayoutTest() {
         }
 
     @Test
-    fun testGrid_rowSpan_expandsRowsToFitContent() =
+    fun testGrid_mixedTrackTypes_resolutionOrder() =
         with(density) {
-            // Scenario:
-            // 2 Columns (Fixed 50)
-            // 2 Rows (Auto)
-            // Item 1 (Col 1, Row 1): Small (10px height)
-            // Item 2 (Col 1, Row 2): Small (10px height)
-            // Item 3 (Col 2, Row 1, Span 2): Tall (100px height)
-            //
-            // Expected Behavior:
-            // Without spanning logic: Rows would be 10px each (total 20px). Item 3 would overflow.
-            // With spanning logic: Item 3 needs 100px.
-            // Deficit = 100 - (10 + 10) = 80px.
-            // Distribute 80px / 2 rows = +40px each.
-            // Final Row Heights: 10 + 40 = 50px each.
-            // Total Grid Height: 100px.
+            val fixedSize = 50
+            val contentSize = 30
+            val totalSize = 200 // 50 (Fixed) + 30 (Auto) + Flex = 200 -> Flex = 120
 
-            val colWidth = 50.dp
-            val smallItemHeight = 10.dp
-            val tallItemHeight = 100.dp
-            val expectedTotalHeight = 100.dp.roundToPx()
-
-            val latch = CountDownLatch(1)
-            val gridSize = Ref<IntSize>()
+            val latch = CountDownLatch(3)
+            val sizes = Array(3) { Ref<IntSize>() }
+            val positions = Array(3) { Ref<Offset>() }
 
             show {
                 Grid(
                     config = {
-                        column(GridTrackSize.Fixed(colWidth))
-                        column(GridTrackSize.Fixed(colWidth))
-                        row(GridTrackSize.Auto)
-                        row(GridTrackSize.Auto)
+                        column(GridTrackSize.Fixed(fixedSize.toDp())) // Col 1: Fixed
+                        column(GridTrackSize.Auto) // Col 2: Auto (Content based)
+                        column(GridTrackSize.Flex(1.fr)) // Col 3: Flex (Remaining)
+                        row(GridTrackSize.Fixed(50.dp))
                     },
-                    modifier =
-                        Modifier.onGloballyPositioned {
-                            gridSize.value = it.size
-                            latch.countDown()
-                        },
+                    modifier = Modifier.width(totalSize.toDp()),
                 ) {
-                    // Col 1, Row 1
-                    Box(Modifier.gridItem(1, 1).size(colWidth, smallItemHeight))
-                    // Col 1, Row 2
-                    Box(Modifier.gridItem(2, 1).size(colWidth, smallItemHeight))
-
-                    // Col 2, Row 1, Span 2 (The driver of expansion)
-                    Box(
-                        Modifier.gridItem(row = 1, column = 2, rowSpan = 2)
-                            .size(colWidth, tallItemHeight)
-                    )
-                }
-            }
-
-            assertTrue(latch.await(1, TimeUnit.SECONDS))
-
-            assertEquals(
-                "Grid height should expand to accommodate the tall row-spanning item",
-                expectedTotalHeight,
-                gridSize.value?.height,
-            )
-        }
-
-    @Test
-    fun testGrid_rowSpan_expandsFlexRows() =
-        with(density) {
-            // Scenario:
-            // Container Height = 100px (Fixed constraint)
-            // 2 Rows (Flex 1fr)
-            // Item 1 (Row 1): Empty
-            // Item 2 (Row 2): Empty
-            // Item 3 (Span 2): Tall (200px)
-            //
-            // Expected Behavior:
-            // Flex logic initially splits 100px -> 50px each.
-            // Spanning logic sees Item 3 needs 200px.
-            // Deficit = 200 - 100 = 100px.
-            // Rows should grow to 100px each.
-            // Total Height = 200px (Grid expands beyond parent constraint if content demands it).
-
-            val containerHeight = 100.dp
-            val tallItemHeight = 200.dp
-            val expectedTotalHeight = 200.dp.roundToPx()
-
-            val latch = CountDownLatch(1)
-            val gridSize = Ref<IntSize>()
-
-            show {
-                // Wrap in a box with fixed height to simulate constraints,
-                // but allow Grid to be larger (unbounded internal checks)
-                Box(
-                    Modifier.height(containerHeight)
-                        .wrapContentHeight(align = Alignment.Top, unbounded = true)
-                ) {
-                    Grid(
-                        config = {
-                            column(GridTrackSize.Fixed(50.dp))
-                            row(GridTrackSize.Flex(1.fr))
-                            row(GridTrackSize.Flex(1.fr))
-                        },
-                        modifier =
-                            Modifier.onGloballyPositioned {
-                                gridSize.value = it.size
-                                latch.countDown()
-                            },
-                    ) {
-                        // Spanning item forcing expansion
-                        Box(
-                            Modifier.gridItem(row = 1, column = 1, rowSpan = 2)
-                                .size(50.dp, tallItemHeight)
-                        )
-                    }
-                }
-            }
-
-            assertTrue(latch.await(1, TimeUnit.SECONDS))
-
-            assertEquals(
-                "Flex rows should expand beyond 1fr share if spanning item requires it",
-                expectedTotalHeight,
-                gridSize.value?.height,
-            )
-        }
-
-    @Test
-    fun testGrid_explicitPlacement_allowsOverlaps() =
-        with(density) {
-            // Scenario:
-            // Two items explicitly placed in (1, 1).
-            // They should occupy the same space. The grid should not throw or shift them.
-
-            val size = 50
-            val sizeDp = size.toDp()
-            val latch = CountDownLatch(2)
-            val pos = Array(2) { Ref<Offset>() }
-            val dummy = Ref<IntSize>()
-
-            show {
-                Grid(
-                    config = {
-                        column(GridTrackSize.Fixed(sizeDp))
-                        row(GridTrackSize.Fixed(sizeDp))
-                    }
-                ) {
-                    // Item 1
-                    Box(Modifier.gridItem(1, 1).size(sizeDp).saveLayoutInfo(dummy, pos[0], latch))
-                    // Item 2 (Same Cell)
-                    Box(Modifier.gridItem(1, 1).size(sizeDp).saveLayoutInfo(dummy, pos[1], latch))
-                }
-            }
-
-            assertTrue(latch.await(1, TimeUnit.SECONDS))
-
-            assertEquals(Offset(0f, 0f), pos[0].value)
-            assertEquals(Offset(0f, 0f), pos[1].value)
-        }
-
-    @Test
-    fun testGrid_negativeIndices_placeCorrectly() =
-        with(density) {
-            val size = 50
-            val sizeDp = size.toDp()
-
-            val positionedLatch = CountDownLatch(4)
-            val childPosition = Array(4) { Ref<Offset>() }
-            val dummySize = Array(4) { Ref<IntSize>() }
-
-            show {
-                Grid(
-                    config = {
-                        repeat(3) { column(GridTrackSize.Fixed(sizeDp)) }
-                        repeat(3) { row(GridTrackSize.Fixed(sizeDp)) }
-                    }
-                ) {
-                    // 1. Top-Left (1, 1) -> (0, 0)
+                    // Col 1: Fixed item
                     Box(
                         Modifier.gridItem(1, 1)
                             .fillMaxSize()
-                            .saveLayoutInfo(dummySize[0], childPosition[0], positionedLatch)
+                            .saveLayoutInfo(sizes[0], positions[0], latch)
                     )
-                    // 2. Top-Right (1, -1) -> (100, 0) (Last Column)
+
+                    // Col 2: Auto item (determines track width)
                     Box(
-                        Modifier.gridItem(1, -1)
-                            .fillMaxSize()
-                            .saveLayoutInfo(dummySize[1], childPosition[1], positionedLatch)
-                    )
-                    // 3. Bottom-Left (-1, 1) -> (0, 100) (Last Row)
-                    Box(
-                        Modifier.gridItem(-1, 1)
-                            .fillMaxSize()
-                            .saveLayoutInfo(dummySize[2], childPosition[2], positionedLatch)
-                    )
-                    // 4. Bottom-Right (-1, -1) -> (100, 100) (Last Row, Last Column)
-                    Box(
-                        Modifier.gridItem(-1, -1)
-                            .fillMaxSize()
-                            .saveLayoutInfo(dummySize[3], childPosition[3], positionedLatch)
-                    )
-                }
-            }
-            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
-
-            // 1. (0, 0)
-            assertEquals(Offset(0f, 0f), childPosition[0].value)
-            // 2. (100, 0) -> Col index 2 * 50
-            assertEquals(Offset((size * 2).toFloat(), 0f), childPosition[1].value)
-            // 3. (0, 100) -> Row index 2 * 50
-            assertEquals(Offset(0f, (size * 2).toFloat()), childPosition[2].value)
-            // 4. (100, 100)
-            assertEquals(Offset((size * 2).toFloat(), (size * 2).toFloat()), childPosition[3].value)
-        }
-
-    @Test
-    fun testGrid_invalidNegativeIndices_fallbackToAuto() =
-        with(density) {
-            val size = 50
-            val sizeDp = size.toDp()
-            val latch = CountDownLatch(2)
-            val pos1 = Ref<Offset>()
-            val pos2 = Ref<Offset>()
-            val dummy = Ref<IntSize>()
-
-            show {
-                Grid(
-                    config = {
-                        // 2x2 Grid
-                        repeat(2) { column(GridTrackSize.Fixed(sizeDp)) }
-                        repeat(2) { row(GridTrackSize.Fixed(sizeDp)) }
-                    }
-                ) {
-                    // Case 1: Valid Negative (-1 -> Index 1)
-                    Box(
-                        Modifier.gridItem(row = -1, column = -1)
-                            .size(sizeDp)
-                            .saveLayoutInfo(dummy, pos1, latch)
+                        Modifier.gridItem(1, 2)
+                            .width(contentSize.toDp())
+                            .fillMaxHeight()
+                            .saveLayoutInfo(sizes[1], positions[1], latch)
                     )
 
-                    // Case 2: Invalid Negative (-5 -> Index -3 -> Invalid)
-                    // Should be treated as "Unspecified" and auto-placed.
-                    // Since (1,1) is empty (Item 1 is at 1,1 0-based), it should go to (0,0).
-                    Box(
-                        Modifier.gridItem(row = -5, column = -5)
-                            .size(sizeDp)
-                            .saveLayoutInfo(dummy, pos2, latch)
-                    )
-                }
-            }
-            assertTrue(latch.await(1, TimeUnit.SECONDS))
-
-            // Item 1 (Valid -1,-1): Bottom-Right (50, 50)
-            assertEquals(Offset(size.toFloat(), size.toFloat()), pos1.value)
-
-            // Item 2 (Invalid -5,-5): Auto-placed to first available slot (0,0)
-            assertEquals(Offset(0f, 0f), pos2.value)
-        }
-
-    @Test
-    fun testGrid_spanning() {
-        val colSize = 50
-        val rowSize = 50
-
-        val positionedLatch = CountDownLatch(1)
-        val childSize = Ref<IntSize>()
-        val childPosition = Ref<Offset>()
-
-        show {
-            Grid(
-                config = {
-                    repeat(3) { column(GridTrackSize.Fixed(colSize.toDp())) }
-                    repeat(3) { row(GridTrackSize.Fixed(rowSize.toDp())) }
-                }
-            ) {
-                // Item at R2, C2 spanning 2 rows and 2 columns
-                // Should be at (50, 50) with size (100, 100)
-                Box(
-                    Modifier.gridItem(row = 2, column = 2, rowSpan = 2, columnSpan = 2)
-                        .fillMaxSize()
-                        .saveLayoutInfo(childSize, childPosition, positionedLatch)
-                )
-            }
-        }
-        assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
-
-        assertEquals(IntSize(colSize * 2, rowSize * 2), childSize.value)
-        assertEquals(Offset(colSize.toFloat(), rowSize.toFloat()), childPosition.value)
-    }
-
-    @Test
-    fun testGrid_spanEntireGrid() =
-        with(density) {
-            val size = 50
-            val sizeDp = size.toDp()
-            val latch = CountDownLatch(1)
-            val itemSize = Ref<IntSize>()
-
-            show {
-                Grid(
-                    config = {
-                        repeat(4) { column(GridTrackSize.Fixed(sizeDp)) }
-                        row(GridTrackSize.Fixed(sizeDp))
-                    }
-                ) {
-                    // Spans all 4 columns
-                    Box(
-                        Modifier.gridItem(1, 1, columnSpan = 4)
-                            .fillMaxSize()
-                            .saveLayoutInfo(itemSize, Ref(), latch)
-                    )
-                }
-            }
-            assertTrue(latch.await(1, TimeUnit.SECONDS))
-
-            assertEquals(size * 4, itemSize.value?.width)
-        }
-
-    @Test
-    fun testGrid_respectsMinConstraints_expandsToFill() =
-        with(density) {
-            val smallTrackSize = 50.dp
-            val largeParentSize = 100.dp
-            val expectedSize = 100.dp.roundToPx()
-
-            val positionedLatch = CountDownLatch(1)
-            val gridSize = Ref<IntSize>()
-
-            show {
-                Grid(
-                    config = {
-                        column(GridTrackSize.Fixed(smallTrackSize))
-                        row(GridTrackSize.Fixed(smallTrackSize))
-                    },
-                    // Force the Grid to be larger than its content
-                    modifier =
-                        Modifier.size(largeParentSize).onGloballyPositioned { coordinates ->
-                            gridSize.value = coordinates.size
-                            positionedLatch.countDown()
-                        },
-                ) { /* empty */
-                }
-            }
-
-            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
-
-            assertEquals(
-                "Grid should expand to satisfy min constraints",
-                IntSize(expectedSize, expectedSize),
-                gridSize.value,
-            )
-        }
-
-    @Test
-    fun testGrid_respectsMaxConstraints_coercesSize() =
-        with(density) {
-            val largeTrackSize = 200.dp
-            val smallParentSize = 100.dp
-            val expectedSize = 100.dp.roundToPx()
-
-            val positionedLatch = CountDownLatch(1)
-            val gridSize = Ref<IntSize>()
-
-            show {
-                // Wrap in Box with propagateMinConstraints=false to test pure max constraints
-                Box(Modifier.size(smallParentSize)) {
-                    Grid(
-                        config = {
-                            column(GridTrackSize.Fixed(largeTrackSize))
-                            row(GridTrackSize.Fixed(largeTrackSize))
-                        },
-                        modifier =
-                            Modifier.onGloballyPositioned { coordinates ->
-                                gridSize.value = coordinates.size
-                                positionedLatch.countDown()
-                            },
-                    ) { /* empty */
-                    }
-                }
-            }
-
-            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
-
-            assertEquals(
-                "Grid should respect max constraints even if tracks are larger",
-                IntSize(expectedSize, expectedSize),
-                gridSize.value,
-            )
-        }
-
-    @Test
-    fun testGrid_respectsConstraints_whenContentOverflows() =
-        with(density) {
-            val parentSize = 100
-            val contentSize = 200 // Larger than parent
-
-            val latch = CountDownLatch(1)
-            val gridSize = Ref<IntSize>()
-
-            show {
-                // Parent container restricts size to 100x100
-                Box(Modifier.size(parentSize.toDp())) {
-                    Grid(
-                        config = {
-                            // Grid wants to be 200x200
-                            column(GridTrackSize.Fixed(contentSize.toDp()))
-                            row(GridTrackSize.Fixed(contentSize.toDp()))
-                        },
-                        modifier =
-                            Modifier.onGloballyPositioned {
-                                gridSize.value = it.size
-                                latch.countDown()
-                            },
-                    ) {
-                        Box(Modifier.gridItem(1, 1).fillMaxSize())
-                    }
-                }
-            }
-
-            assertTrue(latch.await(1, TimeUnit.SECONDS))
-
-            // Assert that Grid reported the PARENT'S size (clamped), not the content size
-            assertEquals(
-                "Grid should be clamped to parent max width/height",
-                IntSize(parentSize, parentSize),
-                gridSize.value,
-            )
-        }
-
-    @Test
-    fun testGrid_respectsConstraints_whenContentUnderflows() =
-        with(density) {
-            val minSize = 200
-            val contentSize = 50 // Smaller than parent min
-
-            val latch = CountDownLatch(1)
-            val gridSize = Ref<IntSize>()
-
-            show {
-                // Parent enforces minimum size of 200x200 (e.g. fillMaxSize)
-                Box(Modifier.requiredSize(minSize.toDp())) {
-                    Grid(
-                        config = {
-                            column(GridTrackSize.Fixed(contentSize.toDp()))
-                            row(GridTrackSize.Fixed(contentSize.toDp()))
-                        },
-                        modifier =
-                            Modifier.fillMaxSize() // Request to fill parent
-                                .onGloballyPositioned {
-                                    gridSize.value = it.size
-                                    latch.countDown()
-                                },
-                    ) {
-                        Box(Modifier.gridItem(1, 1).fillMaxSize())
-                    }
-                }
-            }
-
-            assertTrue(latch.await(1, TimeUnit.SECONDS))
-
-            // Assert that Grid expanded to meet the minimum constraints
-            assertEquals(
-                "Grid should expand to meet min constraints",
-                IntSize(minSize, minSize),
-                gridSize.value,
-            )
-        }
-
-    @Test
-    fun testGrid_percentageTrack_inIndefiniteContainer_fallbacksToAuto() =
-        with(density) {
-            val positionedLatch = CountDownLatch(1)
-            val gridSize = Ref<IntSize>()
-
-            show {
-                // Wrap in a Row to provide infinite width constraint
-                Row {
-                    Grid(
-                        config = {
-                            // 50% of Infinity cannot be calculated.
-                            // Fallback to Auto (MaxContent) and fit the item.
-                            column(GridTrackSize.Percentage(0.5f))
-                            row(GridTrackSize.Fixed(50.dp))
-                        },
-                        modifier =
-                            Modifier.onGloballyPositioned { coordinates ->
-                                gridSize.value = coordinates.size
-                                positionedLatch.countDown()
-                            },
-                    ) {
-                        // The item is 10.dp wide. The track should expand to fit this.
-                        Box(Modifier.gridItem(1, 1).size(10.dp))
-                    }
-                }
-            }
-
-            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
-
-            // Width should be 10.dp (Size of the content), NOT 0.
-            // Height should be 50.dp (Fixed)
-            assertEquals(IntSize(10.dp.roundToPx(), 50.dp.roundToPx()), gridSize.value)
-        }
-
-    @Test
-    fun testGrid_zeroSizeTrack_layoutCorrectly() =
-        with(density) {
-            val size = 50
-            val latch = CountDownLatch(2)
-            val pos = Array(2) { Ref<Offset>() }
-            val dummy = Ref<IntSize>()
-
-            show {
-                Grid(
-                    config = {
-                        column(GridTrackSize.Fixed(size.toDp()))
-                        column(GridTrackSize.Fixed(0.dp)) // Zero width column
-                        column(GridTrackSize.Fixed(size.toDp()))
-                        row(GridTrackSize.Fixed(size.toDp()))
-                    }
-                ) {
-                    // Item 1: Col 1
-                    Box(
-                        Modifier.gridItem(1, 1)
-                            .size(size.toDp())
-                            .saveLayoutInfo(dummy, pos[0], latch)
-                    )
-                    // Item 2: Col 3 (Skipping Col 2 which is 0 width)
+                    // Col 3: Flex item
                     Box(
                         Modifier.gridItem(1, 3)
-                            .size(size.toDp())
-                            .saveLayoutInfo(dummy, pos[1], latch)
+                            .fillMaxSize()
+                            .saveLayoutInfo(sizes[2], positions[2], latch)
                     )
                 }
             }
             assertTrue(latch.await(1, TimeUnit.SECONDS))
 
-            // Item 1 at 0
-            assertEquals(Offset(0f, 0f), pos[0].value)
-            // Item 2 at 50 + 0 = 50
-            assertEquals(Offset(size.toFloat(), 0f), pos[1].value)
+            // Col 1: 50
+            assertEquals(fixedSize, sizes[0].value?.width)
+            // Col 2: 30 (sized by content)
+            assertEquals(contentSize, sizes[1].value?.width)
+            // Col 3: 200 - 50 - 30 = 120
+            assertEquals(120, sizes[2].value?.width)
         }
-
-    @Test
-    fun testGrid_zeroSizeChildren() {
-        val trackSize = 50
-        val latch = CountDownLatch(1)
-        val gridSize = Ref<IntSize>()
-
-        show {
-            Grid(
-                config = {
-                    column(GridTrackSize.Fixed(trackSize.toDp()))
-                    row(GridTrackSize.Fixed(trackSize.toDp()))
-                },
-                modifier =
-                    Modifier.onGloballyPositioned {
-                        gridSize.value = it.size
-                        latch.countDown()
-                    },
-            ) {
-                // Place a zero-sized item.
-                // It should still occupy the logical cell (1,1), but draw nothing.
-                // The Grid should still size itself to the Fixed tracks (50x50).
-                Box(Modifier.gridItem(1, 1).size(0.dp))
-            }
-        }
-
-        assertTrue(latch.await(1, TimeUnit.SECONDS))
-        assertEquals(IntSize(trackSize, trackSize), gridSize.value)
-    }
-
-    @Test
-    fun testGrid_itemFillsCell_whenRequested() {
-        val trackSize = 100
-        val latch = CountDownLatch(1)
-        val childSize = Ref<IntSize>()
-
-        show {
-            Grid(
-                config = {
-                    column(GridTrackSize.Fixed(trackSize.toDp()))
-                    row(GridTrackSize.Fixed(trackSize.toDp()))
-                }
-            ) {
-                // Item has no intrinsic size, but requests fillMaxSize().
-                // It should fill the definition of the track (100x100).
-                Box(Modifier.gridItem(1, 1).fillMaxSize().saveLayoutInfo(childSize, Ref(), latch))
-            }
-        }
-
-        assertTrue(latch.await(1, TimeUnit.SECONDS))
-        assertEquals(IntSize(trackSize, trackSize), childSize.value)
-    }
 
     @Test
     fun testGrid_gaps() =
@@ -1179,6 +681,45 @@ class GridTest : LayoutTest() {
         assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
         assertEquals(IntSize(expectedWidth, size), childSize.value)
     }
+
+    @Test
+    fun testGrid_implicitTracks_respectGaps() =
+        with(density) {
+            val size = 50
+            val gap = 10
+            val latch = CountDownLatch(2)
+            val pos = Array(2) { Ref<Offset>() }
+
+            // Create a dummy ref instead of passing null
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(size.toDp())) // 1 Explicit Col
+                        row(GridTrackSize.Fixed(size.toDp()))
+                        gap(gap.toDp())
+                    }
+                ) {
+                    // Item 1: Col 1
+                    Box(
+                        Modifier.gridItem(1, 1)
+                            .size(size.toDp())
+                            .saveLayoutInfo(dummy, pos[0], latch)
+                    )
+                    // Item 2: Col 2 (Implicit). Should be at 50 + 10 = 60.
+                    Box(
+                        Modifier.gridItem(1, 2)
+                            .size(size.toDp())
+                            .saveLayoutInfo(dummy, pos[1], latch)
+                    )
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset((size + gap).toFloat(), 0f), pos[1].value)
+        }
 
     @Test
     fun testGrid_gapPrecedence_specificOverridesGeneric() =
@@ -1421,6 +962,1214 @@ class GridTest : LayoutTest() {
     }
 
     @Test
+    fun testGrid_implicitTracks_shrinkToFitContent() =
+        with(density) {
+            // Scenario:
+            // Item placed in Col 10.
+            // Cols 1-9 should be implicit Auto.
+            // If they have no content, they should have width 0.
+            // Col 10 should have width 50.
+            // Total Grid Width should be 50 (0+0...+50).
+
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(1)
+            val pos = Ref<Offset>()
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        // No explicit columns
+                        row(GridTrackSize.Fixed(sizeDp))
+                    }
+                ) {
+                    // Place far away at Column 5.
+                    // Columns 1, 2, 3, 4 are Implicit Auto and Empty -> Size 0.
+                    Box(
+                        Modifier.gridItem(column = 5).size(sizeDp).saveLayoutInfo(dummy, pos, latch)
+                    )
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Position should be 0 because previous columns collapsed.
+            // Note: If gaps were added, they would add up (4 * gap).
+            assertEquals(Offset(0f, 0f), pos.value)
+        }
+
+    @Test
+    fun testGrid_rowSpan_expandsRowsToFitContent() =
+        with(density) {
+            // Scenario:
+            // 2 Columns (Fixed 50)
+            // 2 Rows (Auto)
+            // Item 1 (Col 1, Row 1): Small (10px height)
+            // Item 2 (Col 1, Row 2): Small (10px height)
+            // Item 3 (Col 2, Row 1, Span 2): Tall (100px height)
+            //
+            // Expected Behavior:
+            // Without spanning logic: Rows would be 10px each (total 20px). Item 3 would overflow.
+            // With spanning logic: Item 3 needs 100px.
+            // Deficit = 100 - (10 + 10) = 80px.
+            // Distribute 80px / 2 rows = +40px each.
+            // Final Row Heights: 10 + 40 = 50px each.
+            // Total Grid Height: 100px.
+
+            val colWidth = 50.dp
+            val smallItemHeight = 10.dp
+            val tallItemHeight = 100.dp
+            val expectedTotalHeight = 100.dp.roundToPx()
+
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(colWidth))
+                        column(GridTrackSize.Fixed(colWidth))
+                        row(GridTrackSize.Auto)
+                        row(GridTrackSize.Auto)
+                    },
+                    modifier =
+                        Modifier.onGloballyPositioned {
+                            gridSize.value = it.size
+                            latch.countDown()
+                        },
+                ) {
+                    // Col 1, Row 1
+                    Box(Modifier.gridItem(1, 1).size(colWidth, smallItemHeight))
+                    // Col 1, Row 2
+                    Box(Modifier.gridItem(2, 1).size(colWidth, smallItemHeight))
+
+                    // Col 2, Row 1, Span 2 (The driver of expansion)
+                    Box(
+                        Modifier.gridItem(row = 1, column = 2, rowSpan = 2)
+                            .size(colWidth, tallItemHeight)
+                    )
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "Grid height should expand to accommodate the tall row-spanning item",
+                expectedTotalHeight,
+                gridSize.value?.height,
+            )
+        }
+
+    @Test
+    fun testGrid_rowSpan_expandsFlexRows() =
+        with(density) {
+            // Scenario:
+            // Container Height = 100px (Fixed constraint)
+            // 2 Rows (Flex 1fr)
+            // Item 1 (Row 1): Empty
+            // Item 2 (Row 2): Empty
+            // Item 3 (Span 2): Tall (200px)
+            //
+            // Expected Behavior:
+            // Flex logic initially splits 100px -> 50px each.
+            // Spanning logic sees Item 3 needs 200px.
+            // Deficit = 200 - 100 = 100px.
+            // Rows should grow to 100px each.
+            // Total Height = 200px (Grid expands beyond parent constraint if content demands it).
+
+            val containerHeight = 100.dp
+            val tallItemHeight = 200.dp
+            val expectedTotalHeight = 200.dp.roundToPx()
+
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                // Wrap in a box with fixed height to simulate constraints,
+                // but allow Grid to be larger (unbounded internal checks)
+                Box(
+                    Modifier.height(containerHeight)
+                        .wrapContentHeight(align = Alignment.Top, unbounded = true)
+                ) {
+                    Grid(
+                        config = {
+                            column(GridTrackSize.Fixed(50.dp))
+                            row(GridTrackSize.Flex(1.fr))
+                            row(GridTrackSize.Flex(1.fr))
+                        },
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                gridSize.value = it.size
+                                latch.countDown()
+                            },
+                    ) {
+                        // Spanning item forcing expansion
+                        Box(
+                            Modifier.gridItem(row = 1, column = 1, rowSpan = 2)
+                                .size(50.dp, tallItemHeight)
+                        )
+                    }
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "Flex rows should expand beyond 1fr share if spanning item requires it",
+                expectedTotalHeight,
+                gridSize.value?.height,
+            )
+        }
+
+    @Test
+    fun testGrid_autoPlacement_rowFlow() =
+        with(density) {
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(3)
+            val pos = Array(3) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(sizeDp))
+                        column(GridTrackSize.Fixed(sizeDp))
+                        // Rows are implicit/auto
+                        flow = GridFlow.Row
+                    }
+                ) {
+                    // We use Modifier.size because implicit Auto tracks need content size to expand
+                    // Item 1 -> (0,0)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[0], latch))
+                    // Item 2 -> (50,0)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[1], latch))
+                    // Item 3 -> Wraps to next row -> (0, 50)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[2], latch))
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset(size.toFloat(), 0f), pos[1].value)
+            assertEquals(Offset(0f, size.toFloat()), pos[2].value)
+        }
+
+    @Test
+    fun testGrid_autoPlacement_columnFlow() =
+        with(density) {
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(3)
+            val pos = Array(3) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        flow = GridFlow.Column
+                        row(GridTrackSize.Fixed(sizeDp))
+                        row(GridTrackSize.Fixed(sizeDp))
+                        // Cols are implicit/auto
+                    }
+                ) {
+                    // Item 1 -> (0,0)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[0], latch))
+                    // Item 2 -> (0,50)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[1], latch))
+                    // Item 3 -> Wraps to next col -> (50,0)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[2], latch))
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset(0f, size.toFloat()), pos[1].value)
+            assertEquals(Offset(size.toFloat(), 0f), pos[2].value)
+        }
+
+    @Test
+    fun testGrid_autoPlacement_wrapping_respectsGaps() =
+        with(density) {
+            val size = 50
+            val gap = 10
+            val sizeDp = size.toDp()
+            val gapDp = gap.toDp()
+            val latch = CountDownLatch(2)
+            val pos = Array(2) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(sizeDp)) // Only 1 column
+                        row(GridTrackSize.Fixed(sizeDp))
+                        gap(gapDp)
+                        flow = GridFlow.Row
+                    }
+                ) {
+                    // Item 1: (0,0)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[0], latch))
+                    // Item 2: Wraps to (0,1). Should include vertical gap.
+                    // Y Position = Row 1 Height (50) + Gap (10) = 60
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[1], latch))
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset(0f, (size + gap).toFloat()), pos[1].value)
+        }
+
+    @Test
+    fun testGrid_columnFlow_wrapsCorrectly() =
+        with(density) {
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(3)
+            val pos = Array(3) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        flow = GridFlow.Column
+                        // 2 Explicit Rows
+                        row(GridTrackSize.Fixed(sizeDp))
+                        row(GridTrackSize.Fixed(sizeDp))
+                    }
+                ) {
+                    // Item 1 -> (0,0)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[0], latch))
+                    // Item 2 -> (0,50)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[1], latch))
+                    // Item 3 -> Wraps to Next Column -> (50,0)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[2], latch))
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset(0f, size.toFloat()), pos[1].value)
+            assertEquals(Offset(size.toFloat(), 0f), pos[2].value)
+        }
+
+    @Test
+    fun testGrid_columnFlow_createsImplicitColumns() =
+        with(density) {
+            val itemSize = 50
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        // 2 Explicit Rows. Flow = Column.
+                        row(GridTrackSize.Fixed(itemSize.toDp()))
+                        row(GridTrackSize.Fixed(itemSize.toDp()))
+                        flow = GridFlow.Column
+                    },
+                    modifier =
+                        Modifier.onGloballyPositioned {
+                            gridSize.value = it.size
+                            latch.countDown()
+                        },
+                ) {
+                    // 4 items.
+                    // Items 1, 2 fill Col 1 (Rows 1, 2)
+                    // Items 3, 4 should create implicit Col 2 (Rows 1, 2)
+                    repeat(4) { Box(Modifier.size(itemSize.toDp())) }
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Expected: 2 Rows (Explicit) x 2 Columns (1 Explicit + 1 Implicit)
+            // Implicit columns default to Auto -> itemSize (50)
+            assertEquals(IntSize(itemSize * 2, itemSize * 2), gridSize.value)
+        }
+
+    @Test
+    fun testGrid_columnFlow_implicitRows() =
+        with(density) {
+            // Scenario:
+            // Flow = Column.
+            // Explicitly define 1 Column (so we know the width).
+            // Do NOT define any Rows.
+            // Item 1: (0,0)
+            // Item 2: Should stack below at (1,0) -> Creating Implicit Row 2
+            // Item 3: Should stack below at (2,0) -> Creating Implicit Row 3
+
+            val size = 50.dp
+            val sizePx = size.roundToPx().toFloat()
+            val latch = CountDownLatch(3)
+            val pos = Array(3) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        flow = GridFlow.Column
+                        // Define column width so layout isn't 0 width
+                        column(GridTrackSize.Fixed(size))
+                        // Do NOT define rows.
+                        // This allows the column to grow infinitely downwards.
+                    }
+                ) {
+                    // (0,0)
+                    Box(Modifier.size(size).saveLayoutInfo(dummy, pos[0], latch))
+                    // (1, 0) -> Implicit Row 2
+                    Box(Modifier.size(size).saveLayoutInfo(dummy, pos[1], latch))
+                    // (2, 0) -> Implicit Row 3
+                    Box(Modifier.size(size).saveLayoutInfo(dummy, pos[2], latch))
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // All X should be 0 (Column 0)
+            // Y should increment by sizePx
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset(0f, sizePx), pos[1].value)
+            assertEquals(Offset(0f, sizePx * 2), pos[2].value)
+        }
+
+    @Test
+    fun testGrid_mixedPlacement_skipsOccupiedCells() =
+        with(density) {
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(3)
+            val pos = Array(3) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        repeat(3) { column(GridTrackSize.Fixed(sizeDp)) }
+                        row(GridTrackSize.Fixed(sizeDp))
+                    }
+                ) {
+                    // 1. Explicit Item at (0, 1) (Middle Column)
+                    Box(Modifier.gridItem(1, 2).size(sizeDp).saveLayoutInfo(dummy, pos[0], latch))
+
+                    // 2. Auto Item 1 -> Should go to (0, 0)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[1], latch))
+
+                    // 3. Auto Item 2 -> Should skip (0, 1) and go to (0, 2)
+                    Box(Modifier.size(sizeDp).saveLayoutInfo(dummy, pos[2], latch))
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Explicit
+            assertEquals(Offset(size.toFloat(), 0f), pos[0].value)
+            // Auto 1
+            assertEquals(Offset(0f, 0f), pos[1].value)
+            // Auto 2
+            assertEquals(Offset((size * 2).toFloat(), 0f), pos[2].value)
+        }
+
+    @Test
+    fun testGrid_explicitPlacement_allowsOverlaps() =
+        with(density) {
+            // Scenario:
+            // Two items explicitly placed in (1, 1).
+            // They should occupy the same space. The grid should not throw or shift them.
+
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(2)
+            val pos = Array(2) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(sizeDp))
+                        row(GridTrackSize.Fixed(sizeDp))
+                    }
+                ) {
+                    // Item 1
+                    Box(Modifier.gridItem(1, 1).size(sizeDp).saveLayoutInfo(dummy, pos[0], latch))
+                    // Item 2 (Same Cell)
+                    Box(Modifier.gridItem(1, 1).size(sizeDp).saveLayoutInfo(dummy, pos[1], latch))
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset(0f, 0f), pos[1].value)
+        }
+
+    @Test
+    fun testGrid_explicitPlacement_doesNotMoveAutoCursor() =
+        with(density) {
+            // Scenario:
+            // 3 Columns.
+            // Item 1: Auto (0,0). Cursor moves to (0,1).
+            // Item 2: Explicit far away (0, 2). Cursor should REMAIN at (0,1).
+            // Item 3: Auto. Should fill the gap at (0,1), NOT start after Item 2.
+
+            val size = 50.dp
+            val latch = CountDownLatch(3)
+            val pos = Array(3) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        repeat(3) { column(GridTrackSize.Fixed(size)) }
+                        row(GridTrackSize.Fixed(size))
+                    }
+                ) {
+                    // 1. Auto -> (0,0)
+                    Box(Modifier.size(size).saveLayoutInfo(dummy, pos[0], latch))
+                    // 2. Explicit -> (0,2). Should NOT move cursor.
+                    Box(Modifier.gridItem(1, 3).size(size).saveLayoutInfo(dummy, pos[1], latch))
+                    // 3. Auto -> Should fill (0,1)
+                    Box(Modifier.size(size).saveLayoutInfo(dummy, pos[2], latch))
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Calculate pixel size of a single track first
+            val sizePx = size.roundToPx().toFloat()
+
+            // Auto 1 (0,0)
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            // Explicit (Col 3 -> Index 2)
+            assertEquals(Offset(sizePx * 2, 0f), pos[1].value)
+            // Auto 2 (Col 2 -> Index 1)
+            assertEquals(Offset(sizePx, 0f), pos[2].value)
+        }
+
+    @Test
+    fun testGrid_fixedRow_autoCol_skipsOccupied() =
+        with(density) {
+            // Scenario:
+            // 3 Columns.
+            // Item 1: Explicitly placed at (0, 0).
+            // Item 2: Fixed Row 0. Should skip (0,0) and go to (0,1).
+            // Item 3: Fixed Row 0. Should skip (0,0) and (0,1) and go to (0,2).
+
+            val size = 50.dp
+            val latch = CountDownLatch(3)
+            val pos = Array(3) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        repeat(3) { column(GridTrackSize.Fixed(size)) }
+                        row(GridTrackSize.Fixed(size))
+                    }
+                ) {
+                    // 1. Occupy (0,0) explicitly
+                    Box(Modifier.gridItem(1, 1).size(size).saveLayoutInfo(dummy, pos[0], latch))
+                    // 2. Request Row 1 (Auto Col). Should find Col 2.
+                    Box(Modifier.gridItem(row = 1).size(size).saveLayoutInfo(dummy, pos[1], latch))
+                    // 3. Request Row 1 (Auto Col). Should find Col 3.
+                    Box(Modifier.gridItem(row = 1).size(size).saveLayoutInfo(dummy, pos[2], latch))
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Calculate pixel size of a single track first
+            val sizePx = size.roundToPx().toFloat()
+
+            // (0,0)
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            // (50, 0)
+            assertEquals(Offset(sizePx, 0f), pos[1].value)
+            // (100, 0) -> Sum of two tracks
+            assertEquals(Offset(sizePx * 2, 0f), pos[2].value)
+        }
+
+    @Test
+    fun testGrid_fixedCol_autoRow_skipsOccupied() =
+        with(density) {
+            // Scenario:
+            // 1 Column, 3 Rows.
+            // Item 1: Explicitly placed at (0, 0).
+            // Item 2: Fixed Col 0. Should skip (0,0) and go to (1,0).
+
+            val size = 50.dp
+            val latch = CountDownLatch(2)
+            val pos = Array(2) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(size))
+                        repeat(3) { row(GridTrackSize.Fixed(size)) }
+                    }
+                ) {
+                    // 1. Occupy (0,0) explicitly
+                    Box(Modifier.gridItem(1, 1).size(size).saveLayoutInfo(dummy, pos[0], latch))
+                    // 2. Request Col 1 (Auto Row). Should skip Row 1 and land in Row 2.
+                    Box(
+                        Modifier.gridItem(column = 1)
+                            .size(size)
+                            .saveLayoutInfo(dummy, pos[1], latch)
+                    )
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Calculate pixel size of a single track first
+            val sizePx = size.roundToPx().toFloat()
+
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            assertEquals(Offset(0f, sizePx), pos[1].value)
+        }
+
+    @Test
+    fun testGrid_mixedFlow_fixedRowInColumnFlow() =
+        with(density) {
+            // Scenario:
+            // Flow = Column.
+            // Item 1: Fixed Row 1.
+            // Since flow is column, the logic must look for the *first available column* in that
+            // fixed row.
+
+            val size = 50.dp
+            val latch = CountDownLatch(1)
+            val pos = Ref<Offset>()
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(size))
+                        column(GridTrackSize.Fixed(size))
+                        row(GridTrackSize.Fixed(size))
+                        row(GridTrackSize.Fixed(size))
+                        flow = GridFlow.Column
+                    }
+                ) {
+                    // Occupy (1,0) - (Row 2, Col 1)
+                    Box(Modifier.gridItem(2, 1).size(size))
+
+                    // Request Row 2.
+                    // Since (2,1) is occupied, it should find (2,2).
+                    Box(Modifier.gridItem(row = 2).size(size).saveLayoutInfo(dummy, pos, latch))
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Calculate pixel size of a single track first
+            val sizePx = size.roundToPx().toFloat()
+
+            // Should be at Row 2 (Index 1), Col 2 (Index 1) -> (50, 50)
+            assertEquals(Offset(sizePx, sizePx), pos.value)
+        }
+
+    @Test
+    fun testGrid_negativeIndices_placeCorrectly() =
+        with(density) {
+            val size = 50
+            val sizeDp = size.toDp()
+
+            val positionedLatch = CountDownLatch(4)
+            val childPosition = Array(4) { Ref<Offset>() }
+            val dummySize = Array(4) { Ref<IntSize>() }
+
+            show {
+                Grid(
+                    config = {
+                        repeat(3) { column(GridTrackSize.Fixed(sizeDp)) }
+                        repeat(3) { row(GridTrackSize.Fixed(sizeDp)) }
+                    }
+                ) {
+                    // 1. Top-Left (1, 1) -> (0, 0)
+                    Box(
+                        Modifier.gridItem(1, 1)
+                            .fillMaxSize()
+                            .saveLayoutInfo(dummySize[0], childPosition[0], positionedLatch)
+                    )
+                    // 2. Top-Right (1, -1) -> (100, 0) (Last Column)
+                    Box(
+                        Modifier.gridItem(1, -1)
+                            .fillMaxSize()
+                            .saveLayoutInfo(dummySize[1], childPosition[1], positionedLatch)
+                    )
+                    // 3. Bottom-Left (-1, 1) -> (0, 100) (Last Row)
+                    Box(
+                        Modifier.gridItem(-1, 1)
+                            .fillMaxSize()
+                            .saveLayoutInfo(dummySize[2], childPosition[2], positionedLatch)
+                    )
+                    // 4. Bottom-Right (-1, -1) -> (100, 100) (Last Row, Last Column)
+                    Box(
+                        Modifier.gridItem(-1, -1)
+                            .fillMaxSize()
+                            .saveLayoutInfo(dummySize[3], childPosition[3], positionedLatch)
+                    )
+                }
+            }
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+
+            // 1. (0, 0)
+            assertEquals(Offset(0f, 0f), childPosition[0].value)
+            // 2. (100, 0) -> Col index 2 * 50
+            assertEquals(Offset((size * 2).toFloat(), 0f), childPosition[1].value)
+            // 3. (0, 100) -> Row index 2 * 50
+            assertEquals(Offset(0f, (size * 2).toFloat()), childPosition[2].value)
+            // 4. (100, 100)
+            assertEquals(Offset((size * 2).toFloat(), (size * 2).toFloat()), childPosition[3].value)
+        }
+
+    @Test
+    fun testGrid_negativeIndex_refersToExplicitBounds() =
+        with(density) {
+            val size = 50
+            val latch = CountDownLatch(1)
+            val pos = Ref<Offset>()
+
+            // Create a dummy ref instead of passing null
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        repeat(2) {
+                            column(GridTrackSize.Fixed(size.toDp()))
+                        } // Explicit Cols: 0, 1
+                        row(GridTrackSize.Fixed(size.toDp()))
+                    }
+                ) {
+                    // Create an implicit 3rd column (Index 2)
+                    Box(Modifier.gridItem(1, 3).size(size.toDp()))
+
+                    // Place item at column = -1.
+                    // Should map to Explicit Col 1 (the 2nd column), NOT the implicit 3rd column.
+                    Box(
+                        Modifier.gridItem(column = -1)
+                            .size(size.toDp())
+                            .saveLayoutInfo(dummy, pos, latch)
+                    )
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Expect pos at 2nd column (Index 1) -> 50px
+            assertEquals(Offset(size.toFloat(), 0f), pos.value)
+        }
+
+    @Test
+    fun testGrid_invalidNegativeIndices_fallbackToAuto() =
+        with(density) {
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(2)
+            val pos1 = Ref<Offset>()
+            val pos2 = Ref<Offset>()
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        // 2x2 Grid
+                        repeat(2) { column(GridTrackSize.Fixed(sizeDp)) }
+                        repeat(2) { row(GridTrackSize.Fixed(sizeDp)) }
+                    }
+                ) {
+                    // Case 1: Valid Negative (-1 -> Index 1)
+                    Box(
+                        Modifier.gridItem(row = -1, column = -1)
+                            .size(sizeDp)
+                            .saveLayoutInfo(dummy, pos1, latch)
+                    )
+
+                    // Case 2: Invalid Negative (-5 -> Index -3 -> Invalid)
+                    // Should be treated as "Unspecified" and auto-placed.
+                    // Since (1,1) is empty (Item 1 is at 1,1 0-based), it should go to (0,0).
+                    Box(
+                        Modifier.gridItem(row = -5, column = -5)
+                            .size(sizeDp)
+                            .saveLayoutInfo(dummy, pos2, latch)
+                    )
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Item 1 (Valid -1,-1): Bottom-Right (50, 50)
+            assertEquals(Offset(size.toFloat(), size.toFloat()), pos1.value)
+
+            // Item 2 (Invalid -5,-5): Auto-placed to first available slot (0,0)
+            assertEquals(Offset(0f, 0f), pos2.value)
+        }
+
+    @Test
+    fun testGrid_spanning() {
+        val colSize = 50
+        val rowSize = 50
+
+        val positionedLatch = CountDownLatch(1)
+        val childSize = Ref<IntSize>()
+        val childPosition = Ref<Offset>()
+
+        show {
+            Grid(
+                config = {
+                    repeat(3) { column(GridTrackSize.Fixed(colSize.toDp())) }
+                    repeat(3) { row(GridTrackSize.Fixed(rowSize.toDp())) }
+                }
+            ) {
+                // Item at R2, C2 spanning 2 rows and 2 columns
+                // Should be at (50, 50) with size (100, 100)
+                Box(
+                    Modifier.gridItem(row = 2, column = 2, rowSpan = 2, columnSpan = 2)
+                        .fillMaxSize()
+                        .saveLayoutInfo(childSize, childPosition, positionedLatch)
+                )
+            }
+        }
+        assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+
+        assertEquals(IntSize(colSize * 2, rowSize * 2), childSize.value)
+        assertEquals(Offset(colSize.toFloat(), rowSize.toFloat()), childPosition.value)
+    }
+
+    @Test
+    fun testGrid_spanEntireGrid() =
+        with(density) {
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(1)
+            val itemSize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        repeat(4) { column(GridTrackSize.Fixed(sizeDp)) }
+                        row(GridTrackSize.Fixed(sizeDp))
+                    }
+                ) {
+                    // Spans all 4 columns
+                    Box(
+                        Modifier.gridItem(1, 1, columnSpan = 4)
+                            .fillMaxSize()
+                            .saveLayoutInfo(itemSize, Ref(), latch)
+                    )
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(size * 4, itemSize.value?.width)
+        }
+
+    @Test
+    fun testGrid_spanning_intoImplicitTracks() =
+        with(density) {
+            val size = 50
+            val latch = CountDownLatch(1)
+            val itemSize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(size.toDp())) // 1 Explicit Column
+                        row(GridTrackSize.Fixed(size.toDp()))
+                    }
+                ) {
+                    // Place at Col 1, Span 2.
+                    // Should cover Explicit Col 1 + Implicit Col 2.
+                    // Implicit Col 2 should size to Auto. Since this item spans,
+                    // and Auto tracks ignore spanning items for intrinsic sizing (as per your
+                    // design),
+                    // the implicit track might collapse to 0 OR resize if logic allows.
+                    // *Correction*: Your logic adds `Auto` tracks. If no other item is in Col 2,
+                    // it will be size 0.
+                    // Let's add a non-spanning item in Col 2 to give it size.
+
+                    // Item A: Spans Col 1 and Col 2
+                    Box(
+                        Modifier.gridItem(1, 1, columnSpan = 2)
+                            .fillMaxSize()
+                            .saveLayoutInfo(itemSize, Ref(), latch)
+                    )
+
+                    // Item B: Sits in Implicit Col 2 to force it to have size
+                    Box(Modifier.gridItem(1, 2).size(size.toDp()))
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Width = Col 1 (50) + Col 2 (50 from Item B) = 100
+            assertEquals(size * 2, itemSize.value?.width)
+        }
+
+    @Test
+    fun testGrid_itemSpanLargerThanExplicitGrid_doesNotLoop() =
+        with(density) {
+            val size = 50
+            val sizeDp = size.toDp()
+            val latch = CountDownLatch(1)
+            val pos = Ref<Offset>()
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        // 2 Explicit Columns
+                        column(GridTrackSize.Fixed(sizeDp))
+                        column(GridTrackSize.Fixed(sizeDp))
+                        flow = GridFlow.Row
+                    }
+                ) {
+                    // Item spans 3 columns (Exceeds explicit count of 2)
+                    // Should be placed at (0,0) and create implicit tracks
+                    Box(
+                        Modifier.gridItem(columnSpan = 3)
+                            .size(sizeDp)
+                            .saveLayoutInfo(dummy, pos, latch)
+                    )
+                }
+            }
+            assertTrue("Timed out - likely infinite loop", latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(Offset(0f, 0f), pos.value)
+        }
+
+    @Test
+    fun testGrid_respectsMinConstraints_expandsToFill() =
+        with(density) {
+            val smallTrackSize = 50.dp
+            val largeParentSize = 100.dp
+            val expectedSize = 100.dp.roundToPx()
+
+            val positionedLatch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(smallTrackSize))
+                        row(GridTrackSize.Fixed(smallTrackSize))
+                    },
+                    // Force the Grid to be larger than its content
+                    modifier =
+                        Modifier.size(largeParentSize).onGloballyPositioned { coordinates ->
+                            gridSize.value = coordinates.size
+                            positionedLatch.countDown()
+                        },
+                ) { /* empty */
+                }
+            }
+
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "Grid should expand to satisfy min constraints",
+                IntSize(expectedSize, expectedSize),
+                gridSize.value,
+            )
+        }
+
+    @Test
+    fun testGrid_respectsMaxConstraints_coercesSize() =
+        with(density) {
+            val largeTrackSize = 200.dp
+            val smallParentSize = 100.dp
+            val expectedSize = 100.dp.roundToPx()
+
+            val positionedLatch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                // Wrap in Box with propagateMinConstraints=false to test pure max constraints
+                Box(Modifier.size(smallParentSize)) {
+                    Grid(
+                        config = {
+                            column(GridTrackSize.Fixed(largeTrackSize))
+                            row(GridTrackSize.Fixed(largeTrackSize))
+                        },
+                        modifier =
+                            Modifier.onGloballyPositioned { coordinates ->
+                                gridSize.value = coordinates.size
+                                positionedLatch.countDown()
+                            },
+                    ) { /* empty */
+                    }
+                }
+            }
+
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "Grid should respect max constraints even if tracks are larger",
+                IntSize(expectedSize, expectedSize),
+                gridSize.value,
+            )
+        }
+
+    @Test
+    fun testGrid_respectsConstraints_whenContentOverflows() =
+        with(density) {
+            val parentSize = 100
+            val contentSize = 200 // Larger than parent
+
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                // Parent container restricts size to 100x100
+                Box(Modifier.size(parentSize.toDp())) {
+                    Grid(
+                        config = {
+                            // Grid wants to be 200x200
+                            column(GridTrackSize.Fixed(contentSize.toDp()))
+                            row(GridTrackSize.Fixed(contentSize.toDp()))
+                        },
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                gridSize.value = it.size
+                                latch.countDown()
+                            },
+                    ) {
+                        Box(Modifier.gridItem(1, 1).fillMaxSize())
+                    }
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Assert that Grid reported the PARENT'S size (clamped), not the content size
+            assertEquals(
+                "Grid should be clamped to parent max width/height",
+                IntSize(parentSize, parentSize),
+                gridSize.value,
+            )
+        }
+
+    @Test
+    fun testGrid_respectsConstraints_whenContentUnderflows() =
+        with(density) {
+            val minSize = 200
+            val contentSize = 50 // Smaller than parent min
+
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                // Parent enforces minimum size of 200x200 (e.g. fillMaxSize)
+                Box(Modifier.requiredSize(minSize.toDp())) {
+                    Grid(
+                        config = {
+                            column(GridTrackSize.Fixed(contentSize.toDp()))
+                            row(GridTrackSize.Fixed(contentSize.toDp()))
+                        },
+                        modifier =
+                            Modifier.fillMaxSize() // Request to fill parent
+                                .onGloballyPositioned {
+                                    gridSize.value = it.size
+                                    latch.countDown()
+                                },
+                    ) {
+                        Box(Modifier.gridItem(1, 1).fillMaxSize())
+                    }
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Assert that Grid expanded to meet the minimum constraints
+            assertEquals(
+                "Grid should expand to meet min constraints",
+                IntSize(minSize, minSize),
+                gridSize.value,
+            )
+        }
+
+    @Test
+    fun testGrid_percentageTrack_inIndefiniteContainer_fallbacksToAuto() =
+        with(density) {
+            val positionedLatch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                // Wrap in a Row to provide infinite width constraint
+                Row {
+                    Grid(
+                        config = {
+                            // 50% of Infinity cannot be calculated.
+                            // Fallback to Auto (MaxContent) and fit the item.
+                            column(GridTrackSize.Percentage(0.5f))
+                            row(GridTrackSize.Fixed(50.dp))
+                        },
+                        modifier =
+                            Modifier.onGloballyPositioned { coordinates ->
+                                gridSize.value = coordinates.size
+                                positionedLatch.countDown()
+                            },
+                    ) {
+                        // The item is 10.dp wide. The track should expand to fit this.
+                        Box(Modifier.gridItem(1, 1).size(10.dp))
+                    }
+                }
+            }
+
+            assertTrue(positionedLatch.await(1, TimeUnit.SECONDS))
+
+            // Width should be 10.dp (Size of the content), NOT 0.
+            // Height should be 50.dp (Fixed)
+            assertEquals(IntSize(10.dp.roundToPx(), 50.dp.roundToPx()), gridSize.value)
+        }
+
+    @Test
+    fun testGrid_flexColumn_inInfiniteConstraints_withGap_doesNotExpand() =
+        with(density) {
+            // Scenario: Grid is inside a Row + horizontalScroll (Infinite Width).
+            // It has a Flex column and a GAP.
+            //
+            // Bug Trigger:
+            // 1. Available Width = Infinity.
+            // 2. Gap = 10px.
+            // 3. Calculation: availableTrackSpace = Infinity - 10 = 2,147,483,637.
+            // 4. Check: (availableTrackSpace == Infinity) is FALSE.
+            // 5. Result: Logic thinks it has 2 billion pixels of space to distribute.
+            // 6. Flex track expands to ~2 billion pixels.
+
+            val gap = 10.dp
+            val itemSize = 50.dp
+            val expectedWidth = itemSize.roundToPx() // Should shrink to fit content
+
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                // Parent provides Infinite Width constraint
+                Row(Modifier.horizontalScroll(rememberScrollState())) {
+                    Grid(
+                        config = {
+                            column(GridTrackSize.Flex(1.fr)) // Should behave like MinContent/Auto
+                            column(
+                                GridTrackSize.Fixed(0.dp)
+                            ) // Dummy column to ensure gap is applied
+                            row(GridTrackSize.Fixed(50.dp))
+                            columnGap(gap)
+                        },
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                gridSize.value = it.size
+                                latch.countDown()
+                            },
+                    ) {
+                        // Item in Flex column
+                        Box(Modifier.gridItem(1, 1).size(itemSize))
+                    }
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "Flex column in infinite constraints should fallback to min-content size",
+                expectedWidth + gap.roundToPx(), // 50 (Item) + 10 (Gap) + 0 (Col 2)
+                gridSize.value?.width,
+            )
+        }
+
+    @Test
+    fun testGrid_zeroSizeTrack_layoutCorrectly() =
+        with(density) {
+            val size = 50
+            val latch = CountDownLatch(2)
+            val pos = Array(2) { Ref<Offset>() }
+            val dummy = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(size.toDp()))
+                        column(GridTrackSize.Fixed(0.dp)) // Zero width column
+                        column(GridTrackSize.Fixed(size.toDp()))
+                        row(GridTrackSize.Fixed(size.toDp()))
+                    }
+                ) {
+                    // Item 1: Col 1
+                    Box(
+                        Modifier.gridItem(1, 1)
+                            .size(size.toDp())
+                            .saveLayoutInfo(dummy, pos[0], latch)
+                    )
+                    // Item 2: Col 3 (Skipping Col 2 which is 0 width)
+                    Box(
+                        Modifier.gridItem(1, 3)
+                            .size(size.toDp())
+                            .saveLayoutInfo(dummy, pos[1], latch)
+                    )
+                }
+            }
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            // Item 1 at 0
+            assertEquals(Offset(0f, 0f), pos[0].value)
+            // Item 2 at 50 + 0 = 50
+            assertEquals(Offset(size.toFloat(), 0f), pos[1].value)
+        }
+
+    @Test
+    fun testGrid_zeroSizeChildren() {
+        val trackSize = 50
+        val latch = CountDownLatch(1)
+        val gridSize = Ref<IntSize>()
+
+        show {
+            Grid(
+                config = {
+                    column(GridTrackSize.Fixed(trackSize.toDp()))
+                    row(GridTrackSize.Fixed(trackSize.toDp()))
+                },
+                modifier =
+                    Modifier.onGloballyPositioned {
+                        gridSize.value = it.size
+                        latch.countDown()
+                    },
+            ) {
+                // Place a zero-sized item.
+                // It should still occupy the logical cell (1,1), but draw nothing.
+                // The Grid should still size itself to the Fixed tracks (50x50).
+                Box(Modifier.gridItem(1, 1).size(0.dp))
+            }
+        }
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS))
+        assertEquals(IntSize(trackSize, trackSize), gridSize.value)
+    }
+
+    @Test
+    fun testGrid_itemFillsCell_whenRequested() {
+        val trackSize = 100
+        val latch = CountDownLatch(1)
+        val childSize = Ref<IntSize>()
+
+        show {
+            Grid(
+                config = {
+                    column(GridTrackSize.Fixed(trackSize.toDp()))
+                    row(GridTrackSize.Fixed(trackSize.toDp()))
+                }
+            ) {
+                // Item has no intrinsic size, but requests fillMaxSize().
+                // It should fill the definition of the track (100x100).
+                Box(Modifier.gridItem(1, 1).fillMaxSize().saveLayoutInfo(childSize, Ref(), latch))
+            }
+        }
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS))
+        assertEquals(IntSize(trackSize, trackSize), childSize.value)
+    }
+
+    @Test
     fun testGrid_nestedGrid() =
         with(density) {
             val outerSize = 100
@@ -1462,6 +2211,45 @@ class GridTest : LayoutTest() {
 
             assertTrue(latch.await(1, TimeUnit.SECONDS))
             assertEquals(IntSize(50, 100), innerItemSize.value)
+        }
+
+    @Test
+    fun testGrid_stressTest_manyItems() =
+        with(density) {
+            val itemSize = 10
+            val itemSizeDp = itemSize.toDp()
+            val itemCount = 100
+            val cols = 10
+
+            // 100 items / 10 cols = 10 rows.
+            // Total Height = 10 rows * 10px = 100px.
+            val expectedHeight = 100
+
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        // 10 Fixed columns
+                        repeat(cols) { column(GridTrackSize.Fixed(itemSizeDp)) }
+                        // Implicit rows
+                        flow = GridFlow.Row
+                    },
+                    modifier =
+                        Modifier.onGloballyPositioned {
+                            gridSize.value = it.size
+                            latch.countDown()
+                        },
+                ) {
+                    repeat(itemCount) { Box(Modifier.size(itemSizeDp)) }
+                }
+            }
+
+            assertTrue(latch.await(3, TimeUnit.SECONDS))
+
+            assertEquals(10 * itemSize, gridSize.value?.width)
+            assertEquals(expectedHeight, gridSize.value?.height)
         }
 
     @Test(expected = IllegalArgumentException::class)
