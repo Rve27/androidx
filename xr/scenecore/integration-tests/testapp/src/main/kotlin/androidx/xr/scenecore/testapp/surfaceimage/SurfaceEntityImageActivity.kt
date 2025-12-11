@@ -584,9 +584,6 @@ class SurfaceEntityImageActivity : ComponentActivity() {
                         val unused = surfaceEntity!!.addComponent(movableComponent!!)
                     }
 
-                    if (canvasShape is SurfaceEntity.Shape.Quad) {
-                        val unused = surfaceEntity!!.addComponent(movableComponent!!)
-                    }
                     imageShowing = true
                 }
 
