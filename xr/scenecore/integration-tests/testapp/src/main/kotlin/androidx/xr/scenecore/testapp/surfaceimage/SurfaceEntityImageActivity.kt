@@ -62,7 +62,7 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.Config.HeadTrackingMode
+import androidx.xr.runtime.Config.DeviceTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.FloatSize2d
@@ -186,7 +186,7 @@ class SurfaceEntityImageActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val session = (Session.create(this) as SessionCreateSuccess).session
-        session.configure(Config(headTracking = HeadTrackingMode.LAST_KNOWN))
+        session.configure(Config(deviceTracking = DeviceTrackingMode.LAST_KNOWN))
         session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
 
         checkExternalStoragePermission()
