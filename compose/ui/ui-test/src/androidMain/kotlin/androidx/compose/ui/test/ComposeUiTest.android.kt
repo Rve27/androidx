@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package androidx.compose.ui.test
 
 import android.annotation.SuppressLint
@@ -153,6 +155,13 @@ fun <A : ComponentActivity> AndroidComposeUiTestEnvironmentNoSuspendingLambda(
  *   platform specific timeout exception will be thrown.
  * @param block The suspendable test body.
  */
+@Deprecated(
+    message =
+        "Use `androidx.compose.ui.test.v2.runComposeUiTest` instead. The v2 APIs use " +
+            "`StandardTestDispatcher` by default to better simulate production behavior where " +
+            "coroutines are queued rather than executed immediately.",
+    level = DeprecationLevel.WARNING,
+)
 @SuppressLint("ComposeTestRuleDispatcher")
 @Suppress("RedundantUnitReturnType")
 @ExperimentalTestApi
@@ -190,6 +199,13 @@ actual fun runComposeUiTest(
  *   platform specific timeout exception will be thrown.
  * @param block The test function.
  */
+@Deprecated(
+    message =
+        "Use `androidx.compose.ui.test.v2.runAndroidComposeUiTest` instead. The v2 APIs use " +
+            "`StandardTestDispatcher` by default to better simulate production behavior where " +
+            "coroutines are queued rather than executed immediately.",
+    level = DeprecationLevel.WARNING,
+)
 @SuppressLint("ComposeTestRuleDispatcher")
 @Suppress("RedundantUnitReturnType")
 @ExperimentalTestApi
@@ -222,6 +238,13 @@ inline fun <reified A : ComponentActivity> runAndroidComposeUiTest(
  *   platform specific timeout exception will be thrown.
  * @param block The test function.
  */
+@Deprecated(
+    message =
+        "Use `androidx.compose.ui.test.v2.runAndroidComposeUiTest` instead. The v2 APIs use " +
+            "`StandardTestDispatcher` by default to better simulate production behavior where " +
+            "coroutines are queued rather than executed immediately.",
+    level = DeprecationLevel.WARNING,
+)
 @Suppress("RedundantUnitReturnType")
 @ExperimentalTestApi
 fun <A : ComponentActivity> runAndroidComposeUiTest(
@@ -286,6 +309,13 @@ fun <A : ComponentActivity> runAndroidComposeUiTest(
  * need to do this from within the [test lambda][block], or the test framework will not be able to
  * find the content.
  */
+@Deprecated(
+    message =
+        "Use `androidx.compose.ui.test.v2.runEmptyComposeUiTest` instead. The v2 APIs use " +
+            "`StandardTestDispatcher` by default to better simulate production behavior where " +
+            "coroutines are queued rather than executed immediately.",
+    level = DeprecationLevel.WARNING,
+)
 @Suppress("RedundantUnitReturnType")
 @ExperimentalTestApi
 fun runEmptyComposeUiTest(block: ComposeUiTest.() -> Unit): TestResult {
@@ -360,6 +390,13 @@ sealed interface AndroidComposeUiTest<A : ComponentActivity> : ComposeUiTest {
  * @param testTimeout The [Duration] within which the test is expected to complete, otherwise a
  *   platform specific timeout exception will be thrown.
  */
+@Deprecated(
+    message =
+        "Use `androidx.compose.ui.test.v2.AndroidComposeUiTestEnvironment` instead. The v2 APIs use " +
+            "`StandardTestDispatcher` by default to better simulate production behavior where " +
+            "coroutines are queued rather than executed immediately.",
+    level = DeprecationLevel.WARNING,
+)
 @ExperimentalTestApi
 fun <A : ComponentActivity> AndroidComposeUiTestEnvironment(
     effectContext: CoroutineContext = EmptyCoroutineContext,
