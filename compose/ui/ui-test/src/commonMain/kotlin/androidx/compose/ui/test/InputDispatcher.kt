@@ -250,8 +250,8 @@ internal abstract class InputDispatcher(
                     "Cursor input had buttons down, but not associated with a specific input type"
                 }
             ) {
-                CursorInputSource.Mouse -> cursorInputState.enqueueMouseCancel()
-                CursorInputSource.Trackpad -> cursorInputState.enqueueTrackpadCancel()
+                CursorInputSource.Mouse -> enqueueMouseCancel()
+                CursorInputSource.Trackpad -> enqueueTrackpadCancel()
             }
         } else if (cursorInputState.isEntered) {
             // If no cursor buttons were down, we may have been in hovered state
@@ -504,6 +504,10 @@ internal abstract class InputDispatcher(
         cursor.unsetButtonBit(buttonId)
         cursor.enqueueMouseRelease(buttonId)
 
+        if (cursor.hasNoButtonsPressed) {
+            cursor.currentCursorInputSource = null
+        }
+
         // When no buttons remaining, enter hover state immediately (Android-specific behavior)
         if (exitHoverOnPress) {
             if (cursor.hasNoButtonsPressed && isWithinRootBounds(currentCursorPosition)) {
@@ -530,6 +534,7 @@ internal abstract class InputDispatcher(
         check(isWithinRootBounds(position)) {
             "Cannot send mouse hover enter event, $position is out of bounds"
         }
+        cursor.currentCursorInputSource = CursorInputSource.Mouse
 
         updateMousePosition(position)
         cursor.enterMouseHover()
@@ -558,8 +563,14 @@ internal abstract class InputDispatcher(
         check(cursor.hasAnyButtonPressed) {
             "Cannot send mouse cancel event, no mouse buttons are pressed"
         }
+        check(cursor.currentCursorInputSource == CursorInputSource.Mouse) {
+            "Cannot send mouse cancel event, since the current cursor input isn't a mouse"
+        }
+
         cursor.clearButtonState()
         cursor.enqueueMouseCancel()
+
+        cursor.currentCursorInputSource = null
     }
 
     /**
@@ -571,6 +582,7 @@ internal abstract class InputDispatcher(
      */
     fun enqueueMouseScroll(delta: Float, scrollWheel: ScrollWheel) {
         val cursor = cursorInputState
+        cursor.currentCursorInputSource = CursorInputSource.Mouse
 
         if (moveOnScroll) {
             // On Android a scroll is always preceded by a move(/hover) event
@@ -583,6 +595,7 @@ internal abstract class InputDispatcher(
 
     fun enqueueMouseScroll(offset: Offset) {
         val cursor = cursorInputState
+        cursor.currentCursorInputSource = CursorInputSource.Mouse
 
         if (moveOnScroll) {
             // On Android a scroll is always preceded by a move(/hover) event
@@ -699,6 +712,10 @@ internal abstract class InputDispatcher(
         cursor.unsetButtonBit(buttonId)
         cursor.enqueueTrackpadRelease(buttonId)
 
+        if (cursor.hasNoButtonsPressed) {
+            cursor.currentCursorInputSource = null
+        }
+
         // When no buttons remaining, enter hover state immediately (Android-specific behavior)
         if (exitHoverOnPress) {
             if (cursor.hasNoButtonsPressed && isWithinRootBounds(currentCursorPosition)) {
@@ -725,6 +742,8 @@ internal abstract class InputDispatcher(
         check(isWithinRootBounds(position)) {
             "Cannot send trackpad hover enter event, $position is out of bounds"
         }
+
+        cursor.currentCursorInputSource = CursorInputSource.Trackpad
 
         updateTrackpadPosition(position)
         cursor.enterTrackpadHover()
@@ -755,12 +774,19 @@ internal abstract class InputDispatcher(
         check(cursor.hasAnyButtonPressed) {
             "Cannot send trackpad cancel event, no mouse buttons are pressed"
         }
+        check(cursor.currentCursorInputSource == CursorInputSource.Trackpad) {
+            "Cannot send trackpad cancel event, since the current cursor input isn't a trackpad"
+        }
+
         cursor.clearButtonState()
         cursor.enqueueTrackpadCancel()
+
+        cursor.currentCursorInputSource = null
     }
 
     fun enqueueTrackpadScroll(offset: Offset) {
         val cursor = cursorInputState
+        cursor.currentCursorInputSource = CursorInputSource.Trackpad
 
         if (isWithinRootBounds(currentCursorPosition)) {
             cursor.enqueueTrackpadScroll(offset)
@@ -769,6 +795,7 @@ internal abstract class InputDispatcher(
 
     fun enqueueTrackpadPinch(scaleFactor: Float) {
         val cursor = cursorInputState
+        cursor.currentCursorInputSource = CursorInputSource.Trackpad
 
         if (isWithinRootBounds(currentCursorPosition)) {
             cursor.enqueueTrackpadPinch(scaleFactor)
@@ -830,21 +857,25 @@ internal abstract class InputDispatcher(
     private fun CursorInputState.enterMouseHover() {
         enqueueMouseEnter()
         isEntered = true
+        currentCursorInputSource = CursorInputSource.Mouse
     }
 
     private fun CursorInputState.exitMouseHover() {
         enqueueMouseExit()
         isEntered = false
+        currentCursorInputSource = null
     }
 
     private fun CursorInputState.enterTrackpadHover() {
         enqueueTrackpadEnter()
         isEntered = true
+        currentCursorInputSource = CursorInputSource.Trackpad
     }
 
     private fun CursorInputState.exitTrackpadHover() {
         enqueueTrackpadExit()
         isEntered = false
+        currentCursorInputSource = null
     }
 
     /**
