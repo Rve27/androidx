@@ -22,6 +22,7 @@ import androidx.compose.remote.core.CoreDocument;
 import androidx.compose.remote.core.RemoteComposeBuffer;
 import androidx.compose.remote.core.RemoteContext;
 import androidx.compose.remote.core.SystemClock;
+import androidx.compose.remote.core.operations.ColorTheme;
 import androidx.compose.remote.core.operations.layout.Component;
 import androidx.compose.remote.core.serialize.MapSerializer;
 
@@ -31,6 +32,7 @@ import org.jspecify.annotations.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -155,6 +157,17 @@ public class RemoteDocument {
     @Nullable
     public String[] getNamedColors() {
         return mDocument.getNamedColors();
+    }
+
+    /**
+     * Gets a array of Names of the  Themed Colors defined in the loaded doc.
+     *
+     * @return
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @NonNull
+    public ArrayList<ColorTheme> getThemedColors() {
+        return mDocument.getThemedColors();
     }
 
     /**
