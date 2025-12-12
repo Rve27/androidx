@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:OptIn(ExperimentalRemoteCreationApi::class, ExperimentalRemoteCreationComposeApi::class)
 
 package androidx.glance.wear.parcel
 
 import android.content.Context
 import android.os.Bundle
 import androidx.compose.remote.creation.CreationDisplayInfo
-import androidx.compose.remote.creation.ExperimentalRemoteCreationApi
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.capture.CapturedDocument
 import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.creation.compose.layout.RemoteComposable

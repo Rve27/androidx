@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
+
 package androidx.compose.remote.creation.compose.capture
 
 import android.content.Context
@@ -41,7 +43,6 @@ import kotlinx.coroutines.suspendCancellableCoroutine
  * @param content the Composable content to render and capture.
  * @return a [ByteArray] containing the RemoteCompose document.
  */
-@ExperimentalRemoteCreationComposeApi
 public suspend fun captureSingleRemoteDocument(
     context: Context,
     creationDisplayInfo: CreationDisplayInfo = createCreationDisplayInfo(context),
