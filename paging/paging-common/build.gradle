@@ -46,8 +46,6 @@ androidXMultiplatform {
         namespace = "androidx.paging.common"
     }
 
-    enableBinaryCompatibilityValidator = false
-
     defaultPlatform(PlatformIdentifier.ANDROID)
 
     sourceSets {
