@@ -33,10 +33,10 @@ import androidx.xr.runtime.PlaneTrackingMode
 import kotlin.time.ComparableTimeMark
 
 /**
- * Implementation of the [androidx.xr.arcore.runtime.PerceptionRuntime] interface using OpenXR.
+ * Implementation of the [PerceptionRuntime] interface using OpenXR.
  *
- * @property lifecycleManager that manages the lifecycle of the OpenXR session.
- * @property perceptionManager that manages the perception capabilities of a runtime using OpenXR.
+ * @property lifecycleManager that manages the lifecycle of the OpenXR session
+ * @property perceptionManager that manages the perception capabilities of a runtime using OpenXR
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class OpenXrRuntime
