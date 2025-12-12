@@ -42,7 +42,9 @@ dependencies {
 }
 
 android {
-    compileSdk = 36
+    compileSdk {
+        version = preview("Baklava")
+    }
     namespace = "androidx.core.testing"
 }
 

@@ -454,3 +454,15 @@ w: KLIB resolver: The same 'unique_name=kotlin\-stdlib\-common' found in more th
 # > Task :wear:watchfacepush:watchfacepush:processReleaseAndroidTestManifest
 \$SUPPORT/wear/watchfacepush/watchfacepush/src/androidTest/AndroidManifest\.xml:[0-9]+:[0-9]+\-[0-9]+:[0-9]+ Warning:
 uses\-library\#wear\-sdk@android:required was tagged at AndroidManifest\.xml:[0-9]+ to replace other declarations but no other declaration present
+# > Task :activity:integration-tests:testapp:compileBenchmarkReleaseKotlin. Should go away once we fix the :core:core dependency of :activity:activity
+.*Incremental compilation was attempted but failed.*
+.*The following FqNames can't be derived from DirtyData.*
+DirtyData = DirtyData\(dirtyLookupSymbols.*
+at org\.jetbrains\.kotlin\.incremental\.dirtyFiles\.JvmSourcesToCompileCalculator.*
+at org\.jetbrains\.kotlin\.incremental\.dirtyFiles\.ClasspathSnapshotBasedImpactDeterminer.*
+at org\.jetbrains\.kotlin\.incremental\.classpathDiff\.ClasspathChangesComputer.*
+at org\.jetbrains\.kotlin\.incremental\.IncrementalJvmCompilerRunner.*
+at org\.jetbrains\.kotlin\.incremental\.IncrementalCompilerRunner\.tryCompileIncrementally.*
+Falling back to non-incremental compilation \(reason = IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE\)
+To help us fix this issue, please file a bug at https://youtrack.jetbrains.com/issues/KT with the above stack trace.
+\(Be sure to search for the above exception in existing issues first to avoid filing duplicated bugs.\)
