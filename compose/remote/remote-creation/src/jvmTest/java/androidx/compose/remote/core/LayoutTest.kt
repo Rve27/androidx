@@ -17,6 +17,8 @@
 package androidx.compose.remote.core
 
 import androidx.compose.remote.core.layout.ApplyTouchDown
+import androidx.compose.remote.core.layout.ApplyTouchDrag
+import androidx.compose.remote.core.layout.ApplyTouchUp
 import androidx.compose.remote.core.layout.CaptureComponentTree
 import androidx.compose.remote.core.layout.Color
 import androidx.compose.remote.core.layout.LayoutTestPlayer
@@ -387,6 +389,55 @@ class LayoutTest : LayoutTestPlayer() {
                 },
                 CaptureComponentTree(),
                 ResizeDocument(600, 800),
+                CaptureComponentTree(),
+            )
+        checkLayout(
+            1000,
+            1000,
+            8,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "Layout",
+            ops,
+            TestClock(1234),
+        )
+    }
+
+    @Test
+    fun testScrollComponents() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(
+                        Modifier.fillMaxSize().background(Color.YELLOW).padding(16).verticalScroll()
+                    ) {
+                        canvas(Modifier.fillMaxWidth().height(2000).background(Color.BLUE)) {
+                            val w = ComponentWidth()
+                            val h = ComponentHeight()
+                            drawLine(0f, 0f, w.toFloat(), h.toFloat())
+                            drawLine(0f, h.toFloat(), w.toFloat(), 0f)
+                            box(
+                                Modifier.background(Color.YELLOW).size(300, 200).computePosition {
+                                    x = w / 2f - width as RFloat / 2f
+                                    y = h / 2f - height as RFloat / 2f
+                                }
+                            ) {
+                                text(
+                                    "Hello, World!",
+                                    autosize = true,
+                                    textAlign = CoreText.TEXT_ALIGN_CENTER,
+                                )
+                            }
+                        }
+                    }
+                },
+                CaptureComponentTree(),
+                ResizeDocument(600, 800),
+                CaptureComponentTree(),
+                ApplyTouchDown(200f, 400f),
+                ApplyTouchDrag(200f, 200f),
+                ApplyTouchUp(200f, 200f),
+                CaptureComponentTree(),
+                ResizeDocument(800, 1000),
                 CaptureComponentTree(),
             )
         checkLayout(

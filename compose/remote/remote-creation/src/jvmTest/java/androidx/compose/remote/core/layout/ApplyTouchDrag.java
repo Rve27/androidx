@@ -26,11 +26,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ApplyTouchDown extends TestOperation {
+public class ApplyTouchDrag extends TestOperation {
 
     private final float mX;
     private final float mY;
-    public ApplyTouchDown(float x, float y) {
+    public ApplyTouchDrag(float x, float y) {
         mX = x;
         mY = y;
     }
@@ -39,13 +39,13 @@ public class ApplyTouchDown extends TestOperation {
     public boolean apply(@NonNull RemoteContext context, @NonNull CoreDocument document,
             @NonNull TestParameters testParameters, @Nullable List<Map<String, Object>> commands) {
         if (commands != null) {
-            Map<String, Object> applyTouchDown = new LinkedHashMap<>();
-            applyTouchDown.put("x", mX);
-            applyTouchDown.put("y", mY);
+            Map<String, Object> applyTouchDrag = new LinkedHashMap<>();
+            applyTouchDrag.put("x", mX);
+            applyTouchDrag.put("y", mY);
             Map<String, Object> testResult = new LinkedHashMap<>();
-            commands.add(command("Apply TouchDown", applyTouchDown, testResult));
+            commands.add(command("Apply TouchDrag", applyTouchDrag, testResult));
         }
-        document.touchDown(context, mX, mY);
+        document.touchDrag(context, mX, mY);
         return false;
     }
 }
