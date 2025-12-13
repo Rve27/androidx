@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.animation.core.benchmark
+package androidx.compose.animation.benchmark
 
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.Composable
