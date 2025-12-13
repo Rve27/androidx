@@ -31,6 +31,7 @@ import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.widget.EdgeEffect;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -164,6 +165,7 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
         mStart = nanoTime(clock);
         mLastFrameCall = clock.millis();
         mARContext = new AndroidRemoteContext(clock);
+        mARContext.setEdgeEffectBuilder(() -> new EdgeEffect(getContext()));
     }
 
     /**
