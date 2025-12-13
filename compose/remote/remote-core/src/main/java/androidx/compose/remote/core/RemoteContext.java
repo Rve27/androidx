@@ -464,6 +464,17 @@ public abstract class RemoteContext {
         this.mMode = mode;
     }
 
+    /**
+     * Create an edge effect
+     * Used in scroll views when hitting start/end of the scroll area
+     *
+     * @param direction : TOP/BOTTOM/LEFT/RIGHT
+     * @return a platform-specific implementation or null
+     */
+    public @Nullable ScrollingEdgeEffect createEdgeEffect(int direction) {
+        return null;
+    }
+
     @Nullable
     public PaintContext getPaintContext() {
         return mPaintContext;
