@@ -82,11 +82,26 @@ public class CoreDocument implements Serializable {
 
     private static final boolean UPDATE_VARIABLES_BEFORE_LAYOUT = false;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // Default feature values
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static final int DEFAULT_FEATURE_PAINT_MEASURE = 1;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
     @NonNull
     ArrayList<Operation> mOperations = new ArrayList<>();
 
     @Nullable
     RootLayoutComponent mRootLayoutComponent = null;
+
+    @Nullable
+    Header mHeader = null;
+
+    boolean mUseFeaturePaintMeasure = false;
+
+    boolean mNeedsInitialMeasure = true;
 
     @NonNull
     RemoteComposeState mRemoteComposeState = new RemoteComposeState();
@@ -131,6 +146,16 @@ public class CoreDocument implements Serializable {
     private int mHostExceptionID = 0;
     private int mBitmapMemory = 0;
 
+    private @Nullable LayoutCallback mLayoutCallback;
+
+    /**
+     * Set a layout callback for integration in the host platform measure/layout cycle
+     * @param layoutCallback
+     */
+    public void setLayoutCallback(@NonNull LayoutCallback layoutCallback) {
+        mLayoutCallback = layoutCallback;
+    }
+
     public CoreDocument() {
         this(new SystemClock());
     }
@@ -169,7 +194,10 @@ public class CoreDocument implements Serializable {
     }
 
     public int getWidth() {
-        return mWidth;
+        if (mUseFeaturePaintMeasure || mRootLayoutComponent == null) {
+            return mWidth;
+        }
+        return (int) mRootLayoutComponent.getWidth();
     }
 
     /**
@@ -183,7 +211,10 @@ public class CoreDocument implements Serializable {
     }
 
     public int getHeight() {
-        return mHeight;
+        if (mUseFeaturePaintMeasure || mRootLayoutComponent == null) {
+            return mHeight;
+        }
+        return (int) mRootLayoutComponent.getHeight();
     }
 
     /**
@@ -602,6 +633,31 @@ public class CoreDocument implements Serializable {
         return mBitmapMemory;
     }
 
+    /**
+     * Check if the feature is enabled
+     *
+     * @param featureId
+     * @return
+     */
+    public boolean useFeature(short featureId, int defaultValue) {
+        if (mHeader == null) {
+            return false;
+        }
+        return mHeader.getInt(featureId, defaultValue) == 1;
+    }
+
+    /**
+     * Check if the feature is enabled
+     *
+     * @return
+     */
+    public boolean useFeature(short featureId) {
+        if (featureId == Header.FEATURE_PAINT_MEASURE) {
+            return useFeature(featureId, DEFAULT_FEATURE_PAINT_MEASURE);
+        }
+        return useFeature(featureId, 0);
+    }
+
     private interface Visitor {
         void visit(Operation op);
     }
@@ -866,6 +922,7 @@ public class CoreDocument implements Serializable {
                 // Make sure we parse the version at init time...
                 Header header = (Header) op;
                 header.setVersion(this);
+                mHeader = header;
             }
             if (op instanceof IntegerExpression) {
                 IntegerExpression expression = (IntegerExpression) op;
@@ -879,6 +936,7 @@ public class CoreDocument implements Serializable {
                 hasTouchOperations = true;
             }
         }
+        mUseFeaturePaintMeasure = useFeature(Header.FEATURE_PAINT_MEASURE);
         mBitmapMemory = 0;
         mOperations = inflateComponents(mOperations);
 
@@ -1448,6 +1506,32 @@ public class CoreDocument implements Serializable {
     }
 
     /**
+     * Measure the document
+     *
+     * @param context
+     * @param minWidth
+     * @param maxWidth
+     * @param minHeight
+     * @param maxHeight
+     */
+    public void measure(@NonNull RemoteContext context, float minWidth, float maxWidth,
+            float minHeight, float maxHeight) {
+        int h = getHeight();
+        int w = getWidth();
+        if (mRootLayoutComponent != null) {
+            context.mWidth = maxWidth;
+            context.mHeight = maxHeight;
+            mRootLayoutComponent.invalidateMeasure();
+            mRootLayoutComponent.measure(context, minWidth, maxWidth, minHeight, maxHeight);
+            setWidth((int) mRootLayoutComponent.getWidth());
+            setHeight((int) mRootLayoutComponent.getHeight());
+            if ((getHeight() != h || getWidth() != w) && mLayoutCallback != null) {
+                mLayoutCallback.onRequestLayout();
+            }
+        }
+    }
+
+    /**
      * Paint the document
      *
      * @param context the provided PaintContext
@@ -1517,7 +1601,17 @@ public class CoreDocument implements Serializable {
                 }
             }
             if (mRootLayoutComponent.needsMeasure()) {
-                mRootLayoutComponent.layout(context);
+                if (mUseFeaturePaintMeasure) {
+                    mRootLayoutComponent.layout(context);
+                } else {
+                    if (mNeedsInitialMeasure || mLayoutCallback == null) {
+                        mRootLayoutComponent.layout(context);
+                        mNeedsInitialMeasure = false;
+                    }
+                    if (mLayoutCallback != null) {
+                        mLayoutCallback.onRequestLayout();
+                    }
+                }
             }
             if (mRootLayoutComponent.needsBoundsAnimation()) {
                 mRepaintNext = 1;

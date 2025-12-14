@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.CoreDocument;
+import androidx.compose.remote.core.LayoutCallback;
 import androidx.compose.remote.core.RemoteContext;
 import androidx.compose.remote.core.SystemClock;
 import androidx.compose.remote.core.operations.Header;
@@ -60,7 +61,8 @@ import java.util.Set;
  * (touch/click).
  */
 @RestrictTo(LIBRARY_GROUP)
-public class RemoteComposeView extends FrameLayout implements View.OnAttachStateChangeListener {
+public class RemoteComposeView extends FrameLayout implements View.OnAttachStateChangeListener,
+        LayoutCallback {
 
     static final boolean USE_VIEW_AREA_CLICK = true; // Use views to represent click areas
     static final float DEFAULT_FRAME_RATE = 60f;
@@ -216,6 +218,8 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
         mARContext.setDensity(mDensity);
         mARContext.setUseChoreographer(true);
         setContentDescription(mDocument.getDocument().getContentDescription());
+
+        mDocument.getDocument().setLayoutCallback(this);
 
         updateClickAreas();
         requestLayout();
@@ -518,6 +522,11 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
         mDocument.getDocument().applyUpdate(document.getDocument());
     }
 
+    @Override
+    public void onRequestLayout() {
+        requestLayout();
+    }
+
     /**
      * Interface to receive click events on components.
      */
@@ -668,8 +677,58 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
         }
         int preWidth = getWidth();
         int preHeight = getHeight();
-        int w = measureDimension(widthMeasureSpec, mDocument.getWidth());
-        int h = measureDimension(heightMeasureSpec, mDocument.getHeight());
+
+        int w;
+        int h;
+
+        if (!mDocument.useFeature(Header.FEATURE_PAINT_MEASURE)) {
+            int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+            int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+            int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+            int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+            float maxWidth = Float.MAX_VALUE;
+            float maxHeight = Float.MAX_VALUE;
+            switch (widthMode) {
+                case MeasureSpec.EXACTLY:
+                    maxWidth = widthSize;
+                    break;
+                case MeasureSpec.AT_MOST:
+                    maxWidth = widthSize;
+                    break;
+                case MeasureSpec.UNSPECIFIED:
+                    break;
+            }
+            switch (heightMode) {
+                case MeasureSpec.EXACTLY:
+                    maxHeight = heightSize;
+                    break;
+                case MeasureSpec.AT_MOST:
+                    maxHeight = heightSize;
+                    break;
+                case MeasureSpec.UNSPECIFIED:
+                    break;
+            }
+
+            if (mARContext.getPaintContext() != null) {
+                mDocument.getDocument().measure(mARContext, 0, maxWidth, 0,
+                        maxHeight);
+            }
+
+            w = measureDimension(widthMeasureSpec, mDocument.getWidth());
+            h = measureDimension(heightMeasureSpec, mDocument.getHeight());
+
+            if (mARContext.getPaintContext() == null) {
+                if (w == 0) {
+                    w = (int) maxWidth;
+                }
+                if (h == 0) {
+                    h = (int) maxHeight;
+                }
+            }
+        } else {
+            w = measureDimension(widthMeasureSpec, mDocument.getWidth());
+            h = measureDimension(heightMeasureSpec, mDocument.getHeight());
+        }
 
         if (!USE_VIEW_AREA_CLICK) {
             if (mDocument.getDocument().getContentSizing() == RootContentBehavior.SIZING_SCALE) {
