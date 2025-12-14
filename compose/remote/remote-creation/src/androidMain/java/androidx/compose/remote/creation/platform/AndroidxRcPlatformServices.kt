@@ -100,6 +100,9 @@ public open class AndroidxRcPlatformServices(private val logger: RCLogger = RCLo
     }
 
     override fun pathToFloatArray(path: Any): FloatArray? {
+        if (path is RcPlatformServices.RcPathArrayCreator) {
+            return path.createFloatArray()
+        }
         if (path is RemotePath) {
             return path.createFloatArray()
         }
