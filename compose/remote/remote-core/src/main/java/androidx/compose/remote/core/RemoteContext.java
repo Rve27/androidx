@@ -53,7 +53,7 @@ public abstract class RemoteContext {
     private long mDocLoadTime;
     @Nullable protected PaintContext mPaintContext = null;
     protected float mDensity = Float.NaN;
-
+    private int mPaintTheme = -3;
     @NonNull ContextMode mMode = ContextMode.UNSET;
 
     int mDebug = 0;
@@ -412,6 +412,22 @@ public abstract class RemoteContext {
             }
         }
         putObject(fontId, new FontInfo(fontId, fontData));
+    }
+
+    /**
+     * Set the theme under which it will be painted
+     * @param theme the theme
+     */
+    public void setPaintTheme(int theme) {
+        mPaintTheme = theme;
+    }
+
+    /**
+     * Get the theme under which it will be painted
+     * @return the paint theme
+     */
+    public int getPaintTheme() {
+        return mPaintTheme;
     }
 
     /** The font information */
