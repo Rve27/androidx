@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package androidx.sqlite
 import kotlin.jvm.JvmName
 
 /** An interface to open database connections. */
-public interface SQLiteDriver {
+public actual interface SQLiteDriver {
 
     /**
      * Identifies whether the driver has an internal connection pool or not.
@@ -35,16 +35,18 @@ public interface SQLiteDriver {
      */
     @Suppress("INAPPLICABLE_JVM_NAME") // Due to KT-31420
     @get:JvmName("hasConnectionPool")
-    public val hasConnectionPool: Boolean
+    public actual val hasConnectionPool: Boolean
         get() = false
 
     /**
-     * Opens a new database connection.
+     * Opens a new database connection asynchronously.
      *
      * To open an in-memory database use the special name `:memory:` as the [fileName].
      *
      * @param fileName Name of the database file.
      * @return the database connection.
      */
-    public fun open(fileName: String): SQLiteConnection
+    public actual suspend fun openAsync(fileName: String): SQLiteConnection {
+        throw NotImplementedError("$this does not implement openAsync().")
+    }
 }
