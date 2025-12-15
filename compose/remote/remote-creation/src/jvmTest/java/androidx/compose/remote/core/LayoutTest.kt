@@ -450,4 +450,112 @@ class LayoutTest : LayoutTestPlayer() {
             TestClock(1234),
         )
     }
+
+    @Test
+    fun testMeasure1() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(
+                        Modifier.background(Color.YELLOW).padding(16),
+                        horizontal = ColumnLayout.CENTER,
+                        vertical = ColumnLayout.CENTER,
+                    ) {
+                        box(Modifier.size(300, 200).background(Color.RED))
+                    }
+                },
+                CaptureComponentTree(),
+                ResizeDocument(600, 800),
+            )
+        checkLayout(
+            100,
+            100,
+            8,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "Layout",
+            ops,
+            TestClock(1234),
+        )
+    }
+
+    @Test
+    fun testMeasure2() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(
+                        Modifier.fillMaxWidth().background(Color.YELLOW).padding(16),
+                        horizontal = ColumnLayout.CENTER,
+                        vertical = ColumnLayout.CENTER,
+                    ) {
+                        box(Modifier.size(300, 200).background(Color.RED))
+                    }
+                },
+                CaptureComponentTree(),
+                ResizeDocument(600, 800),
+            )
+        checkLayout(
+            100,
+            100,
+            8,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "Layout",
+            ops,
+            TestClock(1234),
+        )
+    }
+
+    @Test
+    fun testMeasure3() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(
+                        Modifier.fillMaxHeight().background(Color.YELLOW).padding(16),
+                        horizontal = ColumnLayout.CENTER,
+                        vertical = ColumnLayout.CENTER,
+                    ) {
+                        box(Modifier.size(300, 200).background(Color.RED))
+                    }
+                },
+                CaptureComponentTree(),
+                ResizeDocument(600, 800),
+            )
+        checkLayout(
+            100,
+            100,
+            8,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "Layout",
+            ops,
+            TestClock(1234),
+        )
+    }
+
+    @Test
+    fun testMeasure4() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(
+                        Modifier.fillMaxSize().background(Color.YELLOW).padding(16),
+                        horizontal = ColumnLayout.CENTER,
+                        vertical = ColumnLayout.CENTER,
+                    ) {
+                        box(Modifier.size(300, 200).background(Color.RED))
+                    }
+                },
+                CaptureComponentTree(),
+                ResizeDocument(600, 800),
+            )
+        checkLayout(
+            100,
+            100,
+            8,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "Layout",
+            ops,
+            TestClock(1234),
+        )
+    }
 }
