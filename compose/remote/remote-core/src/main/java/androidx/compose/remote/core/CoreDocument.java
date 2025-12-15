@@ -18,6 +18,7 @@ package androidx.compose.remote.core;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.compose.remote.core.operations.BitmapData;
+import androidx.compose.remote.core.operations.ColorTheme;
 import androidx.compose.remote.core.operations.ComponentValue;
 import androidx.compose.remote.core.operations.DataListFloat;
 import androidx.compose.remote.core.operations.DrawContent;
@@ -132,6 +133,8 @@ public class CoreDocument implements Serializable {
     private final HashMap<Long, IntegerExpression> mIntegerExpressions = new HashMap<>();
 
     private final HashMap<Integer, FloatExpression> mFloatExpressions = new HashMap<>();
+
+    private @Nullable ArrayList<ColorTheme> mThemeColors = null;
 
     private final @NonNull Clock mClock;
 
@@ -1431,6 +1434,39 @@ public class CoreDocument implements Serializable {
     }
 
     /**
+     * Gets all colors theme objects
+     */
+    @Nullable
+    public ArrayList<ColorTheme> getThemedColors() {
+        if (mThemeColors == null) {
+            ArrayList<ColorTheme> newColors = new ArrayList<>();
+            IntMap<String> strings = new IntMap<>();
+            getColorThemes(mOperations, newColors, strings);
+            mThemeColors = newColors;
+        }
+        return mThemeColors;
+    }
+
+    /**
+     * Gets all colors theme
+     */
+    private void getColorThemes(@NonNull ArrayList<Operation> ops,
+            @NonNull List<ColorTheme> list,
+            IntMap<String> strings) {
+        for (Operation op : ops) {
+            if (op instanceof ColorTheme) {
+                ColorTheme colorTheme = (ColorTheme) op;
+                colorTheme.mColorGroupName = strings.get(colorTheme.mColorGroupId);
+                list.add(colorTheme);
+            } else if (op instanceof TextData) {
+                strings.put(((TextData) op).mTextId, ((TextData) op).mText);
+            } else if (op instanceof Container) {
+                getColorThemes(((Container) op).getList(), list, strings);
+            }
+        }
+    }
+
+    /**
      * Gets the names of all named Variables.
      *
      * @return array of named variables or null
@@ -1538,6 +1574,12 @@ public class CoreDocument implements Serializable {
      * @param theme   the theme we want to use for this document.
      */
     public void paint(@NonNull RemoteContext context, int theme) {
+        if (theme != context.getPaintTheme() && mThemeColors != null) {
+            for (ColorTheme themeColor : mThemeColors) {
+                themeColor.setTheme(context, theme);
+            }
+            context.setPaintTheme(theme);
+        }
         context.clearLastOpCount();
         assert context.getPaintContext() != null;
         context.getPaintContext().clearNeedsRepaint();
