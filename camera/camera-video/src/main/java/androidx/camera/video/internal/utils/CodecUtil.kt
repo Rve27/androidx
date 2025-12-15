@@ -17,6 +17,7 @@ package androidx.camera.video.internal.utils
 
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
+import android.media.MediaCodecList
 import android.util.LruCache
 import androidx.annotation.GuardedBy
 import androidx.camera.video.internal.encoder.EncoderConfig
@@ -34,6 +35,22 @@ public object CodecUtil {
     @GuardedBy("codecInfoCache")
     private val codecInfoCache: LruCache<String, MediaCodecInfo> =
         LruCache(MAX_CODEC_INFO_CACHE_COUNT)
+
+    private val allEncoderInfos: List<MediaCodecInfo> by lazy {
+        MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos.filter { it.isEncoder }
+    }
+
+    private val allEncoderMimeTypes: List<String> by lazy {
+        allEncoderInfos.flatMap { it.supportedTypes?.toList() ?: emptyList() }.distinct()
+    }
+
+    private val allVideoEncoderMimeTypes: List<String> by lazy {
+        allEncoderMimeTypes.filter { it.startsWith("video/") }
+    }
+
+    private val allAudioEncoderMimeTypes: List<String> by lazy {
+        allEncoderMimeTypes.filter { it.startsWith("audio/") }
+    }
 
     /**
      * Creates a codec instance suitable for the encoder config.
@@ -73,6 +90,10 @@ public object CodecUtil {
             codec?.release()
         }
     }
+
+    @JvmStatic public fun getVideoEncoderMimeTypes(): List<String> = allVideoEncoderMimeTypes
+
+    @JvmStatic public fun getAudioEncoderMimeTypes(): List<String> = allAudioEncoderMimeTypes
 
     @Throws(InvalidConfigException::class)
     private fun createCodec(mimeType: String): MediaCodec {
