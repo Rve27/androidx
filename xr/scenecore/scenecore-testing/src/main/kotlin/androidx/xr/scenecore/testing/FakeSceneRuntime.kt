@@ -26,7 +26,6 @@ import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.runtime.ActivityPanelEntity
 import androidx.xr.scenecore.runtime.AnchorEntity
-import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper
 import androidx.xr.scenecore.runtime.CameraViewScenePose
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.Entity
@@ -35,7 +34,6 @@ import androidx.xr.scenecore.runtime.HeadScenePose
 import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.InteractableComponent
 import androidx.xr.scenecore.runtime.LoggingEntity
-import androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper
 import androidx.xr.scenecore.runtime.PanelEntity
 import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose
 import androidx.xr.scenecore.runtime.PixelDimensions
@@ -47,7 +45,6 @@ import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.runtime.SceneRuntime
 import androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper
 import androidx.xr.scenecore.runtime.SpatialCapabilities
-import androidx.xr.scenecore.runtime.SpatialEnvironment
 import androidx.xr.scenecore.runtime.SpatialModeChangeListener
 import androidx.xr.scenecore.runtime.SpatialPointerComponent
 import androidx.xr.scenecore.runtime.SpatialVisibility
@@ -107,15 +104,15 @@ public class FakeSceneRuntime(
     override val soundPoolExtensionsWrapper: SoundPoolExtensionsWrapper =
         FakeSoundPoolExtensionsWrapper()
 
-    override val audioTrackExtensionsWrapper: AudioTrackExtensionsWrapper =
+    override val audioTrackExtensionsWrapper: FakeAudioTrackExtensionsWrapper =
         FakeAudioTrackExtensionsWrapper()
 
-    override val mediaPlayerExtensionsWrapper: MediaPlayerExtensionsWrapper =
+    override val mediaPlayerExtensionsWrapper: FakeMediaPlayerExtensionsWrapper =
         FakeMediaPlayerExtensionsWrapper()
 
     override val mainPanelEntity: PanelEntity = FakePanelEntity()
 
-    override val spatialEnvironment: SpatialEnvironment = FakeSpatialEnvironment()
+    override val spatialEnvironment: FakeSpatialEnvironment = FakeSpatialEnvironment()
 
     override var spatialModeChangeListener: SpatialModeChangeListener? =
         FakeSpatialModeChangeListener()
