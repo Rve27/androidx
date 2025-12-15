@@ -34,9 +34,20 @@ import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.remote.creation.modifiers.RoundedRectShape
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
 import androidx.compose.remote.integration.view.demos.R
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import java.util.Random
 
 private lateinit var color: RcTickerColorPack
+
+@Preview
+@Composable
+@Preview
+fun RcTickerPreview() {
+    val context = LocalContext.current
+    RemoteDocPreview(RcTicker(context))
+}
 
 @Suppress("RestrictedApiAndroidX")
 fun RcTicker(context: Context): RemoteComposeContext {
