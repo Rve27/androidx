@@ -23,7 +23,9 @@ plugins {
 }
 
 android {
-    compileSdk = 36
+    compileSdk {
+        version = preview("Baklava")
+    }
     namespace = "androidx.datastore.macrobenchmark.target"
 }
 
