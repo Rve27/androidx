@@ -20,15 +20,16 @@ import com.google.common.truth.Truth.assertThat
 import java.io.File
 import kotlin.test.Ignore
 import kotlin.test.assertFailsWith
-import org.jetbrains.kotlin.abi.tools.AbiToolsFactory
-import org.jetbrains.kotlin.abi.tools.api.v2.KlibTarget
+import kotlinx.validation.ExperimentalBCVApi
+import kotlinx.validation.api.klib.KlibDump
+import kotlinx.validation.api.klib.KlibDumpFilters
 import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
 import org.jetbrains.kotlin.library.abi.LibraryAbiReader
 import org.junit.Test
 
 private const val KOTLIN_STDLIB_PROPERTY = "kotlin.stdlib.klib.dir"
 
-@OptIn(ExperimentalLibraryAbiReader::class)
+@OptIn(ExperimentalLibraryAbiReader::class, ExperimentalBCVApi::class)
 class BinaryCompatibilityCheckerTest {
     private val klibFile by lazy { getJavaResource("collection.klib") }
     private val validBaselineFile by lazy { getJavaResource("valid_baseline.txt") }
@@ -41,15 +42,14 @@ class BinaryCompatibilityCheckerTest {
         File(klibDir)
     }
 
-    val abiTools = AbiToolsFactory().get().v2
-
     @Test
     fun klibDumpIsCompatibleWithItself() {
         val libraryAbi = LibraryAbiReader.readAbiInfo(klibFile, emptyList())
+        val dump = KlibDump.fromKlib(klibFile, "linuxX64", KlibDumpFilters {})
         val dumpText =
             StringBuilder().let {
-                val dump = abiTools.extractKlibAbi(klibFile, KlibTarget("linuxX64"))
-                StringBuilder().let { dump.print(it) }.toString()
+                dump.saveTo(it)
+                it.toString()
             }
 
         val parsedLibraryAbis = KlibDumpParser(dumpText).parse()

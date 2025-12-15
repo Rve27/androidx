@@ -21,7 +21,6 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -41,7 +40,7 @@ abstract class CheckAbiEquivalenceTask : DefaultTask() {
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
-    abstract var checkedInDump: RegularFile
+    abstract var checkedInDump: Provider<RegularFileProperty>
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
@@ -68,7 +67,7 @@ abstract class CheckAbiEquivalenceTask : DefaultTask() {
     }
 
     private fun checkEqual() {
-        val expected = checkedInDump.asFile
+        val expected = checkedInDump.get().asFile.get()
         val actual = builtDump.get().asFile.get()
         val debugOutFile = debugOutFile.get().asFile
         if (!FileUtils.contentEquals(expected, actual)) {

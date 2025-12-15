@@ -55,7 +55,7 @@ androidXMultiplatform {
     jvm()
     sourceSets {
         jvmMain.dependencies {
-            implementation(libs.kotlinAbiTools)
+                implementation(libs.binaryCompatibilityValidator)
         }
         jvmTest.dependencies {
             implementation(libs.truth)

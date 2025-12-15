@@ -44,7 +44,7 @@ dependencies {
     implementation(libs.spdxGradlePluginz)
     runtimeOnly(libs.androidKotlinMultiplatform)
     runtimeOnly(libs.androidLegacyKaptPlugin)
-    compileOnly(libs.kotlinAbiTools)
+    implementation(libs.binaryCompatibilityValidator)
 
     // For Room Gradle Plugin
     implementation(libs.kspGradlePlugin) {
