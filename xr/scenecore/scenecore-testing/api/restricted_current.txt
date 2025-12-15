@@ -275,6 +275,10 @@ package androidx.xr.scenecore.testing {
     ctor public FakePointerCaptureComponent();
     ctor public FakePointerCaptureComponent(optional java.util.concurrent.Executor? executor, optional androidx.xr.scenecore.runtime.PointerCaptureComponent.StateListener? stateListener);
     ctor @BytecodeOnly public FakePointerCaptureComponent(java.util.concurrent.Executor!, androidx.xr.scenecore.runtime.PointerCaptureComponent.StateListener!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.InputEventListener? getInputListener();
+    method public void onInputEvent(androidx.xr.scenecore.runtime.InputEvent event);
+    method public void onStateChanged(@androidx.xr.scenecore.runtime.PointerCaptureComponent.PointerCaptureState int newState);
+    property public androidx.xr.scenecore.runtime.InputEventListener? inputListener;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntime implements androidx.xr.scenecore.runtime.RenderingRuntime {
@@ -539,6 +543,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public java.util.Map<androidx.xr.scenecore.runtime.ResizeEventListener,java.util.concurrent.Executor> getResizeEventListenersMap();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();
     method @InaccessibleFromKotlin public boolean isFixedAspectRatioEnabled();
+    method public void onResizeEvent(androidx.xr.scenecore.runtime.ResizeEvent event);
     method public void removeResizeEventListener(androidx.xr.scenecore.runtime.ResizeEventListener resizeEventListener);
     method @InaccessibleFromKotlin public void setAutoHideContent(boolean);
     method @InaccessibleFromKotlin public void setAutoUpdateSize(boolean);
@@ -608,6 +613,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper();
     method public androidx.xr.scenecore.runtime.CameraViewScenePose? getCameraViewActivityPose(@androidx.xr.scenecore.runtime.CameraViewScenePose.CameraType int cameraType);
     method @InaccessibleFromKotlin public float getDeviceDpPerMeter();
+    method @InaccessibleFromKotlin public boolean getEnabledPanelDepthTest();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor? getExecutor();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.HeadScenePose? getHeadActivityPose();
     method @InaccessibleFromKotlin public android.app.Activity? getLastSetPreferredAspectRatioActivity();
@@ -619,9 +625,10 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.runtime.ScenePose getScenePoseFromPerceptionPose(androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper getSoundPoolExtensionsWrapper();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialCapabilities getSpatialCapabilities();
+    method @InaccessibleFromKotlin public java.util.Map<java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities>,java.util.concurrent.Executor> getSpatialCapabilitiesChangedMap();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialEnvironment getSpatialEnvironment();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialModeChangeListener? getSpatialModeChangeListener();
-    method @InaccessibleFromKotlin public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialVisibility>> getSpatialVisibilityChangedMap();
+    method @InaccessibleFromKotlin public java.util.Map<java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialVisibility>,java.util.concurrent.Executor> getSpatialVisibilityChangedMap();
     method @InaccessibleFromKotlin public Enum<androidx.xr.scenecore.testing.FakeSceneRuntime.State> getState();
     method public void removePerceivedResolutionChangedListener(java.util.function.Consumer<androidx.xr.scenecore.runtime.PixelDimensions> listener);
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities> listener);
@@ -638,6 +645,7 @@ package androidx.xr.scenecore.testing {
     property public androidx.xr.scenecore.testing.FakeActivitySpace activitySpace;
     property public androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
     property public float deviceDpPerMeter;
+    property public boolean enabledPanelDepthTest;
     property public java.util.concurrent.Executor? executor;
     property public androidx.xr.scenecore.runtime.HeadScenePose? headActivityPose;
     property public android.app.Activity? lastSetPreferredAspectRatioActivity;
@@ -648,11 +656,17 @@ package androidx.xr.scenecore.testing {
     property public androidx.xr.scenecore.runtime.PerceptionSpaceScenePose perceptionSpaceActivityPose;
     property public androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper soundPoolExtensionsWrapper;
     property public androidx.xr.scenecore.runtime.SpatialCapabilities spatialCapabilities;
+    property public java.util.Map<java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities>,java.util.concurrent.Executor> spatialCapabilitiesChangedMap;
     property public androidx.xr.scenecore.runtime.SpatialEnvironment spatialEnvironment;
     property public androidx.xr.scenecore.runtime.SpatialModeChangeListener? spatialModeChangeListener;
-    property public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialVisibility>> spatialVisibilityChangedMap;
+    property public java.util.Map<java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialVisibility>,java.util.concurrent.Executor> spatialVisibilityChangedMap;
     property public Enum<androidx.xr.scenecore.testing.FakeSceneRuntime.State> state;
-    field public static final float DEFAULT_DP_PER_METER = 1151.856f;
+    field public static final int ALL_SPATIAL_CAPABILITIES = 63; // 0x3f
+    field public static final androidx.xr.scenecore.testing.FakeSceneRuntime.Companion Companion;
+  }
+
+  public static final class FakeSceneRuntime.Companion {
+    property public static int ALL_SPATIAL_CAPABILITIES;
   }
 
   public enum FakeSceneRuntime.State {
