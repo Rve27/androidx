@@ -242,4 +242,13 @@ public class RemoteDocument {
     public void serialize(@NonNull MapSerializer serializer) {
         mDocument.serialize(serializer);
     }
+
+    /**
+     * Ask the document for the usage of a feature indicated in the header
+     *
+     * @return
+     */
+    public boolean useFeature(short featureId) {
+        return mDocument.useFeature(featureId);
+    }
 }
