@@ -376,18 +376,6 @@ public class ImpressApiImpl : ImpressApi {
             animationName,
             looping,
             object : AssetAnimator {
-                // Hold a reference to the completer to ensure it isn't garbage
-                // collected until the C++ side releases the reference to the
-                // AssetAnimator. The future returned by
-                // CallbackToFutureAdapter.getFuture() aggressively tries to let the
-                // garbage collector clean up the completer as an optimization, we
-                // are concerned that this could cause the future to never fire, or
-                // cancel incorrectly and return an error, especially since the code
-                // that calls this simply allows the future to go out of scope
-                // without storing it. This might not actually be a problem, but
-                // this code shouldn't be harmful and should reduce the uncertainty.
-                // We should eventually have a different way of communicating
-                // animation completion back to the application. See b/362368652. {
                 override fun onComplete() {
                     continuation.resume(null)
                 }
