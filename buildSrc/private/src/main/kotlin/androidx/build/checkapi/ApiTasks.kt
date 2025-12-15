@@ -74,9 +74,12 @@ internal fun Project.shouldWriteVersionedApiFile(): Boolean {
     }
 
     // Policy: Don't write versioned files for non-final API surfaces, ex. dev or alpha, or for
-    // versions that should only exist in dead-end release branches, ex. rc or stable.
+    // versions that should only exist in dead-end release branches, ex. rc02+ or stable.
     if (
-        !project.version().isFinalApi() || project.version().isRC() || project.version().isStable()
+        !project.version().isFinalApi() ||
+            (project.version().isRC() &&
+                project.version().preReleaseIteration?.let { it > 1 } == true) ||
+            project.version().isStable()
     ) {
         return false
     }
