@@ -40,6 +40,7 @@ import androidx.compose.remote.core.CoreDocument;
 import androidx.compose.remote.core.LayoutCallback;
 import androidx.compose.remote.core.RemoteContext;
 import androidx.compose.remote.core.SystemClock;
+import androidx.compose.remote.core.operations.ColorTheme;
 import androidx.compose.remote.core.operations.Header;
 import androidx.compose.remote.core.operations.RootContentBehavior;
 import androidx.compose.remote.core.operations.Theme;
@@ -51,6 +52,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -298,8 +300,17 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
      *
      * @return array of names or null
      */
-    public String @NonNull [] getNamedColors() {
+    public String @Nullable [] getNamedColors() {
         return mDocument.getNamedColors();
+    }
+
+    /**
+     * Get a array of the names of the "Themed Colors" defined in the loaded doc
+     *
+     * @return array of names or null
+     */
+    public  @NonNull ArrayList<ColorTheme> getThemedColors() {
+        return mDocument.getThemedColors();
     }
 
     /**
@@ -790,7 +801,6 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
         try {
             long nanoStart = nanoTime(mClock);
             long start = mEvalTime ? nanoStart : 0; // measure execution of commands
-
             float animationTime = (nanoStart - mStart) * 1E-9f;
             mARContext.setAnimationTime(animationTime);
             mARContext.loadFloat(RemoteContext.ID_ANIMATION_TIME, animationTime);
