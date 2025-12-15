@@ -1134,7 +1134,7 @@ private fun Throwable.attachComposeStackTrace(
                     listOf(head.copy(groupOffset = offset)) + tail
                 }
             }
-        ComposeStackTrace(trace + parentTrace)
+        ComposeStackTrace(trace + parentTrace, errorContext.sourceInformationEnabled)
     }
 }
 
@@ -1149,5 +1149,8 @@ private fun OperationErrorContext.withCurrentStackTrace(slots: SlotWriter): Oper
             return slots.buildTrace(currentOffset, currentGroup, slots.parent(currentGroup)) +
                 parentTrace
         }
+
+        override val sourceInformationEnabled: Boolean
+            get() = parent.sourceInformationEnabled
     }
 }
