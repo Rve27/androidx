@@ -22,8 +22,8 @@ import androidx.build.lint.Stubs.Companion.DoNotInline
 import androidx.build.lint.Stubs.Companion.FlaggedApi
 import androidx.build.lint.Stubs.Companion.Flags
 import androidx.build.lint.Stubs.Companion.IntRange
-import androidx.build.lint.Stubs.Companion.RequiresAconfigFlag
 import androidx.build.lint.Stubs.Companion.RequiresApi
+import androidx.build.lint.Stubs.Companion.RequiresFlag
 import com.android.tools.lint.checks.infrastructure.TestLintTask
 import org.junit.Rule
 import org.junit.Test
@@ -1581,10 +1581,10 @@ src/com/example/test.kt:6: Error: This call references a method guarded by Trunk
 Fix for src/com/example/test.kt line 6: Extract to static inner class:
 @@ -4 +4
 + import androidx.annotation.DoNotInline
-+ import androidx.annotation.RequiresAconfigFlag
++ import androidx.annotation.RequiresFlag
 @@ -5 +7
 +
-+ @RequiresAconfigFlag("android.test.myFlag")
++ @RequiresFlag("android.test.myFlag")
 + internal object FlagMyFlagImpl {
 +     @DoNotInline
 +     @JvmStatic
@@ -1650,13 +1650,13 @@ src/com/example/MyClass.java:7: Error: This call references a method guarded by 
 Fix for src/com/example/MyClass.java line 7: Extract to static inner class:
 @@ -4 +4
 + import androidx.annotation.DoNotInline;
-+ import androidx.annotation.RequiresAconfigFlag;
++ import androidx.annotation.RequiresFlag;
 @@ -7 +9
 -        FlaggedApiContainer.flaggedApi();
 +        FlagMyFlagImpl.flaggedApi();
 @@ -9 +11
 +
-+ @RequiresAconfigFlag("test.pkg.myFlag")
++ @RequiresFlag("test.pkg.myFlag")
 + static class FlagMyFlagImpl {
 +     private FlagMyFlagImpl() {
 +         // This class is not instantiable.
@@ -1679,7 +1679,7 @@ Fix for src/com/example/MyClass.java line 7: Extract to static inner class:
                 javaSample("android.flagging.FlaggedApiContainer"),
                 ktSample("flaggedapi.FlaggedUsageWithoutOutline"),
                 FlaggedApi,
-                RequiresAconfigFlag,
+                RequiresFlag,
                 Flags,
             )
 
@@ -1696,20 +1696,20 @@ src/flaggedapi/FlaggedUsageWithoutOutline.kt:31: Error: This call references a m
                 .trimIndent()
 
         // Due to b/417243329 these do not reflect actual IDE auto-fix behavior. The flag string
-        // used by the `@RequiresAconfigFlag` annotation is actually the full flag string, e.g.
+        // used by the `@RequiresFlag` annotation is actually the full flag string, e.g.
         // "flaggedapi.myFlag", in practice.
         val expectedFixDiffs =
             """
 Fix for src/flaggedapi/FlaggedUsageWithoutOutline.kt line 26: Extract to static inner class:
 @@ -20 +20
 + import androidx.annotation.DoNotInline
-+ import androidx.annotation.RequiresAconfigFlag
++ import androidx.annotation.RequiresFlag
 @@ -26 +28
 -             FlaggedApiContainer.innerApi()
 +             FlagMyFlagImpl.innerApi()
 @@ -33 +35
 +
-+ @RequiresAconfigFlag("flaggedapi.myFlag")
++ @RequiresFlag("flaggedapi.myFlag")
 + internal object FlagMyFlagImpl {
 +     @DoNotInline
 +     @JvmStatic
@@ -1721,13 +1721,13 @@ Fix for src/flaggedapi/FlaggedUsageWithoutOutline.kt line 26: Extract to static 
 Fix for src/flaggedapi/FlaggedUsageWithoutOutline.kt line 31: Extract to static inner class:
 @@ -20 +20
 + import androidx.annotation.DoNotInline
-+ import androidx.annotation.RequiresAconfigFlag
++ import androidx.annotation.RequiresFlag
 @@ -31 +33
 -         FlaggedApiContainer.innerApi()
 +         FlagMyFlagImpl.innerApi()
 @@ -33 +35
 +
-+ @RequiresAconfigFlag("flaggedapi.myFlag")
++ @RequiresFlag("flaggedapi.myFlag")
 + internal object FlagMyFlagImpl {
 +     @DoNotInline
 +     @JvmStatic
@@ -1749,7 +1749,7 @@ Fix for src/flaggedapi/FlaggedUsageWithoutOutline.kt line 31: Extract to static 
                 javaSample("android.flagging.FlaggedApiContainer"),
                 ktSample("flaggedapi.FlaggedUsageInOutline"),
                 FlaggedApi,
-                RequiresAconfigFlag,
+                RequiresFlag,
                 Flags,
             )
 
@@ -1769,12 +1769,12 @@ No warnings.
                 javaSample("android.flagging.FlaggedApiContainer"),
                 ktSample("flaggedapi.AutofixUnsafeUsageWithTypeConversion"),
                 FlaggedApi,
-                RequiresAconfigFlag,
+                RequiresFlag,
                 Flags,
             )
 
         // Due to b/417243329 these do not reflect actual IDE auto-fix behavior. The flag string
-        // used by the `@RequiresAconfigFlag` annotation is actually the full flag string, e.g.
+        // used by the `@RequiresFlag` annotation is actually the full flag string, e.g.
         // "flaggedapi.myFlag", in practice. Additionally, we don't handle adding generic types
         // to the generated call -- that's fine, the developer can easily fix that.
         val expectedFix =
@@ -1782,13 +1782,13 @@ No warnings.
 Fix for src/flaggedapi/AutofixUnsafeUsageWithTypeConversion.kt line 25: Extract to static inner class:
 @@ -20 +20
 + import androidx.annotation.DoNotInline
-+ import androidx.annotation.RequiresAconfigFlag
++ import androidx.annotation.RequiresFlag
 @@ -25 +27
 -             val resultA = FlaggedApiContainer.apiWithTypeArgument(null)
 +             val resultA = FlagMyFlagImpl.apiWithTypeArgument(null)
 @@ -30 +32
 +
-+ @RequiresAconfigFlag("flaggedapi.myFlag")
++ @RequiresFlag("flaggedapi.myFlag")
 + internal object FlagMyFlagImpl {
 +     @DoNotInline
 +     @JvmStatic
@@ -1800,13 +1800,13 @@ Fix for src/flaggedapi/AutofixUnsafeUsageWithTypeConversion.kt line 25: Extract 
 Fix for src/flaggedapi/AutofixUnsafeUsageWithTypeConversion.kt line 26: Extract to static inner class:
 @@ -20 +20
 + import androidx.annotation.DoNotInline
-+ import androidx.annotation.RequiresAconfigFlag
++ import androidx.annotation.RequiresFlag
 @@ -26 +28
 -             val resultB = FlaggedApiContainer.apiWithGenericType<Int?, Float>(null)
 +             val resultB = FlagMyFlagImpl.apiWithGenericType(null)
 @@ -30 +32
 +
-+ @RequiresAconfigFlag("flaggedapi.myFlag")
++ @RequiresFlag("flaggedapi.myFlag")
 + internal object FlagMyFlagImpl {
 +     @DoNotInline
 +     @JvmStatic
@@ -1818,13 +1818,13 @@ Fix for src/flaggedapi/AutofixUnsafeUsageWithTypeConversion.kt line 26: Extract 
 Fix for src/flaggedapi/AutofixUnsafeUsageWithTypeConversion.kt line 27: Extract to static inner class:
 @@ -20 +20
 + import androidx.annotation.DoNotInline
-+ import androidx.annotation.RequiresAconfigFlag
++ import androidx.annotation.RequiresFlag
 @@ -27 +29
 -             val resultC = FlaggedApiContainer.apiWithTwoDimensionalArray(null)
 +             val resultC = FlagMyFlagImpl.apiWithTwoDimensionalArray(null)
 @@ -30 +32
 +
-+ @RequiresAconfigFlag("flaggedapi.myFlag")
++ @RequiresFlag("flaggedapi.myFlag")
 + internal object FlagMyFlagImpl {
 +     @DoNotInline
 +     @JvmStatic
