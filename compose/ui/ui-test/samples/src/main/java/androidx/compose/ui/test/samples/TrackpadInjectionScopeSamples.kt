@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,26 @@ package androidx.compose.ui.test.samples
 
 import androidx.annotation.Sampled
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.test.ScrollWheel
 import androidx.compose.ui.test.animateMoveAlong
 import androidx.compose.ui.test.animateMoveTo
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performMouseInput
-import androidx.compose.ui.test.smoothScroll
+import androidx.compose.ui.test.performTrackpadInput
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 @Sampled
-fun mouseInputClick() {
-    composeTestRule.onNodeWithTag("myComponent").performMouseInput {
+fun trackpadInputClick() {
+    composeTestRule.onNodeWithTag("myComponent").performTrackpadInput {
         // Click in the middle of the node
         click(center)
     }
 }
 
 @Sampled
-fun mouseInputAnimateMoveTo() {
-    composeTestRule.onNodeWithTag("myComponent").performMouseInput {
+fun trackpadInputAnimateMoveTo() {
+    composeTestRule.onNodeWithTag("myComponent").performTrackpadInput {
         // Hover over the node, making an X shape
         moveTo(topLeft)
         animateMoveTo(bottomRight)
@@ -52,8 +50,8 @@ fun mouseInputAnimateMoveTo() {
 }
 
 @Sampled
-fun mouseInputAnimateMoveAlong() {
-    composeTestRule.onNodeWithTag("myComponent").performMouseInput {
+fun trackpadInputAnimateMoveAlong() {
+    composeTestRule.onNodeWithTag("myComponent").performTrackpadInput {
         // Hover over the node, making a full circle with a radius of 100px
         val r = 100f
         animateMoveAlong(
@@ -67,32 +65,18 @@ fun mouseInputAnimateMoveAlong() {
 }
 
 @Sampled
-fun mouseInputScrollWhileDown() {
-    composeTestRule
-        .onNodeWithTag("verticalScrollable")
-        // Scroll downwards while keeping a button pressed:
-        .performMouseInput {
-            // Presses the primary mouse button
-            press()
-            // Scroll the scroll wheel by 6 units
-            repeat(6) {
-                advanceEventTime()
-                scroll(1f)
-            }
-            // And release the mouse button
-            advanceEventTime()
-            release()
-        }
+fun trackpadInputScroll() {
+    composeTestRule.onNodeWithTag("verticalScrollable").performTrackpadInput {
+        scroll(Offset(0f, 100f))
+    }
 }
 
 @Sampled
-fun mouseInputSmoothScroll() {
-    composeTestRule.onNodeWithTag("horizontalScrollable").performMouseInput {
-        // Scroll forwards horizontally, which is rightwards
-        // unless scroll direction is reversed
-        smoothScroll(100f, durationMillis = 500L, ScrollWheel.Horizontal)
-        // The 100f scroll delta is equally divided into smaller scrolls,
-        // such that the time in between two scroll events is more or less
-        // equal to the default time between events, 16ms.
+fun trackpadInputPinch() {
+    composeTestRule.onNodeWithTag("transformable").performTrackpadInput {
+        // Performs a pinch with a factor of 0.9f, which corresponds to a pinch
+        // with the fingers becoming closer together, which is commonly interpreted
+        // as a "zoom out" gesture
+        pinch(0.9f)
     }
 }
