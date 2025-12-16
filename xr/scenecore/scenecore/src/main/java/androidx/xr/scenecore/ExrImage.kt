@@ -169,7 +169,7 @@ internal constructor(internal val session: Session?, internal val image: RtExrIm
             assetData: ByteArray,
             assetKey: String,
         ): ExrImage {
-            return createFromZip(session, assetData, assetKey)
+            return createFromZip(session, session.renderingRuntime, assetData, assetKey)
         }
 
         private fun createExrImage(session: Session, exrImageResource: RtExrImage): ExrImage =
