@@ -16,15 +16,15 @@
 
 package androidx.compose.runtime
 
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestResult
 
-internal actual suspend fun TestResult.awaitCompletion() {
-    // Copied from Promise.await(), as JsPromiseInterfaceForTesting does not implement it.
-    suspendCancellableCoroutine { cont: CancellableContinuation<Unit> ->
-        then(onFulfilled = { cont.resume(Unit) }, onRejected = { cont.resumeWithException(it) })
+actual fun wrapRunTest(test: suspend WrapRunTestScope.() -> Unit): TestResult {
+    return runBlocking { test(WrapRunTestScopeImpl) }
+}
+
+private object WrapRunTestScopeImpl : WrapRunTestScope {
+    override suspend fun TestResult.awaitCompletion() {
+        // NoOp
     }
 }
