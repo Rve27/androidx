@@ -26,7 +26,6 @@ internal class AnnotationsViewOnTouchListener(
     context: Context,
     private val wetStrokesViewDispatcher: TouchEventDispatcher,
     private val pdfViewDispatcher: TouchEventDispatcher,
-    private val onStartContentTouch: () -> Unit = {},
 ) : View.OnTouchListener {
 
     private var currentDispatcher: TouchEventDispatcher? = null
@@ -55,7 +54,6 @@ internal class AnnotationsViewOnTouchListener(
         downX = event.x
         downY = event.y
         currentDispatcher?.dispatchTouchEvent(event)
-        onStartContentTouch()
     }
 
     private fun handlePointerDown(event: MotionEvent) {
@@ -85,6 +83,25 @@ internal class AnnotationsViewOnTouchListener(
     }
 
     private fun handleMove(event: MotionEvent) {
+        // If we receive a MOVE but haven't initialized state (because DOWN was consumed elsewhere),
+        // we essentially treat this first MOVE as our "Start".
+        if (primaryPointerId == MotionEvent.INVALID_POINTER_ID) {
+            val fakeDown =
+                MotionEvent.obtain(
+                    event.downTime,
+                    event.eventTime,
+                    MotionEvent.ACTION_DOWN,
+                    event.x,
+                    event.y,
+                    event.metaState,
+                )
+            handleDown(fakeDown)
+            fakeDown.recycle()
+            // If the user has already dragged past touch slop in this single event history,
+            // we might want to commit immediately, but letting the next pass handle it is safer.
+            return
+        }
+
         val primaryPointerIndex = event.findPointerIndex(primaryPointerId)
         if (isSingleTouchCommitted && currentDispatcher == wetStrokesViewDispatcher) {
             if (primaryPointerIndex != -1) {
