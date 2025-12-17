@@ -102,6 +102,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             viewmodel.onAction(ToolbarIntent.RedoAvailabilityChanged(value))
         }
 
+    /**
+     * Returns true if any of the configuration popups (color palette or brush size slider) are
+     * currently visible.
+     */
+    public val isConfigPopupVisible: Boolean
+        get() = with(viewmodel.state.value) { isColorPaletteVisible || isBrushSizeSliderVisible }
+
     /** Dismisses any currently visible popups (such as the color palette or brush size slider). */
     public fun dismissPopups() {
         viewmodel.onAction(ToolbarIntent.DismissPopups)
