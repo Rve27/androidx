@@ -34,7 +34,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 
 abstract class BaseBuilderTest {
@@ -46,11 +45,11 @@ abstract class BaseBuilderTest {
         var onOpenInvoked = 0
         val testCallback =
             object : RoomDatabase.Callback() {
-                override fun onCreate(connection: SQLiteConnection) {
+                override suspend fun onCreate(connection: SQLiteConnection) {
                     onCreateInvoked++
                 }
 
-                override fun onOpen(connection: SQLiteConnection) {
+                override suspend fun onOpen(connection: SQLiteConnection) {
                     onOpenInvoked++
                 }
             }
@@ -93,9 +92,9 @@ abstract class BaseBuilderTest {
                     object : RoomDatabase.Callback() {
                         // This onOpen callback will block database initialization until the
                         // onOpenLatch is released.
-                        override fun onOpen(connection: SQLiteConnection) {
+                        override suspend fun onOpen(connection: SQLiteConnection) {
                             onOpenInvoked++
-                            runBlocking { onOpenBlocker.await() }
+                            onOpenBlocker.await()
                         }
                     }
                 )
@@ -134,8 +133,8 @@ abstract class BaseBuilderTest {
                     object : RoomDatabase.Callback() {
                         // Use a bad open callback that will recursively try to open the database
                         // again, this is a user error.
-                        override fun onOpen(connection: SQLiteConnection) {
-                            runBlocking { checkNotNull(database).dao().getItemList() }
+                        override suspend fun onOpen(connection: SQLiteConnection) {
+                            checkNotNull(database).dao().getItemList()
                         }
                     }
                 )
@@ -283,11 +282,11 @@ abstract class BaseBuilderTest {
             getRoomDatabaseBuilder()
                 .addCallback(
                     object : RoomDatabase.Callback() {
-                        override fun onCreate(connection: SQLiteConnection) {
+                        override suspend fun onCreate(connection: SQLiteConnection) {
                             assertThat(connection).isInstanceOf<MyConnection>()
                         }
 
-                        override fun onOpen(connection: SQLiteConnection) {
+                        override suspend fun onOpen(connection: SQLiteConnection) {
                             assertThat(connection).isInstanceOf<MyConnection>()
                         }
                     }

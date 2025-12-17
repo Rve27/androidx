@@ -24,6 +24,7 @@ import androidx.sqlite.execSQL
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -61,7 +62,7 @@ class AutoMigrationTest {
     }
 
     @Test
-    fun goFromV1ToV2() {
+    fun goFromV1ToV2() = runTest {
         createFirstVersion()
         val connection = helper.runMigrationsAndValidate(version = 2, migrations = emptyList())
         val info = read(connection, AutoMigrationDb.Entity1.TABLE_NAME)
@@ -70,7 +71,7 @@ class AutoMigrationTest {
     }
 
     @Test
-    fun goFromV1ToV3() {
+    fun goFromV1ToV3() = runTest {
         createFirstVersion()
         val connection = helper.runMigrationsAndValidate(version = 3, migrations = emptyList())
         val info = read(connection, AutoMigrationDb.Entity1.TABLE_NAME)
@@ -79,7 +80,7 @@ class AutoMigrationTest {
     }
 
     @Test
-    fun goFromV1ToV4() {
+    fun goFromV1ToV4() = runTest {
         createFirstVersion()
         val connection = helper.runMigrationsAndValidate(version = 4, migrations = emptyList())
         val info = read(connection, AutoMigrationDb.Entity1.TABLE_NAME)
@@ -98,7 +99,7 @@ class AutoMigrationTest {
     }
 
     @Test
-    fun testAutoMigrationWithNewEmbeddedField() {
+    fun testAutoMigrationWithNewEmbeddedField() = runTest {
         val embeddedHelper =
             MigrationTestHelper(
                 instrumentation = instrumentation,

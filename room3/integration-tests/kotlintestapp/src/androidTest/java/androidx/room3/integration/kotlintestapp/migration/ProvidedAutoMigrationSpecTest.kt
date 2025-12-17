@@ -107,7 +107,7 @@ class ProvidedAutoMigrationSpecTest {
         internal class MyProvidedAutoMigration() : AutoMigrationSpec {
             var onPostMigrateCalled = false
 
-            override fun onPostMigrate(connection: SQLiteConnection) {
+            override suspend fun onPostMigrate(connection: SQLiteConnection) {
                 onPostMigrateCalled = true
             }
         }

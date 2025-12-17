@@ -169,7 +169,7 @@ class MigrationTest {
     }
 
     @Test
-    fun removeColumn() {
+    fun removeColumn() = runTest {
         helper.createDatabase(4).close()
         val connection =
             helper.runMigrationsAndValidate(version = 5, migrations = listOf(MIGRATION_4_5))
@@ -178,7 +178,7 @@ class MigrationTest {
     }
 
     @Test
-    fun dropTable() {
+    fun dropTable() = runTest {
         helper.createDatabase(5).close()
         val connection =
             helper.runMigrationsAndValidate(version = 6, migrations = listOf(MIGRATION_5_6))
@@ -193,7 +193,7 @@ class MigrationTest {
     }
 
     @Test
-    fun failedToDropTableDontVerify() {
+    fun failedToDropTableDontVerify() = runTest {
         helper.createDatabase(5).close()
         val connection = helper.runMigrationsAndValidate(6, listOf(EmptyMigration(5, 6)))
         val info = TableInfo.read(connection, MigrationDb.Entity3.TABLE_NAME)
@@ -210,7 +210,7 @@ class MigrationTest {
                     migrations =
                         listOf(
                             object : Migration(6, 7) {
-                                override fun migrate(connection: SQLiteConnection) {
+                                override suspend fun migrate(connection: SQLiteConnection) {
                                     connection.execSQL(
                                         "CREATE TABLE Entity4 (`id` INTEGER, `name` TEXT," +
                                             " PRIMARY KEY(`id`))"
@@ -225,7 +225,7 @@ class MigrationTest {
     }
 
     @Test
-    fun newTableWithForeignKey() {
+    fun newTableWithForeignKey() = runTest {
         helper.createDatabase(6).close()
         val connection =
             helper.runMigrationsAndValidate(version = 7, migrations = listOf(MIGRATION_6_7))
@@ -452,7 +452,7 @@ class MigrationTest {
                 .fallbackToDestructiveMigration(true)
                 .addCallback(
                     object : RoomDatabase.Callback() {
-                        override fun onDestructiveMigration(connection: SQLiteConnection) {
+                        override suspend fun onDestructiveMigration(connection: SQLiteConnection) {
                             super.onDestructiveMigration(connection)
                             onDestructiveMigrationInvoked = true
                         }
@@ -510,7 +510,7 @@ class MigrationTest {
 
     private val MIGRATION_1_2: Migration =
         object : Migration(1, 2) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     "CREATE TABLE IF NOT EXISTS `Entity2` (`id` INTEGER NOT NULL," +
                         " `name` TEXT, PRIMARY KEY(`id`))"
@@ -520,7 +520,7 @@ class MigrationTest {
 
     private val MIGRATION_2_3: Migration =
         object : Migration(2, 3) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     "ALTER TABLE " + MigrationDb.Entity2.TABLE_NAME + " ADD COLUMN addedInV3 TEXT"
                 )
@@ -529,7 +529,7 @@ class MigrationTest {
 
     private val MIGRATION_3_4: Migration =
         object : Migration(3, 4) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     "CREATE TABLE IF NOT EXISTS `Entity3` (`id` INTEGER NOT NULL," +
                         " `removedInV5` TEXT, `name` TEXT, PRIMARY KEY(`id`))"
@@ -539,7 +539,7 @@ class MigrationTest {
 
     private val MIGRATION_4_5: Migration =
         object : Migration(4, 5) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     "CREATE TABLE IF NOT EXISTS `Entity3_New` (`id` INTEGER NOT NULL," +
                         " `name` TEXT, PRIMARY KEY(`id`))"
@@ -554,14 +554,14 @@ class MigrationTest {
 
     private val MIGRATION_5_6: Migration =
         object : Migration(5, 6) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL("DROP TABLE " + MigrationDb.Entity3.TABLE_NAME)
             }
         }
 
     private val MIGRATION_6_7: Migration =
         object : Migration(6, 7) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     "CREATE TABLE IF NOT EXISTS " +
                         MigrationDb.Entity4.TABLE_NAME +
@@ -579,7 +579,7 @@ class MigrationTest {
 
     private val MIGRATION_8_9: Migration =
         object : Migration(8, 9) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 // Add column Entity4.addedInV9 with DEFAULT.
                 connection.execSQL(
                     "ALTER TABLE " + MigrationDb.Entity5.TABLE_NAME + " RENAME TO save_Entity5"
@@ -601,7 +601,7 @@ class MigrationTest {
 
     private val MIGRATION_9_10: Migration =
         object : Migration(9, 10) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     "ALTER TABLE " +
                         MigrationDb.Entity5.TABLE_NAME +
@@ -624,7 +624,7 @@ class MigrationTest {
 
     private class EmptyMigration(startVersion: Int, endVersion: Int) :
         Migration(startVersion, endVersion) {
-        override fun migrate(connection: SQLiteConnection) {
+        override suspend fun migrate(connection: SQLiteConnection) {
             // do nothing
         }
     }

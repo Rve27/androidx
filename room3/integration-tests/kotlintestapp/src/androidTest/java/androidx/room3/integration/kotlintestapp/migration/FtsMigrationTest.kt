@@ -134,7 +134,7 @@ class FtsMigrationTest {
 
     private val MIGRATION_1_2: Migration =
         object : Migration(1, 2) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL("ALTER TABLE Book RENAME TO Book_old")
                 connection.execSQL(
                     "CREATE VIRTUAL TABLE IF NOT EXISTS `Book` USING FTS4(" +
@@ -147,7 +147,7 @@ class FtsMigrationTest {
 
     private val MIGRATION_2_3: Migration =
         object : Migration(2, 3) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     ("CREATE TABLE IF NOT EXISTS `Person` (`id` INTEGER NOT NULL, " +
                         "`firstName` TEXT, `lastName` TEXT, `line1` TEXT, `line2` TEXT, " +
@@ -162,7 +162,7 @@ class FtsMigrationTest {
 
     private val MIGRATION_3_4: Migration =
         object : Migration(3, 4) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL("ALTER TABLE `Person` RENAME TO `User`")
                 connection.execSQL("DROP TABLE `AddressFts`")
                 connection.execSQL(
@@ -178,7 +178,7 @@ class FtsMigrationTest {
 
     private val MIGRATION_4_5: Migration =
         object : Migration(4, 5) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL(
                     "CREATE VIRTUAL TABLE IF NOT EXISTS `Mail` USING FTS4(" +
                         "`content` TEXT NOT NULL)"
@@ -188,7 +188,7 @@ class FtsMigrationTest {
 
     private val MIGRATION_5_6: Migration =
         object : Migration(5, 6) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL("DROP TABLE `Mail`")
                 connection.execSQL(
                     "CREATE VIRTUAL TABLE IF NOT EXISTS `Mail` USING FTS4(" +
@@ -199,7 +199,7 @@ class FtsMigrationTest {
 
     private val BAD_MIGRATION_1_2: Migration =
         object : Migration(1, 2) {
-            override fun migrate(connection: SQLiteConnection) {
+            override suspend fun migrate(connection: SQLiteConnection) {
                 connection.execSQL("DROP TABLE Book")
                 connection.execSQL(
                     "CREATE VIRTUAL TABLE `Book` USING FTS4(" +

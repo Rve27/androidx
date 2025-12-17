@@ -167,7 +167,7 @@ abstract class BaseAutoMigrationTest {
 
     @ProvidedAutoMigrationSpec
     open class ProvidedSpecFrom2To3 : AutoMigrationSpec {
-        override fun onPostMigrate(connection: SQLiteConnection) {
+        override suspend fun onPostMigrate(connection: SQLiteConnection) {
             connection.execSQL("UPDATE AutoMigrationEntity SET moreData = '5'")
         }
     }

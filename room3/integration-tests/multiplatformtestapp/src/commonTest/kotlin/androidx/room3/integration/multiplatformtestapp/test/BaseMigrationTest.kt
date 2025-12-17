@@ -62,7 +62,7 @@ abstract class BaseMigrationTest {
             getDatabaseBuilder()
                 .addMigrations(
                     object : Migration(1, 2) {
-                        override fun migrate(connection: SQLiteConnection) {
+                        override suspend fun migrate(connection: SQLiteConnection) {
                             connection.execSQL(
                                 "ALTER TABLE MigrationEntity ADD COLUMN addedInV2 TEXT"
                             )
@@ -92,7 +92,7 @@ abstract class BaseMigrationTest {
 
         val migration =
             object : Migration(1, 2) {
-                override fun migrate(connection: SQLiteConnection) {
+                override suspend fun migrate(connection: SQLiteConnection) {
                     connection.execSQL("ALTER TABLE MigrationEntity ADD COLUMN addedInV2 TEXT")
                 }
             }
@@ -133,7 +133,7 @@ abstract class BaseMigrationTest {
             getDatabaseBuilder()
                 .addMigrations(
                     object : Migration(1, 2) {
-                        override fun migrate(connection: SQLiteConnection) {}
+                        override suspend fun migrate(connection: SQLiteConnection) {}
                     }
                 )
                 .build()
@@ -201,7 +201,7 @@ abstract class BaseMigrationTest {
                 getDatabaseBuilder()
                     .addMigrations(
                         object : Migration(1, 2) {
-                            override fun migrate(connection: SQLiteConnection) {}
+                            override suspend fun migrate(connection: SQLiteConnection) {}
                         }
                     )
                     .fallbackToDestructiveMigrationFrom(dropAllTables = true, 1)
@@ -256,7 +256,7 @@ abstract class BaseMigrationTest {
             getDatabaseBuilder()
                 .addMigrations(
                     object : Migration(1, 2) {
-                        override fun migrate(connection: SQLiteConnection) {
+                        override suspend fun migrate(connection: SQLiteConnection) {
                             assertThat(connection).isInstanceOf<MyConnection>()
                             connection.execSQL(
                                 "ALTER TABLE MigrationEntity ADD COLUMN addedInV2 TEXT"
