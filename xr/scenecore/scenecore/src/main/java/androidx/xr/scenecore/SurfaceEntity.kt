@@ -29,7 +29,6 @@ import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
-import androidx.xr.scenecore.runtime.SceneRuntime
 import androidx.xr.scenecore.runtime.SurfaceEntity as RtSurfaceEntity
 
 /**
@@ -49,11 +48,8 @@ import androidx.xr.scenecore.runtime.SurfaceEntity as RtSurfaceEntity
  * @property edgeFeatheringParams The [EdgeFeatheringParams] which describes the edge fading effects
  *   for the surface.
  */
-// TODO (b/469536598) - Remove SceneRuntime dependency once
-// SceneRuntime.getDisplayResolutionInPixels is moved to a common util class.
 public class SurfaceEntity
 private constructor(
-    private val sceneRuntime: SceneRuntime,
     private val perceptionSpace: PerceptionSpace,
     rtEntity: RtSurfaceEntity,
     entityManager: EntityManager,
@@ -483,7 +479,6 @@ private constructor(
                 }
             val surfaceEntity =
                 SurfaceEntity(
-                    session.sceneRuntime,
                     session.scene.perceptionSpace,
                     session.renderingRuntime.createSurfaceEntity(
                         getRtStereoMode(stereoMode),
@@ -827,7 +822,6 @@ private constructor(
                         as PerceptionScenePose)
                     .rtScenePose,
                 renderViewpointState.fieldOfView,
-                sceneRuntime.getDisplayResolutionInPixels(),
             )
             .toPerceivedResolutionResult()
     }

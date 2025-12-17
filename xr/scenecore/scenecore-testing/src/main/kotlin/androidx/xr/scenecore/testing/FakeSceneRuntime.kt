@@ -119,8 +119,6 @@ public class FakeSceneRuntime(
 
     public var deviceDpPerMeter: Float = DEFAULT_DP_PER_METER
 
-    public var displayResolution: PixelDimensions = PixelDimensions(0, 0)
-
     override fun createPanelEntity(
         context: Context,
         pose: Pose,
@@ -386,10 +384,6 @@ public class FakeSceneRuntime(
 
     override fun createSpatialPointerComponent(): SpatialPointerComponent =
         FakeSpatialPointerComponent()
-
-    override fun getDisplayResolutionInPixels(): PixelDimensions {
-        return displayResolution
-    }
 
     // Assuming the subspaceNodeHolder contains a valid FakeSubspaceNode and a valid FakeNode.
     public fun createSubspaceNodeEntity(node: FakeNode, size: Dimensions): SubspaceNodeEntity =

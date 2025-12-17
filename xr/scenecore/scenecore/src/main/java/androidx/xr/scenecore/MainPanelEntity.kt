@@ -45,7 +45,6 @@ internal constructor(
     entityManager: EntityManager,
 ) :
     PanelEntity(
-        sceneRuntime,
         perceptionSpace,
         sceneRuntime.mainPanelEntity,
         entityManager,

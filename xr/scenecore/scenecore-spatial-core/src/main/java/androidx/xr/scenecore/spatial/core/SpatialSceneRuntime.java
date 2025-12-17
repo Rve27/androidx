@@ -23,11 +23,8 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.DisplayMetrics;
 import android.util.Pair;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
@@ -759,29 +756,5 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     @Override
     public @NonNull SpatialPointerComponent createSpatialPointerComponent() {
         return new SpatialPointerComponentImpl(mExtensions);
-    }
-
-    // Suppress warnings: windowManager's getDefaultDisplay and getRealMetrics.
-    @SuppressWarnings("deprecation")
-    @Override
-    public @NonNull PixelDimensions getDisplayResolutionInPixels() {
-        WindowManager windowManager = Objects.requireNonNull(mActivity).getSystemService(
-                WindowManager.class);
-        if (windowManager == null) {
-            // WindowManager not available, cannot get display resolution. Returning (0, 0).
-            return new PixelDimensions(0, 0); // Fallback if WindowManager is not available
-        }
-
-        Display display = windowManager.getDefaultDisplay();
-        if (display == null) {
-            // Default display not available, cannot get display resolution. Returning (0,0).
-            return new PixelDimensions(0, 0); // Fallback if display is not available
-        }
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        display.getRealMetrics(displayMetrics);
-
-        // Divide the width by 2 because we want single eye resolution, not full display resolution
-        return new PixelDimensions(displayMetrics.widthPixels / 2, displayMetrics.heightPixels);
     }
 }

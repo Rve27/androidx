@@ -16,6 +16,8 @@
 
 package androidx.xr.scenecore.spatial.core;
 
+import static androidx.xr.scenecore.spatial.core.PerceivedResolutionUtils.getDisplayResolutionInPixels;
+
 import static java.lang.Math.min;
 
 import android.content.Context;
@@ -40,6 +42,7 @@ import com.android.extensions.xr.node.NodeTransaction;
 
 import org.jspecify.annotations.NonNull;
 
+import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 
 /** BasePanelEntity provides implementations of capabilities common to PanelEntities. */
@@ -121,8 +124,7 @@ abstract class BasePanelEntity extends AndroidXrEntity implements PanelEntity {
 
     @Override
     public @NonNull PerceivedResolutionResult getPerceivedResolution(
-            @NonNull ScenePose renderViewScenePose, @NonNull FieldOfView renderViewFov,
-            @NonNull PixelDimensions displayResolution) {
+            @NonNull ScenePose renderViewScenePose, @NonNull FieldOfView renderViewFov) {
         // Compute the width, height, and distance to camera, of the panel in activity space units
         float panelWidthInActivitySpace = getSize().width * getScale(Space.ACTIVITY).getX();
         float panelHeightInActivitySpace = getSize().height * getScale(Space.ACTIVITY).getY();
@@ -134,7 +136,7 @@ abstract class BasePanelEntity extends AndroidXrEntity implements PanelEntity {
 
         return PerceivedResolutionUtils.getPerceivedResolutionOfPanel(
                 renderViewFov,
-                displayResolution,
+                getDisplayResolutionInPixels(Objects.requireNonNull(getContext())),
                 panelWidthInActivitySpace,
                 panelHeightInActivitySpace,
                 PanelDistanceToCameraInActivitySpace);
