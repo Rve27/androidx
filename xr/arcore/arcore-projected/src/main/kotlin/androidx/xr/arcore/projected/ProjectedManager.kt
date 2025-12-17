@@ -47,11 +47,12 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 /**
  * Manages the lifecycle of a Projected session.
  *
- * @property context The [Context] instance.
- * @property perceptionManager The [ProjectedPerceptionManager] instance.
- * @property timeSource The [ProjectedTimeSource] instance.
- * @property coroutineContext The [CoroutineContext] for this manager.
- * @property testPerceptionService An optional [IProjectedPerceptionService] for testing
+ * @property context The [Context] instance
+ * @property perceptionManager the [ProjectedPerceptionManager] instance
+ * @property timeSource the [ProjectedTimeSource] instance
+ * @property coroutineContext the [CoroutineContext] for this manager
+ * @property testPerceptionService an optional [IProjectedPerceptionService] for testing
+ * @property config the current [Config] of the session
  */
 @Suppress("NotCloseable")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -273,11 +274,11 @@ internal constructor(
      * If service can't be found, the method throws [IllegalStateException]. It means that the
      * system doesn't include a service supporting Projected XR devices.
      *
-     * @param context can be either a host [Context] or the Projected device [Context].
+     * @param context can be either a host [Context] or the Projected device [Context]
+     * @param serviceConnection the [ServiceConnection] to use
      * @return true if the system is in the process of bringing up a service that your client has
      *   permission to bind to; false if the system couldn't find the service or if your client
-     *   doesn't have permission to bind to it. Regardless of the return value, you should later
-     *   call unbindService to release the connection.
+     *   doesn't have permission to bind to it
      */
     private fun bindPerception(context: Context, serviceConnection: ServiceConnection): Boolean {
         return testPerceptionService != null ||
