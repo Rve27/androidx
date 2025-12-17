@@ -100,6 +100,9 @@ internal class ComposeViewContext(
     /** [ResourceIdCache] provided by [LocalResourceIdCache] */
     internal val resourceIdCache = ResourceIdCache()
 
+    /** [GraphicsResourceCache] provided by [LocalGraphicsResourceCache] */
+    internal val graphicsResourceCache = GraphicsResourceCache()
+
     /**
      * [Configuration] that was last received. Used to determine if there has been an update to the
      * configuration or if we don't have to update the [configuration] instance.
@@ -142,11 +145,13 @@ internal class ComposeViewContext(
             override fun onLowMemory() {
                 imageVectorCache.clear()
                 resourceIdCache.clear()
+                graphicsResourceCache.clear()
             }
 
             override fun onTrimMemory(level: Int) {
                 imageVectorCache.clear()
                 resourceIdCache.clear()
+                graphicsResourceCache.clear()
             }
 
             override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -258,6 +263,7 @@ internal class ComposeViewContext(
             LocalProvidableScrollCaptureInProgress provides scrollCaptureInProgress,
             LocalViewConfiguration provides owner.viewConfiguration,
             LocalHostDefaultProvider provides hostDefaultProvider,
+            LocalGraphicsResourceCache provides graphicsResourceCache,
         ) {
             ProvideCommonCompositionLocals(owner, uriHandler, content)
         }
