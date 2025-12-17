@@ -16,6 +16,7 @@
 
 package androidx.build.importmaven
 
+import java.util.concurrent.TimeUnit.MINUTES
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -47,7 +48,7 @@ class LicenseDownloader(
     private val licenseXPath =
         XPathFactory.newInstance().newXPath().compile("/project/licenses/license/url")
     private val scmUrlXPath = XPathFactory.newInstance().newXPath().compile("/project/scm/url")
-    private val client = OkHttpClient()
+    private val client = OkHttpClient.Builder().readTimeout(1, MINUTES).build()
 
     /** Fetches license information for external dependencies. */
     fun fetchLicenseFromPom(bytes: ByteArray): ByteArray? {
