@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.creation.compose.capture.painter
+package androidx.compose.remote.creation.compose.painter
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteDrawScope

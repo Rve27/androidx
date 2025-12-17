@@ -15,7 +15,7 @@
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.creation.compose.capture.shapes
+package androidx.compose.remote.creation.compose.shapes
 
 import android.graphics.Rect
 import androidx.annotation.RestrictTo

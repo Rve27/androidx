@@ -15,7 +15,7 @@
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.creation.compose.capture.shaders
+package androidx.compose.remote.creation.compose.shaders
 
 import android.graphics.RadialGradient
 import androidx.annotation.RestrictTo
