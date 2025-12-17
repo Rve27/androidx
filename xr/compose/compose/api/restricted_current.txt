@@ -1,6 +1,11 @@
 // Signature format: 4.0
 package androidx.xr.compose.platform {
 
+  public final class ActivityExtKt {
+    method public static suspend Object? requestFullSpace(androidx.activity.ComponentActivity, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    method public static suspend Object? requestHomeSpace(androidx.activity.ComponentActivity, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  }
+
   public final class LocalCoreEntityKt {
     method @InaccessibleFromKotlin @kotlin.PublishedApi internal static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.subspace.layout.OpaqueEntity?> getLocalOpaqueEntity();
     property @kotlin.PublishedApi internal static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.subspace.layout.OpaqueEntity?> LocalOpaqueEntity;
@@ -41,13 +46,13 @@ package androidx.xr.compose.platform {
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.platform.SpatialCapabilities> LocalSpatialCapabilities;
   }
 
-  public interface SpatialConfiguration {
-    method @InaccessibleFromKotlin public default androidx.xr.compose.unit.DpVolumeSize getBounds();
-    method @InaccessibleFromKotlin public default boolean hasXrSpatialFeature();
-    method public default void requestFullSpaceMode();
-    method public default void requestHomeSpaceMode();
-    property public default androidx.xr.compose.unit.DpVolumeSize bounds;
-    property public default boolean hasXrSpatialFeature;
+  public sealed nonexhaustive interface SpatialConfiguration {
+    method @InaccessibleFromKotlin public androidx.xr.compose.unit.DpVolumeSize getBounds();
+    method @InaccessibleFromKotlin public boolean hasXrSpatialFeature();
+    method @Deprecated public void requestFullSpaceMode();
+    method @Deprecated public void requestHomeSpaceMode();
+    property public abstract androidx.xr.compose.unit.DpVolumeSize bounds;
+    property public abstract boolean hasXrSpatialFeature;
     field public static final androidx.xr.compose.platform.SpatialConfiguration.Companion Companion;
   }
 
