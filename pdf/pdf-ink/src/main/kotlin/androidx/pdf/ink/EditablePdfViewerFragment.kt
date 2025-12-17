@@ -191,6 +191,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private lateinit var gestureStateChangedListener: PdfView.OnGestureStateChangedListener
     private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
     private lateinit var wetStrokesViewTouchHandler: WetStrokesViewTouchHandler
+    private lateinit var annotationsViewOnTouchListener: AnnotationsViewOnTouchListener
     private lateinit var annotationToolbar: AnnotationToolbar
 
     private var pageTransformCalculator: PageTransformCalculator = PageTransformCalculator()
@@ -369,18 +370,18 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 }
             setOnTouchListener(wetStrokesViewTouchHandler)
         }
-        val popupDismissalTouchListener = PopupDismissalTouchListener(annotationToolbar)
-        val annotationsViewOnTouchListener =
+
+        annotationsViewOnTouchListener =
             AnnotationsViewOnTouchListener(
                 requireContext(),
                 WetStrokesViewTouchEventDispatcher(),
                 PdfViewTouchEventDispatcher(),
-            )
-        // The order of touch listeners is important, as touch events will be delegated
-        // sequentially.
-        val pdfCompositeTouchListener =
-            PdfCompositeTouchListener(popupDismissalTouchListener, annotationsViewOnTouchListener)
-        pdfContainer.setOnTouchListener(pdfCompositeTouchListener)
+            ) {
+                // dismiss any popups shown on annotation toolbar if touch is intercepted
+                // outside toolbar
+                annotationToolbar.dismissPopups()
+            }
+        pdfContainer.setOnTouchListener(annotationsViewOnTouchListener)
     }
 
     private fun setupBackPressedCallback() {
