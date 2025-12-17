@@ -73,7 +73,11 @@ data class TestCompilationResult(
 )
 
 @OptIn(ExperimentalCompilerApi::class)
-internal class PluginRegistrarArguments(val k2Registrars: List<CompilerPluginRegistrar>)
+internal class PluginRegistrarArguments(
+    @Suppress("DEPRECATION")
+    val k1Registrars: List<org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar>,
+    val k2Registrars: List<CompilerPluginRegistrar>,
+)
 
 /** Ensures the list of sources has at least 1 kotlin file, if not, adds one. */
 internal fun TestCompilationArguments.withAtLeastOneKotlinSource(): TestCompilationArguments {

@@ -211,15 +211,15 @@ internal class KspProcessingEnv(
 
     enum class JvmDefaultMode(val option: String) {
         DISABLE("disable"),
-        ENABLE("enable"),
-        NO_COMPATIBILITY("no-compatibility");
+        ALL_COMPATIBILITY("all-compatibility"),
+        ALL_INCOMPATIBLE("all");
 
         companion object {
             fun fromStringOrNull(string: String?): JvmDefaultMode? =
                 when (string) {
                     DISABLE.option -> DISABLE
-                    ENABLE.option -> ENABLE
-                    NO_COMPATIBILITY.option -> NO_COMPATIBILITY
+                    ALL_COMPATIBILITY.option -> ALL_COMPATIBILITY
+                    ALL_INCOMPATIBLE.option -> ALL_INCOMPATIBLE
                     else -> null
                 }
         }
