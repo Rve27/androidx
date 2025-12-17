@@ -57,6 +57,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 
@@ -75,10 +76,14 @@ public final class SurfaceEntityImplTest {
     private final SurfaceFeature mMockSurfaceFeature = Mockito.mock(SurfaceFeature.class);
     private FakeScenePose mRenderViewScenePose;
     private FieldOfView mRenderViewFov;
-    private PixelDimensions mDisplayResolution;
+    private final PixelDimensions mViewPlaneResolution = new PixelDimensions(2000, 1000);
 
     @Before
     public void setUp() {
+        String widthAndHeightConfig =
+                "+w" + mViewPlaneResolution.width + "dp-h" + mViewPlaneResolution.height + "dp";
+        RuntimeEnvironment.setQualifiers(widthAndHeightConfig);
+
         createDefaultSurfaceEntity(new Shape.Quad(new FloatSize2d(1f, 1f)));
 
         mRenderViewScenePose = new FakeScenePose();
@@ -89,7 +94,6 @@ public final class SurfaceEntityImplTest {
                 (float) Math.atan(1.0),
                 (float) Math.atan(1.0),
                 (float) Math.atan(1.0));
-        mDisplayResolution = new PixelDimensions(1000, 1000);
     }
 
     @After
@@ -258,7 +262,7 @@ public final class SurfaceEntityImplTest {
         mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
 
         PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution(
-                mRenderViewScenePose, mRenderViewFov, mDisplayResolution);
+                mRenderViewScenePose, mRenderViewFov);
         assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
         PerceivedResolutionResult.Success successResult =
                 (PerceivedResolutionResult.Success) result;
@@ -279,7 +283,7 @@ public final class SurfaceEntityImplTest {
         mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
 
         PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution(
-                mRenderViewScenePose, mRenderViewFov, mDisplayResolution);
+                mRenderViewScenePose, mRenderViewFov);
         assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
         PerceivedResolutionResult.Success successResult =
                 (PerceivedResolutionResult.Success) result;
@@ -301,7 +305,7 @@ public final class SurfaceEntityImplTest {
         mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
 
         PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution(
-                mRenderViewScenePose, mRenderViewFov, mDisplayResolution);
+                mRenderViewScenePose, mRenderViewFov);
         assertThat(result).isInstanceOf(PerceivedResolutionResult.EntityTooClose.class);
     }
 
@@ -316,7 +320,7 @@ public final class SurfaceEntityImplTest {
         mSurfaceEntity.setScale(new Vector3(2f, 3f, 1f)); // Scaled to 2m wide, 3m high
 
         PerceivedResolutionResult result = mSurfaceEntity.getPerceivedResolution(
-                mRenderViewScenePose, mRenderViewFov, mDisplayResolution);
+                mRenderViewScenePose, mRenderViewFov);
         assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
         PerceivedResolutionResult.Success successResult =
                 (PerceivedResolutionResult.Success) result;

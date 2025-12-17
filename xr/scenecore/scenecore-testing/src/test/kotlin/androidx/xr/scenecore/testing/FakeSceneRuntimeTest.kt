@@ -301,15 +301,6 @@ class FakeSceneRuntimeTest {
         assertThat(fakeSceneRuntime.lastSetPreferredAspectRatioRatio).isEqualTo(preferredRatio)
     }
 
-    @Test
-    fun getDisplayResolutionInPixels_returnsStoredValue() {
-        val expectedResolution = PixelDimensions(2, 1)
-        fakeSceneRuntime.displayResolution = expectedResolution
-
-        val resolution = fakeSceneRuntime.getDisplayResolutionInPixels()
-        assertThat(resolution).isEqualTo(expectedResolution)
-    }
-
     private class TestInputEventListener : InputEventListener {
         override fun onInputEvent(event: InputEvent) {}
     }

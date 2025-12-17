@@ -25,7 +25,6 @@ import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.PerceivedResolutionResult
-import androidx.xr.scenecore.runtime.PixelDimensions
 import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.runtime.SurfaceEntity
 import androidx.xr.scenecore.runtime.SurfaceEntity.Shape
@@ -201,7 +200,6 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
      *
      * @param renderViewScenePose The [ScenePose] that represents the camera pose.
      * @param renderViewFov The [FieldOfView] of the camera.
-     * @param displayResolution The size of the viewing plane in pixels.
      * @return A [androidx.xr.scenecore.runtime.PerceivedResolutionResult] which encapsulates the
      *   outcome:
      *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
@@ -215,7 +213,6 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
     override fun getPerceivedResolution(
         renderViewScenePose: ScenePose,
         renderViewFov: FieldOfView,
-        displayResolution: PixelDimensions,
     ): PerceivedResolutionResult {
         return perceivedResolutionResult
     }
