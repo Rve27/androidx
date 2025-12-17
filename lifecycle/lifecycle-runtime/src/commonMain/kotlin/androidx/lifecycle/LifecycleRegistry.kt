@@ -18,6 +18,7 @@ package androidx.lifecycle
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle.State
+import androidx.lifecycle.LifecycleRegistry.Companion.createUnsafe
 import kotlin.jvm.JvmStatic
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,48 +27,87 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * An implementation of [Lifecycle] that can handle multiple observers.
  *
- * It is used by Fragments and Support Library Activities. You can also directly use it if you have
- * a custom LifecycleOwner.
+ * It is used by Fragments and Support Library Activities. You can also use it directly if you have
+ * a custom [LifecycleOwner].
  */
 public open class LifecycleRegistry
 private constructor(provider: LifecycleOwner, private val enforceMainThread: Boolean) :
     Lifecycle() {
+
     /**
-     * Custom list that keeps observers and can handle removals / additions during traversal.
+     * A map that holds observers and handles removals/additions during traversal.
      *
-     * Invariant: at any moment of time for observer1 & observer2: if addition_order(observer1) <
-     * addition_order(observer2), then state(observer1) >= state(observer2),
+     * **Invariant:** At any time, for `observer1` & `observer2`: if `addition_order(observer1) <
+     * addition_order(observer2)`, then `state(observer1) >= state(observer2)`.
      */
     private var observerMap = FastSafeIterableMap<LifecycleObserver, ObserverWithState>()
 
-    /** Current state */
-    private var state: State = State.INITIALIZED
-
     /**
-     * The provider that owns this Lifecycle. Only WeakReference on LifecycleOwner is kept, so if
-     * somebody leaks Lifecycle, they won't leak the whole Fragment / Activity. However, to leak
-     * Lifecycle object isn't great idea neither, because it keeps strong references on all other
-     * listeners, so you'll leak all of them as well.
+     * The provider that owns this Lifecycle.
+     *
+     * We use a [WeakReference] to avoid leaking the [LifecycleOwner] (e.g., Fragment or Activity)
+     * if this [Lifecycle] is held longer than necessary.
+     *
+     * **Note:** Leaking this object is still dangerous, as it holds strong references to all its
+     * observers.
      */
     private val lifecycleOwner = WeakReference(provider)
+
+    /**
+     * Tracks the nesting depth of [addObserver] calls to detect re-entrance.
+     *
+     * If an observer is added *inside* the callback of another observer (e.g., inside `onCreate`),
+     * we increment this counter. If the counter is greater than 0, we are already calculating a
+     * target state or dispatching events, so we skip the top-level [sync] call to avoid unsafe
+     * processing.
+     */
     private var addingObserverCounter = 0
+
+    /**
+     * Indicates that the registry is currently traversing the observer list to dispatch events.
+     *
+     * This guards [moveToState]. If a state transition is requested while we are already handling
+     * an event (e.g., an observer calls `markState` in its callback), we cannot simply start a new
+     * [sync] loop immediately. Instead, we set [newEventOccurred] to true, allowing the *outer*
+     * loop to handle the new state after it finishes its current step.
+     */
     private var handlingEvent = false
+
+    /**
+     * Signals that a state change occurred *while* the registry was already processing an event or
+     * adding an observer.
+     *
+     * The [sync] loop checks this flag during iteration. If it detects a new event, it aborts the
+     * current pass and restarts the synchronization process to ensure all observers converge on the
+     * absolute latest state.
+     */
     private var newEventOccurred = false
 
-    // we have to keep it for cases:
-    // void onStart() {
-    //     mRegistry.removeObserver(this);
-    //     mRegistry.add(newObserver);
-    // }
-    // newObserver should be brought only to CREATED state during the execution of
-    // this onStart method. our invariant with observerMap doesn't help, because parent observer
-    // is no longer in the map.
-    private var parentStates = ArrayList<State>()
+    /**
+     * A stack of states used to ensure safe state transitions during re-entrant observer additions.
+     *
+     * When an observer is added *inside* a lifecycle callback (e.g., within `onStart`), we must
+     * prevent the new observer from advancing past the current execution context.
+     *
+     * **Example:**
+     *
+     * ```kotlin
+     * fun onStart() {
+     * registry.removeObserver(this)
+     * registry.addObserver(newObserver)
+     * }
+     * ```
+     *
+     * In this case, `newObserver` must only be brought up to the [State.CREATED] state while
+     * `onStart` is still executing. The standard invariant in `observerMap` fails here because the
+     * original observer (the "parent") has already been removed from the map.
+     */
+    private var parentStates = mutableListOf<State>()
 
     /**
      * Creates a new LifecycleRegistry for the given provider.
      *
-     * You should usually create this inside your LifecycleOwner class's constructor and hold onto
+     * You should usually create this inside your [LifecycleOwner] class's constructor and hold onto
      * the same instance.
      *
      * @param provider The owner LifecycleOwner
@@ -86,6 +126,8 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         currentState = state
     }
 
+    /** The current internal state of the Lifecycle. */
+    private var state = State.INITIALIZED
     override var currentState: State
         get() = state
         /**
@@ -98,7 +140,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
             moveToState(state)
         }
 
-    private val _currentStateFlow: MutableStateFlow<State> = MutableStateFlow(State.INITIALIZED)
+    private val _currentStateFlow = MutableStateFlow(state)
     override val currentStateFlow: StateFlow<State>
         get() = _currentStateFlow.asStateFlow()
 
@@ -115,17 +157,23 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         moveToState(event.targetState)
     }
 
+    /**
+     * Updates the internal state and triggers the synchronization process.
+     *
+     * If we are already handling an event or adding an observer, we set [newEventOccurred] to true
+     * to signal the active loop to restart, rather than starting a new sync immediately.
+     */
     private fun moveToState(next: State) {
         if (state == next) {
             return
         }
-        @Suppress("NewApi") // b/437073246
         checkLifecycleStateTransition(lifecycleOwner.get(), state, next)
 
         state = next
         if (handlingEvent || addingObserverCounter != 0) {
             newEventOccurred = true
-            // we will figure out what to do on upper level.
+            // We are already inside a re-entrant call. The active loop
+            // will notice this flag and restart to handle the new state.
             return
         }
         handlingEvent = true
@@ -136,6 +184,13 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         }
     }
 
+    /**
+     * Checks if all observers are caught up to the current state.
+     *
+     * Because `observerMap` maintains the invariant that older observers have lower/equal states,
+     * we only need to check the first (oldest) and last (newest) observers. If both match the
+     * registry's state, then all observers in between must also be in that state.
+     */
     private val isSynced: Boolean
         get() {
             if (observerMap.size() == 0) {
@@ -146,6 +201,14 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
             return eldestObserverState == newestObserverState && state == newestObserverState
         }
 
+    /**
+     * Calculates the target state for a specific observer.
+     *
+     * We take the minimum of:
+     * 1. The registry's current state.
+     * 2. The state of the observer immediately preceding this one (to maintain the invariant).
+     * 3. The parent state (if we are in a re-entrant call).
+     */
     private fun calculateTargetState(observer: LifecycleObserver): State {
         val map = observerMap.ceil(observer)
         val siblingState = map?.value?.state
@@ -159,10 +222,11 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
      *
      * The given observer will be brought to the current state of the LifecycleOwner. For example,
      * if the LifecycleOwner is in [Lifecycle.State.STARTED] state, the given observer will receive
-     * [Lifecycle.Event.ON_CREATE], [Lifecycle.Event.ON_START] events.
+     * [Lifecycle.Event.ON_CREATE] and [Lifecycle.Event.ON_START] events.
      *
      * @param observer The observer to notify.
-     * @throws IllegalStateException if no event up from observer's initial state
+     * @throws IllegalStateException if no event exists to move up from the observer's initial
+     *   state.
      */
     @MainThread
     override fun addObserver(observer: LifecycleObserver) {
@@ -173,54 +237,40 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         if (previous != null) {
             return
         }
-        @Suppress("NewApi") // b/437073246
-        val lifecycleOwner =
-            lifecycleOwner.get()
-                ?: // it is null we should be destroyed. Fallback quickly
-                return
+        val lifecycleOwner = lifecycleOwner.get() ?: return // If null, the owner is destroyed.
         val isReentrance = addingObserverCounter != 0 || handlingEvent
         var targetState = calculateTargetState(observer)
         addingObserverCounter++
         while (statefulObserver.state < targetState && observerMap.contains(observer)) {
-            pushParentState(statefulObserver.state)
+            parentStates.add(statefulObserver.state)
             val event =
                 Event.upFrom(statefulObserver.state)
                     ?: throw IllegalStateException("no event up from ${statefulObserver.state}")
             statefulObserver.dispatchEvent(lifecycleOwner, event)
-            popParentState()
-            // mState / subling may have been changed recalculate
+            parentStates.removeLastOrNull()
+            // The global state or sibling state may have changed during dispatch; recalculate.
             targetState = calculateTargetState(observer)
         }
         if (!isReentrance) {
-            // we do sync only on the top level.
+            // We only run the full sync loop at the top level to avoid recursion issues.
             sync()
         }
         addingObserverCounter--
     }
 
-    private fun popParentState() {
-        parentStates.removeAt(parentStates.size - 1)
-    }
-
-    private fun pushParentState(state: State) {
-        parentStates.add(state)
-    }
-
     @MainThread
     override fun removeObserver(observer: LifecycleObserver) {
         enforceMainThreadIfNeeded("removeObserver")
-        // we consciously decided not to send destruction events here in opposition to addObserver.
-        // Our reasons for that:
-        // 1. These events haven't yet happened at all. In contrast to events in addObservers, that
-        // actually occurred but earlier.
-        // 2. There are cases when removeObserver happens as a consequence of some kind of fatal
-        // event. If removeObserver method sends destruction events, then a clean up routine becomes
-        // more cumbersome. More specific example of that is: your LifecycleObserver listens for
-        // a web connection, in the usual routine in OnStop method you report to a server that a
-        // session has just ended and you close the connection. Now let's assume now that you
-        // lost an internet and as a result you removed this observer. If you get destruction
-        // events in removeObserver, you should have a special case in your onStop method that
-        // checks if your web connection died and you shouldn't try to report anything to a server.
+        // We consciously decided not to send destruction events here, in contrast to addObserver.
+        // Reasons:
+        // 1. These events haven't occurred naturally. Unlike addObserver (where events historically
+        //    happened), destruction is a future event.
+        // 2. removeObserver is often called during fatal cleanup. If we dispatched destruction
+        //    events here, cleanup logic would become brittle.
+        //    Example: An observer manages a web connection. In onStop(), it reports "session ended"
+        //    and closes the connection. If you lose internet connection and remove the observer,
+        //    dispatching ON_DESTROY here might trigger the "report session ended" logic, which
+        //    would fail (no internet) and require complex error handling in the observer.
         observerMap.remove(observer)
     }
 
@@ -235,48 +285,85 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
             return observerMap.size()
         }
 
+    /**
+     * Moves observers "up" towards [State.RESUMED].
+     *
+     * This dispatches events that initialize or activate the component (e.g., [Event.ON_CREATE],
+     * [Event.ON_START], [Event.ON_RESUME]).
+     *
+     * We iterate from **oldest to newest** observers. This ensures that parents (usually added
+     * first) are initialized before their children.
+     */
     private fun forwardPass(lifecycleOwner: LifecycleOwner) {
         observerMap.forEachWithAdditions { (key, observer) ->
             while (observer.state < state && !newEventOccurred && observerMap.contains(key)) {
-                pushParentState(observer.state)
+                parentStates.add(observer.state)
                 val event =
-                    Event.upFrom(observer.state)
-                        ?: throw IllegalStateException("no event up from ${observer.state}")
+                    checkNotNull(Event.upFrom(observer.state)) {
+                        "no event up from ${observer.state}"
+                    }
                 observer.dispatchEvent(lifecycleOwner, event)
-                popParentState()
+                parentStates.removeLastOrNull()
             }
         }
     }
 
+    /**
+     * Moves observers "down" towards [State.DESTROYED].
+     *
+     * This dispatches events that stop or tear down the component (e.g., [Event.ON_PAUSE],
+     * [Event.ON_STOP], [Event.ON_DESTROY]).
+     *
+     * We iterate from **newest to oldest** observers. This ensures that children (usually added
+     * last) are torn down before their parents, mirroring the stack-like behavior of typical
+     * cleanup routines.
+     */
     private fun backwardPass(lifecycleOwner: LifecycleOwner) {
         observerMap.forEachReversed { (key, observer) ->
             while (observer.state > state && !newEventOccurred && observerMap.contains(key)) {
                 val event =
-                    Event.downFrom(observer.state)
-                        ?: throw IllegalStateException("no event down from ${observer.state}")
-                pushParentState(event.targetState)
+                    checkNotNull(Event.downFrom(observer.state)) {
+                        "no event down from ${observer.state}"
+                    }
+                parentStates.add(event.targetState)
                 observer.dispatchEvent(lifecycleOwner, event)
-                popParentState()
+                parentStates.removeLastOrNull()
             }
         }
     }
 
-    // happens only on the top of stack (never in reentrance),
-    // so it doesn't have to take in account parents
+    /**
+     * Synchronizes the state of all observers with the registry's current [state].
+     *
+     * This method runs a loop that attempts to converge the observers' states toward the registry's
+     * state. It handles two directions:
+     * 1. **Backward Pass:** If the registry's state is *lower* than the oldest observer (e.g.,
+     *    moving towards [State.DESTROYED]), we iterate strictly in reverse order to bring observers
+     *    down.
+     * 2. **Forward Pass:** If the registry's state is *higher* than the newest observer (e.g.,
+     *    moving towards [State.RESUMED]), we iterate in addition order to bring observers up.
+     *
+     * If a new lifecycle event occurs *during* this traversal (re-entrance), the [newEventOccurred]
+     * flag is set. The loop detects this, stops the current pass, and restarts to ensure all
+     * observers settle on the most recent state.
+     *
+     * **Note:** This method must only be called from the top of the stack (never inside a
+     * re-entrant call) to avoid stack overflow.
+     */
     private fun sync() {
-        @Suppress("NewApi") // b/437073246
         val lifecycleOwner =
-            lifecycleOwner.get()
-                ?: throw IllegalStateException(
-                    "LifecycleOwner of this LifecycleRegistry is already " +
-                        "garbage collected. It is too late to change lifecycle state."
-                )
+            checkNotNull(lifecycleOwner.get()) {
+                "LifecycleOwner of this LifecycleRegistry is already " +
+                    "garbage collected. It is too late to change lifecycle state."
+            }
         while (!isSynced) {
             newEventOccurred = false
+            // If the current state is "lower" than the oldest observer, we bring observers down.
             if (state < observerMap.first().value.state) {
                 backwardPass(lifecycleOwner)
             }
             val newest = observerMap.lastOrNull()
+            // If the current state is "higher" than the newest observer, we bring observers up.
             if (!newEventOccurred && newest != null && state > newest.value.state) {
                 forwardPass(lifecycleOwner)
             }
@@ -285,20 +372,21 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         _currentStateFlow.value = currentState
     }
 
+    /**
+     * Ensures the method is called on the main thread if enforcement is enabled.
+     *
+     * @see createUnsafe
+     */
     private fun enforceMainThreadIfNeeded(methodName: String) {
         if (enforceMainThread) {
             check(isMainThread()) { ("Method $methodName must be called on the main thread") }
         }
     }
 
+    /** Wrapper that couples a [LifecycleObserver] with its current [State]. */
     internal class ObserverWithState(observer: LifecycleObserver?, initialState: State) {
-        var state: State
-        var lifecycleObserver: LifecycleEventObserver
-
-        init {
-            lifecycleObserver = Lifecycling.lifecycleEventObserver(observer!!)
-            state = initialState
-        }
+        var state = initialState
+        var lifecycleObserver = Lifecycling.lifecycleEventObserver(observer!!)
 
         fun dispatchEvent(owner: LifecycleOwner?, event: Event) {
             val newState = event.targetState
@@ -310,13 +398,13 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
 
     public companion object {
         /**
-         * Creates a new LifecycleRegistry for the given provider, that doesn't check that its
-         * methods are called on the threads other than main.
+         * Creates a new LifecycleRegistry for the given provider that doesn't check if its methods
+         * are called on threads other than main.
          *
          * LifecycleRegistry is not synchronized: if multiple threads access this
          * `LifecycleRegistry`, it must be synchronized externally.
          *
-         * Another possible use-case for this method is JVM testing, when main thread is not
+         * Another possible use-case for this method is JVM testing, when the main thread is not
          * present.
          */
         @JvmStatic
@@ -324,12 +412,12 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         public fun createUnsafe(owner: LifecycleOwner): LifecycleRegistry {
             return LifecycleRegistry(owner, false)
         }
-
-        @JvmStatic
-        internal fun min(state1: State, state2: State?): State {
-            return if ((state2 != null) && (state2 < state1)) state2 else state1
-        }
     }
+}
+
+/** Returns the minimum of two states, handling nulls by treating them as "larger". */
+private fun min(state1: State, state2: State?): State {
+    return if ((state2 != null) && (state2 < state1)) state2 else state1
 }
 
 /**
@@ -341,7 +429,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
  * @param next The desired next [Lifecycle.State] of the component.
  * @throws IllegalStateException if the component is in an invalid state for the desired transition.
  */
-internal fun checkLifecycleStateTransition(owner: LifecycleOwner?, current: State, next: State) {
+private fun checkLifecycleStateTransition(owner: LifecycleOwner?, current: State, next: State) {
     if (current == State.INITIALIZED && next == State.DESTROYED) {
         error(
             "State must be at least '${State.CREATED}' to be moved to '$next' in component $owner"
@@ -352,4 +440,5 @@ internal fun checkLifecycleStateTransition(owner: LifecycleOwner?, current: Stat
     }
 }
 
+/** Returns `true` if the current thread is the Platform Main Thread. */
 internal expect fun isMainThread(): Boolean
