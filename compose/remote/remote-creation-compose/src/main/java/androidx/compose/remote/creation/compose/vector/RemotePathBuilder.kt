@@ -15,7 +15,7 @@
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.creation.compose.capture.vector
+package androidx.compose.remote.creation.compose.vector
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.state.RemoteFloat
