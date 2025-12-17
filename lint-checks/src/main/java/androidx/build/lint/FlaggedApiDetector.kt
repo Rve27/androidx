@@ -17,6 +17,7 @@
 package androidx.build.lint
 
 import com.android.SdkConstants.ATTR_VALUE
+import com.android.tools.lint.checks.ApiLookup
 import com.android.tools.lint.checks.TypedefDetector
 import com.android.tools.lint.detector.api.AnnotationInfo
 import com.android.tools.lint.detector.api.AnnotationOrigin
@@ -24,6 +25,7 @@ import com.android.tools.lint.detector.api.AnnotationUsageInfo
 import com.android.tools.lint.detector.api.AnnotationUsageType
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.ConstantEvaluator
+import com.android.tools.lint.detector.api.Context
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Implementation
 import com.android.tools.lint.detector.api.Issue
@@ -33,6 +35,7 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
+import com.android.tools.lint.detector.api.getInternalMethodName
 import com.android.tools.lint.detector.api.getMethodName
 import com.android.tools.lint.detector.api.isUnconditionalReturn
 import com.intellij.lang.java.JavaLanguage
@@ -56,8 +59,10 @@ import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UAnnotation
 import org.jetbrains.uast.UBlockExpression
 import org.jetbrains.uast.UCallExpression
+import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UField
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.UIfExpression
 import org.jetbrains.uast.UMethod
@@ -71,6 +76,7 @@ import org.jetbrains.uast.UastBinaryOperator
 import org.jetbrains.uast.UastFacade
 import org.jetbrains.uast.UastPrefixOperator
 import org.jetbrains.uast.evaluateString
+import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.isInjectionHost
 import org.jetbrains.uast.skipParenthesizedExprDown
 import org.jetbrains.uast.toUElement
@@ -84,8 +90,18 @@ import org.jetbrains.uast.util.isConstructorCall
  * `lint-checks/src/main/java/com/android/tools/lint/checks/optional/FlaggedApiDetector.kt`
  */
 class FlaggedApiDetector : Detector(), SourceCodeScanner {
+    private var apiDatabase: ApiLookup? = null
+
+    override fun beforeCheckRootProject(context: Context) {
+        if (apiDatabase == null) {
+            apiDatabase = ApiLookup.get(context.client, context.project.buildTarget)
+        }
+    }
 
     companion object Issues {
+        private const val API_LEVEL_UNKNOWN_OR_1 = -1
+        private const val API_LEVEL_PREVIEW = 10000
+
         private val IMPLEMENTATION =
             Implementation(FlaggedApiDetector::class.java, Scope.JAVA_FILE_SCOPE)
 
@@ -205,6 +221,13 @@ class FlaggedApiDetector : Detector(), SourceCodeScanner {
             return
         }
 
+        // Reduce false positives on flagged APIs by only looking at flags for platform APIs that
+        // were either definitely added in a preview SDK or don't have enough information to know
+        // for certain.
+        if (isUsageOfPlatformApi(usageInfo) && !isUsageOfPreviewApi(context, usageInfo)) {
+            return
+        }
+
         // Avoid checking flagged deprecations. We don't allow adding APIs as deprecated, so we can
         // safely assume that the flag applies to the deprecated state rather than the API itself.
         if (isFlaggedDeprecation(usageInfo)) return
@@ -281,6 +304,47 @@ class FlaggedApiDetector : Detector(), SourceCodeScanner {
         (context.evaluator.getLibrary(usage) ?: context.project.mavenCoordinate)?.version?.let {
             it.substringAfter('-').startsWith("alpha") || it == "unspecified" || it.isEmpty()
         } ?: true // If we can't obtain the Maven coordinate, assume we're in a lint test or app.
+
+    private fun isUsageOfPlatformApi(usageInfo: AnnotationUsageInfo): Boolean =
+        when (val element = usageInfo.referencedElement) {
+            is UClass -> element.qualifiedName
+            is UField -> element.getContainingUClass()?.qualifiedName
+            is UMethod -> element.getContainingUClass()?.qualifiedName
+            else -> null
+        }?.startsWith("android.") ?: false
+
+    private fun isUsageOfPreviewApi(context: JavaContext, usageInfo: AnnotationUsageInfo): Boolean =
+        when (val element = usageInfo.referencedElement) {
+            is UClass -> isPreviewClass(context, element)
+            is UField -> isPreviewField(element)
+            is UMethod -> isPreviewMethod(context, element)
+            else -> false
+        }
+
+    private fun isPreviewField(field: UField): Boolean {
+        val owner = field.getContainingUClass()?.qualifiedName ?: return false
+        val addedInSdk = apiDatabase?.getFieldVersions(owner, field.name)?.min() ?: return false
+        return addedInSdk == API_LEVEL_PREVIEW || addedInSdk == API_LEVEL_UNKNOWN_OR_1
+    }
+
+    private fun isPreviewMethod(context: JavaContext, method: UMethod): Boolean {
+        val owner = method.getContainingUClass()?.qualifiedName ?: return false
+        val name = getInternalMethodName(method.javaPsi)
+        val desc =
+            context.evaluator.getMethodDescription(
+                method.javaPsi,
+                includeName = false,
+                includeReturn = false,
+            ) ?: return false
+        val addedInSdk = apiDatabase?.getMethodVersions(owner, name, desc)?.min() ?: return false
+        return addedInSdk == API_LEVEL_PREVIEW || addedInSdk == API_LEVEL_UNKNOWN_OR_1
+    }
+
+    private fun isPreviewClass(context: JavaContext, clazz: UClass): Boolean {
+        val className = clazz.qualifiedName ?: return false
+        val addedInSdk = apiDatabase?.getClassVersions(className)?.min() ?: return false
+        return addedInSdk == API_LEVEL_PREVIEW || addedInSdk == API_LEVEL_UNKNOWN_OR_1
+    }
 
     private fun isFlaggedDeprecation(usageInfo: AnnotationUsageInfo): Boolean =
         (usageInfo.referencedElement as? UAnnotated)?.let {
