@@ -245,7 +245,7 @@ private fun RemoteComposeContextAndroid.makeColorList(list: Array<String>): IntA
     beginGlobal()
     for (i in 0 until list.size) {
         val colorName = list[i]
-        retList[i] = addColor(0xFF00FF00.toInt()).toInt()
+        retList[i] = addColor(0xFF00FF00.toInt())
         setColorName(retList[i], "color.$colorName")
     }
     endGlobal()
