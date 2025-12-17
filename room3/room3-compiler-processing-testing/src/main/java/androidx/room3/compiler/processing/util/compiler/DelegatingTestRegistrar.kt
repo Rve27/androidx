@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -38,11 +39,28 @@ import org.jetbrains.kotlin.util.ServiceLoaderLite
  */
 @OptIn(ExperimentalCompilerApi::class)
 object DelegatingTestRegistrar {
+
+    @Suppress("DEPRECATION")
+    private val k1Delegates =
+        ThreadLocal<List<org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar>>()
+
     private val k2Delegates = ThreadLocal<List<CompilerPluginRegistrar>>()
 
-    class K2Registrar() : CompilerPluginRegistrar() {
-        override val pluginId: String = "org.testing.plugin"
+    class K1Registrar :
+        @Suppress("DEPRECATION") org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar {
+        override fun registerProjectComponents(
+            project: MockProject,
+            configuration: CompilerConfiguration,
+        ) {
+            k1Delegates.get()?.forEach { it.registerProjectComponents(project, configuration) }
+        }
 
+        // FirKotlinToJvmBytecodeCompiler throws an error when it sees an incompatible plugin.
+        override val supportsK2: Boolean
+            get() = true
+    }
+
+    class K2Registrar : CompilerPluginRegistrar() {
         override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
             k2Delegates.get()?.forEach { with(it) { registerExtensions(configuration) } }
         }
@@ -51,8 +69,15 @@ object DelegatingTestRegistrar {
             get() = true
     }
 
+    private const val K1_SERVICES_REGISTRAR_PATH =
+        "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar"
+
     private const val K2_SERVICES_REGISTRAR_PATH =
         "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
+
+    private val k1ResourcePathForSelfClassLoader by lazy {
+        getResourcePathForClassLoader(K1_SERVICES_REGISTRAR_PATH)
+    }
 
     private val k2ResourcePathForSelfClassLoader by lazy {
         getResourcePathForClassLoader(K2_SERVICES_REGISTRAR_PATH)
@@ -61,11 +86,15 @@ object DelegatingTestRegistrar {
     private fun getResourcePathForClassLoader(servicesRegistrarPath: String): String {
         val registrarClassToLoad =
             when (servicesRegistrarPath) {
+                K1_SERVICES_REGISTRAR_PATH ->
+                    @Suppress("DEPRECATION")
+                    org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar::class
                 K2_SERVICES_REGISTRAR_PATH -> CompilerPluginRegistrar::class
                 else -> error("Unknown services registrar path: $servicesRegistrarPath")
             }
         val expectedRegistrarClass =
             when (servicesRegistrarPath) {
+                K1_SERVICES_REGISTRAR_PATH -> K1Registrar::class
                 K2_SERVICES_REGISTRAR_PATH -> K2Registrar::class
                 else -> error("Unknown services registrar path: $servicesRegistrarPath")
             }
@@ -111,6 +140,7 @@ object DelegatingTestRegistrar {
         registrars: PluginRegistrarArguments,
     ): ExitCode {
         try {
+            k1Delegates.set(registrars.k1Registrars)
             k2Delegates.set(registrars.k2Registrars)
             arguments.addDelegatingTestRegistrars()
             return compiler.exec(
@@ -119,6 +149,7 @@ object DelegatingTestRegistrar {
                 arguments = arguments,
             )
         } finally {
+            k1Delegates.remove()
             k2Delegates.remove()
         }
     }
@@ -127,6 +158,7 @@ object DelegatingTestRegistrar {
         pluginClasspaths =
             buildList {
                     pluginClasspaths?.let { addAll(it) }
+                    add(k1ResourcePathForSelfClassLoader)
                     add(k2ResourcePathForSelfClassLoader)
                 }
                 .toTypedArray()
