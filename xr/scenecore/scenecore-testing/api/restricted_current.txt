@@ -242,7 +242,7 @@ package androidx.xr.scenecore.testing {
     ctor public FakePanelEntity(optional android.view.View? view);
     ctor @BytecodeOnly public FakePanelEntity(android.view.View!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public float getCornerRadius();
-    method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.FieldOfView renderViewFov, androidx.xr.scenecore.runtime.PixelDimensions displayResolution);
+    method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.FieldOfView renderViewFov);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PixelDimensions getSizeInPixels();
     method @InaccessibleFromKotlin public void setCornerRadius(float);
@@ -601,8 +601,6 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.FakeActivitySpace getActivitySpace();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.FakeAudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper();
     method @InaccessibleFromKotlin public float getDeviceDpPerMeter();
-    method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PixelDimensions getDisplayResolution();
-    method public androidx.xr.scenecore.runtime.PixelDimensions getDisplayResolutionInPixels();
     method @InaccessibleFromKotlin public boolean getEnabledPanelDepthTest();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor? getExecutor();
     method @InaccessibleFromKotlin public android.app.Activity? getLastSetPreferredAspectRatioActivity();
@@ -624,7 +622,6 @@ package androidx.xr.scenecore.testing {
     method public void requestFullSpaceMode();
     method public void requestHomeSpaceMode();
     method @InaccessibleFromKotlin public void setDeviceDpPerMeter(float);
-    method @InaccessibleFromKotlin public void setDisplayResolution(androidx.xr.scenecore.runtime.PixelDimensions);
     method public android.os.Bundle setFullSpaceMode(android.os.Bundle bundle);
     method public android.os.Bundle setFullSpaceModeWithEnvironmentInherited(android.os.Bundle bundle);
     method @InaccessibleFromKotlin public void setLastSetPreferredAspectRatioActivity(android.app.Activity?);
@@ -635,7 +632,6 @@ package androidx.xr.scenecore.testing {
     property public androidx.xr.scenecore.testing.FakeActivitySpace activitySpace;
     property public androidx.xr.scenecore.testing.FakeAudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
     property public float deviceDpPerMeter;
-    property public androidx.xr.scenecore.runtime.PixelDimensions displayResolution;
     property public boolean enabledPanelDepthTest;
     property public java.util.concurrent.Executor? executor;
     property public android.app.Activity? lastSetPreferredAspectRatioActivity;
@@ -785,7 +781,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather getEdgeFeather();
     method @InaccessibleFromKotlin public boolean getMContentColorMetadataSet();
     method @InaccessibleFromKotlin public int getMaxContentLightLevel();
-    method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.FieldOfView renderViewFov, androidx.xr.scenecore.runtime.PixelDimensions displayResolution);
+    method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.FieldOfView renderViewFov);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.TextureResource? getPrimaryAlphaMask();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SurfaceEntity.Shape getShape();
     method @InaccessibleFromKotlin public int getStereoMode();

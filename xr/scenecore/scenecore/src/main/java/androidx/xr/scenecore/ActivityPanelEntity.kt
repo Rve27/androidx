@@ -34,15 +34,12 @@ import androidx.xr.scenecore.runtime.SceneRuntime
  * [SpatialCapability.EMBED_ACTIVITY] capability is required. Calling [Entity.dispose] on this
  * Entity will destroy the underlying Activity.
  */
-// TODO (b/469536598) - Remove SceneRuntime dependency once
-// SceneRuntime.getDisplayResolutionInPixels is moved to a common util class.
 public class ActivityPanelEntity
 private constructor(
-    sceneRuntime: SceneRuntime,
     perceptionSpace: PerceptionSpace,
     private val rtActivityPanelEntity: RtActivityPanelEntity,
     entityManager: EntityManager,
-) : PanelEntity(sceneRuntime, perceptionSpace, rtActivityPanelEntity, entityManager) {
+) : PanelEntity(perceptionSpace, rtActivityPanelEntity, entityManager) {
 
     /**
      * Starts an [Activity] in the given panel. Subsequent calls to this method will replace the
@@ -80,7 +77,6 @@ private constructor(
             parent: Entity? = entityManager.getEntityForRtEntity(sceneRuntime.activitySpace),
         ): ActivityPanelEntity =
             ActivityPanelEntity(
-                sceneRuntime,
                 perceptionSpace,
                 sceneRuntime.createActivityPanelEntity(
                     pose,
