@@ -18,6 +18,9 @@
 
 package androidx.xr.scenecore.spatial.core
 
+import android.content.Context
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import androidx.annotation.VisibleForTesting
 import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.math.FloatSize3d
@@ -221,4 +224,33 @@ internal fun getPerceivedResolutionOfPanel(
     return PerceivedResolutionResult.Success(
         PixelDimensions(pixelWidth.roundToInt(), pixelHeight.roundToInt())
     )
+}
+
+/**
+ * Returns the resolution of the display in pixels for each eye.
+ *
+ * @param context The [Context] that provides the default [Display] for determining the display
+ *   resolution.
+ * @return The [PixelDimensions]s of the resolution for a single eye.
+ */
+// Suppress warnings: windowManager's getDefaultDisplay and getRealMetrics.
+@Suppress("DEPRECATION")
+internal fun getDisplayResolutionInPixels(context: Context): PixelDimensions {
+    val windowManager =
+        context.getSystemService(WindowManager::class.java)
+            // WindowManager not available, cannot get display resolution. Returning (0, 0).
+            ?: return PixelDimensions(0, 0)
+
+    val display =
+        windowManager.defaultDisplay
+            // Default display not available, cannot get display resolution. Returning
+            // (0,0).
+            ?: return PixelDimensions(0, 0)
+
+    val displayMetrics = DisplayMetrics()
+    display.getRealMetrics(displayMetrics)
+
+    // Divide the width by 2 because we want single eye resolution, not full display
+    // resolution
+    return PixelDimensions(displayMetrics.widthPixels / 2, displayMetrics.heightPixels)
 }

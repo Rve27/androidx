@@ -36,10 +36,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.android.controller.ActivityController
+import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
+@Config(sdk = [Config.TARGET_SDK])
 class PerceivedResolutionUtilsTest {
 
     private lateinit var activityController: ActivityController<ComponentActivity>
@@ -70,7 +72,6 @@ class PerceivedResolutionUtilsTest {
         cameraDisplayResolution = PixelDimensions(1000, 1000) // 1000x1000 display
 
         fakeSceneRuntime = FakeSceneRuntime(unscaledGravityAlignedActivitySpace = true)
-        fakeSceneRuntime.displayResolution = cameraDisplayResolution
         session =
             Session(
                 activity,
@@ -539,5 +540,20 @@ class PerceivedResolutionUtilsTest {
             )
 
         assertThat(result).isInstanceOf(PerceivedResolutionResult.EntityTooClose::class.java)
+    }
+
+    @Test
+    @Suppress("deprecation")
+    fun getDisplayResolutionInPixels_returnsPixelDimensionsOfDefaultDisplay() {
+        val viewPlaneResolution = PixelDimensions(2000, 1000)
+        val widthAndHeightConfig =
+            "+w${viewPlaneResolution.width}dp-h${viewPlaneResolution.height}dp"
+        RuntimeEnvironment.setQualifiers(widthAndHeightConfig)
+
+        val displayResolution: PixelDimensions = getDisplayResolutionInPixels(activity)
+
+        // The implementation divides width by 2 for single eye resolution
+        assertThat(displayResolution.width).isEqualTo(viewPlaneResolution.width / 2)
+        assertThat(displayResolution.height).isEqualTo(viewPlaneResolution.height)
     }
 }

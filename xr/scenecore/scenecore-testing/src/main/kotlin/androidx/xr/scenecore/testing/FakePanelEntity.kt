@@ -129,7 +129,6 @@ public open class FakePanelEntity(private val view: View? = null) : FakeEntity()
      *
      * @param renderViewScenePose The [ScenePose] that represents the camera pose.
      * @param renderViewFov The [FieldOfView] of the camera.
-     * @param displayResolution The size of the viewing plane in pixels.
      * @return A [androidx.xr.scenecore.runtime.PerceivedResolutionResult] which encapsulates the
      *   outcome:
      *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
@@ -143,7 +142,6 @@ public open class FakePanelEntity(private val view: View? = null) : FakeEntity()
     override fun getPerceivedResolution(
         renderViewScenePose: ScenePose,
         renderViewFov: FieldOfView,
-        displayResolution: PixelDimensions,
     ): PerceivedResolutionResult {
         return perceivedResolutionResult
     }

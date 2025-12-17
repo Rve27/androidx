@@ -38,11 +38,8 @@ import androidx.xr.scenecore.runtime.SceneRuntime
  */
 // TODO(ricknels): move isMainPanelEntity check to SceneRuntime and provide better kdocs
 // for mainPanelEntity
-// TODO (b/469536598) - Remove SceneRuntime dependency once
-// SceneRuntime.getDisplayResolutionInPixels is moved to a common util class.
 public open class PanelEntity
 internal constructor(
-    private val sceneRuntime: SceneRuntime,
     private val perceptionSpace: PerceptionSpace,
     rtEntity: RtPanelEntity,
     entityManager: EntityManager,
@@ -123,7 +120,6 @@ internal constructor(
                         as PerceptionScenePose)
                     .rtScenePose,
                 renderViewpoint.state.value.fieldOfView,
-                sceneRuntime.getDisplayResolutionInPixels(),
             )
             .toPerceivedResolutionResult()
     }
@@ -195,7 +191,6 @@ internal constructor(
             parent: Entity? = entityManager.getEntityForRtEntity(sceneRuntime.activitySpace),
         ): PanelEntity =
             PanelEntity(
-                sceneRuntime,
                 perceptionSpace,
                 sceneRuntime.createPanelEntity(
                     context,
@@ -228,7 +223,6 @@ internal constructor(
             parent: Entity? = entityManager.getEntityForRtEntity(sceneRuntime.activitySpace),
         ): PanelEntity =
             PanelEntity(
-                sceneRuntime,
                 perceptionSpace,
                 sceneRuntime.createPanelEntity(
                     context,

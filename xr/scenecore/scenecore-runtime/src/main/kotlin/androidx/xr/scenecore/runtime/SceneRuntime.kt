@@ -433,7 +433,4 @@ public interface SceneRuntime : JxrRuntime {
     ): PointerCaptureComponent
 
     public fun createSpatialPointerComponent(): SpatialPointerComponent
-
-    /** Gets the resolution in pixels of the viewing plane. */
-    public fun getDisplayResolutionInPixels(): PixelDimensions
 }

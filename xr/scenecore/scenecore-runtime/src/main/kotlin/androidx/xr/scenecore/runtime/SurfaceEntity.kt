@@ -104,7 +104,6 @@ public interface SurfaceEntity : Entity {
      *
      * @param renderViewScenePose The [ScenePose] that represents the camera pose.
      * @param renderViewFov The [FieldOfView] of the camera.
-     * @param displayResolution The size of the viewing plane in pixels.
      * @return A [PerceivedResolutionResult] which encapsulates the outcome:
      *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
      *       is successful.
@@ -117,7 +116,6 @@ public interface SurfaceEntity : Entity {
     public fun getPerceivedResolution(
         renderViewScenePose: ScenePose,
         renderViewFov: FieldOfView,
-        displayResolution: PixelDimensions,
     ): PerceivedResolutionResult
 
     /**
