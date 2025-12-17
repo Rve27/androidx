@@ -52,6 +52,6 @@ androidXMultiplatform {
 }
 
 androidx {
-    kotlinTarget = KotlinTarget.KOTLIN_2_3
+    kotlinTarget = KotlinTarget.KOTLIN_2_2
     type = SoftwareType.INTERNAL_TEST_LIBRARY
 }
