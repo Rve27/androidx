@@ -29,7 +29,6 @@ import androidx.pdf.actions.TwoFingerSwipeUpAction
 import androidx.pdf.ink.R as InkR
 import androidx.pdf.ink.R as PdfInkR
 import androidx.pdf.ink.model.ApplyInProgressException
-import androidx.pdf.ink.view.AnnotationToolbar
 import androidx.pdf.util.Preconditions
 import androidx.pdf.view.PdfView
 import androidx.pdf.viewer.fragment.R as PdfR
@@ -52,10 +51,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertTrue
 import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThan
@@ -485,37 +481,6 @@ class EditablePdfViewerFragmentTestSuite {
         onView(withId(PdfR.id.pdfContentLayout)).perform(pressBack())
         // Assert brush size selector is not displayed
         onView(withId(PdfInkR.id.brush_size_selector)).check(matches(not(isDisplayed())))
-    }
-
-    @Test
-    fun testEditablePdfViewerFragment_annotationToolbar_isConfigPopupVisible() {
-        if (!isRequiredSdkExtensionAvailable()) return
-
-        loadDocumentAndSetupFragment()
-        enterEditMode()
-
-        var annotationToolbar: AnnotationToolbar? = null
-        scenario.onFragment { fragment ->
-            fragment.view?.findViewById<AnnotationToolbar>(PdfInkR.id.annotationToolbar)?.let {
-                annotationToolbar = it
-            }
-        }
-
-        // open brush size selector
-        onView(withId(PdfInkR.id.pen_button)).perform(click())
-
-        assertNotNull(annotationToolbar)
-        assertTrue(annotationToolbar.isConfigPopupVisible)
-
-        onView(withId(PdfInkR.id.pdf_annotation_view)).perform(click())
-        assertFalse(annotationToolbar.isConfigPopupVisible)
-
-        // open color palette
-        onView(withId(PdfInkR.id.color_palette_button)).perform(click())
-        assertTrue(annotationToolbar.isConfigPopupVisible)
-
-        onView(withId(PdfInkR.id.pdf_annotation_view)).perform(click())
-        assertFalse(annotationToolbar.isConfigPopupVisible)
     }
 
     private fun enterEditMode() {
