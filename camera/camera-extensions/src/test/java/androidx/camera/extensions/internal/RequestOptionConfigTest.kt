@@ -59,7 +59,6 @@ class RequestOptionConfigTest {
             .isEqualTo(90)
     }
 
-    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") // intentionally using java.* types
     @Test
     fun canBuildFromConfig() {
         val mutableOptionConfig = MutableOptionsBundle.create()
