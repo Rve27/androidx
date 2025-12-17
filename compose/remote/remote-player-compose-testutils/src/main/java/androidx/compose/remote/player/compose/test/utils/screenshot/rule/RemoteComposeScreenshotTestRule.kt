@@ -89,6 +89,8 @@ class RemoteComposeScreenshotTestRule(
 
     private lateinit var testDescription: Description
 
+    val clickEvents: MutableList<Pair<String, Any?>> = mutableListOf()
+
     private val testName =
         object : TestWatcher() {
 
@@ -259,6 +261,7 @@ class RemoteComposeScreenshotTestRule(
             creationDisplayInfo.height,
             debugMode = 1,
             bitmapLoader = bitmapLoader,
+            onNamedAction = { name, value, _ -> clickEvents.add(Pair(name, value)) },
         )
     }
 
