@@ -15,7 +15,7 @@
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
-package androidx.compose.remote.creation.compose.capture.painter
+package androidx.compose.remote.creation.compose.painter
 
 import android.graphics.BlendMode
 import androidx.annotation.RestrictTo

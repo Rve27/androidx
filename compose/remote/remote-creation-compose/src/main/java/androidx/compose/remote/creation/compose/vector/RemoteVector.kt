@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.creation.compose.capture.vector
+package androidx.compose.remote.creation.compose.vector
 
 import android.graphics.Paint
 import androidx.annotation.RestrictTo
