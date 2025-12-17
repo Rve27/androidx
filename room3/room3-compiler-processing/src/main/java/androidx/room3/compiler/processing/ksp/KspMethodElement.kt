@@ -146,7 +146,7 @@ internal sealed class KspMethodElement(
             parentDeclaration.classKind == ClassKind.INTERFACE &&
             !declaration.isAbstract &&
             !isPrivate() &&
-            env.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
+            env.jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE
     }
 
     override fun isExtensionFunction() = declaration.extensionReceiver != null
