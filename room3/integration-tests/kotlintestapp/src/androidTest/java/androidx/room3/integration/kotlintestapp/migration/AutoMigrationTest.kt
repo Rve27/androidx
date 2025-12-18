@@ -52,7 +52,7 @@ class AutoMigrationTest {
     }
 
     // Run this to create the very 1st version of the db.
-    private fun createFirstVersion() {
+    private fun createFirstVersion() = runTest {
         val connection = helper.createDatabase(1)
         connection.execSQL("INSERT INTO Entity9 (id, name) VALUES (1, 'row1')")
         connection.execSQL("INSERT INTO Entity9 (id, name) VALUES (2, 'row2')")
@@ -89,7 +89,7 @@ class AutoMigrationTest {
     }
 
     @Test
-    fun goFromV1ToV5() {
+    fun goFromV1ToV5() = runTest {
         createFirstVersion()
         try {
             helper.runMigrationsAndValidate(version = 5, migrations = emptyList())

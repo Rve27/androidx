@@ -30,11 +30,13 @@ import androidx.room3.migration.bundle.FtsEntityBundle
 import androidx.room3.util.FtsTableInfo
 import androidx.room3.util.TableInfo
 import androidx.room3.util.ViewInfo
+import androidx.room3.util.getQualifiedName
 import androidx.sqlite.SQLiteConnection
-import androidx.sqlite.execSQL
+import androidx.sqlite.executeSQL
+import androidx.sqlite.prepare
+import androidx.sqlite.step
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
-import kotlinx.coroutines.runBlocking
 
 /**
  * A class that can help test and verify database creation and migration at different versions with
@@ -85,7 +87,7 @@ public expect class MigrationTestHelper {
      * @return A database connection of the newly created database.
      * @throws IllegalStateException If a new database was not created.
      */
-    public fun createDatabase(version: Int): SQLiteConnection
+    public suspend fun createDatabase(version: Int): SQLiteConnection
 
     /**
      * Runs the given set of migrations on the existing database once created via [createDatabase].
@@ -104,7 +106,7 @@ public expect class MigrationTestHelper {
      * @return A database connection of the migrated database.
      * @throws IllegalStateException If the schema validation fails.
      */
-    public fun runMigrationsAndValidate(
+    public suspend fun runMigrationsAndValidate(
         version: Int,
         migrations: List<Migration> = emptyList(),
     ): SQLiteConnection
@@ -116,7 +118,7 @@ internal typealias ConnectionManagerFactory =
 internal typealias ConfigurationFactory = (RoomDatabase.MigrationContainer) -> DatabaseConfiguration
 
 /** Common logic for [MigrationTestHelper.createDatabase] */
-internal fun createDatabaseCommon(
+internal suspend fun createDatabaseCommon(
     schema: DatabaseBundle,
     configurationFactory: ConfigurationFactory,
     connectionManagerFactory: ConnectionManagerFactory = { config, openDelegate ->
@@ -131,7 +133,7 @@ internal fun createDatabaseCommon(
 }
 
 /** Common logic for [MigrationTestHelper.runMigrationsAndValidate] */
-internal fun runMigrationsAndValidateCommon(
+internal suspend fun runMigrationsAndValidateCommon(
     databaseInstance: RoomDatabase,
     schema: DatabaseBundle,
     migrations: List<Migration>,
@@ -184,7 +186,7 @@ private fun createAutoMigrationSpecMap(
         requiredAutoMigrationSpecs.forEach { spec ->
             val match = providedSpecs.firstOrNull { provided -> spec.safeCast(provided) != null }
             requireNotNull(match) {
-                "A required auto migration spec (${spec.qualifiedName}) has not been provided."
+                "A required auto migration spec (${spec.getQualifiedName()}) has not been provided."
             }
             put(spec, match)
         }
@@ -201,7 +203,7 @@ internal abstract class TestConnectionManager : BaseRoomConnectionManager() {
         error("Function should never be invoked during tests.")
     }
 
-    abstract fun openConnection(): SQLiteConnection
+    abstract suspend fun openConnection(): SQLiteConnection
 }
 
 private class DefaultTestConnectionManager(
@@ -225,7 +227,7 @@ private class DefaultTestConnectionManager(
         super.onMigrate(connection, oldVersion, newVersion)
     }
 
-    override fun openConnection() = runBlocking { connectionFactory.invoke() }
+    override suspend fun openConnection() = connectionFactory.invoke()
 }
 
 internal sealed class TestOpenDelegate(databaseBundle: DatabaseBundle) :
@@ -270,7 +272,9 @@ private class CreateOpenDelegate(val databaseBundle: DatabaseBundle) :
     }
 
     override suspend fun createAllTables(connection: SQLiteConnection) {
-        databaseBundle.buildCreateQueries().forEach { createSql -> connection.execSQL(createSql) }
+        databaseBundle.buildCreateQueries().forEach { createSql ->
+            connection.executeSQL(createSql)
+        }
         createAllTables = true
     }
 }

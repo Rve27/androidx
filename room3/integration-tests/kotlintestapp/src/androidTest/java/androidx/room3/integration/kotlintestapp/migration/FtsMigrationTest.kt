@@ -26,6 +26,7 @@ import androidx.sqlite.execSQL
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -53,7 +54,7 @@ class FtsMigrationTest {
     }
 
     @Test
-    fun validMigration() {
+    fun validMigration() = runTest {
         helper.createDatabase(1).use { connection ->
             connection.execSQL(
                 "INSERT INTO BOOK VALUES('Ready Player One', 'Ernest Cline', 402, " +
@@ -72,7 +73,7 @@ class FtsMigrationTest {
     }
 
     @Test
-    fun invalidMigration_missingFtsOption() {
+    fun invalidMigration_missingFtsOption() = runTest {
         helper.createDatabase(1).close()
 
         assertThrows<IllegalStateException> {
@@ -94,7 +95,7 @@ class FtsMigrationTest {
     }
 
     @Test
-    fun validFtsContentMigration() {
+    fun validFtsContentMigration() = runTest {
         helper.createDatabase(3).use { connection ->
             connection.execSQL(
                 "INSERT INTO Person VALUES(1, 'Ernest', 'Cline', 'Ruth Ave', '', 'TX', 78757)"
@@ -111,7 +112,7 @@ class FtsMigrationTest {
     }
 
     @Test
-    fun validFtsWithNamedRowIdMigration() {
+    fun validFtsWithNamedRowIdMigration() = runTest {
         helper.createDatabase(4).close()
 
         helper.runMigrationsAndValidate(5, listOf(MIGRATION_4_5)).close()
@@ -119,7 +120,7 @@ class FtsMigrationTest {
 
     @Test
     @Throws(Exception::class)
-    fun validFtsWithLanguageIdMigration() {
+    fun validFtsWithLanguageIdMigration() = runTest {
         helper.createDatabase(5).close()
 
         helper.runMigrationsAndValidate(6, listOf(MIGRATION_5_6)).close()
