@@ -32,7 +32,6 @@ import androidx.annotation.RequiresExtension
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId
-import androidx.pdf.annotation.models.EditsResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
@@ -242,10 +241,6 @@ internal open class FakeEditablePdfDocument(
         return AnnotationResult(annotations, listOf())
     }
 
-    override suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult {
-        TODO("Not yet implemented")
-    }
-
     override fun <T : PdfEdit> addPdfEditEntry(entry: PdfEditEntry<T>) {
         TODO("Not yet implemented")
     }
@@ -269,10 +264,6 @@ internal open class FakeEditablePdfDocument(
             edits[editId] = PdfAnnotationData(editId, edit)
         }
         return edit
-    }
-
-    override suspend fun commitEdits(): EditsResult {
-        return EditsResult(edits.values.map { it.editId }, listOf())
     }
 
     /**
