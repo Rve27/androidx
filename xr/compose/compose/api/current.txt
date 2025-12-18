@@ -513,11 +513,19 @@ package androidx.xr.compose.subspace.animation {
 
 }
 
-package androidx.xr.compose.subspace.layout {
+package androidx.xr.compose.subspace.draw {
 
   public final class AlphaKt {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier alpha(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, to=1.0) float alpha);
   }
+
+  public final class ScaleKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier scale(androidx.xr.compose.subspace.layout.SubspaceModifier, float scale);
+  }
+
+}
+
+package androidx.xr.compose.subspace.layout {
 
   public final class AspectRatioKt {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier aspectRatio(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, fromInclusive=false) float ratio, optional boolean matchHeightConstraintsFirst);
@@ -637,10 +645,6 @@ package androidx.xr.compose.subspace.layout {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier rotate(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.runtime.math.Vector3 axisAngle, float rotation);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier rotate(androidx.xr.compose.subspace.layout.SubspaceModifier, optional float pitch, optional float yaw, optional float roll);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier! rotate$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, float, float, float, int, Object!);
-  }
-
-  public final class ScaleKt {
-    method public static androidx.xr.compose.subspace.layout.SubspaceModifier scale(androidx.xr.compose.subspace.layout.SubspaceModifier, float scale);
   }
 
   public final class SemanticsModifierKt {
