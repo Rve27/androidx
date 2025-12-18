@@ -16,7 +16,6 @@
 
 package androidx.room3.writer
 
-import COMMON
 import androidx.room3.compiler.codegen.CodeLanguage
 import androidx.room3.compiler.processing.XProcessingEnv
 import androidx.room3.compiler.processing.XTypeElement
@@ -171,7 +170,7 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
         handler: (StringSubject) -> Unit,
     ) {
         runKspTest(
-            sources = listOf(source, COMMON.COROUTINES_ROOM, COMMON.ROOM_DATABASE_KTX),
+            sources = listOf(source),
             javacArguments = listOf("-source", jvmTarget),
             kotlincArguments = listOf("-jvm-target=$jvmTarget", "-Xjvm-default=${jvmDefaultMode}"),
         ) { invocation ->
