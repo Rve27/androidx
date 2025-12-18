@@ -217,7 +217,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
 
             import android.annotation.FlaggedApi;
 
-            public class Build {
+            public class Foo {
                 @FlaggedApi("android.os.flaggedApi")
                 public static boolean flaggedApi() { return true; }
             }
@@ -227,7 +227,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
                         """
             package test.pkg;
 
-            import android.os.Build;
+            import android.os.Foo;
             import androidx.core.flagging.Flags;
             import androidx.annotation.RequiresAconfigFlag;
 
@@ -240,7 +240,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
 
                 static class FlagFlaggedApiImpl {
                     static boolean flaggedApi() {
-                        return Build.flaggedApi();
+                        return Foo.flaggedApi();
                     }
                 }
             }
@@ -255,8 +255,8 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             .expect(
                 """
                 src/test/pkg/JavaTest.java:16: Error: Method flaggedApi() is a flagged API and must be inside a flag check for "android.os.flaggedApi" [AndroidXFlaggedApi]
-                            return Build.flaggedApi();
-                                   ~~~~~~~~~~~~~~~~~~
+                            return Foo.flaggedApi();
+                                   ~~~~~~~~~~~~~~~~
                 1 error
                 """
                     .trimIndent()
@@ -265,8 +265,8 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
                 """
                 Fix for src/test/pkg/JavaTest.java line 16: Wrap with flag check:
                 @@ -16 +16
-                -             return Build.flaggedApi();
-                +             if (androidx.core.flagging.Flags.getBooleanFlagValue("android.os", "flaggedApi")) { return Build.flaggedApi(); } else { throw new RuntimeException("TODO: Implement fallback behavior"); }
+                -             return Foo.flaggedApi();
+                +             if (androidx.core.flagging.Flags.getBooleanFlagValue("android.os", "flaggedApi")) { return Foo.flaggedApi(); } else { throw new RuntimeException("TODO: Implement fallback behavior"); }
                 """
                     .trimIndent()
             )
@@ -281,7 +281,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
 
             import android.annotation.FlaggedApi;
 
-            public class Build {
+            public class Foo {
                 @FlaggedApi("android.os.flaggedApi")
                 public static boolean flaggedApi() { return true; }
             }
@@ -291,7 +291,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
                         """
             package test.pkg;
 
-            import android.os.Build;
+            import android.os.Foo;
             import androidx.core.flagging.Flags;
             import androidx.annotation.RequiresAconfigFlag;
 
@@ -305,7 +305,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
                 @RequiresAconfigFlag("android.os.otherFlaggedApi")
                 static class FlagFlaggedApiImpl {
                     static boolean flaggedApi() {
-                        return Build.flaggedApi();
+                        return Foo.flaggedApi();
                     }
                 }
             }
@@ -323,8 +323,8 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
                             FlagFlaggedApiImpl.flaggedApi();
                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 src/test/pkg/JavaTest.java:17: Error: Method flaggedApi() is a flagged API and must be inside a flag check for "android.os.flaggedApi" [AndroidXFlaggedApi]
-                            return Build.flaggedApi();
-                                   ~~~~~~~~~~~~~~~~~~
+                            return Foo.flaggedApi();
+                                   ~~~~~~~~~~~~~~~~
                 2 errors
                 """
                     .trimIndent()
@@ -332,13 +332,13 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             .expectFixDiffs(
                 """
                 Fix for src/test/pkg/JavaTest.java line 10: Wrap with flag check:
-                @@ -10 +10
-                -             FlagFlaggedApiImpl.flaggedApi();
-                +             if (androidx.core.flagging.Flags.getBooleanFlagValue("android.os", "otherFlaggedApi")) { FlagFlaggedApiImpl.flaggedApi(); } else { throw new RuntimeException("TODO: Implement fallback behavior"); }
+                @@ -10 +10 @@
+                -            FlagFlaggedApiImpl.flaggedApi();
+                +            if (androidx.core.flagging.Flags.getBooleanFlagValue("android.os", "otherFlaggedApi")) { FlagFlaggedApiImpl.flaggedApi(); } else { throw new RuntimeException("TODO: Implement fallback behavior"); }
                 Fix for src/test/pkg/JavaTest.java line 17: Wrap with flag check:
-                @@ -17 +17
-                -             return Build.flaggedApi();
-                +             if (androidx.core.flagging.Flags.getBooleanFlagValue("android.os", "flaggedApi")) { return Build.flaggedApi(); } else { throw new RuntimeException("TODO: Implement fallback behavior"); }
+                @@ -17 +17 @@
+                -            return Foo.flaggedApi();
+                +            if (androidx.core.flagging.Flags.getBooleanFlagValue("android.os", "flaggedApi")) { return Foo.flaggedApi(); } else { throw new RuntimeException("TODO: Implement fallback behavior"); }
                 """
                     .trimIndent()
             )
