@@ -116,6 +116,37 @@ public object VideoConfigUtil {
     }
 
     /**
+     * Resolves a compatible [VideoProfileProxy] from a list based on the provided MIME type and
+     * [DynamicRange].
+     *
+     * This method attempts to find the first profile in the provided list that matches the
+     * requested [videoMime] and the constraints (HDR format and bit depth) of the [dynamicRange].
+     * If the [videoMime] is set to [VideoSpec.MIME_TYPE_AUTO], it will return the first profile
+     * that satisfies the [dynamicRange] requirements.
+     *
+     * @param videoMime The desired video MIME type.
+     * @param dynamicRange The fully specified [DynamicRange] required for the profile.
+     * @param videoProfiles A list of available [VideoProfileProxy]s.
+     * @return The first matching [VideoProfileProxy], or `null` if no compatible profile is found.
+     */
+    public fun resolveCompatibleVideoProfile(
+        videoMime: String,
+        dynamicRange: DynamicRange,
+        videoProfiles: List<VideoProfileProxy>,
+    ): VideoProfileProxy? {
+        val hdrFormats = DynamicRangeUtil.dynamicRangeToVideoProfileHdrFormats(dynamicRange)
+        val bitDepths = DynamicRangeUtil.dynamicRangeToVideoProfileBitDepth(dynamicRange)
+
+        return videoProfiles.firstOrNull {
+            // is HDR compatible
+            hdrFormats.contains(it.hdrFormat) &&
+                bitDepths.contains(it.bitDepth) &&
+                // is MIME type compatible
+                (videoMime == VideoSpec.MIME_TYPE_UNSPECIFIED || it.mediaType == videoMime)
+        }
+    }
+
+    /**
      * Resolves the video mime information into a [VideoMimeInfo].
      *
      * @param mediaSpec the media spec to resolve the mime info.
