@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -1846,6 +1847,56 @@ class VerticalStackTest {
 
         assertThat(state.topItem).isEqualTo(1)
         rule.onNodeWithText("Item 1").assertIsDisplayed()
+    }
+
+    @Test
+    fun recompositions_afterInitialComposition_doesNotRecompose() {
+        var recompositionCount = 0
+        rule.setContent {
+            VerticalStack {
+                item {
+                    StackItem("Item 0")
+                    SideEffect { recompositionCount++ }
+                }
+            }
+        }
+
+        rule.runOnIdle { assertThat(recompositionCount).isEqualTo(1) }
+    }
+
+    @Test
+    fun recompositions_afterScroll_doesNotRecompose() {
+        val stackHeight = 100.dp
+        val stackHeightPx = with(rule.density) { stackHeight.roundToPx() }
+        var item0RecompositionCount = 0
+        var item1RecompositionCount = 0
+        var item2RecompositionCount = 0
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(modifier = Modifier.size(stackHeight), state = state) {
+                item {
+                    StackItem("Item 0")
+                    SideEffect { item0RecompositionCount++ }
+                }
+                item {
+                    StackItem("Item 1")
+                    SideEffect { item1RecompositionCount++ }
+                }
+                item {
+                    StackItem("Item 2")
+                    SideEffect { item2RecompositionCount++ }
+                }
+            }
+        }
+
+        performIndirectSwipe(stackHeightPx)
+
+        rule.runOnIdle {
+            assertThat(state.topItem).isEqualTo(1)
+            assertThat(item0RecompositionCount).isEqualTo(1)
+            assertThat(item1RecompositionCount).isEqualTo(1)
+            assertThat(item2RecompositionCount).isEqualTo(1)
+        }
     }
 
     @Composable
