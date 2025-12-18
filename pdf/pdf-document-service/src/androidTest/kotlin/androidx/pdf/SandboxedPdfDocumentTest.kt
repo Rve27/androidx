@@ -27,7 +27,6 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.util.Size
 import androidx.annotation.RequiresExtension
-import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit

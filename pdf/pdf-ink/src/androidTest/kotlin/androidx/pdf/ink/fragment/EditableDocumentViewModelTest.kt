@@ -21,9 +21,9 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
+import androidx.pdf.EditablePdfDocument
 import androidx.pdf.FakeEditablePdfDocument
 import androidx.pdf.SandboxedPdfLoader
-import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PathPdfObject
 import androidx.pdf.annotation.models.PdfAnnotation
