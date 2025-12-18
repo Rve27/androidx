@@ -18,7 +18,6 @@ package androidx.lifecycle
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import androidx.arch.core.internal.FastSafeIterableMap
-import java.lang.ref.WeakReference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
