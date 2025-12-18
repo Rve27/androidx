@@ -19,7 +19,6 @@ package androidx.room3.integration.kotlintestapp.dao
 import androidx.lifecycle.LiveData
 import androidx.room3.ColumnInfo
 import androidx.room3.Dao
-import androidx.room3.DaoReturnTypeConverters
 import androidx.room3.Delete
 import androidx.room3.Insert
 import androidx.room3.Query
@@ -37,8 +36,6 @@ import androidx.room3.integration.kotlintestapp.vo.Book
 import androidx.room3.integration.kotlintestapp.vo.BookAuthor
 import androidx.room3.integration.kotlintestapp.vo.BookWithJavaEntity
 import androidx.room3.integration.kotlintestapp.vo.BookWithPublisher
-import androidx.room3.integration.kotlintestapp.vo.CustomDaoReturnType
-import androidx.room3.integration.kotlintestapp.vo.CustomDaoReturnTypeConverter
 import androidx.room3.integration.kotlintestapp.vo.DateConverter
 import androidx.room3.integration.kotlintestapp.vo.Lang
 import androidx.room3.integration.kotlintestapp.vo.MiniBook
@@ -58,7 +55,6 @@ import java.util.Date
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-@DaoReturnTypeConverters(CustomDaoReturnTypeConverter::class)
 @TypeConverters(DateConverter::class, AnswerConverter::class)
 interface BooksDao {
 
@@ -398,9 +394,6 @@ interface BooksDao {
     }
 
     @Query("SELECT * FROM book") fun getBooksFlow(): Flow<List<Book>>
-
-    @Query("SELECT * FROM book")
-    suspend fun getBooksCustomDaoReturnType(): CustomDaoReturnType<List<Book>>
 
     @Transaction @Query("SELECT * FROM book") fun getBooksFlowInTransaction(): Flow<List<Book>>
 
