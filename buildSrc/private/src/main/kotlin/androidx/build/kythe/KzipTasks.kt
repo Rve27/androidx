@@ -42,7 +42,6 @@ fun Project.configureProjectForKzipTasks(config: ApiTaskConfig, extension: Andro
                 ":room3:room-compiler-processing",
                 ":room3:room-compiler-processing-testing",
                 // KSP generated folders not visible to AGP variant api (b/380363756)
-                ":privacysandbox:tools:integration-tests:testsdk",
                 ":room3:room-runtime",
                 // Depends on the generated output of the proto project
                 // :wear:protolayout:protolayout-proto
