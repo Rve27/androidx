@@ -40,7 +40,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:$composeVersion")
 
     implementation(project(":compose:remote:remote-creation"))
-    implementation(project(":compose:remote:remote-creation-compose"))
+    api(project(":compose:remote:remote-creation-compose"))
     api(project(":glance:wear:wear-core"))
 
     testImplementation("androidx.core:core-ktx:1.17.0")
