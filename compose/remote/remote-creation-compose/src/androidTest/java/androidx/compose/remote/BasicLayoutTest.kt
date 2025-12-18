@@ -69,6 +69,7 @@ import androidx.compose.remote.creation.compose.state.RemoteDp
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rememberRemoteIntValue
 import androidx.compose.remote.creation.compose.state.rememberRemoteString
+import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.remote.player.view.RemoteComposePlayer
 import androidx.compose.remote.serialization.yaml.YAMLSerializer
@@ -779,7 +780,8 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
                 RemoteBox(
-                    modifier = RemoteModifier.size(100.rdp).clickable(HostAction("my_host_action"))
+                    modifier =
+                        RemoteModifier.size(100.rdp).clickable(HostAction("my_host_action".rs))
                 )
             }
         }
@@ -811,7 +813,8 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 val param = rememberRemoteIntValue { 128 }
                 RemoteBox(
                     modifier =
-                        RemoteModifier.size(100.rdp).clickable(HostAction("my_host_action", param))
+                        RemoteModifier.size(100.rdp)
+                            .clickable(HostAction("my_host_action".rs, param))
                 )
             }
         }
