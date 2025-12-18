@@ -130,10 +130,14 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
         desc: String,
     ): ApiRequirement {
         val apiDatabase = apiDatabase ?: return NO_API_REQUIREMENT
-        val flagString = findFlagStringForElement(method)
-        if (flagString != null) return ApiFlagRequirement(flagString)
-
         val apiLevel = apiDatabase.getMethodVersions(owner, name, desc).min()
+        // Reduce false positives on flagged APIs by only looking at flags for platform APIs that
+        // were either definitely added in a preview SDK or don't have enough information to know
+        // for certain.
+        if (apiLevel == API_LEVEL_PREVIEW || apiLevel == API_LEVEL_UNKNOWN_OR_1) {
+            val flagString = findFlagStringForElement(method)
+            if (flagString != null) return ApiFlagRequirement(flagString)
+        }
         return if (apiLevel == API_LEVEL_UNKNOWN_OR_1) NO_API_REQUIREMENT
         else ApiLevelRequirement(apiLevel)
     }
@@ -1429,6 +1433,7 @@ ${wrapperMethodBody.prependIndent("                            ")}
 
     companion object {
         const val API_LEVEL_UNKNOWN_OR_1 = -1
+        const val API_LEVEL_PREVIEW = 10000
 
         const val FLAGGED_API_ANNOTATION = "android.annotation.FlaggedApi"
         const val REQUIRES_ACONFIG_FLAG_ANNOTATION = "androidx.annotation.RequiresAconfigFlag"
