@@ -74,6 +74,9 @@ public interface PdfAnnotationsManager {
         newAnnotation: PdfAnnotation,
     ): PdfAnnotation
 
+    /** Discards all changes made to the annotations. */
+    public fun discardChanges(): Unit
+
     public companion object {
         public fun create(document: PdfDocument): PdfAnnotationsManager {
             return PdfDocumentAnnotationsManager(

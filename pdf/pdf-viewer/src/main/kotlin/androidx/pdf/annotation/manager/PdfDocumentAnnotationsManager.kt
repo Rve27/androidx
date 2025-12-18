@@ -48,10 +48,7 @@ internal class PdfDocumentAnnotationsManager(
 ) : PdfAnnotationsManager {
     override suspend fun getAnnotations(pageNum: Int): List<KeyedPdfAnnotation> {
         // TODO(b/462603193): Remove the map once draft state returns KeyedPdfAnnotation
-        val draftAnnotations =
-            draftState.getEdits(pageNum).map {
-                KeyedPdfAnnotation(key = it.editId.toString(), annotation = it.annotation)
-            }
+        val draftAnnotations = draftState.getDraftAnnotations(pageNum)
         val persistedAnnotations = annotationsRepository.getAnnotationsForPage(pageNum)
 
         val reconciledAnnotations = reconcileAnnotations(persistedAnnotations)
@@ -136,6 +133,11 @@ internal class PdfDocumentAnnotationsManager(
             annotation = newAnnotation,
         )
         return previousAnnotation
+    }
+
+    override fun discardChanges() {
+        draftState.clear()
+        operationsTracker.clear()
     }
 
     /**
