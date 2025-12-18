@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.camera.video.internal.encoder;
+package androidx.camera.video.internal.encoder
 
-import org.jspecify.annotations.NonNull;
+import android.util.Range
 
-/**
- * EncoderInfo provides encoder related information and capabilities.
- */
-public interface EncoderInfo {
-    /** Returns the name of the encoder. */
-    @NonNull String getName();
+/** AudioEncoderInfo provides audio encoder related information and capabilities. */
+public interface AudioEncoderInfo : EncoderInfo {
+    /** Returns the range of supported bitrates in bits/second. */
+    public val bitrateRange: Range<Int>
 }
