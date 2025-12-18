@@ -34,6 +34,7 @@ import androidx.compose.ui.test.waitUntilExactlyOneExists
 import androidx.compose.ui.test.waitUntilNodeCount
 import androidx.compose.ui.unit.Density
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.platform.app.InstrumentationRegistry
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.time.Duration
@@ -322,6 +323,14 @@ private constructor(
                         base.evaluate()
                     } catch (t: Throwable) {
                         blockException = t
+                    } finally {
+                        try {
+                            // Allow the message queue to finish processing so any coroutines that
+                            // are currently waiting can be run before the test ends.
+                            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+                        } catch (_: Throwable) {
+                            // We don't care about errors while waiting for idle.
+                        }
                     }
 
                     // Throw the aggregate exception. May be from the test body or from the cleanup.
