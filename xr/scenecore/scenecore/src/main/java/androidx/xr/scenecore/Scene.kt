@@ -114,6 +114,12 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public con
      * This field can be `null` if no key entity has been set (default), or if the key entity was
      * cleared by setting this value to `null`. When `null`, the default listener takes no action
      * during spatial mode changes.
+     *
+     * When a new non-null [Entity] is assigned as [keyEntity], the [spatialModeChangedListener] is
+     * immediately invoked with the last known recommended pose and scale values if the following
+     * conditions are met:
+     * 1. The previous value of [keyEntity] was `null`.
+     * 2. There are cached pose and scale values, provided by the system earlier.
      */
     public var keyEntity: Entity?
         get() = _keyEntity
@@ -123,11 +129,29 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public con
                     throw IllegalArgumentException("AnchorEntity cannot be set as the keyEntity.")
                 is ActivitySpace ->
                     throw IllegalArgumentException("ActivitySpace cannot be set as the keyEntity.")
-                else -> _keyEntity = value
+                else -> {
+                    // If the previous keyEntity was from null value, invoke the
+                    // spatialModeChangedListener to apply cached values to new keyEntity.
+                    if (
+                        _keyEntity == null &&
+                            value != null &&
+                            lastRecommendedPose != null &&
+                            lastRecommendedScale != null
+                    ) {
+                        val event =
+                            SpatialModeChangeEvent(lastRecommendedPose!!, lastRecommendedScale!!.x)
+                        spatialModeChangedExecutor.execute {
+                            spatialModeChangedListener.accept(event)
+                        }
+                    }
+                    _keyEntity = value
+                }
             }
         }
 
     private var _keyEntity: Entity? = null
+    private var lastRecommendedPose: Pose? = null
+    private var lastRecommendedScale: Vector3? = null
 
     private val defaultSpatialModeChangedListener =
         Consumer<SpatialModeChangeEvent> { event ->
@@ -165,14 +189,11 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public con
                 entityManager,
             )
         sceneRuntime.spatialModeChangeListener =
-            object : RtSpatialModeChangeListener {
-                override fun onSpatialModeChanged(
-                    recommendedPose: Pose,
-                    recommendedScale: Vector3,
-                ) {
-                    val event = SpatialModeChangeEvent(recommendedPose, recommendedScale.x)
-                    spatialModeChangedExecutor.execute { spatialModeChangedListener.accept(event) }
-                }
+            RtSpatialModeChangeListener { recommendedPose, recommendedScale ->
+                lastRecommendedPose = recommendedPose
+                lastRecommendedScale = recommendedScale
+                val event = SpatialModeChangeEvent(recommendedPose, recommendedScale.x)
+                spatialModeChangedExecutor.execute { spatialModeChangedListener.accept(event) }
             }
 
         spatialCapabilities = sceneRuntime.spatialCapabilities.toSpatialCapabilities()
