@@ -16,36 +16,62 @@
 
 package androidx.security.state
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
+import android.os.RemoteException
 import androidx.security.state.SecurityPatchState.Companion.getComponentSecurityPatchLevel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.timeout
+import org.mockito.Mockito.times
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 class SecurityPatchStateTest {
 
     private val mockContext: Context = mock<Context>()
+    private val mockPackageManager: PackageManager = mock(PackageManager::class.java)
+    private val mockBinder: IBinder = mock(IBinder::class.java)
+    private val mockService: IUpdateInfoService = mock(IUpdateInfoService::class.java)
+
     private val mockSecurityStateManagerCompat: SecurityStateManagerCompat =
         mock<SecurityStateManagerCompat> {}
     private lateinit var securityState: SecurityPatchState
 
     @Before
     fun setup() {
+        `when`(mockContext.packageManager).thenReturn(mockPackageManager)
+        `when`(mockBinder.queryLocalInterface(anyString())).thenReturn(mockService)
         securityState = SecurityPatchState(mockContext, listOf(), mockSecurityStateManagerCompat)
     }
 
@@ -1209,5 +1235,569 @@ class SecurityPatchStateTest {
             .getPackageVersion(Mockito.anyString())
 
         assertFalse(securityState.areCvesPatched(listOf("CVE-2023-0010")))
+    }
+
+    // ============================================================================================
+    // Tests for queryAllAvailableUpdates()
+    //
+    // The following tests verify the behavior of querying for all available updates, including:
+    // 1. Service Discovery (finding trusted providers)
+    // 2. Data Retrieval (marshalling results)
+    // 3. Error Handling (connection failures, timeouts, runtime exceptions)
+    // 4. Threading & Safety (background execution, cancellation cleanup)
+    // ============================================================================================
+
+    // --------------------------------------------------------------------------------------------
+    // Phase 1: Discovery & Filtering
+    // --------------------------------------------------------------------------------------------
+
+    @Test
+    fun testQueryAllAvailableUpdates_returnsEmpty_whenNoProvidersFound() {
+        runBlocking {
+            // GIVEN no services handle the intent (or none are trusted)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(emptyList())
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get an empty list immediately
+            assertTrue(results.isEmpty())
+            // AND no attempt was made to bind
+            verify(mockContext, times(0)).bindService(any(), any(), anyInt())
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_ignoresNonSystemApps() {
+        runBlocking {
+            // GIVEN a third-party app exposes the service
+            val untrustedInfo =
+                createUpdateInfoServiceResolveInfo("com.thirdparty", isSystem = false)
+
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(untrustedInfo))
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN it is ignored (result list is empty)
+            assertTrue(results.isEmpty())
+            // AND we never attempted to bind
+            verify(mockContext, times(0)).bindService(any(), any(), anyInt())
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_includesSystemApps() {
+        runBlocking {
+            // GIVEN a system app exposes the service
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            setupUpdateInfoServiceResponse(emptyList(), packageName = "com.google.android.gms")
+            setupUpdateInfoServiceBinding()
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get a result from that provider
+            assertEquals(1, results.size)
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+
+            // AND verify we unbound from the service
+            verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // Phase 2: Success Scenarios
+    // --------------------------------------------------------------------------------------------
+
+    @Test
+    fun testQueryAllAvailableUpdates_returnsMetadataOnly_whenSystemUpToDate() {
+        runBlocking {
+            // GIVEN a trusted provider reports "System Up To Date" (empty list)
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            setupUpdateInfoServiceBinding()
+
+            // BUT it includes a valid timestamp indicating a successful check
+            val checkTime = 123456789L
+            val result = UpdateCheckResult("com.google.android.gms", emptyList(), checkTime)
+            setupUpdateInfoServiceResponse(result)
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN the updates list is empty, but the timestamp and provider are preserved
+            assertEquals(1, results.size)
+            assertTrue(results[0].updates.isEmpty())
+            assertEquals(checkTime, results[0].lastCheckTimeMillis)
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+
+            // AND verify we unbound from the service
+            verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_returnsDataFromProvider() {
+        runBlocking {
+            // GIVEN a trusted provider returns specific updates
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            val expectedUpdates =
+                listOf(
+                    UpdateInfo.Builder()
+                        .setComponent("SYSTEM")
+                        .setSecurityPatchLevel("2025-01-01")
+                        .build()
+                )
+            val expectedTime = 123456789L
+
+            val mockResult =
+                UpdateCheckResult("com.google.android.gms", expectedUpdates, expectedTime)
+            setupUpdateInfoServiceResponse(mockResult)
+            setupUpdateInfoServiceBinding()
+
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN the data is correctly marshalled back
+            assertEquals(1, results.size)
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+            assertEquals(expectedUpdates, results[0].updates)
+            assertEquals(expectedTime, results[0].lastCheckTimeMillis)
+
+            // AND verify we unbound from the service
+            verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_aggregatesMultipleProviders() {
+        runBlocking {
+            // GIVEN two trusted providers
+            val gotaInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            val playInfo =
+                createUpdateInfoServiceResolveInfo("com.android.vending", isSystem = true)
+
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(gotaInfo, playInfo))
+
+            setupUpdateInfoServiceBinding()
+
+            // Both return empty lists for this basic aggregation test
+            setupUpdateInfoServiceResponse(emptyList())
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get two results (one from each provider)
+            assertEquals(2, results.size)
+
+            // AND verify we unbound from the service
+            verifyUpdateInfoServiceUnbound(times = 2)
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // Phase 3: Connection Failures (Bind Phase)
+    // --------------------------------------------------------------------------------------------
+
+    @Test
+    fun testQueryAllAvailableUpdates_handlesBindFailureGracefully() {
+        runBlocking {
+            // GIVEN a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // BUT binding fails (returns false)
+            `when`(mockContext.bindService(any(), any(), anyInt())).thenReturn(false)
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get an empty result container (not a crash)
+            // The implementation returns an empty result for failed providers so the app knows it
+            // checked.
+            assertEquals(1, results.size)
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+            assertTrue(results[0].updates.isEmpty())
+            assertEquals(0L, results[0].lastCheckTimeMillis)
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_handlesSecurityExceptionOnBind() {
+        runBlocking {
+            // GIVEN a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // BUT bindService throws a SecurityException (e.g., permission denied)
+            `when`(
+                    mockContext.bindService(
+                        any(Intent::class.java),
+                        any(ServiceConnection::class.java),
+                        anyInt(),
+                    )
+                )
+                .thenThrow(SecurityException("Permission denied"))
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get a clean empty result (Graceful Failure)
+            assertEquals(1, results.size)
+            assertTrue(results[0].updates.isEmpty())
+            // The provider package name is preserved so the client knows who failed
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_handlesPartialBindFailure() {
+        runBlocking {
+            // GIVEN two trusted providers
+            val workingInfo = createUpdateInfoServiceResolveInfo("com.working", isSystem = true)
+            val brokenInfo = createUpdateInfoServiceResolveInfo("com.broken", isSystem = true)
+
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(workingInfo, brokenInfo))
+
+            // SETUP: bindService succeeds for "com.working" but fails for "com.broken"
+            `when`(
+                    mockContext.bindService(
+                        any(Intent::class.java),
+                        any(ServiceConnection::class.java),
+                        anyInt(),
+                    )
+                )
+                .thenAnswer { invocation ->
+                    val intent = invocation.getArgument<Intent>(0)
+                    val connection = invocation.getArgument<ServiceConnection>(1)
+
+                    if (intent.component?.packageName == "com.working") {
+                        // Simulate success
+                        connection.onServiceConnected(intent.component, mockBinder)
+                        true
+                    } else {
+                        // Simulate failure (refused to bind)
+                        false
+                    }
+                }
+
+            // Mock a valid response for the working service
+            val updates = listOf(UpdateInfo.Builder().setComponent("SYSTEM").build())
+            val validResult = UpdateCheckResult("com.working", updates, 0L)
+            `when`(mockService.listAvailableUpdates()).thenReturn(validResult)
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get results for BOTH (one with data, one empty/failed)
+            assertEquals(2, results.size)
+
+            val workingResult = results.find { it.providerPackageName == "com.working" }
+            val brokenResult = results.find { it.providerPackageName == "com.broken" }
+
+            assertNotNull(workingResult)
+            assertEquals(1, workingResult?.updates?.size)
+
+            assertNotNull(brokenResult)
+            assertTrue(brokenResult!!.updates.isEmpty()) // Fallback to empty
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // Phase 4: Runtime Failures (Execution Phase)
+    // --------------------------------------------------------------------------------------------
+
+    @Test
+    fun testQueryAllAvailableUpdates_handlesServiceDisconnectGracefully() {
+        runBlocking {
+            // GIVEN a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // BUT the service disconnects during the call
+            `when`(
+                    mockContext.bindService(
+                        any(Intent::class.java),
+                        any(ServiceConnection::class.java),
+                        anyInt(),
+                    )
+                )
+                .thenAnswer { invocation ->
+                    // Simulate onServiceDisconnected being called synchronously
+                    val connection = invocation.getArgument<ServiceConnection>(1)
+                    val component = ComponentName("com.google.android.gms", "MockUpdateInfoService")
+                    connection.onServiceDisconnected(component)
+                    true // bindService itself returns true
+                }
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get a clean empty result, not a crash
+            assertEquals(1, results.size)
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+            assertTrue(results[0].updates.isEmpty())
+            assertEquals(0L, results[0].lastCheckTimeMillis)
+
+            // AND verify we unbound from the service
+            verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_handlesRemoteExceptionGracefully() {
+        runBlocking {
+            // GIVEN a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // AND the service will throw a RemoteException during IPC
+            `when`(mockService.listAvailableUpdates()).thenThrow(RemoteException("Test Exception"))
+            setupUpdateInfoServiceBinding()
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get a clean empty result
+            assertEquals(1, results.size)
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+            assertTrue(results[0].updates.isEmpty())
+            assertEquals(0L, results[0].lastCheckTimeMillis)
+
+            // AND verify we unbound from the service
+            verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_handlesGenericExceptionGracefully() {
+        runBlocking {
+            // GIVEN a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // AND the remote service throws an unexpected RuntimeException during the IPC call.
+            // This simulates a crash or logic error within the background thread execution.
+            `when`(mockService.listAvailableUpdates())
+                .thenThrow(RuntimeException("Unexpected Crash"))
+
+            // Trigger the service connection. This simulates the immediate success of bindService,
+            // which in turn spawns the background thread to perform the IPC call.
+            setupUpdateInfoServiceBinding()
+
+            // WHEN we query for all available updates
+            val results = securityState.queryAllAvailableUpdates()
+
+            // THEN we get a clean empty result
+            assertEquals(1, results.size)
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+            assertTrue(results[0].updates.isEmpty())
+            assertEquals(0L, results[0].lastCheckTimeMillis)
+
+            // AND verify that unbindService was still called to prevent leaking the connection.
+            // We use the helper to handle the race condition where the background thread's
+            // 'finally' block might execute slightly after the coroutine resumes.
+            verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
+    // Phase 5: Safety & Lifecycle (Timeouts & Cancellation)
+    // -------------------------------------------------------------------------------------------
+
+    @Test
+    fun testQueryAllAvailableUpdates_serviceBindingTimesOut_returnsEmptyResult() {
+        runBlocking {
+            // GIVEN a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // AND bindService returns true (system accepted request)
+            // BUT we do NOT call onServiceConnected to simulate a hang
+            `when`(
+                    mockContext.bindService(
+                        any(Intent::class.java),
+                        any(ServiceConnection::class.java),
+                        anyInt(),
+                    )
+                )
+                .thenReturn(true)
+
+            // WHEN we query for updates with a custom short timeout (100ms) )
+            val results = securityState.queryAllAvailableUpdates(timeoutMillis = 100L)
+
+            // THEN the result should be empty (graceful failure)
+            assertEquals(1, results.size)
+            assertEquals("com.google.android.gms", results[0].providerPackageName)
+            assertTrue(results[0].updates.isEmpty())
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_onTimeout_unbindsService() {
+        runBlocking {
+            // GIVEN a trusted provider and a hanging service
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // SETUP: bindService returns true, but we never trigger a callback
+            `when`(
+                    mockContext.bindService(
+                        any(Intent::class.java),
+                        any(ServiceConnection::class.java),
+                        anyInt(),
+                    )
+                )
+                .thenReturn(true)
+
+            // WHEN the query times out (waits only 100ms)
+            securityState.queryAllAvailableUpdates(timeoutMillis = 100L)
+
+            // AND verify we unbound from the service
+            verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_onCancellation_unbindsService() {
+        runBlocking {
+            // GIVEN a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // Capture the connection to verify it is the exact instance unbound later
+            val connectionCaptor = ArgumentCaptor.forClass(ServiceConnection::class.java)
+
+            // SETUP: bindService returns true (request accepted), but we DO NOT trigger
+            // onServiceConnected. This simulates the state where the coroutine is suspended
+            // indefinitely, waiting for the service to attach.
+            `when`(
+                    mockContext.bindService(
+                        any(Intent::class.java),
+                        connectionCaptor.capture(),
+                        anyInt(),
+                    )
+                )
+                .thenReturn(true)
+
+            // WHEN the query is launched in a separate coroutine
+            val job = launch { securityState.queryAllAvailableUpdates() }
+
+            // CRITICAL: Yield the main test thread to allow the launched coroutine to start
+            // executing. Without this, the coroutine would sit in the queue while 'verify'
+            // blocked the thread, causing a deadlock.
+            yield()
+
+            // SYNCHRONIZATION: Wait up to 2 seconds for bindService to be called.
+            // We use 'timeout' because the operation happens on a background thread
+            // (Dispatchers.IO).
+            // This acts as a latch: it proceeds immediately once the call is observed,
+            // ensuring the coroutine has reached the "bound" state before we attempt cancellation.
+            verify(mockContext, timeout(2000))
+                .bindService(any(Intent::class.java), any(ServiceConnection::class.java), anyInt())
+
+            // NOW cancel the job while it is suspended waiting for the service connection.
+            job.cancel()
+            job.join() // Wait for the cancellation to fully process and cleanup to run
+
+            // THEN unbindService must be called to prevent leaking the connection.
+            // This verifies that the 'invokeOnCancellation' block in the implementation
+            // correctly cleans up resources even if the operation never completed.
+            verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    /** Creates a [ResolveInfo] object that mimics a discovered UpdateInfoService. */
+    private fun createUpdateInfoServiceResolveInfo(
+        packageName: String,
+        isSystem: Boolean,
+    ): ResolveInfo {
+        val info = ResolveInfo()
+        info.serviceInfo = ServiceInfo()
+        info.serviceInfo.packageName = packageName
+        info.serviceInfo.name = "MockUpdateInfoService"
+        info.serviceInfo.applicationInfo = ApplicationInfo()
+
+        if (isSystem) {
+            info.serviceInfo.applicationInfo.flags = ApplicationInfo.FLAG_SYSTEM
+        }
+        return info
+    }
+
+    /** Configures the mock [IUpdateInfoService] to return a pre-constructed result object. */
+    private fun setupUpdateInfoServiceResponse(result: UpdateCheckResult) {
+        `when`(mockService.listAvailableUpdates()).thenReturn(result)
+    }
+
+    /** Configures the mock [IUpdateInfoService] to return a result based on a list of updates. */
+    private fun setupUpdateInfoServiceResponse(
+        updates: List<UpdateInfo>,
+        packageName: String = "com.test",
+    ) {
+        val result = UpdateCheckResult(packageName, updates, 0L)
+        setupUpdateInfoServiceResponse(result)
+    }
+
+    /** Mocks a successful [Context.bindService] call that connects to the [IUpdateInfoService]. */
+    private fun setupUpdateInfoServiceBinding() {
+        `when`(
+                mockContext.bindService(
+                    any(Intent::class.java),
+                    any(ServiceConnection::class.java),
+                    anyInt(),
+                )
+            )
+            .thenAnswer { invocation ->
+                val intent = invocation.getArgument<Intent>(0)
+                val connection = invocation.getArgument<ServiceConnection>(1)
+                val targetComponent =
+                    intent.component ?: ComponentName("com.test", "MockUpdateInfoService")
+                connection.onServiceConnected(targetComponent, mockBinder)
+                true
+            }
+    }
+
+    /**
+     * Helper to verify that the mock [IUpdateInfoService] was unbound.
+     *
+     * Uses a timeout to handle cases where unbinding happens on a background thread (which
+     * introduces a race condition) or during cancellation cleanup.
+     */
+    private fun verifyUpdateInfoServiceUnbound(times: Int = 1) {
+        verify(mockContext, timeout(2000).times(times))
+            .unbindService(any(ServiceConnection::class.java))
     }
 }

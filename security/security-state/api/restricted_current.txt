@@ -15,12 +15,15 @@ package androidx.security.state {
     method @RequiresApi(26) public static final android.net.Uri getVulnerabilityReportUrl(optional android.net.Uri serverUrl);
     method public final boolean isDeviceFullyUpdated();
     method @WorkerThread public final void loadVulnerabilityReport(String jsonString);
+    method public final suspend Object? queryAllAvailableUpdates(optional long timeoutMillis, kotlin.coroutines.Continuation<? super java.util.List<androidx.security.state.UpdateCheckResult>>);
+    method @BytecodeOnly public static Object! queryAllAvailableUpdates$default(androidx.security.state.SecurityPatchState!, long, kotlin.coroutines.Continuation!, int, Object!);
     field public static final String COMPONENT_KERNEL = "KERNEL";
     field public static final String COMPONENT_SYSTEM = "SYSTEM";
     field public static final String COMPONENT_SYSTEM_MODULES = "SYSTEM_MODULES";
     field public static final androidx.security.state.SecurityPatchState.Companion Companion;
     field public static final java.util.List<java.lang.String> DEFAULT_SYSTEM_MODULES;
     field public static final String DEFAULT_VULNERABILITY_REPORTS_URL = "https://storage.googleapis.com/osv-android-api";
+    field public static final long UPDATE_INFO_SERVICE_BINDING_TIMEOUT_MS = 5000L; // 0x1388L
   }
 
   public static final class SecurityPatchState.Companion {
@@ -32,6 +35,7 @@ package androidx.security.state {
     property public static String COMPONENT_SYSTEM_MODULES;
     property public java.util.List<java.lang.String> DEFAULT_SYSTEM_MODULES;
     property public static String DEFAULT_VULNERABILITY_REPORTS_URL;
+    property public static long UPDATE_INFO_SERVICE_BINDING_TIMEOUT_MS;
   }
 
   @StringDef(open=true, value={androidx.security.state.SecurityPatchState.COMPONENT_SYSTEM, androidx.security.state.SecurityPatchState.COMPONENT_SYSTEM_MODULES, androidx.security.state.SecurityPatchState.COMPONENT_KERNEL, androidx.security.state.SecurityPatchState.COMPONENT_VENDOR}) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.SOURCE) public static @interface SecurityPatchState.Component {
