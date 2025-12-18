@@ -22,7 +22,7 @@ class FakeAnnotationHandleRegistry : AnnotationHandleRegistry {
     private val handleToSource = mutableMapOf<String, String>()
     private val sourceToHandle = mutableMapOf<String, String>()
 
-    override fun getHandleId(sourceId: String): String {
+    override fun getHandleId(pageNum: Int, sourceId: String): String {
         return sourceToHandle.getOrPut(sourceId) {
             val newHandle = AnnotationHandleIdGenerator.generateId()
             handleToSource[newHandle] = sourceId
