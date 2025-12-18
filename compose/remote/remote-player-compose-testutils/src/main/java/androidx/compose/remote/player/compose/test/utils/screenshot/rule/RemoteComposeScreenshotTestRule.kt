@@ -153,12 +153,14 @@ class RemoteComposeScreenshotTestRule(
         creationDisplayInfo: CreationDisplayInfo = displayInfo,
         backgroundColor: Color? = null,
         deviceConfigurationOverride: DeviceConfigurationOverride? = null,
+        profile: Profile? = null,
         content: @Composable @RemoteComposable () -> Unit,
     ) {
         setContent(
             creationDisplayInfo = creationDisplayInfo,
             backgroundColor = backgroundColor,
             deviceConfigurationOverride = deviceConfigurationOverride,
+            profile = profile,
             content = content,
         )
         composeTestRule.verifyScreenshot(screenshotName, screenshotRule)
@@ -206,6 +208,7 @@ class RemoteComposeScreenshotTestRule(
         creationDisplayInfo: CreationDisplayInfo = displayInfo,
         backgroundColor: Color?,
         deviceConfigurationOverride: DeviceConfigurationOverride? = null,
+        profile: Profile? = null,
         content: @Composable @RemoteComposable () -> Unit,
     ) {
         composeTestRule.setContent {
@@ -227,7 +230,7 @@ class RemoteComposeScreenshotTestRule(
                         rememberRemoteDocument(
                             content = content,
                             creationDisplayInfo = creationDisplayInfo,
-                            profile = profile,
+                            profile = profile ?: this@RemoteComposeScreenshotTestRule.profile,
                         )
                     document?.let { RemoteDocumentPlayer(it, creationDisplayInfo) }
                 }
