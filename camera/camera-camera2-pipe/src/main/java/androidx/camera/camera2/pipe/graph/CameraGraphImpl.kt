@@ -119,6 +119,12 @@ constructor(
                 }
             }
         }
+
+        // Ensure the CameraController is notified about the surfaces for internally created
+        // ImageSource(s) during graph construction.
+        if (streamGraph.imageSourceMap.isNotEmpty()) {
+            surfaceGraph.maybeUpdateSurfaces()
+        }
     }
 
     override val streams: StreamGraph
