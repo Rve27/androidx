@@ -570,10 +570,9 @@ package androidx.xr.compose.subspace.layout {
   }
 
   public final class LookAtUserKt {
-    method public static androidx.xr.compose.subspace.layout.SubspaceModifier billboard(androidx.xr.compose.subspace.layout.SubspaceModifier, optional boolean enabled);
-    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier! billboard$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, boolean, int, Object!);
-    method public static androidx.xr.compose.subspace.layout.SubspaceModifier lookAtUser(androidx.xr.compose.subspace.layout.SubspaceModifier, optional boolean enabled, optional androidx.xr.runtime.math.Vector3 up);
-    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier! lookAtUser$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, boolean, androidx.xr.runtime.math.Vector3!, int, Object!);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier billboard(androidx.xr.compose.subspace.layout.SubspaceModifier);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier lookAtUser(androidx.xr.compose.subspace.layout.SubspaceModifier, optional androidx.xr.runtime.math.Vector3 up);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier! lookAtUser$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, androidx.xr.runtime.math.Vector3!, int, Object!);
   }
 
   public final class OffsetKt {
