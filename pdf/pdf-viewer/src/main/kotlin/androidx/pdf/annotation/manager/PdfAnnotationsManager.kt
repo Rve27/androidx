@@ -17,13 +17,17 @@
 package androidx.pdf.annotation.manager
 
 import androidx.annotation.RestrictTo
+import androidx.pdf.PdfDocument
 import androidx.pdf.annotation.KeyedPdfAnnotation
+import androidx.pdf.annotation.draftstate.AnnotationEditsDraftState
 import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.operations.AnnotationOperationsTracker
+import androidx.pdf.annotation.registry.AnnotationHandleRegistry
+import androidx.pdf.annotation.repository.AnnotationsRepository
 
 /** Manages annotations for a PDF document. */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public interface PdfAnnotationsManager {
-
     /**
      * Retrieves the draft and persisted annotations for a given page number.
      *
@@ -31,6 +35,14 @@ public interface PdfAnnotationsManager {
      * @return A list of [KeyedPdfAnnotation] for the specified page.
      */
     public suspend fun getAnnotations(pageNum: Int): List<KeyedPdfAnnotation>
+
+    /**
+     * Adds a new keyed annotation.
+     *
+     * @param keyedAnnotation The [KeyedPdfAnnotation] to add.
+     * @return The annotation id assigned to the newly added annotation.
+     */
+    public fun addAnnotation(keyedAnnotation: KeyedPdfAnnotation): String
 
     /**
      * Adds a new annotation.
@@ -61,4 +73,15 @@ public interface PdfAnnotationsManager {
         annotationId: String,
         newAnnotation: PdfAnnotation,
     ): PdfAnnotation
+
+    public companion object {
+        public fun create(document: PdfDocument): PdfAnnotationsManager {
+            return PdfDocumentAnnotationsManager(
+                draftState = AnnotationEditsDraftState.create(),
+                annotationsRepository = AnnotationsRepository.create(document),
+                handleRegistry = AnnotationHandleRegistry.create(),
+                operationsTracker = AnnotationOperationsTracker.create(),
+            )
+        }
+    }
 }

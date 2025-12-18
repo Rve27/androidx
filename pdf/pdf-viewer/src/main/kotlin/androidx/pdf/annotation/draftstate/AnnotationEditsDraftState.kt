@@ -63,6 +63,14 @@ public interface AnnotationEditsDraftState {
     public fun addEditById(id: EditId, annotation: PdfAnnotation)
 
     /**
+     * Adds a keyed annotation to the draft.
+     *
+     * @param keyedAnnotation The [KeyedPdfAnnotation] to add.
+     * @return The id assigned to the newly added annotation.
+     */
+    public fun addDraftAnnotation(keyedAnnotation: KeyedPdfAnnotation): String
+
+    /**
      * Adds a new annotation edit to the draft state.
      *
      * @param annotation The [PdfAnnotation] to add.
@@ -83,10 +91,10 @@ public interface AnnotationEditsDraftState {
      * Removes an existing annotation from the draft state.
      *
      * @param pageNum The specified page number.
-     * @param handleId The id of the annotation to remove.
+     * @param annotationId The id of the annotation to remove.
      * @return The [PdfAnnotation] that was removed.
      */
-    public fun removeAnnotation(pageNum: Int, handleId: String): PdfAnnotation
+    public fun removeAnnotation(pageNum: Int, annotationId: String): PdfAnnotation
 
     /**
      * Removes an existing annotation edit from the draft state.
@@ -101,14 +109,14 @@ public interface AnnotationEditsDraftState {
      * Updates an existing annotation edit in the draft state.
      *
      * @param pageNum The specified page number.
-     * @param handleId The id of the annotation to update.
+     * @param annotationId The id of the annotation to update.
      * @param newAnnotation The new [PdfAnnotation] to replace the existing annotation.
      * @return The previous [PdfAnnotation].
      */
     // TODO(b/462602307): Clean up after moving the draft state to view model
     public fun updateDraftAnnotation(
         pageNum: Int,
-        handleId: String,
+        annotationId: String,
         newAnnotation: PdfAnnotation,
     ): PdfAnnotation
 
@@ -128,4 +136,10 @@ public interface AnnotationEditsDraftState {
 
     /** Clears all annotation edits from the draft state. */
     public fun clear()
+
+    public companion object {
+        public fun create(): AnnotationEditsDraftState {
+            return InMemoryAnnotationEditsDraftState()
+        }
+    }
 }

@@ -19,6 +19,7 @@ package androidx.pdf.annotation.draftstate
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.pdf.annotation.AnnotationHandleIdGenerator
+import androidx.pdf.annotation.AnnotationHandleIdGenerator.composeAnnotationId
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
@@ -82,9 +83,25 @@ public class InMemoryAnnotationEditsDraftState() : AnnotationEditsDraftState {
     override fun getEdits(pageNum: Int): List<PdfAnnotationData> =
         editsByPage[pageNum]?.values?.toList() ?: emptyList()
 
+    override fun addDraftAnnotation(keyedAnnotation: KeyedPdfAnnotation): String {
+        val pageNum = keyedAnnotation.annotation.pageNum
+        val handleId = keyedAnnotation.key
+        val keyedPdfAnnotation = KeyedPdfAnnotation(handleId, keyedAnnotation.annotation)
+
+        lock.withLock {
+            val draftPageAnnotations =
+                draftAnnotationsPerPage.getOrPut(pageNum) {
+                    // Using LinkedHashMap to maintain insertion order for each page's annotations.
+                    Collections.synchronizedMap(LinkedHashMap())
+                }
+            draftPageAnnotations[handleId] = keyedPdfAnnotation
+        }
+        return handleId
+    }
+
     override fun addDraftAnnotation(annotation: PdfAnnotation): String {
         val pageNum = annotation.pageNum
-        val handleId = AnnotationHandleIdGenerator.generateId()
+        val handleId = composeAnnotationId(pageNum, id = AnnotationHandleIdGenerator.generateId())
         val keyedPdfAnnotation = KeyedPdfAnnotation(handleId, annotation)
 
         lock.withLock {
@@ -129,15 +146,15 @@ public class InMemoryAnnotationEditsDraftState() : AnnotationEditsDraftState {
         return editId
     }
 
-    override fun removeAnnotation(pageNum: Int, handleId: String): PdfAnnotation {
+    override fun removeAnnotation(pageNum: Int, annotationId: String): PdfAnnotation {
         lock.withLock {
             val draftPageAnnotations =
                 draftAnnotationsPerPage[pageNum]
                     ?: throw NoSuchElementException("No annotations present on page ${pageNum}.")
 
             val removedData =
-                draftPageAnnotations.remove(handleId)
-                    ?: throw NoSuchElementException("Annotation with ID $handleId not found.")
+                draftPageAnnotations.remove(annotationId)
+                    ?: throw NoSuchElementException("Annotation with ID $annotationId not found.")
 
             if (draftPageAnnotations.isEmpty()) {
                 draftAnnotationsPerPage.remove(pageNum)
@@ -167,7 +184,7 @@ public class InMemoryAnnotationEditsDraftState() : AnnotationEditsDraftState {
 
     override fun updateDraftAnnotation(
         pageNum: Int,
-        handleId: String,
+        annotationId: String,
         newAnnotation: PdfAnnotation,
     ): PdfAnnotation {
         lock.withLock {
@@ -175,12 +192,13 @@ public class InMemoryAnnotationEditsDraftState() : AnnotationEditsDraftState {
                 draftAnnotationsPerPage[pageNum]
                     ?: throw NoSuchElementException("No annotations present on page ${pageNum}.")
 
-            if (!draftPageAnnotations.containsKey(handleId)) {
-                throw NoSuchElementException("Annotation with ID $handleId not found.")
+            if (!draftPageAnnotations.containsKey(annotationId)) {
+                throw NoSuchElementException("Annotation with ID $annotationId not found.")
             }
 
-            val keyedAnnotation = KeyedPdfAnnotation(handleId, newAnnotation)
-            val previousData = requireNotNull(draftPageAnnotations.put(handleId, keyedAnnotation))
+            val keyedAnnotation = KeyedPdfAnnotation(annotationId, newAnnotation)
+            val previousData =
+                requireNotNull(draftPageAnnotations.put(annotationId, keyedAnnotation))
             return previousData.annotation
         }
     }
