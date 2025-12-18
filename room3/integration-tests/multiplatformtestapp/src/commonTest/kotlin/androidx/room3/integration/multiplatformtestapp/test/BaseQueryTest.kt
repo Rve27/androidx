@@ -23,6 +23,7 @@ import androidx.room3.executeSQL
 import androidx.room3.immediateTransaction
 import androidx.room3.useReaderConnection
 import androidx.room3.useWriterConnection
+import androidx.sqlite.step
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -435,7 +436,10 @@ abstract class BaseQueryTest {
     @Test
     fun invalidRawQueryOnBindStatement() = runTest {
         val query =
-            RoomRawQuery(sql = "SELECT * FROM SampleEntity", onBindStatement = { it.step() })
+            RoomRawQuery(
+                sql = "SELECT * FROM SampleEntity",
+                onBindStatement = { it.getColumnCount() },
+            )
         assertThrows<IllegalStateException> { db.dao().getSingleItemRaw(query) }
             .hasMessageThat()
             .contains("Only bind*() calls are allowed")
