@@ -83,8 +83,8 @@ class QueryFunctionProcessor(
                     return InternalQueryProcessor(
                             context = context,
                             executableElement = executableElement,
-                            containing = containing,
                             dbVerifier = dbVerifier,
+                            containing = containing,
                         )
                         .processQuery(finalQuery.original)
                 } else {
