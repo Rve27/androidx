@@ -30,8 +30,8 @@ import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.SpatialGltfModelStatus.Failed
 import androidx.xr.compose.subspace.SpatialGltfModelStatus.Loaded
 import androidx.xr.compose.subspace.SpatialGltfModelStatus.Loading
+import androidx.xr.compose.subspace.draw.alpha
 import androidx.xr.compose.subspace.layout.SubspaceModifier
-import androidx.xr.compose.subspace.layout.alpha
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.onPointSourceParamsAvailable
