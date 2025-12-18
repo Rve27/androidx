@@ -504,4 +504,47 @@ class SceneTest {
 
         assertThat(session.scene.keyEntity).isNull()
     }
+
+    @Test
+    fun keyEntity_setFirstTime_invokesSpatialModeChangeListenersWithLastRecommendedValues() {
+        val recommendedPose = Pose(Vector3(1f, 2f, 3f))
+        val recommendedScale = Vector3(5f, 5f, 5f)
+
+        // Trigger a mode change to set lastRecommended values
+        sceneRuntime.spatialModeChangeListener?.onSpatialModeChanged(
+            recommendedPose,
+            recommendedScale,
+        )
+
+        val keyEntity = GroupEntity.create(session, "Test Entity")
+        session.scene.keyEntity = keyEntity
+
+        shadowOf(Looper.getMainLooper()).idle()
+
+        assertThat(keyEntity.getPose()).isEqualTo(recommendedPose)
+        assertThat(keyEntity.getScale()).isEqualTo(recommendedScale.x)
+    }
+
+    @Test
+    fun keyEntity_setFirstTime_invokesCustomSpatialModeChangeListenersWithLastRecommendedValues() {
+        val recommendedPose = Pose(Vector3(1f, 2f, 3f))
+        val recommendedScale = Vector3(5f, 5f, 5f)
+        var testSpatialModeChangeCount = 0
+
+        // Trigger a mode change to set lastRecommended values
+        sceneRuntime.spatialModeChangeListener?.onSpatialModeChanged(
+            recommendedPose,
+            recommendedScale,
+        )
+
+        val keyEntity = GroupEntity.create(session, "Test Entity")
+        session.scene.keyEntity = keyEntity
+        session.scene.setSpatialModeChangedListener { _ -> testSpatialModeChangeCount++ }
+
+        shadowOf(Looper.getMainLooper()).idle()
+
+        // Check that spatial mode change listener was invoked twice, once on spatial mode change
+        // and later when keyEntity was set.
+        assertThat(testSpatialModeChangeCount).isEqualTo(2)
+    }
 }
