@@ -561,7 +561,7 @@ internal class CoreModelEntity() : CoreEntity() {
         get() =
             density?.let { density ->
                 (entity as? GltfModelEntity)
-                    ?.getGltfModelBoundingBox()
+                    ?.gltfModelBoundingBox
                     ?.halfExtents
                     ?.times(2)
                     ?.toIntVolumeSize(density)
