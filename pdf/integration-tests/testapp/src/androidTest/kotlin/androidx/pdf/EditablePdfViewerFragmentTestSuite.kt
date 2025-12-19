@@ -70,6 +70,10 @@ class EditablePdfViewerFragmentTestSuite {
 
     @Before
     fun setup() {
+        assumeFalse(
+            "Test fails on cuttlefish b/465861868",
+            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
         scenario =
             launchFragmentInContainer<TestEditablePdfViewerFragment>(
                     themeResId =
@@ -146,10 +150,6 @@ class EditablePdfViewerFragmentTestSuite {
 
     @Test
     fun testEditablePdfViewerFragment_editMode_singleFingerAnnotation() {
-        assumeFalse(
-            "Test fails on cuttlefish b/465861868",
-            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
-        )
         if (!isRequiredSdkExtensionAvailable()) return
 
         loadDocumentAndSetupFragment()
@@ -248,10 +248,6 @@ class EditablePdfViewerFragmentTestSuite {
 
     @Test
     fun testEditablePdfViewerFragment_enterAndExitEditMode_togglesState() {
-        assumeFalse(
-            "Test fails on cuttlefish b/465861868",
-            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
-        )
         if (!isRequiredSdkExtensionAvailable()) return
 
         loadDocumentAndSetupFragment()
@@ -360,10 +356,6 @@ class EditablePdfViewerFragmentTestSuite {
 
     @Test
     fun testEditablePdfViewerFragment_testUndoRedo() {
-        assumeFalse(
-            "Test fails on cuttlefish b/465861868",
-            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
-        )
         if (!isRequiredSdkExtensionAvailable()) return
 
         loadDocumentAndSetupFragment()
@@ -397,10 +389,6 @@ class EditablePdfViewerFragmentTestSuite {
 
     @Test
     fun testEditablePdfViewerFragment_annotationDisabled() {
-        assumeFalse(
-            "Test fails on cuttlefish b/465861868",
-            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
-        )
         if (!isRequiredSdkExtensionAvailable()) return
 
         loadDocumentAndSetupFragment()
@@ -438,10 +426,6 @@ class EditablePdfViewerFragmentTestSuite {
 
     @Test
     fun testEditablePdfViewerFragment_toolbarPopupDismissed_OnContentTouch() {
-        assumeFalse(
-            "Test fails on cuttlefish b/465861868",
-            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
-        )
         if (!isRequiredSdkExtensionAvailable()) return
 
         loadDocumentAndSetupFragment()
