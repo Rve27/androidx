@@ -1,6 +1,27 @@
 // Signature format: 4.0
 package androidx.wear.compose.foundation {
 
+  @androidx.compose.runtime.Immutable public sealed exhaustive interface AmbientMode {
+  }
+
+  public static final class AmbientMode.Ambient implements androidx.wear.compose.foundation.AmbientMode {
+    ctor public AmbientMode.Ambient(boolean isBurnInProtectionRequired, boolean isLowBitAmbientSupported);
+    method @InaccessibleFromKotlin public boolean isBurnInProtectionRequired();
+    method @InaccessibleFromKotlin public boolean isLowBitAmbientSupported();
+    property public boolean isBurnInProtectionRequired;
+    property public boolean isLowBitAmbientSupported;
+  }
+
+  public static final class AmbientMode.Interactive implements androidx.wear.compose.foundation.AmbientMode {
+    field public static final androidx.wear.compose.foundation.AmbientMode.Interactive INSTANCE;
+  }
+
+  public interface AmbientModeManager {
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.AmbientMode getCurrentAmbientMode();
+    method public suspend Object? withAmbientTick(kotlin.jvm.functions.Function0<kotlin.Unit> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    property public abstract androidx.wear.compose.foundation.AmbientMode currentAmbientMode;
+  }
+
   @kotlin.jvm.JvmInline public final value class AnchorType {
     method @BytecodeOnly public static androidx.wear.compose.foundation.AnchorType! box-impl(float);
     method @BytecodeOnly public float unbox-impl();
@@ -385,6 +406,15 @@ package androidx.wear.compose.foundation {
   public final class HierarchicalFocusKt {
     method public static androidx.compose.ui.Modifier hierarchicalFocusGroup(androidx.compose.ui.Modifier, boolean active);
     method public static androidx.compose.ui.Modifier requestFocusOnHierarchyActive(androidx.compose.ui.Modifier);
+  }
+
+  public final class LocalAmbientModeManagerKt {
+    method @KotlinOnly @androidx.compose.runtime.Composable public static void AmbientTickEffect(androidx.wear.compose.foundation.AmbientModeManager, kotlin.jvm.functions.Function0<kotlin.Unit> block);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void AmbientTickEffect(androidx.wear.compose.foundation.AmbientModeManager, kotlin.jvm.functions.Function0<kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.foundation.AmbientModeManager?> getLocalAmbientModeManager();
+    method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.wear.compose.foundation.AmbientModeManager rememberAmbientModeManager(android.app.Activity activity);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.wear.compose.foundation.AmbientModeManager rememberAmbientModeManager(android.app.Activity, androidx.compose.runtime.Composer?, int);
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.foundation.AmbientModeManager?> LocalAmbientModeManager;
   }
 
   @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi @kotlin.jvm.JvmInline public final value class RevealActionType {
