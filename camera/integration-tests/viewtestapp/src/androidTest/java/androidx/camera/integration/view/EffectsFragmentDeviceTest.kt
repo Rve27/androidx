@@ -17,6 +17,7 @@
 package androidx.camera.integration.view
 
 import android.net.Uri
+import android.os.Build.MODEL
 import android.util.Log
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
@@ -40,6 +41,7 @@ import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import org.junit.After
+import org.junit.Assume.assumeFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -77,6 +79,11 @@ class EffectsFragmentDeviceTest(
 
     @Before
     fun setup() {
+        assumeFalse(
+            "Test fails on cuttlefish (b/465855844)",
+            MODEL.contains("Cuttlefish", ignoreCase = true),
+        )
+
         // Clear the device UI and check if there is no dialog or lock screen on the top of the
         // window before start the test.
         CoreAppTestUtil.prepareDeviceUI(instrumentation)
