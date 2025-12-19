@@ -62,7 +62,10 @@ import androidx.compose.ui.util.fastSumBy
 import androidx.compose.ui.util.lerp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumnState
 import androidx.wear.compose.foundation.lazy.inverseLerp
+import androidx.wear.compose.foundation.lazy.visibleItemsAverageHeight
 import androidx.wear.compose.foundation.pager.HorizontalPager
 import androidx.wear.compose.foundation.pager.PagerState
 import androidx.wear.compose.foundation.pager.VerticalPager
@@ -446,6 +449,39 @@ public object RotaryScrollableDefaults {
 
     /**
      * Implementation of [RotaryScrollableBehavior] to define scrolling behaviour with snap for
+     * [TransformingLazyColumn] - used with the [rotaryScrollable] modifier when snapping is
+     * required.
+     *
+     * @param scrollableState [TransformingLazyColumnState] to which rotary scroll will be
+     *   connected.
+     * @param snapOffset An optional offset to be applied when snapping the item. Defines the
+     *   distance from the center of the scrollable to the center of the snapped item.
+     * @param hapticFeedbackEnabled Controls whether haptic feedback is given during rotary
+     *   scrolling (true by default). It's recommended to keep the default value of true for premium
+     *   scrolling experience.
+     * @param snapSensitivity Configures the sensitivity for rotary snapping. Defaults to
+     *   [RotarySnapSensitivity.Default].
+     */
+    @Composable
+    public fun snapBehavior(
+        scrollableState: TransformingLazyColumnState,
+        snapOffset: Dp = 0.dp,
+        hapticFeedbackEnabled: Boolean = true,
+        snapSensitivity: RotarySnapSensitivity = RotarySnapSensitivity.Default,
+    ): RotaryScrollableBehavior =
+        snapBehavior(
+            scrollableState = scrollableState,
+            layoutInfoProvider =
+                remember(scrollableState) {
+                    TransformingLazyColumnRotarySnapLayoutInfoProvider(scrollableState)
+                },
+            snapOffset = snapOffset,
+            snapSensitivity = RotarySnapSensitivityValues(snapSensitivity),
+            hapticFeedbackEnabled = hapticFeedbackEnabled,
+        )
+
+    /**
+     * Implementation of [RotaryScrollableBehavior] to define scrolling behaviour with snap for
      * [HorizontalPager] and [VerticalPager].
      *
      * @param pagerState [PagerState] to which rotary scroll will be connected.
@@ -565,6 +601,33 @@ internal class ScalingLazyColumnRotarySnapLayoutInfoProvider(
     /** The offset from the item center. */
     override val currentItemOffset: Float
         get() = scrollableState.centerItemScrollOffset.toFloat()
+
+    /** The total count of items in ScalingLazyColumn */
+    override val totalItemCount: Int
+        get() = scrollableState.layoutInfo.totalItemsCount
+}
+
+/** An implementation of rotary scroll adapter for TransformingLazyColumn */
+internal class TransformingLazyColumnRotarySnapLayoutInfoProvider(
+    private val scrollableState: TransformingLazyColumnState
+) : RotarySnapLayoutInfoProvider {
+
+    /** Calculates the average item height by averaging the height of visible items. */
+    override val averageItemSize: Float
+        get() {
+            val measureResult = scrollableState.layoutInfoState.value
+            return if (measureResult.visibleItems.isNotEmpty()) {
+                (measureResult.visibleItemsAverageHeight + measureResult.itemSpacing).toFloat()
+            } else 0f
+        }
+
+    /** Current (centered) item index */
+    override val currentItemIndex: Int
+        get() = scrollableState.anchorItemIndex
+
+    /** The offset from the item center. */
+    override val currentItemOffset: Float
+        get() = scrollableState.anchorItemScrollOffset.toFloat()
 
     /** The total count of items in ScalingLazyColumn */
     override val totalItemCount: Int
@@ -1035,7 +1098,7 @@ internal class RotarySnapHandler(
                         }
                         if (layoutInfoProvider.currentItemIndex == snapTarget) {
                             debugLog { "Target is near the centre. Cancelling first animation" }
-                            expectedDistance = -layoutInfoProvider.currentItemOffset
+                            expectedDistance = -layoutInfoProvider.currentItemOffset + snapOffset
                             continueFirstScroll = false
                             cancelAnimation()
                             return@animateTo
