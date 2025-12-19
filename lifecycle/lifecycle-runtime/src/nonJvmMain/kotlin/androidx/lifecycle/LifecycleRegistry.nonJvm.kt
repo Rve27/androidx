@@ -34,7 +34,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
      * Invariant: at any moment of time for observer1 & observer2: if addition_order(observer1) <
      * addition_order(observer2), then state(observer1) >= state(observer2),
      */
-    private var observerMap = linkedMapOf<LifecycleObserver, ObserverWithState>()
+    private var observerMap = FastSafeIterableMap<LifecycleObserver, ObserverWithState>()
 
     /** Current state */
     private var state: State = State.INITIALIZED
@@ -115,26 +115,23 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         sync()
         handlingEvent = false
         if (state == State.DESTROYED) {
-            observerMap = linkedMapOf()
+            observerMap = FastSafeIterableMap()
         }
     }
 
     private val isSynced: Boolean
         get() {
-            if (observerMap.isEmpty()) {
+            if (observerMap.size() == 0) {
                 return true
             }
-            val eldestObserverState = observerMap.values.first().state
-            val newestObserverState = observerMap.values.last().state
+            val eldestObserverState = observerMap.first().value.state
+            val newestObserverState = observerMap.last().value.state
             return eldestObserverState == newestObserverState && state == newestObserverState
         }
 
     private fun calculateTargetState(observer: LifecycleObserver): State {
-        val siblingState =
-            observerMap.keys.toList().let {
-                val index = it.indexOf(observer)
-                if (index > 0) observerMap[it[index - 1]]?.state else null
-            }
+        val map = observerMap.ceil(observer)
+        val siblingState = map?.value?.state
         val parentState =
             if (parentStates.isNotEmpty()) parentStates[parentStates.size - 1] else null
         return min(min(state, siblingState), parentState)
@@ -155,7 +152,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         enforceMainThreadIfNeeded("addObserver")
         val initialState = if (state == State.DESTROYED) State.DESTROYED else State.INITIALIZED
         val statefulObserver = ObserverWithState(observer, initialState)
-        val previous = observerMap.put(observer, statefulObserver)
+        val previous = observerMap.putIfAbsent(observer, statefulObserver)
         if (previous != null) {
             return
         }
@@ -217,11 +214,11 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
     public actual open val observerCount: Int
         get() {
             enforceMainThreadIfNeeded("getObserverCount")
-            return observerMap.size
+            return observerMap.size()
         }
 
     private fun forwardPass(lifecycleOwner: LifecycleOwner) {
-        forEachObserverWithAdditions { key, observer ->
+        observerMap.forEachWithAdditions { (key, observer) ->
             while (observer.state < state && !newEventOccurred && observerMap.contains(key)) {
                 pushParentState(observer.state)
                 val event =
@@ -234,7 +231,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
     }
 
     private fun backwardPass(lifecycleOwner: LifecycleOwner) {
-        forEachObserverReversed { key, observer ->
+        observerMap.forEachReversed { (key, observer) ->
             while (observer.state > state && !newEventOccurred && observerMap.contains(key)) {
                 val event =
                     Event.downFrom(observer.state)
@@ -246,42 +243,10 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         }
     }
 
-    private inline fun forEachObserverWithAdditions(
-        block: (LifecycleObserver, ObserverWithState) -> Unit
-    ) {
-        val visited = mutableSetOf<LifecycleObserver>()
-        while (!newEventOccurred) {
-            val keys = observerMap.keys.filter { it !in visited }
-            if (keys.isEmpty()) {
-                break
-            }
-            for (key in keys) {
-                if (newEventOccurred) {
-                    break
-                }
-                val value = observerMap[key] ?: continue
-                block(key, value)
-                visited.add(key)
-            }
-        }
-    }
-
-    private inline fun forEachObserverReversed(
-        block: (LifecycleObserver, ObserverWithState) -> Unit
-    ) {
-        val keys = observerMap.keys.reversed()
-        for (key in keys) {
-            if (newEventOccurred) {
-                break
-            }
-            val value = observerMap[key] ?: continue
-            block(key, value)
-        }
-    }
-
     // happens only on the top of stack (never in reentrance),
     // so it doesn't have to take in account parents
     private fun sync() {
+        @Suppress("NewApi") // b/437073246
         val lifecycleOwner =
             lifecycleOwner.get()
                 ?: throw IllegalStateException(
@@ -290,11 +255,11 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
                 )
         while (!isSynced) {
             newEventOccurred = false
-            if (state < observerMap.values.first().state) {
+            if (state < observerMap.first().value.state) {
                 backwardPass(lifecycleOwner)
             }
-            val newest = observerMap.values.lastOrNull()
-            if (!newEventOccurred && newest != null && state > newest.state) {
+            val newest = observerMap.lastOrNull()
+            if (!newEventOccurred && newest != null && state > newest.value.state) {
                 forwardPass(lifecycleOwner)
             }
         }

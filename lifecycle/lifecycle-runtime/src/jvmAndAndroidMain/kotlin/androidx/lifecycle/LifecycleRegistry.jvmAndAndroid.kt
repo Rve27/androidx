@@ -17,7 +17,6 @@ package androidx.lifecycle
 
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
-import androidx.arch.core.internal.FastSafeIterableMap
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -140,8 +139,8 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
             if (observerMap.size() == 0) {
                 return true
             }
-            val eldestObserverState = observerMap.eldest()!!.value.state
-            val newestObserverState = observerMap.newest()!!.value.state
+            val eldestObserverState = observerMap.first().value.state
+            val newestObserverState = observerMap.last().value.state
             return eldestObserverState == newestObserverState && state == newestObserverState
         }
 
@@ -235,11 +234,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
         }
 
     private fun forwardPass(lifecycleOwner: LifecycleOwner) {
-        @Suppress()
-        val ascendingIterator: Iterator<Map.Entry<LifecycleObserver, ObserverWithState>> =
-            observerMap.iteratorWithAdditions()
-        while (ascendingIterator.hasNext() && !newEventOccurred) {
-            val (key, observer) = ascendingIterator.next()
+        observerMap.forEachWithAdditions { (key, observer) ->
             while (observer.state < state && !newEventOccurred && observerMap.contains(key)) {
                 pushParentState(observer.state)
                 val event =
@@ -252,9 +247,7 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
     }
 
     private fun backwardPass(lifecycleOwner: LifecycleOwner) {
-        val descendingIterator = observerMap.descendingIterator()
-        while (descendingIterator.hasNext() && !newEventOccurred) {
-            val (key, observer) = descendingIterator.next()
+        observerMap.forEachReversed { (key, observer) ->
             while (observer.state > state && !newEventOccurred && observerMap.contains(key)) {
                 val event =
                     Event.downFrom(observer.state)
@@ -278,10 +271,10 @@ private constructor(provider: LifecycleOwner, private val enforceMainThread: Boo
                 )
         while (!isSynced) {
             newEventOccurred = false
-            if (state < observerMap.eldest()!!.value.state) {
+            if (state < observerMap.first().value.state) {
                 backwardPass(lifecycleOwner)
             }
-            val newest = observerMap.newest()
+            val newest = observerMap.lastOrNull()
             if (!newEventOccurred && newest != null && state > newest.value.state) {
                 forwardPass(lifecycleOwner)
             }
