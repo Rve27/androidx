@@ -77,7 +77,7 @@ class PdfDocumentAnnotationsManagerTest {
         assertThat(result).hasSize(1)
         assertThat(result[0].annotation).isEqualTo(annotA)
         // Verify a handle was generated
-        val handleId = handleRegistry.getHandleId(sourceId)
+        val handleId = handleRegistry.getHandleId(pageNum, sourceId)
         assertThat(result[0].key).isEqualTo(handleId)
     }
 
@@ -147,7 +147,7 @@ class PdfDocumentAnnotationsManagerTest {
         repository.seedAnnotations(pageNum, listOf(KeyedPdfAnnotation(sourceId, annotA)))
 
         // We need the handle ID to compose the ID passed to removeAnnotation
-        val handleId = handleRegistry.getHandleId(sourceId)
+        val handleId = handleRegistry.getHandleId(pageNum, sourceId)
         val composedId = composeAnnotationId(pageNum, handleId)
 
         val removed = manager.removeAnnotation(composedId)
@@ -170,7 +170,7 @@ class PdfDocumentAnnotationsManagerTest {
     fun removeAnnotation_persistedWithLocalUpdate_removesUpdatedContent() = runTest {
         val sourceId = "source_1"
         repository.seedAnnotations(pageNum, listOf(KeyedPdfAnnotation(sourceId, annotA)))
-        val handleId = handleRegistry.getHandleId(sourceId)
+        val handleId = handleRegistry.getHandleId(pageNum, sourceId)
         val composedId = composeAnnotationId(pageNum, handleId)
 
         // Update first
@@ -207,7 +207,7 @@ class PdfDocumentAnnotationsManagerTest {
     fun updateAnnotation_persistedAnnotation_updatesTrackerAndReconciles() = runTest {
         val sourceId = "source_1"
         repository.seedAnnotations(pageNum, listOf(KeyedPdfAnnotation(sourceId, annotA)))
-        val handleId = handleRegistry.getHandleId(sourceId)
+        val handleId = handleRegistry.getHandleId(pageNum, sourceId)
         val composedId = composeAnnotationId(pageNum, handleId)
 
         val previous = manager.updateAnnotation(composedId, updatedAnnotA)
@@ -229,7 +229,7 @@ class PdfDocumentAnnotationsManagerTest {
     fun updateAnnotation_persistedAnnotationMultipleTimes_returnsLastUpdatedValue() = runTest {
         val sourceId = "source_1"
         repository.seedAnnotations(pageNum, listOf(KeyedPdfAnnotation(sourceId, annotA)))
-        val handleId = handleRegistry.getHandleId(sourceId)
+        val handleId = handleRegistry.getHandleId(pageNum, sourceId)
         val composedId = composeAnnotationId(pageNum, handleId)
 
         manager.updateAnnotation(composedId, updatedAnnotA)
