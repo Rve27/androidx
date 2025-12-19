@@ -24,9 +24,10 @@ import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastRoundToInt
 
 /**
- * Auto focus controls how children receive focus as the list position changes. Conceptually, it's a
- * virtual line that moves along the list — from the topmost item to the bottommost — as the user
- * scrolls. The item located under this line is gained focus.
+ * Contains the latest information about auto focus state. Auto focus controls how children receive
+ * focus as the list position changes. Conceptually, it's a virtual line that moves along the list —
+ * from the topmost item to the bottommost — as the user scrolls. The item located under this line
+ * is gained focus.
  *
  * In long lists, the focus line stays centered within the visible area, and only begins to shift
  * when the user scrolls close to the start or end of the list.
@@ -36,9 +37,10 @@ import androidx.compose.ui.util.fastRoundToInt
  * and later, once all children are placed, it is invoked by [GlimmerListAutoFocusNode] to perform
  * the focus request.
  */
-internal class GlimmerListAutoFocusBehaviour {
+internal class GlimmerListAutoFocusState {
 
     private var pendingRequestFocus = false
+
     internal var properties: GlimmerListAutoFocusProperties? = null
         private set
 
