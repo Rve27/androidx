@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
+
 package androidx.compose.remote.creation.compose.capture
 
 import android.content.Context
@@ -38,19 +40,18 @@ import kotlinx.coroutines.suspendCancellableCoroutine
  * @param context the Android [Context] to use for the capture.
  * @param creationDisplayInfo details about the virtual display to create.
  * @param profile the [Profile] to use for the capture, determining which operations are supported.
- * @param writerEvents callbacks for non-serializable content such as pending intents.
  * @param content the Composable content to render and capture.
  * @return a [ByteArray] containing the RemoteCompose document.
  */
-@ExperimentalRemoteCreationComposeApi
 public suspend fun captureSingleRemoteDocument(
     context: Context,
     creationDisplayInfo: CreationDisplayInfo = createCreationDisplayInfo(context),
     profile: Profile = RcPlatformProfiles.ANDROIDX,
-    writerEvents: WriterEvents? = null,
     content: @Composable @RemoteComposable () -> Unit,
-): ByteArray = suspendCancellableCoroutine { continuation ->
+): CapturedDocument = suspendCancellableCoroutine { continuation ->
     val virtualDisplay = DisplayPool.allocate(context, creationDisplayInfo)
+
+    val writerEvents = WriterEvents()
 
     RemoteComposeCapture(
         context = context,
@@ -60,8 +61,7 @@ public suspend fun captureSingleRemoteDocument(
         onPaint = { _, writer ->
             if (continuation.isActive) {
                 val docBytes = writer.encodeToByteArray()
-                writerEvents?.onDocumentAvailable(docBytes)
-                continuation.resume(docBytes)
+                continuation.resume(CapturedDocument(docBytes, writerEvents.pendingIntents))
                 DisplayPool.release(virtualDisplay)
             }
             true

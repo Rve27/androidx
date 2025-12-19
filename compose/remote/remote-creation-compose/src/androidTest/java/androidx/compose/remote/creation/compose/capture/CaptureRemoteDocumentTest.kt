@@ -66,8 +66,9 @@ class CaptureRemoteDocumentTest {
         val document: ByteArray =
             withContext(Dispatchers.Main) {
                 captureSingleRemoteDocument(context) {
-                    RemoteBox(modifier = RemoteModifier.fillMaxSize().background(Color.Red))
-                }
+                        RemoteBox(modifier = RemoteModifier.fillMaxSize().background(Color.Red))
+                    }
+                    .bytes
             }
 
         val remoteComposeDocument =
@@ -94,27 +95,28 @@ class CaptureRemoteDocumentTest {
         val document: ByteArray =
             withContext(Dispatchers.Main) {
                 captureSingleRemoteDocument(context, profile = customProfile) {
-                    RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) {
-                        val textPaint =
-                            Paint().apply {
-                                isAntiAlias = true
-                                color = Color.LightGray.toArgb()
-                                textSize = 12f
-                            }
+                        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) {
+                            val textPaint =
+                                Paint().apply {
+                                    isAntiAlias = true
+                                    color = Color.LightGray.toArgb()
+                                    textSize = 12f
+                                }
 
-                        canvas.drawTextOnCircle(
-                            text = RemoteString("10:09"),
-                            centerX = remote.component.width / 2f,
-                            centerY = remote.component.height / 2f,
-                            radius = remote.component.width / 2f,
-                            startAngle = 0f.rf,
-                            warpRadiusOffset = 0f.rf,
-                            alignment = DrawTextOnCircle.Alignment.CENTER,
-                            placement = DrawTextOnCircle.Placement.INSIDE,
-                            paint = textPaint,
-                        )
+                            canvas.drawTextOnCircle(
+                                text = RemoteString("10:09"),
+                                centerX = remote.component.width / 2f,
+                                centerY = remote.component.height / 2f,
+                                radius = remote.component.width / 2f,
+                                startAngle = 0f.rf,
+                                warpRadiusOffset = 0f.rf,
+                                alignment = DrawTextOnCircle.Alignment.CENTER,
+                                placement = DrawTextOnCircle.Placement.INSIDE,
+                                paint = textPaint,
+                            )
+                        }
                     }
-                }
+                    .bytes
             }
 
         assertTrue(document.isNotEmpty())
