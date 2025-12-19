@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.layout
 
@@ -69,6 +68,7 @@ public fun RemoteBox(
     }
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public inline fun <reified T : RemoteModifier.Element> RemoteModifier.find(): T? {
     return this.foldIn<T?>(null) { result, element -> result ?: element as? T }
 }

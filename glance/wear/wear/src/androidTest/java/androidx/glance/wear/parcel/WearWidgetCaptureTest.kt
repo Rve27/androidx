@@ -30,6 +30,7 @@ import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationCompos
 import androidx.compose.remote.creation.compose.action.pendingIntentAction
 import androidx.compose.remote.creation.compose.capture.DisplayPool
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCapture
+import androidx.compose.remote.creation.compose.capture.WriterEvents
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteText
@@ -93,7 +94,7 @@ class WearWidgetCaptureTest {
 
         @Composable
         internal fun CollectPendingIntent(
-            widgetPendingIntents: WidgetPendingIntents,
+            widgetPendingIntents: WriterEvents,
             content: @Composable () -> Unit,
         ) {
             val creationDisplayInfo =
@@ -185,12 +186,13 @@ class WearWidgetCaptureTest {
 
     @Test
     fun pendingIntentCollection() {
-        var pendingIntents = WidgetPendingIntents()
-        composeTestRule.setContent { CollectPendingIntent(pendingIntents) { TestLayout() } }
+        val writerEvents = WriterEvents()
+        composeTestRule.setContent { CollectPendingIntent(writerEvents) { TestLayout() } }
+        val pendingIntents = writerEvents.pendingIntents
 
-        assertThat(pendingIntents.size()).isEqualTo(2)
-        assertThat(pendingIntents.get(0)).isEqualTo(testPendingIntent0)
-        assertThat(pendingIntents.get(1)).isEqualTo(testPendingIntent1)
+        assertThat(pendingIntents.size).isEqualTo(2)
+        assertThat(pendingIntents[0]).isEqualTo(testPendingIntent0)
+        assertThat(pendingIntents[1]).isEqualTo(testPendingIntent1)
     }
 
     @Test
