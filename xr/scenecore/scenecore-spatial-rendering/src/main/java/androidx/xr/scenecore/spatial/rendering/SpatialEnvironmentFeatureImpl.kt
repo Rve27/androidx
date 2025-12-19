@@ -89,6 +89,7 @@ internal class SpatialEnvironmentFeatureImpl(
         material: MaterialResource?,
         nodeName: String?,
         animationName: String?,
+        targetRootNode: Node,
     ) {
         check(Looper.getMainLooper().isCurrentThread) {
             "This method must be called on the main thread."
@@ -108,6 +109,7 @@ internal class SpatialEnvironmentFeatureImpl(
                     .setPosition(geometrySubspace.subspaceNode, 0.0f, 0.0f, 0.0f)
                     .setScale(geometrySubspace.subspaceNode, 1.0f, 1.0f, 1.0f)
                     .setOrientation(geometrySubspace.subspaceNode, 0.0f, 0.0f, 0.0f, 1.0f)
+                    .setParent(geometrySubspace.subspaceNode, targetRootNode)
                     .apply()
             }
         }
@@ -130,7 +132,9 @@ internal class SpatialEnvironmentFeatureImpl(
                 )
             }
             if (animationName != null) {
-                impressApi.animateGltfModel(geometryImpressNode, animationName, true)
+                coroutineScope.launch {
+                    impressApi.animateGltfModel(geometryImpressNode, animationName, true)
+                }
             }
             impressApi.setImpressNodeParent(geometryImpressNode, subspaceNode)
         }
@@ -158,10 +162,23 @@ internal class SpatialEnvironmentFeatureImpl(
             val newMaterial = newPreference?.geometryMaterial
             val newNodeName = newPreference?.geometryNodeName
             val newAnimationName = newPreference?.geometryAnimationName
+            val currentRootEnvironmentNode: Node
+
+            if (newGeometry != prevGeometry) {
+                currentRootEnvironmentNode = extensions.createNode()
+            } else {
+                currentRootEnvironmentNode = rootEnvironmentNode!!
+            }
 
             if (newGeometry != prevGeometry) {
                 coroutineScope.launch {
-                    applyGeometry(newGeometry, newMaterial, newNodeName, newAnimationName)
+                    applyGeometry(
+                        newGeometry,
+                        newMaterial,
+                        newNodeName,
+                        newAnimationName,
+                        currentRootEnvironmentNode,
+                    )
                 }
             }
 
@@ -180,28 +197,6 @@ internal class SpatialEnvironmentFeatureImpl(
                 var skyboxMode = XrExtensions.ENVIRONMENT_SKYBOX_APP
                 if (newSkybox == null) {
                     skyboxMode = XrExtensions.NO_SKYBOX
-                }
-                // Transitioning to a new app environment.
-                val currentRootEnvironmentNode: Node
-                if (newGeometry != prevGeometry) {
-                    // Environment geometry has changed, create a new environment node and
-                    // attach the geometry subspace to it.
-                    currentRootEnvironmentNode = extensions.createNode()
-                    geometrySubspaceSplitEngine?.let { geometrySubspace ->
-                        extensions.createNodeTransaction().use { transaction ->
-                            @Suppress("UNUSED_VARIABLE")
-                            val unused =
-                                transaction.setParent(
-                                    geometrySubspace.subspaceNode,
-                                    currentRootEnvironmentNode,
-                                )
-                            transaction.apply()
-                        }
-                    }
-                } else {
-                    // Environment geometry has not changed, use the existing environment
-                    // node.
-                    currentRootEnvironmentNode = rootEnvironmentNode!!
                 }
                 onBeforeNodeAttachedListener?.accept(currentRootEnvironmentNode)
                 extensions.attachSpatialEnvironment(
