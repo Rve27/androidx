@@ -48,7 +48,7 @@ import org.junit.runners.model.Statement
     level = DeprecationLevel.HIDDEN,
     message = "Replaced with same function, but with effectContext",
 )
-@Suppress("ComposeTestRuleDispatcher", "DEPRECATION")
+@Suppress("DEPRECATION")
 actual fun createComposeRule(): ComposeContentTestRule =
     createAndroidComposeRule<ComponentActivity>()
 
@@ -60,7 +60,7 @@ actual fun createComposeRule(): ComposeContentTestRule =
             "coroutines are queued rather than executed immediately.",
     level = DeprecationLevel.WARNING,
 )
-@Suppress("ComposeTestRuleDispatcher", "DEPRECATION", "KmpExperimentalMismatch")
+@Suppress("DEPRECATION", "KmpExperimentalMismatch")
 actual fun createComposeRule(effectContext: CoroutineContext): ComposeContentTestRule =
     createAndroidComposeRule<ComponentActivity>(effectContext)
 
@@ -83,7 +83,7 @@ actual fun createComposeRule(effectContext: CoroutineContext): ComposeContentTes
     level = DeprecationLevel.HIDDEN,
     message = "Replaced with same function, but with effectContext",
 )
-@Suppress("ComposeTestRuleDispatcher", "DEPRECATION")
+@Suppress("DEPRECATION")
 inline fun <reified A : ComponentActivity> createAndroidComposeRule():
     AndroidComposeTestRule<ActivityScenarioRule<A>, A> {
     // TODO(b/138993381): By launching custom activities we are losing control over what content is
@@ -120,7 +120,7 @@ inline fun <reified A : ComponentActivity> createAndroidComposeRule():
             "coroutines are queued rather than executed immediately.",
     level = DeprecationLevel.WARNING,
 )
-@Suppress("ComposeTestRuleDispatcher", "DEPRECATION")
+@Suppress("DEPRECATION")
 inline fun <reified A : ComponentActivity> createAndroidComposeRule(
     effectContext: CoroutineContext = EmptyCoroutineContext
 ): AndroidComposeTestRule<ActivityScenarioRule<A>, A> {

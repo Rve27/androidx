@@ -95,12 +95,6 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
                     disable.add("ListIterator")
                 }
 
-                // If the ComposeTestRuleDispatcher lint rule isn't disabled in the module's
-                // build.gradle file, it will be added to the error set.
-                if (!disable.contains("ComposeTestRuleDispatcher")) {
-                    error.add("ComposeTestRuleDispatcher")
-                }
-
                 // b/333784604 Disable ConfigurationScreenWidthHeight for wear libraries, it
                 // does not apply to wear
                 if (path.startsWith(":wear:")) {
