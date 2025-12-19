@@ -17,11 +17,11 @@
 package androidx.compose.integration.hero.sysui.macrobenchmark
 
 import androidx.benchmark.macro.CompilationMode
-import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.Direction
 import androidx.testutils.createCompilationParams
+import androidx.testutils.defaultComposeScrollingMetrics
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -80,7 +80,7 @@ class SysUiSceneTransitionLayoutHeroBenchmark(private val compilationMode: Compi
     ) {
         benchmarkRule.measureRepeated(
             packageName = StlDemoConstants.PACKAGE,
-            metrics = listOf(FrameTimingMetric()),
+            metrics = defaultComposeScrollingMetrics() + AndroidBlockingCallsMetric(),
             iterations = ITERATIONS,
             compilationMode = compilationMode,
             setupBlock = {
