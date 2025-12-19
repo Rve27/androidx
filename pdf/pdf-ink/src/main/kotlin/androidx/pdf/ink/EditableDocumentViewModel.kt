@@ -29,10 +29,10 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.pdf.EditablePdfDocument
 import androidx.pdf.PdfDocument
 import androidx.pdf.PdfLoader
 import androidx.pdf.SandboxedPdfLoader
-import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.manager.AnnotationsManager
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation

@@ -20,7 +20,6 @@ import android.graphics.PointF
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.SparseArray
-import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId
@@ -36,7 +35,7 @@ import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import java.util.UUID
 
-/** Fake implementation of [androidx.pdf.annotation.EditablePdfDocument] for testing. */
+/** Fake implementation of [EditablePdfDocument] for testing. */
 internal class FakeEditablePdfDocument(
     override val uri: Uri,
     override val pageCount: Int,
