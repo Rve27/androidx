@@ -129,13 +129,33 @@ internal class PdfDocumentAnnotationsManager(
         return previousAnnotation
     }
 
+    /**
+     * Reconciles the raw persisted annotations with the current pending operations (edits and
+     * deletions).
+     *
+     * This function transforms the static repository data into the current view state by performing
+     * three operations:
+     * 1. **ID Translation:** Converts the repository's Source IDs into stable "Handle IDs" via the
+     *    [handleRegistry], ensuring the caller interacts with a unified identifier system.
+     * 2. **Filtering (Deletions):** Checks if an annotation has been marked as deleted in the
+     *    [operationsTracker] and excludes it if so.
+     * 3. **Overlaying (Updates):** Checks if an annotation has a pending update in the
+     *    [operationsTracker] and substitutes the stale persisted content with the fresh updated
+     *    content.
+     *
+     * @param keyedAnnotations The list of annotations fetched directly from the repository (keyed
+     *   by Source ID).
+     * @return A list of [KeyedPdfAnnotation]s keyed by Handle ID, reflecting the current user
+     *   edits.
+     */
     private fun reconcileAnnotations(
         keyedAnnotations: List<KeyedPdfAnnotation>
     ): List<KeyedPdfAnnotation> {
-        return keyedAnnotations.mapNotNull { annotation ->
+        return keyedAnnotations.mapNotNull { keyedAnnotation ->
             // Persisted annotations need to have a proxy id so that the caller can have a
             // unified id.
-            val handleId = handleRegistry.getHandleId(annotation.key)
+            val handleId =
+                handleRegistry.getHandleId(keyedAnnotation.annotation.pageNum, keyedAnnotation.key)
 
             if (operationsTracker.isDeleted(handleId)) {
                 return@mapNotNull null
@@ -145,7 +165,7 @@ internal class PdfDocumentAnnotationsManager(
                 return@mapNotNull KeyedPdfAnnotation(handleId, updatedContent)
             }
 
-            KeyedPdfAnnotation(key = handleId, annotation = annotation.annotation)
+            KeyedPdfAnnotation(key = handleId, annotation = keyedAnnotation.annotation)
         }
     }
 }
