@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.modifier
 
@@ -55,6 +54,7 @@ public class PaddingModifier(
     }
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteModifier.padding(
     left: RemoteFloat = 0f.rf,
     top: RemoteFloat = 0f.rf,
@@ -62,18 +62,22 @@ public fun RemoteModifier.padding(
     bottom: RemoteFloat = 0f.rf,
 ): RemoteModifier = then(PaddingModifier(left, top, right, bottom))
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteModifier.padding(all: RemoteFloat): RemoteModifier = padding(all, all, all, all)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteModifier.padding(
     horizontal: RemoteFloat = 0f.rf,
     vertical: RemoteFloat = 0f.rf,
 ): RemoteModifier =
     padding(left = horizontal, top = vertical, right = horizontal, bottom = vertical)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
 public fun RemoteModifier.padding(all: Dp): RemoteModifier =
     padding(left = all, top = all, right = all, bottom = all)
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
 public fun RemoteModifier.padding(
     left: Dp = 0.dp,

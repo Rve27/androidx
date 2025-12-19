@@ -126,7 +126,7 @@ class RemoteComposeScreenshotTestRule(
     ): CoreDocument {
         val document: ByteArray =
             withContext(Dispatchers.Main) {
-                captureSingleRemoteDocument(context, content = content)
+                captureSingleRemoteDocument(context, content = content).bytes
             }
 
         val remoteComposeDocument =

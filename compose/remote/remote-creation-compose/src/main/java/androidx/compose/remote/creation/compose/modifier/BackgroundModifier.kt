@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.modifier
 
@@ -41,9 +40,11 @@ public data class BackgroundModifier(val color: RemoteColor) : RemoteModifier.El
 public fun RemoteModifier.background(color: Color): RemoteModifier =
     this.then(BackgroundModifier(color.rc))
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteModifier.background(color: RemoteColor): RemoteModifier =
     this.then(BackgroundModifier(color))
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RemoteComposable
 @Composable
 public fun RemoteModifier.background(brush: RemoteBrush): RemoteModifier =
@@ -52,6 +53,7 @@ public fun RemoteModifier.background(brush: RemoteBrush): RemoteModifier =
         drawContent()
     }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RemoteComposable
 @Composable
 public fun RemoteModifier.background(remotePainter: RemotePainter): RemoteModifier =
