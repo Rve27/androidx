@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright (C) 2017 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle.State
 import kotlin.jvm.JvmStatic
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * An implementation of [Lifecycle] that can handle multiple observers.
@@ -26,22 +29,78 @@ import kotlin.jvm.JvmStatic
  * It is used by Fragments and Support Library Activities. You can also directly use it if you have
  * a custom LifecycleOwner.
  */
-public expect open class LifecycleRegistry
+public open class LifecycleRegistry
+private constructor(provider: LifecycleOwner, private val enforceMainThread: Boolean) :
+    Lifecycle() {
+    /**
+     * Custom list that keeps observers and can handle removals / additions during traversal.
+     *
+     * Invariant: at any moment of time for observer1 & observer2: if addition_order(observer1) <
+     * addition_order(observer2), then state(observer1) >= state(observer2),
+     */
+    private var observerMap = FastSafeIterableMap<LifecycleObserver, ObserverWithState>()
 
-/**
- * Creates a new LifecycleRegistry for the given provider.
- *
- * You should usually create this inside your LifecycleOwner class's constructor and hold onto the
- * same instance.
- *
- * @param provider The owner LifecycleOwner
- */
-constructor(provider: LifecycleOwner) : Lifecycle {
+    /** Current state */
+    private var state: State = State.INITIALIZED
+
+    /**
+     * The provider that owns this Lifecycle. Only WeakReference on LifecycleOwner is kept, so if
+     * somebody leaks Lifecycle, they won't leak the whole Fragment / Activity. However, to leak
+     * Lifecycle object isn't great idea neither, because it keeps strong references on all other
+     * listeners, so you'll leak all of them as well.
+     */
+    private val lifecycleOwner = WeakReference(provider)
+    private var addingObserverCounter = 0
+    private var handlingEvent = false
+    private var newEventOccurred = false
+
+    // we have to keep it for cases:
+    // void onStart() {
+    //     mRegistry.removeObserver(this);
+    //     mRegistry.add(newObserver);
+    // }
+    // newObserver should be brought only to CREATED state during the execution of
+    // this onStart method. our invariant with observerMap doesn't help, because parent observer
+    // is no longer in the map.
+    private var parentStates = ArrayList<State>()
+
+    /**
+     * Creates a new LifecycleRegistry for the given provider.
+     *
+     * You should usually create this inside your LifecycleOwner class's constructor and hold onto
+     * the same instance.
+     *
+     * @param provider The owner LifecycleOwner
+     */
+    public constructor(provider: LifecycleOwner) : this(provider, true)
+
+    /**
+     * Moves the Lifecycle to the given state and dispatches necessary events to the observers.
+     *
+     * @param state new state
+     */
+    @MainThread
+    @Deprecated("Override [currentState].")
+    public open fun markState(state: State) {
+        enforceMainThreadIfNeeded("markState")
+        currentState = state
+    }
+
     override var currentState: State
+        get() = state
+        /**
+         * Moves the Lifecycle to the given state and dispatches necessary events to the observers.
+         *
+         * @param state new state
+         */
+        set(state) {
+            enforceMainThreadIfNeeded("setCurrentState")
+            moveToState(state)
+        }
 
-    @MainThread() override fun addObserver(observer: LifecycleObserver)
-
-    @MainThread() override fun removeObserver(observer: LifecycleObserver)
+    private val _currentStateFlow: MutableStateFlow<State> = MutableStateFlow(State.INITIALIZED)
+    override val currentStateFlow: StateFlow<State>
+        get() = _currentStateFlow.asStateFlow()
 
     /**
      * Sets the current state and notifies the observers.
@@ -51,7 +110,119 @@ constructor(provider: LifecycleOwner) : Lifecycle {
      *
      * @param event The event that was received
      */
-    public open fun handleLifecycleEvent(event: Event)
+    public open fun handleLifecycleEvent(event: Event) {
+        enforceMainThreadIfNeeded("handleLifecycleEvent")
+        moveToState(event.targetState)
+    }
+
+    private fun moveToState(next: State) {
+        if (state == next) {
+            return
+        }
+        @Suppress("NewApi") // b/437073246
+        checkLifecycleStateTransition(lifecycleOwner.get(), state, next)
+
+        state = next
+        if (handlingEvent || addingObserverCounter != 0) {
+            newEventOccurred = true
+            // we will figure out what to do on upper level.
+            return
+        }
+        handlingEvent = true
+        sync()
+        handlingEvent = false
+        if (state == State.DESTROYED) {
+            observerMap = FastSafeIterableMap()
+        }
+    }
+
+    private val isSynced: Boolean
+        get() {
+            if (observerMap.size() == 0) {
+                return true
+            }
+            val eldestObserverState = observerMap.first().value.state
+            val newestObserverState = observerMap.last().value.state
+            return eldestObserverState == newestObserverState && state == newestObserverState
+        }
+
+    private fun calculateTargetState(observer: LifecycleObserver): State {
+        val map = observerMap.ceil(observer)
+        val siblingState = map?.value?.state
+        val parentState =
+            if (parentStates.isNotEmpty()) parentStates[parentStates.size - 1] else null
+        return min(min(state, siblingState), parentState)
+    }
+
+    /**
+     * Adds a LifecycleObserver that will be notified when the LifecycleOwner changes state.
+     *
+     * The given observer will be brought to the current state of the LifecycleOwner. For example,
+     * if the LifecycleOwner is in [Lifecycle.State.STARTED] state, the given observer will receive
+     * [Lifecycle.Event.ON_CREATE], [Lifecycle.Event.ON_START] events.
+     *
+     * @param observer The observer to notify.
+     * @throws IllegalStateException if no event up from observer's initial state
+     */
+    @MainThread
+    override fun addObserver(observer: LifecycleObserver) {
+        enforceMainThreadIfNeeded("addObserver")
+        val initialState = if (state == State.DESTROYED) State.DESTROYED else State.INITIALIZED
+        val statefulObserver = ObserverWithState(observer, initialState)
+        val previous = observerMap.putIfAbsent(observer, statefulObserver)
+        if (previous != null) {
+            return
+        }
+        @Suppress("NewApi") // b/437073246
+        val lifecycleOwner =
+            lifecycleOwner.get()
+                ?: // it is null we should be destroyed. Fallback quickly
+                return
+        val isReentrance = addingObserverCounter != 0 || handlingEvent
+        var targetState = calculateTargetState(observer)
+        addingObserverCounter++
+        while (statefulObserver.state < targetState && observerMap.contains(observer)) {
+            pushParentState(statefulObserver.state)
+            val event =
+                Event.upFrom(statefulObserver.state)
+                    ?: throw IllegalStateException("no event up from ${statefulObserver.state}")
+            statefulObserver.dispatchEvent(lifecycleOwner, event)
+            popParentState()
+            // mState / subling may have been changed recalculate
+            targetState = calculateTargetState(observer)
+        }
+        if (!isReentrance) {
+            // we do sync only on the top level.
+            sync()
+        }
+        addingObserverCounter--
+    }
+
+    private fun popParentState() {
+        parentStates.removeAt(parentStates.size - 1)
+    }
+
+    private fun pushParentState(state: State) {
+        parentStates.add(state)
+    }
+
+    @MainThread
+    override fun removeObserver(observer: LifecycleObserver) {
+        enforceMainThreadIfNeeded("removeObserver")
+        // we consciously decided not to send destruction events here in opposition to addObserver.
+        // Our reasons for that:
+        // 1. These events haven't yet happened at all. In contrast to events in addObservers, that
+        // actually occurred but earlier.
+        // 2. There are cases when removeObserver happens as a consequence of some kind of fatal
+        // event. If removeObserver method sends destruction events, then a clean up routine becomes
+        // more cumbersome. More specific example of that is: your LifecycleObserver listens for
+        // a web connection, in the usual routine in OnStop method you report to a server that a
+        // session has just ended and you close the connection. Now let's assume now that you
+        // lost an internet and as a result you removed this observer. If you get destruction
+        // events in removeObserver, you should have a special case in your onStop method that
+        // checks if your web connection died and you shouldn't try to report anything to a server.
+        observerMap.remove(observer)
+    }
 
     /**
      * The number of observers.
@@ -59,6 +230,83 @@ constructor(provider: LifecycleOwner) : Lifecycle {
      * @return The number of observers.
      */
     public open val observerCount: Int
+        get() {
+            enforceMainThreadIfNeeded("getObserverCount")
+            return observerMap.size()
+        }
+
+    private fun forwardPass(lifecycleOwner: LifecycleOwner) {
+        observerMap.forEachWithAdditions { (key, observer) ->
+            while (observer.state < state && !newEventOccurred && observerMap.contains(key)) {
+                pushParentState(observer.state)
+                val event =
+                    Event.upFrom(observer.state)
+                        ?: throw IllegalStateException("no event up from ${observer.state}")
+                observer.dispatchEvent(lifecycleOwner, event)
+                popParentState()
+            }
+        }
+    }
+
+    private fun backwardPass(lifecycleOwner: LifecycleOwner) {
+        observerMap.forEachReversed { (key, observer) ->
+            while (observer.state > state && !newEventOccurred && observerMap.contains(key)) {
+                val event =
+                    Event.downFrom(observer.state)
+                        ?: throw IllegalStateException("no event down from ${observer.state}")
+                pushParentState(event.targetState)
+                observer.dispatchEvent(lifecycleOwner, event)
+                popParentState()
+            }
+        }
+    }
+
+    // happens only on the top of stack (never in reentrance),
+    // so it doesn't have to take in account parents
+    private fun sync() {
+        @Suppress("NewApi") // b/437073246
+        val lifecycleOwner =
+            lifecycleOwner.get()
+                ?: throw IllegalStateException(
+                    "LifecycleOwner of this LifecycleRegistry is already " +
+                        "garbage collected. It is too late to change lifecycle state."
+                )
+        while (!isSynced) {
+            newEventOccurred = false
+            if (state < observerMap.first().value.state) {
+                backwardPass(lifecycleOwner)
+            }
+            val newest = observerMap.lastOrNull()
+            if (!newEventOccurred && newest != null && state > newest.value.state) {
+                forwardPass(lifecycleOwner)
+            }
+        }
+        newEventOccurred = false
+        _currentStateFlow.value = currentState
+    }
+
+    private fun enforceMainThreadIfNeeded(methodName: String) {
+        if (enforceMainThread) {
+            check(isMainThread()) { ("Method $methodName must be called on the main thread") }
+        }
+    }
+
+    internal class ObserverWithState(observer: LifecycleObserver?, initialState: State) {
+        var state: State
+        var lifecycleObserver: LifecycleEventObserver
+
+        init {
+            lifecycleObserver = Lifecycling.lifecycleEventObserver(observer!!)
+            state = initialState
+        }
+
+        fun dispatchEvent(owner: LifecycleOwner?, event: Event) {
+            val newState = event.targetState
+            state = min(state, newState)
+            lifecycleObserver.onStateChanged(owner!!, event)
+            state = newState
+        }
+    }
 
     public companion object {
         /**
@@ -73,7 +321,14 @@ constructor(provider: LifecycleOwner) : Lifecycle {
          */
         @JvmStatic
         @VisibleForTesting
-        public fun createUnsafe(owner: LifecycleOwner): LifecycleRegistry
+        public fun createUnsafe(owner: LifecycleOwner): LifecycleRegistry {
+            return LifecycleRegistry(owner, false)
+        }
+
+        @JvmStatic
+        internal fun min(state1: State, state2: State?): State {
+            return if ((state2 != null) && (state2 < state1)) state2 else state1
+        }
     }
 }
 
