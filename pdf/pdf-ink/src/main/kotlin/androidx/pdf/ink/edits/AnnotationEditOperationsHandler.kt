@@ -16,7 +16,7 @@
 
 package androidx.pdf.ink.edits
 
-import androidx.pdf.annotation.EditablePdfDocument
+import androidx.pdf.EditablePdfDocument
 import androidx.pdf.annotation.models.AnnotationEditOperation
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.EditOperation
