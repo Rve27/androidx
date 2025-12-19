@@ -292,6 +292,7 @@ expect fun createComposeRule(): ComposeContentTestRule
  *   context contains a [TestDispatcher] or [TestCoroutineScheduler] (in that order), it will be
  *   used for composition and the [MainTestClock].
  */
+@Suppress("KmpExperimentalMismatch") // only experimental in jvmStubs
 expect fun createComposeRule(
     effectContext: CoroutineContext = EmptyCoroutineContext
 ): ComposeContentTestRule

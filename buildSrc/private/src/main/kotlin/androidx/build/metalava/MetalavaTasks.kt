@@ -57,6 +57,10 @@ internal object MetalavaTasks {
         val generateRestrictToLibraryGroupAPIs = !extension.mavenGroup!!.requireSameVersion
         val kotlinSourceLevel: Provider<KotlinVersion> = extension.kotlinApiVersion
         val targetsJavaConsumers = !extension.type.targetsKotlinConsumersOnly
+        // For a KMP project, only use multiplatform metalava if K2 is also used as K1 metalava does
+        // not support multiplatform.
+        val multiplatform =
+            compilationInputs is MultiplatformCompilationInputs && extension.metalavaK2UastEnabled
         val generateApi =
             project.tasks.register("generateApi", GenerateApiTask::class.java) { task ->
                 task.group = "API"
@@ -68,6 +72,7 @@ internal object MetalavaTasks {
                 task.targetsJavaConsumers.set(targetsJavaConsumers)
                 task.k2UastEnabled.set(extension.metalavaK2UastEnabled)
                 task.kotlinSourceLevel.set(kotlinSourceLevel)
+                task.multiplatform.set(multiplatform)
 
                 // Arguments needed for generating the API levels JSON
                 task.projectApiDirectory = project.layout.projectDirectory.dir("api")
@@ -130,6 +135,7 @@ internal object MetalavaTasks {
                 task.targetsJavaConsumers.set(targetsJavaConsumers)
                 task.k2UastEnabled.set(extension.metalavaK2UastEnabled)
                 task.kotlinSourceLevel.set(kotlinSourceLevel)
+                task.multiplatform.set(multiplatform)
                 applyInputs(compilationInputs, task, generateApiDependencies, androidManifest)
             }
 
