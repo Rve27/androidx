@@ -34,7 +34,6 @@ import androidx.pdf.PdfDocument.BitmapSource
 import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.PdfDocument.DocumentClosedException
 import androidx.pdf.PdfDocument.PdfPageContent
-import androidx.pdf.annotation.EditablePdfDocument
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.manager.InMemoryAnnotationsManager
 import androidx.pdf.annotation.models.AnnotationResult

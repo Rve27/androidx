@@ -489,7 +489,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
          *
          * @param formEditInfo The edit to be applied to the [PdfDocument] Note: In order to
          *   correctly update the state the formEditInfo at the document the [formEditInfo] must be
-         *   applied to the document via [androidx.pdf.annotation.EditablePdfDocument.applyEdit].
+         *   applied to the document via [androidx.pdf.EditablePdfDocument.applyEdit].
          */
         public fun onFormWidgetInfoUpdated(formEditInfo: FormEditInfo)
     }

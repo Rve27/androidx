@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.pdf.annotation
+package androidx.pdf
 
 import android.os.ParcelFileDescriptor
 import androidx.annotation.RestrictTo
-import androidx.pdf.PdfDocument
-import androidx.pdf.PdfWriteHandle
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.EditsResult
@@ -37,8 +35,8 @@ public abstract class EditablePdfDocument : PdfDocument {
      * Retrieves a list of all edits for the specified page.
      *
      * @param pageNum The page number (0-indexed) from which to retrieve edits.
-     * @return A list of [PdfEditEntry] objects representing the staged edits on the page. Returns
-     *   an empty list if there are no edits on the page.
+     * @return A list of [androidx.pdf.annotation.models.PdfEditEntry] objects representing the
+     *   staged edits on the page. Returns an empty list if there are no edits on the page.
      * @throws IllegalArgumentException if the page number is invalid.
      */
     public abstract suspend fun <T : PdfEditEntry<out PdfEdit>> getEditsForPage(
@@ -51,10 +49,11 @@ public abstract class EditablePdfDocument : PdfDocument {
      * Any areas which are invalidated due to this operation are notified via
      * [OnPdfContentInvalidatedListener] callback.
      *
-     * It is recommended to maintain a list of [FormEditInfo] applied to the document so they can be
-     * saved and restored across destructive events like low memory kills or configuration changes.
+     * It is recommended to maintain a list of [androidx.pdf.models.FormEditInfo] applied to the
+     * document so they can be saved and restored across destructive events like low memory kills or
+     * configuration changes.
      *
-     * @property record The [FormEditInfo] to apply to the form.
+     * @property record The [androidx.pdf.models.FormEditInfo] to apply to the form.
      * @throws IllegalArgumentException if the provided [record] cannot be applied to the widget
      *   indicated by the index, or if the index does not correspond to a widget on the page.
      */
@@ -63,21 +62,25 @@ public abstract class EditablePdfDocument : PdfDocument {
     /**
      * Applies a list of annotation edits to the document.
      *
-     * @param annotations A list of [PdfAnnotationData] representing the edits to be applied.
-     * @return An [AnnotationResult] indicating the success or failure of the operation.
+     * @param annotations A list of [androidx.pdf.annotation.models.PdfAnnotationData] representing
+     *   the edits to be applied.
+     * @return An [androidx.pdf.annotation.models.AnnotationResult] indicating the success or
+     *   failure of the operation.
      */
     public abstract suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult
 
     /**
-     * Applies a list of annotation edits from a source [ParcelFileDescriptor] to the document.
+     * Applies a list of annotation edits from a source [android.os.ParcelFileDescriptor] to the
+     * document.
      *
-     * @param sourcePfd The [ParcelFileDescriptor] containing the annotation edits.
+     * @param sourcePfd The [android.os.ParcelFileDescriptor] containing the annotation edits.
      * @return An [AnnotationResult] indicating the success or failure of the operation.
      */
     public abstract suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult
 
     /**
-     * Creates a new [PdfEdit] onto to the document with the [EditId] provided.
+     * Creates a new [PdfEdit] onto to the document with the [androidx.pdf.annotation.models.EditId]
+     * provided.
      *
      * @param entry The [PdfEditEntry] to be added.
      */
@@ -87,7 +90,8 @@ public abstract class EditablePdfDocument : PdfDocument {
      * Creates a new PdfEdit onto the PdfDocument.
      *
      * @param edit The [PdfEdit] to be added.
-     * @return An [EditId] that uniquely identifies this edit operation.
+     * @return An [androidx.pdf.annotation.models.EditId] that uniquely identifies this edit
+     *   operation.
      */
     public abstract fun addEdit(edit: PdfEdit): EditId
 
@@ -114,7 +118,8 @@ public abstract class EditablePdfDocument : PdfDocument {
     /**
      * Returns an immutable snapshot of all [PdfEdit]s, organized by page number.
      *
-     * @return [PdfEdits] representing all [PdfEdit]s in the document.
+     * @return [androidx.pdf.annotation.models.PdfEdits] representing all [PdfEdit]s in the
+     *   document.
      */
     public abstract fun getAllEdits(): PdfEdits
 
