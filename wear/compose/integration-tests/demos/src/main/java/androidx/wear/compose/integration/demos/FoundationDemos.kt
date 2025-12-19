@@ -18,6 +18,8 @@ package androidx.wear.compose.integration.demos
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.wear.compose.foundation.samples.AmbientModeBasicSample
+import androidx.wear.compose.foundation.samples.AmbientModeWithAmbientTickSample
 import androidx.wear.compose.foundation.samples.CurvedAndNormalText
 import androidx.wear.compose.foundation.samples.CurvedBackground
 import androidx.wear.compose.foundation.samples.CurvedBottomLayout
@@ -101,6 +103,13 @@ val WearFoundationDemos =
     DemoCategory(
         "Foundation",
         listOf(
+            DemoCategory(
+                "Ambient mode",
+                listOf(
+                    ComposableDemo("Ambient sample") { AmbientModeBasicSample() },
+                    ComposableDemo("Ambient tick sample") { AmbientModeWithAmbientTickSample() },
+                ),
+            ),
             ComposableDemo("Arrangements") { ArrangementsDemo() },
             DemoCategory(
                 "Expandables",
