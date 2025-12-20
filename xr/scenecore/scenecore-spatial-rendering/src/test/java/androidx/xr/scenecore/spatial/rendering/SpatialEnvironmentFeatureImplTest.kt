@@ -464,6 +464,22 @@ class SpatialEnvironmentFeatureImplTest {
     }
 
     @Test
+    fun setPreferredSpatialEnvironment_asyncAnimation_startsAnimation() = runBlocking {
+        val exr = fakeLoadEnvironment("fakeEnvironment")
+        val gltf = fakeLoadGltfAsset("fakeGltfAsset")
+        val animationName = "fakeAnimation"
+
+        environment.preferredSpatialEnvironment =
+            SpatialEnvironmentPreference(exr, gltf, null, null, animationName)
+
+        // Will execute animateGltfModel.
+        runUiThreadTasks()
+
+        val loopingAnimatingNodes = fakeImpressApi.impressNodeLoopAnimatingSize()
+        assertThat(loopingAnimatingNodes).isEqualTo(1)
+    }
+
+    @Test
     fun dispose_clearsResources() = runBlocking {
         val exr = fakeLoadEnvironment("fakeEnvironment")
         val gltf = fakeLoadGltfAsset("fakeGltfAsset")
