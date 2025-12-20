@@ -130,7 +130,13 @@ internal class SpatialEnvironmentFeatureImpl(
                 )
             }
             if (animationName != null) {
-                impressApi.animateGltfModel(geometryImpressNode, animationName, true)
+                // animateGltfModel is itself an asynchronous call, and it blocks execution
+                // until the animation finishes. We need to wrap this call in a coroutine so
+                // that we can proceed with the parenting of the environment instead of
+                // waiting for the animation to complete.
+                coroutineScope.launch {
+                    impressApi.animateGltfModel(geometryImpressNode, animationName, true)
+                }
             }
             impressApi.setImpressNodeParent(geometryImpressNode, subspaceNode)
         }
