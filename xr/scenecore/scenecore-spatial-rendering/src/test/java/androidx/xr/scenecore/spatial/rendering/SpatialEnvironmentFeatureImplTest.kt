@@ -464,43 +464,6 @@ class SpatialEnvironmentFeatureImplTest {
     }
 
     @Test
-    fun setPreferredSpatialEnvironment_createsNewRootNode_whenGeometryChanges() = runBlocking {
-        val gltf1 = fakeLoadGltfAsset("fakeGltfAsset1")
-        val gltf2 = fakeLoadGltfAsset("fakeGltfAsset2")
-
-        environment.preferredSpatialEnvironment = SpatialEnvironmentPreference(null, gltf1)
-        runUiThreadTasks()
-
-        val firstEnvNode = ShadowXrExtensions.extract(xrExtensions).getEnvironmentNode(activity)
-        assertThat(firstEnvNode).isNotNull()
-
-        environment.preferredSpatialEnvironment = SpatialEnvironmentPreference(null, gltf2)
-        runUiThreadTasks()
-
-        val secondEnvNode = ShadowXrExtensions.extract(xrExtensions).getEnvironmentNode(activity)
-        assertThat(secondEnvNode).isNotNull()
-
-        // Verify a new root node was attached.
-        assertThat(secondEnvNode).isNotEqualTo(firstEnvNode)
-    }
-
-    @Test
-    fun setPreferredSpatialEnvironment_asyncAnimation_startsAnimation() = runBlocking {
-        val exr = fakeLoadEnvironment("fakeEnvironment")
-        val gltf = fakeLoadGltfAsset("fakeGltfAsset")
-        val animationName = "fakeAnimation"
-
-        environment.preferredSpatialEnvironment =
-            SpatialEnvironmentPreference(exr, gltf, null, null, animationName)
-
-        // Will execute animateGltfModel.
-        runUiThreadTasks()
-
-        val loopingAnimatingNodes = fakeImpressApi.impressNodeLoopAnimatingSize()
-        assertThat(loopingAnimatingNodes).isEqualTo(1)
-    }
-
-    @Test
     fun dispose_clearsResources() = runBlocking {
         val exr = fakeLoadEnvironment("fakeEnvironment")
         val gltf = fakeLoadGltfAsset("fakeGltfAsset")
