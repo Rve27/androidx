@@ -38,7 +38,7 @@ class HelloWidgetService : GlanceWearWidgetService() {
     override val widget: GlanceWearWidget = HelloWidget()
 }
 
-class HelloWidget : GlanceWearWidget() {
+private class HelloWidget : GlanceWearWidget() {
     override suspend fun provideWidgetData(
         context: Context,
         params: WearWidgetParams,
@@ -48,7 +48,7 @@ class HelloWidget : GlanceWearWidget() {
 @RemoteComposable
 @Composable
 @Suppress("RestrictedApiAndroidX")
-fun HelloWidgetContent() {
+private fun HelloWidgetContent() {
     RemoteBox(
         modifier = RemoteModifier.fillMaxSize(),
         horizontalAlignment = RemoteAlignment.CenterHorizontally,
