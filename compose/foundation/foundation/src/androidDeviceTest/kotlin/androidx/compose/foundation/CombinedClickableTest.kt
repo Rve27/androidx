@@ -111,7 +111,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1995,7 +1994,6 @@ class CombinedClickableTest {
         }
     }
 
-    @Ignore // b/449240802
     @Test
     fun interactionSource_focus_inTouchMode() {
         val interactionSource = MutableInteractionSource()
