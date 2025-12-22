@@ -18,6 +18,7 @@ package androidx.camera.camera2.pipe.compat
 
 import android.content.Context
 import android.graphics.SurfaceTexture
+import android.os.Build
 import android.os.Looper
 import android.util.Size
 import android.view.Surface
@@ -92,6 +93,8 @@ internal class CaptureSessionFactoryTest {
     }
 
     @Test
+    // Robolectric doesn't stub out older create capture session methods pre-P.
+    @Config(minSdk = Build.VERSION_CODES.P)
     fun createCameraCaptureSession() = runTest {
         val component: Camera2CaptureSessionTestComponent =
             DaggerCamera2CaptureSessionTestComponent.builder()
@@ -110,7 +113,7 @@ internal class CaptureSessionFactoryTest {
         val surface = Surface(surfaceTexture)
         val threads = FakeThreads.fromTestScope(this)
 
-        val pendingOutputs =
+        val result =
             sessionFactory.create(
                 AndroidCameraDevice(
                     testCamera.metadata,
@@ -143,6 +146,8 @@ internal class CaptureSessionFactoryTest {
                     ),
             )
 
+        assertThat(result).isInstanceOf(CaptureSessionFactory.Result.Success::class.java)
+        val pendingOutputs = (result as CaptureSessionFactory.Result.Success).deferred
         assertThat(pendingOutputs).isNotNull()
         assertThat(pendingOutputs).isEmpty()
         surface.release()
