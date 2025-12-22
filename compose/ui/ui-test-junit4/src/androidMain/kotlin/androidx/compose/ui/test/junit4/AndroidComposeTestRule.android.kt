@@ -52,7 +52,8 @@ import org.junit.runners.model.Statement
 actual fun createComposeRule(): ComposeContentTestRule =
     createAndroidComposeRule<ComponentActivity>()
 
-@SuppressLint("ComposeTestRuleDispatcher")
+// experimental in desktop
+@SuppressLint("ComposeTestRuleDispatcher", "KmpExperimentalMismatch")
 actual fun createComposeRule(effectContext: CoroutineContext): ComposeContentTestRule =
     createAndroidComposeRule<ComponentActivity>(effectContext)
 

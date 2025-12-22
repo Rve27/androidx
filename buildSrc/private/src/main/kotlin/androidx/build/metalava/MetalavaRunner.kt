@@ -267,6 +267,7 @@ internal fun generateApi(
     kotlinSourceLevel: KotlinVersion,
     workerExecutor: WorkerExecutor,
     pathToManifest: String? = null,
+    multiplatform: Boolean,
 ) {
     val generateApiConfigs: MutableList<Pair<GenerateApiMode, ApiLintMode>> =
         mutableListOf(GenerateApiMode.PublicApi to apiLintMode)
@@ -292,6 +293,7 @@ internal fun generateApi(
             kotlinSourceLevel,
             workerExecutor,
             pathToManifest,
+            multiplatform,
         )
     }
 }
@@ -313,6 +315,7 @@ private fun generateApi(
     kotlinSourceLevel: KotlinVersion,
     workerExecutor: WorkerExecutor,
     pathToManifest: String? = null,
+    multiplatform: Boolean,
 ) {
     val args =
         getGenerateApiArgs(
@@ -324,6 +327,7 @@ private fun generateApi(
             apiLintMode,
             apiLevelsArgs,
             pathToManifest,
+            multiplatform,
         )
     runMetalavaWithArgs(metalavaClasspath, args, k2UastEnabled, kotlinSourceLevel, workerExecutor)
 }
@@ -341,6 +345,7 @@ fun getGenerateApiArgs(
     apiLintMode: ApiLintMode,
     apiLevelsArgs: List<String>,
     pathToManifest: String? = null,
+    multiplatform: Boolean,
 ): List<String> {
     // generate public API txt
     val args =
@@ -378,6 +383,11 @@ fun getGenerateApiArgs(
         is GenerateApiMode.PublicApi -> {
             args += listOf("--hide-annotation", "androidx.annotation.RestrictTo")
             args += listOf("--show-unannotated")
+
+            // Run multiplatform lint for the public API invocation of metalava.
+            if (multiplatform) {
+                args += "--multiplatform-enabled"
+            }
         }
         is GenerateApiMode.AllRestrictedApis,
         GenerateApiMode.RestrictToLibraryGroupPrefixApis -> {
