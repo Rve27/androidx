@@ -43,7 +43,7 @@ androidXMultiplatform {
     sourceSets {
         commonMain.dependencies {
             api("androidx.annotation:annotation:1.8.1")
-            implementation(project(":compose:material3:material3-xr"))
+            implementation(project(":compose:material3:xr:xr"))
             implementation("androidx.compose.material3:material3:1.5.0-alpha08")
         }
 
@@ -58,9 +58,8 @@ androidXMultiplatform {
 }
 
 androidx {
-    name = "androidx.compose.material3:material3-xr-adaptive"
-    // TODO(kmost): Change back to PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS before publishing
-    type = SoftwareType.INTERNAL_LIBRARY_WITH_API_TASKS
+    name = "androidx.compose.material3.xr:xr-adaptive"
+    type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
     description = "Automatically enables XR features on XR devices when using Material3"
 }

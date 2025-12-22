@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 function usage() {
   echo "usage: $0 [--skip-if-empty] <gradle_arguments>"
@@ -19,7 +20,6 @@ fi
 
 PROJECT_ROOT=$(dirname "$0")/..
 
-
 if echo "$@" | tr ' ' '\n' | grep -q "^--file=.\+\.kts\?$"; then
-  exec "$PROJECT_ROOT"/gradlew -q -p "$PROJECT_ROOT" --continue :ktCheckFile  --configuration-cache "$@"
+  exec "$PROJECT_ROOT"/gradlew -q -p "$PROJECT_ROOT" --continue :ktCheckFile --configuration-cache "$@"
 fi
