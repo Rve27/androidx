@@ -176,14 +176,6 @@ public interface VendorExtender {
         return Collections.emptyList();
     }
 
-    /**
-     * Returns if the onCaptureCompleted with capture result will be invoked or not.
-     */
-    default boolean willReceiveOnCaptureCompleted() {
-        // onCaptureCompleted is invoked when available captureResult keys are not empty.
-        return !getSupportedCaptureResultKeys().isEmpty();
-    }
-
     default @NonNull List<Pair<CameraCharacteristics.Key, Object>>
             getAvailableCharacteristicsKeyValues() {
         return Collections.emptyList();

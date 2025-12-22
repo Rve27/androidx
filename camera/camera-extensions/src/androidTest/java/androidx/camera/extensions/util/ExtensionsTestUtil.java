@@ -35,21 +35,6 @@ import androidx.camera.core.CameraXConfig;
 import androidx.camera.core.impl.Config;
 import androidx.camera.extensions.ExtensionMode;
 import androidx.camera.extensions.ExtensionsManager;
-import androidx.camera.extensions.impl.AutoImageCaptureExtenderImpl;
-import androidx.camera.extensions.impl.AutoPreviewExtenderImpl;
-import androidx.camera.extensions.impl.BeautyImageCaptureExtenderImpl;
-import androidx.camera.extensions.impl.BeautyPreviewExtenderImpl;
-import androidx.camera.extensions.impl.BokehImageCaptureExtenderImpl;
-import androidx.camera.extensions.impl.BokehPreviewExtenderImpl;
-import androidx.camera.extensions.impl.HdrImageCaptureExtenderImpl;
-import androidx.camera.extensions.impl.HdrPreviewExtenderImpl;
-import androidx.camera.extensions.impl.NightImageCaptureExtenderImpl;
-import androidx.camera.extensions.impl.NightPreviewExtenderImpl;
-import androidx.camera.extensions.impl.advanced.AutoAdvancedExtenderImpl;
-import androidx.camera.extensions.impl.advanced.BeautyAdvancedExtenderImpl;
-import androidx.camera.extensions.impl.advanced.BokehAdvancedExtenderImpl;
-import androidx.camera.extensions.impl.advanced.HdrAdvancedExtenderImpl;
-import androidx.camera.extensions.impl.advanced.NightAdvancedExtenderImpl;
 import androidx.camera.extensions.internal.Camera2ExtensionsInfo;
 import androidx.camera.extensions.internal.Camera2ExtensionsVendorExtender;
 import androidx.camera.extensions.internal.VendorExtender;
@@ -74,71 +59,13 @@ public class ExtensionsTestUtil {
                     CameraCaptureSession.CaptureCallback.class);
     public static final String CAMERA2_IMPLEMENTATION_OPTION = "camera2";
     public static final String CAMERA_PIPE_IMPLEMENTATION_OPTION = "camera_pipe";
-
     private static final int BASE_COMBINATION_ARRAY_POS_MODE = 0;
     private static final int BASE_COMBINATION_ARRAY_POS_LENS_FACING = 1;
-
-    private static boolean isAdvancedExtender() {
-        return false;
-    }
-
     private static boolean hasNoSuchMethod(Runnable runnable) {
         try {
             runnable.run();
         } catch (NoSuchMethodError e) {
             return true;
-        }
-        return false;
-    }
-
-    // Check if the OEM implementation class for the given mode exists or not.
-    private static boolean doesOEMImplementationExistForMode(int extensionMode) {
-        if (isAdvancedExtender()) {
-            switch (extensionMode) {
-                case HDR:
-                    return hasNoSuchMethod(
-                            () -> HdrAdvancedExtenderImpl.checkTestlibRunning());
-                case BOKEH:
-                    return hasNoSuchMethod(
-                            () -> BokehAdvancedExtenderImpl.checkTestlibRunning());
-                case AUTO:
-                    return hasNoSuchMethod(
-                            () -> AutoAdvancedExtenderImpl.checkTestlibRunning());
-                case FACE_RETOUCH:
-                    return hasNoSuchMethod(
-                            () -> BeautyAdvancedExtenderImpl.checkTestlibRunning());
-                case NIGHT:
-                    return hasNoSuchMethod(
-                            () -> NightAdvancedExtenderImpl.checkTestlibRunning());
-            }
-        } else {
-            switch (extensionMode) {
-                case HDR:
-                    return hasNoSuchMethod(
-                            () -> HdrImageCaptureExtenderImpl.checkTestlibRunning())
-                            && hasNoSuchMethod(
-                                    () -> HdrPreviewExtenderImpl.checkTestlibRunning());
-                case BOKEH:
-                    return hasNoSuchMethod(
-                            () -> BokehImageCaptureExtenderImpl.checkTestlibRunning())
-                            && hasNoSuchMethod(
-                                    () -> BokehPreviewExtenderImpl.checkTestlibRunning());
-                case AUTO:
-                    return hasNoSuchMethod(
-                            () -> AutoImageCaptureExtenderImpl.checkTestlibRunning())
-                            && hasNoSuchMethod(
-                                    () -> AutoPreviewExtenderImpl.checkTestlibRunning());
-                case FACE_RETOUCH:
-                    return hasNoSuchMethod(
-                            () -> BeautyImageCaptureExtenderImpl.checkTestlibRunning())
-                            && hasNoSuchMethod(
-                                    () -> BeautyPreviewExtenderImpl.checkTestlibRunning());
-                case NIGHT:
-                    return hasNoSuchMethod(
-                            () -> NightImageCaptureExtenderImpl.checkTestlibRunning())
-                            && hasNoSuchMethod(
-                                    () -> NightPreviewExtenderImpl.checkTestlibRunning());
-            }
         }
         return false;
     }
@@ -163,11 +90,6 @@ public class ExtensionsTestUtil {
      */
     public static boolean isExtensionAvailable(@NonNull ExtensionsManager extensionsManager,
             @NonNull CameraSelector cameraSelector, int extensionMode) {
-        // Return false if classes are removed by OEMs
-        if (!doesOEMImplementationExistForMode(extensionMode)) {
-            return false;
-        }
-
         return extensionsManager.isExtensionAvailable(cameraSelector, extensionMode);
     }
 
