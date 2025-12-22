@@ -110,13 +110,7 @@ public final class AudioConfigUtil {
             }
         }
 
-        AudioMimeInfo.Builder mimeInfoBuilder = AudioMimeInfo.builder(resolvedAudioMime)
-                .setProfile(resolvedAudioProfile);
-        if (compatibleAudioProfile != null) {
-            mimeInfoBuilder.setCompatibleAudioProfile(compatibleAudioProfile);
-        }
-
-        return mimeInfoBuilder.build();
+        return new AudioMimeInfo(resolvedAudioMime, resolvedAudioProfile, compatibleAudioProfile);
     }
 
     /**

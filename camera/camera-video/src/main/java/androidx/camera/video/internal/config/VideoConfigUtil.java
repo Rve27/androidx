@@ -56,6 +56,7 @@ import androidx.camera.video.VideoSpec;
 import androidx.camera.video.internal.VideoValidatedEncoderProfilesProxy;
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks;
 import androidx.camera.video.internal.compat.quirk.MediaCodecDefaultDataSpaceQuirk;
+import androidx.camera.video.internal.encoder.EncoderConfig;
 import androidx.camera.video.internal.encoder.VideoEncoderConfig;
 import androidx.camera.video.internal.encoder.VideoEncoderDataSpace;
 import androidx.camera.video.internal.utils.DynamicRangeUtil;
@@ -203,12 +204,8 @@ public final class VideoConfigUtil {
             }
         }
 
-        VideoMimeInfo.Builder mimeInfoBuilder = VideoMimeInfo.builder(resolvedVideoMime);
-        if (compatibleVideoProfile != null) {
-            mimeInfoBuilder.setCompatibleVideoProfile(compatibleVideoProfile);
-        }
-
-        return mimeInfoBuilder.build();
+        return new VideoMimeInfo(resolvedVideoMime, EncoderConfig.CODEC_PROFILE_NONE,
+                compatibleVideoProfile);
     }
 
     /**
