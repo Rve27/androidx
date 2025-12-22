@@ -36,13 +36,11 @@ import androidx.camera.extensions.impl.advanced.OutputSurfaceConfigurationImpl
 import androidx.camera.extensions.impl.advanced.OutputSurfaceImpl
 import androidx.camera.extensions.impl.advanced.RequestProcessorImpl
 import androidx.camera.extensions.impl.advanced.SessionProcessorImpl
-import androidx.camera.extensions.internal.Camera2ExtensionsUtil.shouldUseCamera2Extensions
 import androidx.camera.extensions.internal.ExtensionVersion
 import androidx.camera.extensions.internal.ExtensionsUtils
 import androidx.camera.extensions.internal.VendorExtender
 import androidx.camera.extensions.internal.Version
 import androidx.camera.extensions.internal.sessionprocessor.AdvancedSessionProcessor
-import androidx.camera.extensions.internal.sessionprocessor.BasicExtenderSessionProcessor
 import androidx.camera.extensions.internal.sessionprocessor.Camera2ExtensionsSessionProcessor
 import androidx.camera.extensions.util.ExtensionsTestUtil
 import androidx.camera.extensions.util.ExtensionsTestUtil.CAMERA_PIPE_IMPLEMENTATION_OPTION
@@ -266,7 +264,7 @@ class ExtensionsManagerTest(
                     return estimatedCaptureLatency
                 }
             }
-        extensionsManager.setVendorExtenderFactory { _, _ -> fakeVendorExtender }
+        extensionsManager.setVendorExtenderFactory { _ -> fakeVendorExtender }
 
         assertThat(
                 extensionsManager.getEstimatedCaptureLatencyRange(baseCameraSelector, extensionMode)
@@ -401,7 +399,7 @@ class ExtensionsManagerTest(
                     return emptyArray()
                 }
             }
-        extensionsManager.setVendorExtenderFactory { _, _ -> fakeVendorExtender }
+        extensionsManager.setVendorExtenderFactory { _ -> fakeVendorExtender }
 
         assumeTrue(
             extensionsManager.extensionsAvailability ==
@@ -429,7 +427,7 @@ class ExtensionsManagerTest(
                     return arrayOf(Size(1920, 1080))
                 }
             }
-        extensionsManager.setVendorExtenderFactory { _, _ -> fakeVendorExtender }
+        extensionsManager.setVendorExtenderFactory { _ -> fakeVendorExtender }
 
         assumeTrue(
             extensionsManager.extensionsAvailability ==
@@ -467,7 +465,7 @@ class ExtensionsManagerTest(
                     return true
                 }
             }
-        extensionsManager.setVendorExtenderFactory { _, _ -> fakeVendorExtender }
+        extensionsManager.setVendorExtenderFactory { _ -> fakeVendorExtender }
 
         // 2. Act
         val camera =
@@ -496,7 +494,7 @@ class ExtensionsManagerTest(
                     return true
                 }
             }
-        extensionsManager.setVendorExtenderFactory { _, _ -> fakeVendorExtender }
+        extensionsManager.setVendorExtenderFactory { _ -> fakeVendorExtender }
 
         // 2. Act
         val camera =
@@ -571,7 +569,7 @@ class ExtensionsManagerTest(
         val extensionCameraSelector = checkExtensionAvailabilityAndInit()
 
         // Inject fake VendorExtenderFactory to provide custom VendorExtender
-        extensionsManager.setVendorExtenderFactory { _, _ ->
+        extensionsManager.setVendorExtenderFactory { _ ->
             object : VendorExtender {
                 override fun isExtensionAvailable(
                     cameraId: String,
@@ -678,24 +676,11 @@ class ExtensionsManagerTest(
         // Get and check the session processor type is correct
         (cameraProvider.getCameraInfo(extensionCameraSelector) as AdapterCameraInfo)
             .sessionProcessor
-            ?.also {
-                if (shouldUseCamera2Extensions(cameraProvider.configImplType)) {
-                    assertThat(it).isInstanceOf(Camera2ExtensionsSessionProcessor::class.java)
-                } else if (ExtensionVersion.isAdvancedExtenderSupported()) {
-                    assertThat(it).isInstanceOf(AdvancedSessionProcessor::class.java)
-                } else {
-                    assertThat(it).isInstanceOf(BasicExtenderSessionProcessor::class.java)
-                }
-            }
+            ?.also { assertThat(it).isInstanceOf(Camera2ExtensionsSessionProcessor::class.java) }
     }
 
     private fun isExtensionAvailableByCameraInfo(cameraInfo: CameraInfo): Boolean {
-        var vendorExtender =
-            ExtensionsTestUtil.createVendorExtender(
-                context,
-                extensionMode,
-                cameraProvider.configImplType,
-            )
+        var vendorExtender = ExtensionsTestUtil.createVendorExtender(context, extensionMode)
         val cameraId = (cameraInfo as CameraInfoInternal).cameraId
 
         return vendorExtender.isExtensionAvailable(
