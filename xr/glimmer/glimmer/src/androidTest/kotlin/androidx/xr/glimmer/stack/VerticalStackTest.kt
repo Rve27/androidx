@@ -1073,6 +1073,52 @@ class VerticalStackTest {
     }
 
     @Test
+    fun masking_decorationNodeReused_updatesMask() {
+        val stackHeight = 100.dp
+        val stackHeightPx = stackHeight.toPx()
+        rule.setContent {
+            Box(Modifier.background(Color.Red)) {
+                VerticalStack(modifier = Modifier.size(stackHeight).testTag("stack")) {
+                    items(10) {
+                        Box(
+                            Modifier.focusable()
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.1f)
+                                .itemDecoration(RectangleShape)
+                                .background(Color.Green)
+                        )
+                    }
+                    item {
+                        StackItem(
+                            "Item 1",
+                            Modifier.itemDecoration(RectangleShape).background(Color.Blue),
+                        )
+                    }
+                }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            assertWithMessage("The center pixel should have the outer Box color")
+                .that(pixels[pixels.width / 2, pixels.height / 2].toOpaque())
+                .isEqualTo(Color.Red)
+        }
+
+        repeat(9) {
+            // Scroll the stack sufficiently to trigger a modifier node reuse.
+            performIndirectSwipe(stackHeightPx)
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            assertWithMessage("The center pixel should have the outer Box color")
+                .that(pixels[pixels.width / 2, pixels.height / 2].toOpaque())
+                .isEqualTo(Color.Red)
+        }
+    }
+
+    @Test
     fun masking_multipleDecorations_clipsToWidest() {
         val narrowDecorationWidth = 50.dp
         val narrowDecorationHeight = 200.dp
