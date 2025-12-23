@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -1382,6 +1383,22 @@ class FloatingToolbarTest {
 
         assertThat(action).hasSize(1)
         assertThat(action[0].label).isEqualTo(actionLabel)
+    }
+
+    @Test
+    fun floatingToolbar_customSize_doesNotCrash() {
+        rule.setMaterialContent(lightColorScheme()) {
+            HorizontalFloatingToolbar(
+                expanded = true,
+                floatingActionButton = {},
+                modifier = Modifier.height(40.dp),
+            ) {}
+            VerticalFloatingToolbar(
+                expanded = true,
+                floatingActionButton = {},
+                modifier = Modifier.width(40.dp),
+            ) {}
+        }
     }
 
     @Test
