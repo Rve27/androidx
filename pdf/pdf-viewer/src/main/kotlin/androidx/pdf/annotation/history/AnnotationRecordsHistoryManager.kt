@@ -16,6 +16,7 @@
 
 package androidx.pdf.annotation.history
 
+import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.KeyedAnnotationRecord
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +26,8 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param annotationRecordsHistory The underlying history log where all edits are stored.
  */
-internal class AnnotationRecordsHistoryManager() {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class AnnotationRecordsHistoryManager() {
     private val annotationRecordsHistory: AnnotationRecordsHistory =
         AnnotationRecordsHistoryImpl(maxSize = MAX_STACK_SIZE)
 
@@ -34,21 +36,21 @@ internal class AnnotationRecordsHistoryManager() {
      *
      * @return true if an undo operation can be performed, false otherwise.
      */
-    val canUndo: StateFlow<Boolean> = annotationRecordsHistory.canUndo
+    public val canUndo: StateFlow<Boolean> = annotationRecordsHistory.canUndo
 
     /**
      * Checks if there are any edits available to be redone.
      *
      * @return true if a redo operation can be performed, false otherwise.
      */
-    val canRedo: StateFlow<Boolean> = annotationRecordsHistory.canRedo
+    public val canRedo: StateFlow<Boolean> = annotationRecordsHistory.canRedo
 
     /**
      * Records the addition of a new annotation to the history.
      *
      * @param keyedAnnotation The [KeyedPdfAnnotation] that was added.
      */
-    fun recordAdd(keyedAnnotation: KeyedPdfAnnotation) =
+    public fun recordAdd(keyedAnnotation: KeyedPdfAnnotation): Unit =
         recordOperation(recordType = KeyedAnnotationRecord.Add, keyedAnnotation)
 
     /**
@@ -56,7 +58,7 @@ internal class AnnotationRecordsHistoryManager() {
      *
      * @param keyedAnnotation The [KeyedPdfAnnotation] that was removed.
      */
-    fun recordRemove(keyedAnnotation: KeyedPdfAnnotation) =
+    public fun recordRemove(keyedAnnotation: KeyedPdfAnnotation): Unit =
         recordOperation(recordType = KeyedAnnotationRecord.Remove, keyedAnnotation)
 
     /**
@@ -64,7 +66,7 @@ internal class AnnotationRecordsHistoryManager() {
      *
      * @param keyedAnnotation The [KeyedPdfAnnotation] that was updated.
      */
-    fun recordUpdate(keyedAnnotation: KeyedPdfAnnotation) =
+    public fun recordUpdate(keyedAnnotation: KeyedPdfAnnotation): Unit =
         recordOperation(recordType = KeyedAnnotationRecord.Update, keyedAnnotation)
 
     /**
@@ -72,17 +74,17 @@ internal class AnnotationRecordsHistoryManager() {
      *
      * @return The [KeyedAnnotationRecord] that was undone, or null if there is nothing to undo.
      */
-    fun undo(): KeyedAnnotationRecord? = annotationRecordsHistory.undo()
+    public fun undo(): KeyedAnnotationRecord? = annotationRecordsHistory.undo()
 
     /**
      * Executes a redo operation.
      *
      * @return The [KeyedAnnotationRecord] that was redone, or null if there is nothing to redo.
      */
-    fun redo(): KeyedAnnotationRecord? = annotationRecordsHistory.redo()
+    public fun redo(): KeyedAnnotationRecord? = annotationRecordsHistory.redo()
 
     /** Clears all edits from the history. */
-    fun clear() = annotationRecordsHistory.clear()
+    public fun clear(): Unit = annotationRecordsHistory.clear()
 
     private fun recordOperation(
         recordType: KeyedAnnotationRecord.RecordType,
@@ -92,7 +94,7 @@ internal class AnnotationRecordsHistoryManager() {
         annotationRecordsHistory.addEntry(record)
     }
 
-    companion object {
+    public companion object {
         private const val MAX_STACK_SIZE = 20
     }
 }
