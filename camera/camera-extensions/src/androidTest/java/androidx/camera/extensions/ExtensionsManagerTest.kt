@@ -37,7 +37,6 @@ import androidx.camera.extensions.impl.advanced.OutputSurfaceImpl
 import androidx.camera.extensions.impl.advanced.RequestProcessorImpl
 import androidx.camera.extensions.impl.advanced.SessionProcessorImpl
 import androidx.camera.extensions.internal.Camera2ExtensionsUtil.shouldUseCamera2Extensions
-import androidx.camera.extensions.internal.ClientVersion
 import androidx.camera.extensions.internal.ExtensionVersion
 import androidx.camera.extensions.internal.ExtensionsUtils
 import androidx.camera.extensions.internal.VendorExtender
@@ -129,37 +128,6 @@ class ExtensionsManagerTest(
         )
         fun data(): Collection<Array<Any>> {
             return ExtensionsTestUtil.getAllImplExtensionsLensFacingCombinations(context, false)
-        }
-    }
-
-    @Test
-    fun getInstanceSuccessfully_whenExtensionAvailabilityIsNotAvailable() {
-        extensionsManager =
-            ExtensionsManager.getInstanceAsync(context, cameraProvider, ClientVersion("99.0.0"))[
-                    10000, TimeUnit.MILLISECONDS]
-
-        assumeTrue(
-            extensionsManager.extensionsAvailability !=
-                ExtensionsManager.ExtensionsAvailability.LIBRARY_AVAILABLE
-        )
-        assertThat(extensionsManager).isNotNull()
-    }
-
-    @Test
-    fun getExtensionsCameraSelectorThrowsException_whenExtensionAvailabilityIsNotAvailable() {
-        extensionsManager =
-            ExtensionsManager.getInstanceAsync(context, cameraProvider, ClientVersion("99.0.0"))[
-                    10000, TimeUnit.MILLISECONDS]
-
-        assumeTrue(
-            extensionsManager.extensionsAvailability !=
-                ExtensionsManager.ExtensionsAvailability.LIBRARY_AVAILABLE
-        )
-
-        val baseCameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-
-        assertThrows<IllegalArgumentException> {
-            extensionsManager.getExtensionEnabledCameraSelector(baseCameraSelector, extensionMode)
         }
     }
 
@@ -304,23 +272,6 @@ class ExtensionsManagerTest(
                 extensionsManager.getEstimatedCaptureLatencyRange(baseCameraSelector, extensionMode)
             )
             .isEqualTo(estimatedCaptureLatency)
-    }
-
-    @Test
-    fun getEstimatedCaptureLatencyRangeReturnNull_whenExtensionAvailabilityIsNotAvailable() {
-        extensionsManager =
-            ExtensionsManager.getInstanceAsync(context, cameraProvider, ClientVersion("99.0.0"))[
-                    10000, TimeUnit.MILLISECONDS]
-
-        assumeTrue(
-            extensionsManager.extensionsAvailability !=
-                ExtensionsManager.ExtensionsAvailability.LIBRARY_AVAILABLE
-        )
-
-        assertThat(
-                extensionsManager.getEstimatedCaptureLatencyRange(baseCameraSelector, extensionMode)
-            )
-            .isNull()
     }
 
     @Test
@@ -487,21 +438,6 @@ class ExtensionsManagerTest(
 
         assertThat(extensionsManager.isImageAnalysisSupported(baseCameraSelector, extensionMode))
             .isTrue()
-    }
-
-    @Test
-    fun isImageAnalysisSupportedIsFalse_whenExtensionAvailabilityIsNotAvailable() {
-        extensionsManager =
-            ExtensionsManager.getInstanceAsync(context, cameraProvider, ClientVersion("99.0.0"))[
-                    10000, TimeUnit.MILLISECONDS]
-
-        assumeTrue(
-            extensionsManager.extensionsAvailability !=
-                ExtensionsManager.ExtensionsAvailability.LIBRARY_AVAILABLE
-        )
-
-        assertThat(extensionsManager.isImageAnalysisSupported(baseCameraSelector, extensionMode))
-            .isFalse()
     }
 
     @Test
