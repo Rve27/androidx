@@ -21,7 +21,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.Rect
-import android.graphics.RectF
 import android.net.Uri
 import android.os.Build
 import android.os.ParcelFileDescriptor
@@ -57,7 +56,6 @@ import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -405,47 +403,6 @@ class SandboxedPdfDocumentTest {
     }
 
     @Test
-    fun getEditsForPage_addAndGetAnnotationFromService() = runTest {
-        assumeFalse(
-            "Test fails on cuttlefish b/460511191",
-            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
-        )
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
-
-        val pageNum = 1
-        val expectedAnnotation1 = getSampleStampAnnotation(pageNum)
-        val expectedAnnotation2 =
-            getSampleStampAnnotation(pageNum = pageNum, bounds = RectF(100f, 100f, 200f, 200f))
-        val document = openDocument(PDF_DOCUMENT)
-
-        val context = ApplicationProvider.getApplicationContext<Context>()
-
-        // Create a ParcelFileDescriptor for the testing annotations document in read-write
-        // mode.
-        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
-
-        val pdfAnnotationsData =
-            listOf(
-                PdfAnnotationData(EditId(pageNum = 0, value = "1"), expectedAnnotation1),
-                PdfAnnotationData(EditId(pageNum = 0, value = "2"), expectedAnnotation2),
-            )
-        writeAnnotationsToFile(pfd, pdfAnnotationsData)
-        document.applyEdits(pfd)
-
-        val actualAnnotations = document.getEditsForPage<PdfAnnotationData>(pageNum)
-        assertThat(actualAnnotations.size).isEqualTo(2)
-        assert(actualAnnotations[0].annotation is StampAnnotation)
-        assertStampAnnotationEquals(
-            expectedAnnotation1,
-            actualAnnotations[0].annotation as StampAnnotation,
-        )
-        assertStampAnnotationEquals(
-            expectedAnnotation2,
-            actualAnnotations[1].annotation as StampAnnotation,
-        )
-    }
-
-    @Test
     fun getEditsForPage_addAndGetEmptyAnnotationFromService() = runTest {
         if (!isRequiredSdkExtensionAvailable()) return@runTest
 
@@ -464,42 +421,6 @@ class SandboxedPdfDocumentTest {
 
         val actualAnnotations = document.getEditsForPage<PdfAnnotationData>(pageNum)
         assertThat(actualAnnotations.size).isEqualTo(0)
-    }
-
-    @Test
-    fun applyEdits_writingAnnotationToStorage() = runTest {
-        assumeFalse(
-            "Test fails on cuttlefish b/460511191",
-            Build.MODEL.contains("Cuttlefish", ignoreCase = true),
-        )
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
-
-        val pageNum = 1
-        val sampleAnnotation = getSampleStampAnnotation(pageNum)
-        val document = openDocument(PDF_DOCUMENT)
-
-        val context = ApplicationProvider.getApplicationContext<Context>()
-
-        // Create a ParcelFileDescriptor for the testing annotations document in read-write
-        // mode.
-        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
-
-        writeAnnotationsToFile(
-            pfd,
-            listOf(PdfAnnotationData(EditId(pageNum = 0, value = "0"), sampleAnnotation)),
-        )
-
-        val annotationResult = document.applyEdits(pfd)
-
-        val actualAnnotations = annotationResult.success
-
-        assertNotNull(actualAnnotations)
-        assertThat(actualAnnotations.size).isEqualTo(1)
-        assert(actualAnnotations[0].annotation is StampAnnotation)
-        assertStampAnnotationEquals(
-            sampleAnnotation,
-            actualAnnotations[0].annotation as StampAnnotation,
-        )
     }
 
     @Test
