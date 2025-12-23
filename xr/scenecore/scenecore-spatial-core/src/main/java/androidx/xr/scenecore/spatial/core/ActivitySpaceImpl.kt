@@ -38,7 +38,6 @@ import com.android.extensions.xr.node.Vec3
 import com.android.extensions.xr.space.Bounds
 import com.android.extensions.xr.space.SpatialState
 import java.util.Collections
-import java.util.HashSet
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Supplier
@@ -108,8 +107,7 @@ public class ActivitySpaceImpl(
 
     override var parent: Entity?
         get() = super.parent
-        set(newParent) =
-            throw UnsupportedOperationException("Cannot set 'parent' on an ActivitySpace.")
+        set(_) = throw UnsupportedOperationException("Cannot set 'parent' on an ActivitySpace.")
 
     /**
      * Return a recommended box for content to be placed in when in Full Space Mode.
