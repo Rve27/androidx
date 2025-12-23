@@ -33,6 +33,7 @@ import androidx.camera.camera2.pipe.CameraPipe
 import androidx.camera.camera2.pipe.CameraStream
 import androidx.camera.camera2.pipe.CameraSurfaceManager
 import androidx.camera.camera2.pipe.CaptureSequenceProcessor
+import androidx.camera.camera2.pipe.OutputId
 import androidx.camera.camera2.pipe.Request
 import androidx.camera.camera2.pipe.StreamFormat
 import androidx.camera.camera2.pipe.StreamId
@@ -130,7 +131,8 @@ internal class CaptureSessionFactoryTest {
                         object : Camera2CaptureSequenceProcessorFactory {
                             override fun create(
                                 session: CameraCaptureSessionWrapper,
-                                surfaceMap: Map<StreamId, Surface>,
+                                streamToSurfaceMap: Map<StreamId, Surface>,
+                                outputToSurfaceMap: Map<OutputId, Surface>,
                             ): CaptureSequenceProcessor<Request, FakeCaptureSequence> =
                                 FakeCaptureSequenceProcessor()
                         },
@@ -141,6 +143,7 @@ internal class CaptureSessionFactoryTest {
                             closeCaptureSessionOnDisconnect = false,
                         ),
                         concurrentSessionSequencer = null,
+                        streamMap,
                         threads,
                         this,
                     ),

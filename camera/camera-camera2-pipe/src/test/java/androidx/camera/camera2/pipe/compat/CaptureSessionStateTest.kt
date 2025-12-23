@@ -17,15 +17,24 @@
 package androidx.camera.camera2.pipe.compat
 
 import android.graphics.SurfaceTexture
+import android.util.Size
 import android.view.Surface
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraGraph.Flags.FinalizeSessionOnCloseBehavior
+import androidx.camera.camera2.pipe.CameraId
+import androidx.camera.camera2.pipe.CameraStream
 import androidx.camera.camera2.pipe.CameraSurfaceManager
 import androidx.camera.camera2.pipe.CaptureSequenceProcessor
+import androidx.camera.camera2.pipe.OutputId
+import androidx.camera.camera2.pipe.OutputStream
 import androidx.camera.camera2.pipe.Request
+import androidx.camera.camera2.pipe.StreamFormat
+import androidx.camera.camera2.pipe.StreamGraph
 import androidx.camera.camera2.pipe.StreamId
 import androidx.camera.camera2.pipe.core.SystemTimeSource
 import androidx.camera.camera2.pipe.graph.GraphListener
+import androidx.camera.camera2.pipe.graph.StreamGraphImpl
+import androidx.camera.camera2.pipe.testing.FakeCameraMetadata
 import androidx.camera.camera2.pipe.testing.FakeCaptureSequence
 import androidx.camera.camera2.pipe.testing.FakeCaptureSequenceProcessor
 import androidx.camera.camera2.pipe.testing.FakeCaptureSessionFactory
@@ -59,7 +68,8 @@ class CaptureSessionStateTest {
         object : Camera2CaptureSequenceProcessorFactory {
             override fun create(
                 session: CameraCaptureSessionWrapper,
-                surfaceMap: Map<StreamId, Surface>,
+                streamToSurfaceMap: Map<StreamId, Surface>,
+                outputToSurfaceMap: Map<OutputId, Surface>,
             ): CaptureSequenceProcessor<Request, FakeCaptureSequence> = fakeCaptureSequenceProcessor
         }
     private val timeSource = SystemTimeSource()
@@ -71,9 +81,29 @@ class CaptureSessionStateTest {
 
     private val surface1: Surface = Surface(SurfaceTexture(1))
     private val surface2: Surface = Surface(SurfaceTexture(2))
-    private val stream1: StreamId = StreamId(1)
-    private val stream2: StreamId = StreamId(2)
-    private val stream3Deferred: StreamId = StreamId(3)
+
+    private val cameraId = CameraId("1")
+    private val streamConfig1 =
+        CameraStream.Config.create(Size(1280, 720), StreamFormat.YUV_420_888, cameraId)
+    private val streamConfig2 =
+        CameraStream.Config.create(Size(1280, 720), StreamFormat.JPEG, cameraId)
+    private val streamConfig3 =
+        CameraStream.Config.create(
+            Size(1280, 720),
+            StreamFormat.UNKNOWN,
+            cameraId,
+            OutputStream.OutputType.SURFACE_VIEW,
+        )
+    private val graphConfig =
+        CameraGraph.Config(cameraId, listOf(streamConfig1, streamConfig2, streamConfig3))
+
+    private val fakeCameraMetadata = FakeCameraMetadata(cameraId = cameraId)
+    private val streamGraph: StreamGraph =
+        StreamGraphImpl(fakeCameraMetadata, graphConfig, mock(), mock())
+
+    private val stream1: StreamId = streamGraph[streamConfig1]!!.id
+    private val stream2: StreamId = streamGraph[streamConfig2]!!.id
+    private val stream3Deferred: StreamId = streamGraph[streamConfig3]!!.id
 
     private val captureSessionFactory =
         FakeCaptureSessionFactory(
@@ -102,6 +132,7 @@ class CaptureSessionStateTest {
                 timeSource,
                 cameraGraphFlags,
                 concurrentSessionSequencer = null,
+                streamGraph,
                 fakeThreads,
                 this,
             )
@@ -128,6 +159,7 @@ class CaptureSessionStateTest {
                 timeSource,
                 cameraGraphFlags,
                 concurrentSessionSequencer = null,
+                streamGraph,
                 fakeThreads,
                 this,
             )
@@ -159,6 +191,7 @@ class CaptureSessionStateTest {
                 timeSource,
                 cameraGraphFlags,
                 concurrentSessionSequencer = null,
+                streamGraph,
                 fakeThreads,
                 this,
             )
@@ -196,6 +229,7 @@ class CaptureSessionStateTest {
                 timeSource,
                 cameraGraphFlags,
                 concurrentSessionSequencer = null,
+                streamGraph,
                 fakeThreads,
                 this,
             )
@@ -223,6 +257,7 @@ class CaptureSessionStateTest {
                 timeSource,
                 cameraGraphFlags,
                 concurrentSessionSequencer = null,
+                streamGraph,
                 fakeThreads,
                 this,
             )
@@ -250,6 +285,7 @@ class CaptureSessionStateTest {
                 timeSource,
                 cameraGraphFlags,
                 concurrentSessionSequencer = null,
+                streamGraph,
                 fakeThreads,
                 this,
             )
@@ -277,6 +313,7 @@ class CaptureSessionStateTest {
                 timeSource,
                 CameraGraph.Flags(closeCaptureSessionOnDisconnect = true),
                 concurrentSessionSequencer = null,
+                streamGraph,
                 fakeThreads,
                 this,
             )
