@@ -336,7 +336,7 @@ public abstract class TileService extends Service {
                     "onTileResourcesRequest not implemented but it was called as tile is not using"
                             + " ProtoLayoutScope concept. Tile won't show any resources.");
             return createImmediateFuture(
-                    Resources.fromProto(ResourceProto.Resources.getDefaultInstance()));
+                    new Resources.Builder().setVersion(requestParams.getVersion()).build());
         }
 
         ResolvableFuture<Resources> result = ResolvableFuture.create();
