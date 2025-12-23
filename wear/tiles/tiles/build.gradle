@@ -72,6 +72,7 @@ android {
 androidx {
     name = "Android Wear Tiles"
     type = SoftwareType.PUBLISHED_LIBRARY
+    samples(project(":wear:tiles:tiles-snippet-samples"))
     inceptionYear = "2020"
     description = "Android Wear Tiles"
     enableRobolectric()

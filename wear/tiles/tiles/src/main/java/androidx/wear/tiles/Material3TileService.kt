@@ -58,6 +58,7 @@ import kotlinx.coroutines.CoroutineScope
  *   to default theme.
  * @param serviceScope the scope to be used for [tileResponse] call, otherwise the scope running on
  *   a main thread will be used.
+ * @sample androidx.wear.tiles.snippet_samples.material3TileServiceHelloWorld
  */
 public abstract class Material3TileService(
     private val allowDynamicTheme: Boolean = true,
