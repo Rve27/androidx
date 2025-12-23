@@ -21,24 +21,44 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.util.AttributeSet
 import android.util.SparseArray
-import android.view.View
+import android.view.MotionEvent
+import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
+import androidx.pdf.PdfDocument
 import androidx.pdf.annotation.drawer.DefaultPdfObjectDrawerFactoryImpl
 import androidx.pdf.annotation.drawer.PdfAnnotationDrawerFactory
 import androidx.pdf.annotation.drawer.PdfAnnotationDrawerFactoryImpl
 import androidx.pdf.annotation.drawer.PdfDocumentAnnotationsDrawerImpl
 import androidx.pdf.annotation.drawer.PdfObjectDrawerFactory
+import androidx.pdf.annotation.highlights.InProgressHighlightsView
+import androidx.pdf.annotation.highlights.InProgressTextHighlightsListener
 import androidx.pdf.annotation.models.PdfAnnotation
 
 /**
- * A custom Android [View] responsible for drawing a collection of annotations onto a Canvas. Each
- * set of page annotations can have its own transformation matrix.
+ * A custom Android [FrameLayout] responsible for drawing a collection of annotations onto a Canvas.
+ * Each set of page annotations can have its own transformation matrix. It also supports annotating
+ * like text highlighting.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class AnnotationsView
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    View(context, attrs, defStyleAttr) {
+    FrameLayout(context, attrs, defStyleAttr) {
+
+    /** The view for displaying in-progress annotations (e.g., wet highlights). */
+    private val inProgressHighlightsView: InProgressHighlightsView
+
+    init {
+        setWillNotDraw(false)
+
+        inProgressHighlightsView =
+            InProgressHighlightsView(context).apply {
+                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+                visibility = GONE
+            }
+        addView(inProgressHighlightsView)
+    }
 
     /**
      * Represents of page annotations that will be rendered on the view. The collection is
@@ -50,6 +70,41 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             invalidate()
         }
 
+    /**
+     * Configures the highlighter.
+     *
+     * @param config The configuration for the highlighter. Pass null to disable.
+     */
+    public fun setHighlighter(config: HighlighterConfig?) {
+        inProgressHighlightsView.apply {
+            if (config != null) {
+                pdfDocument = config.pdfDocument
+                highlightColor = config.color
+                visibility = VISIBLE
+            } else {
+                pdfDocument = null
+                visibility = GONE
+            }
+        }
+    }
+
+    /** Provides page information from view coordinates */
+    public var pageInfoProvider: PageInfoProvider? = null
+        set(value) {
+            field = value
+            inProgressHighlightsView.pageInfoProvider = value
+        }
+
+    /** Adds a listener for highlight gesture events. */
+    public fun addInProgressTextHighlightsListener(listener: InProgressTextHighlightsListener) {
+        inProgressHighlightsView.addInProgressTextHighlightsListener(listener)
+    }
+
+    /** Removes a listener that was previously added via [addInProgressTextHighlightsListener]. */
+    public fun removeInProgressTextHighlightsListener(listener: InProgressTextHighlightsListener) {
+        inProgressHighlightsView.removeInProgressTextHighlightsListener(listener)
+    }
+
     private var pdfObjectDrawerFactory: PdfObjectDrawerFactory = DefaultPdfObjectDrawerFactoryImpl
 
     private var annotationDrawerFactory: PdfAnnotationDrawerFactory =
@@ -58,6 +113,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         PdfDocumentAnnotationsDrawerImpl(annotationDrawerFactory).draw(annotations, canvas)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (inProgressHighlightsView.visibility == VISIBLE) {
+            return inProgressHighlightsView.onTouchEvent(event)
+        }
+        return super.onTouchEvent(event)
     }
 
     /**
@@ -69,5 +131,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     public data class PageAnnotationsData(
         val annotations: List<PdfAnnotation>,
         val transform: Matrix,
+    )
+
+    /**
+     * Configuration for the highlighter.
+     *
+     * @param color The color of the highlighter.
+     * @param pdfDocument The [PdfDocument], required for text selection.
+     */
+    public class HighlighterConfig(
+        @ColorInt public val color: Int,
+        public val pdfDocument: PdfDocument,
     )
 }

@@ -280,20 +280,6 @@ class InProgressHighlightViewTest {
         return MotionEvent.obtain(now, now, action, x, y, 0)
     }
 
-    private class FakePageInfoProvider : PageInfoProvider {
-        override fun getPageInfoFromViewCoordinates(
-            viewX: Float,
-            viewY: Float,
-        ): PageInfoProvider.PageInfo {
-            return PageInfoProvider.PageInfo(
-                pageNum = 0,
-                pageBounds = RectF(0f, 0f, 500f, 500f),
-                pageToViewTransform = Matrix(),
-                viewToPageTransform = Matrix(),
-            )
-        }
-    }
-
     companion object {
         private val HIGHLIGHT_START_RESOURCE_NAME = "TextHighlightStart-${UUID.randomUUID()}"
         private val HIGHLIGHT_FINISH_RESOURCE_NAME = "TextHighlightFinish-${UUID.randomUUID()}"
