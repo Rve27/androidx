@@ -46,6 +46,7 @@ internal class FakeCaptureSessionFactory(
         val deferredStreams = allStreams - surfaces.keys
         check(deferrableStreams.containsAll(deferredStreams))
         val deferred = deferredStreams.associateWith { FakeOutputConfigurationWrapper() }
-        return CaptureSessionFactory.Result.Success(deferred)
+        // TODO: Add parameters and fill in outputSurfaceMap
+        return CaptureSessionFactory.Result.Success(deferred, emptyMap())
     }
 }
