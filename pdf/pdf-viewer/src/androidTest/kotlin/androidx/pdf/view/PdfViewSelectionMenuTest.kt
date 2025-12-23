@@ -18,10 +18,12 @@ package androidx.pdf.view
 
 import android.R as androidR
 import android.graphics.Point
+import android.graphics.RectF
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.pdf.R
+import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.selection.ContextMenuComponent
 import androidx.pdf.selection.PdfSelectionMenuKeys
 import androidx.pdf.selection.SelectionMenuComponent
@@ -52,7 +54,17 @@ class PdfViewSelectionMenuTest {
 
     @Before
     fun before() {
-        val fakePdfDocument = FakePdfDocument(List(100) { Point(500, 1000) })
+        val fakePdfDocument =
+            FakePdfDocument(
+                pages = List(100) { Point(500, 1000) },
+                textContents =
+                    listOf(
+                        PdfPageTextContent(
+                            bounds = listOf(RectF(0f, 0f, 500f, 1000f)),
+                            text = "Dummy text",
+                        )
+                    ),
+            )
         PdfViewTestActivity.onCreateCallback = { activity ->
             with(activity) {
                 container.addView(
