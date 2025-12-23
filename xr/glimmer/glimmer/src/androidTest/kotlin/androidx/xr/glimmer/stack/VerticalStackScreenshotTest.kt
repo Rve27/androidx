@@ -16,7 +16,10 @@
 
 package androidx.xr.glimmer.stack
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.testutils.assertAgainstGolden
@@ -104,6 +107,36 @@ class VerticalStackScreenshotTest {
         rule.setGlimmerThemeContent { VerticalStackWithVaryingSizeItems() }
         rule.onRoot().performTouchInput { swipeUp() }
         assertRootAgainstGolden("verticalStack_varyingSizeItems_scrollToNextItem")
+    }
+
+    @Test
+    fun verticalStack_multipleShapes_clipsToWidest() {
+        rule.setGlimmerThemeContent {
+            VerticalStack(modifier = Modifier.height(300.dp)) {
+                item {
+                    Column {
+                        Card(
+                            modifier =
+                                Modifier.fillMaxWidth(fraction = 0.5f)
+                                    .itemDecoration(CardDefaults.shape)
+                        ) {
+                            Text("Item-0: narrow shape")
+                        }
+                        Card(
+                            modifier = Modifier.fillMaxWidth().itemDecoration(CardDefaults.shape)
+                        ) {
+                            Text("Item-0: wide shape")
+                        }
+                    }
+                }
+                item {
+                    Card(modifier = Modifier.fillMaxSize().itemDecoration(CardDefaults.shape)) {
+                        Text("Item-1")
+                    }
+                }
+            }
+        }
+        assertRootAgainstGolden("verticalStack_multipleShapes_clipsToWidest")
     }
 
     @Composable

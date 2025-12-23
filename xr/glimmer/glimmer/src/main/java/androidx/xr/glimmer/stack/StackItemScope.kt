@@ -16,9 +16,12 @@
 
 package androidx.xr.glimmer.stack
 
-import androidx.collection.MutableScatterMap
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -26,6 +29,7 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.DrawModifierNode
@@ -33,10 +37,14 @@ import androidx.compose.ui.node.LayoutAwareModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.util.fastForEach
 import androidx.xr.glimmer.DepthNode
 import androidx.xr.glimmer.GlimmerTheme.Companion.LocalGlimmerTheme
+import kotlin.math.abs
 
 /** Receiver scope used by item content in [VerticalStack]. */
 @Stable
@@ -85,22 +93,38 @@ internal constructor(private val stackItemScope: StackItemScopeImpl, private val
     }
 }
 
-// TODO(b/413429531): add support for shape bounds.
-internal class StackItemDecoration(internal var shape: Shape, internal var size: Size)
-
 internal class StackItemScopeImpl(internal val state: StackState) : StackItemScope {
 
     internal var index = -1
-    internal val decorations = MutableScatterMap<Any, StackItemDecoration>()
+    internal val decorations = mutableListOf<ItemDecorationNode>()
+    internal var coordinates: LayoutCoordinates? = null
 
-    // TODO(b/413429531): remove the first decoration getter once multiple shapes are supported.
-    internal fun firstDecoration(): StackItemDecoration? {
-        var decoration: StackItemDecoration? = null
-        decorations.forEachValue {
-            decoration = it
-            return@forEachValue
+    internal var maskOffset by mutableStateOf<Offset?>(null)
+    internal var maskOutline by mutableStateOf<Outline?>(null)
+
+    internal fun recalculateMask() {
+        var selectedDecoration: ItemDecorationNode? = null
+        var selectedDecorationWidth = 0f
+        var selectedDecorationHeight = 0f
+
+        decorations.fastForEach { decoration ->
+            val bounds = decoration.outline?.bounds ?: return@fastForEach
+            if (selectedDecoration == null || bounds.width > selectedDecorationWidth) {
+                selectedDecoration = decoration
+                selectedDecorationWidth = bounds.width
+                selectedDecorationHeight = bounds.height
+            } else if (
+                abs(bounds.width - selectedDecorationWidth) < 0.01f &&
+                    (decoration.offset.y + bounds.height / 2) >
+                        (selectedDecoration.offset.y + selectedDecorationHeight / 2)
+            ) {
+                // In case of equal width decorations, select the one with a lower center.
+                selectedDecoration = decoration
+            }
         }
-        return decoration
+
+        maskOutline = selectedDecoration?.outline
+        maskOffset = selectedDecoration?.offset
     }
 }
 
@@ -113,22 +137,31 @@ internal class ItemDecorationNode(
     CompositionLocalConsumerModifierNode,
     DrawModifierNode {
 
+    internal var size = Size.Zero
+    internal var outline: Outline? = null
+    internal var offset: Offset = Offset.Zero
+
     private var depthNode: DepthNode? = null
-    private var size = Size.Zero
-    private var itemOutline: Outline? = null
+    private var coordinates: LayoutCoordinates? = null
 
     override fun onAttach() {
         depthNode = delegate(DepthNode(currentValueOfDepth(), shape))
+        stackItemScope.decorations.add(this)
         if (size != Size.Zero) {
-            // If this node is reused, we need to update the shape in case there is no remeasure.
-            updateShapeAndOutline()
+            // If this node is reused, update the decoration in case there is no remeasure.
+            updateDecoration()
         }
     }
 
     override fun onRemeasured(size: IntSize) {
-        // TODO(b/413429531): add support for shape bounds.
         this.size = size.toSize()
-        updateShapeAndOutline()
+        updateDecoration()
+    }
+
+    override fun onPlaced(coordinates: LayoutCoordinates) {
+        this.coordinates = coordinates
+        offset = calculateDecorationOffset()
+        stackItemScope.recalculateMask()
     }
 
     override fun onDetach() {
@@ -155,8 +188,7 @@ internal class ItemDecorationNode(
         val scrimAlpha =
             calculateScrimAlpha(index = index, topItem = topItem, offsetFraction = offsetFraction)
         val scrimColor = getScrimColor(index = index, topItem = topItem)
-        val outline = getItemOutline()
-
+        val outline = getDecorationOutline()
         scrimColor?.let {
             // If there is a scrim color, apply it on top of the item.
             drawOutline(outline = outline, color = it, alpha = scrimAlpha)
@@ -177,30 +209,39 @@ internal class ItemDecorationNode(
         if (this.stackItemScope != stackItemScope || this.shape != shape) {
             this.stackItemScope = stackItemScope
             this.shape = shape
-            updateShapeAndOutline()
+            updateDecoration()
         }
     }
 
-    private fun ContentDrawScope.getItemOutline(): Outline {
-        itemOutline?.let {
+    private fun ContentDrawScope.getDecorationOutline(): Outline {
+        outline?.let {
             return it
         }
-        val outline = shape.createOutline(size, layoutDirection, this)
-        itemOutline = outline
-        return outline
+        return shape.createOutline(size, layoutDirection, this).also { outline = it }
     }
 
-    private fun updateShapeAndOutline() {
-        val decoration = stackItemScope.decorations[this]
-        if (decoration != null) {
-            decoration.shape = shape
-            decoration.size = size
-            // TODO(b/413429531): make sure a shape change invalidates layout and updates clipping.
-        } else {
-            stackItemScope.decorations.put(this, StackItemDecoration(shape, size))
-        }
-        itemOutline = null
+    private fun updateDecoration() {
+        if (size == Size.Zero || !isAttached) return
+
+        offset = calculateDecorationOffset()
+        outline = createOutline()
+
+        stackItemScope.recalculateMask()
     }
+
+    private fun createOutline(): Outline {
+        val density = currentValueOf(LocalDensity)
+        val layoutDirection = currentValueOf(LocalLayoutDirection)
+        return shape.createOutline(size, layoutDirection, density)
+    }
+
+    private fun calculateDecorationOffset(): Offset =
+        coordinates?.let { decorationCoordinates ->
+            stackItemScope.coordinates?.localPositionOf(
+                sourceCoordinates = decorationCoordinates,
+                relativeToSource = Offset.Zero,
+            )
+        } ?: Offset.Zero
 
     private fun calculateContentAlpha(index: Int, topItem: Int, offsetFraction: Float): Float =
         when {
