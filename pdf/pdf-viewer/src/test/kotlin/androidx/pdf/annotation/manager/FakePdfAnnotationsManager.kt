@@ -56,6 +56,10 @@ class FakePdfAnnotationsManager : PdfAnnotationsManager {
         return oldAnnotation
     }
 
+    override fun discardChanges() {
+        storage.clear()
+    }
+
     fun getAnnotation(id: String): PdfAnnotation? = storage[id]
 
     fun count(): Int = storage.size

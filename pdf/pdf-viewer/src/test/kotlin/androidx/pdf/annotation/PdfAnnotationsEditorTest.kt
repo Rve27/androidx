@@ -170,18 +170,18 @@ class PdfAnnotationsEditorTest {
     }
 
     @Test
-    fun clearHistory_resetsUndoStack() = runTest {
+    fun clear_resetsUndoStackAndChanges() = runTest {
         editor.addDraftAnnotation(annotA)
         assertThat(historyManager.canUndo.value).isTrue()
 
-        editor.clearHistory()
+        editor.clear()
 
+        assertThat(fakeManager.count()).isEqualTo(0)
         assertThat(historyManager.canUndo.value).isFalse()
 
         // Undo should do nothing now
         editor.undo()
-        // Manager should still have the annotation (clearing history doesn't delete content)
-        assertThat(fakeManager.count()).isEqualTo(1)
+        assertThat(fakeManager.count()).isEqualTo(0)
     }
 
     @Test
