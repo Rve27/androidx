@@ -383,7 +383,6 @@ internal constructor(
         CameraExtensionsInfos.from(cameraInfo)
 
     @VisibleForTesting
-    @Suppress("EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING")
     internal fun setVendorExtenderFactory(vendorExtenderFactory: VendorExtenderFactory) {
         extensionsInfo.setVendorExtenderFactory(vendorExtenderFactory)
     }

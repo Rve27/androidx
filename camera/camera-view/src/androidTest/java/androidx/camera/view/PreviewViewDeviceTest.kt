@@ -1045,10 +1045,10 @@ class PreviewViewDeviceTest(private val implName: String, private val cameraConf
      * An empty implementation of [PreviewViewImplementation] used for testing. It allows mocking
      * [PreviewViewImplementation] since the latter is package private.
      */
-    @Suppress("EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING") // b/446693288
-    internal open class TestPreviewViewImplementation
-    constructor(parent: FrameLayout, previewTransform: PreviewTransformation) :
-        PreviewViewImplementation(parent, previewTransform) {
+    private open class TestPreviewViewImplementation(
+        parent: FrameLayout,
+        previewTransform: PreviewTransformation,
+    ) : PreviewViewImplementation(parent, previewTransform) {
         override fun initializePreview() {}
 
         override fun getPreview(): View? {
