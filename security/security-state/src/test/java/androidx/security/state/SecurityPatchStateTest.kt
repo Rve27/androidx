@@ -516,6 +516,729 @@ class SecurityPatchStateTest {
         assertTrue(versions.isEmpty())
     }
 
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsNewerSystemUpdate() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a provider reports a newer SYSTEM update (2025-05-01)
+            val update =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-05-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(update)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN it returns the newer update SPL
+            assertEquals("2025-05-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsDeviceSpl_whenNoProvidersFound() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND no providers are discovered
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(emptyList())
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN it strictly falls back to the Device SPL
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsDeviceSpl_whenAllProvidersEmpty() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND multiple trusted providers exist
+            val provider1 = createUpdateInfoServiceResolveInfo("com.p1", isSystem = true)
+            val provider2 = createUpdateInfoServiceResolveInfo("com.p2", isSystem = true)
+
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(provider1, provider2))
+
+            setupUpdateInfoServiceBinding()
+
+            // AND they ALL return empty lists (no updates available from anyone)
+            setupUpdateInfoServiceResponse(emptyList())
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN it safely returns the Device SPL
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsDeviceSpl_whenSystemUpdateIsOlder() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-05-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-05-01")
+
+            // AND the provider reports an OLDER update (2025-01-01)
+            // (e.g. stale cache or rolled back server side)
+            val oldUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-01-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(oldUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN it ignores the update and returns the Device SPL
+            assertEquals("2025-05-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsDeviceSpl_whenSystemUpdateIsEqual() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND the provider reports the SAME version (2025-01-01)
+            val sameUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-01-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(sameUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN it returns the Device SPL (no change)
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsNewestSystemUpdate_fromMultipleProviders() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND two trusted providers exist for the SYSTEM component
+            // (e.g., an OEM Updater and GOTA both claim to manage the System image)
+            val provider1 = createUpdateInfoServiceResolveInfo("com.oem.updater", isSystem = true)
+            val provider2 =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(provider1, provider2))
+
+            setupUpdateInfoServiceBinding()
+
+            // Provider 1 reports an older update (March)
+            val update1 =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-03-01")
+                    .build()
+            val result1 =
+                UpdateCheckResult(
+                    providerPackageName = "com.oem.updater",
+                    updates = listOf(update1),
+                    lastCheckTimeMillis = 1000L,
+                )
+
+            // Provider 2 reports a NEWER update (June)
+            val update2 =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-06-01")
+                    .build()
+            val result2 =
+                UpdateCheckResult(
+                    providerPackageName = "com.google.android.gms",
+                    updates = listOf(update2),
+                    lastCheckTimeMillis = 1000L,
+                )
+
+            // Mock the service to return both results
+            `when`(mockService.listAvailableUpdates()).thenReturn(result1).thenReturn(result2)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN it returns the newest one
+            assertEquals("2025-06-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsNewestSystemUpdate_fromSingleProviderList() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a single provider reports MULTIPLE updates for SYSTEM
+            val olderUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-02-01")
+                    .build()
+
+            val newestUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-06-01") // The winner
+                    .build()
+
+            val middleUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-04-01")
+                    .build()
+
+            // Setup the service to return this list
+            setupTrustedUpdateInfoServiceWithUpdates(olderUpdate, newestUpdate, middleUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN it correctly identifies the newest one from the list
+            assertEquals("2025-06-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsSystemUpdate_fromWorkingProvider_whenAnotherFails() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND two trusted providers exist
+            val brokenProvider = createUpdateInfoServiceResolveInfo("com.broken", isSystem = true)
+            val workingProvider = createUpdateInfoServiceResolveInfo("com.working", isSystem = true)
+
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(brokenProvider, workingProvider))
+
+            // SETUP: "com.working" binds successfully, "com.broken" fails
+            `when`(
+                    mockContext.bindService(
+                        any(Intent::class.java),
+                        any(ServiceConnection::class.java),
+                        anyInt(),
+                    )
+                )
+                .thenAnswer { invocation ->
+                    val intent = invocation.getArgument<Intent>(0)
+                    val connection = invocation.getArgument<ServiceConnection>(1)
+
+                    if (intent.component?.packageName == "com.working") {
+                        // Working provider: Connect and return a valid SYSTEM update
+                        val update =
+                            UpdateInfo.Builder()
+                                .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                                .setSecurityPatchLevel("2025-06-01")
+                                .build()
+                        val result =
+                            UpdateCheckResult(
+                                providerPackageName = "com.working",
+                                updates = listOf(update),
+                                lastCheckTimeMillis = 1000L,
+                            )
+
+                        // Mock the service call for the successful bind
+                        `when`(mockService.listAvailableUpdates()).thenReturn(result)
+
+                        connection.onServiceConnected(intent.component, mockBinder)
+                        true
+                    } else {
+                        // Broken provider: Refuses bind (returns false)
+                        false
+                    }
+                }
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the update from the working provider is found and returned
+            // (Proving the broken provider was ignored without stopping the process)
+            assertEquals("2025-06-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_onTimeout_returnsDeviceSpl() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            // AND the service hangs (bindService returns true but no connection happens)
+            `when`(mockContext.bindService(any(), any(), anyInt())).thenReturn(true)
+
+            // WHEN we request the Available SPL for SYSTEM with a short timeout (100ms)
+            // (This confirms the parameter is propagated to queryAllAvailableUpdates)
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(
+                    SecurityPatchState.COMPONENT_SYSTEM,
+                    timeoutMillis = 100L,
+                )
+
+            // THEN it returns the Device SPL (fallback) immediately after the timeout
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsSystemUpdate_fromMixedComponentResults() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND two trusted providers exist:
+            // 1. "com.system.updater" (Reports SYSTEM updates)
+            // 2. "com.kernel.updater" (Reports KERNEL updates)
+            val systemProvider =
+                createUpdateInfoServiceResolveInfo("com.system.updater", isSystem = true)
+            val kernelProvider =
+                createUpdateInfoServiceResolveInfo("com.kernel.updater", isSystem = true)
+
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(systemProvider, kernelProvider))
+
+            setupUpdateInfoServiceBinding()
+
+            // SETUP: Create the distinct updates
+            val systemUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-06-01")
+                    .build()
+            val systemResult =
+                UpdateCheckResult(
+                    providerPackageName = "com.system.updater",
+                    updates = listOf(systemUpdate),
+                    lastCheckTimeMillis = 1000L,
+                )
+
+            val kernelUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_KERNEL)
+                    .setSecurityPatchLevel("5.15.1")
+                    .build()
+            val kernelResult =
+                UpdateCheckResult(
+                    providerPackageName = "com.kernel.updater",
+                    updates = listOf(kernelUpdate),
+                    lastCheckTimeMillis = 1000L,
+                )
+
+            // Configure the mock service to return different results for the sequential calls.
+            `when`(mockService.listAvailableUpdates())
+                .thenReturn(systemResult)
+                .thenReturn(kernelResult)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN it correctly finds the SYSTEM update (from Provider 1)
+            // and ignores the KERNEL update (from Provider 2)
+            assertEquals("2025-06-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsSystemUpdate_ignoringMalformedEntries() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a provider returns a list with one GOOD update and one BAD update
+            val goodUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-05-01")
+                    .build()
+
+            val badUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("INVALID_SPL_STRING")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(goodUpdate, badUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the invalid one is ignored, and the valid one is returned
+            assertEquals("2025-05-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsNewerKernelVersion() {
+        runBlocking {
+            // GIVEN the Device Kernel is 5.10.99
+            mockDeviceSpl(SecurityPatchState.COMPONENT_KERNEL, "5.10.99")
+
+            // AND a provider reports a newer Kernel 5.15.1
+            val kernelUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_KERNEL)
+                    .setSecurityPatchLevel("5.15.1")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(kernelUpdate)
+
+            // WHEN we request the Available SPL for KERNEL
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_KERNEL)
+
+            // THEN it correctly returns the newer version
+            assertEquals("5.15.1", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsNewestKernelVersion() {
+        runBlocking {
+            // GIVEN the Device Kernel is 5.10.99
+            mockDeviceSpl(SecurityPatchState.COMPONENT_KERNEL, "5.10.99")
+
+            // AND a provider reports multiple kernel updates
+            val vSame =
+                UpdateInfo.Builder().setComponent("KERNEL").setSecurityPatchLevel("5.10.99").build()
+            val vNewerPatch =
+                UpdateInfo.Builder()
+                    .setComponent("KERNEL")
+                    .setSecurityPatchLevel("5.10.105")
+                    .build()
+            val vNewestMajor =
+                UpdateInfo.Builder().setComponent("KERNEL").setSecurityPatchLevel("5.15.1").build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(vSame, vNewerPatch, vNewestMajor)
+
+            // WHEN we request the Available SPL for KERNEL
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_KERNEL)
+
+            // THEN it returns the highest version number
+            assertEquals("5.15.1", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_returnsNewerSystemModulesUpdate() {
+        runBlocking {
+            // 1. Setup: Load a Vulnerability Report that knows about two versions:
+            // - 2025-01-01 (Old)
+            // - 2025-06-01 (New/Published)
+            val jsonReport =
+                """
+                {
+                    "vulnerabilities": {
+                        "2025-01-01": [{
+                            "cve_identifiers": ["CVE-2025-0001"],
+                            "asb_identifiers": ["ASB-A-2025001"],
+                            "severity": "high",
+                            "components": ["com.google.android.modulemetadata"]
+                        }],
+                        "2025-06-01": [{
+                            "cve_identifiers": ["CVE-2025-0002"],
+                            "asb_identifiers": ["ASB-A-2025002"],
+                            "severity": "critical",
+                            "components": ["com.google.android.modulemetadata"]
+                        }]
+                    },
+                    "kernel_lts_versions": {}
+                }
+                """
+                    .trimIndent()
+            securityState.loadVulnerabilityReport(jsonReport)
+
+            // 2. Mock Device State: The device is still on the OLD version (2025-01-01)
+            // Even though the report sees 2025-06-01, the device hasn't installed it.
+            // SecurityPatchState.getDeviceSecurityPatchLevel() will correctly calculate
+            // 2025-01-01 based on this package version.
+            `when`(
+                    mockSecurityStateManagerCompat.getPackageVersion(
+                        "com.google.android.modulemetadata"
+                    )
+                )
+                .thenReturn("2025-01-01")
+
+            // 3. Setup Provider: The service explicitly offers the "2025-06-01" update.
+            // This signals that the "Published" update is now "Available" for this device.
+            val update =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM_MODULES)
+                    .setSecurityPatchLevel("2025-06-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(update)
+
+            // 4. Action: Request the Available SPL for SYSTEM_MODULES
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(
+                    SecurityPatchState.COMPONENT_SYSTEM_MODULES
+                )
+
+            // 5. Verify: It identifies and returns the newer update (2025-06-01)
+            assertEquals("2025-06-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_ignoresUpdatesForOtherComponents() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a provider reports a new update for "SYSTEM_MODULES"
+            // (But we are going to query for SYSTEM)
+            val modulesUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM_MODULES)
+                    .setSecurityPatchLevel("2025-05-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(modulesUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the SYSTEM_MODULES update is ignored (result matches device)
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_ignoresPackageSpecificUpdatesForSystemModules() {
+        runBlocking {
+            val jsonReport =
+                """
+                {
+                    "vulnerabilities": {
+                        "2025-01-01": [{
+                            "cve_identifiers": ["CVE-2025-0001"],
+                            "asb_identifiers": ["ASB-A-2025001"],
+                            "severity": "high",
+                            "components": ["com.google.android.modulemetadata"]
+                        }]
+                    },
+                    "kernel_lts_versions": {}
+                }
+                """
+                    .trimIndent()
+            securityState.loadVulnerabilityReport(jsonReport)
+
+            // GIVEN Device SPL for SYSTEM_MODULES is 2025-01-01
+            // (Mocking package version for the module mentioned in the report)
+            `when`(
+                    mockSecurityStateManagerCompat.getPackageVersion(
+                        "com.google.android.modulemetadata"
+                    )
+                )
+                .thenReturn("2025-01-01")
+
+            // AND a provider reports an update for a specific module package
+            // (The library expects "SYSTEM_MODULES", not package names)
+            val packageUpdate =
+                UpdateInfo.Builder()
+                    .setComponent("com.google.android.modulemetadata")
+                    .setSecurityPatchLevel("2025-06-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(packageUpdate)
+
+            // WHEN we request Available SPL for SYSTEM_MODULES
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(
+                    SecurityPatchState.COMPONENT_SYSTEM_MODULES
+                )
+
+            // THEN the package-level update is ignored, returning the Device SPL
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_ignoresUnknownComponents() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a provider reports an update for an unknown component
+            val weirdUpdate =
+                UpdateInfo.Builder()
+                    .setComponent("UNKNOWN_COMPONENT_XYZ")
+                    .setSecurityPatchLevel("2025-05-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(weirdUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the unknown component is ignored
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_ignoresUpdatesWithWrongComponentCase() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a provider reports a newer update but uses lowercase "system"
+            // (The contract requires "SYSTEM")
+            val update =
+                UpdateInfo.Builder()
+                    .setComponent("system") // Lowercase
+                    .setSecurityPatchLevel("2025-06-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(update)
+
+            // WHEN we request the Available SPL for "SYSTEM"
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the lowercase update is ignored, returning Device SPL
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_ignoresUpdatesWithWrongFormatForComponent() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a provider reports a "SYSTEM" update but uses a Kernel Version format
+            // (This simulates a provider sending valid-looking but wrong-type data)
+            val badTypeUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM) // Says SYSTEM
+                    .setSecurityPatchLevel("5.10.199") // But provides Version data (Not a Date)
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(badTypeUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the update is ignored (parsing failed for Date type), returning Device SPL
+            // (It does not crash or try to compare "5.10.199" with a Date)
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_ignoresUpdatesWithMalformedSpl() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a provider reports an update with a completely malformed string
+            val badUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("NOT_A_DATE")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(badUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the update is ignored (parsing fails), returning Device SPL
+            // (Verifies that IllegalArgumentException is caught and logged)
+            assertEquals("2025-01-01", result.toString())
+        }
+    }
+
+    @Test
+    fun testFetchAvailableSecurityPatchLevel_ignoresUpdatesWithInvalidDateValues() {
+        runBlocking {
+            // GIVEN the Device SPL for SYSTEM is 2025-01-01
+            mockDeviceSpl(SecurityPatchState.COMPONENT_SYSTEM, "2025-01-01")
+
+            // AND a provider reports an update with a valid format but invalid date
+            // (e.g., February 30th does not exist)
+            val invalidDateUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-02-30")
+                    .build()
+
+            // AND a valid newer update exists
+            val validUpdate =
+                UpdateInfo.Builder()
+                    .setComponent(SecurityPatchState.COMPONENT_SYSTEM)
+                    .setSecurityPatchLevel("2025-03-01")
+                    .build()
+
+            setupTrustedUpdateInfoServiceWithUpdates(invalidDateUpdate, validUpdate)
+
+            // WHEN we request the Available SPL for SYSTEM
+            val result =
+                securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the invalid date is ignored, and the valid one is returned
+            // (Verifies that parsing exceptions are caught and filtered)
+            assertEquals("2025-03-01", result.toString())
+        }
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun testFetchAvailableSecurityPatchLevel_propagatesDeviceStateExceptions() {
+        runBlocking {
+            // GIVEN the device state is missing/corrupt (getDeviceSecurityPatchLevel throws)
+            `when`(mockSecurityStateManagerCompat.getGlobalSecurityState(anyString()))
+                .thenThrow(IllegalStateException("System SPL missing"))
+
+            // WHEN we request the Available SPL for SYSTEM
+            securityState.fetchAvailableSecurityPatchLevel(SecurityPatchState.COMPONENT_SYSTEM)
+
+            // THEN the exception propagates (Fail Fast)
+        }
+    }
+
     private fun generateMockReport(component: String, date: String): String {
         return """
             {
@@ -1738,6 +2461,55 @@ class SecurityPatchStateTest {
             // correctly cleans up resources even if the operation never completed.
             verifyUpdateInfoServiceUnbound()
         }
+    }
+
+    /** Helper to mock the current Device Security Patch Level. */
+    private fun mockDeviceSpl(component: String, spl: String) {
+        val bundle = Bundle()
+        // Map the component to the bundle key used by SecurityPatchState
+        val key =
+            when (component) {
+                SecurityPatchState.COMPONENT_SYSTEM -> "system_spl"
+                SecurityPatchState.COMPONENT_VENDOR -> "vendor_spl"
+                SecurityPatchState.COMPONENT_KERNEL -> "kernel_version"
+                else ->
+                    throw IllegalArgumentException(
+                        "mockDeviceSpl only supports global components (SYSTEM, VENDOR, KERNEL). " +
+                            "For SYSTEM_MODULES, mock package versions directly."
+                    )
+            }
+        bundle.putString(key, spl)
+
+        `when`(mockSecurityStateManagerCompat.getGlobalSecurityState(anyString()))
+            .thenReturn(bundle)
+    }
+
+    /**
+     * Helper to setup a complete "Happy Path" scenario where a single trusted [IUpdateInfoService]
+     * is discovered, bound, and configured to return the specified updates.
+     *
+     * This helper accepts a variable number of arguments, so it can be called with one update or
+     * multiple updates.
+     */
+    private fun setupTrustedUpdateInfoServiceWithUpdates(vararg updates: UpdateInfo) {
+        val info =
+            createUpdateInfoServiceResolveInfo(
+                packageName = "com.google.android.gms",
+                isSystem = true,
+            )
+
+        `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(info))
+
+        setupUpdateInfoServiceBinding()
+
+        val result =
+            UpdateCheckResult(
+                providerPackageName = "com.google.android.gms",
+                updates = updates.toList(),
+                lastCheckTimeMillis = 1000L,
+            )
+        setupUpdateInfoServiceResponse(result)
     }
 
     /** Creates a [ResolveInfo] object that mimics a discovered UpdateInfoService. */

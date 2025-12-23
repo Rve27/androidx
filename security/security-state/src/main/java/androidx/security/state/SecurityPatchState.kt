@@ -707,6 +707,65 @@ constructor(
     }
 
     /**
+     * Fetches the latest available security patch level for a specific component.
+     *
+     * This is a convenience method that determines the effective security state by aggregating
+     * results from all trusted providers and comparing them against the device's current state.
+     *
+     * **Performance:** This method performs IPC (Inter-Process Communication) to query trusted
+     * services. While the providers themselves may return cached data without triggering a network
+     * call, the service binding process is asynchronous and significantly heavier than local memory
+     * lookups.
+     *
+     * **Aggregation Logic:** If multiple providers report updates for the same component (e.g.,
+     * both an OEM updater and GOTA report a "SYSTEM" update), this method conservatively selects
+     * the **newest** (highest version/date) patch level among them.
+     *
+     * **Note:** This value is based on the server-side state known to the update clients. It may
+     * not represent a real-time check if the update client has restricted background syncs (e.g.,
+     * due to rate limiting or battery saver).
+     *
+     * @param component The component to check (e.g., [COMPONENT_SYSTEM],
+     *   [COMPONENT_SYSTEM_MODULES]).
+     * @param timeoutMillis The maximum time to wait for the query to complete, in milliseconds.
+     *   Defaults to [UPDATE_INFO_SERVICE_BINDING_TIMEOUT_MS].
+     * @return The latest [SecurityPatchLevel] found. If no updates are available, or if the
+     *   available updates are older than or equal to the current device state, this returns the
+     *   current Device SPL.
+     */
+    public suspend fun fetchAvailableSecurityPatchLevel(
+        @Component component: String,
+        timeoutMillis: Long = UPDATE_INFO_SERVICE_BINDING_TIMEOUT_MS,
+    ): SecurityPatchLevel {
+        val deviceSpl = getDeviceSecurityPatchLevel(component)
+        val results = queryAllAvailableUpdates(timeoutMillis)
+
+        val maxAvailableSpl =
+            results
+                .asSequence()
+                .flatMap { it.updates }
+                .filter { update -> update.component == component }
+                .mapNotNull { update ->
+                    try {
+                        getComponentSecurityPatchLevel(component, update.securityPatchLevel)
+                    } catch (e: IllegalArgumentException) {
+                        Log.w(
+                            TAG,
+                            "Ignoring invalid SPL format from provider: ${update.securityPatchLevel}",
+                        )
+                        null
+                    }
+                }
+                .maxOrNull()
+
+        if (maxAvailableSpl != null && maxAvailableSpl > deviceSpl) {
+            return maxAvailableSpl
+        }
+
+        return deviceSpl
+    }
+
+    /**
      * Queries for available security updates from all trusted update providers.
      *
      * This method performs a comprehensive check by:
