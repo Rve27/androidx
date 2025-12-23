@@ -33,12 +33,17 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
+import android.provider.Settings;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,6 +123,7 @@ import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowContentResolver;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -129,21 +135,29 @@ import java.util.function.Consumer;
 @Config(sdk = {Config.TARGET_SDK})
 public class SpatialSceneRuntimeTest {
     private static final int OPEN_XR_REFERENCE_SPACE_TYPE = 1;
-    Activity mActivity;
-    private SpatialSceneRuntime mRuntime;
+    private static final String GUARDIAN_CONSENT_GRANTED = "guardian_consent_granted";
+    private static final String TOGGLE_GUARDIAN = "toggle_guardian";
+    private static final Uri IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI =
+            Settings.Secure.getUriFor(GUARDIAN_CONSENT_GRANTED);
+    private static final Uri IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI =
+            Settings.System.getUriFor(TOGGLE_GUARDIAN);
     private final EntityManager mEntityManager = new EntityManager();
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
     private final @NonNull XrExtensions mXrExtensions =
             Objects.requireNonNull(XrExtensionsProvider.getXrExtensions());
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
+    Activity mActivity;
+    private SpatialSceneRuntime mRuntime;
+    private ContentResolver mContentResolver;
+    private ShadowContentResolver mShadowContentResolver;
 
     @Before
     public void setUp() {
         mActivity = Robolectric.buildActivity(Activity.class).create().start().get();
-
+        mShadowContentResolver = shadowOf(mActivity.getContentResolver());
+        mContentResolver = mActivity.getContentResolver();
         ShadowXrExtensions.extract(mXrExtensions)
                 .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
-
         mRuntime =
                 SpatialSceneRuntime.create(
                         mActivity,
@@ -182,6 +196,15 @@ public class SpatialSceneRuntimeTest {
         GltfEntity gltfEntity = createGltfEntity();
         gltfEntity.setPose(pose);
         return gltfEntity;
+    }
+
+    private SpatialSceneRuntime createRuntime() {
+        return SpatialSceneRuntime.create(
+                mActivity,
+                mFakeExecutor,
+                mXrExtensions,
+                mEntityManager,
+                false);
     }
 
     @Test
@@ -2244,6 +2267,153 @@ public class SpatialSceneRuntimeTest {
 
         assertThat(mNodeRepository.getReformOptions(getNode(testEntity)).getEnabledReform())
                 .isEqualTo(ALLOW_MOVE);
+    }
+
+    @Test
+    public void constructor_initializesBoundaryConsentCacheCorrectly() {
+        mRuntime.destroy();
+        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 1);
+        mRuntime = createRuntime();
+
+        boolean result = mRuntime.isBoundaryConsentGranted();
+
+        assertThat(result).isTrue();
+
+        mRuntime.destroy();
+        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 0);
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 1);
+        mRuntime = createRuntime();
+
+        result = mRuntime.isBoundaryConsentGranted();
+
+        assertThat(result).isTrue();
+
+        mRuntime.destroy();
+        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 0);
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
+        mRuntime = createRuntime();
+
+        result = mRuntime.isBoundaryConsentGranted();
+
+        assertThat(result).isTrue();
+
+        mRuntime.destroy();
+        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
+        mRuntime = createRuntime();
+
+        result = mRuntime.isBoundaryConsentGranted();
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void constructor_registerBoundaryConsentStateListener() {
+        assertThat(mShadowContentResolver
+                .getContentObservers(IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI)).hasSize(1);
+        assertThat(mShadowContentResolver
+                .getContentObservers(IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI)).hasSize(1);
+    }
+
+    @Test
+    public void isBoundaryConsentGranted_returnsCachedValue() {
+        // Set initial state to GRANTED = false
+        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
+        // Recreate runtime to pick up the new initial state
+        mRuntime.destroy();
+        mRuntime = createRuntime();
+        assertThat(mRuntime.isBoundaryConsentGranted()).isFalse();
+
+        // Directly change the underlying setting without notifying the observer
+        // This simulates a situation where the cache should NOT be updated.
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 1);
+
+        // The method should still return the old, cached value.
+        assertThat(mRuntime.isBoundaryConsentGranted()).isFalse();
+    }
+
+    @Test
+    @SuppressWarnings(value = "unchecked")
+    public void
+            addOnBoundaryConsentChangedListener_contentResolverChange_notifiesListeners() {
+        Consumer<Boolean> listener1 = (Consumer<Boolean>) mock(Consumer.class);
+        Consumer<Boolean> listener2 = (Consumer<Boolean>) mock(Consumer.class);
+        mRuntime.addOnBoundaryConsentChangedListener(directExecutor(), listener1);
+        mRuntime.addOnBoundaryConsentChangedListener(directExecutor(), listener2);
+
+        // Simulate initial state of system settings
+        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
+        shadowOf(Looper.getMainLooper()).idle();
+        mFakeExecutor.runAll();
+
+        // Change setting
+        Settings.Secure.putInt(mActivity.getContentResolver(), GUARDIAN_CONSENT_GRANTED, 1);
+        shadowOf(Looper.getMainLooper()).idle();
+        mFakeExecutor.runAll();
+
+        verify(listener1, times(1)).accept(true);
+        verify(listener2, times(1)).accept(true);
+
+        Mockito.clearInvocations(listener1, listener2);
+        // Change setting again
+        Settings.Secure.putInt(mActivity.getContentResolver(), GUARDIAN_CONSENT_GRANTED, 0);
+        shadowOf(Looper.getMainLooper()).idle();
+        mFakeExecutor.runAll();
+        verify(listener1, times(1)).accept(false);
+        verify(listener2, times(1)).accept(false);
+    }
+
+    @Test
+    @SuppressWarnings(value = "unchecked")
+    public void removeOnBoundaryConsentChangedListener_stopsReceivingEvents() {
+        // Recreate the runtime to ensure a clean initial state.
+        mRuntime.destroy();
+        // Set an explicit initial state (GRANTED = false).
+        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
+        mRuntime = createRuntime(); // Recreate the runtime to ensure a clean state for the test.
+
+        Consumer<Boolean> listener1 = (Consumer<Boolean>) mock(Consumer.class);
+        Consumer<Boolean> listener2 = (Consumer<Boolean>) mock(Consumer.class);
+        mRuntime.addOnBoundaryConsentChangedListener(directExecutor(), listener1);
+        mRuntime.addOnBoundaryConsentChangedListener(directExecutor(), listener2);
+
+        mRuntime.removeOnBoundaryConsentChangedListener(listener1);
+
+        // Trigger a state change (from false to true).
+        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 1);
+        shadowOf(Looper.getMainLooper()).idle();
+        mFakeExecutor.runAll();
+
+        verify(listener2).accept(true);
+        verify(listener1, never()).accept(any());
+    }
+
+    @Test
+    public void destroy_unregisterBoundaryConsentStateListener() {
+        // A runtime is created in setUp(), which registers the observer.
+        assertThat(
+                mShadowContentResolver.getContentObservers(
+                        IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI))
+                .isNotEmpty();
+        assertThat(
+                mShadowContentResolver.getContentObservers(
+                        IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI))
+                .isNotEmpty();
+
+        mRuntime.destroy();
+
+        assertThat(
+                mShadowContentResolver.getContentObservers(
+                        IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI))
+                .isEmpty();
+        assertThat(
+                mShadowContentResolver.getContentObservers(
+                        IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI))
+                .isEmpty();
     }
 
     @Test

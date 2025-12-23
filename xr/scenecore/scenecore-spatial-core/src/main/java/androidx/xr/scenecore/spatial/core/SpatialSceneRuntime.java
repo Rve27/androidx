@@ -18,11 +18,15 @@ package androidx.xr.scenecore.spatial.core;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Pair;
 import android.view.View;
 
@@ -83,6 +87,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -95,7 +100,8 @@ import java.util.function.Supplier;
 @SuppressWarnings({"BanSynchronizedMethods", "BanConcurrentHashMap"})
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory {
-    private @Nullable Activity mActivity;
+    private static final String GUARDIAN_CONSENT_GRANTED = "guardian_consent_granted";
+    private static final String TOGGLE_GUARDIAN = "toggle_guardian";
     private final ScheduledExecutorService mExecutor;
     private final XrExtensions mExtensions;
     private final Node mSceneRootNode;
@@ -110,9 +116,9 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
 
     private final Map<Consumer<SpatialCapabilities>, Executor>
             mSpatialCapabilitiesChangedListeners = new ConcurrentHashMap<>();
-
-    private @Nullable Pair<Executor, Consumer<SpatialVisibility>> mSpatialVisibilityHandler = null;
     private final Map<Consumer<PixelDimensions>, Executor> mPerceivedResolutionChangedListeners =
+            new ConcurrentHashMap<>();
+    private final Map<Consumer<Boolean>, Executor> mBoundaryConsentListeners =
             new ConcurrentHashMap<>();
     @VisibleForTesting
     boolean mIsExtensionVisibilityStateCallbackRegistered = false;
@@ -120,19 +126,19 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     // TODO b/373481538: remove lazy initialization once XR Extensions bug is fixed. This will allow
     // us to remove the lazySpatialStateProvider instance and pass the spatialState directly.
     private final AtomicReference<SpatialState> mSpatialState = new AtomicReference<>(null);
-
     // Returns the currently-known spatial state, or fetches it from the extensions if it has never
     // been set. The spatial state is kept updated in the SpatialStateCallback.
     private final Supplier<SpatialState> mLazySpatialStateProvider;
-
-    private SpatialModeChangeListener mSpatialModeChangeListener = null;
-
     private final ActivitySpaceImpl mActivitySpace;
 
     /** Returns the PerceptionSpaceScenePose for the Session. */
     private final PerceptionSpaceScenePoseImpl mPerceptionSpaceScenePose;
-
     private final PanelEntity mMainPanelEntity;
+    private @Nullable Activity mActivity;
+    private @Nullable Pair<Executor, Consumer<SpatialVisibility>> mSpatialVisibilityHandler;
+    private @Nullable SpatialModeChangeListener mSpatialModeChangeListener;
+    private @Nullable ContentObserver mBoundaryConsentObserver;
+    private final AtomicBoolean mIsBoundaryConsentGrantedCache;
 
     private SpatialSceneRuntime(
             @NonNull Activity activity,
@@ -192,6 +198,9 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                 new MainPanelEntityImpl(
                         activity, taskWindowLeashNode, extensions, entityManager, executor);
         mMainPanelEntity.setParent(mActivitySpace);
+        // Initialize the boundary consent cache and register the listener.
+        mIsBoundaryConsentGrantedCache = new AtomicBoolean(calculateBoundaryConsentState());
+        registerBoundaryConsentStateListener();
     }
 
     static @NonNull SpatialSceneRuntime create(
@@ -279,6 +288,9 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
         mSpatialModeChangeListener = null;
         mExtensions.clearSpatialStateCallback(mActivity);
 
+        unregisterBoundaryConsentStateListener();
+        mBoundaryConsentListeners.clear();
+
         clearSpatialVisibilityChangedListener();
         mPerceivedResolutionChangedListeners.clear();
         // This will trigger clearing the callback from XrExtensions if it was registered
@@ -335,15 +347,15 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     }
 
     @Override
+    public @Nullable SpatialModeChangeListener getSpatialModeChangeListener() {
+        return mSpatialModeChangeListener;
+    }
+
+    @Override
     public void setSpatialModeChangeListener(
             @Nullable SpatialModeChangeListener spatialModeChangeListener) {
         mSpatialModeChangeListener = spatialModeChangeListener;
         mActivitySpace.setSpatialModeChangeListener(spatialModeChangeListener);
-    }
-
-    @Override
-    public @NonNull SpatialModeChangeListener getSpatialModeChangeListener() {
-        return mSpatialModeChangeListener;
     }
 
     @Override
@@ -757,6 +769,93 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     @Override
     public @NonNull SpatialPointerComponent createSpatialPointerComponent() {
         return new SpatialPointerComponentImpl(mExtensions);
+    }
+
+    /**
+     * Calculates the current boundary consent state directly from system settings.
+     */
+    private boolean calculateBoundaryConsentState() {
+        if (mActivity == null) {
+            throw new IllegalStateException(
+                    "Cannot calculate boundary consent on a destroyed runtime.");
+        }
+        // TODO: b/464401298 - Implement boundary consent logic for Spatial API >= 2
+        ContentResolver resolver = mActivity.getContentResolver();
+        boolean isExplicitBoundaryConsentGranted =
+                (Settings.Secure.getInt(resolver, GUARDIAN_CONSENT_GRANTED, 0)
+                        == 1);
+        boolean isBoundaryEnabledInDeveloperOptions =
+                (Settings.System.getInt(resolver, TOGGLE_GUARDIAN, 1) == 1);
+        return (!isBoundaryEnabledInDeveloperOptions || isExplicitBoundaryConsentGranted);
+    }
+
+    private void registerBoundaryConsentStateListener() {
+        // TODO: b/464401298 - Implement boundary consent logic for Spatial API >= 2
+        if (mActivity == null) {
+            throw new IllegalStateException(
+                    "Cannot register listener on a destroyed runtime.");
+        }
+        if (mBoundaryConsentObserver != null) {
+            return; // Already registered.
+        }
+        Uri isExplicitBoundaryConsentGrantedUri =
+                Settings.Secure.getUriFor(GUARDIAN_CONSENT_GRANTED);
+        Uri isBoundaryEnabledInDeveloperOptionsUri = Settings.System.getUriFor(TOGGLE_GUARDIAN);
+        // Registers the ContentObserver to listen for changes in boundary settings.
+        mBoundaryConsentObserver =
+                new ContentObserver(new Handler(Looper.getMainLooper())) {
+                    @Override
+                    public void onChange(boolean selfChange) {
+                        mExecutor.execute(()-> {
+                            // Recalculate the current state
+                            boolean newGrantedState = calculateBoundaryConsentState();
+
+                            // Only update cache and notify listeners
+                            // if the state has actually changed
+                            if (mIsBoundaryConsentGrantedCache.compareAndSet(
+                                    !newGrantedState, newGrantedState)) {
+                                mBoundaryConsentListeners.forEach(
+                                        (consumer, anExecutor) ->
+                                                anExecutor.execute(
+                                                        () -> consumer.accept(newGrantedState)));
+                            }
+                        });
+                    }
+                };
+
+        ContentResolver resolver = mActivity.getContentResolver();
+        resolver.registerContentObserver(
+                isExplicitBoundaryConsentGrantedUri,
+                /* notifyForDescendants= */ false,
+                mBoundaryConsentObserver);
+        resolver.registerContentObserver(
+                isBoundaryEnabledInDeveloperOptionsUri,
+                /* notifyForDescendants= */ false,
+                mBoundaryConsentObserver);
+    }
+
+    private void unregisterBoundaryConsentStateListener() {
+        // TODO: b/464401298 - Implement boundary consent logic for Spatial API >= 2
+        if (mBoundaryConsentObserver != null && mActivity != null) {
+            mActivity.getContentResolver().unregisterContentObserver(mBoundaryConsentObserver);
+            mBoundaryConsentObserver = null;
+        }
+    }
+
+    @Override
+    public boolean isBoundaryConsentGranted() {
+        return mIsBoundaryConsentGrantedCache.get();
+    }
+
+    @Override
+    public void addOnBoundaryConsentChangedListener(
+            @NonNull Executor executor, @NonNull Consumer<Boolean> listener) {
+        mBoundaryConsentListeners.put(listener, executor);
+    }
+
+    @Override
+    public void removeOnBoundaryConsentChangedListener(@NonNull Consumer<Boolean> listener) {
+        mBoundaryConsentListeners.remove(listener);
     }
 
     @Override

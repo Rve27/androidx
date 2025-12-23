@@ -657,6 +657,7 @@ package androidx.xr.scenecore.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SceneRuntime extends androidx.xr.runtime.internal.JxrRuntime {
+    method public void addOnBoundaryConsentChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<java.lang.Boolean> listener);
     method public void addPerceivedResolutionChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.runtime.PixelDimensions> listener);
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities> listener);
     method public void clearSpatialVisibilityChangedListener();
@@ -684,6 +685,8 @@ package androidx.xr.scenecore.runtime {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialCapabilities getSpatialCapabilities();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialEnvironment getSpatialEnvironment();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SpatialModeChangeListener? getSpatialModeChangeListener();
+    method @InaccessibleFromKotlin public boolean isBoundaryConsentGranted();
+    method public void removeOnBoundaryConsentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
     method public void removePerceivedResolutionChangedListener(java.util.function.Consumer<androidx.xr.scenecore.runtime.PixelDimensions> listener);
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities> listener);
     method public void requestFullSpaceMode();
@@ -695,6 +698,7 @@ package androidx.xr.scenecore.runtime {
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialVisibility> listener);
     property public abstract androidx.xr.scenecore.runtime.ActivitySpace activitySpace;
     property public abstract androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
+    property public abstract boolean isBoundaryConsentGranted;
     property public abstract androidx.xr.scenecore.runtime.PanelEntity mainPanelEntity;
     property public abstract androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper mediaPlayerExtensionsWrapper;
     property public abstract androidx.xr.scenecore.runtime.PerceptionSpaceScenePose perceptionSpaceActivityPose;
