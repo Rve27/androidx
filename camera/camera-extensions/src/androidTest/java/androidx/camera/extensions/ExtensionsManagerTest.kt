@@ -35,10 +35,8 @@ import androidx.camera.extensions.impl.advanced.OutputSurfaceConfigurationImpl
 import androidx.camera.extensions.impl.advanced.OutputSurfaceImpl
 import androidx.camera.extensions.impl.advanced.RequestProcessorImpl
 import androidx.camera.extensions.impl.advanced.SessionProcessorImpl
-import androidx.camera.extensions.internal.ExtensionVersion
 import androidx.camera.extensions.internal.ExtensionsUtils
 import androidx.camera.extensions.internal.VendorExtender
-import androidx.camera.extensions.internal.Version
 import androidx.camera.extensions.internal.sessionprocessor.AdvancedSessionProcessor
 import androidx.camera.extensions.internal.sessionprocessor.Camera2ExtensionsSessionProcessor
 import androidx.camera.extensions.util.ExtensionsTestUtil
@@ -152,13 +150,6 @@ class ExtensionsManagerTest(
 
     @Test
     fun correctAvailability_whenExtensionIsNotAvailable(): Unit = runBlocking {
-        // Skips the test if extensions availability is disabled by quirk.
-        assumeFalse(
-            ExtensionsTestUtil.extensionsDisabledByQuirk(
-                CameraUtil.getCameraIdWithLensFacing(lensFacing)!!
-            )
-        )
-
         extensionsManager = ExtensionsManager.getInstance(context, cameraProvider)
         val baseCameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
@@ -239,10 +230,6 @@ class ExtensionsManagerTest(
             extensionsManager.extensionsAvailability ==
                 ExtensionsManager.ExtensionsAvailability.LIBRARY_AVAILABLE
         )
-        // Skips the test when the extension version is 1.1 or below. It is the case that the
-        // device has its own implementation and ExtensionsInfo will directly return null to impact
-        // the test result.
-        assumeTrue(ExtensionVersion.getRuntimeVersion()!! >= Version.VERSION_1_2)
 
         val estimatedCaptureLatency = Range(100L, 1000L)
 
@@ -265,20 +252,6 @@ class ExtensionsManagerTest(
                 extensionsManager.getEstimatedCaptureLatencyRange(baseCameraSelector, extensionMode)
             )
             .isEqualTo(estimatedCaptureLatency)
-    }
-
-    @Test
-    fun getEstimatedCaptureLatencyRangeReturnNull_belowVersion1_2() {
-        assumeTrue(ExtensionVersion.getRuntimeVersion()!!.compareTo(Version.VERSION_1_2) < 0)
-
-        checkExtensionAvailabilityAndInit()
-
-        // This call should not cause any exception even if the vendor library doesn't implement
-        // the getEstimatedCaptureLatencyRange function.
-        val latencyInfo =
-            extensionsManager.getEstimatedCaptureLatencyRange(baseCameraSelector, extensionMode)
-
-        assertThat(latencyInfo).isNull()
     }
 
     @Test
@@ -559,8 +532,6 @@ class ExtensionsManagerTest(
 
     @Test
     fun returnsCorrectCurrentExtensionTypeAvailabilityFromCameraExtensionsInfo() = runBlocking {
-        assumeTrue(ExtensionVersion.isAdvancedExtenderSupported())
-        assumeTrue(ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4))
         val extensionCameraSelector = checkExtensionAvailabilityAndInit()
 
         // Inject fake VendorExtenderFactory to provide custom VendorExtender

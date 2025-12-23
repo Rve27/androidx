@@ -48,11 +48,8 @@ import androidx.camera.extensions.impl.PreviewExtenderImpl;
 import androidx.camera.extensions.impl.PreviewImageProcessorImpl;
 import androidx.camera.extensions.impl.RequestUpdateProcessorImpl;
 import androidx.camera.extensions.internal.Camera2CameraCaptureResult;
-import androidx.camera.extensions.internal.ClientVersion;
-import androidx.camera.extensions.internal.ExtensionVersion;
 import androidx.camera.extensions.internal.RequestOptionConfig;
 import androidx.camera.extensions.internal.VendorExtender;
-import androidx.camera.extensions.internal.Version;
 import androidx.camera.extensions.internal.compat.workaround.OnEnableDisableSessionDurationCheck;
 import androidx.core.util.Preconditions;
 
@@ -192,18 +189,15 @@ public class BasicExtenderSessionProcessor extends SessionProcessorBase {
                         .addOutputConfig(mCaptureOutputConfig)
                         .setSessionTemplateId(CameraDevice.TEMPLATE_PREVIEW);
 
-        if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                && ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)) {
-            int previewSessionType = mPreviewExtenderImpl.onSessionType();
-            int captureSessionType = mImageCaptureExtenderImpl.onSessionType();
-            Preconditions.checkArgument(previewSessionType == captureSessionType,
-                    "Needs same session type in both PreviewExtenderImpl and "
-                            + "ImageCaptureExtenderImpl");
-            if (previewSessionType == -1) { // -1 means using default value
-                previewSessionType = SessionConfiguration.SESSION_REGULAR;
-            }
-            builder.setSessionType(previewSessionType);
+        int previewSessionType = mPreviewExtenderImpl.onSessionType();
+        int captureSessionType = mImageCaptureExtenderImpl.onSessionType();
+        Preconditions.checkArgument(previewSessionType == captureSessionType,
+                "Needs same session type in both PreviewExtenderImpl and "
+                        + "ImageCaptureExtenderImpl");
+        if (previewSessionType == -1) { // -1 means using default value
+            previewSessionType = SessionConfiguration.SESSION_REGULAR;
         }
+        builder.setSessionType(previewSessionType);
 
         if (mAnalysisOutputConfig != null) {
             builder.addOutputConfig(mAnalysisOutputConfig);
@@ -422,15 +416,11 @@ public class BasicExtenderSessionProcessor extends SessionProcessorBase {
                 if (mPreviewProcessor != null) {
                     mPreviewProcessor.notifyCaptureResult(totalCaptureResult);
                 } else {
-                    if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_3)
-                            && ExtensionVersion
-                            .isMinimumCompatibleVersion(Version.VERSION_1_3)) {
-                        Long timestamp = totalCaptureResult.get(CaptureResult.SENSOR_TIMESTAMP);
-                        if (timestamp != null) {
-                            captureCallback.onCaptureCompleted(timestamp,
-                                    repeatingCaptureSequenceId,
-                                    new Camera2CameraCaptureResult(totalCaptureResult));
-                        }
+                    Long timestamp = totalCaptureResult.get(CaptureResult.SENSOR_TIMESTAMP);
+                    if (timestamp != null) {
+                        captureCallback.onCaptureCompleted(timestamp,
+                                repeatingCaptureSequenceId,
+                                new Camera2CameraCaptureResult(totalCaptureResult));
                     }
                 }
 
@@ -716,11 +706,7 @@ public class BasicExtenderSessionProcessor extends SessionProcessorBase {
 
     @Override
     public @Nullable Pair<Long, Long> getRealtimeCaptureLatency() {
-        if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                && ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)) {
-            return mImageCaptureExtenderImpl.getRealtimeCaptureLatency();
-        }
-        return null;
+        return mImageCaptureExtenderImpl.getRealtimeCaptureLatency();
     }
 
     @Override

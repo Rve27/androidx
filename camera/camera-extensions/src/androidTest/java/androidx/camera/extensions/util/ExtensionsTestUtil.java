@@ -41,7 +41,6 @@ import androidx.camera.extensions.impl.BeautyImageCaptureExtenderImpl;
 import androidx.camera.extensions.impl.BeautyPreviewExtenderImpl;
 import androidx.camera.extensions.impl.BokehImageCaptureExtenderImpl;
 import androidx.camera.extensions.impl.BokehPreviewExtenderImpl;
-import androidx.camera.extensions.impl.ExtensionVersionImpl;
 import androidx.camera.extensions.impl.HdrImageCaptureExtenderImpl;
 import androidx.camera.extensions.impl.HdrPreviewExtenderImpl;
 import androidx.camera.extensions.impl.NightImageCaptureExtenderImpl;
@@ -53,10 +52,7 @@ import androidx.camera.extensions.impl.advanced.HdrAdvancedExtenderImpl;
 import androidx.camera.extensions.impl.advanced.NightAdvancedExtenderImpl;
 import androidx.camera.extensions.internal.Camera2ExtensionsInfo;
 import androidx.camera.extensions.internal.Camera2ExtensionsVendorExtender;
-import androidx.camera.extensions.internal.ExtensionVersion;
 import androidx.camera.extensions.internal.VendorExtender;
-import androidx.camera.extensions.internal.Version;
-import androidx.camera.extensions.internal.compat.workaround.ExtensionDisabledValidator;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.testing.impl.CameraUtil;
 
@@ -83,17 +79,6 @@ public class ExtensionsTestUtil {
     private static final int BASE_COMBINATION_ARRAY_POS_LENS_FACING = 1;
 
     private static boolean isAdvancedExtender() {
-        ExtensionVersionImpl extensionVersion = new ExtensionVersionImpl();
-        try {
-            if (ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_2)
-                    && extensionVersion.isAdvancedExtenderImplemented()) {
-                return true;
-            }
-        } catch (NoSuchMethodError e) {
-            // in case some devices remove the isAdvancedExtenderImplemented method in
-            // ExtensionVersionImpl.
-            return false;
-        }
         return false;
     }
 
@@ -354,12 +339,5 @@ public class ExtensionsTestUtil {
     private static boolean isSpecificSkippedDeviceWithExtensionMode(@ExtensionMode.Mode int mode) {
         return "tecno".equalsIgnoreCase(Build.BRAND) && "tecno-ke5".equalsIgnoreCase(Build.DEVICE)
                 && (mode == ExtensionMode.HDR || mode == ExtensionMode.NIGHT);
-    }
-
-    /**
-     * Returns whether extensions is disabled by quirk.
-     */
-    public static boolean extensionsDisabledByQuirk(@NonNull String cameraId) {
-        return new ExtensionDisabledValidator().shouldDisableExtension(cameraId);
     }
 }

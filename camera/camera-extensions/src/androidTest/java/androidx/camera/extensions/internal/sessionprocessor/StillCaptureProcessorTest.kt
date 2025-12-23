@@ -39,9 +39,6 @@ import androidx.camera.core.impl.OutputSurface
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.extensions.impl.CaptureProcessorImpl
 import androidx.camera.extensions.impl.ProcessResultImpl
-import androidx.camera.extensions.internal.ClientVersion
-import androidx.camera.extensions.internal.ExtensionVersion
-import androidx.camera.extensions.internal.Version
 import androidx.camera.extensions.internal.sessionprocessor.StillCaptureProcessor.OnCaptureResultCallback
 import androidx.camera.extensions.util.Api21Impl
 import androidx.camera.extensions.util.Api21Impl.toCameraDeviceWrapper
@@ -256,68 +253,6 @@ class StillCaptureProcessorTest {
                     .use { assertThat(it).isNotNull() }
             }
         }
-    }
-
-    @Test
-    fun canStartCaptureWithPostview(): Unit = runBlocking {
-        Assume.assumeTrue(
-            ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_4) &&
-                ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-        )
-        val postviewImageReader =
-            ImageReaderProxys.createIsolatedReader(WIDTH, HEIGHT, ImageFormat.YUV_420_888, 2)
-        val postviewOutputSurface =
-            OutputSurface.create(
-                postviewImageReader.surface!!,
-                Size(WIDTH, HEIGHT),
-                ImageFormat.YUV_420_888,
-            )
-        initStillCaptureProcessor(postviewOutputSurface)
-
-        val captureStageIdList = listOf(0, 1, 2)
-        cameraDevice =
-            Camera2Util.openCameraDevice(cameraManager, CAMERA_ID, backgroundHandler)
-                .toCameraDeviceWrapper()
-
-        cameraYuvImageReader =
-            ImageReader.newInstance(
-                WIDTH,
-                HEIGHT,
-                ImageFormat.YUV_420_888,
-                captureStageIdList.size, /* maxImages */
-            )
-
-        val captureSession =
-            Camera2Util.openCaptureSession(
-                cameraDevice!!.unwrap(),
-                listOf(cameraYuvImageReader!!.surface),
-                backgroundHandler,
-            )
-
-        val postviewDeferred = CompletableDeferred<ImageProxy>()
-        postviewImageReader.setOnImageAvailableListener(
-            {
-                val postviewImage = it.acquireNextImage()
-                postviewDeferred.complete(postviewImage!!)
-            },
-            CameraXExecutors.mainThreadExecutor(),
-        )
-
-        withTimeout(10000) {
-            captureImage(
-                    cameraDevice!!.unwrap(),
-                    captureSession,
-                    cameraYuvImageReader!!,
-                    captureStageIdList,
-                    enablePostview = true,
-                )
-                .use { assertThat(it).isNotNull() }
-
-            val postviewImage = postviewDeferred.await()
-            assertThat(postviewImage.format).isEqualTo(ImageFormat.YUV_420_888)
-        }
-
-        postviewImageReader.close()
     }
 
     private suspend fun openCameraAndCaptureImageAwait(

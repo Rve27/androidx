@@ -26,12 +26,7 @@ import android.view.Surface;
 
 import androidx.annotation.GuardedBy;
 import androidx.camera.core.Logger;
-import androidx.camera.core.impl.utils.executor.CameraXExecutors;
 import androidx.camera.extensions.impl.PreviewImageProcessorImpl;
-import androidx.camera.extensions.impl.ProcessResultImpl;
-import androidx.camera.extensions.internal.ClientVersion;
-import androidx.camera.extensions.internal.ExtensionVersion;
-import androidx.camera.extensions.internal.Version;
 
 import org.jspecify.annotations.NonNull;
 
@@ -94,29 +89,8 @@ class PreviewProcessor {
                             return;
                         }
                         try {
-                            if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_3)
-                                    && ExtensionVersion
-                                    .isMinimumCompatibleVersion(Version.VERSION_1_3)) {
-                                mPreviewImageProcessor.process(imageReference.get(),
-                                        totalCaptureResult,
-                                        new ProcessResultImpl() {
-                                            @Override
-                                            public void onCaptureCompleted(long shutterTimestamp,
-                                                    @NonNull List<Pair<CaptureResult.Key, Object>>
-                                                            result) {
-                                                onResultCallback.onCaptureResult(shutterTimestamp,
-                                                        result);
-                                            }
-
-                                            @Override
-                                            public void onCaptureProcessProgressed(int progress) {
-
-                                            }
-                                        }, CameraXExecutors.ioExecutor());
-                            } else {
-                                mPreviewImageProcessor.process(imageReference.get(),
-                                        totalCaptureResult);
-                            }
+                            mPreviewImageProcessor.process(imageReference.get(),
+                                    totalCaptureResult);
                         } finally {
                             imageReference.decrement();
                         }

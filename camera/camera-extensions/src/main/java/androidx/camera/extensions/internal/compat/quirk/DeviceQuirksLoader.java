@@ -40,12 +40,6 @@ public class DeviceQuirksLoader {
         final List<Quirk> quirks = new ArrayList<>();
 
         if (quirkSettings.shouldEnableQuirk(
-                ExtensionDisabledQuirk.class,
-                ExtensionDisabledQuirk.load())) {
-            quirks.add(new ExtensionDisabledQuirk());
-        }
-
-        if (quirkSettings.shouldEnableQuirk(
                 CrashWhenOnDisableTooSoon.class,
                 CrashWhenOnDisableTooSoon.load())) {
             quirks.add(new CrashWhenOnDisableTooSoon());

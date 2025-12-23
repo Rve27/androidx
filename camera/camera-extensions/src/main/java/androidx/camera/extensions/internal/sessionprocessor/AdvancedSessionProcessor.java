@@ -56,11 +56,8 @@ import androidx.camera.extensions.impl.advanced.OutputSurfaceConfigurationImpl;
 import androidx.camera.extensions.impl.advanced.OutputSurfaceImpl;
 import androidx.camera.extensions.impl.advanced.RequestProcessorImpl;
 import androidx.camera.extensions.impl.advanced.SessionProcessorImpl;
-import androidx.camera.extensions.internal.ClientVersion;
-import androidx.camera.extensions.internal.ExtensionVersion;
 import androidx.camera.extensions.internal.RequestOptionConfig;
 import androidx.camera.extensions.internal.VendorExtender;
-import androidx.camera.extensions.internal.Version;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -134,34 +131,11 @@ public class AdvancedSessionProcessor extends SessionProcessorBase {
             @NonNull String cameraId,
             @NonNull Map<String, CameraCharacteristics> cameraCharacteristicsMap,
             @NonNull OutputSurfaceConfiguration outputSurfaceConfig) {
-        Camera2SessionConfigImpl sessionConfigImpl = null;
-        if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                && ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)) {
-            sessionConfigImpl =
-                    mImpl.initSession(
-                            cameraId,
-                            cameraCharacteristicsMap,
-                            mContext,
-                            new OutputSurfaceConfigurationImplAdapter(outputSurfaceConfig));
-
-        }
-
-        // In case of OEM doesn't implement the v1.4 version of initSession, we fallback to invoke
-        // prior version.
-        if (sessionConfigImpl == null) {
-            sessionConfigImpl =
-                    mImpl.initSession(
-                            cameraId,
-                            cameraCharacteristicsMap,
-                            mContext,
-                            new OutputSurfaceImplAdapter(
-                                    outputSurfaceConfig.getPreviewOutputSurface()),
-                            new OutputSurfaceImplAdapter(
-                                    outputSurfaceConfig.getImageCaptureOutputSurface()),
-                            outputSurfaceConfig.getImageAnalysisOutputSurface() == null
-                                    ? null : new OutputSurfaceImplAdapter(
-                                    outputSurfaceConfig.getImageAnalysisOutputSurface()));
-        }
+        Camera2SessionConfigImpl sessionConfigImpl = mImpl.initSession(
+                cameraId,
+                cameraCharacteristicsMap,
+                mContext,
+                new OutputSurfaceConfigurationImplAdapter(outputSurfaceConfig));
 
         mIsPostviewConfigured = outputSurfaceConfig.getPostviewOutputSurface() != null;
         // Resets the extension type and strength result when initializing the session
@@ -192,17 +166,14 @@ public class AdvancedSessionProcessor extends SessionProcessorBase {
         }
         camera2SessionConfigBuilder
                 .setSessionTemplateId(sessionConfigImpl.getSessionTemplateId());
-        if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                && ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)) {
-            try {
-                int sessionType = sessionConfigImpl.getSessionType();
-                if (sessionType == -1) { // -1 means using default value
-                    sessionType = SessionConfiguration.SESSION_REGULAR;
-                }
-                camera2SessionConfigBuilder.setSessionType(sessionType);
-            } catch (NoSuchMethodError e) {
-                camera2SessionConfigBuilder.setSessionType(SessionConfiguration.SESSION_REGULAR);
+        try {
+            int sessionType = sessionConfigImpl.getSessionType();
+            if (sessionType == -1) { // -1 means using default value
+                sessionType = SessionConfiguration.SESSION_REGULAR;
             }
+            camera2SessionConfigBuilder.setSessionType(sessionType);
+        } catch (NoSuchMethodError e) {
+            camera2SessionConfigBuilder.setSessionType(SessionConfiguration.SESSION_REGULAR);
         }
         return camera2SessionConfigBuilder.build();
     }
@@ -323,9 +294,7 @@ public class AdvancedSessionProcessor extends SessionProcessorBase {
                 new SessionProcessorImplCaptureCallbackAdapter(
                         callback, tagBundle, mWillReceiveOnCaptureCompleted);
 
-        if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                && ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                && mIsPostviewConfigured && postviewEnabled
+        if (mIsPostviewConfigured && postviewEnabled
                 && mVendorExtender.isPostviewAvailable()) {
             return mImpl.startCaptureWithPostview(stillCaptureCallback);
         } else {
@@ -349,13 +318,9 @@ public class AdvancedSessionProcessor extends SessionProcessorBase {
     public int startTrigger(@NonNull Config config, @NonNull TagBundle tagBundle,
             @NonNull CaptureCallback callback) {
         HashMap<CaptureRequest.Key<?>, Object> map = convertConfigToMap(config);
-        if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_3)
-                && ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_3)) {
-            return mImpl.startTrigger(map,
-                    new SessionProcessorImplCaptureCallbackAdapter(
-                            callback, tagBundle, mWillReceiveOnCaptureCompleted));
-        }
-        return -1;
+        return mImpl.startTrigger(map,
+                new SessionProcessorImplCaptureCallbackAdapter(
+                        callback, tagBundle, mWillReceiveOnCaptureCompleted));
     }
 
     @Override
@@ -373,11 +338,7 @@ public class AdvancedSessionProcessor extends SessionProcessorBase {
 
     @Override
     public @Nullable Pair<Long, Long> getRealtimeCaptureLatency() {
-        if (ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                && ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)) {
-            return mImpl.getRealtimeCaptureLatency();
-        }
-        return null;
+        return mImpl.getRealtimeCaptureLatency();
     }
 
     @Override

@@ -30,9 +30,6 @@ import androidx.camera.core.impl.OutputSurface;
 import androidx.camera.core.impl.utils.executor.CameraXExecutors;
 import androidx.camera.extensions.impl.CaptureProcessorImpl;
 import androidx.camera.extensions.impl.ProcessResultImpl;
-import androidx.camera.extensions.internal.ClientVersion;
-import androidx.camera.extensions.internal.ExtensionVersion;
-import androidx.camera.extensions.internal.Version;
 import androidx.camera.extensions.internal.compat.workaround.CaptureOutputSurfaceForCaptureProcessor;
 import androidx.core.util.Preconditions;
 
@@ -96,9 +93,7 @@ class StillCaptureProcessor {
         mCaptureProcessorImpl.onImageFormatUpdate(ImageFormat.YUV_420_888);
 
         mIsPostviewConfigured = (postviewOutputSurface != null);
-        if (postviewOutputSurface != null
-                && ClientVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                && ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)) {
+        if (postviewOutputSurface != null) {
             Preconditions.checkArgument(
                     postviewOutputSurface.getImageFormat() == ImageFormat.YUV_420_888);
             mCaptureProcessorImpl.onResolutionUpdate(surfaceSize, postviewOutputSurface.getSize());
@@ -188,10 +183,7 @@ class StillCaptureProcessor {
                         return;
                     }
                     Logger.d(TAG, "CaptureProcessorImpl.process() begin");
-                    if (ExtensionVersion.isMinimumCompatibleVersion(Version.VERSION_1_4)
-                            && ClientVersion.isMinimumCompatibleVersion(
-                            Version.VERSION_1_4)
-                            && enablePostview && mIsPostviewConfigured) {
+                    if (enablePostview && mIsPostviewConfigured) {
                         mCaptureProcessorImpl.processWithPostview(convertedResult,
                                 new ProcessResultImpl() {
                                     @Override
@@ -212,10 +204,7 @@ class StillCaptureProcessor {
                                     }
 
                                 }, CameraXExecutors.directExecutor());
-                    } else if (ExtensionVersion.isMinimumCompatibleVersion(
-                            Version.VERSION_1_3)
-                            && ClientVersion.isMinimumCompatibleVersion(
-                            Version.VERSION_1_3)) {
+                    } else {
                         mCaptureProcessorImpl.process(convertedResult,
                                 new ProcessResultImpl() {
                                     @Override
@@ -234,8 +223,6 @@ class StillCaptureProcessor {
                                                 .onCaptureProcessProgressed(progress);
                                     }
                                 }, CameraXExecutors.directExecutor());
-                    } else {
-                        mCaptureProcessorImpl.process(convertedResult);
                     }
                 } catch (Exception e) {
                     Logger.e(TAG, "mCaptureProcessorImpl.process exception ", e);
