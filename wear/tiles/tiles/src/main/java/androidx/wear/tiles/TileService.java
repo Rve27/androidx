@@ -1267,7 +1267,7 @@ public abstract class TileService extends Service {
     }
 
     /** Creates immediate future with the given result of the given type. */
-    private static <T> ListenableFuture<T> createImmediateFuture(T result) {
+    static <T> ListenableFuture<T> createImmediateFuture(T result) {
         ResolvableFuture<T> future = ResolvableFuture.create();
         future.set(result);
         return future;
