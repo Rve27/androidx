@@ -20,7 +20,6 @@ import android.os.ParcelFileDescriptor
 import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId
-import androidx.pdf.annotation.models.EditsResult
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
 import androidx.pdf.annotation.models.PdfEditEntry
@@ -70,15 +69,6 @@ public abstract class EditablePdfDocument : PdfDocument {
     public abstract suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult
 
     /**
-     * Applies a list of annotation edits from a source [android.os.ParcelFileDescriptor] to the
-     * document.
-     *
-     * @param sourcePfd The [android.os.ParcelFileDescriptor] containing the annotation edits.
-     * @return An [AnnotationResult] indicating the success or failure of the operation.
-     */
-    public abstract suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult
-
-    /**
      * Creates a new [PdfEdit] onto to the document with the [androidx.pdf.annotation.models.EditId]
      * provided.
      *
@@ -111,9 +101,6 @@ public abstract class EditablePdfDocument : PdfDocument {
      * @return The old [PdfEdit] that was updated.
      */
     public abstract fun updateEdit(editId: EditId, edit: PdfEdit): PdfEdit
-
-    /** Commits all PdfEdits to the PDF document. */
-    public abstract suspend fun commitEdits(): EditsResult
 
     /**
      * Returns an immutable snapshot of all [PdfEdit]s, organized by page number.
