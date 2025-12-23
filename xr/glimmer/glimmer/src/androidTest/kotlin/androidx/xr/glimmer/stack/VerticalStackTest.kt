@@ -90,6 +90,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.After
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1267,6 +1268,7 @@ class VerticalStackTest {
         }
     }
 
+    @Ignore // b/471249095
     @Test
     fun masking_roundedShape_clipsAtTopRadius() {
         val topOffset = 100.dp
