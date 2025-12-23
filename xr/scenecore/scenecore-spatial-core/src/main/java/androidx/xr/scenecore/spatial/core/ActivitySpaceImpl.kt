@@ -239,6 +239,10 @@ public class ActivitySpaceImpl(
         )
     }
 
+    // TODO: b/469860602 - Remove this override once transform listener fix lands.
+    override val worldSpaceScale: Vector3
+        get() = if (unscaledGravityAlignedActivitySpace) Vector3.One else super.worldSpaceScale
+
     override fun addOnBoundsChangedListener(listener: ActivitySpace.OnBoundsChangedListener) {
         boundsListeners.add(listener)
     }
