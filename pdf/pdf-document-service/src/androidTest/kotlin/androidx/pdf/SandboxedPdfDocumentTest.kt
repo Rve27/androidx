@@ -41,10 +41,8 @@ import androidx.pdf.utils.AnnotationUtilsTest.Companion.isRequiredSdkExtensionAv
 import androidx.pdf.utils.TestUtils
 import androidx.pdf.utils.assertStampAnnotationEquals
 import androidx.pdf.utils.createPdfAnnotationDataList
-import androidx.pdf.utils.createPfd
 import androidx.pdf.utils.createStampAnnotationWithPath
 import androidx.pdf.utils.getSampleStampAnnotation
-import androidx.pdf.utils.writeAnnotationsToFile
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
@@ -400,27 +398,6 @@ class SandboxedPdfDocumentTest {
             pfd?.close()
             editedPdfFile.delete()
         }
-    }
-
-    @Test
-    fun getEditsForPage_addAndGetEmptyAnnotationFromService() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
-
-        val pageNum = 1
-        val document = openDocument(PDF_DOCUMENT)
-
-        val context = ApplicationProvider.getApplicationContext<Context>()
-
-        // Create a ParcelFileDescriptor for the testing annotations document in read-write
-        // mode.
-        val pfd = createPfd(context, PDF_ANNOTATION_DOCUMENT, "rwt")
-
-        val pdfAnnotationsData = listOf<PdfAnnotationData>()
-        writeAnnotationsToFile(pfd, pdfAnnotationsData)
-        document.applyEdits(pfd)
-
-        val actualAnnotations = document.getEditsForPage<PdfAnnotationData>(pageNum)
-        assertThat(actualAnnotations.size).isEqualTo(0)
     }
 
     @Test

@@ -38,7 +38,6 @@ import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.manager.InMemoryAnnotationsManager
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId
-import androidx.pdf.annotation.models.EditsResult
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
@@ -417,17 +416,6 @@ public class SandboxedPdfDocument(
         return withDocument { annotationsProcessor.process(annotations) }
     }
 
-    override suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult {
-        val annotationResult = withDocument { pdfDocumentRemote ->
-            pdfDocumentRemote.addAnnotations(sourcePfd)
-        }
-        if (annotationResult != null) {
-            return annotationResult
-        }
-
-        return AnnotationResult(listOf(), listOf())
-    }
-
     override fun <T : PdfEdit> addPdfEditEntry(entry: PdfEditEntry<T>) {
         when (entry) {
             is PdfAnnotationData -> annotationsManager.addAnnotationById(entry.id, entry.annotation)
@@ -471,32 +459,28 @@ public class SandboxedPdfDocument(
         return annotationsManager.getAnnotationsForPage(pageNum)
     }
 
-    override suspend fun commitEdits(): EditsResult {
-        return annotationsManager.commitEdits()
-    }
-
     override fun getAllEdits(): PdfEdits = annotationsManager.getSnapshot()
 
-    override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> {
-        // TODO: Implement this method after cleaning up getEditsForPage method
-        return listOf()
-    }
+    override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> =
+        getKeyedAnnotationsForPage(pageNum)
 
     private suspend fun getAnnotations(pageNum: Int): List<PdfAnnotation> {
+        return getKeyedAnnotationsForPage(pageNum).map { it.annotation }
+    }
+
+    private suspend fun getKeyedAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> {
         val firstBatch = withDocument { it.getAllPageAnnotations(pageNum) } ?: return emptyList()
         if (firstBatch.totalBatchCount <= 1) {
-            return firstBatch.annotations.map { it.annotation }
+            return firstBatch.annotations
         }
 
         return coroutineScope {
-            val firstAnnotations = firstBatch.annotations.map { it.annotation }
+            val firstAnnotations = firstBatch.annotations
             val deferredRemainingBatches =
                 (1 until firstBatch.totalBatchCount).map { batchIndex ->
                     async {
                         withDocument { remote ->
-                            remote.getBatchedPageAnnotations(pageNum, batchIndex).annotations.map {
-                                it.annotation
-                            }
+                            remote.getBatchedPageAnnotations(pageNum, batchIndex).annotations
                         }
                     }
                 }
