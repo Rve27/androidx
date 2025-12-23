@@ -103,6 +103,11 @@ final class SubspaceNodeEntityImpl extends AndroidXrEntity implements SubspaceNo
     }
 
     @Override
+    public @NonNull Dimensions getSize() {
+        return mSize;
+    }
+
+    @Override
     public void setSize(@NonNull Dimensions size) {
         mSize = size;
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
@@ -114,11 +119,6 @@ final class SubspaceNodeEntityImpl extends AndroidXrEntity implements SubspaceNo
                             size.depth * mInternalScale.getZ())
                     .apply();
         }
-    }
-
-    @Override
-    public @NonNull Dimensions getSize() {
-        return mSize;
     }
 
     @Override
