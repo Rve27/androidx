@@ -549,10 +549,14 @@ internal class CaptureSessionState(
         Log.info {
             "Creating CameraCaptureSession from ${device?.cameraId} using $this with $surfaces"
         }
-        val deferred =
+        val result =
             Debug.trace("CameraDevice-${device?.cameraId?.value}#createCaptureSession") {
                 captureSessionFactory.create(device!!, surfaces!!, this)
             }
+        if (result !is CaptureSessionFactory.Result.Success) {
+            Log.error { "Failed to create capture session for $this!" }
+            return
+        }
 
         synchronized(lock) {
             if (state == State.CLOSING || state == State.CLOSED) {
@@ -563,6 +567,8 @@ internal class CaptureSessionState(
             state = State.CREATED
 
             activeSurfaceMap.putAll(surfaces!!)
+
+            val deferred = result.deferred
             if (deferred.isNotEmpty()) {
                 Log.info {
                     "Created $this with ${surfaces.keys.toList()}. " +
