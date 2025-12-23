@@ -16,6 +16,7 @@
 
 package androidx.pdf.annotation.models
 
+import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.KeyedPdfAnnotation
 
 /**
@@ -24,19 +25,20 @@ import androidx.pdf.annotation.KeyedPdfAnnotation
  * @param recordType The type of operation, such as [Add], [Remove], or [Update].
  * @param keyedAnnotation The [KeyedPdfAnnotation] that was added, removed, or updated.
  */
-internal data class KeyedAnnotationRecord(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public data class KeyedAnnotationRecord(
     val recordType: RecordType,
     val keyedAnnotation: KeyedPdfAnnotation,
 ) {
-    sealed interface RecordType
+    public sealed interface RecordType
 
     /** Represents an operation that adds data. */
-    data object Add : RecordType
+    public data object Add : RecordType
 
     /** Represents an operation that removes data. */
-    data object Remove : RecordType
+    public data object Remove : RecordType
 
     // TODO: This will change to a class with the associated metadata
     /** Represents an operation that updates existing data. */
-    data object Update : RecordType
+    public data object Update : RecordType
 }

@@ -16,6 +16,7 @@
 
 package androidx.pdf.annotation
 
+import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.history.AnnotationRecordsHistoryManager
 import androidx.pdf.annotation.manager.PdfAnnotationsManager
 import androidx.pdf.annotation.models.KeyedAnnotationRecord
@@ -31,7 +32,8 @@ import androidx.pdf.annotation.models.PdfAnnotation
  * @property historyManager Manages the stack of operations for Undo/Redo.
  * @property annotationsManager The single source of truth for annotation data (Persisted + Drafts).
  */
-internal class PdfAnnotationsEditor(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class PdfAnnotationsEditor(
     private val historyManager: AnnotationRecordsHistoryManager,
     private val annotationsManager: PdfAnnotationsManager,
 ) {
@@ -42,7 +44,7 @@ internal class PdfAnnotationsEditor(
      * @param annotation The [androidx.pdf.annotation.models.PdfAnnotation] content to add.
      * @return The unique Handle ID assigned to the new annotation.
      */
-    fun addDraftAnnotation(annotation: PdfAnnotation): String {
+    public fun addDraftAnnotation(annotation: PdfAnnotation): String {
         val annotationId = annotationsManager.addAnnotation(annotation)
 
         // Record the operation with the generated ID so it can be removed later if Undone.
@@ -58,7 +60,7 @@ internal class PdfAnnotationsEditor(
      * @param annotationId The unique Handle ID of the annotation to remove.
      * @return The [PdfAnnotation] data that was removed, or null if the ID was not found.
      */
-    suspend fun removeAnnotation(annotationId: String): PdfAnnotation? {
+    public suspend fun removeAnnotation(annotationId: String): PdfAnnotation? {
         val removedAnnotation = performRemove(annotationId)
 
         if (removedAnnotation != null) {
@@ -75,7 +77,7 @@ internal class PdfAnnotationsEditor(
      * @param annotationId The unique Handle ID of the annotation to update.
      * @param newAnnotation The new content to apply.
      */
-    suspend fun updateAnnotation(annotationId: String, newAnnotation: PdfAnnotation) {
+    public suspend fun updateAnnotation(annotationId: String, newAnnotation: PdfAnnotation) {
         val oldAnnotation = performUpdate(annotationId, newAnnotation)
 
         val keyedAnnotation = KeyedPdfAnnotation(annotationId, oldAnnotation)
@@ -86,13 +88,16 @@ internal class PdfAnnotationsEditor(
      * Reverts the last recorded operation. This applies the inverse action to the
      * [PdfAnnotationsManager] (e.g., removing an added item).
      */
-    suspend fun undo() = replayOperation(record = historyManager.undo())
+    public suspend fun undo(): Unit = replayOperation(record = historyManager.undo())
 
     /** Re-applies the last undone operation. */
-    suspend fun redo() = replayOperation(record = historyManager.redo())
+    public suspend fun redo(): Unit = replayOperation(record = historyManager.redo())
 
-    /** Clears the entire edit history, resetting the Undo/Redo stack. */
-    fun clearHistory() = historyManager.clear()
+    /** Clears all the unsaved changes and the entire history */
+    public fun clear(): Unit {
+        annotationsManager.discardChanges()
+        historyManager.clear()
+    }
 
     /**
      * Applies the logic of [androidx.pdf.annotation.models.KeyedAnnotationRecord] to the manager
