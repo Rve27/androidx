@@ -685,13 +685,21 @@ public class WebViewFeatureInternal {
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
      * This feature covers
-     * {@link WebSettingsCompat#setBackForwardCacheSettings(WebSettings, BackForwardCacheSettings)}
      * {@link WebSettingsCompat#getBackForwardCacheSettings(WebSettings)}
      */
     public static final ApiFeature.NoFramework BACK_FORWARD_CACHE_SETTINGS =
             new ApiFeature.NoFramework(WebViewFeature.BACK_FORWARD_CACHE_SETTINGS,
                     Features.BACK_FORWARD_CACHE_SETTINGS);
 
+    /**
+     * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
+     * This feature covers
+     * {@link BackForwardCacheSettings#setMaxPagesInCache(int)}
+     * {@link BackForwardCacheSettings#setTimeoutSeconds(long)}
+     */
+    public static final ApiFeature.NoFramework BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3 =
+            new ApiFeature.NoFramework(WebViewFeature.BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3,
+                    Features.BACK_FORWARD_CACHE_SETTINGS_V3);
 
     public static final ApiFeature.NoFramework DELETE_BROWSING_DATA = new ApiFeature.NoFramework(
             WebViewFeature.DELETE_BROWSING_DATA, Features.WEB_STORAGE_DELETE_BROWSING_DATA
@@ -806,7 +814,7 @@ public class WebViewFeatureInternal {
      */
     public static final ApiFeature.NoFramework WEB_VIEW_NAVIGATION_LISTENER_V2 =
             new ApiFeature.NoFramework(
-            WebViewFeature.WEB_VIEW_NAVIGATION_LISTENER_EXPERIMENTAL_V2,
+                    WebViewFeature.WEB_VIEW_NAVIGATION_LISTENER_EXPERIMENTAL_V2,
                     Features.WEB_VIEW_NAVIGATION_LISTENER_V2);
 
     /**

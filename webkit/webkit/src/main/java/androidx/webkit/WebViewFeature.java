@@ -666,6 +666,15 @@ public class WebViewFeature {
      */
     public static final String BACK_FORWARD_CACHE_SETTINGS = "BACK_FORWARD_CACHE_SETTINGS";
 
+    /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers
+     * {@link BackForwardCacheSettings#setMaxPagesInCache(int)}
+     * {@link BackForwardCacheSettings#setTimeoutSeconds(long)}
+     */
+    public static final String BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3 =
+            "BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3";
+
 
     /**
      * Feature for {@link #isFeatureSupported(String)}.
