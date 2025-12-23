@@ -24,11 +24,12 @@ import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
@@ -49,7 +51,6 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalFocusManager
@@ -67,6 +68,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
@@ -797,185 +799,6 @@ class VerticalStackTest {
     }
 
     @Test
-    fun itemDecoration_setsSizeAndShapeOnItemScope() = runTest {
-        val state = StackState()
-        val triangleShape = GenericShape { size, _ ->
-            lineTo(size.width, 0f)
-            lineTo(size.width, size.height)
-            close()
-        }
-        var itemScope0: StackItemScopeImpl? = null
-        var itemScope1: StackItemScopeImpl? = null
-        var itemScope2: StackItemScopeImpl? = null
-        rule.setContent {
-            VerticalStack(state = state) {
-                repeat(10) { index ->
-                    item {
-                        itemScope0 = this as StackItemScopeImpl
-                        StackItem(
-                            "Item ${index * 3}",
-                            Modifier.height(10.dp).itemDecoration(RectangleShape),
-                        )
-                    }
-                    item {
-                        itemScope1 = this as StackItemScopeImpl
-                        StackItem(
-                            "Item ${index * 3 + 1}",
-                            Modifier.height(20.dp).itemDecoration(RoundedCornerShape(2.dp)),
-                        )
-                    }
-                    item {
-                        itemScope2 = this as StackItemScopeImpl
-                        StackItem(
-                            "Item ${index * 3 + 2}",
-                            Modifier.height(30.dp).itemDecoration(triangleShape),
-                        )
-                    }
-                }
-            }
-        }
-        val initialItemScope0 = itemScope0
-        val initialItemScope1 = itemScope1
-        val initialItemScope2 = itemScope2
-
-        rule.runOnIdle {
-            val itemDecoration0 = itemScope0?.firstDecoration()
-            val itemDecoration1 = itemScope1?.firstDecoration()
-            val itemDecoration2 = itemScope2?.firstDecoration()
-
-            with(rule.density) {
-                assertThat(itemDecoration0?.size?.height).isEqualTo(10.dp.roundToPx())
-                assertThat(itemDecoration1?.size?.height).isEqualTo(20.dp.roundToPx())
-                assertThat(itemDecoration2?.size?.height).isEqualTo(30.dp.roundToPx())
-            }
-
-            assertThat(itemDecoration0?.shape).isEqualTo(RectangleShape)
-            assertThat(itemDecoration1?.shape).isEqualTo(RoundedCornerShape(2.dp))
-            assertThat(itemDecoration2?.shape).isSameInstanceAs(triangleShape)
-        }
-
-        repeat(30) { index -> runOnUiThread { state.scrollToItem(index) } }
-
-        rule.runOnIdle {
-            assertThat(state.topItem).isEqualTo(29)
-            assertThat(itemScope0).isNotSameInstanceAs(initialItemScope0)
-            assertThat(itemScope1).isNotSameInstanceAs(initialItemScope1)
-            assertThat(itemScope2).isNotSameInstanceAs(initialItemScope2)
-
-            val itemDecoration0 = itemScope0?.firstDecoration()
-            val itemDecoration1 = itemScope1?.firstDecoration()
-            val itemDecoration2 = itemScope2?.firstDecoration()
-
-            with(rule.density) {
-                assertThat(itemDecoration0?.size?.height).isEqualTo(10.dp.roundToPx())
-                assertThat(itemDecoration1?.size?.height).isEqualTo(20.dp.roundToPx())
-                assertThat(itemDecoration2?.size?.height).isEqualTo(30.dp.roundToPx())
-            }
-
-            assertThat(itemDecoration0?.shape).isEqualTo(RectangleShape)
-            assertThat(itemDecoration1?.shape).isEqualTo(RoundedCornerShape(2.dp))
-            assertThat(itemDecoration2?.shape).isSameInstanceAs(triangleShape)
-        }
-    }
-
-    @Test
-    fun itemDecoration_shapeChange_updatesShapeOnItemScope() {
-        val state = StackState()
-        val triangleShape = GenericShape { size, _ ->
-            lineTo(size.width, 0f)
-            lineTo(size.width, size.height)
-            close()
-        }
-        var itemShape0: Shape by mutableStateOf(RectangleShape)
-        var itemShape1: Shape by mutableStateOf(RoundedCornerShape(2.dp))
-        var itemShape2: Shape by mutableStateOf(triangleShape)
-        var itemScope0: StackItemScopeImpl? = null
-        var itemScope1: StackItemScopeImpl? = null
-        var itemScope2: StackItemScopeImpl? = null
-        rule.setContent {
-            VerticalStack(state = state) {
-                item {
-                    itemScope0 = this as StackItemScopeImpl
-                    StackItem("Item 0", Modifier.itemDecoration(itemShape0))
-                }
-                item {
-                    itemScope1 = this as StackItemScopeImpl
-                    StackItem("Item 1", Modifier.itemDecoration(itemShape1))
-                }
-                item {
-                    itemScope2 = this as StackItemScopeImpl
-                    StackItem("Item 2", Modifier.itemDecoration(itemShape2))
-                }
-            }
-        }
-        rule.runOnIdle {
-            assertThat(itemScope0?.firstDecoration()?.shape).isEqualTo(RectangleShape)
-            assertThat(itemScope1?.firstDecoration()?.shape).isEqualTo(RoundedCornerShape(2.dp))
-            assertThat(itemScope2?.firstDecoration()?.shape).isEqualTo(triangleShape)
-        }
-
-        rule.runOnIdle {
-            itemShape0 = RoundedCornerShape(2.dp)
-            itemShape1 = triangleShape
-            itemShape2 = RectangleShape
-        }
-
-        rule.runOnIdle {
-            assertThat(itemScope0?.firstDecoration()?.shape).isEqualTo(RoundedCornerShape(2.dp))
-            assertThat(itemScope1?.firstDecoration()?.shape).isEqualTo(triangleShape)
-            assertThat(itemScope2?.firstDecoration()?.shape).isEqualTo(RectangleShape)
-        }
-    }
-
-    @Test
-    fun itemDecoration_sizeChange_updatesSizeOnItemScope() {
-        val state = StackState()
-        var itemScope0: StackItemScopeImpl? = null
-        var itemScope1: StackItemScopeImpl? = null
-        var itemScope2: StackItemScopeImpl? = null
-        var itemHeight0 by mutableStateOf(10.dp)
-        var itemHeight1 by mutableStateOf(20.dp)
-        var itemHeight2 by mutableStateOf(30.dp)
-        rule.setContent {
-            VerticalStack(state = state) {
-                item {
-                    itemScope0 = this as StackItemScopeImpl
-                    StackItem("Item 0", Modifier.height(itemHeight0).itemDecoration(RectangleShape))
-                }
-                item {
-                    itemScope1 = this as StackItemScopeImpl
-                    StackItem("Item 1", Modifier.height(itemHeight1).itemDecoration(RectangleShape))
-                }
-                item {
-                    itemScope2 = this as StackItemScopeImpl
-                    StackItem("Item 2", Modifier.height(itemHeight2).itemDecoration(RectangleShape))
-                }
-            }
-        }
-        rule.runOnIdle {
-            with(rule.density) {
-                assertThat(itemScope0?.firstDecoration()?.size?.height).isEqualTo(10.dp.roundToPx())
-                assertThat(itemScope1?.firstDecoration()?.size?.height).isEqualTo(20.dp.roundToPx())
-                assertThat(itemScope2?.firstDecoration()?.size?.height).isEqualTo(30.dp.roundToPx())
-            }
-        }
-
-        rule.runOnIdle {
-            itemHeight0 = 20.dp
-            itemHeight1 = 30.dp
-            itemHeight2 = 40.dp
-        }
-
-        rule.runOnIdle {
-            with(rule.density) {
-                assertThat(itemScope0?.firstDecoration()?.size?.height).isEqualTo(20.dp.roundToPx())
-                assertThat(itemScope1?.firstDecoration()?.size?.height).isEqualTo(30.dp.roundToPx())
-                assertThat(itemScope2?.firstDecoration()?.size?.height).isEqualTo(40.dp.roundToPx())
-            }
-        }
-    }
-
-    @Test
     fun masking_largerNextItem_clipsNextItemToTopItemShape() {
         val stackSize = 100.dp
         val state = StackState()
@@ -1127,6 +950,366 @@ class VerticalStackTest {
             assertWithMessage("Pixel at ($x, $y) should have the next-next item's color")
                 .that(nextNextItemColor.blue)
                 .isGreaterThan(0.3f)
+        }
+    }
+
+    @Test
+    fun masking_narrowDecoration_doesNotClip() {
+        val narrowDecorationWidth = 50.dp
+        val narrowDecorationHeight = 200.dp
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                item {
+                    // Item 0: Red, contains a narrow decoration, which does not mask Item 1
+                    Box(Modifier.fillMaxSize().focusable()) {
+                        Box(
+                            Modifier.size(
+                                    width = narrowDecorationWidth,
+                                    height = narrowDecorationHeight,
+                                )
+                                .itemDecoration(RectangleShape)
+                                .background(Color.Red)
+                        )
+                    }
+                }
+                item {
+                    // Item 1: Blue, should not be clipped by Item 0.
+                    StackItem("Item 1", Modifier.background(Color.Blue))
+                }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val narrowDecorationWidthPx = with(rule.density) { narrowDecorationWidth.roundToPx() }
+            val narrowDecorationHeightPx = with(rule.density) { narrowDecorationHeight.roundToPx() }
+            val pixels = toPixelMap()
+
+            assertWithMessage("The narrow decoration of Item 0 should be visible")
+                .that(pixels[narrowDecorationWidthPx / 2, narrowDecorationHeightPx / 2].toOpaque())
+                .isEqualTo(Color.Red)
+
+            assertWithMessage("Item 1 outside narrow decoration should not be clipped")
+                .that(pixels[pixels.width / 2, narrowDecorationHeightPx / 2].toOpaque())
+                .isEqualTo(Color.Blue)
+        }
+    }
+
+    @Test
+    fun masking_narrowDecorationBecomeWide_clipsAfterWidening() {
+        var widthFraction by mutableStateOf(0.5f)
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                item {
+                    // Item 0: Red, contains a narrow decoration initially.
+                    Box(
+                        Modifier.focusable()
+                            .fillMaxWidth(widthFraction)
+                            .height(10.dp)
+                            .itemDecoration(RectangleShape)
+                            .background(Color.Red)
+                    )
+                }
+                item {
+                    // Item 1: Blue, should not be clipped by Item 0 initially.
+                    StackItem("Item 1", Modifier.background(Color.Blue))
+                }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            assertWithMessage("Item 1 should not be clipped")
+                .that(pixels[pixels.width / 2, pixels.height / 2].toOpaque())
+                .isEqualTo(Color.Blue)
+        }
+
+        rule.runOnIdle { widthFraction = 1f }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            assertWithMessage("Item 1 should now be clipped")
+                .that(pixels[pixels.width / 2, pixels.height / 2].toOpaque())
+                .isNotEqualTo(Color.Blue)
+        }
+    }
+
+    @Test
+    fun masking_decorationHeightDecreases_updatesMask() {
+        var heightFraction by mutableStateOf(0.6f)
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                item {
+                    // Item 0: Red, contains a large decoration initially.
+                    Box(
+                        Modifier.focusable()
+                            .fillMaxWidth()
+                            .fillMaxHeight(heightFraction)
+                            .itemDecoration(RectangleShape)
+                            .background(Color.Red)
+                    )
+                }
+                item { StackItem("Item 1", Modifier.background(Color.Blue)) }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            assertWithMessage("Item 0 is in the middle of the stack viewport")
+                .that(pixels[pixels.width / 2, pixels.height / 2].toOpaque())
+                .isEqualTo(Color.Red)
+        }
+
+        rule.runOnIdle { heightFraction = 0.1f }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            assertWithMessage("Item 1 should now be clipped further")
+                .that(pixels[pixels.width / 2, (pixels.height * 0.8f).toInt()].toOpaque())
+                .isNotIn(listOf(Color.Red, Color.Blue))
+        }
+    }
+
+    @Test
+    fun masking_multipleDecorations_clipsToWidest() {
+        val narrowDecorationWidth = 50.dp
+        val narrowDecorationHeight = 200.dp
+        val wideDecorationHeight = 10.dp
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                item {
+                    // Item 0: Contains two decorations.
+                    // 1. Narrow but tall (Red)
+                    // 2. Wide (Green)
+                    // The clip should align to the Wide one (Green).
+                    Box(Modifier.fillMaxSize().focusable()) {
+                        Box(
+                            Modifier.size(
+                                    width = narrowDecorationWidth,
+                                    height = narrowDecorationHeight,
+                                )
+                                .itemDecoration(RectangleShape)
+                                .background(Color.Red)
+                        )
+                        Box(
+                            Modifier.padding(top = narrowDecorationHeight)
+                                .fillMaxWidth()
+                                .height(wideDecorationHeight)
+                                .itemDecoration(RectangleShape)
+                                .background(Color.Green)
+                        )
+                    }
+                }
+                item {
+                    // Item 1: Blue, should be clipped by Item 0.
+                    StackItem("Item 1", Modifier.background(Color.Blue))
+                }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val narrowDecorationWidthPx = with(rule.density) { narrowDecorationWidth.roundToPx() }
+            val narrowDecorationHeightPx = with(rule.density) { narrowDecorationHeight.roundToPx() }
+            val wideDecorationHeightPx = with(rule.density) { wideDecorationHeight.roundToPx() }
+            val pixels = toPixelMap()
+
+            assertWithMessage("The narrow decoration of Item 0 should be visible")
+                .that(pixels[narrowDecorationWidthPx / 2, narrowDecorationHeightPx / 2].toOpaque())
+                .isEqualTo(Color.Red)
+
+            assertWithMessage(
+                    "Item 1 outside narrow decoration but above clip line should be clipped"
+                )
+                .that(pixels[narrowDecorationWidthPx * 2, narrowDecorationHeightPx / 2].toOpaque())
+                .isNotEqualTo(Color.Blue)
+
+            val belowY = with(rule.density) { 50.dp.roundToPx() }
+            assertWithMessage("Item 1 should be visible below the clip line)")
+                .that(
+                    pixels[
+                            pixels.width / 2,
+                            narrowDecorationHeightPx + wideDecorationHeightPx + belowY]
+                        .toOpaque()
+                )
+                .isEqualTo(Color.Blue)
+        }
+    }
+
+    @Test
+    fun masking_removeDecoration_updatesClip() {
+        val narrowDecorationWidth = 50.dp
+        val narrowDecorationHeight = 200.dp
+        val wideDecorationHeight = 10.dp
+        val state = StackState()
+        var showWideDecoration by mutableStateOf(true)
+        rule.setContent {
+            VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                item {
+                    // Item 0: Contains two decorations.
+                    // 1. Narrow but tall (Red) -- always present
+                    // 2. Wide (Green) -- gets removed
+                    // The clip should initially align to the green one and then the red one.
+                    Box(Modifier.fillMaxSize().focusable()) {
+                        Box(
+                            Modifier.size(
+                                    width = narrowDecorationWidth,
+                                    height = narrowDecorationHeight,
+                                )
+                                .itemDecoration(RectangleShape)
+                                .background(Color.Red)
+                        )
+                        if (showWideDecoration) {
+                            Box(
+                                Modifier.padding(top = narrowDecorationHeight)
+                                    .fillMaxWidth()
+                                    .height(wideDecorationHeight)
+                                    .itemDecoration(RectangleShape)
+                                    .background(Color.Green)
+                            )
+                        }
+                    }
+                }
+                item {
+                    // Item 1: Blue, should be clipped by Item 0.
+                    StackItem("Item 1", Modifier.background(Color.Blue))
+                }
+            }
+        }
+        val narrowDecorationWidthPx = with(rule.density) { narrowDecorationWidth.roundToPx() }
+        val narrowDecorationHeightPx = with(rule.density) { narrowDecorationHeight.roundToPx() }
+
+        // Initially the clip line is aligned with the top of the wide decoration.
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+
+            assertWithMessage("The narrow decoration of Item 0 should be visible")
+                .that(pixels[narrowDecorationWidthPx / 2, narrowDecorationHeightPx / 2].toOpaque())
+                .isEqualTo(Color.Red)
+
+            assertWithMessage(
+                    "Item 1 outside narrow decoration but above the wide decoration should be clipped"
+                )
+                .that(pixels[narrowDecorationWidthPx * 2, narrowDecorationHeightPx / 2].toOpaque())
+                .isNotEqualTo(Color.Blue)
+        }
+
+        rule.runOnIdle { showWideDecoration = false }
+
+        // Now the clip line is aligned with the top of the narrow decoration.
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+
+            assertWithMessage("The narrow decoration of Item 0 should be visible")
+                .that(pixels[narrowDecorationWidthPx / 2, narrowDecorationHeightPx / 2].toOpaque())
+                .isEqualTo(Color.Red)
+
+            assertWithMessage("Item 1 outside narrow decoration should now be visible")
+                .that(pixels[narrowDecorationWidthPx * 2, narrowDecorationHeightPx / 2].toOpaque())
+                .isEqualTo(Color.Blue)
+        }
+    }
+
+    @Test
+    fun masking_changeDecorationOffset_updatesClip() {
+        val state = StackState()
+        val initialOffset = 200.dp
+        val decorationHeight = 10.dp
+        val shadowOffset = 50.dp
+        var offsetDp by mutableStateOf(initialOffset)
+        rule.setContent {
+            VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                item {
+                    Box(Modifier.fillMaxSize().focusable()) {
+                        Box(
+                            Modifier.padding(top = offsetDp)
+                                .fillMaxWidth()
+                                .height(decorationHeight)
+                                .itemDecoration(RectangleShape)
+                                .background(Color.Red)
+                        )
+                    }
+                }
+                item { StackItem("Item 1", Modifier.background(Color.Green)) }
+            }
+        }
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            val centerX = pixels.width / 2
+            assertWithMessage("Initially clips above the initial offset")
+                .that(pixels[centerX, initialOffset.toPx() / 2].toOpaque())
+                .isNotIn(listOf(Color.Red, Color.Green))
+            assertWithMessage("Item 1 is visible right below Item 0")
+                .that(
+                    pixels[
+                            centerX,
+                            initialOffset.toPx() + decorationHeight.toPx() + shadowOffset.toPx()]
+                        .toOpaque()
+                )
+                .isEqualTo(Color.Green)
+        }
+
+        rule.runOnIdle { offsetDp = initialOffset + decorationHeight + shadowOffset * 2 }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            val centerX = pixels.width / 2
+            assertWithMessage("Item 1 is clipped where it was visible before")
+                .that(
+                    pixels[
+                            centerX,
+                            initialOffset.toPx() + decorationHeight.toPx() + shadowOffset.toPx()]
+                        .toOpaque()
+                )
+                .isNotIn(listOf(Color.Red, Color.Green))
+        }
+    }
+
+    @Test
+    fun masking_roundedShape_clipsAtTopRadius() {
+        val topOffset = 100.dp
+        val cornerRadius = 100.dp
+        val shape = RoundedCornerShape(cornerRadius)
+        val state = StackState()
+        rule.setContent {
+            VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                item {
+                    // Item 0: Rounded Rect with the widest point at 'topRadius'.
+                    Box(Modifier.fillMaxSize().focusable()) {
+                        Box(
+                            Modifier.padding(top = topOffset)
+                                .fillMaxWidth()
+                                .height(cornerRadius * 2)
+                                .clip(shape)
+                                .itemDecoration(shape)
+                                .background(Color.Red)
+                        )
+                    }
+                }
+                item { StackItem("Item 1", Modifier.background(Color.Green)) }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            val topOffsetPx = topOffset.toPx()
+            val cornerRadiusPx = cornerRadius.toPx()
+            assertWithMessage("Pixels outside of the top-left rounded corner should be clipped")
+                .that(pixels[(cornerRadiusPx * 0.9f).toInt(), topOffsetPx + 1])
+                .isNotIn(listOf(Color.Red, Color.Green))
+            assertWithMessage("Pixels inside of the rounded corner should have the Item 0 color")
+                .that(pixels[(cornerRadiusPx * 0.9f).toInt(), topOffsetPx + cornerRadiusPx])
+                .isEqualTo(Color.Red)
+            assertWithMessage(
+                    "Pixels outside of the bottom-left rounded corner should have the Item 1 color"
+                )
+                .that(
+                    pixels[(cornerRadiusPx * 0.9f).toInt(), topOffsetPx + cornerRadiusPx * 2 - 1]
+                        .toOpaque()
+                )
+                .isEqualTo(Color.Green)
         }
     }
 
@@ -1943,6 +2126,8 @@ class VerticalStackTest {
     }
 
     private fun Color.toOpaque(): Color = copy(alpha = 1.0f)
+
+    private fun Dp.toPx(): Int = with(rule.density) { roundToPx() }
 }
 
 /** A short swipe duration to trigger a fling. */
