@@ -156,8 +156,11 @@ internal class Camera2CaptureSequenceProcessor(
             check(hasSurface)
 
             if (request.inputRequest != null) {
-                checkNotNull(imageWriter) {
-                    "Failed to create ImageWriter for capture session: $session"
+                if (imageWriter == null) {
+                    Log.error {
+                        "Failed to queue request to ImageWriter - No ImageWriter available!"
+                    }
+                    return null
                 }
                 val image = request.inputRequest.image
                 synchronized(lock) {
@@ -403,7 +406,10 @@ internal class Camera2CaptureSequenceProcessor(
                         threads.camera2Handler,
                     )
                 } catch (e: RuntimeException) {
-                    Log.warn(e) { "Failed to create ImageWriter for session $session" }
+                    Log.error(e) {
+                        "Failed to create ImageWriter for session $session! " +
+                            "Reprocessing will not be supported!"
+                    }
                     null
                 }
             if (androidImageWriter != null) {
