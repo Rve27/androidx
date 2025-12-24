@@ -21,9 +21,11 @@ import android.hardware.camera2.CameraExtensionSession
 import android.os.Build
 import android.view.Surface
 import androidx.annotation.GuardedBy
+import androidx.camera.camera2.pipe.CameraError
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraGraph.Flags.FinalizeSessionOnCloseBehavior
 import androidx.camera.camera2.pipe.CameraSurfaceManager
+import androidx.camera.camera2.pipe.GraphState
 import androidx.camera.camera2.pipe.OutputId
 import androidx.camera.camera2.pipe.StreamGraph
 import androidx.camera.camera2.pipe.StreamId
@@ -177,6 +179,9 @@ internal class CaptureSessionState(
     override fun onConfigureFailed(session: CameraCaptureSessionWrapper) {
         Log.warn { "$this Configuration Failed" }
         Debug.traceStart { "$this#onConfigureFailed" }
+        graphListener.onGraphError(
+            GraphState.GraphStateError(CameraError.ERROR_GRAPH_CONFIG, willAttemptRetry = false)
+        )
         shutdown()
         captureSessionAttemptCompleted.countDown()
         sessionSequencer?.release()
