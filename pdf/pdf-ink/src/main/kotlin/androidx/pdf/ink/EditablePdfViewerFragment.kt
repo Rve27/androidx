@@ -552,7 +552,19 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         val right = left + annotationToolbar.width
         val bottom = top + annotationToolbar.height
 
-        return Path().apply { addRect(left, top, right, bottom, Path.Direction.CW) }
+        val cornerRadiusPx = resources.getDimension(R.dimen.annotation_toolbar_corner_radius)
+
+        return Path().apply {
+            addRoundRect(
+                left,
+                top,
+                right,
+                bottom,
+                cornerRadiusPx,
+                cornerRadiusPx,
+                Path.Direction.CW,
+            )
+        }
     }
 
     /**
