@@ -207,6 +207,8 @@ internal class ItemDecorationNode(
     fun update(stackItemScope: StackItemScopeImpl, shape: Shape) {
         depthNode?.update(currentValueOfDepth(), shape)
         if (this.stackItemScope != stackItemScope || this.shape != shape) {
+            this.stackItemScope.decorations.remove(this)
+            stackItemScope.decorations.add(this)
             this.stackItemScope = stackItemScope
             this.shape = shape
             updateDecoration()
