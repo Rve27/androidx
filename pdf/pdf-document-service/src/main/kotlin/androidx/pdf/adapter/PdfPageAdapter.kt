@@ -21,7 +21,6 @@ import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.pdf.PdfRenderer
-import android.graphics.pdf.RenderParams
 import android.graphics.pdf.component.PdfAnnotation
 import android.graphics.pdf.component.PdfPageObject
 import android.graphics.pdf.content.PdfPageGotoLinkContent
@@ -38,7 +37,9 @@ import android.util.Pair
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
+import androidx.pdf.RenderParams
 import androidx.pdf.utils.getTransformationMatrix
+import androidx.pdf.utils.toAndroidClass
 
 /**
  * A [PdfPage] implementation that uses the [PdfRenderer.Page] class for rendering.
@@ -56,7 +57,7 @@ internal class PdfPageAdapter(private val page: PdfRenderer.Page) : PdfPage {
     override val width = page.width
 
     override fun renderPage(bitmap: Bitmap, renderParams: RenderParams) {
-        page.render(bitmap, null, null, renderParams)
+        page.render(bitmap, null, null, renderParams.toAndroidClass())
     }
 
     override fun renderTile(
@@ -76,7 +77,7 @@ internal class PdfPageAdapter(private val page: PdfRenderer.Page) : PdfPage {
                 width,
                 height,
             )
-        page.render(bitmap, null, transformationMatrix, renderParams)
+        page.render(bitmap, null, transformationMatrix, renderParams.toAndroidClass())
     }
 
     override fun getPageTextContents(): List<PdfPageTextContent> {
