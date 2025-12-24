@@ -425,8 +425,27 @@ class ActivitySpaceImplTest : SystemSpaceEntityImplTest() {
 
     @Test
     fun getScaleRelativeToRealWorldSpace_returnsVector3One() {
-        val activitySpaceImpl = activitySpace
+        testRuntime = createTestSceneRuntime(/* unscaledGravityAlignedActivitySpace= */ true)
+        activitySpace = testRuntime.activitySpace as ActivitySpaceImpl
+        val newTransform =
+            Matrix4.fromTrs(
+                Vector3.One,
+                Quaternion.fromEulerAngles(45f, 0f, 0f),
+                Vector3(2f, 2f, 2f),
+            )
+        activitySpace.handleOriginUpdate(newTransform)
+        assertVector3(activitySpace.worldSpaceScale, Vector3(1f, 1f, 1f))
+    }
 
-        assertVector3(activitySpaceImpl.getScale(Space.REAL_WORLD), Vector3(1f, 1f, 1f))
+    @Test
+    fun getPoseInOpenXrReferenceSpace_unscaledGravityAlignedTrue_returnsUnscaledPose() {
+        testRuntime = createTestSceneRuntime(/* unscaledGravityAlignedActivitySpace= */ true)
+        activitySpace = testRuntime.activitySpace as ActivitySpaceImpl
+        val initialRotation = Quaternion.fromEulerAngles(45f, 0f, 0f)
+        val newTransform = Matrix4.fromTrs(Vector3.One, initialRotation, Vector3(2f, 2f, 2f))
+        activitySpace.handleOriginUpdate(newTransform)
+        val pose = activitySpace.poseInOpenXrReferenceSpace
+        assertThat(pose).isNotNull()
+        assertPose(pose!!, Pose(Vector3.One, initialRotation))
     }
 }
