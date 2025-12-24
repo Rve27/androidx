@@ -28,7 +28,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -186,7 +185,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private lateinit var wetStrokesView: InProgressStrokesView
     private lateinit var annotationView: AnnotationsView
-    private lateinit var backPressedCallback: OnBackPressedCallback
     private lateinit var onViewportChangedListener: PdfView.OnViewportChangedListener
     private lateinit var gestureStateChangedListener: PdfView.OnGestureStateChangedListener
     private lateinit var wetStrokesOnFinishedListener: WetStrokesOnFinishedListener
@@ -268,8 +266,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         setupUiStateCollectors()
         setupTouchListeners()
         setUpPdfViewListeners()
-        setupBackPressedCallback()
-        setupDiscardChangesDialogListener()
         setupAnnotationToolbar()
     }
 
@@ -326,7 +322,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private fun updateUiForEditMode(isEnabled: Boolean) {
         PdfFeatureFlags.isMultiTouchScrollEnabled = isEnabled
-        backPressedCallback.isEnabled = isEnabled
 
         toolboxView.visibility = if (isEnabled) GONE else VISIBLE
         annotationToolbar.visibility = if (isEnabled) VISIBLE else GONE
@@ -342,17 +337,8 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         }
     }
 
-    private fun setupDiscardChangesDialogListener() {
-        childFragmentManager.setFragmentResultListener(
-            DiscardChangesDialog.REQUEST_KEY,
-            viewLifecycleOwner,
-        ) { _, _ ->
-            documentViewModel.discardUnsavedChanges()
-        }
-    }
-
     private fun setupTouchListeners() {
-        toolboxView.setOnEditClickListener { documentViewModel.isEditModeEnabled = true }
+        toolboxView.setOnEditClickListener { isEditModeEnabled = true }
 
         wetStrokesOnFinishedListener =
             WetStrokesOnFinishedListener(
@@ -382,32 +368,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 annotationToolbar.dismissPopups()
             }
         pdfContainer.setOnTouchListener(annotationsViewOnTouchListener)
-    }
-
-    private fun setupBackPressedCallback() {
-        backPressedCallback =
-            object : OnBackPressedCallback(enabled = false) {
-                override fun handleOnBackPressed() {
-                    if (documentViewModel.hasUnsavedChanges()) {
-                        showDiscardChangesDialog()
-                    } else {
-                        documentViewModel.isEditModeEnabled = false
-                    }
-                }
-            }
-        requireActivity()
-            .onBackPressedDispatcher
-            .addCallback(viewLifecycleOwner, backPressedCallback)
-    }
-
-    private fun showDiscardChangesDialog() {
-        val dialog =
-            (childFragmentManager.findFragmentByTag(DiscardChangesDialog.TAG)
-                as? DiscardChangesDialog) ?: DiscardChangesDialog()
-
-        if (!dialog.isAdded) {
-            dialog.show(childFragmentManager, DiscardChangesDialog.TAG)
-        }
     }
 
     private fun updateAnnotationsView(displayState: AnnotationsDisplayState) {
