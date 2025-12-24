@@ -127,7 +127,7 @@ public class SandboxedPdfLoader(
             binder.isPdfLinearized(),
             binder.getFormType(),
             renderParams = renderParams,
-            annotationsProcessor = BatchPdfAnnotationsProcessor(binder),
+            batchPdfAnnotationsProcessor = BatchPdfAnnotationsProcessor(binder),
         )
     }
 

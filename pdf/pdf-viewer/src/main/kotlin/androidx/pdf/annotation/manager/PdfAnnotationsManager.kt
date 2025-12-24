@@ -17,6 +17,7 @@
 package androidx.pdf.annotation.manager
 
 import androidx.annotation.RestrictTo
+import androidx.pdf.EditsDraft
 import androidx.pdf.PdfDocument
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.draftstate.AnnotationEditsDraftState
@@ -35,6 +36,13 @@ public interface PdfAnnotationsManager {
      * @return A list of [KeyedPdfAnnotation] for the specified page.
      */
     public suspend fun getAnnotations(pageNum: Int): List<KeyedPdfAnnotation>
+
+    /**
+     * Retrieves all local modifications made to the document annotations.
+     *
+     * @return A [EditsDraft] representing the current state of all modified items.
+     */
+    public suspend fun getAnnotationModifications(): EditsDraft
 
     /**
      * Adds a new keyed annotation.

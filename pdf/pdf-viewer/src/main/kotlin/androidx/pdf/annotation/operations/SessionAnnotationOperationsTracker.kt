@@ -16,6 +16,9 @@
 
 package androidx.pdf.annotation.operations
 
+import androidx.pdf.EditsDraft
+import androidx.pdf.MutableEditsDraft
+import androidx.pdf.annotation.AnnotationHandleIdGenerator.decomposeAnnotationId
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotation
 import java.util.Collections
@@ -77,6 +80,26 @@ internal class SessionAnnotationOperationsTracker : AnnotationOperationsTracker 
         synchronized(operationsMap) {
             return ArrayList(operationsMap.values)
         }
+    }
+
+    override fun getModificationsSnapshot(): EditsDraft {
+        val mutableEditsDraft = MutableEditsDraft()
+        operationsMap.forEach { (_, operation) ->
+            when (operation.operationType) {
+                KeyedAnnotationOperation.OperationType.ADD -> {
+                    mutableEditsDraft.insert(operation.keyedAnnotation.annotation)
+                }
+                KeyedAnnotationOperation.OperationType.UPDATE -> {
+                    val (unused, aospId) = decomposeAnnotationId(operation.keyedAnnotation.key)
+                    mutableEditsDraft.update(aospId, operation.keyedAnnotation.annotation)
+                }
+                KeyedAnnotationOperation.OperationType.REMOVE -> {
+                    val (pageNum, aospId) = decomposeAnnotationId(operation.keyedAnnotation.key)
+                    mutableEditsDraft.remove(aospId, pageNum)
+                }
+            }
+        }
+        return mutableEditsDraft.toEditsDraft()
     }
 
     override fun isDeleted(key: String): Boolean {

@@ -17,6 +17,7 @@
 package androidx.pdf.annotation.operations
 
 import androidx.annotation.RestrictTo
+import androidx.pdf.EditsDraft
 import androidx.pdf.annotation.models.PdfAnnotation
 
 /** Manages and tracks the lifecycle of annotation modification operations within a session. */
@@ -51,6 +52,15 @@ public interface AnnotationOperationsTracker {
      * @return A list of [KeyedAnnotationOperation] objects ready to be persisted or rendered.
      */
     public fun getSnapshot(): List<KeyedAnnotationOperation>
+
+    /**
+     * Retrieves a snapshot of all current modifications (additions, updates, and removals)
+     * accumulated in this tracker.
+     *
+     * @return An [EditsDraft] object containing the ordered collection of operations (Inserts,
+     *   Updates, Removes).
+     */
+    public fun getModificationsSnapshot(): EditsDraft
 
     /**
      * Returns the new annotation if the annotation with [key] has been updated. Returns null

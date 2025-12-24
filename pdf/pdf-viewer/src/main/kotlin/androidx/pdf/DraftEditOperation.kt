@@ -19,7 +19,6 @@ package androidx.pdf
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.RestrictTo
-import androidx.core.os.ParcelCompat
 import androidx.pdf.annotation.models.PdfAnnotation
 
 internal const val TAG_INSERT = 1
@@ -36,9 +35,9 @@ public interface DraftEditOperation : Parcelable {
             object : Parcelable.Creator<DraftEditOperation> {
                 override fun createFromParcel(parcel: Parcel): DraftEditOperation {
                     return when (val tag = parcel.readInt()) {
-                        TAG_INSERT -> InsertDraftEditOperation(parcel)
-                        TAG_UPDATE -> UpdateDraftEditOperation(parcel)
-                        TAG_REMOVE -> RemoveDraftEditOperation(parcel)
+                        TAG_INSERT -> InsertDraftEditOperation.createFromParcel(parcel)
+                        TAG_UPDATE -> UpdateDraftEditOperation.createFromParcel(parcel)
+                        TAG_REMOVE -> RemoveDraftEditOperation.createFromParcel(parcel)
                         else ->
                             throw IllegalArgumentException("Unknown DraftEditOperation tag: $tag")
                     }
@@ -59,31 +58,17 @@ public interface DraftEditOperation : Parcelable {
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class InsertDraftEditOperation(public val annotation: PdfAnnotation) : DraftEditOperation {
 
-    internal constructor(
-        parcel: Parcel
-    ) : this(
-        annotation =
-            ParcelCompat.readParcelable(
-                parcel,
-                PdfAnnotation::class.java.classLoader,
-                PdfAnnotation::class.java,
-            )!!
-    )
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(TAG_INSERT)
-        parcel.writeParcelable(annotation, flags)
+        annotation.writeToParcel(parcel, flags)
     }
 
     override fun describeContents(): Int = 0
 
     public companion object CREATOR : Parcelable.Creator<InsertDraftEditOperation> {
         override fun createFromParcel(parcel: Parcel): InsertDraftEditOperation {
-            val tag = parcel.readInt()
-            if (tag != TAG_INSERT) {
-                throw IllegalArgumentException("Invalid tag for Insert operation: $tag")
-            }
-            return InsertDraftEditOperation(parcel)
+            val annotation = PdfAnnotation.CREATOR.createFromParcel(parcel)!!
+            return InsertDraftEditOperation(annotation)
         }
 
         override fun newArray(size: Int): Array<InsertDraftEditOperation?> {
@@ -102,33 +87,19 @@ public class InsertDraftEditOperation(public val annotation: PdfAnnotation) : Dr
 public class UpdateDraftEditOperation(public val id: String, public val annotation: PdfAnnotation) :
     DraftEditOperation {
 
-    internal constructor(
-        parcel: Parcel
-    ) : this(
-        id = parcel.readString() ?: "",
-        annotation =
-            ParcelCompat.readParcelable(
-                parcel,
-                PdfAnnotation::class.java.classLoader,
-                PdfAnnotation::class.java,
-            )!!,
-    )
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(TAG_UPDATE)
         parcel.writeString(id)
-        parcel.writeParcelable(annotation, flags)
+        annotation.writeToParcel(parcel, flags)
     }
 
     override fun describeContents(): Int = 0
 
     public companion object CREATOR : Parcelable.Creator<UpdateDraftEditOperation> {
         override fun createFromParcel(parcel: Parcel): UpdateDraftEditOperation {
-            val tag = parcel.readInt()
-            if (tag != TAG_UPDATE) {
-                throw IllegalArgumentException("Invalid tag for Update operation: $tag")
-            }
-            return UpdateDraftEditOperation(parcel)
+            val id = parcel.readString() ?: ""
+            val annotation = PdfAnnotation.CREATOR.createFromParcel(parcel)!!
+            return UpdateDraftEditOperation(id, annotation)
         }
 
         override fun newArray(size: Int): Array<UpdateDraftEditOperation?> {
@@ -147,10 +118,6 @@ public class UpdateDraftEditOperation(public val id: String, public val annotati
 public class RemoveDraftEditOperation(public val id: String, public val pageNum: Int) :
     DraftEditOperation {
 
-    internal constructor(
-        parcel: Parcel
-    ) : this(id = parcel.readString() ?: "", pageNum = parcel.readInt())
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(TAG_REMOVE)
         parcel.writeString(id)
@@ -161,11 +128,9 @@ public class RemoveDraftEditOperation(public val id: String, public val pageNum:
 
     public companion object CREATOR : Parcelable.Creator<RemoveDraftEditOperation> {
         override fun createFromParcel(parcel: Parcel): RemoveDraftEditOperation {
-            val tag = parcel.readInt()
-            if (tag != TAG_REMOVE) {
-                throw IllegalArgumentException("Invalid tag for Remove operation: $tag")
-            }
-            return RemoveDraftEditOperation(parcel)
+            val id = parcel.readString() ?: ""
+            val pageNum = parcel.readInt()
+            return RemoveDraftEditOperation(id, pageNum)
         }
 
         override fun newArray(size: Int): Array<RemoveDraftEditOperation?> {

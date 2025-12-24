@@ -31,6 +31,7 @@ import androidx.annotation.RestrictTo
 public data class AnnotationsDisplayState(
     val edits: PdfEdits,
     val transformationMatrices: Map<Int, Matrix>,
+    val visiblePageAnnotations: VisiblePdfAnnotations = VisiblePdfAnnotations.EMPTY,
 ) {
     public companion object {
         public val EMPTY: AnnotationsDisplayState =
