@@ -21,12 +21,17 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 
-/** Routes touch events to either ink view or pdf view based on single or multi-touch gestures. */
-internal class AnnotationsViewOnTouchListener(
+/**
+ * An [View.OnTouchListener] for the [androidx.pdf.view.PdfContentLayout] that routes touch events
+ * to either the annotation layers or the underlying PDF view.
+ */
+internal class PdfContentLayoutTouchListener(
     context: Context,
-    private val wetStrokesViewDispatcher: TouchEventDispatcher,
+    private val annotationsTouchEventDispatcher: TouchEventDispatcher,
     private val pdfViewDispatcher: TouchEventDispatcher,
 ) : View.OnTouchListener {
+
+    internal var isAnnotationInteractionEnabled: Boolean = true
 
     private var currentDispatcher: TouchEventDispatcher? = null
     private var isSingleTouchCommitted = false
@@ -36,6 +41,17 @@ internal class AnnotationsViewOnTouchListener(
     private val touchSlop: Int by lazy { ViewConfiguration.get(context).scaledTouchSlop }
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
+        if (!isAnnotationInteractionEnabled) {
+            if (currentDispatcher == annotationsTouchEventDispatcher) {
+                // Send a CANCEL event to the annotations dispatcher to clean up its state.
+                val cancelEvent =
+                    MotionEvent.obtain(event).apply { action = MotionEvent.ACTION_CANCEL }
+                currentDispatcher?.dispatchTouchEvent(cancelEvent)
+                cancelEvent.recycle()
+                resetState()
+            }
+            return pdfViewDispatcher.dispatchTouchEvent(event)
+        }
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> handleDown(event)
             MotionEvent.ACTION_POINTER_DOWN -> handlePointerDown(event)
@@ -49,7 +65,12 @@ internal class AnnotationsViewOnTouchListener(
 
     private fun handleDown(event: MotionEvent) {
         primaryPointerId = event.getPointerId(0)
-        currentDispatcher = wetStrokesViewDispatcher
+        currentDispatcher =
+            if (isAnnotationInteractionEnabled) {
+                annotationsTouchEventDispatcher
+            } else {
+                pdfViewDispatcher
+            }
         isSingleTouchCommitted = false
         downX = event.x
         downY = event.y
@@ -103,7 +124,7 @@ internal class AnnotationsViewOnTouchListener(
         }
 
         val primaryPointerIndex = event.findPointerIndex(primaryPointerId)
-        if (isSingleTouchCommitted && currentDispatcher == wetStrokesViewDispatcher) {
+        if (isSingleTouchCommitted && currentDispatcher == annotationsTouchEventDispatcher) {
             if (primaryPointerIndex != -1) {
                 val x = event.getX(primaryPointerIndex)
                 val y = event.getY(primaryPointerIndex)
@@ -121,7 +142,7 @@ internal class AnnotationsViewOnTouchListener(
             }
         } else {
             if (
-                currentDispatcher == wetStrokesViewDispatcher &&
+                currentDispatcher == annotationsTouchEventDispatcher &&
                     !isSingleTouchCommitted &&
                     primaryPointerIndex != -1
             ) {
@@ -139,7 +160,10 @@ internal class AnnotationsViewOnTouchListener(
         val actionIndex = event.actionIndex
         val liftedPointerId = event.getPointerId(actionIndex)
 
-        if (currentDispatcher == wetStrokesViewDispatcher && liftedPointerId == primaryPointerId) {
+        if (
+            currentDispatcher == annotationsTouchEventDispatcher &&
+                liftedPointerId == primaryPointerId
+        ) {
             val upEvent =
                 MotionEvent.obtain(
                     event.downTime,

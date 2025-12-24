@@ -83,34 +83,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         }
 
     /**
-     * The current interaction mode of the view, determining how touch events are handled (e.g.,
-     * selecting via [AnnotationMode.Select] or highlighting via [AnnotationMode.Highlight]).
+     * The current interaction mode, determining how touch events are handled for annotations.
+     *
+     * Set to [AnnotationMode.Select] to enable selecting existing annotations, or
+     * [AnnotationMode.Highlight] to create new text highlights. If `null`, touch interactions for
+     * annotations are disabled on [androidx.pdf.annotation.AnnotationsView] and its children.
      *
      * This property must only be modified on the UI thread.
      */
-    public var interactionMode: AnnotationMode = AnnotationMode.Select()
+    public var interactionMode: AnnotationMode? = null
         set(value) {
             checkMainThread()
             field = value
-        }
-
-    /**
-     * Configures the highlighter.
-     *
-     * @param config The configuration for the highlighter. Pass null to disable.
-     */
-    public fun setHighlighter(config: HighlighterConfig?) {
-        inProgressHighlightsView.apply {
-            if (config != null) {
-                pdfDocument = config.pdfDocument
-                highlightColor = config.color
-                visibility = VISIBLE
+            if (value is AnnotationMode.Highlight) {
+                setHighlighter(value.highlighterConfig)
             } else {
-                pdfDocument = null
-                visibility = GONE
+                setHighlighter(null)
             }
         }
-    }
 
     /** Provides page information from view coordinates */
     public var pageInfoProvider: PageInfoProvider? = null
@@ -145,6 +135,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
     private var annotationDrawerFactory: PdfAnnotationDrawerFactory =
         PdfAnnotationDrawerFactoryImpl(pdfObjectDrawerFactory)
+
+    /**
+     * Configures the highlighter.
+     *
+     * @param config The configuration for the highlighter. Pass null to disable.
+     */
+    private fun setHighlighter(config: HighlighterConfig?) {
+        inProgressHighlightsView.apply {
+            if (config != null) {
+                pdfDocument = config.pdfDocument
+                highlightColor = config.color
+                visibility = VISIBLE
+            } else {
+                pdfDocument = null
+                visibility = GONE
+            }
+        }
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -194,7 +202,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         public class Select : AnnotationMode()
 
         /** Mode for creating new highlight annotations. */
-        public class Highlight : AnnotationMode()
+        public class Highlight(public val highlighterConfig: HighlighterConfig) : AnnotationMode()
     }
 
     public companion object {

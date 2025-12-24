@@ -811,20 +811,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         ) ?: true
     }
 
-    /** Returns a [SparseArray] of page locations ([RectF]) in view coordinates. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public fun getCurrentPageLocations(): SparseArray<RectF> {
-        val localPageLayoutManager = pageLayoutManager ?: return SparseArray()
-        val pageLocations = localPageLayoutManager.pageLocations
-
-        val pageLocationsInViewCoords = SparseArray<RectF>(pageLocations.size())
-        pageLocations.forEach { page, pageLocationsInContentCoords ->
-            val rectToTransform = RectF(pageLocationsInContentCoords)
-            pageLocationsInViewCoords.put(page, rectToTransform.asViewRectF())
-        }
-        return pageLocationsInViewCoords
-    }
-
     @VisibleForTesting internal var pdfViewAccessibilityManager: PdfViewAccessibilityManager? = null
     @VisibleForTesting
     internal var isAccessibilityEnabled: Boolean =
