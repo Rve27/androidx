@@ -81,6 +81,8 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         get() = state[EDIT_MODE_ENABLED_KEY] ?: false
         set(value) {
             state[EDIT_MODE_ENABLED_KEY] = value
+            // Discard any draft changes when exiting edit mode
+            if (!value) discardUnsavedChanges()
             updateAnnotationInteractionState()
         }
 
@@ -250,7 +252,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         editablePdfDocument != null && editsHistoryManager?.canUndo?.value ?: false
 
     /** Discards all uncommitted edits, reverting the document to its last saved state. */
-    internal fun discardUnsavedChanges() {
+    private fun discardUnsavedChanges() {
         val document = editablePdfDocument ?: return
 
         document.clearUncommittedEdits()
@@ -259,7 +261,6 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         _annotationDisplayStateFlow.update { displayState ->
             displayState.copy(edits = document.getAllEdits())
         }
-        isEditModeEnabled = false
     }
 
     private fun setupManagersAndHandlers(documentUri: Uri?, document: EditablePdfDocument?) {

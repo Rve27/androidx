@@ -87,6 +87,7 @@ internal open class FakeEditablePdfDocument(
     private val textContents: List<PdfPageTextContent> = emptyList(),
     private val pageFormWidgetInfos: Map<Int, List<FormWidgetInfo>> = mapOf(),
     initialEdits: List<PdfAnnotation> = emptyList(),
+    private val onClearUncommittedChanges: (() -> Unit)? = null,
 ) : EditablePdfDocument() {
     override val pageCount: Int = pages.size
 
@@ -339,7 +340,7 @@ internal open class FakeEditablePdfDocument(
     override fun getAllEdits(): PdfEdits = PdfEdits(edits.values.groupBy { it.annotation.pageNum })
 
     override fun clearUncommittedEdits() {
-        TODO("Not yet implemented")
+        onClearUncommittedChanges?.invoke()
     }
 
     override fun createWriteHandle(): PdfWriteHandle {

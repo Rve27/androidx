@@ -42,6 +42,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.io.File
 import java.util.concurrent.Executors
+import junit.framework.TestCase.assertFalse
+import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.first
@@ -326,12 +328,23 @@ class EditableDocumentViewModelTest {
 
     @Test
     fun updateEditMode_updatesIsAnnotationInteractionEnabled() = runTest {
+        var areUncommittedChangesCleared = false
+        val testUri = Uri.fromFile(File("test2.pdf"))
+        val testDocument =
+            FakeEditablePdfDocument(
+                uri = requireNotNull(testUri),
+                onClearUncommittedChanges = { areUncommittedChangesCleared = true },
+            )
+        annotationsViewModel.maybeInitialiseForDocument(testDocument)
+
         // Mark annotations visible throughout test
         annotationsViewModel.areAnnotationsVisible = true
+        assertFalse(areUncommittedChangesCleared)
 
         // Exit edit mode
         annotationsViewModel.isEditModeEnabled = false
         assertThat(annotationsViewModel.isAnnotationInteractionEnabled.first()).isFalse()
+        assertTrue(areUncommittedChangesCleared)
         // Enter edit mode
         annotationsViewModel.isEditModeEnabled = true
         assertThat(annotationsViewModel.isAnnotationInteractionEnabled.first()).isTrue()
