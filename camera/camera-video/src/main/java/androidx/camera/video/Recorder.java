@@ -77,6 +77,7 @@ import androidx.camera.core.SurfaceRequest;
 import androidx.camera.core.impl.AdapterCameraInfo;
 import androidx.camera.core.impl.CameraConfig;
 import androidx.camera.core.impl.CameraInfoInternal;
+import androidx.camera.core.impl.EncoderProfilesProvider;
 import androidx.camera.core.impl.MutableStateObservable;
 import androidx.camera.core.impl.Observable;
 import androidx.camera.core.impl.StateObservable;
@@ -3159,9 +3160,7 @@ public final class Recorder implements VideoOutput {
             @NonNull CameraInfo cameraInfo,
             @VideoCapabilitiesSource int videoCapabilitiesSource) {
         if (shouldSkipCapabilitiesCache(cameraInfo)) {
-            return new RecorderVideoCapabilities(videoCapabilitiesSource,
-                    (CameraInfoInternal) cameraInfo, videoRecordingType,
-                    VideoEncoderInfoImpl.FINDER);
+            return createVideoCapabilities(videoRecordingType, cameraInfo, videoCapabilitiesSource);
         }
 
         AdapterCameraInfo adapterCameraInfo = (AdapterCameraInfo) cameraInfo;
@@ -3175,13 +3174,28 @@ public final class Recorder implements VideoOutput {
             VideoCapabilities capabilities = sVideoCapabilitiesCache.get(key);
 
             if (capabilities == null) {
-                capabilities = new RecorderVideoCapabilities(videoCapabilitiesSource,
-                        (CameraInfoInternal) cameraInfo, videoRecordingType,
-                        VideoEncoderInfoImpl.FINDER);
+                capabilities = createVideoCapabilities(videoRecordingType, cameraInfo,
+                        videoCapabilitiesSource);
                 sVideoCapabilitiesCache.put(key, capabilities);
             }
             return capabilities;
         }
+    }
+
+    private static @NonNull VideoCapabilities createVideoCapabilities(
+            @VideoRecordingType int videoRecordingType,
+            @NonNull CameraInfo cameraInfo,
+            @VideoCapabilitiesSource int videoCapabilitiesSource) {
+        @Quality.QualitySource
+        int qualitySource = videoRecordingType == Recorder.VIDEO_RECORDING_TYPE_HIGH_SPEED
+                ? Quality.QUALITY_SOURCE_HIGH_SPEED : Quality.QUALITY_SOURCE_REGULAR;
+
+        EncoderProfilesProvider resolvedProvider = EncoderProfilesProviderResolver.resolve(
+                (CameraInfoInternal) cameraInfo, videoCapabilitiesSource, qualitySource,
+                VideoEncoderInfoImpl.FINDER);
+
+        return new RecorderVideoCapabilities(resolvedProvider, qualitySource,
+                (CameraInfoInternal) cameraInfo);
     }
 
     /**

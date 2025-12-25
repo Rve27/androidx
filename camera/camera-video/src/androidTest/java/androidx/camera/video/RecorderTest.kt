@@ -32,6 +32,7 @@ import android.media.MediaCodec
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.net.Uri
+import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Size
@@ -44,6 +45,7 @@ import androidx.camera.core.DynamicRange
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.core.impl.AdapterCameraInfo
+import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.ImageFormatConstants
 import androidx.camera.core.impl.Observable.Observer
 import androidx.camera.core.impl.utils.executor.CameraXExecutors.directExecutor
@@ -193,6 +195,8 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var camera: Camera
     private lateinit var cameraSelector: CameraSelector
+    private lateinit var cameraInfoInternal: CameraInfoInternal
+    private lateinit var videoCapabilities: VideoCapabilities
 
     private lateinit var preview: Preview
     private lateinit var surfaceTexturePreview: Preview
@@ -220,7 +224,8 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
         // Using Preview so that the surface provider could be set to control when to issue the
         // surface request.
         val cameraInfo = camera.cameraInfo
-        val videoCapabilities = Recorder.getVideoCapabilities(cameraInfo)
+        cameraInfoInternal = cameraInfo as CameraInfoInternal
+        videoCapabilities = Recorder.getVideoCapabilities(cameraInfo)
         val candidates =
             mutableSetOf<Size>().apply {
                 if (testName.methodName == "setFileSizeLimit") {
@@ -1390,6 +1395,44 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
 
         // Assert
         assertThat(capabilities1).isNotSameInstanceAs(capabilities2)
+    }
+
+    @Test
+    fun getVideoCapabilities_supportStandardDynamicRange() {
+        assumeFalse(isDeviceWithCamcorderProfileResolutionMismatch())
+
+        assertThat(videoCapabilities.supportedDynamicRanges).contains(DynamicRange.SDR)
+    }
+
+    @Test
+    fun getVideoCapabilities_supportedQualitiesOfSdrIsNotEmpty() {
+        assumeFalse(isDeviceWithCamcorderProfileResolutionMismatch())
+
+        assertThat(videoCapabilities.getSupportedQualities(DynamicRange.SDR)).isNotEmpty()
+    }
+
+    /**
+     * Checks if the device has a known mismatch between CamcorderProfile resolutions and the
+     * camera's supported output sizes (b/231903433).
+     *
+     * See go/camerax-camcorder-profile-no-matching-resolutions
+     */
+    private fun isDeviceWithCamcorderProfileResolutionMismatch(): Boolean {
+        val isNokia2Point1 =
+            "nokia".equals(Build.BRAND, true) && "nokia 2.1".equals(Build.MODEL, true)
+        val isMotoE5Play =
+            "motorola".equals(Build.BRAND, true) && "moto e5 play".equals(Build.MODEL, true)
+
+        return isNokia2Point1 || isMotoE5Play
+    }
+
+    @Test
+    fun getHighSpeedVideoCapabilities_whenCameraDoesNotSupportHighSpeed_returnNull() {
+        assumeFalse(cameraInfoInternal.isHighSpeedSupported)
+
+        val videoCapabilities = Recorder.getHighSpeedVideoCapabilities(camera.cameraInfo)
+
+        assertThat(videoCapabilities).isNull()
     }
 
     private fun testRecorderIsConfiguredBasedOnTargetVideoEncodingBitrate(targetBitrate: Int) {
