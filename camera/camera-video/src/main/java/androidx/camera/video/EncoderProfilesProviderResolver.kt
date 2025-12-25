@@ -37,7 +37,6 @@ internal object EncoderProfilesProviderResolver {
     private const val TAG = "EncoderProfilesResolver"
 
     /** Resolves the [EncoderProfilesProvider] based on the camera info and source. */
-    @JvmStatic
     fun resolve(
         cameraInfo: CameraInfoInternal,
         @Recorder.VideoCapabilitiesSource videoCapabilitiesSource: Int,
