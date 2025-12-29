@@ -203,20 +203,12 @@ private fun StackItemLayout(
  */
 private fun Modifier.maskItemsBelow(state: StackState, itemScope: StackItemScopeImpl): Modifier =
     this.drawWithContent {
-        val maskOffset = itemScope.maskOffset
-        val maskBounds = itemScope.maskOutline?.bounds
-
-        if (maskOffset == null || maskBounds == null) {
-            drawContent()
-            return@drawWithContent
-        }
-
         val viewportSize = state.layoutInfoInternal.viewportSize
-        val viewportHeight = viewportSize.height.toFloat()
         val viewportWidth = viewportSize.width.toFloat()
 
-        if (maskBounds.width >= (viewportWidth - 0.5f)) {
+        if (itemScope.maskWidth >= (viewportWidth - DecorationWidthNoiseThresholdPx)) {
             // Only apply the mask to the items below (Z-axis) if the mask fills the viewport width.
+            val viewportHeight = viewportSize.height.toFloat()
             drawRect(
                 Color.Black,
                 blendMode = BlendMode.DstOut,
@@ -224,9 +216,7 @@ private fun Modifier.maskItemsBelow(state: StackState, itemScope: StackItemScope
                 // stack viewport depending on the scroll position. We need to deduct the viewport
                 // height to make the starting Y offset negative, so that the mask region extends
                 // upwards to the top of the stack viewport.
-                // TODO(b/467651864): replace (height / 2) with the Y offset of the widest line in
-                // the decoration to handle generic shapes.
-                topLeft = Offset(x = 0f, y = maskOffset.y + maskBounds.height / 2 - viewportHeight),
+                topLeft = Offset(x = 0f, y = itemScope.maskBottomY - viewportHeight),
                 size = Size(width = viewportWidth, height = viewportHeight),
             )
         }

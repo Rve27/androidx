@@ -24,12 +24,14 @@ import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -1186,6 +1188,59 @@ class VerticalStackTest {
     }
 
     @Test
+    fun masking_multipleEqualWidthDecorations_clipsAboveTopMost() {
+        val topOffset = 100.dp
+        val decorationHeight = 10.dp
+        val interDecorationDistance = 100.dp
+        val state = StackState()
+        rule.setContent {
+            Box(Modifier.background(Color.Red)) {
+                VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                    item {
+                        Column(Modifier.padding(top = topOffset).fillMaxSize().focusable()) {
+                            Box(
+                                Modifier.fillMaxWidth()
+                                    .height(decorationHeight)
+                                    .itemDecoration(RectangleShape)
+                                    .background(Color.Green)
+                            )
+                            Spacer(Modifier.height(interDecorationDistance))
+                            Box(
+                                Modifier.fillMaxWidth()
+                                    .height(decorationHeight)
+                                    .itemDecoration(RectangleShape)
+                                    .background(Color.Green)
+                            )
+                        }
+                    }
+                    item { StackItem("Large item", Modifier.background(Color.Blue)) }
+                }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            val offsetX = pixels.width / 2
+            val topOffsetPx = topOffset.toPx()
+            val decorationHeightPx = decorationHeight.toPx()
+            val interDecorationDistancePx = interDecorationDistance.toPx()
+
+            assertWithMessage("Next item is masked above the first decoration")
+                .that(pixels[offsetX, topOffsetPx / 2].toOpaque())
+                .isEqualTo(Color.Red)
+
+            assertWithMessage("Next item is not masked between the two decorations")
+                .that(
+                    pixels[
+                            offsetX,
+                            topOffsetPx + decorationHeightPx + interDecorationDistancePx / 2]
+                        .toOpaque()
+                )
+                .isEqualTo(Color.Blue)
+        }
+    }
+
+    @Test
     fun masking_removeDecoration_updatesClip() {
         val narrowDecorationWidth = 50.dp
         val narrowDecorationHeight = 200.dp
@@ -1358,6 +1413,131 @@ class VerticalStackTest {
                     "Pixels outside of the bottom-left rounded corner should have the Item 1 color"
                 )
                 .that(pixels[offsetPx, topOffsetPx + cornerRadiusPx * 2 - offsetPx + 2].toOpaque())
+                .isEqualTo(Color.Blue)
+        }
+    }
+
+    @Test
+    fun masking_genericShape_selectsWidestPoint() {
+        val topOffset = 100.dp
+        val decorationHeight = 100.dp
+        // Shape definition:
+        // - Starts at 60% height (padding at top).
+        // - Widest point is at 80% of the total size.
+        // - Ends at 100% height.
+        // Bounds: top=0.6, bottom=1.0. Height=0.4.
+        // Widest point relative to bounds: At 0.2 (which is 0.8 absolute - 0.6 top).
+        val shiftedDiamondShape = GenericShape { size, _ ->
+            moveTo(size.width / 2f, size.height * 0.6f) // Start 60% down
+            lineTo(size.width, size.height * 0.8f) // Widest point at 80%
+            lineTo(size.width / 2f, size.height)
+            lineTo(0f, size.height * 0.8f) // Widest point at 80%
+            close()
+        }
+
+        rule.setContent {
+            Box(Modifier.fillMaxSize().background(Color.Red)) {
+                VerticalStack(state = StackState(), modifier = Modifier.testTag("stack")) {
+                    item {
+                        Box(Modifier.fillMaxSize().focusable()) {
+                            Box(
+                                Modifier.padding(top = topOffset)
+                                    .fillMaxWidth()
+                                    .height(decorationHeight)
+                                    .clip(shiftedDiamondShape)
+                                    .itemDecoration(shiftedDiamondShape)
+                                    .background(Color.Green)
+                            )
+                        }
+                    }
+                    item { StackItem("Item 1", Modifier.background(Color.Blue)) }
+                }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            val topOffsetPx = topOffset.toPx()
+            val decorationHeightPx = decorationHeight.toPx()
+            val offsetXPx = pixels.width / 4
+
+            assertWithMessage("Pixels above the widest point should be clipped")
+                .that(
+                    pixels[offsetXPx, (topOffsetPx + decorationHeightPx * 0.5f - 1).toInt()]
+                        .toOpaque()
+                )
+                .isEqualTo(Color.Red)
+
+            assertWithMessage(
+                    "Pixels at 70% (between calculated relative height and absolute height) should be clipped"
+                )
+                .that(
+                    pixels[offsetXPx, (topOffsetPx + decorationHeightPx * 0.7f - 1).toInt()]
+                        .toOpaque()
+                )
+                .isEqualTo(Color.Red)
+
+            assertWithMessage("Pixels below the widest point should have Item 1 color")
+                .that(
+                    pixels[offsetXPx, (topOffsetPx + decorationHeightPx * 0.95f).toInt()].toOpaque()
+                )
+                .isEqualTo(Color.Blue)
+        }
+    }
+
+    @Test
+    fun masking_genericShape_picksTopMostWidestPoint() {
+        val state = StackState()
+        val topOffset = 100.dp
+        val decorationHeight = 100.dp
+        // Widest points are at 0.3 (top) and 0.7 (bottom).
+        // The masking logic should pick the top widest line.
+        val indentedRhombusShape = GenericShape { size, _ ->
+            apply {
+                moveTo(size.width * 0.5f, 0f)
+                lineTo(size.width, size.height * 0.3f)
+                lineTo(size.width * 0.6f, size.height * 0.5f)
+                lineTo(size.width, size.height * 0.7f)
+                lineTo(size.width * 0.5f, size.height)
+                lineTo(0f, size.height * 0.7f)
+                lineTo(size.width * 0.4f, size.height * 0.5f)
+                lineTo(0f, size.height * 0.3f)
+                close()
+            }
+        }
+        rule.setContent {
+            Box(Modifier.fillMaxSize().background(Color.Red)) {
+                VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                    item {
+                        Box(Modifier.fillMaxSize().focusable()) {
+                            Box(
+                                Modifier.padding(top = topOffset)
+                                    .fillMaxWidth()
+                                    .height(decorationHeight)
+                                    .clip(indentedRhombusShape)
+                                    .itemDecoration(indentedRhombusShape)
+                                    .background(Color.Green)
+                            )
+                        }
+                    }
+                    item { StackItem("Item 1", Modifier.background(Color.Blue)) }
+                }
+            }
+        }
+
+        rule.onNodeWithTag("stack").captureToImage().run {
+            val pixels = toPixelMap()
+            val topOffsetPx = topOffset.toPx()
+            val decorationHeightPx = decorationHeight.toPx()
+            val offsetXPx = pixels.width / 4
+            assertWithMessage("Pixels above the top widest point should be clipped")
+                .that(pixels[offsetXPx, topOffsetPx + 5].toOpaque())
+                .isEqualTo(Color.Red)
+            assertWithMessage("Pixels in the indented area should have Item 1 color")
+                .that(pixels[offsetXPx, topOffsetPx + decorationHeightPx / 2].toOpaque())
+                .isEqualTo(Color.Blue)
+            assertWithMessage("Pixels below the widest bottom point should have Item 1 color")
+                .that(pixels[offsetXPx, topOffsetPx + decorationHeightPx - 5].toOpaque())
                 .isEqualTo(Color.Blue)
         }
     }
