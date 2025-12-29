@@ -83,6 +83,7 @@ import androidx.xr.glimmer.performIndirectRelease
 import androidx.xr.glimmer.performIndirectSwipe
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import kotlin.math.sqrt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -90,7 +91,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.After
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1314,7 +1314,6 @@ class VerticalStackTest {
         }
     }
 
-    @Ignore // b/471249095
     @Test
     fun masking_roundedShape_clipsAtTopRadius() {
         val topOffset = 100.dp
@@ -1322,21 +1321,23 @@ class VerticalStackTest {
         val shape = RoundedCornerShape(cornerRadius)
         val state = StackState()
         rule.setContent {
-            VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
-                item {
-                    // Item 0: Rounded Rect with the widest point at 'topRadius'.
-                    Box(Modifier.fillMaxSize().focusable()) {
-                        Box(
-                            Modifier.padding(top = topOffset)
-                                .fillMaxWidth()
-                                .height(cornerRadius * 2)
-                                .clip(shape)
-                                .itemDecoration(shape)
-                                .background(Color.Red)
-                        )
+            Box(Modifier.fillMaxSize().background(Color.Red)) {
+                VerticalStack(state = state, modifier = Modifier.testTag("stack")) {
+                    item {
+                        // Item 0: Rounded Rect with the widest point at the 'cornerRadius' Y offset
+                        Box(Modifier.fillMaxSize().focusable()) {
+                            Box(
+                                Modifier.padding(top = topOffset)
+                                    .fillMaxWidth()
+                                    .height(cornerRadius * 2)
+                                    .clip(shape)
+                                    .itemDecoration(shape)
+                                    .background(Color.Green)
+                            )
+                        }
                     }
+                    item { StackItem("Item 1", Modifier.background(Color.Blue)) }
                 }
-                item { StackItem("Item 1", Modifier.background(Color.Green)) }
             }
         }
 
@@ -1344,20 +1345,20 @@ class VerticalStackTest {
             val pixels = toPixelMap()
             val topOffsetPx = topOffset.toPx()
             val cornerRadiusPx = cornerRadius.toPx()
+            val cornerRadiusLegPx = cornerRadiusPx / sqrt(2f)
+            val offsetPx = (cornerRadiusPx - cornerRadiusLegPx).toInt()
+
             assertWithMessage("Pixels outside of the top-left rounded corner should be clipped")
-                .that(pixels[(cornerRadiusPx * 0.9f).toInt(), topOffsetPx + 1])
-                .isNotIn(listOf(Color.Red, Color.Green))
-            assertWithMessage("Pixels inside of the rounded corner should have the Item 0 color")
-                .that(pixels[(cornerRadiusPx * 0.9f).toInt(), topOffsetPx + cornerRadiusPx])
+                .that(pixels[offsetPx, topOffsetPx + offsetPx - 2])
                 .isEqualTo(Color.Red)
+            assertWithMessage("Pixels inside of the rounded corner should have the Item 0 color")
+                .that(pixels[offsetPx, topOffsetPx + offsetPx + 2])
+                .isEqualTo(Color.Green)
             assertWithMessage(
                     "Pixels outside of the bottom-left rounded corner should have the Item 1 color"
                 )
-                .that(
-                    pixels[(cornerRadiusPx * 0.9f).toInt(), topOffsetPx + cornerRadiusPx * 2 - 1]
-                        .toOpaque()
-                )
-                .isEqualTo(Color.Green)
+                .that(pixels[offsetPx, topOffsetPx + cornerRadiusPx * 2 - offsetPx + 2].toOpaque())
+                .isEqualTo(Color.Blue)
         }
     }
 
