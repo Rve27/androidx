@@ -289,9 +289,9 @@ abstract class AndroidXExtension(
         private set
 
     /** Description for this artifact to use in .pom files */
-    var description: String? = null
+    abstract val description: Property<String>
     /** The year when the development of this library started to use in .pom files */
-    var inceptionYear: String? = null
+    abstract val inceptionYear: Property<String>
 
     /** The main license to add when publishing. Default is Apache 2. */
     var license: License =
