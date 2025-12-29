@@ -21,7 +21,7 @@ import androidx.xr.arcore.ArDevice
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.spatial.LocalSubspaceRootNode
 import androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode
-import androidx.xr.compose.subspace.node.LayoutCoordinatesAwareModifierNode
+import androidx.xr.compose.subspace.node.SubspaceLayoutAwareModifierNode
 import androidx.xr.compose.subspace.node.SubspaceLayoutModifierNode
 import androidx.xr.compose.subspace.node.SubspaceModifierNodeElement
 import androidx.xr.compose.subspace.node.currentValueOf
@@ -109,7 +109,7 @@ private class LookAtUserElement(private val up: Vector3) :
 internal class LookAtUserNode(var up: Vector3) :
     SubspaceModifier.Node(),
     SubspaceLayoutModifierNode,
-    LayoutCoordinatesAwareModifierNode,
+    SubspaceLayoutAwareModifierNode,
     CompositionLocalConsumerSubspaceModifierNode {
     private lateinit var session: Session
     private lateinit var arDevice: ArDevice
@@ -134,7 +134,7 @@ internal class LookAtUserNode(var up: Vector3) :
         arDevice = ArDevice.getInstance(session)
     }
 
-    override fun onLayoutCoordinates(coordinates: SubspaceLayoutCoordinates) {
+    override fun onPlaced(coordinates: SubspaceLayoutCoordinates) {
         manageHeadPoseJob()
     }
 

@@ -1176,8 +1176,8 @@ package androidx.xr.compose.subspace.node {
     method public static <T> T currentValueOf(androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode, androidx.compose.runtime.CompositionLocal<T> local);
   }
 
-  public interface LayoutCoordinatesAwareModifierNode extends androidx.xr.compose.subspace.layout.DelegatableSubspaceNode {
-    method public void onLayoutCoordinates(androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates coordinates);
+  public interface SubspaceLayoutAwareModifierNode extends androidx.xr.compose.subspace.layout.DelegatableSubspaceNode {
+    method public void onPlaced(androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates coordinates);
   }
 
   public interface SubspaceLayoutModifierNode extends androidx.xr.compose.subspace.layout.DelegatableSubspaceNode {
