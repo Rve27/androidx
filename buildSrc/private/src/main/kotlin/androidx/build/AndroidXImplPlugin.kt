@@ -224,7 +224,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             if (androidXExtension.shouldPublishSbom().get()) {
                 project.configureSbomPublishing(androidXExtension.isIsolatedProjectsEnabled())
             }
-            if (androidXExtension.shouldPublish()) {
+            if (androidXExtension.shouldPublish.get()) {
                 project.validatePublishedMultiplatformHasDefault()
                 project.addLicensesToPublishedArtifacts(androidXExtension.license)
                 project.registerValidateRelocatedDependenciesTask()
@@ -376,7 +376,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             evaluatedProject.kotlinExtensionOrNull?.let { kotlinExtension ->
                 kotlinExtension.coreLibrariesVersion = kotlinVersionStringProvider.get()
             }
-            if (evaluatedProject.androidXExtension.shouldPublish()) {
+            if (evaluatedProject.androidXExtension.shouldPublish.get()) {
                 tasks.register(
                     CheckKotlinApiTargetTask.TASK_NAME,
                     CheckKotlinApiTargetTask::class.java,
@@ -1037,7 +1037,9 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             val isProbablyPublished =
                 type == SoftwareType.PUBLISHED_LIBRARY ||
                     type == SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
-            if (mavenGroup != null && isProbablyPublished && androidXExtension.shouldPublish()) {
+            if (
+                mavenGroup != null && isProbablyPublished && androidXExtension.shouldPublish.get()
+            ) {
                 validateProjectMavenGroup(mavenGroup.group)
                 validateProjectMavenName(androidXExtension.name.get(), mavenGroup.group)
                 validateProjectStructure(mavenGroup.group)
@@ -1083,7 +1085,8 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
 
         project.afterEvaluate {
             check(
-                !androidXExtension.shouldPublish() || !compileOptions.isCoreLibraryDesugaringEnabled
+                !androidXExtension.shouldPublish.get() ||
+                    !compileOptions.isCoreLibraryDesugaringEnabled
             ) {
                 "AndroidX libraries are not permitted to use core library desugaring as it " +
                     "forces library users to also enable core library desugaring."
@@ -1638,13 +1641,13 @@ fun Project.validateProjectParser(androidXExtension: AndroidXExtension) {
             "$errorPrefix Incorrectly computed libraryType = ${parsed.softwareType} " +
                 "instead of ${androidXExtension.type.get()}"
         }
-        check(androidXExtension.shouldPublish() == parsed.shouldPublish()) {
+        check(androidXExtension.shouldPublish.get() == parsed.shouldPublish()) {
             "$errorPrefix Incorrectly computed shouldPublish() = ${parsed.shouldPublish()} " +
-                "instead of ${androidXExtension.shouldPublish()}"
+                "instead of ${androidXExtension.shouldPublish.get()}"
         }
-        check(androidXExtension.shouldRelease() == parsed.shouldRelease()) {
+        check(androidXExtension.shouldRelease.get() == parsed.shouldRelease()) {
             "$errorPrefix Incorrectly computed shouldRelease() = ${parsed.shouldRelease()} " +
-                "instead of ${androidXExtension.shouldRelease()}"
+                "instead of ${androidXExtension.shouldRelease.get()}"
         }
         check(androidXExtension.projectDirectlySpecifiesMavenVersion == parsed.specifiesVersion) {
             "$errorPrefix Incorrectly computed specifiesVersion = ${parsed.specifiesVersion} " +

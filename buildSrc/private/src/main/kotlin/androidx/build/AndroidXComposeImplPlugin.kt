@@ -63,7 +63,7 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
 
     companion object {
         private fun Project.configureAndroidCommonOptions(lint: Lint) {
-            val isPublished = androidXExtension.shouldPublish()
+            val isPublished = androidXExtension.shouldPublish.get()
             val type = androidXExtension.type.get()
 
             lint.apply {

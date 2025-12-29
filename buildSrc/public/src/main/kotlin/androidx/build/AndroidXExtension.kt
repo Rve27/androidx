@@ -302,13 +302,15 @@ abstract class AndroidXExtension(
 
     private var extraLicenses: MutableCollection<License> = ArrayList()
 
-    fun shouldPublish(): Boolean = type.get().publish.shouldPublish()
+    val shouldPublish: Provider<Boolean>
+        get() = type.map { it.publish.shouldPublish() }
 
-    fun shouldRelease(): Boolean = type.get().publish.shouldRelease()
+    val shouldRelease: Provider<Boolean>
+        get() = type.map { it.publish.shouldRelease() }
 
     fun ifReleasing(action: () -> Unit) {
         project.afterEvaluate {
-            if (shouldRelease()) {
+            if (shouldRelease.get()) {
                 action()
             }
         }
