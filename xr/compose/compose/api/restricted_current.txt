@@ -1039,13 +1039,13 @@ package androidx.xr.compose.subspace.layout {
     method @InaccessibleFromKotlin public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? getParentCoordinates();
     method @InaccessibleFromKotlin public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? getParentLayoutCoordinates();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPoseInParentEntity();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPoseInParent();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPoseInRoot();
     method @InaccessibleFromKotlin public androidx.xr.compose.unit.IntVolumeSize getSize();
     property public abstract androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? parentCoordinates;
     property public abstract androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? parentLayoutCoordinates;
     property public abstract androidx.xr.runtime.math.Pose pose;
-    property public abstract androidx.xr.runtime.math.Pose poseInParentEntity;
+    property public abstract androidx.xr.runtime.math.Pose poseInParent;
     property public abstract androidx.xr.runtime.math.Pose poseInRoot;
     property public abstract androidx.xr.compose.unit.IntVolumeSize size;
   }
