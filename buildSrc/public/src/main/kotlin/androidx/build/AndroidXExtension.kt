@@ -302,9 +302,9 @@ abstract class AndroidXExtension(
 
     private var extraLicenses: MutableCollection<License> = ArrayList()
 
-    fun shouldPublish(): Boolean = type.publish.shouldPublish()
+    fun shouldPublish(): Boolean = type.get().publish.shouldPublish()
 
-    fun shouldRelease(): Boolean = type.publish.shouldRelease()
+    fun shouldRelease(): Boolean = type.get().publish.shouldRelease()
 
     fun ifReleasing(action: () -> Unit) {
         project.afterEvaluate {
@@ -314,15 +314,18 @@ abstract class AndroidXExtension(
         }
     }
 
-    fun shouldPublishSbom(): Boolean {
-        if (isIsolatedProjectsEnabled()) return false
-        // IDE plugins are used by and ship inside Studio
-        return shouldPublish() || type == SoftwareType.IDE_PLUGIN
+    fun shouldPublishSbom(): Provider<Boolean> {
+        return type.zip(project.provider { isIsolatedProjectsEnabled() }) { type, isolated ->
+            if (isolated) return@zip false
+            // IDE plugins are used by and ship inside Studio
+            type.publish.shouldPublish() || type == SoftwareType.IDE_PLUGIN
+        }
     }
 
     var doNotDocumentReason: String? = null
 
-    var type: SoftwareType = SoftwareType.UNSET
+    val type: Property<SoftwareType> =
+        project.objects.property(SoftwareType::class.java).convention(SoftwareType.UNSET)
 
     val failOnDeprecationWarnings: Property<Boolean> =
         project.objects.property(Boolean::class.java).convention(true)
@@ -364,8 +367,8 @@ abstract class AndroidXExtension(
         return@lazy tags
     }
 
-    fun shouldEnforceKotlinStrictApiMode(): Boolean {
-        return !legacyDisableKotlinStrictApiMode && type.checkApi is RunApiTasks.Yes
+    fun shouldEnforceKotlinStrictApiMode(): Provider<Boolean> {
+        return type.map { !legacyDisableKotlinStrictApiMode && it.checkApi is RunApiTasks.Yes }
     }
 
     fun extraLicense(closure: Closure<Any>): License {

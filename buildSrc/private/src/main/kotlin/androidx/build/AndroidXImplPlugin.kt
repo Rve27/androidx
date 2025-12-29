@@ -221,7 +221,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         project.validateProjectParser(androidXExtension)
         project.validateAllArchiveInputsRecognized()
         project.afterEvaluate {
-            if (androidXExtension.shouldPublishSbom()) {
+            if (androidXExtension.shouldPublishSbom().get()) {
                 project.configureSbomPublishing(androidXExtension.isIsolatedProjectsEnabled())
             }
             if (androidXExtension.shouldPublish()) {
@@ -432,9 +432,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                     project.plugins.hasPlugin(KotlinMultiplatformAndroidPlugin::class.java)
             }
         val defaultJavaTargetVersion =
-            project.provider {
-                getDefaultTargetJavaVersion(androidXExtension.type, project.name).toString()
-            }
+            androidXExtension.type.map { getDefaultTargetJavaVersion(it, project.name).toString() }
         val defaultJvmTarget = defaultJavaTargetVersion.map { JvmTarget.fromTarget(it) }
         if (plugin is KotlinMultiplatformPluginWrapper) {
             project.extensions.getByType<KotlinMultiplatformExtension>().apply {
@@ -447,9 +445,9 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 }
                 targets.withType(KotlinJvmTarget::class.java).configureEach { target ->
                     val defaultTargetVersionForNonAndroidTargets =
-                        project.provider {
+                        androidXExtension.type.map {
                             getDefaultTargetJavaVersion(
-                                    softwareType = androidXExtension.type,
+                                    softwareType = it,
                                     projectName = project.name,
                                     targetName = target.name,
                                 )
@@ -504,7 +502,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                             "-Xjspecify-annotations=strict",
                             "-Xtype-enhancement-improvements-strict-mode",
                         )
-                    if (androidXExtension.type.targetsKotlinConsumersOnly) {
+                    if (androidXExtension.type.get().targetsKotlinConsumersOnly) {
                         // The Kotlin Compiler adds intrinsic assertions which are only relevant
                         // when the code is consumed by Java users. Therefore we can turn this off
                         // when code is being consumed by Kotlin users.
@@ -559,7 +557,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         project.afterEvaluate {
             val kotlinExtension = project.kotlinExtensionOrNull
             kotlinExtension?.explicitApi =
-                if (androidXExtension.shouldEnforceKotlinStrictApiMode()) {
+                if (androidXExtension.shouldEnforceKotlinStrictApiMode().get()) {
                     ExplicitApiMode.Strict
                 } else {
                     ExplicitApiMode.Disabled
@@ -724,7 +722,8 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             @Suppress("UnstableApiUsage")
             variant.configureJavaCompileTask { compile ->
                 val defaultTargetJavaVersion =
-                    getDefaultTargetJavaVersion(androidXExtension.type, project.name).toString()
+                    getDefaultTargetJavaVersion(androidXExtension.type.get(), project.name)
+                        .toString()
                 compile.sourceCompatibility = defaultTargetJavaVersion
                 compile.targetCompatibility = defaultTargetJavaVersion
             }
@@ -980,7 +979,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         project.afterEvaluate {
             javaExtension.apply {
                 val defaultTargetJavaVersion =
-                    getDefaultTargetJavaVersion(androidXExtension.type, project.name)
+                    getDefaultTargetJavaVersion(androidXExtension.type.get(), project.name)
                 sourceCompatibility = defaultTargetJavaVersion
                 targetCompatibility = defaultTargetJavaVersion
             }
@@ -1034,10 +1033,10 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         // AndroidXExtension.mavenGroup is not readable until afterEvaluate.
         afterEvaluate {
             val mavenGroup = androidXExtension.mavenGroup
+            val type = androidXExtension.type.get()
             val isProbablyPublished =
-                androidXExtension.type == SoftwareType.PUBLISHED_LIBRARY ||
-                    androidXExtension.type ==
-                        SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
+                type == SoftwareType.PUBLISHED_LIBRARY ||
+                    type == SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
             if (mavenGroup != null && isProbablyPublished && androidXExtension.shouldPublish()) {
                 validateProjectMavenGroup(mavenGroup.group)
                 validateProjectMavenName(androidXExtension.name.get(), mavenGroup.group)
@@ -1100,9 +1099,9 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
 
             project.enforceBanOnVersionRanges()
 
-            if (androidXExtension.type.compilationTarget != CompilationTarget.DEVICE) {
+            if (androidXExtension.type.get().compilationTarget != CompilationTarget.DEVICE) {
                 throw IllegalStateException(
-                    "${androidXExtension.type.name} libraries cannot apply the android plugin, as" +
+                    "${androidXExtension.type.get().name} libraries cannot apply the android plugin, as" +
                         " they do not target android devices"
                 )
             }
@@ -1302,7 +1301,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
     ) {
         if (buildFeatures.isIsolatedProjectsEnabled()) return
         afterEvaluate {
-            if (androidXExtension.type.requiresDependencyVerification()) {
+            if (androidXExtension.type.get().requiresDependencyVerification()) {
                 taskConfigurator(project.createVerifyDependencyVersionsTask())
             }
         }
@@ -1475,7 +1474,7 @@ internal fun getDefaultTargetJavaVersion(
 
 /** Must be called from a `project.afterEvaluate` block. */
 private fun Project.addTestLintK1Task(androidXExt: AndroidXExtension) {
-    if (!androidXExt.type.isLint()) {
+    if (!androidXExt.type.get().isLint()) {
         return
     }
 
@@ -1502,7 +1501,7 @@ private fun Project.addTestLintK1Task(androidXExt: AndroidXExtension) {
 }
 
 private fun Project.validateLintVersionTestExists(androidXExtension: AndroidXExtension) {
-    if (!androidXExtension.type.isLint()) {
+    if (!androidXExtension.type.get().isLint()) {
         return
     }
     kotlinExtensionOrNull?.let { extension ->
@@ -1635,9 +1634,9 @@ fun Project.validateProjectParser(androidXExtension: AndroidXExtension) {
     project.gradle.taskGraph.whenReady {
         val parsed = project.parse()
         val errorPrefix = "ProjectParser error parsing ${project.path}."
-        check(androidXExtension.type == parsed.softwareType) {
+        check(androidXExtension.type.get() == parsed.softwareType) {
             "$errorPrefix Incorrectly computed libraryType = ${parsed.softwareType} " +
-                "instead of ${androidXExtension.type}"
+                "instead of ${androidXExtension.type.get()}"
         }
         check(androidXExtension.shouldPublish() == parsed.shouldPublish()) {
             "$errorPrefix Incorrectly computed shouldPublish() = ${parsed.shouldPublish()} " +
