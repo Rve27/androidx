@@ -38,6 +38,7 @@ public data class AnnotationsDisplayState(
             AnnotationsDisplayState(
                 edits = PdfEdits(editsByPage = emptyMap()),
                 transformationMatrices = emptyMap(),
+                visiblePageAnnotations = VisiblePdfAnnotations.EMPTY,
             )
     }
 }

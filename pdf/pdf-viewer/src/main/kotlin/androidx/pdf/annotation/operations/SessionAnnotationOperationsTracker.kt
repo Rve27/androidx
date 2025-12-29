@@ -21,6 +21,7 @@ import androidx.pdf.MutableEditsDraft
 import androidx.pdf.annotation.AnnotationHandleIdGenerator.decomposeAnnotationId
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.registry.AnnotationHandleRegistry
 import java.util.Collections
 
 /**
@@ -43,7 +44,9 @@ import java.util.Collections
  * 3. Thread Safety: All access to the internal storage is synchronized, making it safe to record
  *    operations from the UI thread while simultaneously snapshotting from a background sync thread.
  */
-internal class SessionAnnotationOperationsTracker : AnnotationOperationsTracker {
+internal class SessionAnnotationOperationsTracker(
+    private val handleRegistry: AnnotationHandleRegistry
+) : AnnotationOperationsTracker {
     private val operationsMap: MutableMap<String, KeyedAnnotationOperation> =
         Collections.synchronizedMap(LinkedHashMap())
 
@@ -85,17 +88,22 @@ internal class SessionAnnotationOperationsTracker : AnnotationOperationsTracker 
     override fun getModificationsSnapshot(): EditsDraft {
         val mutableEditsDraft = MutableEditsDraft()
         operationsMap.forEach { (_, operation) ->
-            when (operation.operationType) {
-                KeyedAnnotationOperation.OperationType.ADD -> {
-                    mutableEditsDraft.insert(operation.keyedAnnotation.annotation)
-                }
-                KeyedAnnotationOperation.OperationType.UPDATE -> {
-                    val (unused, aospId) = decomposeAnnotationId(operation.keyedAnnotation.key)
-                    mutableEditsDraft.update(aospId, operation.keyedAnnotation.annotation)
-                }
-                KeyedAnnotationOperation.OperationType.REMOVE -> {
-                    val (pageNum, aospId) = decomposeAnnotationId(operation.keyedAnnotation.key)
-                    mutableEditsDraft.remove(aospId, pageNum)
+            val handleId = operation.keyedAnnotation.key
+            val sourceId = handleRegistry.getSourceId(handleId)
+
+            // If sourceId is null, it's a draft or invalid, so we skip it.
+            if (sourceId != null) {
+                when (operation.operationType) {
+                    KeyedAnnotationOperation.OperationType.ADD -> {
+                        mutableEditsDraft.insert(operation.keyedAnnotation.annotation)
+                    }
+                    KeyedAnnotationOperation.OperationType.UPDATE -> {
+                        mutableEditsDraft.update(sourceId, operation.keyedAnnotation.annotation)
+                    }
+                    KeyedAnnotationOperation.OperationType.REMOVE -> {
+                        val (pageNum, _) = decomposeAnnotationId(handleId)
+                        mutableEditsDraft.remove(sourceId, pageNum)
+                    }
                 }
             }
         }

@@ -19,6 +19,7 @@ package androidx.pdf.annotation.operations
 import androidx.annotation.RestrictTo
 import androidx.pdf.EditsDraft
 import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.registry.AnnotationHandleRegistry
 
 /** Manages and tracks the lifecycle of annotation modification operations within a session. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -81,8 +82,8 @@ public interface AnnotationOperationsTracker {
     public fun clear(): Unit
 
     public companion object {
-        public fun create(): AnnotationOperationsTracker {
-            return SessionAnnotationOperationsTracker()
+        public fun create(registry: AnnotationHandleRegistry): AnnotationOperationsTracker {
+            return SessionAnnotationOperationsTracker(registry)
         }
     }
 }

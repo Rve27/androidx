@@ -87,11 +87,12 @@ public interface PdfAnnotationsManager {
 
     public companion object {
         public fun create(document: PdfDocument): PdfAnnotationsManager {
+            val handleRegistry = AnnotationHandleRegistry.create()
             return PdfDocumentAnnotationsManager(
                 draftState = AnnotationEditsDraftState.create(),
                 annotationsRepository = AnnotationsRepository.create(document),
-                handleRegistry = AnnotationHandleRegistry.create(),
-                operationsTracker = AnnotationOperationsTracker.create(),
+                handleRegistry = handleRegistry,
+                operationsTracker = AnnotationOperationsTracker.create(handleRegistry),
             )
         }
     }
