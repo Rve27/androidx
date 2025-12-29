@@ -54,6 +54,11 @@ import kotlin.math.roundToInt
  * the item on top of the stack is prominently displayed. [VerticalStack] implements the item
  * traversal in a vertical direction.
  *
+ * Note: When displaying text within a [VerticalStack], it is strongly recommended to set
+ * [androidx.compose.ui.text.TextStyle.textMotion] to
+ * [androidx.compose.ui.text.style.TextMotion.Animated]. This ensures smooth rendering during layout
+ * animations or scaling transitions, preventing pixel-snapping artifacts.
+ *
  * @sample androidx.xr.glimmer.samples.VerticalStackSample
  * @param modifier the modifier to apply to this layout.
  * @param state the state of the stack.
