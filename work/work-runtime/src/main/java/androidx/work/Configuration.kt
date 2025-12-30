@@ -182,6 +182,18 @@ public class Configuration internal constructor(builder: Builder) {
      */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val tracer: Tracer
 
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) private val enableRepresentativeJobs: Boolean
+
+    /**
+     * Specifies whether WorkManager will prioritize unique constraints when scheduling with
+     * JobScheduler. This is intended to reduce the risk of starvation when many jobs with similar
+     * constraints are scheduled.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun isRepresentativeJobsEnabled(): Boolean {
+        return enableRepresentativeJobs
+    }
+
     init {
         val builderWorkerDispatcher = builder.workerContext
 
@@ -229,6 +241,7 @@ public class Configuration internal constructor(builder: Builder) {
         workExecutionEventListener = builder.workExecutionEventListener
         workExecutionEventExecutor = builder.workExecutionEventExecutor ?: executor
         tracer = builder.tracer ?: createDefaultTracer()
+        enableRepresentativeJobs = builder.enableRepresentativeJobs
     }
 
     /** A Builder for [Configuration]s. */
@@ -255,6 +268,7 @@ public class Configuration internal constructor(builder: Builder) {
         internal var workExecutionEventListener: WorkExecutionEventListener? = null
         internal var workExecutionEventExecutor: Executor? = null
         internal var tracer: Tracer? = null
+        internal var enableRepresentativeJobs: Boolean = false
 
         /** Creates a new [Configuration.Builder]. */
         public constructor()
@@ -630,6 +644,20 @@ public class Configuration internal constructor(builder: Builder) {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun setTracer(tracer: Tracer): Builder {
             this.tracer = tracer
+            return this
+        }
+
+        /**
+         * Specifies whether WorkManager will prioritize unique constraints when scheduling with
+         * JobScheduler. This is intended to reduce the risk of starvation when many jobs with
+         * similar constraints are scheduled.
+         *
+         * @param enabled whether to enable representative jobs
+         * @return This [Builder] instance
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun setRepresentativeJobsEnabled(enabled: Boolean): Builder {
+            this.enableRepresentativeJobs = enabled
             return this
         }
 
