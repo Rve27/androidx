@@ -1197,7 +1197,7 @@ package androidx.xr.compose.subspace.node {
     method public abstract void update(N node);
   }
 
-  public sealed nonexhaustive interface SubspaceSemanticsInfo {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public sealed nonexhaustive interface SubspaceSemanticsInfo {
     method @InaccessibleFromKotlin public default java.util.List<androidx.xr.scenecore.Component>? getComponents();
     method @InaccessibleFromKotlin public androidx.compose.ui.semantics.SemanticsConfiguration getConfig();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
