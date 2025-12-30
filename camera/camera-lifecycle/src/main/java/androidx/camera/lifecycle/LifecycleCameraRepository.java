@@ -479,8 +479,6 @@ final class LifecycleCameraRepository {
                     if (hasUseCase && lifecycleCamera.getUseCases().isEmpty()) {
                         setInactive(lifecycleCamera.getLifecycleOwner());
                     }
-                } else {
-                    Logger.w(TAG, "Attempt to unbind use cases from an invalid camera.");
                 }
             }
         }
