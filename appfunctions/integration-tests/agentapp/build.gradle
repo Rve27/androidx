@@ -9,6 +9,8 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+def targetAppApkName = "TargetApp.apk"
+
 // This task copies the apks provided by the `apkAssets` configuration and places them in the
 // resources folder. This allows a build time generation of the sample apps.
 abstract class PrepareTargetApkTask extends DefaultTask {
@@ -19,6 +21,9 @@ abstract class PrepareTargetApkTask extends DefaultTask {
 
     @OutputDirectory
     abstract DirectoryProperty getOutputDir()
+
+    @Input
+    abstract Property<String> getApkFileName()
 
     @TaskAction
     void exec() {
@@ -31,7 +36,7 @@ abstract class PrepareTargetApkTask extends DefaultTask {
                 }
 
                 // Copies the apk in the output dir
-                Files.copy(file, outputDir.file("TargetApp.apk").get().asFile)
+                Files.copy(file, outputDir.file(apkFileName.get()).get().asFile)
             }
         }
     }
@@ -41,6 +46,7 @@ def prepareTargetApkTaskProvider = tasks.register("prepareTargetApk", PrepareTar
     description = "Copies the apks provided by appfunctions-integrationTest-multi-module-app projects into the Java resources."
     apkAssetsFolders.from(configurations.named("apkAssets").get().incoming.files)
     outputDir.set(layout.buildDirectory.dir("intermediates/appfunction-integrationTest-resources"))
+    apkFileName.set(targetAppApkName)
 }
 
 android {
@@ -48,6 +54,8 @@ android {
     compileSdk = 36
     defaultConfig {
         minSdk = 33
+
+        testInstrumentationRunnerArgument("TARGET_APP_APK", targetAppApkName)
     }
 }
 
