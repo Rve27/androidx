@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.random.Random
@@ -73,6 +74,19 @@ fun FlexBoxAlignItemsDemo() {
 
         Text(text = "Column Align Items - End", fontSize = 20.sp)
         FlexBoxColumnAlignItemsEndSample()
+        Spacer(Modifier.height(24.dp))
+
+        Text(text = "Row Align Items - Baseline", fontSize = 20.sp)
+        FlexBoxRowAlignItemsBaselineSample()
+        Spacer(Modifier.height(24.dp))
+
+        Text(text = "Row Align Items - To LastBaseline", fontSize = 20.sp)
+        FlexBoxRowAlignItemsToLastBaselineSample()
+        Spacer(Modifier.height(24.dp))
+
+        Text(text = "Row Align Items - To Custom Baseline", fontSize = 20.sp)
+        FlexBoxRowAlignItemsToCustomBaselineSample()
+        Spacer(Modifier.height(24.dp))
     }
 }
 
@@ -226,6 +240,135 @@ private fun FlexBoxRowAlignItemsEndSample() {
                     .border(1.dp, color = Color.Black)
         ) {
             Text(text = "3", modifier = Modifier.align(Alignment.Center))
+        }
+    }
+}
+
+@Composable
+private fun FlexBoxRowAlignItemsBaselineSample() {
+    FlexBox(
+        config = {
+            direction = FlexDirection.Row
+            alignItems = FlexAlignItems.Baseline
+        },
+        modifier = Modifier.fillMaxWidth().border(1.dp, Color.Black),
+    ) {
+        Box(
+            modifier =
+                Modifier.width(50.dp)
+                    .height(100.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(text = "1", fontSize = 40.sp, modifier = Modifier.align(Alignment.Center))
+        }
+        Box(
+            modifier =
+                Modifier.width(80.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(
+                text = "This one\n" + "has more lines\n" + "of text.",
+                fontSize = 20.sp,
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+        Box(
+            modifier =
+                Modifier.width(50.dp)
+                    .height(80.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(text = "3", fontSize = 10.sp, modifier = Modifier.align(Alignment.Center))
+        }
+    }
+}
+
+@Composable
+private fun FlexBoxRowAlignItemsToLastBaselineSample() {
+    FlexBox(
+        config = {
+            direction = FlexDirection.Row
+            alignItemsToBaseline(LastBaseline)
+        },
+        modifier = Modifier.fillMaxWidth().border(1.dp, Color.Black),
+    ) {
+        Box(
+            modifier =
+                Modifier.width(50.dp)
+                    .height(100.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(text = "1", fontSize = 40.sp, modifier = Modifier.align(Alignment.Center))
+        }
+        Box(
+            modifier =
+                Modifier.width(80.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(
+                text = "This one\n" + "has more lines\n" + "of text.",
+                fontSize = 20.sp,
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+        Box(
+            modifier =
+                Modifier.width(50.dp)
+                    .height(80.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(text = "3", fontSize = 10.sp, modifier = Modifier.align(Alignment.Center))
+        }
+    }
+}
+
+@Composable
+private fun FlexBoxRowAlignItemsToCustomBaselineSample() {
+    FlexBox(
+        config = {
+            direction = FlexDirection.Row
+            alignItemsToBaseline { measured ->
+                // Custom baseline at the bottom of the item
+                measured.measuredHeight / 2
+            }
+        },
+        modifier = Modifier.fillMaxWidth().border(1.dp, Color.Black),
+    ) {
+        Box(
+            modifier =
+                Modifier.width(50.dp)
+                    .height(100.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(text = "1", fontSize = 40.sp, modifier = Modifier.align(Alignment.Center))
+        }
+        Box(
+            modifier =
+                Modifier.width(80.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(
+                text = "This one\n" + "has more lines\n" + "of text.",
+                fontSize = 20.sp,
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+        Box(
+            modifier =
+                Modifier.width(50.dp)
+                    .height(80.dp)
+                    .background(color = randomColor())
+                    .border(1.dp, color = Color.Black)
+        ) {
+            Text(text = "3", fontSize = 10.sp, modifier = Modifier.align(Alignment.Center))
         }
     }
 }

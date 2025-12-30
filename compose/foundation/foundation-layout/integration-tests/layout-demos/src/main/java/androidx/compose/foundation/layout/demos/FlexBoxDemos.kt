@@ -19,7 +19,10 @@ package androidx.compose.foundation.layout.demos
 import androidx.compose.foundation.layout.demos.flexbox.FlexBoxAlignContentDemo
 import androidx.compose.foundation.layout.demos.flexbox.FlexBoxAlignItemsDemo
 import androidx.compose.foundation.layout.demos.flexbox.FlexBoxAlignSelfDemo
+import androidx.compose.foundation.layout.demos.flexbox.FlexBoxAnimatedDirectionDemo
+import androidx.compose.foundation.layout.demos.flexbox.FlexBoxAnimatedOrderDemo
 import androidx.compose.foundation.layout.demos.flexbox.FlexBoxFlexDemo
+import androidx.compose.foundation.layout.demos.flexbox.FlexBoxIntrinsicDemo
 import androidx.compose.foundation.layout.demos.flexbox.FlexBoxJustifyContentDemo
 import androidx.compose.foundation.layout.demos.flexbox.SimpleColumnFlexBox
 import androidx.compose.foundation.layout.demos.flexbox.SimpleRowFlexBox
@@ -37,5 +40,8 @@ val FlexBoxDemos =
             ComposableDemo("AlignItems") { FlexBoxAlignItemsDemo() },
             ComposableDemo("AlignSelf") { FlexBoxAlignSelfDemo() },
             ComposableDemo("Flexible") { FlexBoxFlexDemo() },
+            ComposableDemo("Animated Direction") { FlexBoxAnimatedDirectionDemo() },
+            ComposableDemo("Animated Order") { FlexBoxAnimatedOrderDemo() },
+            ComposableDemo("Intrinsic") { FlexBoxIntrinsicDemo() },
         ),
     )
