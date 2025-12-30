@@ -22,7 +22,7 @@ import androidx.camera.extensions.internal.VendorExtender;
 import org.jspecify.annotations.NonNull;
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-interface VendorExtenderFactory {
+public interface VendorExtenderFactory {
     @NonNull
     VendorExtender createVendorExtender(@ExtensionMode.Mode int extensionMode,
             boolean useCamera2Extensions);
