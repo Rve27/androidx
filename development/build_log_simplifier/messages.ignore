@@ -439,3 +439,9 @@ at org\.jetbrains\.kotlin\.incremental\.IncrementalCompilerRunner\.tryCompileInc
 Falling back to non-incremental compilation \(reason = IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE\)
 To help us fix this issue, please file a bug at https://youtrack.jetbrains.com/issues/KT with the above stack trace.
 \(Be sure to search for the above exception in existing issues first to avoid filing duplicated bugs.\)
+# > Task :appfunctions:integration-tests:multi-modules-testapp:app:compileDebugAndroidTestKotlin
+# b/472412144
+\[KOTLIN\] \[IC\] Incremental compilation was attempted but failed:
+java\.lang\.IllegalStateException: The following LookupSymbols are not yet converted to ProgramSymbols:.*
+(?:.*[\n\r])*.*Falling back to non\-incremental compilation \(reason = IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE\)
+(?:.*[\n\r])*.*e: Incremental compilation failed: The following LookupSymbols are not yet converted to ProgramSymbols:.*SchemaAppFunctionInventory_Impl\)
