@@ -32,8 +32,6 @@ dependencies {
     compileOnly(libs.androidLintApiStableAnalysis)
     compileOnly(libs.kotlinStdlib)
 
-    api(libs.kotlinMetadataJvm) { exclude group: "org.jetbrains.kotlin" }
-
     testImplementation(libs.kotlinStdlib)
     testImplementation(libs.androidLint)
     testImplementation(libs.androidLintTests)
