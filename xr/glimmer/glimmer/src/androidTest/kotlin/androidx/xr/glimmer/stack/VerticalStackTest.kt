@@ -83,7 +83,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.After
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1408,17 +1407,16 @@ class VerticalStackTest {
         }
     }
 
-    @Ignore // b/472316715
     @Test
     fun masking_genericShape_selectsWidestPoint() {
         val topOffset = 100.dp
         val decorationHeight = 100.dp
         // Shape definition:
-        // - Starts at 60% height (padding at top).
-        // - Widest point is at 80% of the total size.
-        // - Ends at 100% height.
-        // Bounds: top=0.6, bottom=1.0. Height=0.4.
-        // Widest point relative to bounds: At 0.2 (which is 0.8 absolute - 0.6 top).
+        // - Starts at 60% decoration height (40% top padding).
+        // - Widest point is at 80% of the total decoration height.
+        // - Ends at 100% decoration height.
+        // Shape bounds: top=0.6, bottom=1.0, height=0.4.
+        // Widest point relative to shape bounds: at 0.2 (which is 0.8 absolute - 0.6 top).
         val shiftedDiamondShape = GenericShape { size, _ ->
             moveTo(size.width / 2f, size.height * 0.6f) // Start 60% down
             lineTo(size.width, size.height * 0.8f) // Widest point at 80%
@@ -1451,12 +1449,11 @@ class VerticalStackTest {
             val pixels = toPixelMap()
             val topOffsetPx = topOffset.toPx()
             val decorationHeightPx = decorationHeight.toPx()
-            val offsetXPx = pixels.width / 4
+            val offsetXPx = pixels.width / 6
 
             assertWithMessage("Pixels above the widest point should be clipped")
                 .that(
-                    pixels[offsetXPx, (topOffsetPx + decorationHeightPx * 0.5f - 1).toInt()]
-                        .toOpaque()
+                    pixels[offsetXPx, (topOffsetPx + decorationHeightPx * 0.5f).toInt()].toOpaque()
                 )
                 .isEqualTo(Color.Red)
 
@@ -1464,8 +1461,7 @@ class VerticalStackTest {
                     "Pixels at 70% (between calculated relative height and absolute height) should be clipped"
                 )
                 .that(
-                    pixels[offsetXPx, (topOffsetPx + decorationHeightPx * 0.7f - 1).toInt()]
-                        .toOpaque()
+                    pixels[offsetXPx, (topOffsetPx + decorationHeightPx * 0.7f).toInt()].toOpaque()
                 )
                 .isEqualTo(Color.Red)
 
