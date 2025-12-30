@@ -19,6 +19,7 @@ package androidx.pdf.annotation
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Matrix
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.SparseArray
 import android.view.MotionEvent
@@ -46,6 +47,17 @@ public class AnnotationsView
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     FrameLayout(context, attrs, defStyleAttr) {
 
+    private val onAnnotationHitListeners = mutableListOf<OnAnnotationHitListener>()
+    private val annotationHitTouchHandler =
+        AnnotationHitTouchHandler().apply {
+            setListener(
+                object : OnAnnotationHitListener {
+                    override fun onAnnotationHit(annotation: PdfAnnotation) {
+                        onAnnotationHitListeners.forEach { it.onAnnotationHit(annotation) }
+                    }
+                }
+            )
+        }
     /** The view for displaying in-progress annotations (e.g., wet highlights). */
     private val inProgressHighlightsView: InProgressHighlightsView
 
@@ -68,6 +80,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         set(value) {
             field = value
             invalidate()
+        }
+
+    /**
+     * The current interaction mode of the view, determining how touch events are handled (e.g.,
+     * selecting via [AnnotationMode.Select] or highlighting via [AnnotationMode.Highlight]).
+     *
+     * This property must only be modified on the UI thread.
+     */
+    public var interactionMode: AnnotationMode = AnnotationMode.Select()
+        set(value) {
+            checkMainThread()
+            field = value
         }
 
     /**
@@ -100,9 +124,21 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         inProgressHighlightsView.addInProgressTextHighlightsListener(listener)
     }
 
+    /** Adds a listener for annotation hit events. */
+    public fun addOnAnnotationHitListener(listener: OnAnnotationHitListener) {
+        if (!onAnnotationHitListeners.contains(listener)) {
+            onAnnotationHitListeners.add(listener)
+        }
+    }
+
     /** Removes a listener that was previously added via [addInProgressTextHighlightsListener]. */
     public fun removeInProgressTextHighlightsListener(listener: InProgressTextHighlightsListener) {
         inProgressHighlightsView.removeInProgressTextHighlightsListener(listener)
+    }
+
+    /** Removes a listener that was previously added via [addOnAnnotationHitListener]. */
+    public fun removeOnAnnotationHitListener(listener: OnAnnotationHitListener) {
+        onAnnotationHitListeners.remove(listener)
     }
 
     private var pdfObjectDrawerFactory: PdfObjectDrawerFactory = DefaultPdfObjectDrawerFactoryImpl
@@ -116,10 +152,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (inProgressHighlightsView.visibility == VISIBLE) {
-            return inProgressHighlightsView.onTouchEvent(event)
+        return when (interactionMode) {
+            is AnnotationMode.Select -> {
+                annotationHitTouchHandler.handleTouch(this, event)
+            }
+            is AnnotationMode.Highlight -> {
+                if (inProgressHighlightsView.visibility == VISIBLE) {
+                    return inProgressHighlightsView.onTouchEvent(event)
+                }
+                super.onTouchEvent(event)
+            }
+            else -> super.onTouchEvent(event)
         }
-        return super.onTouchEvent(event)
     }
 
     /**
@@ -143,4 +187,27 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         @ColorInt public val color: Int,
         public val pdfDocument: PdfDocument,
     )
+
+    /** Defines the current interaction mode of the [AnnotationsView]. */
+    public abstract class AnnotationMode {
+        /** Mode for selecting existing annotations (e.g. erase, drag, scale). */
+        public class Select : AnnotationMode()
+
+        /** Mode for creating new highlight annotations. */
+        public class Highlight : AnnotationMode()
+    }
+
+    public companion object {
+        private fun checkMainThread() {
+            check(Looper.myLooper() == Looper.getMainLooper()) {
+                "Property must be set on the main thread"
+            }
+        }
+    }
+}
+
+/** Callback interface for annotation hit events. */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public interface OnAnnotationHitListener {
+    public fun onAnnotationHit(annotation: PdfAnnotation)
 }
