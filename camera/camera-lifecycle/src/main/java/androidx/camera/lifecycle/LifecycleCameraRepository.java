@@ -17,6 +17,7 @@
 package androidx.camera.lifecycle;
 
 import androidx.annotation.GuardedBy;
+import androidx.annotation.RestrictTo;
 import androidx.camera.core.CameraIdentifier;
 import androidx.camera.core.Logger;
 import androidx.camera.core.SessionConfig;
@@ -72,7 +73,8 @@ import java.util.Set;
  * When it is released, all UseCases bound to the LifecycleCamera will be unbound and the
  * LifecycleCamera will be released.
  */
-final class LifecycleCameraRepository {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public final class LifecycleCameraRepository {
     private static final String TAG = "LifecycleCameraRepository";
 
     private final Object mLock = new Object();
