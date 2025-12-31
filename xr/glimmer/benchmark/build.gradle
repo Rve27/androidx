@@ -25,6 +25,7 @@ plugins {
 
 dependencies {
     androidTestImplementation(project(":xr:glimmer:glimmer"))
+    androidTestImplementation(project(":xr:glimmer:test-utils"))
     androidTestImplementation(project(":benchmark:benchmark-junit4"))
     androidTestImplementation(project(":compose:benchmark-utils"))
     androidTestImplementation(libs.testRules)
