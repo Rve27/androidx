@@ -99,6 +99,7 @@ import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.onPointSourceParamsAvailable
 import androidx.xr.compose.subspace.layout.width
+import androidx.xr.compose.testapp.common.isMvHevcSupported
 import androidx.xr.compose.testapp.ui.components.CommonTestScaffold
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
@@ -533,19 +534,24 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
                                             Button(
+                                                enabled = isMvHevcSupported(),
                                                 onClick = {
                                                     stereoMode = StereoMode.MultiviewLeftPrimary
-                                                }
+                                                },
                                             ) {
                                                 Text("Multiview Left Primary")
                                             }
                                             Button(
+                                                enabled = isMvHevcSupported(),
                                                 onClick = {
                                                     stereoMode = StereoMode.MultiviewRightPrimary
-                                                }
+                                                },
                                             ) {
                                                 Text("Multiview Right Primary")
                                             }
+                                        }
+                                        if (!isMvHevcSupported()) {
+                                            Text("MV-HEVC is not supported on this device.")
                                         }
 
                                         val surfaceText =
