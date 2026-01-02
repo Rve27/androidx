@@ -37,3 +37,10 @@ When bridging standard Compose types (like `BlendMode` or `ColorFilter`) to the 
 
 ### 4. Incremental Public API Design
 Always start with the minimum set of methods required by downstream consumers (like `remote-material3`). This reduces the maintenance surface and serialization overhead. Implementing unused methods will introduce a lot of transitive complexity and untested code.
+
+### 5. V1 Compatibility in RecordingCanvas
+While `RemoteCanvas2` and `RemoteDrawScope2` are pruned and use remote-first types, `RecordingCanvas` must maintain overloads for standard platform types (`Float`, `Rect`, etc.) to support the existing V1 `RemoteDrawScope` during the migration period.
+- **CAUTION**: When adding new functionality to V2, consider if a V1 bridge is needed in `RecordingCanvas` to prevent build regressions.
+
+### 6. Specialized Drawing Signatures
+Some drawing operations, like `drawTextOnCircle`, have complex signatures in the underlying `RemoteComposeWriter`. Ensure these signatures are correctly mirrored in `RemoteCanvas2` and `RemoteDrawScope2`, matching the writer's expectations for optional parameters like warp radius, alignment, and placement.

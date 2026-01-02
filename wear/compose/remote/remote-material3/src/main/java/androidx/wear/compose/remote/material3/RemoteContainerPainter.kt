@@ -16,11 +16,14 @@
 
 package androidx.wear.compose.remote.material3
 
-import androidx.compose.remote.creation.compose.capture.RemoteDrawScope
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.painter.RemotePainter
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
 import androidx.compose.remote.creation.compose.state.RemoteFloat
+import androidx.compose.remote.creation.compose.state.RemotePaint
+import androidx.compose.remote.creation.compose.state.rc
+import androidx.compose.ui.graphics.Color
 
 @Suppress("RestrictedApiAndroidX")
 internal fun remoteContainerPainter(
@@ -36,9 +39,18 @@ private class DefaultRemoteContainerPainter(
     private val alpha: RemoteFloat,
     override val intrinsicSize: RemoteSize? = painter.intrinsicSize,
 ) : RemotePainter() {
-    override fun RemoteDrawScope.onDraw() {
+    override fun RemoteDrawScope2.onDraw() {
         with(painter) { draw(alpha = alpha) }
-        scrim?.let { drawRect(brush = scrim, alpha = alpha) }
+        scrim?.let {
+            drawRect(
+                paint =
+                    RemotePaint().apply {
+                        remoteBrush = scrim
+                        remoteColor =
+                            Color.Black.rc.copy(alpha = this@DefaultRemoteContainerPainter.alpha)
+                    }
+            )
+        }
     }
 }
 
@@ -54,7 +66,7 @@ private class DefaultDisabledRemoteContainerPainter(
     private val alpha: RemoteFloat,
     override val intrinsicSize: RemoteSize? = painter.intrinsicSize,
 ) : RemotePainter() {
-    override fun RemoteDrawScope.onDraw() {
+    override fun RemoteDrawScope2.onDraw() {
         with(painter) { draw(alpha = alpha) }
     }
 }
