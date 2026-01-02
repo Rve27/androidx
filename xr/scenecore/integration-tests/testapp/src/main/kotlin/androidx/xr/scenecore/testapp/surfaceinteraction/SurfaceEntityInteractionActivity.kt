@@ -58,6 +58,7 @@ import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
 import androidx.xr.scenecore.testapp.R
+import androidx.xr.scenecore.testapp.common.isMvHevcSupported
 import java.io.File
 import java.util.function.Consumer
 
@@ -99,6 +100,7 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
     private var spatialEnvironmentPreference: SpatialEnvironment.SpatialEnvironmentPreference? =
         null
     private var consentGranted: Boolean = false
+    private lateinit var mvHevcNotSupportedText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -189,6 +191,11 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
 
         textViewPointerLogs = findViewById(R.id.textView_pointer_log)
         textViewPointerLogs.text = ""
+
+        mvHevcNotSupportedText = findViewById(R.id.mv_hevc_not_supported_text)
+        if (!isMvHevcSupported()) {
+            mvHevcNotSupportedText.visibility = View.VISIBLE
+        }
 
         updateButtonsEnabled(null, false)
 
@@ -303,8 +310,10 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
     private fun updateButtonsEnabled(selectedVideo: VideoEnums?, interactableAttached: Boolean) {
         val isVideoSelected = selectedVideo != null
         buttonSelectQuad.isEnabled = selectedVideo != VideoEnums.BIG_BUCK_BUNNY_BUTTON
-        buttonSelectSphere.isEnabled = selectedVideo != VideoEnums.GALAXY_360_MVHEVC_BUTTON
-        buttonSelectHemisphere.isEnabled = selectedVideo != VideoEnums.NAVER_180_MVHEVC_BUTTON
+        buttonSelectSphere.isEnabled =
+            isMvHevcSupported() && (selectedVideo != VideoEnums.GALAXY_360_MVHEVC_BUTTON)
+        buttonSelectHemisphere.isEnabled =
+            isMvHevcSupported() && (selectedVideo != VideoEnums.NAVER_180_MVHEVC_BUTTON)
         buttonDeselectVideo.isEnabled = isVideoSelected
 
         switchInteractableAttached.isEnabled = selectedVideo != null
