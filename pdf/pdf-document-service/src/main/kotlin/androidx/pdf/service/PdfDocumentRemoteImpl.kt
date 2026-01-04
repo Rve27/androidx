@@ -47,6 +47,7 @@ import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.annotation.processor.PageAnnotationsPaginator
 import androidx.pdf.annotation.processor.PdfRendererAnnotationsProcessor
 import androidx.pdf.models.Dimensions
+import androidx.pdf.utils.toPdfObject
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class PdfDocumentRemoteImpl(
@@ -155,6 +156,7 @@ internal class PdfDocumentRemoteImpl(
         return rendererAdapter.withPage(pageNum) { page -> page.getFormWidgetInfos(types) }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 19)
     override fun getTopPageObjectAtPosition(
         pageNum: Int,
         point: PointF,
@@ -163,8 +165,8 @@ internal class PdfDocumentRemoteImpl(
         return rendererAdapter.withPage(pageNum) { page ->
             val topObjectResult = page.getTopPageObjectAtPosition(point, types)
             topObjectResult?.let {
-                // TODO: b/447328448 - Convert AOSP Image PdfPageObject to Jetpack Image PdfObject
-                return@withPage null
+                val convertedObject: PdfObject? = topObjectResult.second.toPdfObject()
+                return@withPage convertedObject
             }
         }
     }
