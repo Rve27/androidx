@@ -441,6 +441,45 @@ public object RemoteButtonDefaults {
         RemoteMaterialTheme.colorScheme.defaultButtonColors
 
     /**
+     * Creates a [RemoteButtonColors] that represents the default background and content colors used
+     * in a [RemoteButton].
+     *
+     * @param containerColor The background color of this [RemoteButton] when enabled
+     * @param contentColor The content color of this [RemoteButton] when enabled
+     * @param secondaryContentColor The content color of this [RemoteButton] when enabled
+     * @param iconColor The content color of this [RemoteButton] when enabled
+     * @param disabledContainerColor The background color of this [RemoteButton] when not enabled
+     * @param disabledContentColor The content color of this [RemoteButton] when not enabled
+     * @param disabledSecondaryContentColor The content color of this [RemoteButton] when not
+     *   enabled
+     * @param disabledIconColor The content color of this [RemoteButton] when not enabled
+     */
+    @Composable
+    public fun buttonColors(
+        containerColor: RemoteColor? = null,
+        contentColor: RemoteColor? = null,
+        secondaryContentColor: RemoteColor? = null,
+        iconColor: RemoteColor? = null,
+        disabledContainerColor: RemoteColor? = null,
+        disabledContentColor: RemoteColor? = null,
+        disabledSecondaryContentColor: RemoteColor? = null,
+        disabledIconColor: RemoteColor? = null,
+    ): RemoteButtonColors {
+        val default = RemoteMaterialTheme.colorScheme.defaultButtonColors
+        return default.copy(
+            containerColor = containerColor ?: default.containerColor,
+            contentColor = contentColor ?: default.contentColor,
+            secondaryContentColor = secondaryContentColor ?: default.secondaryContentColor,
+            iconColor = iconColor ?: default.iconColor,
+            disabledContainerColor = disabledContainerColor ?: default.disabledContainerColor,
+            disabledContentColor = disabledContentColor ?: default.disabledContentColor,
+            disabledSecondaryContentColor =
+                disabledSecondaryContentColor ?: default.disabledSecondaryContentColor,
+            disabledIconColor = disabledIconColor ?: default.disabledIconColor,
+        )
+    }
+
+    /**
      * Creates a [RemoteButtonColors] for the content in a [RemoteButton] with an image container
      * painter.
      */
@@ -624,6 +663,29 @@ public class RemoteButtonColors(
             ifFalse = disabledSecondaryContentColor,
         )
     }
+
+    /** Returns a copy of this RemoteButtonColors optionally overriding some of the values. */
+    public fun copy(
+        containerColor: RemoteColor? = this.containerColor,
+        contentColor: RemoteColor? = this.contentColor,
+        secondaryContentColor: RemoteColor? = this.secondaryContentColor,
+        iconColor: RemoteColor? = this.iconColor,
+        disabledContainerColor: RemoteColor? = this.disabledContainerColor,
+        disabledContentColor: RemoteColor? = this.disabledContentColor,
+        disabledSecondaryContentColor: RemoteColor? = this.disabledSecondaryContentColor,
+        disabledIconColor: RemoteColor? = this.disabledIconColor,
+    ): RemoteButtonColors =
+        RemoteButtonColors(
+            containerColor = containerColor ?: this.containerColor,
+            contentColor = contentColor ?: this.contentColor,
+            secondaryContentColor = secondaryContentColor ?: this.secondaryContentColor,
+            iconColor = iconColor ?: this.iconColor,
+            disabledContainerColor = disabledContainerColor ?: this.disabledContainerColor,
+            disabledContentColor = disabledContentColor ?: this.disabledContentColor,
+            disabledSecondaryContentColor =
+                disabledSecondaryContentColor ?: this.disabledSecondaryContentColor,
+            disabledIconColor = disabledIconColor ?: this.disabledIconColor,
+        )
 }
 
 /** Draws a colored and shaped background with when clipping is not supported. */
