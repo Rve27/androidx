@@ -67,6 +67,9 @@ androidx.compose.ui.window
 androidx.lifecycle.compose
 androidx.navigation.compose
 androidx.navigation.compose.internal
+androidx.navigation3.runtime
+androidx.navigation3.scene
+androidx.navigation3.ui
 androidx.wear.compose.foundation
 androidx.wear.compose.foundation.lazy
 androidx.wear.compose.foundation.pager
