@@ -16,117 +16,178 @@
 
 package androidx.lifecycle
 
+import androidx.collection.MutableScatterMap
+
+/**
+ * An ordered, map-based collection specifically designed for the Android Lifecycle observer
+ * pattern.
+ *
+ * **The Problem:** Lifecycle observers frequently trigger events that cause other observers to be
+ * added or removed while the collection is being iterated. Standard collections like
+ * `LinkedHashMap` throw `ConcurrentModificationException` or require expensive iterator allocations
+ * to handle this.
+ *
+ * **The Solution:** This map uses an intrusive doubly-linked list. When an entry is removed, it is
+ * unlinked from the main chain but **retains its next/prev pointers**. This creates "Ghost Nodes"
+ * that allow active iterators to safely traverse back to the live list without complex state
+ * tracking or index shifting.
+ *
+ * Constraints:
+ * - NOT thread-safe.
+ * - Optimized for high-frequency iteration and zero-allocation modification.
+ */
 internal actual class FastSafeIterableMap<K : Any, V : Any> {
 
-    private val delegate = linkedMapOf<K, V>()
+    /** Lookup table for O(1) access. Stores the intrusive entries. */
+    private val map = MutableScatterMap<K, Entry<K, V>>()
 
-    actual fun contains(key: K): Boolean {
-        return delegate.containsKey(key)
-    }
+    /** The start of the intrusive linked list. Used as the entry point for forward iteration. */
+    private var head: Entry<K, V>? = null
 
+    /**
+     * The end of the intrusive linked list. New entries are appended here to maintain insertion
+     * order.
+     */
+    private var tail: Entry<K, V>? = null
+
+    actual fun contains(key: K): Boolean = map.containsKey(key)
+
+    /**
+     * Adds a value only if the key is not already present. Appends to the tail to ensure iteration
+     * follows insertion order.
+     */
     actual fun putIfAbsent(key: K, value: V): V? {
-        val existing = delegate[key]
+        val existing = map[key]
         if (existing != null) {
-            return existing
+            return existing.value
         }
-        delegate[key] = value
+
+        val newEntry = Entry(key, value)
+        map[key] = newEntry
+
+        if (tail == null) {
+            head = newEntry
+            tail = newEntry
+        } else {
+            tail?.next = newEntry
+            newEntry.prev = tail
+            tail = newEntry
+        }
         return null
     }
 
+    /**
+     * Removes the entry and marks it as a "Ghost Node".
+     *
+     * We intentionally do not null out the entry's [Entry.next] and [Entry.prev] pointers. If a
+     * loop is currently processing this entry, those pointers serve as the "bridge" back to the
+     * remaining elements in the map.
+     */
     actual fun remove(key: K): V? {
-        return delegate.remove(key)
+        val entry = map.remove(key) ?: return null
+
+        // Unlink from the live chain.
+        if (entry.prev == null) head = entry.next else entry.prev?.next = entry.next
+        if (entry.next == null) tail = entry.prev else entry.next?.prev = entry.prev
+
+        // Marks this node as dead. Iterators check this flag to skip removed
+        // elements that are still in their traversal path.
+        entry.markRemoved()
+
+        return entry.value
     }
 
     /**
-     * In FastSafeIterableMap (Android), `ceil` returns the PREVIOUS entry. We replicate that
-     * behavior here.
+     * Returns the entry that was inserted immediately before the entry associated with the given
+     * [key], or null if no such entry exists.
+     *
+     * Note: Despite the name 'ceil', this retrieves the logical predecessor to support specific
+     * Lifecycle iteration patterns.
      */
-    actual fun ceil(key: K): Map.Entry<K, V>? {
-        if (!contains(key)) return null
+    actual fun ceil(key: K): Map.Entry<K, V>? = map[key]?.prev
 
-        var previous: Map.Entry<K, V>? = null
+    /**
+     * Returns the first entry in the map.
+     *
+     * @throws IllegalArgumentException if the map is empty.
+     */
+    actual fun first(): Map.Entry<K, V> =
+        head ?: throw NoSuchElementException("Collection is empty.")
 
-        // Iterate over keys to avoid holding invalidatable Entry references.
-        for (currentKey in delegate.keys) {
-            if (currentKey == key) {
-                return previous
-            }
-            // Snapshot the value to ensure we return a stable entry
-            val value = delegate[currentKey]
-            if (value != null) {
-                previous = Entry(currentKey, value)
-            }
-        }
-        return null
-    }
+    /**
+     * Returns the last entry in the map.
+     *
+     * @throws IllegalArgumentException if the map is empty.
+     */
+    actual fun last(): Map.Entry<K, V> =
+        tail ?: throw NoSuchElementException("Collection is empty.")
 
-    actual fun first(): Map.Entry<K, V> {
-        return delegate.entries.first()
-    }
+    actual fun lastOrNull(): Map.Entry<K, V>? = tail
 
-    actual fun last(): Map.Entry<K, V> {
-        return delegate.entries.last()
-    }
+    /** Current count of live (non-removed) elements. */
+    actual fun size(): Int = map.size
 
-    actual fun lastOrNull(): Map.Entry<K, V>? {
-        return delegate.entries.lastOrNull()
-    }
-
-    actual fun size(): Int {
-        return delegate.size
-    }
-
+    /**
+     * Iterates forward through the map. Safe to add or remove elements (including the current one)
+     * during execution.
+     *
+     * New elements added during iteration will be visited if they are appended after the current
+     * position.
+     */
     actual fun forEachWithAdditions(action: (Map.Entry<K, V>) -> Unit) {
-        val visited = mutableSetOf<K>()
-
-        // Snapshot KEYS, not entries. Keys are safe immutable references.
-        // Copying to a list prevents CME on the iterator itself.
-        var candidates = delegate.keys.toList()
-
-        while (candidates.isNotEmpty()) {
-            for (key in candidates) {
-                // Check if we already visited this key (optimization)
-                if (visited.add(key)) {
-                    // Re-fetch value from the live map.
-                    // If returns null, the item was removed during the loop -> skip it.
-                    val value = delegate[key]
-                    if (value != null) {
-                        action(Entry(key, value))
-                    }
-                }
+        var current = head
+        while (current != null) {
+            // We check isRemoved because a previous step in this loop might
+            // have removed 'current' or a future element we haven't reached yet.
+            if (!current.isRemoved) {
+                action(current)
             }
-
-            // If the map grew while we were looping, we need to process the new additions.
-            if (delegate.size > visited.size) {
-                candidates = delegate.keys.filter { !visited.contains(it) }
-            } else {
-                break
-            }
-        }
-    }
-
-    actual fun forEachReversed(action: (Map.Entry<K, V>) -> Unit) {
-        // Start with a safe snapshot of the current keys
-        val keys = delegate.keys.toList()
-
-        // Iterate by index to avoid iterator allocation
-        var index = keys.size - 1
-        while (index >= 0) {
-            val key = keys[index]
-
-            // Re-fetch value safely and guard against removal during iteration
-            val value = delegate[key]
-            if (value != null) {
-                action(Entry(key, value))
-            }
-
-            index--
+            // Move to next AFTER action. If current was removed, its 'next'
+            // pointer still acts as a bridge to the rest of the list.
+            current = current.next
         }
     }
 
     /**
-     * A simple immutable implementation of Map.Entry. Used to pass safe snapshots to callers,
-     * preventing crashes if the backing map changes.
+     * Iterates in reverse order. Modification-safe via the same 'Ghost Node' logic used in forward
+     * iteration.
      */
-    private data class Entry<K, V>(override val key: K, override val value: V) : Map.Entry<K, V>
+    actual fun forEachReversed(action: (Map.Entry<K, V>) -> Unit) {
+        var current = tail
+        while (current != null) {
+            // We check isRemoved because a previous step in this loop might
+            // have removed 'current' or a future element we haven't reached yet.
+            if (!current.isRemoved) {
+                action(current)
+            }
+
+            // Move to previous AFTER action. If current was removed, its 'previous'
+            // pointer still acts as a bridge to the rest of the list.
+            current = current.prev
+        }
+    }
+
+    /** An intrusive doubly-linked list node that also serves as a [Map.Entry]. */
+    private data class Entry<K, V>(override val key: K, override val value: V) : Map.Entry<K, V> {
+
+        // Note: We retain next/prev pointers even after removal to allow active
+        // iterators to "bridge" back to the live list from this node.
+        var next: Entry<K, V>? = null
+        var prev: Entry<K, V>? = null
+
+        /**
+         * Indicates this entry is no longer in the Map. Once true, it can never be set back to
+         * false.
+         */
+        var isRemoved: Boolean = false
+            private set
+
+        /**
+         * Marks this entry as a "Ghost Node." It remains linked to its neighbors to support
+         * iterator safety, but will be skipped during traversal.
+         */
+        fun markRemoved() {
+            isRemoved = true
+        }
+    }
 }
