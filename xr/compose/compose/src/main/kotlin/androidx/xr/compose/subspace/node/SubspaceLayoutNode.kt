@@ -512,9 +512,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
             )
 
             // Call coordinates-aware callbacks after the node and its children are placed.
-            nodes.getAll<LayoutCoordinatesAwareModifierNode>().forEach {
-                it.onLayoutCoordinates(this)
-            }
+            nodes.getAll<SubspaceLayoutAwareModifierNode>().forEach { it.onPlaced(this) }
 
             this@SubspaceLayoutNode.layoutPending = false
             layoutState = LayoutState.Idle
