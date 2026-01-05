@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <androidx.compose.material3:material3-xr>
+// Library unique name: <androidx.compose.material3.xr:xr>
 abstract interface androidx.compose.material3.xr.stub/XrHorizontalOrbiterStub { // androidx.compose.material3.xr.stub/XrHorizontalOrbiterStub|null[0]
     abstract fun Orbiter(androidx.compose.material3.xr.spatial/HorizontalOrbiterProperties, kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int) // androidx.compose.material3.xr.stub/XrHorizontalOrbiterStub.Orbiter|Orbiter(androidx.compose.material3.xr.spatial.HorizontalOrbiterProperties;kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 }
