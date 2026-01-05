@@ -17,7 +17,6 @@
 package androidx.lifecycle
 
 import androidx.kruth.assertThat
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -103,7 +102,6 @@ class FastSafeIterableMapTest {
     }
 
     @Test
-    @Ignore // TODO(mgalhardo): Android implementation doesn't support this case.
     fun reAddRemovedElementDuringIteration() {
         val map = FastSafeIterableMap<String, Int>()
         map.putIfAbsent("a", 1)
@@ -144,7 +142,6 @@ class FastSafeIterableMapTest {
     }
 
     @Test
-    @Ignore // TODO(mgalhardo): Android and CMP throws different exceptions today.
     fun emptyMapThrowsWithCustomMessage() {
         val map = FastSafeIterableMap<String, Int>()
 
