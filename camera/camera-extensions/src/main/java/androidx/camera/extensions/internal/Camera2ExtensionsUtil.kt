@@ -23,8 +23,6 @@ import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.camera.core.CameraXConfig
-import androidx.camera.core.CameraXConfig.ImplType
 import androidx.camera.extensions.ExtensionMode
 
 /** The class to provide Camera2 Extensions related util methods. */
@@ -77,9 +75,4 @@ public object Camera2ExtensionsUtil {
             }
         }
     }
-
-    /** Returns true if Camera2 Extensions API should be be used to turn on the extension mode. */
-    @JvmStatic
-    public fun shouldUseCamera2Extensions(@ImplType configImplType: Int): Boolean =
-        configImplType == CameraXConfig.CAMERAX_CONFIG_IMPL_TYPE_PIPE
 }
