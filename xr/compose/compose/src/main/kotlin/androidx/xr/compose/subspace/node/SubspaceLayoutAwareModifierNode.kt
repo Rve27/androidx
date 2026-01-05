@@ -20,15 +20,15 @@ import androidx.xr.compose.subspace.layout.DelegatableSubspaceNode
 import androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates
 
 /**
- * A [DelegatableSubspaceNode] whose [onLayoutCoordinates] callback is invoked when the layout
- * coordinates of the layout node may have changed.
+ * A [DelegatableSubspaceNode] whose [onPlaced] callback is invoked when the layout coordinates of
+ * the layout node may have changed.
  *
  * @see [androidx.xr.compose.subspace.layout.onGloballyPositioned]
  */
-public interface LayoutCoordinatesAwareModifierNode : DelegatableSubspaceNode {
+public interface SubspaceLayoutAwareModifierNode : DelegatableSubspaceNode {
     /**
      * Called with the final [SubspaceLayoutCoordinates] of the layout node after placement. The
      * coordinates value may or may not have changed since the last callback.
      */
-    public fun onLayoutCoordinates(coordinates: SubspaceLayoutCoordinates)
+    public fun onPlaced(coordinates: SubspaceLayoutCoordinates)
 }
