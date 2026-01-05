@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <androidx.compose.material3:material3-xr-adaptive>
+// Library unique name: <androidx.compose.material3.xr:xr-adaptive>
 open annotation class androidx.compose.material3.xr.adaptive/ExperimentalMaterial3XrAdaptiveApi : kotlin/Annotation { // androidx.compose.material3.xr.adaptive/ExperimentalMaterial3XrAdaptiveApi|null[0]
     constructor <init>() // androidx.compose.material3.xr.adaptive/ExperimentalMaterial3XrAdaptiveApi.<init>|<init>(){}[0]
 }
