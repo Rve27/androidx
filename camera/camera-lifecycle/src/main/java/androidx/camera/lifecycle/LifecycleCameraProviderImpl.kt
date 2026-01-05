@@ -686,6 +686,7 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider, CameraPres
                                 primaryCompositionSettings,
                                 secondaryCompositionSettings,
                             ),
+                        cameraX!!.rotationProvider,
                     )
             }
 
