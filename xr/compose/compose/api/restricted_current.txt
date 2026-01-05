@@ -325,11 +325,16 @@ package androidx.xr.compose.subspace {
   }
 
   public final class SpatialBoxKt {
-    method @KotlinOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialBox(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, optional boolean propagateMinConstraints, kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.SpatialBoxScope,kotlin.Unit> content);
+    method @KotlinOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static inline void SpatialBox(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, optional boolean propagateMinConstraints, kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.SpatialBoxScope,kotlin.Unit> content);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialBox(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, boolean, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialBoxScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @kotlin.PublishedApi internal static androidx.xr.compose.subspace.layout.SubspaceMeasurePolicy cachedSpatialBoxMeasurePolicy(androidx.xr.compose.subspace.layout.SpatialAlignment alignment, boolean propagateMinConstraints);
   }
 
   @androidx.compose.foundation.layout.LayoutScopeMarker public interface SpatialBoxScope {
+    method public androidx.xr.compose.subspace.layout.SubspaceModifier align(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.compose.subspace.layout.SpatialAlignment alignment);
+  }
+
+  @kotlin.PublishedApi internal final class SpatialBoxScopeInstance implements androidx.xr.compose.subspace.SpatialBoxScope {
     method public androidx.xr.compose.subspace.layout.SubspaceModifier align(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.compose.subspace.layout.SpatialAlignment alignment);
   }
 
