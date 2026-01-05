@@ -109,7 +109,6 @@ public final class CameraX {
     @GuardedBy("mInitializeLock")
     private ListenableFuture<Void> mShutdownInternalFuture = Futures.immediateFuture(null);
     private final Integer mMinLogLevel;
-    private final @CameraXConfig.ImplType int mConfigImplType;
 
     private static final Object MIN_LOG_LEVEL_LOCK = new Object();
     @GuardedBy("MIN_LOG_LEVEL_LOCK")
@@ -146,7 +145,6 @@ public final class CameraX {
         // Update quirks settings as early as possible since device quirks are loaded statically.
         updateQuirkSettings(appContext, mCameraXConfig.getQuirkSettings(),
                 quirkSettingsLoader);
-        mConfigImplType = mCameraXConfig.getConfigImplType();
 
         Executor executor = mCameraXConfig.getCameraExecutor(null);
         Handler schedulerHandler = mCameraXConfig.getSchedulerHandler(null);
@@ -279,14 +277,6 @@ public final class CameraX {
             Logger.d(TAG, "QuirkSettings by default: " + quirkSettings);
         }
         QuirkSettingsHolder.instance().set(quirkSettings);
-    }
-
-    /**
-     * Returns the config impl type of the instance.
-     */
-    @RestrictTo(Scope.LIBRARY_GROUP)
-    public @CameraXConfig.ImplType int getConfigImplType() {
-        return mConfigImplType;
     }
 
     /**
