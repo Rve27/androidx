@@ -20,6 +20,7 @@ import androidx.annotation.GuardedBy;
 import androidx.annotation.RestrictTo;
 import androidx.camera.core.CameraIdentifier;
 import androidx.camera.core.Logger;
+import androidx.camera.core.RotationProvider;
 import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.concurrent.CameraCoordinator;
@@ -131,7 +132,8 @@ public final class LifecycleCameraRepository {
      */
     LifecycleCamera createLifecycleCamera(
             @NonNull LifecycleOwner lifecycleOwner,
-            @NonNull CameraUseCaseAdapter cameraUseCaseAdapter) {
+            @NonNull CameraUseCaseAdapter cameraUseCaseAdapter,
+            @NonNull RotationProvider rotationProvider) {
         LifecycleCamera lifecycleCamera;
         synchronized (mLock) {
             Key key = Key.create(lifecycleOwner, cameraUseCaseAdapter.getAdapterIdentifier());
@@ -140,7 +142,8 @@ public final class LifecycleCameraRepository {
 
             // Need to add observer before creating LifecycleCamera to make sure
             // it can be stopped before the latest active one is started.'
-            lifecycleCamera = new LifecycleCamera(lifecycleOwner, cameraUseCaseAdapter);
+            lifecycleCamera = new LifecycleCamera(lifecycleOwner, cameraUseCaseAdapter,
+                    rotationProvider);
             // Suspend the LifecycleCamera if there is no use case bound.
             if (cameraUseCaseAdapter.getUseCases().isEmpty()) {
                 lifecycleCamera.suspend();

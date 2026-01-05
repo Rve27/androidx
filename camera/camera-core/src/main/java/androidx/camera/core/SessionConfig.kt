@@ -113,6 +113,8 @@ constructor(
     public open val requireNonEmptyUseCases: Boolean = true
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public open val cameraFilter: CameraFilter? = null
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public open val isAutoRotationEnabled: Boolean = false
 
     /**
      * Gets the feature selection listener set to this session config.
@@ -302,6 +304,7 @@ constructor(
         private var frameRateRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
         private val requiredFeatureGroup = mutableListOf<GroupableFeature>()
         private val preferredFeatureGroup = mutableListOf<GroupableFeature>()
+        private var isAutoRotationEnabled = false
 
         public constructor(vararg useCases: UseCase) : this(useCases.toList())
 
@@ -396,16 +399,31 @@ constructor(
             return this
         }
 
+        /**
+         * Sets whether to use auto rotation.
+         *
+         * When enabled, CameraX will monitor the device motion sensor and set the target rotation
+         * for ImageCapture, VideoCapture and ImageAnalysis.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun setAutoRotationEnabled(isAutoRotationEnabled: Boolean): Builder {
+            this.isAutoRotationEnabled = isAutoRotationEnabled
+            return this
+        }
+
         /** Builds a [SessionConfig] from the current configuration. */
         public fun build(): SessionConfig {
-            return SessionConfig(
-                useCases = useCases,
-                viewPort = viewPort,
-                effects = effects.toList(),
-                frameRateRange = frameRateRange,
-                requiredFeatureGroup = requiredFeatureGroup.toSet(),
-                preferredFeatureGroup = preferredFeatureGroup.toList(),
-            )
+            return object :
+                SessionConfig(
+                    useCases = useCases,
+                    viewPort = viewPort,
+                    effects = effects.toList(),
+                    frameRateRange = frameRateRange,
+                    requiredFeatureGroup = requiredFeatureGroup.toSet(),
+                    preferredFeatureGroup = preferredFeatureGroup.toList(),
+                ) {
+                override val isAutoRotationEnabled: Boolean = this@Builder.isAutoRotationEnabled
+            }
         }
     }
 }

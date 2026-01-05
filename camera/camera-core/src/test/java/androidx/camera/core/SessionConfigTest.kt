@@ -103,6 +103,7 @@ class SessionConfigTest {
         assertThat(sessionConfig.requiredFeatureGroup).isEmpty()
         assertThat(sessionConfig.preferredFeatureGroup).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
+        assertThat(sessionConfig.isAutoRotationEnabled).isFalse()
     }
 
     @Test
@@ -182,6 +183,7 @@ class SessionConfigTest {
                 .setViewPort(viewPort)
                 .addEffect(effect)
                 .setFrameRateRange(frameRateRange)
+                .setAutoRotationEnabled(true)
                 .build()
 
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
@@ -192,6 +194,7 @@ class SessionConfigTest {
         assertThat(sessionConfig.requiredFeatureGroup).isEmpty()
         assertThat(sessionConfig.preferredFeatureGroup).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
+        assertThat(sessionConfig.isAutoRotationEnabled).isTrue()
     }
 
     @Test
