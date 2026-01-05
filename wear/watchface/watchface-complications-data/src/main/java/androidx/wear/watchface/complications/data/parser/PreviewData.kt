@@ -463,7 +463,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                 }
                 text =
                     when (parser.name) {
-                        TAG_PLAIN -> parsePlainText(parser, providerContext)
+                        TAG_PLAIN -> parsePlainTextToString(parser, providerContext)
                         TAG_FORMATTED ->
                             parseFormattedText(parser, parserContext, providerContext, textUtils)
                         TAG_TIME -> parseTimeText(parser, parserContext, providerContext, textUtils)
@@ -475,24 +475,43 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
             return text
         }
 
-        private fun parsePlainText(parser: XmlResourceParser, providerContext: Context): String? {
+        /**
+         * Returns string representation of plain text.
+         *
+         * Numbers will be formatted into text using the default locale.
+         */
+        private fun parsePlainTextToString(
+            parser: XmlResourceParser,
+            providerContext: Context,
+        ): String? {
+            return when (val plainText = parsePlainTextToAny(parser, providerContext)) {
+                is Number -> {
+                    NumberFormat.getInstance(Locale.getDefault()).format(plainText)
+                }
+
+                else -> plainText.toString()
+            }
+        }
+
+        /**
+         * Parses plain text and keeps its type.
+         *
+         * Number entries for example will retain their types.
+         */
+        private fun parsePlainTextToAny(parser: XmlResourceParser, providerContext: Context): Any? {
             val attributeValue = parser.getAttributeValue(null, ATTR_VALUE) ?: return null
             val valueType = parser.getAttributeValue(null, ATTR_VALUE_TYPE)
 
             if (attributeValue.startsWith("@")) {
                 return resolveTextResource(providerContext, attributeValue)
             }
-            val numberFormat = NumberFormat.getInstance(Locale.getDefault())
-            val text =
-                when (valueType) {
-                    PLAIN_TEXT_TYPE_INT -> numberFormat.format(attributeValue.toLongOrNull() ?: 0L)
-                    PLAIN_TEXT_TYPE_LONG -> numberFormat.format(attributeValue.toLongOrNull() ?: 0L)
-                    PLAIN_TEXT_TYPE_FLOAT ->
-                        numberFormat.format(attributeValue.toDoubleOrNull() ?: 0.0)
 
-                    else -> attributeValue
-                }
-            return text
+            return when (valueType) {
+                PLAIN_TEXT_TYPE_INT -> attributeValue.toIntOrNull()
+                PLAIN_TEXT_TYPE_LONG -> attributeValue.toLongOrNull()
+                PLAIN_TEXT_TYPE_FLOAT -> attributeValue.toDoubleOrNull()
+                else -> attributeValue
+            }
         }
 
         /**
@@ -553,7 +572,8 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                             }
                         TAG_DATE ->
                             parseDateText(parser, parserContext, textUtils)?.let { params.add(it) }
-                        TAG_PLAIN -> parsePlainText(parser, providerContext)?.let { params.add(it) }
+                        TAG_PLAIN ->
+                            parsePlainTextToAny(parser, providerContext)?.let { params.add(it) }
                         TAG_TIME_DIFFERENCE ->
                             parseTimeDifferenceText(parser, parserContext)?.let { params.add(it) }
                     }

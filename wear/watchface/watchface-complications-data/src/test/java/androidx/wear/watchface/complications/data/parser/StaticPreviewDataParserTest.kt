@@ -127,7 +127,7 @@ class StaticPreviewDataParserTest {
             val complicationData =
                 previewData!![ComplicationType.SHORT_TEXT] as ShortTextComplicationData
             val text = complicationData.text.getTextAt(context.resources, Instant.ofEpochMilli(0))
-            assertThat(text).isEqualTo("Steps: 10, Time: 02:40")
+            assertThat(text).isEqualTo("Steps: 343, Time: 02:40")
         }
     }
 
@@ -330,7 +330,7 @@ class StaticPreviewDataParserTest {
                     previewData[ComplicationType.SHORT_TEXT] as ShortTextComplicationData
                 val text =
                     complicationData.text.getTextAt(context.resources, Instant.ofEpochMilli(0))
-                assertThat(text).isEqualTo("Steps: 10, Time: 2:40AM")
+                assertThat(text).isEqualTo("Steps: 343, Time: 2:40AM")
             }
         }
         runTestForLocale(Locale.GERMANY) { context ->
@@ -340,7 +340,32 @@ class StaticPreviewDataParserTest {
                     previewData[ComplicationType.SHORT_TEXT] as ShortTextComplicationData
                 val text =
                     complicationData.text.getTextAt(context.resources, Instant.ofEpochMilli(0))
-                assertThat(text).isEqualTo("Steps: 10, Time: 02:40")
+                assertThat(text).isEqualTo("Steps: 343, Time: 02:40")
+            }
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun formattedTextComplicationWithNumberFormat() {
+        runTestForLocale(Locale.US) { context ->
+            context.resources.getXml(R.xml.static_preview_data_formatted).use { parser ->
+                val previewData = PreviewData.inflate(context, parser)
+                val complicationData =
+                    previewData[ComplicationType.LONG_TEXT] as LongTextComplicationData
+                val text =
+                    complicationData.text.getTextAt(context.resources, Instant.ofEpochMilli(0))
+                assertThat(text).isEqualTo("Steps: 343, Time: 2:40AM, Progress: 10%")
+            }
+        }
+        runTestForLocale(Locale.GERMANY) { context ->
+            context.resources.getXml(R.xml.static_preview_data_formatted).use { parser ->
+                val previewData = PreviewData.inflate(context, parser)
+                val complicationData =
+                    previewData[ComplicationType.LONG_TEXT] as LongTextComplicationData
+                val text =
+                    complicationData.text.getTextAt(context.resources, Instant.ofEpochMilli(0))
+                assertThat(text).isEqualTo("Steps: 343, Time: 02:40, Progress: 10%")
             }
         }
     }
