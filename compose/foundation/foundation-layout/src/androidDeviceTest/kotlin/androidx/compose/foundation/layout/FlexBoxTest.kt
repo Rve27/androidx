@@ -16,18 +16,28 @@
 
 package androidx.compose.foundation.layout
 
+import androidx.compose.foundation.layout.FlexBoxScopeInstance.flex
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.VerticalAlignmentLine
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth
+import kotlin.math.max
+import kotlin.math.min
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
@@ -1321,6 +1331,230 @@ class FlexBoxTest {
         Truth.assertThat(itemsPlaced).isEqualTo(100)
     }
 
+    // Baseline Test region
+
+    @Test
+    fun testFlexBox_alignItemsBaseline_FirstBaseline() {
+        val yPositions = mutableListOf<Float>()
+        val baseline1 = 10
+        val baseline2 = 30
+        val height = 40
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    config = {
+                        direction = FlexDirection.Row
+                        alignItems = FlexAlignItems.Baseline
+                    }
+                ) {
+                    BaselineTestLayout(
+                        width = 50.dp,
+                        height = height.dp,
+                        baseline = baseline1.dp,
+                        horizontalLine = FirstBaseline,
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                yPositions.add(it.positionInParent().y)
+                            },
+                    )
+                    BaselineTestLayout(
+                        width = 50.dp,
+                        height = height.dp,
+                        baseline = baseline2.dp,
+                        horizontalLine = FirstBaseline,
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                yPositions.add(it.positionInParent().y)
+                            },
+                    )
+                }
+            }
+        }
+
+        rule.waitForIdle()
+        // Max ascent (baseline) is 30.
+        // Item 1 baseline is 10, so it must shift down by 20 to align at 30. y = 20.
+        // Item 2 baseline is 30, so it aligns at 30. y = 0.
+        Truth.assertThat(yPositions).containsExactly(20f, 0f).inOrder()
+    }
+
+    @Test
+    fun testFlexBox_alignItemsToBaseline_FirstBaseline() {
+        val yPositions = mutableListOf<Float>()
+        val baseline1 = 10
+        val baseline2 = 30
+        val height = 40
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    config = {
+                        direction = FlexDirection.Row
+                        alignItemsToBaseline(TestHorizontalLine)
+                    }
+                ) {
+                    BaselineTestLayout(
+                        width = 50.dp,
+                        height = height.dp,
+                        baseline = baseline1.dp,
+                        horizontalLine = TestHorizontalLine,
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                yPositions.add(it.positionInParent().y)
+                            },
+                    )
+                    BaselineTestLayout(
+                        width = 50.dp,
+                        height = height.dp,
+                        baseline = baseline2.dp,
+                        horizontalLine = TestHorizontalLine,
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                yPositions.add(it.positionInParent().y)
+                            },
+                    )
+                }
+            }
+        }
+
+        rule.waitForIdle()
+        // Max ascent (baseline) is 30.
+        // Item 1 baseline is 10, so it must shift down by 20 to align at 30. y = 20.
+        // Item 2 baseline is 30, so it aligns at 30. y = 0.
+        Truth.assertThat(yPositions).containsExactly(20f, 0f).inOrder()
+    }
+
+    @Test
+    fun testFlexBox_alignItemsToBaseline_lambda() {
+        val yPositions = mutableListOf<Float>()
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    config = {
+                        direction = FlexDirection.Row
+                        alignItemsToBaseline { it.measuredHeight / 2 }
+                    }
+                ) {
+                    Box(
+                        Modifier.size(20.dp).onGloballyPositioned {
+                            yPositions.add(it.positionInParent().y)
+                        }
+                    )
+                    Box(
+                        Modifier.size(40.dp).onGloballyPositioned {
+                            yPositions.add(it.positionInParent().y)
+                        }
+                    )
+                }
+            }
+        }
+
+        rule.waitForIdle()
+        // Baselines: 10, 20. Max ascent = 20.
+        // Item 1 y = 20 - 10 = 10.
+        // Item 2 y = 20 - 20 = 0.
+        Truth.assertThat(yPositions).containsExactly(10f, 0f).inOrder()
+    }
+
+    @Test
+    fun testFlexBox_alignSelfToBaseline() {
+        val yPositions = mutableListOf<Float>()
+        val baseline1 = 10
+        val baseline2 = 30
+        val height = 40
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    config = {
+                        direction = FlexDirection.Row
+                        alignItems = FlexAlignItems.Start
+                    }
+                ) {
+                    BaselineTestLayout(
+                        width = 50.dp,
+                        height = height.dp,
+                        baseline = baseline1.dp,
+                        horizontalLine = TestHorizontalLine,
+                        modifier =
+                            Modifier.flex { alignSelfToBaseline(TestHorizontalLine) }
+                                .onGloballyPositioned { yPositions.add(it.positionInParent().y) },
+                    )
+                    BaselineTestLayout(
+                        width = 50.dp,
+                        height = height.dp,
+                        baseline = baseline2.dp,
+                        horizontalLine = TestHorizontalLine,
+                        modifier =
+                            Modifier.flex { alignSelfToBaseline(TestHorizontalLine) }
+                                .onGloballyPositioned { yPositions.add(it.positionInParent().y) },
+                    )
+                }
+            }
+        }
+
+        rule.waitForIdle()
+        // Both items override alignment to Baseline.
+        // Max ascent = 30.
+        // Item 1 y = 30 - 10 = 20.
+        // Item 2 y = 30 - 30 = 0.
+        Truth.assertThat(yPositions).containsExactly(20f, 0f).inOrder()
+    }
+
+    @Test
+    fun testFlexBox_alignItemsToBaseline_Column_VerticalLine() {
+        val xPositions = mutableListOf<Float>()
+        val baseline1 = 10
+        val baseline2 = 30
+        val width = 40
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    config = {
+                        direction = FlexDirection.Column
+                        // In Column, cross-axis is horizontal, so we align using a
+                        // VerticalAlignmentLine
+                        alignItemsToBaseline(TestVerticalLine)
+                    }
+                ) {
+                    // BaselineTestLayout sets both TestHorizontalLine and TestVerticalLine to
+                    // 'baseline'
+                    BaselineTestLayout(
+                        width = width.dp,
+                        height = 50.dp,
+                        baseline = baseline1.dp,
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                xPositions.add(it.positionInParent().x)
+                            },
+                    )
+                    BaselineTestLayout(
+                        width = width.dp,
+                        height = 50.dp,
+                        baseline = baseline2.dp,
+                        modifier =
+                            Modifier.onGloballyPositioned {
+                                xPositions.add(it.positionInParent().x)
+                            },
+                    )
+                }
+            }
+        }
+
+        rule.waitForIdle()
+        // The alignment line is a vertical line (x-coordinate relative to the item's start).
+        // Item 1 has line at x=10.
+        // Item 2 has line at x=30.
+        // The maximum distance to the line (max ascent) is 30.
+
+        // Item 1 must shift right so its line (at 10) aligns with 30. Shift = 20. Position X = 20.
+        // Item 2 line (at 30) is already at max. Shift = 0. Position X = 0.
+        Truth.assertThat(xPositions).containsExactly(20f, 0f).inOrder()
+    }
+
     companion object {
         private val NoOpDensity =
             object : Density {
@@ -1328,4 +1562,34 @@ class FlexBoxTest {
                 override val fontScale = 1f
             }
     }
+}
+
+private val TestHorizontalLine = HorizontalAlignmentLine(::min)
+private val TestVerticalLine = VerticalAlignmentLine(::min)
+
+@Composable
+private fun BaselineTestLayout(
+    width: Dp,
+    height: Dp,
+    baseline: Dp,
+    modifier: Modifier = Modifier,
+    horizontalLine: HorizontalAlignmentLine = TestHorizontalLine,
+    content: @Composable () -> Unit = {},
+) {
+    Layout(
+        content = content,
+        modifier = modifier,
+        measurePolicy = { _, constraints ->
+            val widthPx = max(width.roundToPx(), constraints.minWidth)
+            val heightPx = max(height.roundToPx(), constraints.minHeight)
+            layout(
+                widthPx,
+                heightPx,
+                mapOf(
+                    horizontalLine to baseline.roundToPx(),
+                    TestVerticalLine to baseline.roundToPx(),
+                ),
+            ) {}
+        },
+    )
 }

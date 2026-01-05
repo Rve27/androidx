@@ -1826,7 +1826,6 @@ internal class ResolvedFlexItemInfo : FlexConfigScope {
         basis = FlexBasis.Percent(value)
     }
 
-    // TODO add test cases for these functions
     override fun alignSelfToBaseline(alignmentLine: AlignmentLine) {
         alignSelf = FlexAlignSelf.Baseline
         baselineAlignmentLine = alignmentLine
