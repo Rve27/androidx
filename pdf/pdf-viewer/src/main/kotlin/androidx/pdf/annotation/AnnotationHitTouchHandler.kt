@@ -143,8 +143,3 @@ internal class AnnotationHitTouchHandler() {
         )
     }
 }
-
-/** Callback interface for annotation hit events. */
-internal interface OnAnnotationHitListener {
-    fun onAnnotationHit(annotation: PdfAnnotation)
-}
