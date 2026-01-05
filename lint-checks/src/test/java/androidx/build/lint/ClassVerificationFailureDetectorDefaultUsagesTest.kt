@@ -166,13 +166,13 @@ src/com/example/MyClass.java:7: Error: This call references a method guarded by 
 Fix for src/com/example/MyClass.java line 7: Extract to static inner class:
 @@ -4 +4
 + import androidx.annotation.DoNotInline;
-+ import androidx.annotation.RequiresAconfigFlag;
++ import androidx.annotation.RequiresFlag;
 @@ -7 +9
 -        FlaggedApiContainer.flaggedApi();
 +        FlagMyFlagImpl.flaggedApi();
 @@ -9 +11
 +
-+ @RequiresAconfigFlag("test.pkg.myFlag")
++ @RequiresFlag("test.pkg.myFlag")
 + static class FlagMyFlagImpl {
 +     private FlagMyFlagImpl() {
 +         // This class is not instantiable.
