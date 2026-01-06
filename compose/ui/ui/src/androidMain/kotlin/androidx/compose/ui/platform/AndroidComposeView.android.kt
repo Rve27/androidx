@@ -3250,11 +3250,11 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                                     val oldValue = it.showLayoutBounds
                                     it.showLayoutBounds = getIsShowingLayoutBounds()
                                     if (oldValue != it.showLayoutBounds) {
-                                        it.invalidateDescendants()
+                                        it.post { it.invalidateDescendants() }
                                     }
                                 }
                             } else {
-                                composeViews.forEach { it.invalidateDescendants() }
+                                composeViews.forEach { it.post { it.invalidateDescendants() } }
                             }
                         }
                     }
