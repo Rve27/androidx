@@ -19,6 +19,7 @@ package androidx.compose.remote.creation.compose.modifier
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.painter.RemotePainter
+import androidx.compose.remote.creation.compose.painter.painterRemoteColor
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.rc
@@ -41,8 +42,13 @@ public fun RemoteModifier.background(color: Color): RemoteModifier =
     this.then(BackgroundModifier(color.rc))
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RemoteComposable
+@Composable
 public fun RemoteModifier.background(color: RemoteColor): RemoteModifier =
-    this.then(BackgroundModifier(color))
+    this.drawWithContent {
+        with(painterRemoteColor(color)) { onDraw() }
+        drawContent()
+    }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RemoteComposable
