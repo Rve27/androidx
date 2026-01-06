@@ -42,8 +42,6 @@ androidx {
 
 android {
     namespace = "androidx.mediarouter.testing"
-    compileSdk {
-        version = preview("Baklava")
-    }
+    compileSdk { version = preview("Baklava") }
 }
 

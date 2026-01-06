@@ -23,9 +23,7 @@ dependencies {
 }
 
 android {
-    compileSdk {
-        version = preview("Baklava")
-    }
+    compileSdk { version = preview("Baklava") }
     namespace = "androidx.activity.compose.benchmark"
 
     // DO NOT CHECK IN! Enable experimental benchmarking with R8 - for local runs only
