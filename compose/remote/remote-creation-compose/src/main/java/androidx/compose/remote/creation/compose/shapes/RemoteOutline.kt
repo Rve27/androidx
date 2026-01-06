@@ -19,7 +19,7 @@ package androidx.compose.remote.creation.compose.shapes
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.RemotePath
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.layout.conicTo
@@ -43,7 +43,7 @@ public sealed class RemoteOutline {
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public class Rectangle(public val topLeft: RemoteOffset, public val size: RemoteSize) :
         RemoteOutline() {
-        override fun RemoteDrawScope2.drawOutline(paint: RemotePaint) {
+        override fun RemoteDrawScope.drawOutline(paint: RemotePaint) {
             drawRect(paint, topLeft, size)
         }
     }
@@ -56,7 +56,7 @@ public sealed class RemoteOutline {
         internal val bottomEnd: RemoteFloat,
         internal val bottomStart: RemoteFloat,
     ) : RemoteOutline() {
-        override fun RemoteDrawScope2.drawOutline(paint: RemotePaint) {
+        override fun RemoteDrawScope.drawOutline(paint: RemotePaint) {
             val w = remoteWidth
             val h = remoteHeight
             // Remap corner radii based on layout direction
@@ -123,12 +123,12 @@ public sealed class RemoteOutline {
     /** An area defined as a path. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public class Generic(public val path: RemotePath) : RemoteOutline() {
-        override fun RemoteDrawScope2.drawOutline(paint: RemotePaint) {
+        override fun RemoteDrawScope.drawOutline(paint: RemotePaint) {
             drawPath(path, paint)
         }
     }
 
     /** Draws the outline to the canvas with paint. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public abstract fun RemoteDrawScope2.drawOutline(paint: RemotePaint)
+    public abstract fun RemoteDrawScope.drawOutline(paint: RemotePaint)
 }

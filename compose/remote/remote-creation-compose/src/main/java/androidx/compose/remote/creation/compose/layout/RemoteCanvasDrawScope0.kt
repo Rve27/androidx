@@ -32,12 +32,11 @@ import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.creation.compose.capture.NoRemoteCompose
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
-import androidx.compose.remote.creation.compose.capture.RemoteDrawScope
+import androidx.compose.remote.creation.compose.capture.RemoteDrawScope0
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
 import androidx.compose.remote.creation.compose.state.AnimatedRemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteString
-import androidx.compose.remote.creation.compose.state.getFloatIdForCreationState
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -74,18 +73,18 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class RemoteCanvasDrawScope(
+public open class RemoteCanvasDrawScope0(
     public val remoteComposeCreationState: RemoteComposeCreationState,
     public val drawScope: DrawScope,
     override val density: Float = drawScope.density,
     override val fontScale: Float = drawScope.fontScale,
     override val drawContext: DrawContext = drawScope.drawContext,
     override val layoutDirection: LayoutDirection = drawScope.layoutDirection,
-) : RemoteDrawScope {
+) : RemoteDrawScope0 {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public class RemoteAccess(
-        public val remoteDrawScope: RemoteCanvasDrawScope,
+        public val remoteDrawScope: RemoteCanvasDrawScope0,
         public val drawScope: DrawScope,
         public val remoteComposeCreationState: RemoteComposeCreationState,
     ) {
@@ -208,7 +207,7 @@ public open class RemoteCanvasDrawScope(
             until: Int,
             from: Int = 0,
             step: Int = 1,
-            content: RemoteCanvasDrawScope.(RemoteFloat) -> Unit,
+            content: RemoteCanvasDrawScope0.(RemoteFloat) -> Unit,
         ) {
             loop(until.toFloat(), from.toFloat(), step.toFloat(), content)
         }
@@ -217,7 +216,7 @@ public open class RemoteCanvasDrawScope(
             until: Float,
             from: Float = 0f,
             step: Float = 1f,
-            content: RemoteCanvasDrawScope.(RemoteFloat) -> Unit,
+            content: RemoteCanvasDrawScope0.(RemoteFloat) -> Unit,
         ) {
             val loopIndex = remoteComposeCreationState.document.addFloatConstant(0f)
             remoteComposeCreationState.document.startLoop(

@@ -28,7 +28,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemotePaddingValues
 import androidx.compose.remote.creation.compose.layout.RemoteRow
@@ -36,7 +36,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteRowScope
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.clickable
-import androidx.compose.remote.creation.compose.modifier.drawWithContent2
+import androidx.compose.remote.creation.compose.modifier.drawWithContent
 import androidx.compose.remote.creation.compose.modifier.heightIn
 import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
@@ -346,7 +346,7 @@ private fun RemoteButtonImpl(
         horizontalArrangement = RemoteArrangement.CenterHorizontally,
         modifier =
             modifier
-                .drawWithContent2 {
+                .drawWithContent {
                     drawScope.drawShapedBackground(
                         shape = shape,
                         color = colors.containerColor(enabled),
@@ -683,7 +683,7 @@ public class RemoteButtonColors(
 }
 
 /** Draws a colored and shaped background with when clipping is not supported. */
-internal fun RemoteDrawScope2.drawShapedBackground(
+internal fun RemoteDrawScope.drawShapedBackground(
     shape: RemoteShape,
     color: RemoteColor,
     enabled: RemoteBoolean,
@@ -726,7 +726,7 @@ internal fun RemoteDrawScope2.drawShapedBackground(
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Suppress("RestrictedApiAndroidX")
-private fun RemoteDrawScope2.drawBorder(
+private fun RemoteDrawScope.drawBorder(
     borderColor: RemoteColor,
     borderStrokeWidth: RemoteFloat,
     shape: RemoteShape,
@@ -746,7 +746,7 @@ private fun RemoteDrawScope2.drawBorder(
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Suppress("RestrictedApiAndroidX")
-private fun RemoteDrawScope2.drawSolidColorShape(
+private fun RemoteDrawScope.drawSolidColorShape(
     shape: RemoteShape,
     w: RemoteFloat,
     h: RemoteFloat,

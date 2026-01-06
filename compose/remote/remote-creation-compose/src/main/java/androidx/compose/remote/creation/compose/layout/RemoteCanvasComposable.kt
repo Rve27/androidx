@@ -18,7 +18,6 @@ package androidx.compose.remote.creation.compose.layout
 
 import androidx.annotation.RestrictTo
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.toComposeUiLayout
@@ -27,27 +26,26 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.nativeCanvas
 
 /**
- * A Composable that provides a [RemoteDrawScope2] for drawing operations in RemoteCompose.
+ * A Composable that provides a [RemoteDrawScope] for drawing operations in RemoteCompose.
  *
  * @param modifier The [RemoteModifier] to apply to this layout.
- * @param content The drawing commands to be executed on the remote canvas via [RemoteDrawScope2].
+ * @param content The drawing commands to be executed on the remote canvas via [RemoteDrawScope].
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RemoteComposable
 @Composable
-public fun RemoteCanvas2(
+public fun RemoteCanvas(
     modifier: RemoteModifier = RemoteModifier,
-    content: RemoteDrawScope2.() -> Unit,
+    content: RemoteDrawScope.() -> Unit,
 ) {
-    val captureMode = LocalRemoteComposeCreationState.current
     @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
     Spacer(
         modifier =
             RemoteComposeCanvasModifier(modifier.toRemoteCompose())
                 .drawBehind {
-                    RemoteDrawScope2(
+                    RemoteDrawScope(
                             remoteCanvas =
-                                RemoteCanvas2(
+                                RemoteCanvas(
                                     this.drawContext.canvas.nativeCanvas as RecordingCanvas
                                 ),
                             underlyingDrawScope = this,

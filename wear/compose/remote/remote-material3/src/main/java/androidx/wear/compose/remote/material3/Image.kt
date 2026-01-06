@@ -22,7 +22,7 @@ import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.remote.creation.compose.layout.RemoteBox
-import androidx.compose.remote.creation.compose.layout.RemoteCanvas2
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
@@ -160,7 +160,7 @@ private fun FallbackAvatar(
 @RemoteComposable
 @SuppressLint("RestrictedApiAndroidX")
 private fun BackgroundOverlay(modifier: RemoteModifier, overlayColor: RemoteColor) {
-    RemoteCanvas2(modifier = modifier.clip(ImageDefaults.backgroundShape())) {
+    RemoteCanvas(modifier = modifier.clip(ImageDefaults.backgroundShape())) {
         val cornerRadius = RemoteDp(ImageDefaults.BACKGROUND_CORNER_RADIUS_DP.value.rf).toPx()
         drawRoundRect(
             paint = RemotePaint().apply { remoteColor = overlayColor },

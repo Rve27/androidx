@@ -20,7 +20,7 @@ import android.graphics.Paint
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.creation.compose.capture.toRemotePath
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteColorFilter
 import androidx.compose.remote.creation.compose.state.RemotePaint
@@ -62,7 +62,7 @@ public inline fun RemotePathData(block: RemotePathBuilder.() -> Unit): List<Path
     }
 
 internal sealed class RemoteVNode {
-    abstract fun RemoteDrawScope2.draw(colorFilter: RemoteColorFilter?)
+    abstract fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?)
 }
 
 internal class RemoteVectorComponent(val root: RemoteGroupComponent) : RemoteVNode() {
@@ -75,11 +75,11 @@ internal class RemoteVectorComponent(val root: RemoteGroupComponent) : RemoteVNo
     private var rootScaleX = 1f.rf
     private var rootScaleY = 1f.rf
 
-    private fun RemoteDrawScope2.drawVector(tintFilter: RemoteColorFilter?) {
+    private fun RemoteDrawScope.drawVector(tintFilter: RemoteColorFilter?) {
         with(root) { scale(rootScaleX, rootScaleY) { draw(tintFilter) } }
     }
 
-    override fun RemoteDrawScope2.draw(colorFilter: RemoteColorFilter?) {
+    override fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?) {
         rootScaleX = remoteWidth / viewportSize.width
         rootScaleY = remoteHeight / viewportSize.height
         val targetFilter = colorFilter ?: intrinsicColorFilter
@@ -119,7 +119,7 @@ internal class RemotePathComponent : RemoteVNode() {
         pathData.toRemotePath(path)
     }
 
-    override fun RemoteDrawScope2.draw(colorFilter: RemoteColorFilter?) {
+    override fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?) {
         updatePath()
 
         val paint = RemotePaint().apply { remoteColorFilter = colorFilter }
@@ -251,7 +251,7 @@ internal class RemoteGroupComponent : RemoteVNode() {
         markTintForVNode(instance)
     }
 
-    override fun RemoteDrawScope2.draw(colorFilter: RemoteColorFilter?) {
+    override fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?) {
         withTransform({ groupMatrix?.let { transform(it) } }) {
             children.fastForEach { node -> with(node) { this@draw.draw(colorFilter) } }
         }

@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.LayoutDirection
  * API incompatibilities.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteDrawScope2
+public class RemoteDrawScope
 public constructor(
-    public val remoteCanvas: RemoteCanvas2,
+    public val remoteCanvas: RemoteCanvas,
     public val underlyingDrawScope: DrawScope,
 ) {
     public val remoteComposeCreationState: RemoteComposeCreationState
@@ -167,17 +167,17 @@ public constructor(
     }
 
     /** Performs a rotation. */
-    public fun rotate(degrees: RemoteFloat, block: RemoteDrawScope2.() -> Unit) {
+    public fun rotate(degrees: RemoteFloat, block: RemoteDrawScope.() -> Unit) {
         withTransform({ rotate(degrees) }, block)
     }
 
     /** Performs a translation. */
-    public fun translate(left: RemoteFloat, top: RemoteFloat, block: RemoteDrawScope2.() -> Unit) {
+    public fun translate(left: RemoteFloat, top: RemoteFloat, block: RemoteDrawScope.() -> Unit) {
         withTransform({ translate(left, top) }, block)
     }
 
     /** Performs a scaling. */
-    public fun scale(scaleX: RemoteFloat, scaleY: RemoteFloat, block: RemoteDrawScope2.() -> Unit) {
+    public fun scale(scaleX: RemoteFloat, scaleY: RemoteFloat, block: RemoteDrawScope.() -> Unit) {
         withTransform({ scale(scaleX, scaleY) }, block)
     }
 
@@ -186,7 +186,7 @@ public constructor(
         scaleX: RemoteFloat,
         scaleY: RemoteFloat,
         pivot: RemoteOffset,
-        block: RemoteDrawScope2.() -> Unit,
+        block: RemoteDrawScope.() -> Unit,
     ) {
         withTransform({ scale(scaleX, scaleY, pivot) }, block)
     }
@@ -199,8 +199,8 @@ public constructor(
      *   applied.
      */
     public fun withTransform(
-        transformBlock: RemoteCanvas2.() -> Unit,
-        drawBlock: RemoteDrawScope2.() -> Unit,
+        transformBlock: RemoteCanvas.() -> Unit,
+        drawBlock: RemoteDrawScope.() -> Unit,
     ) {
         remoteCanvas.save()
         remoteCanvas.transformBlock()

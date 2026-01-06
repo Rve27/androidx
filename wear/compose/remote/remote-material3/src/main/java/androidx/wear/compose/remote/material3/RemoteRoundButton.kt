@@ -23,7 +23,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.clickable
-import androidx.compose.remote.creation.compose.modifier.drawWithContent2
+import androidx.compose.remote.creation.compose.modifier.drawWithContent
 import androidx.compose.remote.creation.compose.shapes.RemoteShape
 import androidx.compose.remote.creation.compose.state.RemoteBoolean
 import androidx.compose.remote.creation.compose.state.RemoteColor
@@ -49,7 +49,7 @@ internal fun RemoteRoundButton(
         verticalArrangement = RemoteArrangement.Center,
         modifier =
             modifier
-                .drawWithContent2 {
+                .drawWithContent {
                     drawScope.drawShapedBackground(
                         shape = shape,
                         color = backgroundColor,
