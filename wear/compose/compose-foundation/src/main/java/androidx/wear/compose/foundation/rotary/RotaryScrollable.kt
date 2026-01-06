@@ -1035,6 +1035,9 @@ internal class RotarySnapHandler(
             }
             // Update the snap target to ensure consistency
             snapTarget = layoutInfoProvider.currentItemIndex
+            // After the scroll ends we need to call a fling with 0f velocity for proper overscroll
+            // and nested scroll support.
+            with(scrollLogic) { fling(0f, null, scrollableState) }
         }
     }
 
@@ -1125,6 +1128,9 @@ internal class RotarySnapHandler(
                     prevPosition = value
                 }
             }
+            // After the scroll ends we need to call a fling with 0f velocity for proper overscroll
+            // and nested scroll support.
+            with(scrollLogic) { fling(0f, null, scrollableState) }
         }
     }
 
