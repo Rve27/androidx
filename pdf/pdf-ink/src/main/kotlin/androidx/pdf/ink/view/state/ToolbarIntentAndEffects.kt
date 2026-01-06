@@ -70,12 +70,6 @@ internal sealed interface ToolbarIntent {
 
     /** Intent to dismiss any popups(brush slider, color palette) shown. */
     object DismissPopups : ToolbarIntent
-
-    /** Intent to expand the toolbar. */
-    object ExpandToolbar : ToolbarIntent
-
-    /** Intent to collapse the toolbar. */
-    object CollapseToolbar : ToolbarIntent
 }
 
 /**
