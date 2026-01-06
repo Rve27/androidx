@@ -897,14 +897,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                 removeCallbacks(this)
                 val lastMotionEvent = previousMotionEvent
                 if (lastMotionEvent != null) {
-                    val wasMouseEvent = lastMotionEvent.getToolType(0) == TOOL_TYPE_MOUSE
                     val action = lastMotionEvent.actionMasked
-                    val resend =
-                        if (wasMouseEvent) {
-                            action != ACTION_HOVER_EXIT && action != ACTION_UP
-                        } else {
-                            action != ACTION_UP
-                        }
+                    val resend = action != ACTION_HOVER_EXIT && action != ACTION_UP
                     if (resend) {
                         val newAction =
                             if (action == ACTION_HOVER_MOVE || action == ACTION_HOVER_ENTER) {
@@ -2762,7 +2756,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                 /* flags */ motionEvent.flags,
             )
         val pointerInputEvent = motionEventAdapter.convertToPointerInputEvent(event, this)!!
-
         pointerInputEventProcessor.process(pointerInputEvent, this, true)
         event.recycle()
     }
@@ -2948,6 +2941,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                     previousMotionEvent?.recycle()
                     previousMotionEvent = MotionEvent.obtainNoHistory(event)
                     hoverExitReceived = true
+
                     // There are cases where the hover exit will incorrectly trigger because this
                     // post is called right before the end of the frame and the new frame checks for
                     // a press/down event (which hasn't occurred yet). Therefore, we delay the post
