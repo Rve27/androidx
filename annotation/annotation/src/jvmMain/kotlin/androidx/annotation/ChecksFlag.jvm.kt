@@ -17,29 +17,17 @@
 package androidx.annotation
 
 /**
- * Indicates an API is part of a feature that is guarded by an aconfig flag, and only available if
- * the flag is enabled.
- *
- * Unless the API has been finalized and has become part of the SDK, callers of the annotated API
- * must check that the flag is enabled before making any assumptions about the existence of the API.
+ * Denotes that the annotated method or field is equivalent to checking that the specified aconfig
+ * flag is enabled.
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
-@Target(
-    AnnotationTarget.ANNOTATION_CLASS,
-    AnnotationTarget.CLASS,
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER,
-    AnnotationTarget.CONSTRUCTOR,
-    AnnotationTarget.FIELD,
-    AnnotationTarget.FILE,
-)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.FIELD)
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // Flags are only supported internally for now.
-public annotation class RequiresAconfigFlag(
+public annotation class ChecksFlag(
     /**
-     * The string value for the aconfig flag used to guard the feature this API is part of, for
-     * example `"android.os.flags.my_feature"`.
+     * The string value for the aconfig flag checked by the annotated API, for example
+     * `"android.os.flags.my_feature"`.
      */
     val value: String
 )
