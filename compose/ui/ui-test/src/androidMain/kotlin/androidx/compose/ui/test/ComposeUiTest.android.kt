@@ -129,9 +129,9 @@ inline fun <reified A : ComponentActivity> runAndroidComposeUiTestNonSuspendingL
     message = "Replaced with same function, but with runTextContext and testTimeout",
 )
 @JvmName("AndroidComposeUiTestEnvironment")
-inline fun <A : ComponentActivity> AndroidComposeUiTestEnvironmentNoSuspendingLambda(
+fun <A : ComponentActivity> AndroidComposeUiTestEnvironmentNoSuspendingLambda(
     effectContext: CoroutineContext = EmptyCoroutineContext,
-    crossinline activityProvider: () -> A?,
+    activityProvider: () -> A?,
 ): AndroidComposeUiTestEnvironment<A> {
     return AndroidComposeUiTestEnvironment(
         effectContext,
@@ -361,13 +361,19 @@ sealed interface AndroidComposeUiTest<A : ComponentActivity> : ComposeUiTest {
  *   platform specific timeout exception will be thrown.
  */
 @ExperimentalTestApi
-inline fun <A : ComponentActivity> AndroidComposeUiTestEnvironment(
+fun <A : ComponentActivity> AndroidComposeUiTestEnvironment(
     effectContext: CoroutineContext = EmptyCoroutineContext,
     runTestContext: CoroutineContext = EmptyCoroutineContext,
     testTimeout: Duration = 60.seconds,
-    crossinline activityProvider: () -> A?,
+    activityProvider: () -> A?,
 ): AndroidComposeUiTestEnvironment<A> {
-    return object : AndroidComposeUiTestEnvironment<A>(effectContext, runTestContext, testTimeout) {
+    return object :
+        AndroidComposeUiTestEnvironment<A>(
+            effectContext = effectContext,
+            runTestContext = runTestContext,
+            testTimeout = testTimeout,
+            useStandardTestDispatcherForComposition = false,
+        ) {
         override val activity: A?
             get() = activityProvider.invoke()
     }
@@ -379,9 +385,11 @@ inline fun <A : ComponentActivity> AndroidComposeUiTestEnvironment(
  * require that the environment has been set up.
  *
  * If the [effectContext] contains a [TestDispatcher], that dispatcher will be used to run
- * composition on and its [TestCoroutineScheduler] will be used to construct the [MainTestClock]. If
- * the `effectContext` does not contain a `TestDispatcher`, an [UnconfinedTestDispatcher] will be
- * created, using the `TestCoroutineScheduler` from the `effectContext` if present.
+ * composition, and its [TestCoroutineScheduler] will be used to construct the [MainTestClock]. If
+ * the `effectContext` does not contain a `TestDispatcher`, a [StandardTestDispatcher] will be
+ * created for `androidx.compose.ui.test.v2.*` APIs; otherwise, an [UnconfinedTestDispatcher] will
+ * be created. In both cases, the `TestCoroutineScheduler` from the `effectContext` will be used if
+ * present.
  *
  * @param A The Activity type to be interacted with, which typically (but not necessarily) is the
  *   activity that was launched and hosts the Compose content.
@@ -397,16 +405,26 @@ inline fun <A : ComponentActivity> AndroidComposeUiTestEnvironment(
  */
 @ExperimentalTestApi
 @OptIn(ExperimentalCoroutinesApi::class)
-abstract class AndroidComposeUiTestEnvironment<A : ComponentActivity>(
+abstract class AndroidComposeUiTestEnvironment<A : ComponentActivity>
+internal constructor(
     private val effectContext: CoroutineContext = EmptyCoroutineContext,
     private val runTestContext: CoroutineContext = EmptyCoroutineContext,
     private val testTimeout: Duration = 60.seconds,
+    private val useStandardTestDispatcherForComposition: Boolean,
 ) {
+
+    @Suppress("unused") constructor() : this(EmptyCoroutineContext)
 
     @Suppress("unused")
     constructor(
         effectContext: CoroutineContext = EmptyCoroutineContext
     ) : this(effectContext, EmptyCoroutineContext, 60.seconds)
+
+    constructor(
+        effectContext: CoroutineContext = EmptyCoroutineContext,
+        runTestContext: CoroutineContext = EmptyCoroutineContext,
+        testTimeout: Duration = 60.seconds,
+    ) : this(effectContext, runTestContext, testTimeout, true)
 
     /**
      * Returns the current host activity of type [A]. If no such activity is available, for example
@@ -785,6 +803,7 @@ abstract class AndroidComposeUiTestEnvironment<A : ComponentActivity>(
             coroutineExceptionHandler.throwUncaught()
         }
 
+        @Suppress("BanThreadSleep")
         override fun waitUntil(
             conditionDescription: String?,
             timeoutMillis: Long,
@@ -966,3 +985,13 @@ interface ComposeAccessibilityValidator {
 
 internal class AndroidComposeUiTestTimeoutException(message: String, cause: Throwable?) :
     Exception(message, cause)
+
+@OptIn(ExperimentalCoroutinesApi::class)
+private fun CoroutineContext.createDefaultTestDispatcher(
+    useStandardTestDispatcher: Boolean
+): TestDispatcher {
+    if (useStandardTestDispatcher) {
+        return StandardTestDispatcher(this[TestCoroutineScheduler])
+    }
+    return UnconfinedTestDispatcher(this[TestCoroutineScheduler])
+}
