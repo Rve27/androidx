@@ -115,9 +115,6 @@ internal data class AnnotationToolbarState(
      * configuration will be applied.
      */
     val highlighterState: ToolAttributes,
-
-    /** Whether the toolbar is currently expanded. */
-    val isExpanded: Boolean,
 ) : Parcelable {
 
     // Secondary constructor to read from a Parcel.
@@ -147,7 +144,6 @@ internal data class AnnotationToolbarState(
                     ToolAttributes::class.java,
                 )
             ),
-        isExpanded = parcel.readByte() != 0.toByte(),
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -160,7 +156,6 @@ internal data class AnnotationToolbarState(
         parcel.writeByte(if (isColorPaletteVisible) 1 else 0)
         parcel.writeParcelable(penState, flags)
         parcel.writeParcelable(highlighterState, flags)
-        parcel.writeByte(if (isExpanded) 1 else 0)
     }
 
     override fun describeContents(): Int {
