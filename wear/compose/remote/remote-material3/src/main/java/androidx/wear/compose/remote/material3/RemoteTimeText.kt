@@ -26,9 +26,9 @@ import androidx.compose.remote.core.RemoteContext.FLOAT_TIME_IN_MIN
 import androidx.compose.remote.core.operations.DrawTextOnCircle
 import androidx.compose.remote.core.operations.TextFromFloat
 import androidx.compose.remote.creation.compose.layout.RemoteBox
-import androidx.compose.remote.creation.compose.layout.RemoteCanvas2
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.clearAndSetSemantics
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
@@ -85,7 +85,7 @@ public fun RemoteTimeText(
         )
     val fontSize = with(LocalDensity.current) { fontSize.toPx() }.rf
     RemoteBox(modifier.clearAndSetSemantics {}) {
-        RemoteCanvas2(modifier = RemoteModifier.fillMaxSize()) {
+        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) {
             drawTimeText(
                 text = text,
                 textColor = color,
@@ -108,7 +108,7 @@ private fun buildTimeTextString(
     return leadingWithSeparator + time + trailingWithSeparator
 }
 
-private fun RemoteDrawScope2.drawTimeText(
+private fun RemoteDrawScope.drawTimeText(
     text: RemoteString,
     textColor: RemoteColor,
     fontSize: RemoteFloat,

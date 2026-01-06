@@ -22,12 +22,10 @@ import androidx.compose.remote.creation.compose.capture.DefaultIconSize
 import androidx.compose.remote.creation.compose.capture.RemoteImageVector
 import androidx.compose.remote.creation.compose.capture.RemoteVectorGroup
 import androidx.compose.remote.creation.compose.capture.RemoteVectorPath
-import androidx.compose.remote.creation.compose.capture.withTransform
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.layout.toAndroidBlendMode
-import androidx.compose.remote.creation.compose.layout.translate
 import androidx.compose.remote.creation.compose.painter.RemotePainter
 import androidx.compose.remote.creation.compose.state.RemoteBlendModeColorFilter
 import androidx.compose.remote.creation.compose.state.RemoteColor
@@ -78,7 +76,7 @@ public class RemoteVectorPainter() : RemotePainter() {
             vector.name = value
         }
 
-    override fun RemoteDrawScope2.onDraw() {
+    override fun RemoteDrawScope.onDraw() {
         with(vector) {
             val shouldMirror = autoMirror && layoutDirection == LayoutDirection.Rtl
             if (shouldMirror) {

@@ -16,7 +16,7 @@
 
 package androidx.wear.compose.remote.material3
 
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.painter.RemotePainter
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
@@ -39,7 +39,7 @@ private class DefaultRemoteContainerPainter(
     private val alpha: RemoteFloat,
     override val intrinsicSize: RemoteSize? = painter.intrinsicSize,
 ) : RemotePainter() {
-    override fun RemoteDrawScope2.onDraw() {
+    override fun RemoteDrawScope.onDraw() {
         with(painter) { draw(alpha = alpha) }
         scrim?.let {
             drawRect(
@@ -66,7 +66,7 @@ private class DefaultDisabledRemoteContainerPainter(
     private val alpha: RemoteFloat,
     override val intrinsicSize: RemoteSize? = painter.intrinsicSize,
 ) : RemotePainter() {
-    override fun RemoteDrawScope2.onDraw() {
+    override fun RemoteDrawScope.onDraw() {
         with(painter) { draw(alpha = alpha) }
     }
 }

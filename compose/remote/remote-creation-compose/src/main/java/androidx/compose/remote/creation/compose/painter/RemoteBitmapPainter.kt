@@ -18,7 +18,7 @@
 package androidx.compose.remote.creation.compose.painter
 
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
@@ -37,7 +37,7 @@ public class RemoteBitmapPainter(
     private val srcOffset: RemoteOffset = RemoteOffset.Zero,
     private val srcSize: RemoteSize = RemoteSize(image.width, image.height),
 ) : RemotePainter() {
-    override fun RemoteDrawScope2.onDraw() {
+    override fun RemoteDrawScope.onDraw() {
         drawScaledBitmap(
             image = image,
             srcOffset = srcOffset,
