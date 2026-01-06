@@ -1067,7 +1067,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         }
 
         val defaultMinSdk = project.defaultAndroidConfig.minSdk
-        val defaultCompileSdk = project.defaultAndroidConfig.compileSdk
 
         // Suppress output of android:compileSdkVersion and related attributes (b/277836549).
         androidResources.additionalParameters += "--no-compile-sdk-metadata"
@@ -1094,10 +1093,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             check(minSdkVersion >= defaultMinSdk) {
                 "minSdkVersion $minSdkVersion lower than the default of $defaultMinSdk"
             }
-            check(compileSdk == defaultCompileSdk || project.isCustomCompileSdkAllowed()) {
-                "compileSdk must not be explicitly specified, was \"$compileSdk\""
-            }
-
             project.enforceBanOnVersionRanges()
 
             if (androidXExtension.type.compilationTarget != CompilationTarget.DEVICE) {
@@ -1170,9 +1165,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             val minSdkVersion = minSdk!!
             check(minSdkVersion >= defaultMinSdkVersion) {
                 "minSdkVersion $minSdkVersion lower than the default of $defaultMinSdkVersion"
-            }
-            check(compileSdk == defaultCompileSdk || project.isCustomCompileSdkAllowed()) {
-                "compileSdk must not be explicitly specified, was \"$compileSdk\""
             }
             project.enforceBanOnVersionRanges()
         }
