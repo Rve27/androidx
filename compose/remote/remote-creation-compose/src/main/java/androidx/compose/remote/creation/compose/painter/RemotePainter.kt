@@ -19,7 +19,7 @@ package androidx.compose.remote.creation.compose.painter
 
 import android.graphics.BlendMode
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
@@ -39,8 +39,8 @@ public abstract class RemotePainter {
 
     private var paint: RemotePaint? = null
 
-    /** Defines the drawing operations within [RemoteDrawScope2]. */
-    public abstract fun RemoteDrawScope2.onDraw()
+    /** Defines the drawing operations within [RemoteDrawScope]. */
+    public abstract fun RemoteDrawScope.onDraw()
 
     /**
      * The intrinsic size of the painter. This is the size of the painter before any scaling or
@@ -71,7 +71,7 @@ public abstract class RemotePainter {
 
     /** Returns the size of the component that this painter is drawing on. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun RemoteDrawScope2.componentSize(): RemoteSize {
+    public fun RemoteDrawScope.componentSize(): RemoteSize {
         return remoteSize
     }
 
@@ -80,7 +80,7 @@ public abstract class RemotePainter {
      * draw the painter.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun RemoteDrawScope2.draw(
+    public fun RemoteDrawScope.draw(
         blendMode: android.graphics.BlendMode? = null,
         alpha: RemoteFloat = DefaultAlpha.rf,
     ) {

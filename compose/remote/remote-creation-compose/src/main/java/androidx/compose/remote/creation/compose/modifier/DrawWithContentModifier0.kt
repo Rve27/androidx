@@ -19,13 +19,13 @@ package androidx.compose.remote.creation.compose.modifier
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
-import androidx.compose.remote.creation.compose.layout.RemoteCanvas2
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
-import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope
-import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope2
+import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope0
+import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope0Impl
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScopeImpl
-import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScopeImpl2
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,8 +33,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.nativeCanvas
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class DrawWithContentModifier(public val content: (RemoteDrawWithContentScope).() -> Unit) :
-    RemoteModifier.Element {
+public class DrawWithContentModifier0(
+    public val content: (RemoteDrawWithContentScope0).() -> Unit
+) : RemoteModifier.Element {
     override fun toRemoteComposeElement(): RecordingModifier.Element {
         return androidx.compose.remote.creation.modifiers.DrawWithContentModifier()
     }
@@ -44,7 +45,7 @@ public class DrawWithContentModifier(public val content: (RemoteDrawWithContentS
         val captureMode = LocalRemoteComposeCreationState.current
         return this.drawBehind {
             captureMode.document.startCanvasOperations()
-            RemoteDrawWithContentScopeImpl(captureMode, drawScope = this).content()
+            RemoteDrawWithContentScope0Impl(captureMode, drawScope = this).content()
             captureMode.document.endCanvasOperations()
         }
     }
@@ -52,20 +53,20 @@ public class DrawWithContentModifier(public val content: (RemoteDrawWithContentS
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
-public fun RemoteModifier.drawWithContent(
-    onDraw: (RemoteDrawWithContentScope).() -> Unit
+public fun RemoteModifier.drawWithContent0(
+    onDraw: (RemoteDrawWithContentScope0).() -> Unit
 ): RemoteModifier {
-    return then(DrawWithContentModifier(onDraw))
+    return then(DrawWithContentModifier0(onDraw))
 }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RemoteComposable
 @Composable
-public fun RemoteModifier.drawWithContent2(
-    onDraw: RemoteDrawWithContentScope2.() -> Unit
+public fun RemoteModifier.drawWithContent(
+    onDraw: RemoteDrawWithContentScope.() -> Unit
 ): RemoteModifier = then(DrawWithContentModifier2(onDraw))
 
-private class DrawWithContentModifier2(val onDraw: RemoteDrawWithContentScope2.() -> Unit) :
+private class DrawWithContentModifier2(val onDraw: RemoteDrawWithContentScope.() -> Unit) :
     RemoteModifier.Element {
     override fun toRemoteComposeElement(): RecordingModifier.Element {
         return androidx.compose.remote.creation.modifiers.DrawWithContentModifier()
@@ -76,13 +77,13 @@ private class DrawWithContentModifier2(val onDraw: RemoteDrawWithContentScope2.(
         val captureMode = LocalRemoteComposeCreationState.current
         return this.drawBehind {
             val drawScope =
-                RemoteDrawScope2(
+                RemoteDrawScope(
                     remoteCanvas =
-                        RemoteCanvas2(this.drawContext.canvas.nativeCanvas as RecordingCanvas),
+                        RemoteCanvas(this.drawContext.canvas.nativeCanvas as RecordingCanvas),
                     underlyingDrawScope = this,
                 )
             captureMode.document.startCanvasOperations()
-            RemoteDrawWithContentScopeImpl2(drawScope = drawScope).onDraw()
+            RemoteDrawWithContentScopeImpl(drawScope = drawScope).onDraw()
             captureMode.document.endCanvasOperations()
         }
     }

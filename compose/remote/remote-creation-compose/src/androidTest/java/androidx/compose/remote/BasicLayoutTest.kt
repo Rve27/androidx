@@ -38,7 +38,7 @@ import androidx.compose.remote.creation.compose.layout.CaptureAsBitmap
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
-import androidx.compose.remote.creation.compose.layout.RemoteCanvas
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas0
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteContext
@@ -51,7 +51,7 @@ import androidx.compose.remote.creation.compose.layout.rememberStateMachine
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.clickable
-import androidx.compose.remote.creation.compose.modifier.drawWithContent
+import androidx.compose.remote.creation.compose.modifier.drawWithContent0
 import androidx.compose.remote.creation.compose.modifier.fillMaxHeight
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
@@ -405,7 +405,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                RemoteCanvas(
+                RemoteCanvas0(
                     modifier =
                         RemoteModifier.fillMaxWidth()
                             .height(100.rdp)
@@ -451,7 +451,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                RemoteCanvas(
+                RemoteCanvas0(
                     modifier =
                         RemoteModifier.fillMaxWidth()
                             .height(100.rdp)
@@ -1153,11 +1153,11 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
         val painter = rememberVectorPainter(icon)
         val iconSizePx = with(LocalDensity.current) { Dp(size.value.internalAsFloat()).toPx() }
         val scale = iconSizePx / 24f
-        RemoteCanvas(modifier = RemoteModifier.size(size)) {
+        RemoteCanvas0(modifier = RemoteModifier.size(size)) {
             scale(scale, pivot = RemoteOffset.Zero) {
                 // Suppressed because of https://buganizer.corp.google.com/issues/375131944
                 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-                with(painter.vector.root) { this@RemoteCanvas.drawScope.draw() }
+                with(painter.vector.root) { this@RemoteCanvas0.drawScope.draw() }
             }
         }
     }
@@ -1320,16 +1320,16 @@ list:
             ) {
                 RemoteBox(
                     modifier =
-                        RemoteModifier.drawWithContent {
-                                rotate(37f) { this@drawWithContent.drawContent() }
+                        RemoteModifier.drawWithContent0 {
+                                rotate(37f) { this@drawWithContent0.drawContent() }
                                 translate(40f, 40f) {
                                     rotate(45f) {
-                                        scale(1.2f) { this@drawWithContent.drawContent() }
+                                        scale(1.2f) { this@drawWithContent0.drawContent() }
                                     }
                                 }
                                 drawContent()
                                 translate(-40f, -40f) {
-                                    rotate(30f) { this@drawWithContent.drawContent() }
+                                    rotate(30f) { this@drawWithContent0.drawContent() }
                                 }
                             }
                             .size(64.rdp)
