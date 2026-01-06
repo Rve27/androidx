@@ -35,6 +35,7 @@ import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.pdf.PdfDocumentRemote
 import androidx.pdf.PdfLoadingStatus
+import androidx.pdf.RenderParams
 import androidx.pdf.adapter.PdfDocumentRenderer
 import androidx.pdf.adapter.PdfDocumentRendererFactory
 import androidx.pdf.adapter.PdfDocumentRendererFactoryImpl
@@ -51,6 +52,7 @@ import androidx.pdf.annotation.processor.PageAnnotationsPaginator
 import androidx.pdf.annotation.processor.PdfRendererAnnotationsProcessor
 import androidx.pdf.models.Dimensions
 import androidx.pdf.utils.readAnnotationsFromPfd
+import androidx.pdf.utils.toAndroidClass
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class PdfDocumentRemoteImpl(
@@ -84,12 +86,20 @@ internal class PdfDocumentRemoteImpl(
         return rendererAdapter.withPage(pageNum) { page -> Dimensions(page.width, page.height) }
     }
 
-    override fun getPageBitmap(pageNum: Int, width: Int, height: Int): Bitmap {
+    override fun getPageBitmap(
+        pageNum: Int,
+        width: Int,
+        height: Int,
+        renderParams: RenderParams,
+    ): Bitmap {
         val output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         // Create a bitmap with a white background. PdfRenderer doesn't
         // guarantee a specific background color by default.
         output.eraseColor(Color.WHITE)
-        rendererAdapter.openPage(pageNum, useCache = true).renderPage(output)
+        // TODO (b/464133165): Update renderPage to use renderParams
+        rendererAdapter
+            .openPage(pageNum, useCache = true)
+            .renderPage(output, renderParams.toAndroidClass())
         return output
     }
 
@@ -101,6 +111,7 @@ internal class PdfDocumentRemoteImpl(
         pageHeight: Int,
         offsetX: Int,
         offsetY: Int,
+        renderParams: RenderParams,
     ): Bitmap {
         val output = Bitmap.createBitmap(tileWidth, tileHeight, Bitmap.Config.ARGB_8888)
         // Create a bitmap with a white background. PdfRenderer doesn't
@@ -109,9 +120,17 @@ internal class PdfDocumentRemoteImpl(
 
         // Latency optimization: Keep pages open to avoid re-initializing native objects
         // for subsequent rendering calls within the same user-visible portion.
+        // TODO (b/464133165): Update renderTile to use renderParams
         rendererAdapter
             .openPage(pageNum, useCache = true)
-            .renderTile(output, offsetX, offsetY, pageWidth, pageHeight)
+            .renderTile(
+                output,
+                offsetX,
+                offsetY,
+                pageWidth,
+                pageHeight,
+                renderParams.toAndroidClass(),
+            )
         return output
     }
 

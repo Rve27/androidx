@@ -37,8 +37,8 @@ interface PdfDocumentRemote {
   int openPdfDocument(in ParcelFileDescriptor pfd, String password);
   int numPages();
   androidx.pdf.models.Dimensions getPageDimensions(int pageNum);
-  android.graphics.Bitmap getPageBitmap(int pageNum, int width, int height);
-  android.graphics.Bitmap getTileBitmap(int pageNum, int tilewidth, int tileHeight, int pageWidth, int pageHeight, int offsetX, int offsetY);
+  android.graphics.Bitmap getPageBitmap(int pageNum, int width, int height, in androidx.pdf.RenderParams renderParams);
+  android.graphics.Bitmap getTileBitmap(int pageNum, int tilewidth, int tileHeight, int pageWidth, int pageHeight, int offsetX, int offsetY, in androidx.pdf.RenderParams renderParams);
   List<android.graphics.pdf.content.PdfPageTextContent> getPageText(int pageNum);
   List<android.graphics.pdf.models.PageMatchBounds> searchPageText(int pageNum, String query);
   android.graphics.pdf.models.selection.PageSelection selectPageText(int pageNum, in android.graphics.pdf.models.selection.SelectionBoundary start, in android.graphics.pdf.models.selection.SelectionBoundary stop);

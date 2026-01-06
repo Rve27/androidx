@@ -81,11 +81,12 @@ public class SandboxedPdfLoader(
         uri: Uri,
         fileDescriptor: ParcelFileDescriptor,
         password: String?,
+        renderParams: RenderParams,
     ): PdfDocument {
         val connection = connect(uri)
 
         return withContext(resolveCoroutineContext(coroutineContext)) {
-            openDocumentInternal(uri, fileDescriptor, password, connection)
+            openDocumentInternal(uri, fileDescriptor, password, connection, renderParams)
         }
     }
 
@@ -103,6 +104,7 @@ public class SandboxedPdfLoader(
         pfd: ParcelFileDescriptor,
         password: String?,
         connection: PdfServiceConnection,
+        renderParams: RenderParams = RenderParams(RenderParams.RENDER_MODE_FOR_DISPLAY),
     ): PdfDocument {
         val binder =
             connection.documentBinder
@@ -124,6 +126,7 @@ public class SandboxedPdfLoader(
             binder.numPages(),
             binder.isPdfLinearized(),
             binder.getFormType(),
+            renderParams = renderParams,
             annotationsProcessor = BatchPdfAnnotationsProcessor(binder),
         )
     }

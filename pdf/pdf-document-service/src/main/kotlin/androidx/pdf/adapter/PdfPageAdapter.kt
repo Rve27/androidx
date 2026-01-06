@@ -55,8 +55,8 @@ internal class PdfPageAdapter(private val page: PdfRenderer.Page) : PdfPage {
     override val height = page.height
     override val width = page.width
 
-    override fun renderPage(bitmap: Bitmap) {
-        page.render(bitmap, null, null, getRenderParams())
+    override fun renderPage(bitmap: Bitmap, renderParams: RenderParams) {
+        page.render(bitmap, null, null, renderParams)
     }
 
     override fun renderTile(
@@ -65,6 +65,7 @@ internal class PdfPageAdapter(private val page: PdfRenderer.Page) : PdfPage {
         top: Int,
         scaledPageWidth: Int,
         scaledPageHeight: Int,
+        renderParams: RenderParams,
     ) {
         val transformationMatrix =
             getTransformationMatrix(
@@ -75,7 +76,7 @@ internal class PdfPageAdapter(private val page: PdfRenderer.Page) : PdfPage {
                 width,
                 height,
             )
-        page.render(bitmap, null, transformationMatrix, getRenderParams())
+        page.render(bitmap, null, transformationMatrix, renderParams)
     }
 
     override fun getPageTextContents(): List<PdfPageTextContent> {
@@ -112,15 +113,6 @@ internal class PdfPageAdapter(private val page: PdfRenderer.Page) : PdfPage {
 
     override fun close() {
         page.close()
-    }
-
-    override fun getRenderParams(): RenderParams {
-        return RenderParams.Builder(RenderParams.RENDER_MODE_FOR_DISPLAY)
-            .setRenderFlags(
-                RenderParams.FLAG_RENDER_HIGHLIGHT_ANNOTATIONS or
-                    RenderParams.FLAG_RENDER_TEXT_ANNOTATIONS
-            )
-            .build()
     }
 
     override fun applyEdit(editRecord: FormEditRecord): List<Rect> {

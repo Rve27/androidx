@@ -37,6 +37,7 @@ import androidx.pdf.annotation.models.PdfEdit;
 import androidx.pdf.annotation.models.AddEditResult;
 import androidx.pdf.annotation.models.ModifyEditResult;
 import androidx.pdf.annotation.models.PaginatedAnnotations;
+import androidx.pdf.RenderParams;
 
 /** Remote interface for interacting with a PDF document */
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
@@ -72,9 +73,10 @@ interface PdfDocumentRemote {
      * @param pageNum The zero-based page number to render.
      * @param width The desired width of the resulting Bitmap.
      * @param height The desired height of the resulting Bitmap.
+     * @param renderParams The set of parameters used for rendering a page bitmap.
      * @return A Bitmap representation of the specified page, or null if an error occurs.
      */
-    Bitmap getPageBitmap(int pageNum, int width, int height);
+    Bitmap getPageBitmap(int pageNum, int width, int height, in RenderParams renderParams);
 
     /**
      * Renders a tile of the specified page into a Bitmap.
@@ -89,9 +91,10 @@ interface PdfDocumentRemote {
      * @param pageHeight The height of the whole PDF page.
      * @param offsetX The horizontal offset of the tile within the page.
      * @param offsetY The vertical offset of the tile within the page.
+     * @param renderParams The set of parameters used for rendering a tile bitmap.
      * @return A Bitmap representation of the specified tile, or null if an error occurs.
      */
-    Bitmap getTileBitmap(int pageNum, int tilewidth, int tileHeight, int pageWidth, int pageHeight, int offsetX, int offsetY);
+    Bitmap getTileBitmap(int pageNum, int tilewidth, int tileHeight, int pageWidth, int pageHeight, int offsetX, int offsetY, in RenderParams renderParams);
 
     /**
      * Gets the text content of the specified page.
