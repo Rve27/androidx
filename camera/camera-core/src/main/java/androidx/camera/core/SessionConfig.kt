@@ -305,8 +305,24 @@ constructor(
         private val requiredFeatureGroup = mutableListOf<GroupableFeature>()
         private val preferredFeatureGroup = mutableListOf<GroupableFeature>()
         private var isAutoRotationEnabled = false
+        private var cameraFilter: CameraFilter? = null
+        private var sessionType: Int = SESSION_TYPE_REGULAR
+        private var requireNonEmptyUseCases: Boolean = true
 
         public constructor(vararg useCases: UseCase) : this(useCases.toList())
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public constructor(sessionConfig: SessionConfig) : this(sessionConfig.useCases) {
+            viewPort = sessionConfig.viewPort
+            effects = sessionConfig.effects.toMutableList()
+            frameRateRange = sessionConfig.frameRateRange
+            requiredFeatureGroup.addAll(sessionConfig.requiredFeatureGroup)
+            preferredFeatureGroup.addAll(sessionConfig.preferredFeatureGroup)
+            isAutoRotationEnabled = sessionConfig.isAutoRotationEnabled
+            cameraFilter = sessionConfig.cameraFilter
+            sessionType = sessionConfig.sessionType
+            requireNonEmptyUseCases = sessionConfig.requireNonEmptyUseCases
+        }
 
         /** Sets the [ViewPort] to be applied on the camera session. */
         public fun setViewPort(viewPort: ViewPort): Builder {
@@ -423,6 +439,9 @@ constructor(
                     preferredFeatureGroup = preferredFeatureGroup.toList(),
                 ) {
                 override val isAutoRotationEnabled: Boolean = this@Builder.isAutoRotationEnabled
+                override val cameraFilter: CameraFilter? = this@Builder.cameraFilter
+                override val sessionType: Int = this@Builder.sessionType
+                override val requireNonEmptyUseCases: Boolean = this@Builder.requireNonEmptyUseCases
             }
         }
     }
