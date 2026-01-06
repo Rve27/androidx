@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.subspace.layout
+package androidx.xr.compose.subspace.semantics
 
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
+import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.node.SubspaceModifierNodeElement
 import androidx.xr.compose.subspace.node.SubspaceSemanticsModifierNode
 
-/**
- * Add semantics key/value pairs to the layout node, for use in testing, accessibility, etc.
- *
- * Based on [androidx.compose.ui.semantics.SemanticsModifier].
- */
+/** Add semantics key/value pairs to the layout node, for use in testing, accessibility, etc. */
 public fun SubspaceModifier.semantics(
     properties: (SemanticsPropertyReceiver.() -> Unit)
 ): SubspaceModifier = this then AppendedSemanticsElement(properties = properties)

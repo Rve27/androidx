@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.subspace.layout
+package androidx.xr.compose.subspace.semantics
 
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.testTag
+import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.node.SubspaceModifierNodeElement
 import androidx.xr.compose.subspace.node.SubspaceSemanticsModifierNode
 
