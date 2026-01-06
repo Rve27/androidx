@@ -81,6 +81,7 @@ internal open class FakeEditablePdfDocument(
     internal val pages: List<Point?> = listOf(),
     override val formType: Int = PDF_FORM_TYPE_NONE,
     override val isLinearized: Boolean = false,
+    override val renderParams: RenderParams = RenderParams(RenderParams.RENDER_MODE_FOR_DISPLAY),
     private val searchResults: SparseArray<List<PageMatchBounds>> = SparseArray(),
     override val uri: Uri = Uri.parse("content://test.app/document.pdf"),
     private val pageLinks: Map<Int, PdfDocument.PdfPageLinks> = mapOf(),

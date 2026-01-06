@@ -29,6 +29,7 @@ import android.graphics.pdf.models.selection.PageSelection
 import android.graphics.pdf.models.selection.SelectionBoundary
 import android.os.ParcelFileDescriptor
 import androidx.pdf.PdfDocumentRemote
+import androidx.pdf.RenderParams
 import androidx.pdf.annotation.models.AddEditResult
 import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId
@@ -52,7 +53,12 @@ class FakePdfDocumentRemote : PdfDocumentRemote.Stub() {
         TODO("Not yet implemented")
     }
 
-    override fun getPageBitmap(pageNum: Int, width: Int, height: Int): Bitmap? {
+    override fun getPageBitmap(
+        pageNum: Int,
+        width: Int,
+        height: Int,
+        renderParams: RenderParams?,
+    ): Bitmap? {
         TODO("Not yet implemented")
     }
 
@@ -64,6 +70,7 @@ class FakePdfDocumentRemote : PdfDocumentRemote.Stub() {
         pageHeight: Int,
         offsetX: Int,
         offsetY: Int,
+        renderParams: RenderParams?,
     ): Bitmap? {
         TODO("Not yet implemented")
     }
