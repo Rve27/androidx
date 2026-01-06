@@ -19,13 +19,12 @@ package androidx.compose.remote.creation.compose.capture
 
 import android.graphics.Typeface
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.creation.compose.layout.RemoteCanvasDrawScope.RemoteAccess
+import androidx.compose.remote.creation.compose.layout.RemoteCanvasDrawScope0.RemoteAccess
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteString
-import androidx.compose.remote.creation.compose.state.getFloatIdForCreationState
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -60,12 +59,12 @@ import androidx.compose.ui.unit.LayoutDirection
  * @param bottom number of pixels to inset the bottom drawing bound
  * @param block lambda that is called to issue drawing commands within the inset coordinate space
  */
-public inline fun RemoteDrawScope.inset(
+public inline fun RemoteDrawScope0.inset(
     left: Float,
     top: Float,
     right: Float,
     bottom: Float,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ) {
     drawContext.transform.inset(left, top, right, bottom)
     block()
@@ -73,7 +72,7 @@ public inline fun RemoteDrawScope.inset(
 }
 
 /**
- * Convenience method modifies the [RemoteDrawScope] bounds to inset both left, top, right and
+ * Convenience method modifies the [RemoteDrawScope0] bounds to inset both left, top, right and
  * bottom bounds by [inset]. After this method is invoked, the coordinate space is returned to the
  * state before this inset was applied.
  *
@@ -81,14 +80,14 @@ public inline fun RemoteDrawScope.inset(
  * @param block lambda that is called to issue additional drawing commands within the modified
  *   coordinate space
  */
-public inline fun RemoteDrawScope.inset(inset: Float, block: RemoteDrawScope.() -> Unit) {
+public inline fun RemoteDrawScope0.inset(inset: Float, block: RemoteDrawScope0.() -> Unit) {
     drawContext.transform.inset(inset, inset, inset, inset)
     block()
     drawContext.transform.inset(-inset, -inset, -inset, -inset)
 }
 
 /**
- * Convenience method modifies the [RemoteDrawScope] bounds to inset both left and right bounds by
+ * Convenience method modifies the [RemoteDrawScope0] bounds to inset both left and right bounds by
  * [horizontal] as well as the top and bottom by [vertical]. After this method is invoked, the
  * coordinate space is returned to the state before this inset was applied.
  *
@@ -97,10 +96,10 @@ public inline fun RemoteDrawScope.inset(inset: Float, block: RemoteDrawScope.() 
  * @param block lambda that is called to issue additional drawing commands within the modified
  *   coordinate space
  */
-public inline fun RemoteDrawScope.inset(
+public inline fun RemoteDrawScope0.inset(
     horizontal: Float = 0.0f,
     vertical: Float = 0.0f,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ): Unit = inset(horizontal, vertical, horizontal, vertical, block)
 
 /**
@@ -112,10 +111,10 @@ public inline fun RemoteDrawScope.inset(
  * @param block lambda that is called to issue drawing commands within the translated coordinate
  *   space
  */
-public inline fun RemoteDrawScope.translate(
+public inline fun RemoteDrawScope0.translate(
     left: Float = 0.0f,
     top: Float = 0.0f,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ): Unit = withTransform({ translate(left, top) }, block)
 
 /**
@@ -127,10 +126,10 @@ public inline fun RemoteDrawScope.translate(
  * @param pivot The coordinate for the pivot point, defaults to the center of the coordinate space
  * @param block lambda that is called to issue drawing commands within the rotated coordinate space
  */
-public inline fun RemoteDrawScope.rotate(
+public inline fun RemoteDrawScope0.rotate(
     degrees: Float,
     pivot: RemoteOffset = remoteCenter,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ): Unit = withTransform({ rotate(degrees, pivot.asOffset()) }, block)
 
 /**
@@ -141,10 +140,10 @@ public inline fun RemoteDrawScope.rotate(
  * @param pivot The coordinate for the pivot point, defaults to the center of the coordinate space
  * @param block lambda that is called to issue drawing commands within the rotated coordinate space
  */
-public inline fun RemoteDrawScope.rotateRad(
+public inline fun RemoteDrawScope0.rotateRad(
     radians: Float,
     pivot: RemoteOffset = remoteCenter,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ) {
     //    withTransform({ rotate(degrees(radians), pivot) }, block)
 }
@@ -160,11 +159,11 @@ public inline fun RemoteDrawScope.rotateRad(
  * @param pivot The coordinate for the pivot point, defaults to the center of the coordinate space
  * @param block lambda used to issue drawing commands within the scaled coordinate space
  */
-public inline fun RemoteDrawScope.scale(
+public inline fun RemoteDrawScope0.scale(
     scaleX: Float,
     scaleY: Float,
     pivot: RemoteOffset = remoteCenter,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ): Unit = withTransform({ scale(scaleX, scaleY, pivot.asOffset()) }, block)
 
 /**
@@ -177,10 +176,10 @@ public inline fun RemoteDrawScope.scale(
  * @param pivot The coordinate for the pivot point, defaults to the center of the coordinate space
  * @param block lambda used to issue drawing commands within the scaled coordinate space
  */
-public inline fun RemoteDrawScope.scale(
+public inline fun RemoteDrawScope0.scale(
     scale: Float,
     pivot: RemoteOffset = remoteCenter,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ): Unit = withTransform({ scale(scale, scale, pivot.asOffset()) }, block)
 
 /**
@@ -198,13 +197,13 @@ public inline fun RemoteDrawScope.scale(
  * @param block Lambda callback with this CanvasScope as a receiver scope to issue drawing commands
  *   within the provided clip
  */
-public fun RemoteDrawScope.clipRect(
+public fun RemoteDrawScope0.clipRect(
     left: RemoteFloat = 0.0f.rf,
     top: RemoteFloat = 0.0f.rf,
     right: RemoteFloat = remote.component.width,
     bottom: RemoteFloat = remote.component.height,
     clipOp: ClipOp = ClipOp.Intersect,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ): Unit =
     withTransform(
         {
@@ -229,19 +228,19 @@ public fun RemoteDrawScope.clipRect(
  * @param block Lambda callback with this CanvasScope as a receiver scope to issue drawing commands
  *   within the provided clip
  */
-public inline fun RemoteDrawScope.clipPath(
+public inline fun RemoteDrawScope0.clipPath(
     path: Path,
     clipOp: ClipOp = ClipOp.Intersect,
-    block: RemoteDrawScope.() -> Unit,
+    block: RemoteDrawScope0.() -> Unit,
 ): Unit = withTransform({ clipPath(path, clipOp) }, block)
 
 /**
  * Provides access to draw directly with the underlying [Canvas]. This is helpful for situations to
- * re-use alternative drawing logic in combination with [RemoteDrawScope]
+ * re-use alternative drawing logic in combination with [RemoteDrawScope0]
  *
  * @param block Lambda callback to issue drawing commands on the provided [Canvas]
  */
-public inline fun RemoteDrawScope.drawIntoCanvas(block: (Canvas) -> Unit): Unit =
+public inline fun RemoteDrawScope0.drawIntoCanvas(block: (Canvas) -> Unit): Unit =
     block(drawContext.canvas)
 
 /**
@@ -253,9 +252,9 @@ public inline fun RemoteDrawScope.drawIntoCanvas(block: (Canvas) -> Unit): Unit 
  * @param drawBlock Callback invoked to issue drawing operations after the transformations are
  *   applied
  */
-public inline fun RemoteDrawScope.withTransform(
+public inline fun RemoteDrawScope0.withTransform(
     transformBlock: DrawTransform.() -> Unit,
-    drawBlock: RemoteDrawScope.() -> Unit,
+    drawBlock: RemoteDrawScope0.() -> Unit,
 ): Unit =
     with(drawContext) {
         // Transformation can include inset calls which change the drawing area
@@ -272,7 +271,7 @@ public inline fun RemoteDrawScope.withTransform(
 /**
  * Creates a scoped drawing environment with the provided [Canvas]. This provides a declarative,
  * stateless API to draw shapes and paths without requiring consumers to maintain underlying
- * [Canvas] state information. [RemoteDrawScope] implementations are also provided sizing
+ * [Canvas] state information. [RemoteDrawScope0] implementations are also provided sizing
  * information and transformations are done relative to the local translation. That is left and top
  * coordinates are always the origin and the right and bottom coordinates are always the specified
  * width and height respectively. Drawing content is not clipped, so it is possible to draw outside
@@ -281,7 +280,7 @@ public inline fun RemoteDrawScope.withTransform(
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @DrawScopeMarker
 public // @JvmDefaultWithCompatibility
-interface RemoteDrawScope : Density {
+interface RemoteDrawScope0 : Density {
     public val canvas: RecordingCanvas
         get() = drawContext.canvas.nativeCanvas as RecordingCanvas
 

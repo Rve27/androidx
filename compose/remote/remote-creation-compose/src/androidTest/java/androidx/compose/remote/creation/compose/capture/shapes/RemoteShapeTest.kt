@@ -23,7 +23,7 @@ import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
-import androidx.compose.remote.creation.compose.layout.RemoteCanvas2
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
@@ -168,7 +168,7 @@ class RemoteShapeTest {
             verticalArrangement = RemoteArrangement.Center,
             modifier = RemoteModifier.width(200.rdp).height(200.rdp),
         ) {
-            RemoteCanvas2(RemoteModifier.width(100.rdp).height(100.rdp)) {
+            RemoteCanvas(RemoteModifier.width(100.rdp).height(100.rdp)) {
                 val w = remoteWidth
                 val h = remoteHeight
                 val size = RemoteSize(w, h)

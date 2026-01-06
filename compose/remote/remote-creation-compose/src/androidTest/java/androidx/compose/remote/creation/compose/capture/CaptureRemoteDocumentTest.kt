@@ -29,7 +29,7 @@ import androidx.compose.remote.creation.RemoteComposeWriterAndroid
 import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.layout.RemoteBox
-import androidx.compose.remote.creation.compose.layout.RemoteCanvas
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas0
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
@@ -95,7 +95,7 @@ class CaptureRemoteDocumentTest {
         val document: ByteArray =
             withContext(Dispatchers.Main) {
                 captureSingleRemoteDocument(context, profile = customProfile) {
-                        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) {
+                        RemoteCanvas0(modifier = RemoteModifier.fillMaxSize()) {
                             val textPaint =
                                 Paint().apply {
                                     isAntiAlias = true
