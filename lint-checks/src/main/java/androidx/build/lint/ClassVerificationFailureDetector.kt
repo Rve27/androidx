@@ -160,7 +160,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
 
     private sealed interface ApiRequirement {
         val wrapperClassName: String
-        val wrapperClassAnnotation: String
+        val wrapperClassAnnotations: List<String>
         val stringForMessage: String
 
         operator fun compareTo(other: Int): Int
@@ -173,8 +173,11 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
         override val wrapperClassName by lazy {
             "Flag${flagString.substringAfterLast('.').capitalizeAsciiOnly()}Impl"
         }
-        override val wrapperClassAnnotation by lazy {
-            "@$REQUIRES_FLAG_ANNOTATION(\"$flagString\")"
+        override val wrapperClassAnnotations by lazy {
+            listOf(
+                "@RequiresApi(10000) // Required when calling pre-release APIs",
+                "@$REQUIRES_FLAG_ANNOTATION(\"$flagString\")",
+            )
         }
         override val stringForMessage by lazy { "guarded by Trunk Stable flag \"$flagString\"" }
 
@@ -189,8 +192,8 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
 
     private class ApiLevelRequirement(val apiLevel: Int) : ApiRequirement {
         override val wrapperClassName by lazy { "Api${apiLevel}Impl" }
-        override val wrapperClassAnnotation by lazy {
-            "@${REQUIRES_API_ANNOTATION.newName()}($apiLevel)"
+        override val wrapperClassAnnotations by lazy {
+            listOf("@${REQUIRES_API_ANNOTATION.newName()}($apiLevel)")
         }
         override val stringForMessage by lazy { "added in API level $apiLevel" }
 
@@ -965,7 +968,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                     if (isKotlin) {
                         """
 
-                        ${api.wrapperClassAnnotation}
+${api.wrapperClassAnnotations.joinToString("\n").prependIndent("                        ")}
                         internal object $wrapperClassName {
 ${wrapperMethodBody.prependIndent("                            ")}
                         }
@@ -975,7 +978,7 @@ ${wrapperMethodBody.prependIndent("                            ")}
                     } else {
                         """
 
-                        ${api.wrapperClassAnnotation}
+${api.wrapperClassAnnotations.joinToString("\n").prependIndent("                        ")}
                         static class $wrapperClassName {
                             private $wrapperClassName() {
                                 // This class is not instantiable.
