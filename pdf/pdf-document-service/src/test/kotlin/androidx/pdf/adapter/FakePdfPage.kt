@@ -45,7 +45,7 @@ class FakePdfPage(private val pageNum: Int, override val height: Int, override v
     internal val annotationsOperation = mutableListOf<AnnotationOperationRecord>()
     val annotationsMap = mutableMapOf<Int, PdfAnnotation>()
 
-    override fun renderPage(bitmap: Bitmap) {
+    override fun renderPage(bitmap: Bitmap, renderParams: RenderParams) {
         TODO("Not yet implemented")
     }
 
@@ -55,6 +55,7 @@ class FakePdfPage(private val pageNum: Int, override val height: Int, override v
         top: Int,
         scaledPageWidth: Int,
         scaledPageHeight: Int,
+        renderParams: RenderParams,
     ) {
         TODO("Not yet implemented")
     }
@@ -88,10 +89,6 @@ class FakePdfPage(private val pageNum: Int, override val height: Int, override v
     }
 
     override fun getPageGotoLinks(): List<PdfPageGotoLinkContent> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getRenderParams(): RenderParams {
         TODO("Not yet implemented")
     }
 

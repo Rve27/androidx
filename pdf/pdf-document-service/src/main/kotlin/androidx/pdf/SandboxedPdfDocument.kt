@@ -99,6 +99,7 @@ public class SandboxedPdfDocument(
     override val pageCount: Int,
     override val isLinearized: Boolean,
     override val formType: Int,
+    override val renderParams: RenderParams,
     private val annotationsProcessor: PdfAnnotationsProcessor,
 ) : EditablePdfDocument() {
 
@@ -288,6 +289,7 @@ public class SandboxedPdfDocument(
          *
          * @param scaledPageSizePx The desired size of the bitmap in pixels.
          * @param tileRegion The optional region of the page to render (null for the entire page).
+         * @param renderParams The render params used to render contents on the bitmap.
          * @return The bitmap of the specified page or region.
          */
         override suspend fun getBitmap(scaledPageSizePx: Size, tileRegion: Rect?): Bitmap {
@@ -297,6 +299,7 @@ public class SandboxedPdfDocument(
                         pageNumber,
                         scaledPageSizePx.width,
                         scaledPageSizePx.height,
+                        renderParams,
                     ) ?: getDefaultBitmap(scaledPageSizePx.width, scaledPageSizePx.height)
                 } else {
                     val offsetX = tileRegion.left
@@ -309,6 +312,7 @@ public class SandboxedPdfDocument(
                         scaledPageSizePx.height,
                         offsetX,
                         offsetY,
+                        renderParams,
                     ) ?: getDefaultBitmap(tileRegion.width(), tileRegion.height())
                 }
             }
