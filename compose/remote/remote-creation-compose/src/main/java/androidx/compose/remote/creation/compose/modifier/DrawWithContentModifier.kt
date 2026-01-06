@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.modifier
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
+import androidx.compose.remote.creation.compose.capture.RecordingCanvas
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas2
+import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope
+import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope2
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScopeImpl
+import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScopeImpl2
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.nativeCanvas
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class DrawWithContentModifier(public val content: (RemoteDrawWithContentScope).() -> Unit) :
@@ -44,9 +50,40 @@ public class DrawWithContentModifier(public val content: (RemoteDrawWithContentS
     }
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
 public fun RemoteModifier.drawWithContent(
     onDraw: (RemoteDrawWithContentScope).() -> Unit
 ): RemoteModifier {
     return then(DrawWithContentModifier(onDraw))
+}
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@RemoteComposable
+@Composable
+public fun RemoteModifier.drawWithContent2(
+    onDraw: RemoteDrawWithContentScope2.() -> Unit
+): RemoteModifier = then(DrawWithContentModifier2(onDraw))
+
+private class DrawWithContentModifier2(val onDraw: RemoteDrawWithContentScope2.() -> Unit) :
+    RemoteModifier.Element {
+    override fun toRemoteComposeElement(): RecordingModifier.Element {
+        return androidx.compose.remote.creation.modifiers.DrawWithContentModifier()
+    }
+
+    @Composable
+    override fun Modifier.toComposeUi(): Modifier {
+        val captureMode = LocalRemoteComposeCreationState.current
+        return this.drawBehind {
+            val drawScope =
+                RemoteDrawScope2(
+                    remoteCanvas =
+                        RemoteCanvas2(this.drawContext.canvas.nativeCanvas as RecordingCanvas),
+                    underlyingDrawScope = this,
+                )
+            captureMode.document.startCanvasOperations()
+            RemoteDrawWithContentScopeImpl2(drawScope = drawScope).onDraw()
+            captureMode.document.endCanvasOperations()
+        }
+    }
 }

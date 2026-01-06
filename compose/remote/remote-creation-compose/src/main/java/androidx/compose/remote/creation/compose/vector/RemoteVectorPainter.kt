@@ -19,12 +19,14 @@ package androidx.compose.remote.creation.compose.vector
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.DefaultIconSize
-import androidx.compose.remote.creation.compose.capture.RemoteDrawScope
 import androidx.compose.remote.creation.compose.capture.RemoteImageVector
 import androidx.compose.remote.creation.compose.capture.RemoteVectorGroup
 import androidx.compose.remote.creation.compose.capture.RemoteVectorPath
 import androidx.compose.remote.creation.compose.capture.withTransform
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
+import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemoteSize
+import androidx.compose.remote.creation.compose.layout.toAndroidBlendMode
 import androidx.compose.remote.creation.compose.layout.translate
 import androidx.compose.remote.creation.compose.painter.RemotePainter
 import androidx.compose.remote.creation.compose.state.RemoteBlendModeColorFilter
@@ -32,7 +34,6 @@ import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteColorFilter
 import androidx.compose.remote.creation.compose.state.asRdp
 import androidx.compose.remote.creation.compose.state.rf
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -77,13 +78,13 @@ public class RemoteVectorPainter() : RemotePainter() {
             vector.name = value
         }
 
-    override fun RemoteDrawScope.onDraw() {
+    override fun RemoteDrawScope2.onDraw() {
         with(vector) {
             val shouldMirror = autoMirror && layoutDirection == LayoutDirection.Rtl
             if (shouldMirror) {
                 withTransform({
-                    translate(this@onDraw.remoteSize.width, 0f.rf)
-                    scale(-1f, 1f, Offset.Zero)
+                    translate(remoteWidth, 0f.rf)
+                    scale(-1f.rf, 1f.rf, RemoteOffset.Zero)
                 }) {
                     draw(null)
                 }
@@ -269,41 +270,3 @@ internal fun RemoteGroupComponent.createGroupComponent(
     }
     return this
 }
-
-/**
- * Convert the compose [BlendMode] to the underlying Android platform [android.graphics.BlendMode]
- */
-internal fun BlendMode.toAndroidBlendMode(): android.graphics.BlendMode =
-    when (this) {
-        BlendMode.Clear -> android.graphics.BlendMode.CLEAR
-        BlendMode.Src -> android.graphics.BlendMode.SRC
-        BlendMode.Dst -> android.graphics.BlendMode.DST
-        BlendMode.SrcOver -> android.graphics.BlendMode.SRC_OVER
-        BlendMode.DstOver -> android.graphics.BlendMode.DST_OVER
-        BlendMode.SrcIn -> android.graphics.BlendMode.SRC_IN
-        BlendMode.DstIn -> android.graphics.BlendMode.DST_IN
-        BlendMode.SrcOut -> android.graphics.BlendMode.SRC_OUT
-        BlendMode.DstOut -> android.graphics.BlendMode.DST_OUT
-        BlendMode.SrcAtop -> android.graphics.BlendMode.SRC_ATOP
-        BlendMode.DstAtop -> android.graphics.BlendMode.DST_ATOP
-        BlendMode.Xor -> android.graphics.BlendMode.XOR
-        BlendMode.Plus -> android.graphics.BlendMode.PLUS
-        BlendMode.Modulate -> android.graphics.BlendMode.MODULATE
-        BlendMode.Screen -> android.graphics.BlendMode.SCREEN
-        BlendMode.Overlay -> android.graphics.BlendMode.OVERLAY
-        BlendMode.Darken -> android.graphics.BlendMode.DARKEN
-        BlendMode.Lighten -> android.graphics.BlendMode.LIGHTEN
-        BlendMode.ColorDodge -> android.graphics.BlendMode.COLOR_DODGE
-        BlendMode.ColorBurn -> android.graphics.BlendMode.COLOR_BURN
-        BlendMode.Hardlight -> android.graphics.BlendMode.HARD_LIGHT
-        BlendMode.Softlight -> android.graphics.BlendMode.SOFT_LIGHT
-        BlendMode.Difference -> android.graphics.BlendMode.DIFFERENCE
-        BlendMode.Exclusion -> android.graphics.BlendMode.EXCLUSION
-        BlendMode.Multiply -> android.graphics.BlendMode.MULTIPLY
-        BlendMode.Hue -> android.graphics.BlendMode.HUE
-        BlendMode.Saturation -> android.graphics.BlendMode.SATURATION
-        BlendMode.Color -> android.graphics.BlendMode.COLOR
-        BlendMode.Luminosity -> android.graphics.BlendMode.LUMINOSITY
-        // Always return SRC_OVER as the default if there is no valid alternative
-        else -> android.graphics.BlendMode.SRC_OVER
-    }
