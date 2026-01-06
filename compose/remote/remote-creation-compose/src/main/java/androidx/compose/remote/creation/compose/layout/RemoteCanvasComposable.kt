@@ -21,7 +21,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.toComposeUiLayout
+import androidx.compose.remote.creation.compose.state.rf
+import androidx.compose.remote.creation.compose.v2.RemoteCanvasV2
+import androidx.compose.remote.creation.compose.v2.RemoteComposeApplierV2
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.nativeCanvas
 
@@ -38,6 +42,10 @@ public fun RemoteCanvas(
     modifier: RemoteModifier = RemoteModifier,
     content: RemoteDrawScope.() -> Unit,
 ) {
+    if (currentComposer.applier is RemoteComposeApplierV2) {
+        RemoteCanvasV2(modifier, content)
+        return
+    }
     @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
     Spacer(
         modifier =
@@ -48,7 +56,8 @@ public fun RemoteCanvas(
                                 RemoteCanvas(
                                     this.drawContext.canvas.nativeCanvas as RecordingCanvas
                                 ),
-                            underlyingDrawScope = this,
+                            fontScale = this.fontScale.rf,
+                            layoutDirection = this.layoutDirection,
                         )
                         .content()
                 }
