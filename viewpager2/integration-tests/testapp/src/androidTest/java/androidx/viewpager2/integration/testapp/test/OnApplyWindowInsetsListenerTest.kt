@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.viewpager2.integration.targetsdktests
+package androidx.viewpager2.integration.testapp.test
 
 import android.content.Context
 import android.os.Build
