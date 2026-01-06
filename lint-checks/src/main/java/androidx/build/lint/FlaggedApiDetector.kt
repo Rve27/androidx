@@ -293,10 +293,10 @@ class FlaggedApiDetector : Detector(), SourceCodeScanner {
                 }
 
     private fun isUsageInAllowlistedLibrary(context: JavaContext, usage: UElement): Boolean =
-        context.getAllowlistedCoordinates().let { allowlistedCoordinates ->
-            (context.evaluator.getLibrary(usage) ?: context.project.mavenCoordinate)?.let {
-                allowlistedCoordinates.contains(it.groupId) ||
-                    allowlistedCoordinates.contains("${it.groupId}:${it.artifactId}")
+        context.getAllowlistedCoordinates().let { allowlist ->
+            context.evaluator.getLibrary(usage)?.let {
+                allowlist.contains(it.groupId) ||
+                    allowlist.contains("${it.groupId}:${it.artifactId.substringAfterLast(':')}")
             } ?: true // If we can't obtain the Maven coordinate, assume we're in a lint test.
         }
 
