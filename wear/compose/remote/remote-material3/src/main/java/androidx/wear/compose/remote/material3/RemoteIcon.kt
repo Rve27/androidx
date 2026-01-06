@@ -21,7 +21,7 @@ package androidx.wear.compose.remote.material3
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteImageVector
 import androidx.compose.remote.creation.compose.layout.RemoteBox
-import androidx.compose.remote.creation.compose.layout.RemoteCanvas
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas2
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
@@ -58,7 +58,7 @@ public fun RemoteIcon(
 ) {
     RemoteBox(modifier.semantics { this.contentDescription = contentDescription }) {
         val painter = painterRemoteVector(imageVector, tint)
-        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
+        RemoteCanvas2(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
     }
 }
 
@@ -83,7 +83,7 @@ public fun RemoteIcon(
 ) {
     RemoteBox(modifier.semantics { this.contentDescription = contentDescription }) {
         val painter = painterRemoteVector(imageVector, tint)
-        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
+        RemoteCanvas2(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
     }
 }
 
