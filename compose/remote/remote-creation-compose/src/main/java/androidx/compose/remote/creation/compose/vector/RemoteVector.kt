@@ -19,11 +19,8 @@ package androidx.compose.remote.creation.compose.vector
 import android.graphics.Paint
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.RemotePath
-import androidx.compose.remote.creation.compose.capture.RemoteDrawScope
-import androidx.compose.remote.creation.compose.capture.scale
 import androidx.compose.remote.creation.compose.capture.toRemotePath
-import androidx.compose.remote.creation.compose.capture.withTransform
-import androidx.compose.remote.creation.compose.layout.RemoteOffset
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteColorFilter
 import androidx.compose.remote.creation.compose.state.RemotePaint
@@ -65,7 +62,7 @@ public inline fun RemotePathData(block: RemotePathBuilder.() -> Unit): List<Path
     }
 
 internal sealed class RemoteVNode {
-    abstract fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?)
+    abstract fun RemoteDrawScope2.draw(colorFilter: RemoteColorFilter?)
 }
 
 internal class RemoteVectorComponent(val root: RemoteGroupComponent) : RemoteVNode() {
@@ -78,17 +75,13 @@ internal class RemoteVectorComponent(val root: RemoteGroupComponent) : RemoteVNo
     private var rootScaleX = 1f.rf
     private var rootScaleY = 1f.rf
 
-    private fun RemoteDrawScope.drawVector(tintFilter: RemoteColorFilter?) {
-        with(root) {
-            scale(rootScaleX.toFloat(), rootScaleY.toFloat(), RemoteOffset.Zero) {
-                draw(tintFilter)
-            }
-        }
+    private fun RemoteDrawScope2.drawVector(tintFilter: RemoteColorFilter?) {
+        with(root) { scale(rootScaleX, rootScaleY) { draw(tintFilter) } }
     }
 
-    override fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?) {
-        rootScaleX = remote.component.width / viewportSize.width
-        rootScaleY = remote.component.height / viewportSize.height
+    override fun RemoteDrawScope2.draw(colorFilter: RemoteColorFilter?) {
+        rootScaleX = remoteWidth / viewportSize.width
+        rootScaleY = remoteHeight / viewportSize.height
         val targetFilter = colorFilter ?: intrinsicColorFilter
         drawVector(targetFilter)
     }
@@ -126,13 +119,13 @@ internal class RemotePathComponent : RemoteVNode() {
         pathData.toRemotePath(path)
     }
 
-    override fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?) {
+    override fun RemoteDrawScope2.draw(colorFilter: RemoteColorFilter?) {
         updatePath()
 
         val paint = RemotePaint().apply { remoteColorFilter = colorFilter }
         fill?.let {
             paint.style = Paint.Style.FILL
-            canvas.drawRPath(renderPath, paint)
+            drawPath(renderPath, paint)
         }
         stroke?.let {
             paint.style = Paint.Style.STROKE
@@ -140,7 +133,7 @@ internal class RemotePathComponent : RemoteVNode() {
             paint.strokeMiter = strokeLineMiter
             paint.strokeCap = strokeLineCap.toAndroidCap()
             paint.strokeJoin = strokeLineJoin.toAndroidJoin()
-            canvas.drawRPath(renderPath, paint)
+            drawPath(renderPath, paint)
         }
     }
 
@@ -258,7 +251,7 @@ internal class RemoteGroupComponent : RemoteVNode() {
         markTintForVNode(instance)
     }
 
-    override fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?) {
+    override fun RemoteDrawScope2.draw(colorFilter: RemoteColorFilter?) {
         withTransform({ groupMatrix?.let { transform(it) } }) {
             children.fastForEach { node -> with(node) { this@draw.draw(colorFilter) } }
         }

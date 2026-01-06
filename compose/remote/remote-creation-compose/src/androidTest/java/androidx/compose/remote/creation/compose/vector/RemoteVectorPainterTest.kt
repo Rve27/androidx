@@ -21,7 +21,7 @@ import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.capture.RemoteImageVector
 import androidx.compose.remote.creation.compose.layout.RemoteBox
-import androidx.compose.remote.creation.compose.layout.RemoteCanvas
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas2
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
@@ -158,7 +158,7 @@ private fun LoadFromImageVector(
 ) {
     RemoteBox(modifier) {
         val painter = painterRemoteVector(imageVector, tint)
-        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
+        RemoteCanvas2(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
     }
 }
 
@@ -171,7 +171,7 @@ private fun LoadFromRes(
 ) {
     RemoteBox(modifier) {
         val painter = painterRemoteVector(ImageVector.vectorResource(res), tint)
-        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
+        RemoteCanvas2(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
     }
 }
 
@@ -184,7 +184,7 @@ private fun LoadFromRemoteImageVector(
 ) {
     RemoteBox(modifier) {
         val painter = painterRemoteVector(imageVector, tint)
-        RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
+        RemoteCanvas2(modifier = RemoteModifier.fillMaxSize()) { with(painter) { onDraw() } }
     }
 }
 

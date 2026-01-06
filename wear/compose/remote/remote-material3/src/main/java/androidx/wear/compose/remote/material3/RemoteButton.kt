@@ -23,24 +23,20 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.action.Action
-import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
-import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
-import androidx.compose.remote.creation.compose.capture.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope2
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemotePaddingValues
 import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteRowScope
 import androidx.compose.remote.creation.compose.layout.RemoteSize
-import androidx.compose.remote.creation.compose.layout.remoteComponentHeight
-import androidx.compose.remote.creation.compose.layout.remoteComponentWidth
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.clickable
-import androidx.compose.remote.creation.compose.modifier.drawWithContent
+import androidx.compose.remote.creation.compose.modifier.drawWithContent2
 import androidx.compose.remote.creation.compose.modifier.heightIn
 import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
@@ -331,7 +327,6 @@ private fun RemoteButtonImpl(
     labelFont: TextStyle,
     content: @Composable @RemoteComposable RemoteRowScope.() -> Unit,
 ) {
-    val state = LocalRemoteComposeCreationState.current
     // TODO(b/466078229): uses padding modifiers that takes RemoteDp
     val contentPadding: RemoteModifier =
         with(LocalDensity.current) {
@@ -351,8 +346,8 @@ private fun RemoteButtonImpl(
         horizontalArrangement = RemoteArrangement.CenterHorizontally,
         modifier =
             modifier
-                .drawWithContent {
-                    drawShapedBackground(
+                .drawWithContent2 {
+                    drawScope.drawShapedBackground(
                         shape = shape,
                         color = colors.containerColor(enabled),
                         enabled = enabled,
@@ -360,7 +355,6 @@ private fun RemoteButtonImpl(
                         disabledContainerPainter = disabledContainerPainter,
                         borderColor = borderColor,
                         borderStrokeWidth = border?.value,
-                        state = state,
                     )
                     drawContent()
                 }
@@ -689,21 +683,20 @@ public class RemoteButtonColors(
 }
 
 /** Draws a colored and shaped background with when clipping is not supported. */
-internal fun RemoteDrawScope.drawShapedBackground(
+internal fun RemoteDrawScope2.drawShapedBackground(
     shape: RemoteShape,
     color: RemoteColor,
-    borderColor: RemoteColor?,
-    borderStrokeWidth: RemoteFloat?,
     enabled: RemoteBoolean,
     containerPainter: RemotePainter?,
     disabledContainerPainter: RemotePainter?,
-    state: RemoteComposeCreationState,
+    borderColor: RemoteColor?,
+    borderStrokeWidth: RemoteFloat?,
 ) {
-    val w = remoteComponentWidth(state)
-    val h = remoteComponentHeight(state)
+    val w = remoteWidth
+    val h = remoteHeight
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-        canvas.drawRect(0f.rf, 0f.rf, w, h, RemotePaint().apply { remoteColor = color })
+        drawRect(paint = RemotePaint().apply { remoteColor = color })
         return
     }
 
@@ -733,37 +726,40 @@ internal fun RemoteDrawScope.drawShapedBackground(
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Suppress("RestrictedApiAndroidX")
-private fun RemoteDrawScope.drawBorder(
+private fun RemoteDrawScope2.drawBorder(
     borderColor: RemoteColor,
     borderStrokeWidth: RemoteFloat,
     shape: RemoteShape,
     w: RemoteFloat,
     h: RemoteFloat,
 ) {
-    val borderPaint =
-        RemotePaint().apply {
-            remoteColor = borderColor
-            strokeWidth = borderStrokeWidth.toFloat()
-            style = Paint.Style.STROKE
-        }
-    with(shape.createOutline(RemoteSize(w, h), layoutDirection)) { drawOutline(borderPaint) }
+    with(shape.createOutline(RemoteSize(w, h), layoutDirection)) {
+        drawOutline(
+            RemotePaint().apply {
+                remoteColor = borderColor
+                strokeWidth = borderStrokeWidth.id
+                style = Paint.Style.STROKE
+            }
+        )
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Suppress("RestrictedApiAndroidX")
-private fun RemoteDrawScope.drawSolidColorShape(
+private fun RemoteDrawScope2.drawSolidColorShape(
     shape: RemoteShape,
     w: RemoteFloat,
     h: RemoteFloat,
     color: RemoteColor? = null,
 ) {
-    val paint =
-        RemotePaint().apply {
-            style = Paint.Style.FILL
-            remoteColor = color
-        }
-
-    with(shape.createOutline(RemoteSize(w, h), layoutDirection)) { drawOutline(paint) }
+    with(shape.createOutline(RemoteSize(w, h), layoutDirection)) {
+        drawOutline(
+            RemotePaint().apply {
+                style = Paint.Style.FILL
+                remoteColor = color
+            }
+        )
+    }
 }
 
 // TODO(b/451927368): Adds HeightInModifier and WidthInModifier that accept RemoteDp

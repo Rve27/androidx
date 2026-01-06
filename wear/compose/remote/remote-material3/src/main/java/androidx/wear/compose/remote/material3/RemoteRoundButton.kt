@@ -17,14 +17,13 @@
 package androidx.wear.compose.remote.material3
 
 import androidx.compose.remote.creation.compose.action.Action
-import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.clickable
-import androidx.compose.remote.creation.compose.modifier.drawWithContent
+import androidx.compose.remote.creation.compose.modifier.drawWithContent2
 import androidx.compose.remote.creation.compose.shapes.RemoteShape
 import androidx.compose.remote.creation.compose.state.RemoteBoolean
 import androidx.compose.remote.creation.compose.state.RemoteColor
@@ -45,15 +44,13 @@ internal fun RemoteRoundButton(
     shape: RemoteShape,
     content: @Composable @RemoteComposable () -> Unit,
 ) {
-    val state = LocalRemoteComposeCreationState.current
-
     RemoteBox(
         horizontalAlignment = RemoteAlignment.CenterHorizontally,
         verticalArrangement = RemoteArrangement.Center,
         modifier =
             modifier
-                .drawWithContent {
-                    drawShapedBackground(
+                .drawWithContent2 {
+                    drawScope.drawShapedBackground(
                         shape = shape,
                         color = backgroundColor,
                         enabled = enabled,
@@ -61,7 +58,6 @@ internal fun RemoteRoundButton(
                         disabledContainerPainter = null,
                         borderColor = borderColor,
                         borderStrokeWidth = border?.value,
-                        state = state,
                     )
                     drawContent()
                 }
