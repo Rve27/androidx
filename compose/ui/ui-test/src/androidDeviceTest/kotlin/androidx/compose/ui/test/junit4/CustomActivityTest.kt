@@ -26,10 +26,9 @@ import androidx.compose.material.Text
 import androidx.compose.testutils.expectError
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.runAndroidComposeUiTest
+import androidx.compose.ui.test.v2.runAndroidComposeUiTest
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -58,13 +57,11 @@ class CustomActivityTest {
 
     @Test
     fun launchCustomActivity() =
-        runAndroidComposeUiTest<CustomActivity>(StandardTestDispatcher()) {
-            onNodeWithText("Hello").assertExists()
-        }
+        runAndroidComposeUiTest<CustomActivity> { onNodeWithText("Hello").assertExists() }
 
     @Test
     fun setContentOnActivityWithContent() =
-        runAndroidComposeUiTest<CustomActivity>(StandardTestDispatcher()) {
+        runAndroidComposeUiTest<CustomActivity> {
             expectError<IllegalStateException>(expectedMessage = ContentAlreadySetError) {
                 setContent { Text("Hello") }
             }

@@ -233,6 +233,7 @@ fun createEmptyComposeRule(
         },
     )
 
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalTestApi::class)
 class AndroidComposeTestRule<R : TestRule, A : ComponentActivity>
 private constructor(
