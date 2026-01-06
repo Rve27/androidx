@@ -33,7 +33,6 @@ import com.android.build.api.attributes.BuildTypeAttr
 import com.android.build.api.variant.KotlinMultiplatformAndroidVariant
 import com.android.build.api.variant.LibraryVariant
 import java.io.File
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
@@ -56,29 +55,8 @@ object KmpApiTaskConfig : ApiTaskConfig()
 data class AndroidMultiplatformApiTaskConfig(val variant: KotlinMultiplatformAndroidVariant) :
     ApiTaskConfig()
 
-fun AndroidXExtension.shouldConfigureApiTasks(): Boolean {
-    if (!project.state.executed) {
-        throw GradleException(
-            "Project ${project.name} has not been evaluated. Extension" +
-                "properties may only be accessed after the project has been evaluated."
-        )
-    }
-
-    return when (type.checkApi) {
-        is RunApiTasks.No -> {
-            project.logger.info("Projects of type ${type.name} do not track API.")
-            false
-        }
-        is RunApiTasks.Yes -> {
-            (type.checkApi as RunApiTasks.Yes).reason?.let { reason ->
-                project.logger.info(
-                    "Project ${project.name} has explicitly enabled API tasks " +
-                        "with reason: $reason"
-                )
-            }
-            true
-        }
-    }
+fun AndroidXExtension.shouldConfigureApiTasks(): Provider<Boolean> {
+    return type.map { it.checkApi is RunApiTasks.Yes }
 }
 
 /**
@@ -109,7 +87,7 @@ internal fun Project.shouldWriteVersionedApiFile(): Boolean {
 fun Project.configureProjectForApiTasks(config: ApiTaskConfig, extension: AndroidXExtension) {
     // afterEvaluate required to read extension properties
     afterEvaluate {
-        if (!extension.shouldConfigureApiTasks()) {
+        if (!extension.shouldConfigureApiTasks().get()) {
             return@afterEvaluate
         }
 
