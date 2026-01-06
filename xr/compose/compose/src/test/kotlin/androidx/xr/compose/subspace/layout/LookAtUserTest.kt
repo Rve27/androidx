@@ -23,7 +23,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.arcore.testing.FakePerceptionManager
 import androidx.xr.arcore.testing.FakePerceptionRuntime
-import androidx.xr.compose.spatial.ExperimentalUserSubspaceApi
+import androidx.xr.compose.spatial.ExperimentalFollowingSubspaceApi
 import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.SpatialBox
 import androidx.xr.compose.subspace.SpatialPanel
@@ -61,7 +61,7 @@ class LookAtUserTest {
     private lateinit var activity: ComponentActivity
 
     @Before
-    @OptIn(ExperimentalUserSubspaceApi::class)
+    @OptIn(ExperimentalFollowingSubspaceApi::class)
     fun setUp() {
         activityController = Robolectric.buildActivity(ComponentActivity::class.java)
         activity = activityController.get()

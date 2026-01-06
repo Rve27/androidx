@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.xr.compose.testapp.anchoredsubspace
+package androidx.xr.compose.testapp.followingsubspace
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -48,8 +48,11 @@ import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.AnchorCreateResourcesExhausted
 import androidx.xr.arcore.AnchorCreateSuccess
 import androidx.xr.arcore.Plane
-import androidx.xr.compose.spatial.AnchoredSubspace
+import androidx.xr.compose.spatial.ExperimentalFollowingSubspaceApi
+import androidx.xr.compose.spatial.FollowingSubspace
 import androidx.xr.compose.spatial.Subspace
+import androidx.xr.compose.subspace.FollowBehavior
+import androidx.xr.compose.subspace.FollowTarget
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SpatialRow
@@ -60,25 +63,29 @@ import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testapp.ui.components.CommonTestScaffold
 import androidx.xr.compose.testapp.ui.theme.PurpleGrey80
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion
+import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.AnchorEntity
+import androidx.xr.scenecore.Space
+import kotlinx.coroutines.delay
 
 /**
- * Main activity for the AnchoredSubspace.
+ * Main activity for the FollowingSubspace.
  *
- * This activity demonstrates the capability of AnchoredSubspace.
+ * This activity demonstrates the capability of FollowingSubspace for anchors.
  */
 @SuppressLint("MutableCollectionMutableState")
-class AnchoredSubspaceApp : ComponentActivity() {
+@OptIn(ExperimentalFollowingSubspaceApi::class)
+class AnchorFollowingSubspaceActivity : ComponentActivity() {
     lateinit var session: Session
 
-    var lposes by mutableStateOf(mutableListOf<Pose>())
+    var planePoses by mutableStateOf(mutableListOf<Pose>())
 
     companion object {
-        private const val TAG = "AnchoredSubspaceApp"
+        private const val TAG = "FollowingSubspaceApp"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +95,9 @@ class AnchoredSubspaceApp : ComponentActivity() {
             session =
                 remember(this) { (Session.create(activity = this) as SessionCreateSuccess).session }
             LaunchedEffect(session) {
-                session.configure(Config(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
+                session.configure(
+                    Config(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
+                )
             }
 
             MainPanelContent()
@@ -101,33 +110,35 @@ class AnchoredSubspaceApp : ComponentActivity() {
         var selectedPose by remember {
             mutableStateOf<Pose?>(null)
         } // To track which pose is selected
+        val currentPose = selectedPose
 
         LaunchedEffect(session) {
             Plane.subscribe(session).collect { planeUpdate ->
-                val newPoses = UpdatePlaneModels(planeUpdate)
+                val newPoses = updatePlaneModels(planeUpdate)
                 poses = newPoses
             }
         }
 
-        if (selectedPose == null) {
-
-            CreateButtons(poses) { pose ->
+        if (currentPose == null) {
+            SetOfAnchorButtons(poses) { pose ->
                 selectedPose = pose // Set the selected pose on button click
             }
         } else {
-            AnchoredSubspaceContent(session, selectedPose!!)
-            Button(onClick = { this@AnchoredSubspaceApp.finish() }) { Text("Back to main app") }
+            FollowingSubspaceContent(session, currentPose)
+            Button(onClick = { this@AnchorFollowingSubspaceActivity.finish() }) {
+                Text("Back to main app")
+            }
         }
     }
 
     @Composable
-    fun CreateButtons(poses: List<Pose>, onPoseSelected: (Pose) -> Unit) {
+    fun SetOfAnchorButtons(poses: List<Pose>, onPoseSelected: (Pose) -> Unit) {
         if (poses.isEmpty()) {
             Text("Scanning for planes...")
         } else {
             Column {
                 poses.forEachIndexed { index, pose ->
-                    CreateButton(
+                    SingleAnchorButtonWithPoseListener(
                         text = "Anchor to Plane Position ${index + 1}",
                         pose,
                         onClick = { onPoseSelected(pose) },
@@ -138,7 +149,7 @@ class AnchoredSubspaceApp : ComponentActivity() {
     }
 
     @Composable
-    fun CreateButton(text: String, position: Pose, onClick: () -> Unit) {
+    fun SingleAnchorButtonWithPoseListener(text: String, position: Pose, onClick: () -> Unit) {
         var rootAnchor = remember { mutableStateOf<AnchorEntity?>(null) }
         LaunchedEffect(Unit) {
             val anchorResult = Anchor.create(session, position)
@@ -159,9 +170,42 @@ class AnchoredSubspaceApp : ComponentActivity() {
         }
 
         if (rootAnchor.value != null) {
+            val currentAnchor = rootAnchor.value!!
 
-            AnchoredSubspace(
-                lockTo = rootAnchor.value!!,
+            LaunchedEffect(currentAnchor) {
+                val initialPose = currentAnchor.getPose(relativeTo = Space.ACTIVITY)
+                var counter = 0
+
+                // Loop indefinitely as long as the composable is active
+                while (true) {
+                    val translationX = if (counter % 2 == 0) 5f else -5f
+
+                    val newPose =
+                        Pose(
+                            Vector3(
+                                initialPose.translation.x + translationX,
+                                initialPose.translation.y,
+                                initialPose.translation.z,
+                            ),
+                            Quaternion(
+                                initialPose.rotation.x,
+                                initialPose.rotation.y,
+                                initialPose.rotation.z,
+                                initialPose.rotation.w,
+                            ),
+                        )
+
+                    Log.d(TAG, "Anchor moved to: (${newPose.translation}")
+
+                    // Wait for a few seconds before the next move
+                    delay(1000L)
+                    counter++
+                }
+            }
+
+            FollowingSubspace(
+                target = FollowTarget.Anchor(currentAnchor),
+                behavior = FollowBehavior.Tight,
                 modifier = SubspaceModifier.rotate(pitch = -90f, 0f, 0f),
             ) {
                 SpatialPanel(modifier = SubspaceModifier.width(400.dp).height(300.dp)) {
@@ -183,19 +227,20 @@ class AnchoredSubspaceApp : ComponentActivity() {
         }
     }
 
-    private fun UpdatePlaneModels(planes: Collection<Plane>): MutableList<Pose> {
-        lposes.clear()
+    private fun updatePlaneModels(planes: Collection<Plane>): MutableList<Pose> {
+        planePoses.clear()
 
         val planesToProcess = planes.take(3)
         for (plane in planesToProcess) {
-            lposes.add(plane.state.value.centerPose)
+            planePoses.add(plane.state.value.centerPose)
         }
-        return lposes
+        return planePoses
     }
 
+    @OptIn(ExperimentalFollowingSubspaceApi::class)
     @Composable
     @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
-    private fun AnchoredSubspaceContent(session: Session, anchorPose: Pose) {
+    private fun FollowingSubspaceContent(session: Session, anchorPose: Pose) {
         var rootAnchor = remember { mutableStateOf<AnchorEntity?>(null) }
 
         val anchorResult = Anchor.create(session, anchorPose)
@@ -214,8 +259,9 @@ class AnchoredSubspaceApp : ComponentActivity() {
         }
 
         if (rootAnchor.value != null) {
-            AnchoredSubspace(
-                lockTo = rootAnchor.value!!,
+            FollowingSubspace(
+                target = FollowTarget.Anchor(rootAnchor.value!!),
+                behavior = FollowBehavior.Tight,
                 modifier = SubspaceModifier.rotate(pitch = -90f, 0f, 0f),
             ) {
                 SpatialRow {
@@ -246,18 +292,18 @@ class AnchoredSubspaceApp : ComponentActivity() {
     @UiComposable
     @Composable
     private fun CustomSpatialPanel(
-        modifier: SubspaceModifier = SubspaceModifier,
+        modifier: SubspaceModifier = SubspaceModifier.Companion,
         content: @Composable () -> Unit,
     ) {
         @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
-        SpatialPanel(modifier.width(300.dp).height(200.dp)) {
+        (SpatialPanel(modifier.width(300.dp).height(200.dp)) {
             Box(
                 modifier = Modifier.background(Color.LightGray).fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
                 content()
             }
-        }
+        })
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -267,7 +313,7 @@ class AnchoredSubspaceApp : ComponentActivity() {
         CommonTestScaffold(
             title = "Anchorable Subspace Test case",
             bottomBarText = "Bottom Bar",
-            onClickBackArrow = { this@AnchoredSubspaceApp.finish() },
+            onClickBackArrow = { this@AnchorFollowingSubspaceActivity.finish() },
             showBottomBar = false,
         ) { padding ->
             Box(
