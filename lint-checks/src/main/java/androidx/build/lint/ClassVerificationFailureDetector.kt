@@ -174,7 +174,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             "Flag${flagString.substringAfterLast('.').capitalizeAsciiOnly()}Impl"
         }
         override val wrapperClassAnnotation by lazy {
-            "@$REQUIRES_ACONFIG_FLAG_ANNOTATION(\"$flagString\")"
+            "@$REQUIRES_FLAG_ANNOTATION(\"$flagString\")"
         }
         override val stringForMessage by lazy { "guarded by Trunk Stable flag \"$flagString\"" }
 
@@ -653,19 +653,19 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
 
         /**
          * Walks up the class hierarchy from the element to find if there is any `@RequiresApi` or
-         * `@RequiresAconfigFlag` annotation applicable to [requiredApi] API requirement.
+         * `@RequiresFlag` annotation applicable to [requiredApi] API requirement.
          */
         fun UElement.containedInClassWithApiRequirement(requiredApi: ApiRequirement): Boolean {
             var classUnderInspection: UClass? = this.getContainingUClass() ?: return false
 
             while (classUnderInspection != null) {
                 if (requiredApi is ApiFlagRequirement) {
-                    val potentialRequiresAconfigFlag =
+                    val potentialRequiresFlag =
                         ((classUnderInspection
-                                .getAnnotation(REQUIRES_ACONFIG_FLAG_ANNOTATION)
+                                .getAnnotation(REQUIRES_FLAG_ANNOTATION)
                                 ?.findAttributeValue(ATTR_VALUE) as? PsiLiteralValue)
                             ?.value as? String)
-                    if (requiredApi.flagString == potentialRequiresAconfigFlag) {
+                    if (requiredApi.flagString == potentialRequiresFlag) {
                         return true
                     }
                 }
@@ -1436,7 +1436,7 @@ ${wrapperMethodBody.prependIndent("                            ")}
         const val API_LEVEL_PREVIEW = 10000
 
         const val FLAGGED_API_ANNOTATION = "android.annotation.FlaggedApi"
-        const val REQUIRES_ACONFIG_FLAG_ANNOTATION = "androidx.annotation.RequiresAconfigFlag"
+        const val REQUIRES_FLAG_ANNOTATION = "androidx.annotation.RequiresFlag"
 
         private val NO_API_REQUIREMENT = ApiLevelRequirement(API_LEVEL_UNKNOWN_OR_1)
 
