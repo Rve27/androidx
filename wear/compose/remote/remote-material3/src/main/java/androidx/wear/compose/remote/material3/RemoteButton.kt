@@ -37,9 +37,12 @@ import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.clickable
 import androidx.compose.remote.creation.compose.modifier.drawWithContent
+import androidx.compose.remote.creation.compose.modifier.fillMaxSize
+import androidx.compose.remote.creation.compose.modifier.height
 import androidx.compose.remote.creation.compose.modifier.heightIn
 import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
+import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.modifier.widthIn
 import androidx.compose.remote.creation.compose.modifier.wrapContentSize
 import androidx.compose.remote.creation.compose.painter.RemotePainter
@@ -64,8 +67,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.ButtonDefaults.scrimGradientEndColor
 import androidx.wear.compose.material3.ButtonDefaults.scrimGradientStartColor
+import androidx.wear.compose.material3.CompactButton
 import androidx.wear.compose.material3.TextConfiguration
 
 /**
@@ -306,6 +311,143 @@ public fun RemoteButton(
     )
 
 /**
+ * A Wear Material3 [RemoteCompactButton] that offers two slots and a specific layout for an icon
+ * and label. Both the icon and label are optional however it is expected that at least one will be
+ * provided.
+ *
+ * The [RemoteCompactButton] is Stadium shaped and has a max height designed to take no more than
+ * one line of text and/or one icon. The default max height is [ButtonDefaults.CompactButtonHeight].
+ * This includes a visible button height of 32.dp and 8.dp of padding above and below the button in
+ * order to meet accessibility guidelines that request a minimum of 48.dp height and width of
+ * tappable area.
+ *
+ * If an icon is provided then the labels should be "start" aligned, e.g. left aligned in
+ * left-to-right mode so that the text starts next to the icon.
+ *
+ * The items are laid out as follows.
+ * 1. If a label is provided then the button will be laid out with the optional icon at the start of
+ *    a row followed by the label with a default max height of
+ *    [RemoteButtonDefaults.CompactButtonHeight].
+ * 2. If only an icon is provided it will be laid out vertically and horizontally centered with a
+ *    default height of [RemoteButtonDefaults.CompactButtonHeight] and the default width of
+ *    [RemoteButtonDefaults.IconOnlyCompactButtonWidth]
+ *
+ * If neither icon nor label is provided then the button will displayed like an icon only button but
+ * with no contents or background color.
+ *
+ * [RemoteCompactButton] takes the [RemoteButtonDefaults.buttonColors] color scheme by default, with
+ * colored background, contrasting content color and no border. This is a high-emphasis button for
+ * the primary, most important or most common action on a screen.
+ *
+ * [RemoteCompactButton] can be enabled or disabled. A disabled button will not respond to click
+ * events.
+ *
+ * @sample androidx.wear.compose.remote.material3.samples.RemoteCompactButtonSimpleSample
+ * @param onClick Will be called when the user clicks the button
+ * @param modifier Modifier to be applied to the button
+ * @param enabled Controls the enabled state of the button. When `false`, this button will not be
+ *   clickable. It must be a constant value.
+ * @param icon A slot for providing the button's icon. The contents are expected to be a
+ *   horizontally and vertically aligned icon of size [RemoteButtonDefaults.ExtraSmallIconSize] when
+ *   used with a label or [RemoteButtonDefaults.SmallIconSize] when used as the only content in the
+ *   button.
+ * @param shape Defines the button's shape. It is strongly recommended to use the default as this
+ *   shape is a key characteristic of the Wear Material3 Theme
+ * @param colors [RemoteButtonColors] that will be used to resolve the background and content color
+ *   for this button in different states. See [RemoteButtonDefaults.buttonColors].
+ * @param border Optional [RemoteDp] that will be used to resolve the border for this button in
+ *   different states.
+ * @param borderColor Optional [RemoteColor] that will be used to resolve the border color for this
+ *   button in different states.
+ * @param contentPadding The spacing values to apply internally between the container and the
+ *   content
+ * @param label Slot for composable body content displayed on the Button
+ */
+@Composable
+@RemoteComposable
+@Suppress("RestrictedApiAndroidX")
+public fun RemoteCompactButton(
+    vararg onClick: Action,
+    modifier: RemoteModifier = RemoteModifier,
+    icon: (@Composable () -> Unit)? = null,
+    enabled: RemoteBoolean = true.rb,
+    shape: RemoteShape = RemoteButtonDefaults.compactButtonShape,
+    colors: RemoteButtonColors = RemoteButtonDefaults.buttonColors(),
+    border: RemoteDp? = null,
+    borderColor: RemoteColor? = null,
+    contentPadding: RemotePaddingValues = RemoteButtonDefaults.CompactButtonContentPadding,
+    label: @Composable @RemoteComposable (RemoteRowScope.() -> Unit)?,
+) {
+    val tapPadding = RemoteButtonDefaults.CompactButtonTapTargetPadding
+    val hasActions = onClick.isNotEmpty()
+
+    RemoteBox(
+        modifier =
+            modifier
+                .compactButtonModifier()
+                .padding(tapPadding)
+                .clickable(*onClick, enabled = enabled.constantValue ?: false && hasActions)
+    ) {
+        if (label != null) {
+            RemoteButtonImpl(
+                modifier = RemoteModifier.height(RemoteButtonDefaults.CompactButtonVisibleHeight),
+                secondaryLabelContent = null,
+                icon = icon,
+                enabled = enabled,
+                shape = shape,
+                labelFont = LocalRemoteTypography.current.typography.labelSmall,
+                containerPainter = null,
+                disabledContainerPainter = null,
+                colors = colors,
+                border = border,
+                borderColor = borderColor,
+                contentPadding = contentPadding,
+                labelContent =
+                    provideScopeContent(
+                        contentColor = colors.contentColor(enabled),
+                        textStyle = LocalRemoteTypography.current.typography.labelSmall,
+                        textConfiguration =
+                            TextConfiguration(
+                                textAlign = if (icon != null) TextAlign.Start else TextAlign.Center,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 3,
+                            ),
+                        content = label,
+                    ),
+            )
+        } else {
+            // Icon only compact buttons have their own layout with a specific width and center
+            // aligned
+            // content. We use the base simple single slot Button under the covers.
+            RemoteButtonImpl(
+                modifier =
+                    RemoteModifier.height(RemoteButtonDefaults.CompactButtonVisibleHeight)
+                        .width(RemoteButtonDefaults.IconOnlyCompactButtonWidth),
+                enabled = enabled,
+                shape = shape,
+                labelFont = LocalRemoteTypography.current.typography.labelSmall,
+                containerPainter = null,
+                disabledContainerPainter = null,
+                colors = colors,
+                border = border,
+                borderColor = borderColor,
+                contentPadding = contentPadding,
+            ) {
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxSize().wrapContentSize(),
+                    horizontalAlignment = RemoteAlignment.CenterHorizontally,
+                    verticalArrangement = RemoteArrangement.Center,
+                ) {
+                    if (icon != null) {
+                        icon()
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
  * Button with label. This allows to use the token values for individual buttons instead of relying
  * on common values.
  */
@@ -326,8 +468,9 @@ private fun RemoteButtonImpl(
     labelFont: TextStyle,
     content: @Composable @RemoteComposable RemoteRowScope.() -> Unit,
 ) {
+    val hasActions = onClick.isNotEmpty()
     val containerModifier =
-        RemoteModifier.clickable(*onClick, enabled = enabled.constantValue ?: false)
+        RemoteModifier.clickable(*onClick, enabled = enabled.constantValue ?: false && hasActions)
             .padding(contentPadding)
 
     RemoteRow(
@@ -415,6 +558,10 @@ public object RemoteButtonDefaults {
     public val shape: RemoteRoundedCornerShape
         @Composable get() = RemoteRoundedCornerShape(16.rdp)
 
+    /** Recommended [RemoteRoundedCornerShape] for [RemoteCompactButton]. */
+    public val compactButtonShape: RemoteRoundedCornerShape
+        @Composable get() = RemoteRoundedCornerShape(18.rdp)
+
     /**
      * Creates a [RemoteButtonColors] that represents the default background and content colors used
      * in a [RemoteButton].
@@ -496,6 +643,14 @@ public object RemoteButtonDefaults {
      */
     public val IconSpacing: RemoteDp = 6.rdp
 
+    /**
+     * The recommended icon size when used in [RemoteCompactButton]s containing both icon and text.
+     */
+    public val ExtraSmallIconSize: RemoteDp = 20.rdp
+
+    /** The recommended icon size when used in [CompactButton]s containing icon-only content. */
+    public val SmallIconSize: RemoteDp = 24.rdp
+
     /** The recommended default size for icons when used inside a [RemoteButton]. */
     public val IconSize: RemoteDp = 26.rdp
 
@@ -511,6 +666,38 @@ public object RemoteButtonDefaults {
     /** The default content padding used by [RemoteButton] */
     public val ContentPadding: RemotePaddingValues =
         RemotePaddingValues(horizontal = ButtonHorizontalPadding, vertical = ButtonVerticalPadding)
+
+    /**
+     * The height applied for the [RemoteCompactButton]. This includes a visible button height of
+     * 32.dp and 8.dp of padding above and below the button in order to meet accessibility
+     * guidelines that request a minimum of 48.dp height and width of tappable area.
+     *
+     * Note that you can override it by adjusting Modifier.height and Modifier.padding directly on
+     * [RemoteCompactButton].
+     */
+    public val CompactButtonHeight: RemoteDp = 48.rdp
+    internal val CompactButtonVisibleHeight: RemoteDp = 32.rdp
+
+    /**
+     * The default padding to be provided around a [RemoteCompactButton] in order to ensure that its
+     * tappable area meets minimum UX guidance.
+     */
+    internal val CompactButtonTapTargetPadding: RemotePaddingValues =
+        RemotePaddingValues(topPadding = 8.rdp, bottomPadding = 8.rdp)
+
+    internal val IconOnlyCompactButtonWidth = 52.rdp
+
+    internal val CompactButtonHorizontalPadding: RemoteDp = 12.rdp
+    internal val CompactButtonVerticalPadding: RemoteDp = 0.rdp
+
+    /** The default content padding used by [CompactButton] */
+    public val CompactButtonContentPadding: RemotePaddingValues =
+        RemotePaddingValues(
+            leftPadding = CompactButtonHorizontalPadding,
+            topPadding = CompactButtonVerticalPadding,
+            rightPadding = CompactButtonHorizontalPadding,
+            bottomPadding = CompactButtonVerticalPadding,
+        )
 
     /** The default alpha applied to the container when the button is disabled. */
     public val DisabledContainerAlpha: Float = 0.12f
@@ -756,6 +943,11 @@ private fun RemoteDrawScope.drawSolidColorShape(
 @Composable
 public fun RemoteModifier.buttonSizeModifier(): RemoteModifier =
     this.heightIn(min = RemoteButtonDefaults.Height).widthIn(min = RemoteButtonDefaults.Width)
+
+@Composable
+private fun RemoteModifier.compactButtonModifier(): RemoteModifier {
+    return this.height(RemoteButtonDefaults.CompactButtonHeight)
+}
 
 internal fun RemoteColor.toDisabledColor(
     disabledAlpha: RemoteFloat = DisabledContentAlpha.rf
