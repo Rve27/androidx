@@ -186,8 +186,7 @@ class PdfFormFillingTest {
     @Test
     fun getFormWidgetInfosOfType_checkbox_inClickForm() = runTest {
         val readOnlyCheckBox =
-            FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_CHECKBOX,
+            FormWidgetInfo.createCheckbox(
                 widgetIndex = 0,
                 widgetRect = Rect(135, 30, 155, 50),
                 textValue = "true",
@@ -196,8 +195,7 @@ class PdfFormFillingTest {
             )
 
         val checkBox =
-            FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_CHECKBOX,
+            FormWidgetInfo.createCheckbox(
                 widgetIndex = 1,
                 widgetRect = Rect(135, 70, 155, 90),
                 textValue = "false",
@@ -217,8 +215,7 @@ class PdfFormFillingTest {
     fun applyEdit_clickOnCheckBox() = runTest {
         val widgetArea = Rect(135, 70, 155, 90)
         val before =
-            FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_CHECKBOX,
+            FormWidgetInfo.createCheckbox(
                 widgetIndex = 1,
                 widgetRect = widgetArea,
                 textValue = "false",
@@ -230,8 +227,7 @@ class PdfFormFillingTest {
         val editRec = FormEditInfo.createClick(before.widgetIndex, clickPoint = clickPoint)
 
         val after =
-            FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_CHECKBOX,
+            FormWidgetInfo.createCheckbox(
                 widgetIndex = 1,
                 widgetRect = widgetArea,
                 textValue = "true",
@@ -990,15 +986,14 @@ class PdfFormFillingTest {
             fontSize: Float,
             listItems: List<ListItem>,
         ): FormWidgetInfo {
-            return FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_COMBOBOX,
+            return FormWidgetInfo.createComboBox(
                 widgetIndex = widgetIndex,
                 widgetRect = widgetRect,
                 textValue = textValue,
                 accessibilityLabel = accessibilityLabel,
                 isReadOnly = readOnly,
                 isEditableText = editableText,
-                fontSize = fontSize.takeIf { it > 0 },
+                fontSize = fontSize.takeIf { it > 0 } ?: 0f,
                 listItems = listItems,
             )
         }
@@ -1010,8 +1005,7 @@ class PdfFormFillingTest {
             textValue: String,
             accessibilityLabel: String,
         ): FormWidgetInfo {
-            return FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+            return FormWidgetInfo.createRadioButton(
                 widgetIndex = widgetIndex,
                 widgetRect = widgetRect,
                 textValue = textValue,
@@ -1029,8 +1023,7 @@ class PdfFormFillingTest {
             multiSelect: Boolean,
             listItems: List<ListItem>,
         ): FormWidgetInfo {
-            return FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_LISTBOX,
+            return FormWidgetInfo.createListBox(
                 widgetIndex = widgetIndex,
                 widgetRect = widgetRect,
                 textValue = textValue,
@@ -1052,8 +1045,7 @@ class PdfFormFillingTest {
             maxLength: Int,
             fontSize: Float,
         ): FormWidgetInfo {
-            return FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_TEXTFIELD,
+            return FormWidgetInfo.createTextField(
                 widgetIndex = widgetIndex,
                 widgetRect = widgetRect,
                 textValue = textValue,
@@ -1061,8 +1053,8 @@ class PdfFormFillingTest {
                 isReadOnly = readOnly,
                 isEditableText = editableText,
                 isMultiLineText = multiLineText,
-                maxLength = maxLength.takeIf { it >= 0 }, // Only include if > 0
-                fontSize = fontSize.takeIf { it > 0 }, // Only include if > 0
+                maxLength = maxLength.takeIf { it >= 0 } ?: 0, // Only include if > 0
+                fontSize = fontSize.takeIf { it > 0 } ?: 0f, // Only include if > 0
             )
         }
     }

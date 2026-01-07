@@ -364,8 +364,7 @@ class PdfDocumentViewModelTest {
         val document = (loadedState as PdfFragmentUiState.DocumentLoaded).pdfDocument
         val formWidgetInfos = document.getFormWidgetInfos(0)
         val expectedFormWidgetInfoIndex1 =
-            FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_CHECKBOX,
+            FormWidgetInfo.createCheckbox(
                 widgetIndex = 1,
                 widgetRect = Rect(135, 70, 155, 90),
                 textValue = "true",
@@ -373,8 +372,7 @@ class PdfDocumentViewModelTest {
                 isReadOnly = false,
             )
         val expectedFormWidgetInfoIndex5 =
-            FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+            FormWidgetInfo.createRadioButton(
                 widgetIndex = 5,
                 widgetRect = Rect(85, 230, 105, 250),
                 textValue = "true",
@@ -382,8 +380,7 @@ class PdfDocumentViewModelTest {
                 isReadOnly = false,
             )
         val expectedFormWidgetInfoIndex7 =
-            FormWidgetInfo(
-                widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+            FormWidgetInfo.createRadioButton(
                 widgetIndex = 7,
                 widgetRect = Rect(185, 230, 205, 250),
                 textValue = "false",

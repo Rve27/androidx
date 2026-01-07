@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
 import androidx.annotation.IntRange
 import androidx.annotation.RestrictTo
@@ -35,7 +36,8 @@ import java.util.Objects
  */
 @SuppressLint("BanParcelableUsage")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FormWidgetInfo(
+public class FormWidgetInfo
+private constructor(
     /** The [WidgetType] of this widget */
     @WidgetType public val widgetType: Int,
     /** The index of this widget among all form widgets on the page */
@@ -92,6 +94,7 @@ public class FormWidgetInfo(
 
     init {
         require(widgetIndex >= 0) { "widgetIndex must be non-negative" }
+        require(fontSize >= 0f) { "fontSize must be non-negative" }
     }
 
     private constructor(
@@ -278,7 +281,7 @@ public class FormWidgetInfo(
             accessibilityLabel: String?,
             isReadOnly: Boolean,
             isEditableText: Boolean,
-            fontSize: Float,
+            @FloatRange(from = 0.0) fontSize: Float,
             listItems: List<ListItem>,
         ): FormWidgetInfo =
             FormWidgetInfo(
@@ -303,10 +306,13 @@ public class FormWidgetInfo(
             isReadOnly: Boolean,
             isEditableText: Boolean,
             isMultiLineText: Boolean,
-            maxLength: Int,
-            fontSize: Float,
-        ): FormWidgetInfo =
-            FormWidgetInfo(
+            @IntRange(from = 0) maxLength: Int,
+            @FloatRange(from = 0.0) fontSize: Float,
+        ): FormWidgetInfo {
+            require(maxLength >= 0)
+            require(fontSize >= 0)
+
+            return FormWidgetInfo(
                 WIDGET_TYPE_TEXTFIELD,
                 widgetIndex,
                 widgetRect,
@@ -318,6 +324,7 @@ public class FormWidgetInfo(
                 maxLength = maxLength,
                 fontSize = fontSize,
             )
+        }
 
         @JvmStatic
         public fun createListBox(
