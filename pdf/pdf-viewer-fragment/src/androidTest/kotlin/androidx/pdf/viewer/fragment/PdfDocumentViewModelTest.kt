@@ -370,7 +370,7 @@ class PdfDocumentViewModelTest {
                 widgetRect = Rect(135, 70, 155, 90),
                 textValue = "true",
                 accessibilityLabel = "checkbox",
-                readOnly = false,
+                isReadOnly = false,
             )
         val expectedFormWidgetInfoIndex5 =
             FormWidgetInfo(
@@ -379,7 +379,7 @@ class PdfDocumentViewModelTest {
                 widgetRect = Rect(85, 230, 105, 250),
                 textValue = "true",
                 accessibilityLabel = "",
-                readOnly = false,
+                isReadOnly = false,
             )
         val expectedFormWidgetInfoIndex7 =
             FormWidgetInfo(
@@ -388,7 +388,7 @@ class PdfDocumentViewModelTest {
                 widgetRect = Rect(185, 230, 205, 250),
                 textValue = "false",
                 accessibilityLabel = "",
-                readOnly = false,
+                isReadOnly = false,
             )
 
         for (widget: FormWidgetInfo in formWidgetInfos) {

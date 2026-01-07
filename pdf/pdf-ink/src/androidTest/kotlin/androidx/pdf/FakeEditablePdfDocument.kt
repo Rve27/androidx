@@ -357,8 +357,8 @@ internal open class FakeEditablePdfDocument(
                                     accessibilityLabel = "ListBox",
                                     listItems =
                                         listOf(ListItem("Apple", false), ListItem("Banana", false)),
-                                    multiSelect = true,
-                                    readOnly = true,
+                                    isMultiSelect = true,
+                                    isReadOnly = true,
                                 )
                             ),
                     ),

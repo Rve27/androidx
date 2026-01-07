@@ -76,7 +76,7 @@ class FormWidgetInteractionHandlerTest {
                 widgetRect = Rect(10, 10, 20, 20),
                 textValue = "Hello",
                 accessibilityLabel = "accessible",
-                readOnly = false,
+                isReadOnly = false,
             )
 
         val expectedEditRecord =
@@ -107,7 +107,7 @@ class FormWidgetInteractionHandlerTest {
                 widgetRect = Rect(10, 10, 20, 20),
                 textValue = "Radio",
                 accessibilityLabel = "accessible",
-                readOnly = false,
+                isReadOnly = false,
             )
         val expectedEditRecord =
             FormEditInfo.createClick(
@@ -136,7 +136,7 @@ class FormWidgetInteractionHandlerTest {
                 widgetRect = Rect(10, 10, 20, 20),
                 textValue = "Push",
                 accessibilityLabel = "accessible",
-                readOnly = false,
+                isReadOnly = false,
             )
         val expectedEditRecord =
             FormEditInfo.createClick(
@@ -165,7 +165,7 @@ class FormWidgetInteractionHandlerTest {
                 widgetRect = Rect(10, 10, 20, 20),
                 textValue = "Push",
                 accessibilityLabel = "accessible",
-                readOnly = false,
+                isReadOnly = false,
             )
         handler.handleInteraction(touchPoint, formWidgetInfo)
         assertThat(formEditTextPlaced).isTrue()

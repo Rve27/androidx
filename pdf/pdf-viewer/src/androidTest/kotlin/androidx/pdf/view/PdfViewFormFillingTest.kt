@@ -247,7 +247,7 @@ class PdfViewFormFillingTest {
                                     widgetRect = Rect(10, 10, 200, 200),
                                     textValue = "Hello",
                                     accessibilityLabel = "Hello",
-                                    multiLineText = false,
+                                    isMultiLineText = false,
                                     fontSize = 10.0f,
                                 )
                             )
@@ -352,7 +352,7 @@ class PdfViewFormFillingTest {
                 textValue = "Banana",
                 accessibilityLabel = "ListBox",
                 listItems = choices,
-                multiSelect = multiselect,
+                isMultiSelect = multiselect,
             )
         )
     }

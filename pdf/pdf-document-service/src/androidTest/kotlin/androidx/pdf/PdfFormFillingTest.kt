@@ -192,7 +192,7 @@ class PdfFormFillingTest {
                 widgetRect = Rect(135, 30, 155, 50),
                 textValue = "true",
                 accessibilityLabel = "readOnlyCheckbox",
-                readOnly = true,
+                isReadOnly = true,
             )
 
         val checkBox =
@@ -202,7 +202,7 @@ class PdfFormFillingTest {
                 widgetRect = Rect(135, 70, 155, 90),
                 textValue = "false",
                 accessibilityLabel = "checkbox",
-                readOnly = false,
+                isReadOnly = false,
             )
 
         verifyFormWidgetInfos(
@@ -223,7 +223,7 @@ class PdfFormFillingTest {
                 widgetRect = widgetArea,
                 textValue = "false",
                 accessibilityLabel = "checkbox",
-                readOnly = false,
+                isReadOnly = false,
             )
 
         val clickPoint = PdfPoint(pageNum = 0, x = 145f, y = 80f)
@@ -236,7 +236,7 @@ class PdfFormFillingTest {
                 widgetRect = widgetArea,
                 textValue = "true",
                 accessibilityLabel = "checkbox",
-                readOnly = false,
+                isReadOnly = false,
             )
 
         val expectedDirtyArea: List<Rect> = listOf(widgetArea)
@@ -996,8 +996,8 @@ class PdfFormFillingTest {
                 widgetRect = widgetRect,
                 textValue = textValue,
                 accessibilityLabel = accessibilityLabel,
-                readOnly = readOnly,
-                editableText = editableText,
+                isReadOnly = readOnly,
+                isEditableText = editableText,
                 fontSize = fontSize.takeIf { it > 0 },
                 listItems = listItems,
             )
@@ -1016,7 +1016,7 @@ class PdfFormFillingTest {
                 widgetRect = widgetRect,
                 textValue = textValue,
                 accessibilityLabel = accessibilityLabel,
-                readOnly = readOnly,
+                isReadOnly = readOnly,
             )
         }
 
@@ -1035,8 +1035,8 @@ class PdfFormFillingTest {
                 widgetRect = widgetRect,
                 textValue = textValue,
                 accessibilityLabel = accessibilityLabel,
-                readOnly = readOnly,
-                multiSelect = multiSelect,
+                isReadOnly = readOnly,
+                isMultiSelect = multiSelect,
                 listItems = listItems,
             )
         }
@@ -1058,9 +1058,9 @@ class PdfFormFillingTest {
                 widgetRect = widgetRect,
                 textValue = textValue,
                 accessibilityLabel = accessibilityLabel,
-                readOnly = readOnly,
-                editableText = editableText,
-                multiLineText = multiLineText,
+                isReadOnly = readOnly,
+                isEditableText = editableText,
+                isMultiLineText = multiLineText,
                 maxLength = maxLength.takeIf { it >= 0 }, // Only include if > 0
                 fontSize = fontSize.takeIf { it > 0 }, // Only include if > 0
             )
