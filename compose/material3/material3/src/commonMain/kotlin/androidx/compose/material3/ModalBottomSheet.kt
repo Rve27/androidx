@@ -18,8 +18,6 @@ package androidx.compose.material3
 
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -35,19 +33,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.isSpecified
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -151,11 +145,20 @@ fun ModalBottomSheet(
         onDismissRequest = settleToDismiss,
     ) {
         Box(modifier = Modifier.fillMaxSize().imePadding().semantics { isTraversalGroup = true }) {
+            val isScrimVisible: Boolean by remember {
+                derivedStateOf { sheetState.targetValue != Hidden }
+            }
+            val scrimAlpha by
+                animateFloatAsState(
+                    targetValue = if (isScrimVisible) 1f else 0f,
+                    animationSpec = MotionSchemeKeyTokens.DefaultEffects.value(),
+                    label = "ScrimAlphaAnimation",
+                )
             Scrim(
+                contentDescription = getString(Strings.CloseSheet),
+                onClick = if (properties.shouldDismissOnClickOutside) animateToDismiss else null,
+                alpha = { scrimAlpha },
                 color = scrimColor,
-                onDismissRequest = animateToDismiss,
-                visible = sheetState.targetValue != Hidden,
-                dismissEnabled = properties.shouldDismissOnClickOutside,
             )
             BottomSheet(
                 modifier =
@@ -227,41 +230,6 @@ fun rememberModalBottomSheetState(
         confirmValueChange = confirmValueChange,
         initialValue = Hidden,
     )
-
-@Composable
-private fun Scrim(
-    color: Color,
-    onDismissRequest: () -> Unit,
-    visible: Boolean,
-    dismissEnabled: Boolean,
-) {
-    // TODO Load the motionScheme tokens from the component tokens file
-    if (color.isSpecified) {
-        val alpha by
-            animateFloatAsState(
-                targetValue = if (visible) 1f else 0f,
-                animationSpec = MotionSchemeKeyTokens.DefaultEffects.value(),
-            )
-        val closeSheet = getString(Strings.CloseSheet)
-        val dismissSheet =
-            if (dismissEnabled) {
-                Modifier.pointerInput(onDismissRequest) { detectTapGestures { onDismissRequest() } }
-                    .semantics(mergeDescendants = true) {
-                        traversalIndex = 1f
-                        contentDescription = closeSheet
-                        onClick {
-                            onDismissRequest()
-                            true
-                        }
-                    }
-            } else {
-                Modifier
-            }
-        Canvas(Modifier.fillMaxSize().then(dismissSheet)) {
-            drawRect(color = color, alpha = alpha.coerceIn(0f, 1f))
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
