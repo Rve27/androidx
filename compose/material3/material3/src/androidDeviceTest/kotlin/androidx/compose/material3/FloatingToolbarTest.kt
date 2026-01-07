@@ -88,7 +88,6 @@ import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import kotlin.math.roundToInt
 import kotlinx.coroutines.test.StandardTestDispatcher
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1113,7 +1112,6 @@ class FloatingToolbarTest {
     }
 
     @Test
-    @Ignore("b/422764590")
     fun verticalFloatingToolbar_scrollBehavior() {
         rule.setMaterialContent(lightColorScheme()) {
             val scrollBehavior =
@@ -1121,7 +1119,11 @@ class FloatingToolbarTest {
             Scaffold(modifier = Modifier.nestedScroll(scrollBehavior).testTag(MainLayoutTag)) {
                 innerPadding ->
                 Box(Modifier.padding(innerPadding)) {
-                    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+                    Column(
+                        Modifier.fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .testTag("Content")
+                    ) {
                         Text(text = remember { LoremIpsum().values.first() })
                     }
                     VerticalFloatingToolbar(
@@ -1141,7 +1143,7 @@ class FloatingToolbarTest {
         rule.onNodeWithTag(FloatingToolbarContentLastItemTestTag).assertIsDisplayed()
 
         // Swipe the content up to collapse the FloatingToolbar.
-        rule.onNodeWithTag(MainLayoutTag).performTouchInput { swipeUp(bottom, bottom - 1000) }
+        rule.onNodeWithTag("Content").performTouchInput { swipeUp(bottom, bottom - 1000) }
         rule.waitForIdle()
         // Check that the FAB and a sample from the toolbar content are not displayed.
         rule.onNodeWithTag(FloatingActionButtonTestTag).assertIsNotDisplayed()
@@ -1149,7 +1151,6 @@ class FloatingToolbarTest {
     }
 
     @Test
-    @Ignore("b/422736884")
     fun horizontalFloatingToolbar_scrollBehavior() {
         rule.setMaterialContent(lightColorScheme()) {
             val scrollBehavior =
@@ -1157,7 +1158,11 @@ class FloatingToolbarTest {
             Scaffold(modifier = Modifier.nestedScroll(scrollBehavior).testTag(MainLayoutTag)) {
                 innerPadding ->
                 Box(Modifier.padding(innerPadding)) {
-                    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+                    Column(
+                        Modifier.fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .testTag("Content")
+                    ) {
                         Text(text = remember { LoremIpsum().values.first() })
                     }
                     HorizontalFloatingToolbar(
@@ -1177,7 +1182,7 @@ class FloatingToolbarTest {
         rule.onNodeWithTag(FloatingToolbarContentLastItemTestTag).assertIsDisplayed()
 
         // Swipe the content up to collapse the FloatingToolbar.
-        rule.onNodeWithTag(MainLayoutTag).performTouchInput { swipeUp(bottom, bottom - 1000) }
+        rule.onNodeWithTag("Content").performTouchInput { swipeUp(bottom, bottom - 1000) }
         rule.waitForIdle()
         // Check that the FAB and a sample from the toolbar content are not displayed.
         rule.onNodeWithTag(FloatingActionButtonTestTag).assertIsNotDisplayed()
