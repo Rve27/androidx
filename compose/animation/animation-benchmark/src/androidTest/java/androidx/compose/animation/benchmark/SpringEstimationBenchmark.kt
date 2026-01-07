@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.animation.core.benchmark
+package androidx.compose.animation.benchmark
 
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
