@@ -17,6 +17,7 @@
 package androidx.pdf.annotation.draftstate
 
 import androidx.annotation.RestrictTo
+import androidx.pdf.EditsDraft
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
@@ -42,6 +43,14 @@ public interface AnnotationEditsDraftState {
      * @return A list of [KeyedPdfAnnotation] objects.
      */
     public fun getDraftAnnotations(pageNum: Int): List<KeyedPdfAnnotation>
+
+    /**
+     * Retrieves a snapshot of all current modifications accumulated in this draft state.
+     *
+     * @return An [EditsDraft] object containing the ordered collection of operations (Inserts,
+     *   Updates, Removes).
+     */
+    public fun getModificationsSnapshot(): EditsDraft
 
     /**
      * Retrieves all annotation edits for a specific page.

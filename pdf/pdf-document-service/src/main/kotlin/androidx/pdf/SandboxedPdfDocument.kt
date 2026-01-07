@@ -35,15 +35,7 @@ import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.PdfDocument.DocumentClosedException
 import androidx.pdf.PdfDocument.PdfPageContent
 import androidx.pdf.annotation.KeyedPdfAnnotation
-import androidx.pdf.annotation.manager.InMemoryAnnotationsManager
-import androidx.pdf.annotation.models.AnnotationResult
-import androidx.pdf.annotation.models.EditId
-import androidx.pdf.annotation.models.PdfAnnotation
-import androidx.pdf.annotation.models.PdfAnnotationData
-import androidx.pdf.annotation.models.PdfEdit
-import androidx.pdf.annotation.models.PdfEditEntry
-import androidx.pdf.annotation.models.PdfEdits
-import androidx.pdf.annotation.processor.PdfAnnotationsProcessor
+import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.SelectionBoundary
@@ -100,13 +92,10 @@ public class SandboxedPdfDocument(
     override val isLinearized: Boolean,
     override val formType: Int,
     override val renderParams: RenderParams,
-    private val annotationsProcessor: PdfAnnotationsProcessor,
+    private val batchPdfAnnotationsProcessor: BatchPdfAnnotationsProcessor,
 ) : EditablePdfDocument() {
 
     private val refCount = AtomicInteger(1)
-
-    private val annotationsManager =
-        InMemoryAnnotationsManager(::getAnnotations, annotationsProcessor)
 
     /** The [CoroutineScope] we use to close [BitmapSource]s asynchronously */
     private val closeScope = CoroutineScope(coroutineContext + SupervisorJob())
@@ -265,6 +254,23 @@ public class SandboxedPdfDocument(
         }
     }
 
+    override suspend fun applyEdits(editsDraft: EditsDraft): List<String> {
+        return batchPdfAnnotationsProcessor.process(editsDraft)
+    }
+
+    /**
+     * Generates a handle for writing the document. This handle should be closed after use.
+     *
+     * @return A [PdfWriteHandle] for the document.
+     */
+    override fun createWriteHandle(): PdfWriteHandle {
+        refCount.incrementAndGet()
+        return PdfWriteHandleImpl(this)
+    }
+
+    override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> =
+        getKeyedAnnotationsForPage(pageNum)
+
     @WorkerThread
     override fun close() {
         if (refCount.decrementAndGet() > 0) return
@@ -410,70 +416,8 @@ public class SandboxedPdfDocument(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override suspend fun <T : PdfEditEntry<out PdfEdit>> getEditsForPage(pageNum: Int): List<T> =
-        annotationsManager.getAnnotationsForPage(pageNum) as List<T>
-
-    override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
-        // Wrapping the process method inside withDocument is important because if the service
-        // disconnected/crashed, withDocument is responsible for retrying the request.
-        return withDocument { annotationsProcessor.process(annotations) }
-    }
-
-    override fun <T : PdfEdit> addPdfEditEntry(entry: PdfEditEntry<T>) {
-        when (entry) {
-            is PdfAnnotationData -> annotationsManager.addAnnotationById(entry.id, entry.annotation)
-            else ->
-                throw UnsupportedOperationException("Unsupported edit type: ${entry.edit::class}")
-        }
-    }
-
-    override fun addEdit(edit: PdfEdit): EditId {
-        return when (edit) {
-            is PdfAnnotation -> annotationsManager.addAnnotation(edit)
-            else -> throw UnsupportedOperationException("Unsupported edit type: ${edit::class}")
-        }
-    }
-
-    override fun removeEdit(editId: EditId): PdfEdit = annotationsManager.removeAnnotation(editId)
-
-    override fun updateEdit(editId: EditId, edit: PdfEdit): PdfEdit {
-        return when (edit) {
-            is PdfAnnotation -> annotationsManager.updateAnnotation(editId, edit)
-            else -> throw UnsupportedOperationException("Unsupported edit type: ${edit::class}")
-        }
-    }
-
-    override fun clearUncommittedEdits() {
-        return annotationsManager.clearUncommittedEdits()
-    }
-
-    /**
-     * Generates a handle for writing the document. This handle should be closed after use.
-     *
-     * @return A [PdfWriteHandle] for the document.
-     */
-    override fun createWriteHandle(): PdfWriteHandle {
-        refCount.incrementAndGet()
-        return PdfWriteHandleImpl(this)
-    }
-
-    // TODO: b/438309514 - Remove GetAnnotationsFromDraftState from SandboxPdfDocument
-    internal suspend fun getAnnotationsFromDraftState(pageNum: Int): List<PdfAnnotationData> {
-        return annotationsManager.getAnnotationsForPage(pageNum)
-    }
-
-    override fun getAllEdits(): PdfEdits = annotationsManager.getSnapshot()
-
-    override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> =
-        getKeyedAnnotationsForPage(pageNum)
-
-    private suspend fun getAnnotations(pageNum: Int): List<PdfAnnotation> {
-        return getKeyedAnnotationsForPage(pageNum).map { it.annotation }
-    }
-
     private suspend fun getKeyedAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> {
-        val firstBatch = withDocument { it.getAllPageAnnotations(pageNum) } ?: return emptyList()
+        val firstBatch = withDocument { it.getPageAnnotations(pageNum) } ?: return emptyList()
         if (firstBatch.totalBatchCount <= 1) {
             return firstBatch.annotations
         }
