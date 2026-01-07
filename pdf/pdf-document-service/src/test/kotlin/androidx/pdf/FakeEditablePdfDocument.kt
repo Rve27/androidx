@@ -20,13 +20,11 @@ import android.graphics.PointF
 import android.net.Uri
 import android.util.SparseArray
 import androidx.pdf.annotation.KeyedPdfAnnotation
-import androidx.pdf.annotation.models.AnnotationResult
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.annotation.models.PdfEdit
 import androidx.pdf.annotation.models.PdfEditEntry
-import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.models.FormEditInfo
@@ -51,13 +49,6 @@ internal class FakeEditablePdfDocument(
         annotationsByPage.getOrPut(pageNum) { mutableListOf() }.add(data)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override suspend fun <T : PdfEditEntry<out PdfEdit>> getEditsForPage(pageNum: Int): List<T> {
-        getAnnotationsForPageCallCount[pageNum] =
-            getAnnotationsForPageCallCount.getOrDefault(pageNum, 0) + 1
-        return (annotationsByPage[pageNum] ?: emptyList()).toList() as List<T>
-    }
-
     override fun addOnPdfContentInvalidatedListener(
         listener: PdfDocument.OnPdfContentInvalidatedListener
     ) {
@@ -70,31 +61,7 @@ internal class FakeEditablePdfDocument(
         TODO("Not yet implemented")
     }
 
-    override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
-        TODO("Not yet implemented")
-    }
-
-    override fun <T : PdfEdit> addPdfEditEntry(entry: PdfEditEntry<T>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun addEdit(edit: PdfEdit): EditId {
-        TODO("Not yet implemented")
-    }
-
-    override fun removeEdit(editId: EditId): PdfEdit {
-        TODO("Not yet implemented")
-    }
-
-    override fun updateEdit(editId: EditId, edit: PdfEdit): PdfEdit {
-        TODO("Not yet implemented")
-    }
-
-    override fun getAllEdits(): PdfEdits {
-        TODO("Not yet implemented")
-    }
-
-    override fun clearUncommittedEdits() {
+    override suspend fun applyEdits(editsDraft: EditsDraft): List<String> {
         TODO("Not yet implemented")
     }
 

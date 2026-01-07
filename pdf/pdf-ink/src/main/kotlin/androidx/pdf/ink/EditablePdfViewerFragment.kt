@@ -48,7 +48,7 @@ import androidx.pdf.annotation.highlights.InProgressTextHighlightsListener
 import androidx.pdf.annotation.highlights.models.InProgressHighlightId
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation
-import androidx.pdf.annotation.models.PdfEdits
+import androidx.pdf.annotation.models.VisiblePdfAnnotations
 import androidx.pdf.featureflag.PdfFeatureFlags
 import androidx.pdf.ink.model.ApplyEditsState
 import androidx.pdf.ink.model.ApplyInProgressException
@@ -93,6 +93,8 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     public constructor() : super()
 
     protected constructor(pdfStylingOptions: PdfStylingOptions) : super(pdfStylingOptions)
+
+    private var lastViewportUpdate: ViewportUpdate? = null
 
     /**
      * If `true`, the fragment is in edit mode, allowing for annotating or editing. If `false`, the
@@ -342,7 +344,16 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override fun onLoadDocumentSuccess(document: PdfDocument) {
         super.onLoadDocumentSuccess(document)
-        documentViewModel.maybeInitialiseForDocument(document)
+        val initialMatrices =
+            lastViewportUpdate?.let { update ->
+                generatePageRangeTransformationMatrices(
+                    update.firstVisiblePage,
+                    update.visiblePagesCount,
+                    update.pageLocations,
+                    update.zoomLevel,
+                )
+            }
+        documentViewModel.maybeInitialiseForDocument(document, initialMatrices)
     }
 
     override fun onDestroyView() {
@@ -428,12 +439,12 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         val firstVisiblePage = pdfView.firstVisiblePage
         val lastVisiblePage = firstVisiblePage + pdfView.visiblePagesCount - 1
 
-        val edits = displayState.edits
+        val visiblePageAnnotations = displayState.visiblePageAnnotations
         val transformationMatrices = displayState.transformationMatrices
 
         (firstVisiblePage..lastVisiblePage).forEach { pageNum ->
             val pageAnnotationData =
-                createPageAnnotationsData(pageNum, edits, transformationMatrices)
+                createPageAnnotationsData(pageNum, visiblePageAnnotations, transformationMatrices)
             pageRenderDataArray.put(pageNum, pageAnnotationData)
         }
         annotationView.annotations = pageRenderDataArray
@@ -441,12 +452,17 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private fun createPageAnnotationsData(
         pageNum: Int,
-        edits: PdfEdits,
+        visiblePageAnnotations: VisiblePdfAnnotations,
         transformationMatrices: Map<Int, Matrix>,
     ): PageAnnotationsData {
         val annotationsForPage: List<PdfAnnotation> =
-            edits.getEditsForPage(pageNum).map { it.edit }.filterIsInstance<PdfAnnotation>()
-        val transformMatrix = transformationMatrices[pageNum] ?: Matrix()
+            visiblePageAnnotations.getKeyedAnnotationsForPage(pageNum).map { it.annotation }
+        val transformMatrix = transformationMatrices[pageNum]
+
+        if (transformMatrix == null) {
+            return PageAnnotationsData(emptyList(), Matrix())
+        }
+
         return PageAnnotationsData(annotationsForPage, transformMatrix)
     }
 
@@ -470,18 +486,19 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                     pageLocations: SparseArray<RectF>,
                     zoomLevel: Float,
                 ) {
-                    val firstVisiblePage = pdfView.firstVisiblePage
-                    val lastVisiblePage = firstVisiblePage + pdfView.visiblePagesCount - 1
+                    lastViewportUpdate =
+                        ViewportUpdate(
+                            firstVisiblePage,
+                            visiblePagesCount,
+                            pageLocations,
+                            zoomLevel,
+                        )
 
-                    updateTransformationMatrices(
+                    updateAnnotationDisplayState(
                         firstVisiblePage,
                         visiblePagesCount,
                         pageLocations,
                         zoomLevel,
-                    )
-                    documentViewModel.fetchAnnotationsForPageRange(
-                        startPage = firstVisiblePage,
-                        endPage = lastVisiblePage,
                     )
                     pageInfoProvider.zoom = zoomLevel
                     pageInfoProvider.pageLocations = pageLocations
@@ -491,6 +508,39 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         pdfView.addOnViewportChangedListener(onViewportChangedListener)
     }
 
+    private fun updateAnnotationDisplayState(
+        firstVisiblePage: Int,
+        visiblePagesCount: Int,
+        pageLocations: SparseArray<RectF>,
+        zoomLevel: Float,
+    ) {
+        val lastVisiblePage = firstVisiblePage + visiblePagesCount - 1
+
+        updateTransformationMatrices(firstVisiblePage, visiblePagesCount, pageLocations, zoomLevel)
+
+        documentViewModel.fetchAnnotationsForPageRange(
+            startPage = firstVisiblePage,
+            endPage = lastVisiblePage,
+        )
+    }
+
+    private fun generatePageRangeTransformationMatrices(
+        firstVisiblePage: Int,
+        visiblePagesCount: Int,
+        pageLocations: SparseArray<RectF>,
+        zoomLevel: Float,
+    ): Map<Int, Matrix> {
+        val lastVisiblePage = firstVisiblePage + visiblePagesCount - 1
+        documentViewModel.visiblePageRange = firstVisiblePage..lastVisiblePage
+
+        return pageTransformCalculator.calculate(
+            firstVisiblePage,
+            visiblePagesCount,
+            pageLocations,
+            zoomLevel,
+        )
+    }
+
     private fun updateTransformationMatrices(
         firstVisiblePage: Int,
         visiblePagesCount: Int,
@@ -498,7 +548,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         zoomLevel: Float,
     ) {
         val transformationMatrices =
-            pageTransformCalculator.calculate(
+            generatePageRangeTransformationMatrices(
                 firstVisiblePage,
                 visiblePagesCount,
                 pageLocations,
@@ -625,6 +675,22 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
             return pdfView.onTouchEvent(event)
         }
     }
+
+    /**
+     * A data holder for capturing the current viewport state of the PDF view.
+     *
+     * @property firstVisiblePage The index of the first page currently visible in the viewport.
+     * @property visiblePagesCount The total number of pages currently partially or fully visible.
+     * @property pageLocations A mapping of page indexes to their screen-relative bounds (in
+     *   pixels).
+     * @property zoomLevel The current zoom factor of the document.
+     */
+    private data class ViewportUpdate(
+        val firstVisiblePage: Int,
+        val visiblePagesCount: Int,
+        val pageLocations: SparseArray<RectF>,
+        val zoomLevel: Float,
+    )
 
     private companion object {
         private const val TOUCH_TOLERANCE_IN_DP = 2f

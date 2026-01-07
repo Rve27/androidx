@@ -18,6 +18,8 @@ package androidx.pdf.annotation.draftstate
 
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
+import androidx.pdf.EditsDraft
+import androidx.pdf.MutableEditsDraft
 import androidx.pdf.annotation.AnnotationHandleIdGenerator
 import androidx.pdf.annotation.AnnotationHandleIdGenerator.composeAnnotationId
 import androidx.pdf.annotation.KeyedPdfAnnotation
@@ -78,6 +80,16 @@ public class InMemoryAnnotationEditsDraftState() : AnnotationEditsDraftState {
 
     override fun getDraftAnnotations(pageNum: Int): List<KeyedPdfAnnotation> {
         return draftAnnotationsPerPage[pageNum]?.values?.toList() ?: emptyList()
+    }
+
+    override fun getModificationsSnapshot(): EditsDraft {
+        val mutableEditsDraft = MutableEditsDraft()
+        draftAnnotationsPerPage.forEach { (_, pageAnnotationsMap) ->
+            pageAnnotationsMap.forEach { (_, keyedAnnotation) ->
+                mutableEditsDraft.insert(keyedAnnotation.annotation)
+            }
+        }
+        return mutableEditsDraft.toEditsDraft()
     }
 
     override fun getEdits(pageNum: Int): List<PdfAnnotationData> =
