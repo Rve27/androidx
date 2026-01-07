@@ -120,6 +120,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         pageToViewTransform: Matrix,
     ) {
         val doc = pdfDocument ?: return
+
+        activeHighlights[id] =
+            HighlightState(pageNum, highlightColor, pageToViewTransform, startPdfPoint, emptyList())
+
         viewScope?.launch {
             val pageRects = doc.calculateHighlightRects(pageNum, startPdfPoint, startPdfPoint)
 
@@ -128,19 +132,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
                     pageRects.map { pageRect ->
                         RectF().apply { pageToViewTransform.mapRect(this, pageRect) }
                     }
-                activeHighlights[id] =
-                    HighlightState(
-                        pageNum,
-                        highlightColor,
-                        pageToViewTransform,
-                        startPdfPoint,
-                        viewRects,
-                    )
-                inProgressTextHighlightsListeners.forEach {
-                    it.onTextHighlightStarted(startViewPoint, id)
+
+                // If the gesture hasn't been canceled, update its state and notify listeners.
+                activeHighlights[id]?.let { currentState ->
+                    activeHighlights[id] = currentState.copy(selectionRects = viewRects)
+                    inProgressTextHighlightsListeners.forEach {
+                        it.onTextHighlightStarted(startViewPoint, id)
+                    }
                 }
                 invalidate()
             } else {
+                activeHighlights.remove(id)
                 inProgressTextHighlightsListeners.forEach {
                     it.onTextHighlightFailed(startViewPoint)
                 }
@@ -163,8 +165,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
                     pageRects.map { pageRect ->
                         RectF().apply { currentState.pageToViewTransform.mapRect(this, pageRect) }
                     }
-                activeHighlights[id] = currentState.copy(selectionRects = newViewRects)
-                invalidate()
+
+                // Check if the highlight is still active before updating the viewRects.
+                if (activeHighlights.contains(id)) {
+                    activeHighlights[id] = currentState.copy(selectionRects = newViewRects)
+                    invalidate()
+                }
             }
         }
     }
