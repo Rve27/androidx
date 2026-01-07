@@ -18,54 +18,22 @@
 package androidx.compose.remote.creation.compose.layout
 
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
-import androidx.compose.remote.creation.compose.capture.RemoteDrawScope0
-import androidx.compose.ui.graphics.drawscope.DrawContext
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.ui.unit.LayoutDirection
 
+/**
+ * A remote-compatible drawing scope for RemoteCompose that provides access to the content of the
+ * component being drawn.
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface RemoteDrawWithContentScope0 : RemoteDrawScope0 {
-    public fun drawContent()
-}
-
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteDrawWithContentScope0Impl(
-    remoteComposeCreationState: RemoteComposeCreationState,
-    drawScope: DrawScope,
-    density: Float = drawScope.density,
-    fontScale: Float = drawScope.fontScale,
-    drawContext: DrawContext = drawScope.drawContext,
-    layoutDirection: LayoutDirection = drawScope.layoutDirection,
-) :
-    RemoteCanvasDrawScope0(
-        remoteComposeCreationState = remoteComposeCreationState,
-        drawScope = drawScope,
-        density = density,
-        fontScale = fontScale,
-        drawContext = drawContext,
-        layoutDirection = layoutDirection,
-    ),
-    RemoteDrawWithContentScope0 {
-
-    override fun drawContent() {
-        canvas.document.drawComponentContent()
-    }
-}
-
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface RemoteDrawWithContentScope {
-    /** The [RemoteDrawScope] providing drawing operations. */
-    public val drawScope: RemoteDrawScope
+public class RemoteDrawWithContentScope(
+    remoteCanvas: RemoteCanvas,
+    fontScale: RemoteFloat,
+    layoutDirection: LayoutDirection,
+) : RemoteDrawScope(remoteCanvas, fontScale, layoutDirection) {
 
     /** Draws the content of the component. */
-    public fun drawContent()
-}
-
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteDrawWithContentScopeImpl(override val drawScope: RemoteDrawScope) :
-    RemoteDrawWithContentScope {
-    override fun drawContent() {
-        drawScope.remoteCanvas.internalCanvas.document.drawComponentContent()
+    public fun drawContent() {
+        remoteCanvas.internalCanvas.document.drawComponentContent()
     }
 }

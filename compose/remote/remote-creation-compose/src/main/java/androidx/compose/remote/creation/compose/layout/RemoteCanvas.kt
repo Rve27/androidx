@@ -16,15 +16,18 @@
 
 package androidx.compose.remote.creation.compose.layout
 
+import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.DrawTextOnCircle
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
+import androidx.compose.remote.creation.compose.state.RemoteBoolean
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Matrix
 
 /**
@@ -141,12 +144,7 @@ public class RemoteCanvas(
         radius: RemoteFloat,
         paint: RemotePaint,
     ) {
-        internalCanvas.drawCircle(
-            centerX.getFloatIdForCreationState(creationState),
-            centerY.getFloatIdForCreationState(creationState),
-            radius.getFloatIdForCreationState(creationState),
-            paint,
-        )
+        internalCanvas.drawCircle(centerX, centerY, radius, paint)
     }
 
     /** Draws an oval from ([left], [top]) to ([right], [bottom]) using the specified [paint]. */
@@ -225,6 +223,21 @@ public class RemoteCanvas(
     /** Draws text from [text] at ([x], [y]) using the specified [paint]. */
     public fun drawText(text: RemoteString, x: RemoteFloat, y: RemoteFloat, paint: RemotePaint) {
         internalCanvas.drawText(text, -1, x, y, paint)
+    }
+
+    /** Draws a run of text at a specified position. */
+    public fun drawTextRun(
+        text: RemoteString,
+        start: Int,
+        end: Int,
+        contextStart: Int,
+        contextEnd: Int,
+        x: RemoteFloat,
+        y: RemoteFloat,
+        isRtl: Boolean,
+        paint: RemotePaint,
+    ) {
+        internalCanvas.drawTextRun(text, start, end, contextStart, contextEnd, x, y, isRtl, paint)
     }
 
     /**
@@ -348,13 +361,59 @@ public class RemoteCanvas(
         top: RemoteFloat,
         right: RemoteFloat,
         bottom: RemoteFloat,
+        clipOp: ClipOp = ClipOp.Intersect,
     ) {
-        internalCanvas.clipRect(left, top, right, bottom)
+        internalCanvas.clipRect(
+            left.getFloatIdForCreationState(creationState),
+            top.getFloatIdForCreationState(creationState),
+            right.getFloatIdForCreationState(creationState),
+            bottom.getFloatIdForCreationState(creationState),
+            // TODO: add ClipOp support to internalCanvas
+        )
     }
 
     /** Clips the current canvas state to the specified [path]. */
-    public fun clipPath(path: RemotePath) {
+    public fun clipPath(path: RemotePath, clipOp: ClipOp = ClipOp.Intersect) {
         internalCanvas.clipPath(path.path)
+        // TODO: add ClipOp support to internalCanvas
+    }
+
+    /**
+     * Instructs the player to conditionally execute [drawCommands] if [condition] evaluates to
+     * true.
+     */
+    public fun drawConditionally(condition: RemoteBoolean, drawCommands: () -> Unit) {
+        internalCanvas.drawConditionally(condition, drawCommands)
+    }
+
+    /** Instructs the player to draw [drawCommands] into [bitmap]. */
+    public fun drawToOffscreenBitmap(bitmap: RemoteBitmap, drawCommands: () -> Unit) {
+        internalCanvas.drawToOffscreenBitmap(bitmap, drawCommands)
+    }
+
+    /**
+     * Instructs the player to draw [drawCommands] into [bitmap] which will be cleared with
+     * [clearColor] before any [drawCommands] are processed.
+     */
+    public fun drawToOffscreenBitmap(
+        bitmap: RemoteBitmap,
+        @ColorInt clearColor: Int,
+        drawCommands: () -> Unit,
+    ) {
+        internalCanvas.drawToOffscreenBitmap(bitmap, clearColor, drawCommands)
+    }
+
+    /**
+     * Executes [body] commands in a loop, with the index in the range
+     * [from .. until) with a stride of [step].
+     */
+    public fun loop(
+        from: RemoteFloat,
+        until: RemoteFloat,
+        step: RemoteFloat,
+        body: (index: RemoteFloat) -> Unit,
+    ) {
+        internalCanvas.loop(from, until, step, body)
     }
 }
 

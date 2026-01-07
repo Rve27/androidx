@@ -44,7 +44,7 @@ public fun RemoteModifier.background(color: Color): RemoteModifier =
 @Composable
 public fun RemoteModifier.background(color: RemoteColor): RemoteModifier =
     this.drawWithContent {
-        with(painterRemoteColor(color)) { drawScope.onDraw() }
+        with(painterRemoteColor(color)) { onDraw() }
         drawContent()
     }
 
@@ -53,9 +53,7 @@ public fun RemoteModifier.background(color: RemoteColor): RemoteModifier =
 @Composable
 public fun RemoteModifier.background(brush: RemoteBrush): RemoteModifier =
     this.drawWithContent {
-        drawScope.drawRect(
-            paint = RemotePaint().apply { applyRemoteBrush(brush, drawScope.remoteSize) }
-        )
+        drawRect(paint = RemotePaint().apply { applyRemoteBrush(brush, remoteSize) })
         drawContent()
     }
 
@@ -64,6 +62,6 @@ public fun RemoteModifier.background(brush: RemoteBrush): RemoteModifier =
 @Composable
 public fun RemoteModifier.background(remotePainter: RemotePainter): RemoteModifier =
     this.drawWithContent {
-        with(remotePainter) { drawScope.onDraw() }
+        with(remotePainter) { onDraw() }
         drawContent()
     }
