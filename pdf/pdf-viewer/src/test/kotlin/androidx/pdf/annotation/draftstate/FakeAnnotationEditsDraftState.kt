@@ -16,6 +16,7 @@
 
 package androidx.pdf.annotation.draftstate
 
+import androidx.pdf.EditsDraft
 import androidx.pdf.annotation.AnnotationHandleIdGenerator
 import androidx.pdf.annotation.AnnotationHandleIdGenerator.composeAnnotationId
 import androidx.pdf.annotation.KeyedPdfAnnotation
@@ -70,6 +71,10 @@ class FakeAnnotationEditsDraftState : AnnotationEditsDraftState {
     override fun getDraftAnnotations(pageNum: Int): List<KeyedPdfAnnotation> {
         return drafts[pageNum]?.map { (key, annotation) -> KeyedPdfAnnotation(key, annotation) }
             ?: emptyList()
+    }
+
+    override fun getModificationsSnapshot(): EditsDraft {
+        TODO("Not yet implemented")
     }
 
     override fun addEditById(id: EditId, annotation: PdfAnnotation) {}

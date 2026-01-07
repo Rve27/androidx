@@ -1,4 +1,4 @@
-package androidx.pdf.annotation.models;
+package androidx.pdf;
 
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-@JavaOnlyStableParcelable parcelable PdfEdit;
+@JavaOnlyStableParcelable parcelable UpdateDraftEditOperation;

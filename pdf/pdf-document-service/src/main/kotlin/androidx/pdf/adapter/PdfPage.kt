@@ -19,7 +19,6 @@ package androidx.pdf.adapter
 import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
-import android.graphics.pdf.RenderParams
 import android.graphics.pdf.component.PdfAnnotation
 import android.graphics.pdf.component.PdfPageObject
 import android.graphics.pdf.content.PdfPageGotoLinkContent
@@ -33,6 +32,7 @@ import android.graphics.pdf.models.selection.PageSelection
 import android.graphics.pdf.models.selection.SelectionBoundary
 import android.util.Pair
 import androidx.annotation.RestrictTo
+import androidx.pdf.RenderParams
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 /**
