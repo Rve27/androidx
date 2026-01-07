@@ -136,9 +136,8 @@ constructor(
     @GuardedBy("lock")
     private val pendingUseCasesToNotifyCameraControlReady = mutableSetOf<UseCase>()
 
-    private val meteringRepeating by lazy {
+    private val meteringRepeating =
         MeteringRepeating.Builder(cameraProperties, displayInfoManager).build()
-    }
 
     private val supportedSurfaceCombination =
         SupportedSurfaceCombination(
@@ -557,6 +556,10 @@ constructor(
 
     @GuardedBy("lock")
     private fun shouldAddRepeatingUseCase(runningUseCases: Set<UseCase>): Boolean {
+        if (!cameraXConfig.isRepeatingStreamForced) {
+            return false
+        }
+
         val isMeteringEnabled = attachedUseCases.contains(meteringRepeating)
         return !isMeteringEnabled && isMeteringRepeatingRequired(runningUseCases)
     }
