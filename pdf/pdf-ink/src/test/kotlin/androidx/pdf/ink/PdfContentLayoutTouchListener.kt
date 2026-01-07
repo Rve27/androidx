@@ -30,8 +30,8 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 @org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
-class AnnotationsViewOnTouchListenerTest {
-    private lateinit var listener: AnnotationsViewOnTouchListener
+class PdfContentLayoutTouchListenerTest {
+    private lateinit var listener: PdfContentLayoutTouchListener
     private lateinit var view: View
     private lateinit var context: Context
 
@@ -54,7 +54,7 @@ class AnnotationsViewOnTouchListenerTest {
         pdfViewEventTracker = TestTouchEventDispatcher()
 
         listener =
-            AnnotationsViewOnTouchListener(context, wetStrokesViewEventTracker, pdfViewEventTracker)
+            PdfContentLayoutTouchListener(context, wetStrokesViewEventTracker, pdfViewEventTracker)
     }
 
     @Test

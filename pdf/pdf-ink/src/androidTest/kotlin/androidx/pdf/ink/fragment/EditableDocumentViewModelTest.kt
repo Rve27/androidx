@@ -290,8 +290,8 @@ class EditableDocumentViewModelTest {
 
         val drawingMode = annotationsViewModel.drawingMode.first()
         assertThat(drawingMode).isInstanceOf(AnnotationDrawingMode.PenMode::class.java)
-        assertThat((drawingMode as AnnotationDrawingMode.PenMode).brush.size).isEqualTo(2.0f)
-        assertThat(drawingMode.brush.colorIntArgb).isEqualTo(Color.RED)
+        assertThat((drawingMode as AnnotationDrawingMode.PenMode).size).isEqualTo(2.0f)
+        assertThat(drawingMode.color).isEqualTo(Color.RED)
     }
 
     @Test
@@ -301,9 +301,8 @@ class EditableDocumentViewModelTest {
 
         val drawingMode = annotationsViewModel.drawingMode.first()
         assertThat(drawingMode).isInstanceOf(AnnotationDrawingMode.HighlighterMode::class.java)
-        assertThat((drawingMode as AnnotationDrawingMode.HighlighterMode).brush.size)
-            .isEqualTo(10.0f)
-        assertThat(drawingMode.brush.colorIntArgb).isEqualTo(Color.YELLOW)
+        assertThat((drawingMode as AnnotationDrawingMode.HighlighterMode).size).isEqualTo(10.0f)
+        assertThat(drawingMode.color).isEqualTo(Color.YELLOW)
     }
 
     @Test

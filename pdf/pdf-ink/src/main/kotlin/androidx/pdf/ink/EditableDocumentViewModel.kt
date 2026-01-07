@@ -20,8 +20,6 @@ import android.graphics.Matrix
 import android.net.Uri
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
-import androidx.ink.brush.Brush
-import androidx.ink.brush.StockBrushes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -100,11 +98,14 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     internal val applyEditsStatus: StateFlow<ApplyEditsState> = _applyEditsStatus.asStateFlow()
 
     // TODO: b/441634479 Refactor to extract the document from `DocumentLoaded` UI state.
-    private var editablePdfDocument: EditablePdfDocument? = null
+    internal var editablePdfDocument: EditablePdfDocument? = null
 
     private val _drawingMode =
         MutableStateFlow<AnnotationDrawingMode>(
-            AnnotationDrawingMode.PenMode(InkDefaults.PEN_BRUSH)
+            AnnotationDrawingMode.PenMode(
+                InkDefaults.DEFAULT_BRUSH_SIZE,
+                InkDefaults.DEFAULT_INK_COLOR,
+            )
         )
     internal val drawingMode: StateFlow<AnnotationDrawingMode>
         get() = _drawingMode.asStateFlow()
@@ -296,33 +297,23 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     }
 
     internal fun setCurrentToolInfo(toolInfo: AnnotationToolInfo) {
+        val pdfDocument = editablePdfDocument
         when (toolInfo) {
-            is Pen -> {
-                val brush =
-                    Brush.createWithColorIntArgb(
-                        family = StockBrushes.pressurePen(),
-                        colorIntArgb = toolInfo.color,
-                        size = toolInfo.brushSize,
-                        epsilon = InkDefaults.EPSILON_VALUE,
-                    )
-                _drawingMode.value = AnnotationDrawingMode.PenMode(brush)
-            }
-
+            is Pen ->
+                _drawingMode.value =
+                    AnnotationDrawingMode.PenMode(toolInfo.brushSize, toolInfo.color)
             is Highlighter -> {
-                if (toolInfo.color != null) {
-                    val brush =
-                        Brush.createWithColorIntArgb(
-                            family = StockBrushes.highlighter(),
-                            colorIntArgb = toolInfo.color,
-                            size = toolInfo.brushSize,
-                            epsilon = InkDefaults.EPSILON_VALUE,
+                if (toolInfo.color != null && pdfDocument != null) {
+                    _drawingMode.value =
+                        AnnotationDrawingMode.HighlighterMode(
+                            toolInfo.brushSize,
+                            toolInfo.color,
+                            pdfDocument,
                         )
-                    _drawingMode.value = AnnotationDrawingMode.HighlighterMode(brush)
                 } else {
                     // TODO: Add support for emoji highlighter
                 }
             }
-
             is Eraser -> _drawingMode.value = AnnotationDrawingMode.EraserMode
         }
     }
