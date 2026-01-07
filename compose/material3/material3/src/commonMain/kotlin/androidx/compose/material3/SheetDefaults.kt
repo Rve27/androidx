@@ -118,6 +118,9 @@ import kotlinx.coroutines.launch
  * For a persistent bottom sheet that is structurally integrated into a screen layout, use
  * [BottomSheetScaffold].
  *
+ * The following sample shows how the component can be used alongside [ModalBottomSheetDialog].
+ *
+ * @sample androidx.compose.material3.samples.ManualModalBottomSheetSample
  * @param modifier The modifier to be applied to the bottom sheet.
  * @param state The state object managing the sheet's value and offsets.
  * @param gesturesEnabled Whether gestures are enabled.

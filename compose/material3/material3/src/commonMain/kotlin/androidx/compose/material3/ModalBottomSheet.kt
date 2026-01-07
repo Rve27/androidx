@@ -231,11 +231,30 @@ fun rememberModalBottomSheetState(
         initialValue = Hidden,
     )
 
+/**
+ * [Dialog]-like component providing default window behavior for [BottomSheet]. This implementation
+ * explicitly provides a full-screen edge to edge layout.
+ *
+ * The dialog is visible as long as it is part of the composition hierarchy. In order to let the
+ * user dismiss the Dialog, the implementation of onDismissRequest should contain a way to remove
+ * the dialog from the composition hierarchy.
+ *
+ * You can add implement a custom [ModalBottomSheet] by leveraging this API alongside [BottomSheet],
+ * [draggableAnchoredSheet], and [Scrim]:
+ *
+ * @sample androidx.compose.material3.samples.ManualModalBottomSheetSample
+ * @param onDismissRequest Callback which executes when user tries to dismiss
+ *   [ModalBottomSheetDialog].
+ * @param contentColor The content color of this dialog. Used to inform the default behavior of the
+ *   windows' system bars and content.
+ * @param properties [ModalBottomSheetProperties] for further customization of this dialog.
+ * @param content The content displayed in this [ModalBottomSheetDialog]. Usually [BottomSheet].
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal expect fun ModalBottomSheetDialog(
-    onDismissRequest: () -> Unit,
-    contentColor: Color,
-    properties: ModalBottomSheetProperties,
+    onDismissRequest: () -> Unit = {},
+    contentColor: Color = contentColorFor(BottomSheetDefaults.ContainerColor),
+    properties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
     content: @Composable () -> Unit,
 )
