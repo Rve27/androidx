@@ -17,6 +17,10 @@
 package androidx.compose.remote.creation.compose.v2
 
 import androidx.compose.remote.creation.CreationDisplayInfo
+import androidx.compose.remote.creation.compose.layout.RemoteBox
+import androidx.compose.remote.creation.compose.layout.RemoteColumn
+import androidx.compose.remote.creation.compose.layout.RemoteRow
+import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.runtime.BroadcastFrameClock
 import kotlinx.coroutines.flow.first
@@ -88,6 +92,33 @@ class RemoteComposeV2Test {
                 RemoteRowV2 {
                     RemoteSpacerV2(modifier = RemoteModifier.weight(1f))
                     RemoteTextV2(text = "End")
+                }
+            }
+
+        launch {
+            yield()
+            clock.sendFrame(0L)
+            yield()
+            clock.sendFrame(16_000_000L)
+        }
+
+        val document = flow.first()
+        assertNotNull(document)
+        assertTrue(document.isNotEmpty())
+    }
+
+    @Test
+    fun testV1toV2Switching() = runTest {
+        val displayInfo = CreationDisplayInfo(500, 500, 1)
+        val clock = BroadcastFrameClock()
+        val flow =
+            captureRemoteDocumentV2(displayInfo, context = coroutineContext + clock) {
+                // Using V1 components inside V2 capture
+                RemoteBox {
+                    RemoteColumn {
+                        RemoteText(text = "V1 Text")
+                        RemoteRow { RemoteText(text = "Nested V1 Text") }
+                    }
                 }
             }
 
