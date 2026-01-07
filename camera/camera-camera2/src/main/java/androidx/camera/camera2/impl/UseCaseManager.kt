@@ -340,14 +340,16 @@ constructor(
         when {
             shouldAddRepeatingUseCase(runningUseCases) -> addRepeatingUseCase()
             shouldRemoveRepeatingUseCase(runningUseCases) -> removeRepeatingUseCase()
-            else -> {
-                camera?.let {
-                    it.updateRepeatingRequestAsync(isPrimary, runningUseCases)
-                    for (control in allControls) {
-                        if (control is RunningUseCasesChangeListener) {
-                            control.onRunningUseCasesChanged(runningUseCases)
-                        }
-                    }
+            else -> updateRunningUseCases(runningUseCases)
+        }
+    }
+
+    private fun updateRunningUseCases(runningUseCases: Set<UseCase>) {
+        camera?.let {
+            it.updateRepeatingRequestAsync(isPrimary, runningUseCases)
+            for (control in allControls) {
+                if (control is RunningUseCasesChangeListener) {
+                    control.onRunningUseCasesChanged(runningUseCases)
                 }
             }
         }
@@ -466,7 +468,7 @@ constructor(
 
         newUseCaseCamera.setActiveResumeMode(activeResumeEnabled)
 
-        refreshRunningUseCases()
+        updateRunningUseCases(getRunningUseCases())
 
         Camera2Logger.debug {
             "Notifying $pendingUseCasesToNotifyCameraControlReady camera control ready"

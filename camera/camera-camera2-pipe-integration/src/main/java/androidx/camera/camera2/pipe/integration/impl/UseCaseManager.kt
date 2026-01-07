@@ -40,7 +40,6 @@ import androidx.camera.camera2.pipe.integration.interop.ExperimentalCamera2Inter
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.camera.core.concurrent.CameraCoordinator
 import androidx.camera.core.featuregroup.impl.FeatureCombinationQuery
@@ -54,7 +53,6 @@ import androidx.camera.core.impl.SessionConfig
 import androidx.camera.core.impl.SessionConfig.ValidatingBuilder
 import androidx.camera.core.impl.SessionProcessor
 import androidx.camera.core.impl.SurfaceConfig
-import androidx.camera.core.impl.stabilization.StabilizationMode
 import androidx.camera.core.impl.utils.UseCaseUtil.containsVideoCapture
 import androidx.camera.core.impl.utils.UseCaseUtil.getVideoStabilization
 import androidx.camera.core.streamsharing.StreamSharing
@@ -341,14 +339,16 @@ constructor(
         when {
             shouldAddRepeatingUseCase(runningUseCases) -> addRepeatingUseCase()
             shouldRemoveRepeatingUseCase(runningUseCases) -> removeRepeatingUseCase()
-            else -> {
-                camera?.let {
-                    it.updateRepeatingRequestAsync(isPrimary, runningUseCases)
-                    for (control in allControls) {
-                        if (control is RunningUseCasesChangeListener) {
-                            control.onRunningUseCasesChanged(runningUseCases)
-                        }
-                    }
+            else -> updateRunningUseCases(runningUseCases)
+        }
+    }
+
+    private fun updateRunningUseCases(runningUseCases: Set<UseCase>) {
+        camera?.let {
+            it.updateRepeatingRequestAsync(isPrimary, runningUseCases)
+            for (control in allControls) {
+                if (control is RunningUseCasesChangeListener) {
+                    control.onRunningUseCasesChanged(runningUseCases)
                 }
             }
         }
@@ -467,7 +467,7 @@ constructor(
 
         newUseCaseCamera.setActiveResumeMode(activeResumeEnabled)
 
-        refreshRunningUseCases()
+        updateRunningUseCases(getRunningUseCases())
 
         Camera2Logger.debug {
             "Notifying $pendingUseCasesToNotifyCameraControlReady camera control ready"
@@ -692,10 +692,6 @@ constructor(
         } else {
             listOf(currentConfig.captureType)
         }
-
-    private fun Collection<UseCase>.isPreviewStabilizationOn() =
-        filterIsInstance<Preview>().firstOrNull()?.currentConfig?.previewStabilizationMode ==
-            StabilizationMode.ON
 
     private fun Collection<UseCase>.isUltraHdrOn() =
         filterIsInstance<ImageCapture>().firstOrNull()?.currentConfig?.inputFormat ==
