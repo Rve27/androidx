@@ -54,7 +54,6 @@ import com.android.build.api.dsl.KotlinMultiplatformAndroidDeviceTestCompilation
 import com.android.build.api.dsl.KotlinMultiplatformAndroidHostTestCompilation
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.api.dsl.LibraryExtension
-import com.android.build.api.dsl.PrivacySandboxSdkExtension
 import com.android.build.api.dsl.TestBuildType
 import com.android.build.api.dsl.TestExtension
 import com.android.build.api.variant.AndroidComponentsExtension
@@ -65,12 +64,10 @@ import com.android.build.api.variant.KotlinMultiplatformAndroidComponentsExtensi
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.api.variant.LibraryVariant
 import com.android.build.api.variant.LibraryVariantBuilder
-import com.android.build.api.variant.Variant
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.TestPlugin
 import com.android.build.gradle.api.KotlinMultiplatformAndroidPlugin
-import com.android.build.gradle.api.PrivacySandboxSdkPlugin
 import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import com.google.protobuf.gradle.ProtobufExtension
@@ -180,8 +177,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                         plugin,
                         androidXKmpExtension,
                     )
-                is @Suppress("UnstableApiUsage") PrivacySandboxSdkPlugin -> // b/397703898
-                configureWithPrivacySandboxSdkPlugin(project)
                 is ProtobufPlugin -> configureProtobufPlugin(project)
             }
         }
@@ -602,10 +597,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 // Remove the cast when we upgrade to AGP 9.0.0
                 (variant as HasUnitTestBuilder).enableUnitTest = false
             }
-            onVariants {
-                it.configureTests(project.getKeystore())
-                it.configureLocalAsbSigning(project.getKeystore())
-            }
+            onVariants { it.configureTests(project.getKeystore()) }
         }
 
         project.configureJavaCompilationWarnings(
@@ -632,10 +624,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             )
             project.addAppApkToTestConfigGeneration(androidXExtension)
             excludeVersionFiles(packaging.resources)
-        }
-
-        project.extensions.getByType(AndroidComponentsExtension::class.java).apply {
-            onVariants { it.configureLocalAsbSigning(project.getKeystore()) }
         }
         project.configureJavaCompilationWarnings(androidXExtension)
     }
@@ -790,39 +778,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         }
     }
 
-    @Suppress("UnstableApiUsage") // usage of PrivacySandboxSdkExtension b/397703898
-    private fun configureWithPrivacySandboxSdkPlugin(project: Project) {
-        project.tasks.register("check")
-        project.extensions.getByType<PrivacySandboxSdkExtension>().apply {
-            configureLocalAsbSigning(experimentalProperties, project.getKeystore())
-            compileSdk = project.defaultAndroidConfig.compileSdk
-            minSdk = project.defaultAndroidConfig.minSdk
-            buildToolsVersion = project.defaultAndroidConfig.buildToolsVersion
-            bundle { setVersion(1, 0, 0) }
-        }
-        // Workaround for b/389890488
-        project.configurations.configureEach { configuration ->
-            if (configuration.isCanBeResolved) {
-                configuration.attributes { attributeContainer ->
-                    attributeContainer.attribute(
-                        BuildTypeAttr.ATTRIBUTE,
-                        project.objects.named(BuildTypeAttr::class.java, "release"),
-                    )
-                }
-            }
-        }
-    }
-
-    private fun configureLocalAsbSigning(
-        experimentalProperties: MutableMap<String, Any>,
-        keyStore: File,
-    ) {
-        experimentalProperties[ASB_SIGNING_CONFIG_PROPERTY_NAME] = keyStore.absolutePath
-    }
-
-    private val ASB_SIGNING_CONFIG_PROPERTY_NAME =
-        "android.privacy_sandbox.local_deployment_signing_store_file"
-
     /**
      * Excludes files telling which versions of androidx libraries were used in test apks, to avoid
      * invalidating caches as often
@@ -865,11 +820,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 pickFirsts.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
             }
         }
-    }
-
-    @Suppress("UnstableApiUsage") // usage of experimentalProperties b/397703898
-    private fun Variant.configureLocalAsbSigning(keyStore: File) {
-        experimentalProperties.put(ASB_SIGNING_CONFIG_PROPERTY_NAME, keyStore.absolutePath)
     }
 
     private fun configureWithLibraryPlugin(project: Project, androidXExtension: AndroidXExtension) {
