@@ -18,7 +18,6 @@
 
 package androidx.compose.ui.test
 
-import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
@@ -61,7 +60,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 
-@SuppressLint("ComposeTestRuleDispatcher")
 @ExperimentalTestApi
 @Deprecated(
     level = DeprecationLevel.HIDDEN,
@@ -82,7 +80,6 @@ fun runComposeUiTestNonSuspendingLambda(
     }
 }
 
-@SuppressLint("ComposeTestRuleDispatcher")
 @ExperimentalTestApi
 @Deprecated(
     level = DeprecationLevel.HIDDEN,
@@ -104,7 +101,6 @@ fun <A : ComponentActivity> runAndroidComposeUiTestNonSuspendingLambda(
     }
 }
 
-@SuppressLint("ComposeTestRuleDispatcher")
 @ExperimentalTestApi
 @Deprecated(
     level = DeprecationLevel.HIDDEN,
@@ -162,7 +158,6 @@ fun <A : ComponentActivity> AndroidComposeUiTestEnvironmentNoSuspendingLambda(
             "coroutines are queued rather than executed immediately.",
     level = DeprecationLevel.WARNING,
 )
-@SuppressLint("ComposeTestRuleDispatcher")
 @Suppress("RedundantUnitReturnType")
 @ExperimentalTestApi
 actual fun runComposeUiTest(
@@ -206,7 +201,6 @@ actual fun runComposeUiTest(
             "coroutines are queued rather than executed immediately.",
     level = DeprecationLevel.WARNING,
 )
-@SuppressLint("ComposeTestRuleDispatcher")
 @Suppress("RedundantUnitReturnType")
 @ExperimentalTestApi
 inline fun <reified A : ComponentActivity> runAndroidComposeUiTest(
