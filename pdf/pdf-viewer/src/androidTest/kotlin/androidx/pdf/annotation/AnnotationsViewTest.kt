@@ -96,11 +96,11 @@ class AnnotationsViewTest {
                         color = Color.YELLOW,
                         pdfDocument = fakePdfDocument,
                     )
-                annotationsView.setHighlighter(config)
+                annotationsView.interactionMode = AnnotationMode.Highlight(config)
                 assertThat(internalView.visibility).isEqualTo(View.VISIBLE)
 
                 // 3. Set Null -> GONE
-                annotationsView.setHighlighter(null)
+                annotationsView.interactionMode = null
                 assertThat(internalView.visibility).isEqualTo(View.GONE)
             }
         }
@@ -117,8 +117,7 @@ class AnnotationsViewTest {
                         color = Color.YELLOW,
                         pdfDocument = fakePdfDocument,
                     )
-                annotationsView.interactionMode = AnnotationMode.Highlight()
-                annotationsView.setHighlighter(config)
+                annotationsView.interactionMode = AnnotationMode.Highlight(config)
                 annotationsView.addInProgressTextHighlightsListener(testHighlightListener)
 
                 // Touch down on valid text
@@ -139,8 +138,7 @@ class AnnotationsViewTest {
     fun onTouchEvent_whenHighlighterDisabled_ignoresEvents() {
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
             scenario.onActivity {
-                annotationsView.interactionMode = AnnotationMode.Highlight()
-                annotationsView.setHighlighter(null)
+                annotationsView.interactionMode = null
                 annotationsView.addInProgressTextHighlightsListener(testHighlightListener)
 
                 val event = obtainMotionEvent(10f, 10f, MotionEvent.ACTION_DOWN)
@@ -168,8 +166,7 @@ class AnnotationsViewTest {
 
             scenario.onActivity {
                 val config = AnnotationsView.HighlighterConfig(Color.YELLOW, fakePdfDocument)
-                annotationsView.interactionMode = AnnotationMode.Highlight()
-                annotationsView.setHighlighter(config)
+                annotationsView.interactionMode = AnnotationMode.Highlight(config)
 
                 annotationsView.addInProgressTextHighlightsListener(listenerA)
                 annotationsView.addInProgressTextHighlightsListener(listenerB)
