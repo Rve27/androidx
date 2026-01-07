@@ -330,8 +330,7 @@ class PagerScaffoldTest {
             ) {
                 HorizontalPager(
                     state = pagerState,
-                    flingBehavior =
-                        PagerScaffoldDefaults.snapWithSpringFlingBehavior(state = pagerState),
+                    flingBehavior = PagerScaffoldDefaults.snapWithSpringFlingBehavior(pagerState),
                 ) { page ->
                     AnimatedPage(pageIndex = page, pagerState = pagerState) {
                         ScreenScaffold {
@@ -370,8 +369,7 @@ class PagerScaffoldTest {
             ) {
                 VerticalPager(
                     state = pagerState,
-                    flingBehavior =
-                        PagerScaffoldDefaults.snapWithSpringFlingBehavior(state = pagerState),
+                    flingBehavior = PagerScaffoldDefaults.snapWithSpringFlingBehavior(pagerState),
                 ) { page ->
                     AnimatedPage(pageIndex = page, pagerState = pagerState) {
                         ScreenScaffold {
