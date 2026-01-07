@@ -37,21 +37,13 @@ import androidx.compose.ui.unit.LayoutDirection
  * API incompatibilities.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteDrawScope
-public constructor(
+public class RemoteDrawScope(
     public val remoteCanvas: RemoteCanvas,
-    public val underlyingDrawScope: DrawScope,
+    public val fontScale: RemoteFloat,
+    public val layoutDirection: LayoutDirection,
 ) {
     public val remoteComposeCreationState: RemoteComposeCreationState
         get() = remoteCanvas.creationState
-
-    /** The font scale of the current drawing environment. */
-    public val fontScale: Float
-        get() = underlyingDrawScope.fontScale
-
-    /** The layout direction of the current drawing environment. */
-    public val layoutDirection: LayoutDirection
-        get() = underlyingDrawScope.layoutDirection
 
     /** The width of the drawing area as a [RemoteFloat]. */
     public val remoteWidth: RemoteFloat

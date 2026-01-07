@@ -18,11 +18,16 @@ package androidx.compose.remote.creation.compose.v2
 
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.layout.RemoteBox
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.state.RemoteColor
+import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.runtime.BroadcastFrameClock
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
@@ -119,6 +124,32 @@ class RemoteComposeV2Test {
                         RemoteText(text = "V1 Text")
                         RemoteRow { RemoteText(text = "Nested V1 Text") }
                     }
+                }
+            }
+
+        launch {
+            yield()
+            clock.sendFrame(0L)
+            yield()
+            clock.sendFrame(16_000_000L)
+        }
+
+        val document = flow.first()
+        assertNotNull(document)
+        assertTrue(document.isNotEmpty())
+    }
+
+    @Test
+    fun testRemoteCanvasV2() = runTest {
+        val displayInfo = CreationDisplayInfo(500, 500, 1)
+        val clock = BroadcastFrameClock()
+        val flow =
+            captureRemoteDocumentV2(displayInfo, context = coroutineContext + clock) {
+                RemoteCanvas {
+                    drawRect(
+                        paint =
+                            RemotePaint().apply { remoteColor = RemoteColor(Color.Red.toArgb()) }
+                    )
                 }
             }
 

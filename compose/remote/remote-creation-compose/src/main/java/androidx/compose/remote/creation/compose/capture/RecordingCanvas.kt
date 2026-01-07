@@ -171,9 +171,10 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
             }
         val tmpLastStrokeWidth = paint.strokeWidth
         val tmpLastTextSize = paint.textSize
-        val tmpLastStrokeCapOrdinal = paint.strokeCap.ordinal
-        val tmpLastStrokeJoinOrdinal = paint.strokeJoin.ordinal
-        val tmpLastStyleOrdinal = paint.style.ordinal
+        // Handle NPE in Robolectric
+        val tmpLastStrokeCapOrdinal = paint.strokeCap?.ordinal ?: Paint.Cap.BUTT.ordinal
+        val tmpLastStrokeJoinOrdinal = paint.strokeJoin?.ordinal ?: Paint.Join.MITER.ordinal
+        val tmpLastStyleOrdinal = paint.style?.ordinal ?: Paint.Style.FILL.ordinal
         val paintTypeface = paint.typeface
         val tmpTypeface =
             when (paintTypeface) {
@@ -246,17 +247,17 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
             send = true
         }
         if (forceSendingPaint || lastStrokeCapOrdinal != tmpLastStrokeCapOrdinal) {
-            paintBundle.setStrokeCap(paint.strokeCap.ordinal)
+            paintBundle.setStrokeCap(tmpLastStrokeCapOrdinal)
             lastStrokeCapOrdinal = tmpLastStrokeCapOrdinal
             send = true
         }
         if (forceSendingPaint || lastStrokeJoinOrdinal != tmpLastStrokeJoinOrdinal) {
-            paintBundle.setStrokeJoin(paint.strokeJoin.ordinal)
+            paintBundle.setStrokeJoin(tmpLastStrokeJoinOrdinal)
             lastStrokeJoinOrdinal = tmpLastStrokeJoinOrdinal
             send = true
         }
         if (forceSendingPaint || lastStyleOrdinal != tmpLastStyleOrdinal) {
-            paintBundle.setStyle(paint.style.ordinal)
+            paintBundle.setStyle(tmpLastStyleOrdinal)
             lastStyleOrdinal = tmpLastStyleOrdinal
             send = true
         }

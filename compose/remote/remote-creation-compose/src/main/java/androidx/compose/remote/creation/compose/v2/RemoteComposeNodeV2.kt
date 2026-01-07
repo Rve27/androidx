@@ -17,15 +17,19 @@
 package androidx.compose.remote.creation.compose.v2
 
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.creation.compose.capture.RecordingCanvas
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposeNode
 import androidx.compose.runtime.DisallowComposableCalls
@@ -38,8 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.util.fastForEach
+import androidx.core.graphics.createBitmap
 
 internal abstract class RemoteComposeNodeV2 {
     val children = mutableListOf<RemoteComposeNodeV2>()
@@ -49,6 +55,33 @@ internal abstract class RemoteComposeNodeV2 {
 
     fun renderChildren(creationState: RemoteComposeCreationState) {
         children.fastForEach { it.render(creationState) }
+    }
+}
+
+internal class RemoteCanvasNodeV2 : RemoteComposeNodeV2() {
+    var onDraw: (RemoteDrawScope.() -> Unit)? = null
+
+    override fun render(creationState: RemoteComposeCreationState) {
+        val recordingCanvas =
+            RecordingCanvas(createBitmap(1, 1)).apply {
+                setRemoteComposeCreationState(creationState)
+            }
+
+        val recordingModifier = modifier.toRemoteCompose()
+        creationState.document.startCanvas(recordingModifier)
+        onDraw?.let { drawLambda ->
+            val remoteCanvas = RemoteCanvas(recordingCanvas)
+            val remoteDrawScope =
+                RemoteDrawScope(
+                    remoteCanvas = remoteCanvas,
+                    // TODO use real value
+                    fontScale = 1f.rf,
+                    // TODO use real value
+                    layoutDirection = LayoutDirection.Ltr,
+                )
+            remoteDrawScope.drawLambda()
+        }
+        creationState.document.endCanvas()
     }
 }
 

@@ -26,6 +26,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScop
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope0
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope0Impl
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScopeImpl
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -80,7 +81,8 @@ private class DrawWithContentModifier2(val onDraw: RemoteDrawWithContentScope.()
                 RemoteDrawScope(
                     remoteCanvas =
                         RemoteCanvas(this.drawContext.canvas.nativeCanvas as RecordingCanvas),
-                    underlyingDrawScope = this,
+                    fontScale = this.fontScale.rf,
+                    layoutDirection = this.layoutDirection,
                 )
             captureMode.document.startCanvasOperations()
             RemoteDrawWithContentScopeImpl(drawScope = drawScope).onDraw()
