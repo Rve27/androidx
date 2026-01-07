@@ -24,7 +24,7 @@ plugins {
 }
 
 dependencies {
-
+    androidTestImplementation(project(":compose:animation:animation"))
     androidTestImplementation(project(":compose:animation:animation-core"))
     androidTestImplementation(project(":benchmark:benchmark-junit4"))
     androidTestImplementation(project(":compose:runtime:runtime"))
@@ -37,7 +37,7 @@ dependencies {
 android {
     compileSdk = 35
 
-    namespace = "androidx.compose.animation.core.benchmark"
+    namespace = "androidx.compose.animation.benchmark"
 }
 
 androidx {
