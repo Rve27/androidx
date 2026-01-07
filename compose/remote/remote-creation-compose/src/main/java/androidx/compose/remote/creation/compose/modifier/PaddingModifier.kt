@@ -18,6 +18,7 @@ package androidx.compose.remote.creation.compose.modifier
 
 import androidx.annotation.RestrictTo
 import androidx.compose.foundation.layout.padding
+import androidx.compose.remote.creation.compose.layout.RemotePaddingValues
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.modifiers.RecordingModifier
@@ -98,3 +99,18 @@ public fun RemoteModifier.padding(
 @Composable
 public fun RemoteModifier.padding(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): RemoteModifier =
     padding(left = horizontal, top = vertical, right = horizontal, bottom = vertical)
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@Composable
+public fun RemoteModifier.padding(padding: RemotePaddingValues): RemoteModifier =
+    then(
+        with(LocalDensity.current) {
+            // TODO(b/466078229): uses padding modifiers that takes RemoteDp
+            PaddingModifier(
+                padding.leftPadding.value * density,
+                padding.topPadding.value * density,
+                padding.rightPadding.value * density,
+                padding.bottomPadding.value * density,
+            )
+        }
+    )

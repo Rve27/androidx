@@ -59,7 +59,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.DefaultAlpha
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -327,19 +326,9 @@ private fun RemoteButtonImpl(
     labelFont: TextStyle,
     content: @Composable @RemoteComposable RemoteRowScope.() -> Unit,
 ) {
-    // TODO(b/466078229): uses padding modifiers that takes RemoteDp
-    val contentPadding: RemoteModifier =
-        with(LocalDensity.current) {
-            RemoteModifier.padding(
-                left = contentPadding.leftPadding.value * density,
-                top = contentPadding.topPadding.value * density,
-                right = contentPadding.rightPadding.value * density,
-                bottom = contentPadding.bottomPadding.value * density,
-            )
-        }
     val containerModifier =
         RemoteModifier.clickable(*onClick, enabled = enabled.constantValue ?: false)
-            .then(contentPadding)
+            .padding(contentPadding)
 
     RemoteRow(
         verticalAlignment = RemoteAlignment.CenterVertically,
