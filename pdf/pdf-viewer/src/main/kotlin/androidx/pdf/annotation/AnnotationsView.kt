@@ -52,8 +52,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         AnnotationHitTouchHandler().apply {
             setListener(
                 object : OnAnnotationHitListener {
-                    override fun onAnnotationHit(annotation: PdfAnnotation) {
-                        onAnnotationHitListeners.forEach { it.onAnnotationHit(annotation) }
+                    override fun onAnnotationHit(keyedPdfAnnotation: KeyedPdfAnnotation) {
+                        onAnnotationHitListeners.forEach { it.onAnnotationHit(keyedPdfAnnotation) }
                     }
                 }
             )
@@ -209,5 +209,5 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 /** Callback interface for annotation hit events. */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public interface OnAnnotationHitListener {
-    public fun onAnnotationHit(annotation: PdfAnnotation)
+    public fun onAnnotationHit(keyedPdfAnnotation: KeyedPdfAnnotation)
 }

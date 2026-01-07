@@ -55,7 +55,10 @@ internal class AnnotationHitTouchHandler() {
                 val hitAnnotation = findAnnotationAtPoint(annotationsView, pageInfo, event)
 
                 if (hitAnnotation != null) {
-                    onAnnotationHitListener?.onAnnotationHit(hitAnnotation)
+                    // TODO(b/470857248): Replace with actual keyedPdfAnnotation from
+                    // annotationsView.
+                    val keyedPdfAnnotation = KeyedPdfAnnotation(KEY, hitAnnotation)
+                    onAnnotationHitListener?.onAnnotationHit(keyedPdfAnnotation)
                     return true
                 }
                 false
@@ -141,5 +144,9 @@ internal class AnnotationHitTouchHandler() {
             ceil(right).toInt(),
             ceil(bottom).toInt(),
         )
+    }
+
+    private companion object {
+        const val KEY = "key"
     }
 }

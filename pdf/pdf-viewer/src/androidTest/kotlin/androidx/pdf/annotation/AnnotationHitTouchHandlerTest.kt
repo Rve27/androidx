@@ -203,8 +203,8 @@ class AnnotationHitTouchHandlerTest {
     class FakeAnnotationHitListener : OnAnnotationHitListener {
         var lastHitAnnotation: PdfAnnotation? = null
 
-        override fun onAnnotationHit(annotation: PdfAnnotation) {
-            lastHitAnnotation = annotation
+        override fun onAnnotationHit(keyedPdfAnnotation: KeyedPdfAnnotation) {
+            lastHitAnnotation = keyedPdfAnnotation.annotation
         }
     }
 
