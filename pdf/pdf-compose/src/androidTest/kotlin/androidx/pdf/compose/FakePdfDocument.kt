@@ -38,6 +38,7 @@ import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormWidgetInfo
+import java.util.concurrent.Executor
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -184,7 +185,8 @@ internal open class FakePdfDocument(
     }
 
     override fun addOnPdfContentInvalidatedListener(
-        listener: PdfDocument.OnPdfContentInvalidatedListener
+        executor: Executor,
+        listener: PdfDocument.OnPdfContentInvalidatedListener,
     ) {
         return
     }

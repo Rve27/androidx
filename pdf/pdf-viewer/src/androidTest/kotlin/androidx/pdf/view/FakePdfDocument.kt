@@ -40,6 +40,7 @@ import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
+import java.util.concurrent.Executor
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -123,7 +124,8 @@ internal open class FakePdfDocument(
     }
 
     override fun addOnPdfContentInvalidatedListener(
-        listener: PdfDocument.OnPdfContentInvalidatedListener
+        executor: Executor,
+        listener: PdfDocument.OnPdfContentInvalidatedListener,
     ) {
         return
     }

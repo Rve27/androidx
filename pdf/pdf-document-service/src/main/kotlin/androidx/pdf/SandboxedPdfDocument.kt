@@ -45,6 +45,7 @@ import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.toAndroidClass
 import androidx.pdf.utils.toContentClass
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.Executor
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
@@ -101,7 +102,7 @@ public class SandboxedPdfDocument(
     private val closeScope = CoroutineScope(coroutineContext + SupervisorJob())
 
     private val onPdfContentInvalidatedListeners:
-        CopyOnWriteArrayList<PdfDocument.OnPdfContentInvalidatedListener> =
+        CopyOnWriteArrayList<Pair<Executor, PdfDocument.OnPdfContentInvalidatedListener>> =
         CopyOnWriteArrayList()
 
     /**
@@ -234,23 +235,24 @@ public class SandboxedPdfDocument(
     }
 
     override fun addOnPdfContentInvalidatedListener(
-        listener: PdfDocument.OnPdfContentInvalidatedListener
+        executor: Executor,
+        listener: PdfDocument.OnPdfContentInvalidatedListener,
     ) {
-        onPdfContentInvalidatedListeners.add(listener)
+        onPdfContentInvalidatedListeners.add(Pair(executor, listener))
     }
 
     override fun removeOnPdfContentInvalidatedListener(
         listener: PdfDocument.OnPdfContentInvalidatedListener
     ) {
-        onPdfContentInvalidatedListeners.remove(listener)
+        onPdfContentInvalidatedListeners.removeIf { it.second == listener }
     }
 
     override suspend fun applyEdit(record: FormEditInfo) {
         val dirtyAreas = withDocument { document ->
             document.applyEdit(record.pageNumber, record.toAndroidClass())
         }
-        onPdfContentInvalidatedListeners.forEach {
-            it.onPdfContentInvalidated(record.pageNumber, dirtyAreas)
+        onPdfContentInvalidatedListeners.forEach { (executor, listener) ->
+            executor.execute { listener.onPdfContentInvalidated(record.pageNumber, dirtyAreas) }
         }
     }
 
