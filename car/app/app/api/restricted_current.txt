@@ -1817,6 +1817,7 @@ package androidx.car.app.model {
     method public androidx.car.app.model.Metadata? getMetadata();
     method @androidx.car.app.annotations.RequiresCarApi(6) public int getNumericDecoration();
     method public androidx.car.app.model.OnClickDelegate? getOnClickDelegate();
+    method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public androidx.car.app.model.CarProgressBar? getProgressBar();
     method @androidx.car.app.annotations.RequiresCarApi(8) public int getRowEndImageType();
     method public int getRowImageType();
     method public java.util.List<androidx.car.app.model.CarText!> getTexts();
@@ -1851,6 +1852,7 @@ package androidx.car.app.model {
     method public androidx.car.app.model.Row.Builder setMetadata(androidx.car.app.model.Metadata);
     method @IntRange(from=0) @androidx.car.app.annotations.RequiresCarApi(6) public androidx.car.app.model.Row.Builder setNumericDecoration(int);
     method public androidx.car.app.model.Row.Builder setOnClickListener(androidx.car.app.model.OnClickListener);
+    method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public androidx.car.app.model.Row.Builder setProgressBar(androidx.car.app.model.CarProgressBar);
     method public androidx.car.app.model.Row.Builder setTitle(androidx.car.app.model.CarText);
     method public androidx.car.app.model.Row.Builder setTitle(CharSequence);
     method public androidx.car.app.model.Row.Builder setToggle(androidx.car.app.model.Toggle);
