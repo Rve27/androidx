@@ -42,7 +42,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -672,10 +671,6 @@ internal fun toPaint(
         if (this.blendMode != blendMode) this.blendMode = blendMode
         if (this.filterQuality != filterQuality) this.filterQuality = filterQuality
     }
-
-internal typealias ROffset = Offset
-
-internal typealias RSize = Size
 
 public inline fun DrawScope.drawIntoRemoteCanvas(block: (RecordingCanvas) -> Unit): Unit {
     val canvas = drawContext.canvas.nativeCanvas as? RecordingCanvas

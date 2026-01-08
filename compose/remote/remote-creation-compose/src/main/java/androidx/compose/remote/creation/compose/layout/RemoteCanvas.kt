@@ -134,6 +134,139 @@ public class RemoteCanvas(
         internalCanvas.drawRoundRect(left, top, right, bottom, rx, ry, paint)
     }
 
+    /** Draws a circle at ([centerX], [centerY]) with the specified [radius] and [paint]. */
+    public fun drawCircle(
+        centerX: RemoteFloat,
+        centerY: RemoteFloat,
+        radius: RemoteFloat,
+        paint: RemotePaint,
+    ) {
+        internalCanvas.drawCircle(
+            centerX.getFloatIdForCreationState(creationState),
+            centerY.getFloatIdForCreationState(creationState),
+            radius.getFloatIdForCreationState(creationState),
+            paint,
+        )
+    }
+
+    /** Draws an oval from ([left], [top]) to ([right], [bottom]) using the specified [paint]. */
+    public fun drawOval(
+        left: RemoteFloat,
+        top: RemoteFloat,
+        right: RemoteFloat,
+        bottom: RemoteFloat,
+        paint: RemotePaint,
+    ) {
+        internalCanvas.drawOval(left, top, right, bottom, paint)
+    }
+
+    /**
+     * Draws an arc from ([left], [top]) to ([right], [bottom]) starting at [startAngle] and
+     * sweeping by [sweepAngle] using the specified [paint].
+     *
+     * @param useCenter If true, include the center of the oval in the arc, which creates a sector.
+     */
+    public fun drawArc(
+        left: RemoteFloat,
+        top: RemoteFloat,
+        right: RemoteFloat,
+        bottom: RemoteFloat,
+        startAngle: RemoteFloat,
+        sweepAngle: RemoteFloat,
+        useCenter: Boolean,
+        paint: RemotePaint,
+    ) {
+        internalCanvas.drawArc(left, top, right, bottom, startAngle, sweepAngle, useCenter, paint)
+    }
+
+    /** Draws a line from ([startX], [startY]) to ([stopX], [stopY]) using the specified [paint]. */
+    public fun drawLine(
+        startX: RemoteFloat,
+        startY: RemoteFloat,
+        stopX: RemoteFloat,
+        stopY: RemoteFloat,
+        paint: RemotePaint,
+    ) {
+        internalCanvas.drawLine(startX, startY, stopX, stopY, paint)
+    }
+
+    /**
+     * Draws a path that is an interpolation (tween) between [path1] and [path2] based on [tween].
+     *
+     * @param tween The interpolation factor (0.0 for [path1], 1.0 for [path2]).
+     * @param start The start value for internal tween calculations (often 0.0).
+     * @param stop The stop value for internal tween calculations (often 1.0).
+     */
+    public fun drawTweenPath(
+        path1: androidx.compose.ui.graphics.Path,
+        path2: androidx.compose.ui.graphics.Path,
+        tween: RemoteFloat,
+        start: RemoteFloat,
+        stop: RemoteFloat,
+        paint: androidx.compose.ui.graphics.Paint,
+    ) {
+        internalCanvas.drawTweenPath(path1, path2, tween, start, stop, paint)
+    }
+
+    /**
+     * Draws a path that is an interpolation (tween) between [path1] and [path2] based on [tween].
+     */
+    public fun drawTweenPath(
+        path1: RemotePath,
+        path2: RemotePath,
+        tween: RemoteFloat,
+        start: RemoteFloat,
+        stop: RemoteFloat,
+        paint: androidx.compose.ui.graphics.Paint,
+    ) {
+        internalCanvas.drawTweenPath(path1, path2, tween, start, stop, paint)
+    }
+
+    /** Draws text from [text] at ([x], [y]) using the specified [paint]. */
+    public fun drawText(text: RemoteString, x: RemoteFloat, y: RemoteFloat, paint: RemotePaint) {
+        internalCanvas.drawText(text, -1, x, y, paint)
+    }
+
+    /**
+     * Draws text with an anchor point and translation factors.
+     *
+     * @param panx A horizontal translation factor (-1 = left, 0 = center, 1 = right).
+     * @param pany A vertical translation factor (-1 = top, 0 = center, 1 = bottom).
+     */
+    public fun drawAnchoredText(
+        text: RemoteString,
+        anchorX: RemoteFloat,
+        anchorY: RemoteFloat,
+        panx: RemoteFloat,
+        pany: RemoteFloat,
+        flags: Int,
+        paint: RemotePaint,
+    ) {
+        internalCanvas.drawAnchoredText(text, anchorX, anchorY, panx, pany, flags, paint)
+    }
+
+    /** Draws text along a given [path] using the specified [paint]. */
+    public fun drawTextOnPath(
+        text: RemoteString,
+        path: RemotePath,
+        hOffset: RemoteFloat,
+        vOffset: RemoteFloat,
+        paint: RemotePaint,
+    ) {
+        internalCanvas.drawTextOnPath(text, path, hOffset, vOffset, paint)
+    }
+
+    /** Draws text from [text] along a given [path] using the specified [paint]. */
+    public fun drawTextOnPath(
+        text: RemoteString,
+        path: android.graphics.Path,
+        hOffset: RemoteFloat,
+        vOffset: RemoteFloat,
+        paint: RemotePaint,
+    ) {
+        internalCanvas.drawTextOnPath(text, path, hOffset, vOffset, paint)
+    }
+
     /** Draws a path using the specified [paint]. */
     public fun drawPath(path: android.graphics.Path, paint: RemotePaint) {
         internalCanvas.drawPath(path, paint)
@@ -207,6 +340,21 @@ public class RemoteCanvas(
             placement,
             paint,
         )
+    }
+
+    /** Clips the current canvas state to the specified rectangle. */
+    public fun clipRect(
+        left: RemoteFloat,
+        top: RemoteFloat,
+        right: RemoteFloat,
+        bottom: RemoteFloat,
+    ) {
+        internalCanvas.clipRect(left, top, right, bottom)
+    }
+
+    /** Clips the current canvas state to the specified [path]. */
+    public fun clipPath(path: RemotePath) {
+        internalCanvas.clipPath(path.path)
     }
 }
 

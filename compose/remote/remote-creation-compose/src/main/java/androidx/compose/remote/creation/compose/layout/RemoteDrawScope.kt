@@ -20,7 +20,6 @@ import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.DrawTextOnCircle
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
-import androidx.compose.remote.creation.compose.shaders.RemoteSolidColor
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemotePaint
@@ -66,23 +65,12 @@ public class RemoteDrawScope(
         block()
     }
 
-    private fun resolveRemoteBrush(paint: RemotePaint, size: RemoteSize) {
-        paint.remoteBrush?.let { brush ->
-            if (brush.hasShader) {
-                paint.shader = brush.createShader(size)
-            } else if (brush is RemoteSolidColor) {
-                paint.remoteColor = brush.color
-            }
-        }
-    }
-
     /** Draws a rectangle. */
     public fun drawRect(
         paint: RemotePaint,
         topLeft: RemoteOffset = RemoteOffset.Zero,
         size: RemoteSize = remoteSize,
     ) {
-        resolveRemoteBrush(paint, size)
         remoteCanvas.drawRect(
             topLeft.x,
             topLeft.y,
@@ -99,7 +87,6 @@ public class RemoteDrawScope(
         size: RemoteSize = remoteSize,
         cornerRadius: RemoteOffset = RemoteOffset.Zero,
     ) {
-        resolveRemoteBrush(paint, size)
         remoteCanvas.drawRoundRect(
             topLeft.x,
             topLeft.y,
@@ -111,13 +98,68 @@ public class RemoteDrawScope(
         )
     }
 
+    /** Draws a circle. */
+    public fun drawCircle(
+        paint: RemotePaint,
+        center: RemoteOffset = remoteCenter,
+        radius: RemoteFloat,
+    ) {
+        RemoteSize(radius * 2f, radius * 2f)
+        remoteCanvas.drawCircle(center.x, center.y, radius, paint)
+    }
+
+    /** Draws an oval. */
+    public fun drawOval(
+        paint: RemotePaint,
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize,
+    ) {
+        remoteCanvas.drawOval(
+            topLeft.x,
+            topLeft.y,
+            topLeft.x + size.width,
+            topLeft.y + size.height,
+            paint,
+        )
+    }
+
+    /**
+     * Draws an arc.
+     *
+     * @param useCenter If true, include the center of the oval in the arc, which creates a sector.
+     */
+    public fun drawArc(
+        paint: RemotePaint,
+        startAngle: RemoteFloat,
+        sweepAngle: RemoteFloat,
+        useCenter: Boolean,
+        topLeft: RemoteOffset = RemoteOffset.Zero,
+        size: RemoteSize = remoteSize,
+    ) {
+        remoteCanvas.drawArc(
+            topLeft.x,
+            topLeft.y,
+            topLeft.x + size.width,
+            topLeft.y + size.height,
+            startAngle,
+            sweepAngle,
+            useCenter,
+            paint,
+        )
+    }
+
+    /** Draws a line. */
+    public fun drawLine(paint: RemotePaint, start: RemoteOffset, end: RemoteOffset) {
+        remoteCanvas.drawLine(start.x, start.y, end.x, end.y, paint)
+    }
+
     /** Draws an image. */
     public fun drawImage(
         image: RemoteBitmap,
         topLeft: RemoteOffset = RemoteOffset.Zero,
         paint: RemotePaint = RemotePaint(),
     ) {
-        resolveRemoteBrush(paint, RemoteSize(image.width, image.height))
+        RemoteSize(image.width, image.height)
         remoteCanvas.drawBitmap(image, topLeft.x, topLeft.y, paint)
     }
 
@@ -156,6 +198,58 @@ public class RemoteDrawScope(
     /** Draws a path. */
     public fun drawPath(path: androidx.compose.ui.graphics.Path, paint: RemotePaint) {
         remoteCanvas.drawPath(path.asAndroidPath(), paint)
+    }
+
+    public fun drawTweenPath(
+        path1: androidx.compose.ui.graphics.Path,
+        path2: androidx.compose.ui.graphics.Path,
+        tween: RemoteFloat,
+        start: RemoteFloat = 0f.rf,
+        stop: RemoteFloat = 1f.rf,
+        paint: androidx.compose.ui.graphics.Paint,
+    ) {
+        remoteCanvas.drawTweenPath(path1, path2, tween, start, stop, paint)
+    }
+
+    /** Draws a tween path. */
+    public fun drawTweenPath(
+        path1: RemotePath,
+        path2: RemotePath,
+        tween: RemoteFloat,
+        start: RemoteFloat = 0f.rf,
+        stop: RemoteFloat = 1f.rf,
+        paint: androidx.compose.ui.graphics.Paint,
+    ) {
+        remoteCanvas.drawTweenPath(path1, path2, tween, start, stop, paint)
+    }
+
+    /** Draws text. */
+    public fun drawText(text: RemoteString, x: RemoteFloat, y: RemoteFloat, paint: RemotePaint) {
+        remoteCanvas.drawText(text, x, y, paint)
+    }
+
+    /** Draws anchored text. */
+    public fun drawAnchoredText(
+        text: RemoteString,
+        anchorX: RemoteFloat,
+        anchorY: RemoteFloat,
+        panx: RemoteFloat = 0f.rf,
+        pany: RemoteFloat = 0f.rf,
+        flags: Int = 0,
+        paint: RemotePaint,
+    ) {
+        remoteCanvas.drawAnchoredText(text, anchorX, anchorY, panx, pany, flags, paint)
+    }
+
+    /** Draws text along a path. */
+    public fun drawTextOnPath(
+        text: RemoteString,
+        path: androidx.compose.ui.graphics.Path,
+        hOffset: RemoteFloat = 0f.rf,
+        vOffset: RemoteFloat = 0f.rf,
+        paint: RemotePaint,
+    ) {
+        remoteCanvas.drawTextOnPath(text, path.asAndroidPath(), hOffset, vOffset, paint)
     }
 
     /** Performs a rotation. */
@@ -233,4 +327,7 @@ public class RemoteDrawScope(
             paint,
         )
     }
+
+    /** Access to remote-specific utilities like time and animations. */
+    public val remote: RemoteAccess = RemoteAccess(this, remoteComposeCreationState)
 }
