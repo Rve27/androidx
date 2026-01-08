@@ -45,6 +45,7 @@ import androidx.pdf.PdfWriteHandle
 import androidx.pdf.annotation.AnnotationsView
 import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
 import androidx.pdf.annotation.KeyedPdfAnnotation
+import androidx.pdf.annotation.OnAnnotationHitListener
 import androidx.pdf.annotation.highlights.InProgressTextHighlightsListener
 import androidx.pdf.annotation.highlights.models.InProgressHighlightId
 import androidx.pdf.annotation.models.AnnotationsDisplayState
@@ -235,6 +236,15 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
             }
         }
 
+    private val onAnnotationsHitListener =
+        object : OnAnnotationHitListener {
+            override fun onAnnotationHit(keyedPdfAnnotation: KeyedPdfAnnotation) {
+                if (documentViewModel.drawingMode.value == AnnotationDrawingMode.EraserMode) {
+                    // TODO: (b/473955799) Call removeAnnotation on EditableDocumentViewModel.
+                }
+            }
+        }
+
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override val documentViewModel: EditableDocumentViewModel by viewModels {
         EditableDocumentViewModel.Factory
@@ -306,8 +316,14 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         setupUiStateCollectors()
         setupTouchListeners()
         setupPdfViewListeners()
-        setupTextHighlights()
+        setupAnnotationViewListeners()
         setupAnnotationToolbar()
+    }
+
+    private fun setupAnnotationViewListeners() {
+        annotationView.pageInfoProvider = pageInfoProvider
+        annotationView.addOnAnnotationHitListener(onAnnotationsHitListener)
+        annotationView.addInProgressTextHighlightsListener(inProgressTextHighlightsListener)
     }
 
     private fun setupUiStateCollectors() {
@@ -428,11 +444,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
             PdfCompositeTouchListener(popupDismissalTouchListener, pdfContentLayoutTouchListener)
         pdfContainer.setOnTouchListener(pdfCompositeTouchListener)
         pdfContainer.isAnnotationInteractionEnabled = true
-    }
-
-    private fun setupTextHighlights() {
-        annotationView.pageInfoProvider = pageInfoProvider
-        annotationView.addInProgressTextHighlightsListener(inProgressTextHighlightsListener)
     }
 
     private fun updateAnnotationsView(displayState: AnnotationsDisplayState) {
@@ -608,10 +619,8 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 annotationView.interactionMode =
                     AnnotationsView.AnnotationMode.Highlight(drawingMode.toHighlighterConfig())
             }
-            else -> {
-                wetStrokesView.setOnTouchListener(null)
-                annotationView.interactionMode = null
-                // TODO: Add handling for other drawing modes
+            is AnnotationDrawingMode.EraserMode -> {
+                annotationView.interactionMode = AnnotationsView.AnnotationMode.Select()
             }
         }
     }
