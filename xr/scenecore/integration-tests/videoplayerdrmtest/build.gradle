@@ -36,7 +36,7 @@ android {
     defaultConfig {
         // TODO: This should be lower, possibly 21.
         //       Address API calls that require higher versions.
-        minSdk = 34
+        minSdk { version = release(34) }
     }
     compileSdk { version = release(35) }
     buildFeatures { viewBinding = true }
