@@ -44,6 +44,7 @@ import androidx.pdf.PdfDocument
 import androidx.pdf.PdfWriteHandle
 import androidx.pdf.annotation.AnnotationsView
 import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
+import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.highlights.InProgressTextHighlightsListener
 import androidx.pdf.annotation.highlights.models.InProgressHighlightId
 import androidx.pdf.annotation.models.AnnotationsDisplayState
@@ -455,8 +456,8 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         visiblePageAnnotations: VisiblePdfAnnotations,
         transformationMatrices: Map<Int, Matrix>,
     ): PageAnnotationsData {
-        val annotationsForPage: List<PdfAnnotation> =
-            visiblePageAnnotations.getKeyedAnnotationsForPage(pageNum).map { it.annotation }
+        val annotationsForPage: List<KeyedPdfAnnotation> =
+            visiblePageAnnotations.getKeyedAnnotationsForPage(pageNum)
         val transformMatrix = transformationMatrices[pageNum]
 
         if (transformMatrix == null) {
