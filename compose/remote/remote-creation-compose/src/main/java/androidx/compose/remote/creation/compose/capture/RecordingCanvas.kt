@@ -1124,6 +1124,31 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
     }
 
     /**
+     * Draws text along a given [RemotePath].
+     *
+     * @param text The text to draw.
+     * @param path The [RemotePath] along which to draw the text.
+     * @param hOffset The horizontal offset along the path.
+     * @param vOffset The vertical offset from the path.
+     * @param paint The [Paint] object for styling the text.
+     */
+    public fun drawTextOnPath(
+        text: String,
+        path: RemotePath,
+        hOffset: RemoteFloat,
+        vOffset: RemoteFloat,
+        paint: Paint,
+    ) {
+        usePaint(paint)
+        document.drawTextOnPath(
+            text,
+            path,
+            hOffset.getFloatIdForCreationState(creationState),
+            vOffset.getFloatIdForCreationState(creationState),
+        )
+    }
+
+    /**
      * Draws text from a [RemoteString] along a given [Path].
      *
      * @param text The [RemoteString] to draw.
@@ -1135,6 +1160,31 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
     public fun drawTextOnPath(
         text: RemoteString,
         path: Path,
+        hOffset: RemoteFloat,
+        vOffset: RemoteFloat,
+        paint: Paint,
+    ) {
+        usePaint(paint)
+        document.drawTextOnPath(
+            text.getIdForCreationState(creationState),
+            path,
+            hOffset.getFloatIdForCreationState(creationState),
+            vOffset.getFloatIdForCreationState(creationState),
+        )
+    }
+
+    /**
+     * Draws text from a [RemoteString] along a given [RemotePath].
+     *
+     * @param text The [RemoteString] to draw.
+     * @param path The [RemotePath] along which to draw the text.
+     * @param hOffset The horizontal offset along the path.
+     * @param vOffset The vertical offset from the path.
+     * @param paint The [Paint] object for styling the text.
+     */
+    public fun drawTextOnPath(
+        text: RemoteString,
+        path: RemotePath,
         hOffset: RemoteFloat,
         vOffset: RemoteFloat,
         paint: Paint,
@@ -1330,6 +1380,35 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
         document.drawTweenPath(
             path1.asAndroidPath(),
             path2.asAndroidPath(),
+            tween.getFloatIdForCreationState(creationState),
+            start.getFloatIdForCreationState(creationState),
+            stop.getFloatIdForCreationState(creationState),
+        )
+    }
+
+    /**
+     * Draws a path, interpolated using tween, between path1, & path2 [RemotePath] with the given
+     * [Paint].
+     *
+     * @param path1 The starting [RemotePath].
+     * @param path2 The ending [RemotePath].
+     * @param tween The interpolation factor (0.0 for `path1`, 1.0 for `path2`).
+     * @param start The start value for internal tween calculations (often 0.0).
+     * @param stop The stop value for internal tween calculations (often 1.0).
+     * @param paint The Compose UI [Paint] object for styling.
+     */
+    public fun drawTweenPath(
+        path1: RemotePath,
+        path2: RemotePath,
+        tween: RemoteFloat,
+        start: RemoteFloat,
+        stop: RemoteFloat,
+        paint: androidx.compose.ui.graphics.Paint,
+    ) {
+        usePaint(paint.asFrameworkPaint())
+        document.drawTweenPath(
+            path1,
+            path2,
             tween.getFloatIdForCreationState(creationState),
             start.getFloatIdForCreationState(creationState),
             stop.getFloatIdForCreationState(creationState),
