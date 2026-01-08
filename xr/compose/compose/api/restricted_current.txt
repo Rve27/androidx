@@ -1124,8 +1124,10 @@ package androidx.xr.compose.subspace.layout {
   public abstract static class SubspacePlaceable.SubspacePlacementScope {
     ctor public SubspacePlaceable.SubspacePlacementScope();
     method @InaccessibleFromKotlin public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? getCoordinates();
+    method @InaccessibleFromKotlin protected abstract androidx.compose.ui.unit.LayoutDirection getParentLayoutDirection();
     method public final void place(androidx.xr.compose.subspace.layout.SubspacePlaceable, androidx.xr.runtime.math.Pose pose);
     property public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? coordinates;
+    property protected abstract androidx.compose.ui.unit.LayoutDirection parentLayoutDirection;
   }
 
 }
