@@ -22,6 +22,7 @@ import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.Paint
+import android.graphics.Typeface
 import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
@@ -75,6 +76,12 @@ public open class RemotePaint : Paint {
             if (paint.remoteColor != null) {
                 remoteColor = paint.remoteColor
             }
+        }
+    }
+
+    init {
+        if (typeface == null) {
+            typeface = Typeface.DEFAULT
         }
     }
 
