@@ -233,8 +233,9 @@ class BinaryCompatibilityChecker(
                 isBinaryCompatibleWith(other, parentName, errs)
             },
             isAllowedAddition = {
-                when {
-                    this is AbiFunction -> modality != AbiModality.ABSTRACT
+                when (this) {
+                    is AbiFunction -> modality != AbiModality.ABSTRACT
+                    is AbiProperty -> modality != AbiModality.ABSTRACT
                     else -> true
                 }
             },
