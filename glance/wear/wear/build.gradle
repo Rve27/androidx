@@ -76,7 +76,7 @@ android {
     namespace = "androidx.glance.wear"
     compileSdk { version = release(36) }
     defaultConfig {
-        minSdk = 29
+        minSdk { version = release(29) }
     }
 }
 

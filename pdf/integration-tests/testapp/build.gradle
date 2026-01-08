@@ -9,7 +9,7 @@ android {
     compileSdk { version = release(36) { sdkExtension = 19 }}
     defaultConfig {
         applicationId = "androidx.pdf.testapp"
-        minSdk = 31
+        minSdk { version = release(31) }
     }
 
     sourceSets {

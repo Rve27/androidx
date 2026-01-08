@@ -1018,7 +1018,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         buildToolsVersion = project.defaultAndroidConfig.buildToolsVersion
 
         defaultConfig.ndk.abiFilters.addAll(SUPPORTED_BUILD_ABIS)
-        defaultConfig.minSdk = defaultMinSdk
+        defaultConfig.minSdk { version = release(defaultMinSdk) }
         defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         testOptions.animationsDisabled = !project.isMacrobenchmark()
@@ -1085,8 +1085,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         val defaultMinSdkVersion = project.defaultAndroidConfig.minSdk
         compileSdk { version = release(project.defaultAndroidConfig.compileSdk) }
         buildToolsVersion = project.defaultAndroidConfig.buildToolsVersion
-
-        minSdk = defaultMinSdkVersion
+        minSdk { version = release(defaultMinSdkVersion) }
 
         lint.targetSdk = project.defaultAndroidConfig.targetSdk
         compilations
