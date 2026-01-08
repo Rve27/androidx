@@ -48,6 +48,7 @@ import dagger.Binds
 import dagger.Module
 import java.util.concurrent.Executor
 import javax.inject.Inject
+import javax.inject.Provider
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineStart
@@ -274,15 +275,19 @@ public interface UseCaseCameraRequestControl {
 public class UseCaseCameraRequestControlImpl
 @Inject
 constructor(
-    private val capturePipeline: CapturePipeline,
-    private val state: UseCaseCameraState,
+    private val capturePipelineProvider: Provider<CapturePipeline>,
+    private val useCaseCameraStateProvider: Provider<UseCaseCameraState>,
     private val useCaseGraphContext: UseCaseGraphContext,
-    private val useCaseSurfaceManager: UseCaseSurfaceManager,
+    private val useCaseSurfaceManagerProvider: Provider<UseCaseSurfaceManager>,
     private val threads: UseCaseThreads,
     private val cameraXConfig: CameraXConfig? = null,
 ) : UseCaseCameraRequestControl {
 
     @Volatile private var closed = false
+
+    private val capturePipeline by lazy { capturePipelineProvider.get() }
+    private val useCaseSurfaceManager by lazy { useCaseSurfaceManagerProvider.get() }
+    private val useCaseCameraState by lazy { useCaseCameraStateProvider.get() }
 
     private data class InfoBundle(
         val options: Camera2ImplConfig.Builder = Camera2ImplConfig.Builder(),
@@ -625,7 +630,7 @@ constructor(
                     DEFAULT_REQUEST_TEMPLATE
                 }
 
-            state.updateAsync(
+            useCaseCameraState.updateAsync(
                 parameters = options.build().toParameters(),
                 appendParameters = false,
                 internalParameters = mapOf(CAMERAX_TAG_BUNDLE to toTagBundle()),
