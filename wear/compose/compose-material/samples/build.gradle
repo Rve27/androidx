@@ -59,7 +59,7 @@ android {
     compileSdk { version = release(35) }
 
     defaultConfig {
-        minSdk = 25
+        minSdk { version = release(25) }
     }
     namespace = "androidx.wear.compose.material.samples"
 }

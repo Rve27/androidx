@@ -25,7 +25,7 @@ android {
     compileSdk { version = release(35) }
     defaultConfig {
         applicationId = "androidx.wear.compose.integration.navigation"
-        minSdk = 25
+        minSdk { version = release(25) }
     }
 
     buildTypes {

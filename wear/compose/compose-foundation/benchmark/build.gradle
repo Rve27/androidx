@@ -35,7 +35,7 @@ android {
     compileSdk { version = release(35) }
 
     defaultConfig {
-        minSdk = 25
+        minSdk { version = release(25) }
     }
     buildTypes.configureEach {
         testProguardFile "benchmark-proguard-rules.pro"
