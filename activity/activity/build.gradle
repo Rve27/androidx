@@ -14,9 +14,7 @@ plugins {
 }
 
 android {
-    compileSdk {
-        version = preview("Baklava")
-    }
+    compileSdk { version = preview("Baklava") }
     namespace = "androidx.activity"
 }
 

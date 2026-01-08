@@ -83,9 +83,7 @@ dependencies {
 }
 
 android {
-    compileSdk {
-        version = preview("Baklava")
-    }
+    compileSdk { version = preview("Baklava") }
     buildFeatures {
         aidl = true
     }
