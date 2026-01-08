@@ -55,10 +55,7 @@ internal class AnnotationSelectionTouchHandler() {
                 val selectedAnnotation = findAnnotationAtPoint(annotationsView, pageInfo, event)
 
                 if (selectedAnnotation != null) {
-                    // TODO(b/470857248): Replace with actual keyedPdfAnnotation from
-                    // annotationsView.
-                    val keyedPdfAnnotation = KeyedPdfAnnotation(KEY, selectedAnnotation)
-                    onAnnotationSelectedListener?.onAnnotationSelected(keyedPdfAnnotation)
+                    onAnnotationSelectedListener?.onAnnotationSelected(selectedAnnotation)
                     return true
                 }
                 false
@@ -72,7 +69,7 @@ internal class AnnotationSelectionTouchHandler() {
         annotationsView: AnnotationsView,
         pageInfo: PageInfoProvider.PageInfo,
         event: MotionEvent,
-    ): PdfAnnotation? {
+    ): KeyedPdfAnnotation? {
         // Use the system's touch slop for a density-aware tolerance.
         val touchSlop: Int = ViewConfiguration.get(annotationsView.context).scaledTouchSlop
 
@@ -89,14 +86,12 @@ internal class AnnotationSelectionTouchHandler() {
         pageInfo.viewToPageTransform.mapRect(touchRectPdf, touchRectView)
         val touchRegion = touchRectPdf.toRegion()
 
-        val annotations =
-            annotationsView.annotations.get(pageInfo.pageNum)?.keyedAnnotations?.map {
-                it.annotation
-            } ?: return null
+        val keyedPdfAnnotations =
+            annotationsView.annotations.get(pageInfo.pageNum)?.keyedAnnotations ?: return null
 
         // Iterate in reverse Z-order to find the top-most annotation.
-        return annotations.asReversed().firstOrNull { annotation ->
-            isAnnotationHit(annotation, touchRegion, touchRectPdf)
+        return keyedPdfAnnotations.asReversed().firstOrNull { keyedPdfAnnotation ->
+            isAnnotationHit(keyedPdfAnnotation.annotation, touchRegion, touchRectPdf)
         }
     }
 
@@ -146,9 +141,5 @@ internal class AnnotationSelectionTouchHandler() {
             ceil(right).toInt(),
             ceil(bottom).toInt(),
         )
-    }
-
-    private companion object {
-        const val KEY = "key"
     }
 }
