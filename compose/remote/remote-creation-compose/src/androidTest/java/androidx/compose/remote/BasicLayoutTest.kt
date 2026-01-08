@@ -31,9 +31,6 @@ import androidx.compose.remote.creation.compose.action.HostAction
 import androidx.compose.remote.creation.compose.action.ValueChange
 import androidx.compose.remote.creation.compose.capture.rememberAsyncRemoteDocument
 import androidx.compose.remote.creation.compose.capture.rememberRemoteDocument
-import androidx.compose.remote.creation.compose.capture.rotate
-import androidx.compose.remote.creation.compose.capture.scale
-import androidx.compose.remote.creation.compose.capture.translate
 import androidx.compose.remote.creation.compose.layout.CaptureAsBitmap
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
@@ -50,7 +47,7 @@ import androidx.compose.remote.creation.compose.layout.rememberStateMachine
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.clickable
-import androidx.compose.remote.creation.compose.modifier.drawWithContent0
+import androidx.compose.remote.creation.compose.modifier.drawWithContent
 import androidx.compose.remote.creation.compose.modifier.fillMaxHeight
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
@@ -108,6 +105,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
+import java.util.Collections.rotate
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Ignore
 import org.junit.Rule
@@ -454,13 +452,12 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
   COLUMN [-3:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
     MODIFIERS
       BACKGROUND = [0.0, 0.0, 715.0, 825.0] color [1.0, 1.0, 0.0, 1.0] shape [0]
-    CANVAS [-5:-1] = [0.0, 275.0, 715.0, 275.0] VISIBLE
+    BOX [-5:-1] = [0.0, 275.0, 715.0, 275.0] VISIBLE
       MODIFIERS
         HEIGHT = 100.0 dp
         BACKGROUND = [0.0, 0.0, 715.0, 275.0] color [1.0, 1.0, 1.0, 1.0] shape [0]
         PADDING = [22.0, 22.0, 22.0, 22.0]
         BACKGROUND = [0.0, 0.0, 671.0, 231.0] color [0.8, 0.8, 0.8, 1.0] shape [0]
-      CANVAS_CONTENT [-7:-1] = [0.0, 0.0, 671.0, 231.0] VISIBLE
 """
         testLayout(result) {
             RemoteColumn(
@@ -468,14 +465,14 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                RemoteCanvas(
+                RemoteBox(
                     modifier =
                         RemoteModifier.fillMaxWidth()
                             .height(100.rdp)
                             .background(Color.White)
                             .padding(8.dp)
                             .background(Color.LightGray)
-                ) {}
+                )
             }
         }
     }
@@ -1326,16 +1323,16 @@ list:
             ) {
                 RemoteBox(
                     modifier =
-                        RemoteModifier.drawWithContent0 {
-                                rotate(37f) { this@drawWithContent0.drawContent() }
-                                translate(40f, 40f) {
-                                    rotate(45f) {
-                                        scale(1.2f) { this@drawWithContent0.drawContent() }
+                        RemoteModifier.drawWithContent {
+                                rotate(degrees = 37f.rf) { drawContent() }
+                                translate(left = 40f.rf, top = 40f.rf) {
+                                    rotate(degrees = 45f.rf) {
+                                        scale(scale = 1.2f.rf) { drawContent() }
                                     }
                                 }
                                 drawContent()
-                                translate(-40f, -40f) {
-                                    rotate(30f) { this@drawWithContent0.drawContent() }
+                                translate(left = -40f.rf, top = -40f.rf) {
+                                    rotate(degrees = 30f.rf) { drawContent() }
                                 }
                             }
                             .size(64.rdp)
