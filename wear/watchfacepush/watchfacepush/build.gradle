@@ -36,7 +36,7 @@ dependencies {
 android {
     namespace = "androidx.wear.watchfacepush"
     defaultConfig {
-        minSdk = 33
+        minSdk { version = release(33) }
         compileSdk { version = release(36) }
     }
 }
