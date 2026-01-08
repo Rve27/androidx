@@ -16,13 +16,11 @@
 
 package androidx.pdf.annotation
 
-import androidx.pdf.annotation.models.PdfAnnotation
-
 internal class FakeOnAnnotationHitListener : OnAnnotationHitListener {
     var isHit: Boolean = false
         private set
 
-    override fun onAnnotationHit(annotation: PdfAnnotation) {
+    override fun onAnnotationHit(keyedPdfAnnotation: KeyedPdfAnnotation) {
         isHit = true
     }
 }
