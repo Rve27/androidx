@@ -124,6 +124,7 @@ class Camera2CameraControllerTest {
             Camera2CameraController(
                 testBackgroundScope,
                 fakeThreads,
+                StrictMode(true),
                 fakeGraphConfig,
                 fakeGraphListener,
                 fakeSurfaceTracker,
