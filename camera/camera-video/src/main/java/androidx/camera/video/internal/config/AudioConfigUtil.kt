@@ -72,13 +72,13 @@ public object AudioConfigUtil {
                         "used. May rely on fallback defaults to derive settings [chosen mime " +
                         "type: $resolvedAudioMime(profile: $resolvedAudioProfile)]",
                 )
-            } else if (mediaSpec.outputFormat == MediaSpec.OUTPUT_FORMAT_AUTO) {
+            } else if (mediaSpec.outputFormat == MediaSpec.OUTPUT_FORMAT_UNSPECIFIED) {
                 compatibleAudioProfile = audioProfile
                 resolvedAudioMime = encoderProfileAudioMime
                 resolvedAudioProfile = encoderProfileAudioProfile
                 Logger.d(
                     TAG,
-                    "MediaSpec contains OUTPUT_FORMAT_AUTO. Using EncoderProfiles " +
+                    "MediaSpec contains OUTPUT_FORMAT_UNSPECIFIED. Using EncoderProfiles " +
                         "to derive AUDIO settings [mime type: $resolvedAudioMime(profile: " +
                         "$resolvedAudioProfile)]",
                 )
@@ -182,7 +182,7 @@ public object AudioConfigUtil {
 
     public fun resolveAudioSource(audioSpec: AudioSpec): Int {
         var resolvedAudioSource = audioSpec.source
-        if (resolvedAudioSource == AudioSpec.SOURCE_AUTO) {
+        if (resolvedAudioSource == AudioSpec.SOURCE_UNSPECIFIED) {
             resolvedAudioSource = AUDIO_SOURCE_DEFAULT
             Logger.d(TAG, "Using default AUDIO source: $resolvedAudioSource")
         } else {
@@ -193,7 +193,7 @@ public object AudioConfigUtil {
 
     public fun resolveAudioSourceFormat(audioSpec: AudioSpec): Int {
         var resolvedAudioSourceFormat = audioSpec.sourceFormat
-        if (resolvedAudioSourceFormat == AudioSpec.SOURCE_FORMAT_AUTO) {
+        if (resolvedAudioSourceFormat == AudioSpec.SOURCE_FORMAT_UNSPECIFIED) {
             // TODO: This should come from a priority list and may need to be combined with
             //  AudioSource.isSettingsSupported.
             resolvedAudioSourceFormat = AUDIO_SOURCE_FORMAT_DEFAULT

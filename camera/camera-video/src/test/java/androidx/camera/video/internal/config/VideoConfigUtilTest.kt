@@ -58,7 +58,7 @@ class VideoConfigUtilTest {
     fun videoMimeInfo_resolvesFromDynamicRange_withCompatibleProfile() {
         val videoMimeInfo =
             VideoConfigUtil.resolveVideoMimeInfo(
-                createMediaSpec(outputFormat = MediaSpec.OUTPUT_FORMAT_AUTO),
+                createMediaSpec(outputFormat = MediaSpec.OUTPUT_FORMAT_UNSPECIFIED),
                 DynamicRange.HLG_10_BIT,
                 createFakeEncoderProfiles(
                     listOf(
@@ -140,7 +140,7 @@ class VideoConfigUtilTest {
     }
 
     @Test
-    fun resolveFrameRates_expectedCaptureFrameRateUnspecified_videoSpecAuto() {
+    fun resolveFrameRates_expectedCaptureFrameRateUnspecified_videoSpecUnspecified() {
         val videoSpec = VideoSpec.builder().build()
         val expectedCaptureFrameRateRange = FRAME_RATE_RANGE_UNSPECIFIED
 
@@ -151,7 +151,7 @@ class VideoConfigUtilTest {
     }
 
     @Test
-    fun resolveFrameRates_expectedCaptureFrameRateSpecified_videoSpecAuto() {
+    fun resolveFrameRates_expectedCaptureFrameRateSpecified_videoSpecUnspecified() {
         val videoSpec = VideoSpec.builder().build()
         val expectedCaptureFrameRateRange = Range(24, 60)
 
@@ -192,7 +192,7 @@ class VideoConfigUtilTest {
                 videoProfileProxies,
             )
 
-        fun createMediaSpec(outputFormat: Int = MediaSpec.OUTPUT_FORMAT_AUTO) =
+        fun createMediaSpec(outputFormat: Int = MediaSpec.OUTPUT_FORMAT_UNSPECIFIED) =
             MediaSpec.builder().apply { setOutputFormat(outputFormat) }.build()
 
         private val DEFAULT_VIDEO_RESOLUTION = Size(1920, 1080)
