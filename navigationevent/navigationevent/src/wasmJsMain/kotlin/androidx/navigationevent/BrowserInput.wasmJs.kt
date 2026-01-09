@@ -26,8 +26,7 @@ import org.w3c.dom.PopStateEvent
 import org.w3c.dom.Window
 
 // @OptIn(ExperimentalWasmJsInterop::class)
-public class BrowserInput
-public constructor(
+internal class BrowserInput(
     private val browserWindow: BrowserWindow,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Main,
 ) : NavigationEventInput() {
