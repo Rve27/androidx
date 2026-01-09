@@ -71,6 +71,7 @@ class BinaryCompatibilityCheckerTest {
                     KlibDumpParser(currentDump).parse(),
                     KlibDumpParser(previousDump).parse(),
                     shouldFreeze = false,
+                    dependencies = mapOf("linux" to emptySet(), "ios" to emptySet()),
                 )
             }
         assertThat(e.message).contains("[ios]: Target was removed")
@@ -942,7 +943,7 @@ class BinaryCompatibilityCheckerTest {
     }
 
     @Test
-    fun removeConcreteImplemantation() {
+    fun removeConcreteImplementation() {
         val beforeText =
             """
         abstract class my.lib/MyClass : my.lib/MyInterface { // my.lib/MyClass|null[0]
@@ -1646,7 +1647,11 @@ class BinaryCompatibilityCheckerTest {
 
         val e =
             assertFailsWith<ValidationException> {
-                BinaryCompatibilityChecker.checkAllBinariesAreCompatible(afterLibs, beforeLibs)
+                BinaryCompatibilityChecker.checkAllBinariesAreCompatible(
+                    afterLibs,
+                    beforeLibs,
+                    dependencies = mapOf("iosX64" to emptySet(), "linuxX64" to emptySet()),
+                )
             }
         assertThat(e.message).contains("[iosX64]: Target was removed")
     }
@@ -1664,6 +1669,53 @@ class BinaryCompatibilityCheckerTest {
             setOf("[iosX64]: Target was removed"),
             dependencies = mapOf("iosX64" to emptySet(), "linuxX64" to emptySet()),
         )
+    }
+
+    @Test
+    fun removedDeclarationsAndTargetsAreBothReported() {
+        val beforeText =
+            """
+        // KLib ABI Dump
+        // Targets: [linuxX64, iosX64]
+        // Rendering settings:
+        // - Signature version: 2
+        // - Show manifest properties: true
+        // - Show declarations: true
+        // Library unique name: <androidx:library>
+        final class my.lib/MyClass { // my.lib/MyClass|null[0]
+            constructor <init>() // my.lib/MyClass.<init>|<init>(){}[0]
+            final fun myFun(): kotlin/String // my.lib/MyClass.myFun|myFun(){}[0]
+        }
+        """
+        val afterText =
+            """
+        // KLib ABI Dump
+        // Targets: [linuxX64]
+        // Rendering settings:
+        // - Signature version: 2
+        // - Show manifest properties: true
+        // - Show declarations: true
+        // Library unique name: <androidx:library>
+        final class my.lib/MyClass { // my.lib/MyClass|null[0]
+            constructor <init>() // my.lib/MyClass.<init>|<init>(){}[0]
+        }
+        """
+        val beforeLibs = KlibDumpParser(beforeText).parse()
+        val afterLibs = KlibDumpParser(afterText).parse()
+        val errors =
+            BinaryCompatibilityChecker.checkAllBinariesAreCompatible(
+                afterLibs,
+                beforeLibs,
+                baselines = emptySet(),
+                shouldFreeze = false,
+                validate = false,
+                dependencies = mapOf("iosX64" to setOf(stdlibKlib), "linuxX64" to setOf(stdlibKlib)),
+            )
+        assertThat(errors.map { it.toString() })
+            .containsExactly(
+                "[iosX64]: Target was removed",
+                "[linuxX64]: Removed declaration myFun() from my.lib/MyClass",
+            )
     }
 
     @Test

@@ -449,43 +449,50 @@ class BinaryCompatibilityChecker(
             shouldFreeze: Boolean = false,
             dependencies: Map<String, Collection<File>> = mapOf(),
         ): List<CompatibilityError> {
-            val errors = CompatibilityErrors(baselines, "meta")
+            val targetErrors = CompatibilityErrors(baselines, "meta")
             val removedTargets = oldLibraries.keys - newLibraries.keys
             val addedTargets = newLibraries.keys - oldLibraries.keys
             if (removedTargets.isNotEmpty()) {
-                errors.addAll(
+                targetErrors.addAll(
                     removedTargets.flatMap {
                         CompatibilityErrors(baselines, it).apply { add("Target was removed") }
                     }
                 )
             }
             if (shouldFreeze && addedTargets.isNotEmpty()) {
-                errors.addAll(
+                targetErrors.addAll(
                     addedTargets.flatMap {
                         CompatibilityErrors(baselines, it).apply { add("Target was added") }
                     }
                 )
             }
-            if (errors.isNotEmpty()) {
-                if (validate) {
-                    throw ValidationException(errors.toString())
+            val compatErrors =
+                oldLibraries.keys.flatMap { target ->
+                    val newLib =
+                        newLibraries[target]
+                            // We can't compare targets if they've been removed. We'll throw on
+                            // removed
+                            // targets but if that removal is baselined we can still make it here.
+                            ?: return@flatMap emptyList()
+                    val oldLib = oldLibraries[target]!!
+                    val errorsForTarget = CompatibilityErrors(baselines, target)
+                    val dependenciesForTarget =
+                        dependencies.getOrElse(target) {
+                            throw IllegalStateException("Dependencies missing for target $target")
+                        }
+                    BinaryCompatibilityChecker(newLib, oldLib, dependenciesForTarget)
+                        .checkBinariesAreCompatible(
+                            errors = errorsForTarget,
+                            // don't throw on the individual target, we'll throw all errors after
+                            // once we've collected them
+                            validate = false,
+                            shouldFreeze = shouldFreeze,
+                        )
                 }
-                return errors
-            }
-            return oldLibraries.keys.flatMap { target ->
-                val newLib =
-                    newLibraries[target]
-                        // We can't compare targets if they've been removed. We'll throw on removed
-                        // targets but if that removal is baselined we can still make it here.
-                        ?: return@flatMap emptyList()
-                val oldLib = oldLibraries[target]!!
-                val errorsForTarget = CompatibilityErrors(baselines, target)
-                val dependenciesForTarget =
-                    dependencies.getOrElse(target) {
-                        throw IllegalStateException("Dependencies missing for target $target")
-                    }
-                BinaryCompatibilityChecker(newLib, oldLib, dependenciesForTarget)
-                    .checkBinariesAreCompatible(errorsForTarget, validate, shouldFreeze)
+            return (targetErrors + compatErrors).also {
+                if (validate && it.isNotEmpty()) {
+                    throw ValidationException(it.toString())
+                }
             }
         }
 
