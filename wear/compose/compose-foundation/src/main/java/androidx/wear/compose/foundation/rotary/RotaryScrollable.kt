@@ -263,13 +263,13 @@ public interface RotarySnapLayoutInfoProvider {
 public object RotaryScrollableDefaults {
 
     /**
-     * Default snap sensitivity: The standard setting, intended for general use when the user is
+     * Low snap sensitivity: the standard setting, intended for general use when the user is
      * performing typical UI navigation.
      */
-    public const val SnapSensitivity: Float = 0.4f
+    public const val LowSnapSensitivity: Float = 0.4f
 
     /**
-     * High snap sensitivity. Recommended for contexts where even a light or minimal gesture should
+     * High snap sensitivity: recommended for contexts where even a light or minimal gesture should
      * trigger movement, such as navigating a long list (e.g. at least 10 items) where quick
      * scrolling is desired.
      */
@@ -322,7 +322,7 @@ public object RotaryScrollableDefaults {
      *   scrolling (true by default). It's recommended to keep the default value of true for premium
      *   scrolling experience.
      * @param snapSensitivity Configures the sensitivity for rotary snapping. Defaults to
-     *   [RotaryScrollableDefaults.SnapSensitivity].
+     *   [RotaryScrollableDefaults.LowSnapSensitivity].
      */
     @Composable
     public fun snapBehavior(
@@ -330,7 +330,7 @@ public object RotaryScrollableDefaults {
         layoutInfoProvider: RotarySnapLayoutInfoProvider,
         snapOffset: Dp = 0.dp,
         hapticFeedbackEnabled: Boolean = true,
-        @FloatRange(from = 0.0, to = 1.0) snapSensitivity: Float = SnapSensitivity,
+        @FloatRange(from = 0.0, to = 1.0) snapSensitivity: Float = LowSnapSensitivity,
     ): RotaryScrollableBehavior =
         snapBehavior(
             scrollableState = scrollableState,
@@ -384,14 +384,14 @@ public object RotaryScrollableDefaults {
      *   scrolling (true by default). It's recommended to keep the default value of true for premium
      *   scrolling experience.
      * @param snapSensitivity Configures the sensitivity for rotary snapping. Defaults to
-     *   [RotaryScrollableDefaults.SnapSensitivity].
+     *   [RotaryScrollableDefaults.LowSnapSensitivity].
      */
     @Composable
     public fun snapBehavior(
         scrollableState: ScalingLazyListState,
         snapOffset: Dp = 0.dp,
         hapticFeedbackEnabled: Boolean = true,
-        @FloatRange(from = 0.0, to = 1.0) snapSensitivity: Float = SnapSensitivity,
+        @FloatRange(from = 0.0, to = 1.0) snapSensitivity: Float = LowSnapSensitivity,
     ): RotaryScrollableBehavior =
         snapBehavior(
             scrollableState = scrollableState,
@@ -451,14 +451,14 @@ public object RotaryScrollableDefaults {
      *   scrolling (true by default). It's recommended to keep the default value of true for premium
      *   scrolling experience.
      * @param snapSensitivity Configures the sensitivity for rotary snapping. Defaults to
-     *   [SnapSensitivity].
+     *   [LowSnapSensitivity].
      */
     @Composable
     public fun snapBehavior(
         scrollableState: TransformingLazyColumnState,
         snapOffset: Dp = 0.dp,
         hapticFeedbackEnabled: Boolean = true,
-        @FloatRange(from = 0.0, to = 1.0) snapSensitivity: Float = SnapSensitivity,
+        @FloatRange(from = 0.0, to = 1.0) snapSensitivity: Float = LowSnapSensitivity,
     ): RotaryScrollableBehavior =
         snapBehavior(
             scrollableState = scrollableState,
@@ -483,8 +483,8 @@ public object RotaryScrollableDefaults {
      *   scrolling experience.
      * @param snapSensitivity Configures the sensitivity for rotary snapping. Defaults to
      *   [RotaryScrollableDefaults.HighSnapSensitivity] which is suitable for Pagers with at least
-     *   10 pages. See also [RotaryScrollableDefaults.SnapSensitivity] for context where there are
-     *   fewer pages.
+     *   10 pages. See also [RotaryScrollableDefaults.LowSnapSensitivity] for context where there
+     *   are fewer pages.
      */
     @Composable
     public fun snapBehavior(
@@ -1826,9 +1826,9 @@ internal constructor(
 internal fun RotarySnapSensitivityValues(sensitivity: Float): RotarySnapSensitivityValues {
     // Calculate fraction of this sensitivity value, with reference to the two recommended values.
     val fraction =
-        (sensitivity - RotaryScrollableDefaults.SnapSensitivity) /
+        (sensitivity - RotaryScrollableDefaults.LowSnapSensitivity) /
             (RotaryScrollableDefaults.HighSnapSensitivity -
-                RotaryScrollableDefaults.SnapSensitivity)
+                RotaryScrollableDefaults.LowSnapSensitivity)
     val defaultValues = RotarySnapSensitivityValues.Default
     val highValues = RotarySnapSensitivityValues.High
 
