@@ -16,20 +16,24 @@
 
 package androidx.navigationevent
 
+import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
+import org.w3c.dom.PopStateEvent
 import org.w3c.dom.Window
 import org.w3c.dom.events.Event
 
-internal class BrowserWindowImpl(private val window: Window) : BrowserWindow {
-    override val history: BrowserHistory = BrowserHistoryImpl(window)
+// @OptIn(ExperimentalWasmJsInterop::class)
+@VisibleForTesting
+internal interface BrowserHistory {
+    val state: JsAny?
 
-    override fun addEventListener(type: String, callback: (Event) -> Unit) {
-        window.addEventListener(type, callback)
-    }
+    fun push(data: JsAny?, url: String?)
 
-    override fun removeEventListener(type: String, callback: (Event) -> Unit) {
-        window.removeEventListener(type, callback)
-    }
+    fun replace(data: JsAny?, url: String?)
+
+    suspend fun go(delta: Int)
 }
 
 // @OptIn(ExperimentalWasmJsInterop::class)
@@ -53,4 +57,10 @@ internal class BrowserHistoryImpl(private val window: Window) : BrowserHistory {
         // won't receive a popstate event.
         window.createPopStateFlow().first()
     }
+}
+
+private fun Window.createPopStateFlow() = callbackFlow {
+    val callback: (Event) -> Unit = { event: Event -> trySend(event as PopStateEvent) }
+    window.addEventListener(BrowserInput.TYPE_POPSTATE, callback)
+    awaitClose { window.removeEventListener(BrowserInput.TYPE_POPSTATE, callback) }
 }
