@@ -21,10 +21,10 @@ package androidx.compose.runtime
 
 import androidx.compose.runtime.Composer.Companion.Empty
 import androidx.compose.runtime.collection.ScopeMap
-import androidx.compose.runtime.composer.gapbuffer.Anchor
 import androidx.compose.runtime.composer.gapbuffer.SlotReader
 import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.composer.gapbuffer.SlotWriter
+import androidx.compose.runtime.composer.gapbuffer.asGapAnchor
 import androidx.compose.runtime.tooling.ComposeStackTrace
 import androidx.compose.runtime.tooling.ComposeStackTraceFrame
 import androidx.compose.runtime.tooling.ComposeStackTraceMode
@@ -1365,7 +1365,7 @@ internal inline fun <R> SlotWriter.withAfterAnchorInfo(anchor: Anchor?, cb: (Int
     var priority = -1
     var endRelativeAfter = -1
     if (anchor != null && anchor.valid) {
-        priority = anchorIndex(anchor)
+        priority = anchorIndex(anchor.asGapAnchor())
         endRelativeAfter = slotsSize - slotsEndAllIndex(priority)
     }
     cb(priority, endRelativeAfter)
@@ -1531,7 +1531,7 @@ internal fun extractMovableContentAtCurrent(
     if (anchor.valid) {
         val extracted =
             (composition as CompositionImpl).extractInvalidationsOfGroup {
-                slots.inGroup(anchor, it)
+                slots.inGroup(anchor.asGapAnchor(), it.asGapAnchor())
             }
         reference.invalidations += extracted
     }
@@ -1550,7 +1550,7 @@ internal fun extractMovableContentAtCurrent(
             writer.update(reference.parameter)
 
             // Move the content into current location
-            val anchors = slots.moveTo(reference.anchor, 1, writer)
+            val anchors = slots.moveTo(reference.anchor.asGapAnchor(), 1, writer)
 
             // skip the group that was just inserted.
             writer.skipGroup()

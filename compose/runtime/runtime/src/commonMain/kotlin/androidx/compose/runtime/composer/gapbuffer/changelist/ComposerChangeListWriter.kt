@@ -27,7 +27,7 @@ import androidx.compose.runtime.MovableContentStateReference
 import androidx.compose.runtime.RecomposeScopeImpl
 import androidx.compose.runtime.RememberObserverHolder
 import androidx.compose.runtime.Stack
-import androidx.compose.runtime.composer.gapbuffer.Anchor
+import androidx.compose.runtime.composer.gapbuffer.GapAnchor
 import androidx.compose.runtime.composer.gapbuffer.SlotReader
 import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.internal.IntRef
@@ -150,7 +150,7 @@ internal class ComposerChangeListWriter(
         }
     }
 
-    private fun ensureGroupStarted(anchor: Anchor) {
+    private fun ensureGroupStarted(anchor: GapAnchor) {
         pushSlotTableOperationPreamble()
         changeList.pushEnsureGroupStarted(anchor)
         startedGroup = true
@@ -210,12 +210,12 @@ internal class ComposerChangeListWriter(
         changeList.pushUpdateValue(value, groupSlotIndex)
     }
 
-    fun updateAnchoredValue(value: Any?, anchor: Anchor, groupSlotIndex: Int) {
+    fun updateAnchoredValue(value: Any?, anchor: GapAnchor, groupSlotIndex: Int) {
         // Because this uses an anchor, it can be performed without positioning the writer.
         changeList.pushUpdateAnchoredValue(value, anchor, groupSlotIndex)
     }
 
-    fun appendValue(anchor: Anchor, value: Any?) {
+    fun appendValue(anchor: GapAnchor, value: Any?) {
         // Because this uses an anchor, it can be performed without positioning the writer.
         changeList.pushAppendValue(anchor, value)
     }
@@ -271,14 +271,14 @@ internal class ComposerChangeListWriter(
         writersReaderDelta += reader.groupSize
     }
 
-    fun insertSlots(anchor: Anchor, from: SlotTable) {
+    fun insertSlots(anchor: GapAnchor, from: SlotTable) {
         pushPendingUpsAndDowns()
         pushSlotEditingOperationPreamble()
         realizeNodeMovementOperations()
         changeList.pushInsertSlots(anchor, from)
     }
 
-    fun insertSlots(anchor: Anchor, from: SlotTable, fixups: FixupList) {
+    fun insertSlots(anchor: GapAnchor, from: SlotTable, fixups: FixupList) {
         pushPendingUpsAndDowns()
         pushSlotEditingOperationPreamble()
         realizeNodeMovementOperations()
@@ -406,7 +406,7 @@ internal class ComposerChangeListWriter(
         changeList.pushSideEffect(effect)
     }
 
-    fun determineMovableContentNodeIndex(effectiveNodeIndexOut: IntRef, anchor: Anchor) {
+    fun determineMovableContentNodeIndex(effectiveNodeIndexOut: IntRef, anchor: GapAnchor) {
         pushPendingUpsAndDowns()
         changeList.pushDetermineMovableContentNodeIndex(effectiveNodeIndexOut, anchor)
     }

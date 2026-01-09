@@ -17,7 +17,6 @@
 package androidx.compose.runtime
 
 import androidx.compose.runtime.annotation.RememberInComposition
-import androidx.compose.runtime.composer.gapbuffer.Anchor
 
 /**
  * Convert a lambda into one that moves the remembered state and nodes created in a previous call to
