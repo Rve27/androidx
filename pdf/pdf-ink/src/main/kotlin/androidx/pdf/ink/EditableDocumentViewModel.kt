@@ -182,6 +182,13 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         }
     }
 
+    internal fun removeAnnotation(annotationKey: String) {
+        withEditor { editor ->
+            editor.removeAnnotation(annotationKey)
+            refreshVisibleAnnotations(visiblePageRange)
+        }
+    }
+
     // Data Loading & Saving
 
     /** Updates the transformation matrices for rendering annotations. */
