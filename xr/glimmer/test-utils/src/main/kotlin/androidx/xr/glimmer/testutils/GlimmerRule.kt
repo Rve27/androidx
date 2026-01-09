@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.glimmer
+package androidx.xr.glimmer.testutils
 
 import android.app.Instrumentation
-import android.os.Build.VERSION.SDK_INT
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
@@ -25,7 +24,7 @@ import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.rules.ExternalResource
 
-internal fun createGlimmerRule(): GlimmerRule = GlimmerRule()
+fun createGlimmerRule(): GlimmerRule = GlimmerRule()
 
 /**
  * Enters non-touch mode for tests so that Glimmer's focusables can be focused. This also enables
@@ -33,12 +32,13 @@ internal fun createGlimmerRule(): GlimmerRule = GlimmerRule()
  * focusable item.
  */
 @OptIn(ExperimentalComposeUiApi::class)
-class GlimmerRule() : ExternalResource() {
+class GlimmerRule : ExternalResource() {
 
     // Save the original flag value right before the test runs.
     private val savedInitialFocusAvailability = ComposeUiFlags.isInitialFocusOnFocusableAvailable
 
     override fun before() {
+        assumeGlimmerMinSdk()
         ComposeUiFlags.isInitialFocusOnFocusableAvailable = true
         InstrumentationRegistry.getInstrumentation().setInTouchModeCompat(false)
     }
@@ -47,7 +47,7 @@ class GlimmerRule() : ExternalResource() {
         // Restore the flag to its original value after the test finishes.
         ComposeUiFlags.isInitialFocusOnFocusableAvailable = savedInitialFocusAvailability
         // TODO(b/267253920): Add a compose test API to set/reset InputMode.
-        InstrumentationRegistry.getInstrumentation().resetInTouchModeCompat()
+        InstrumentationRegistry.getInstrumentation().resetInTouchMode()
     }
 
     private fun Instrumentation.setInTouchModeCompat(touchMode: Boolean) {
@@ -58,9 +58,5 @@ class GlimmerRule() : ExternalResource() {
             // mode.
             sendKeyDownUpSync(Key.Grave.nativeKeyCode)
         }
-    }
-
-    private fun Instrumentation.resetInTouchModeCompat() {
-        if (SDK_INT < 33) setInTouchMode(true) else resetInTouchMode()
     }
 }
