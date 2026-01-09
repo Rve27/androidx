@@ -17,6 +17,8 @@
 package androidx.compose.remote.creation.compose.v2
 
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.core.Operations
+import androidx.compose.remote.core.operations.layout.managers.TextLayout
 import androidx.compose.remote.creation.compose.capture.RecordingCanvas
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
@@ -38,12 +40,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontVariation
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.util.fastForEach
 import androidx.core.graphics.createBitmap
 
@@ -140,70 +140,123 @@ internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
 }
 
 internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
-    var text: String? = null
-    var remoteText: RemoteString? = null
+    lateinit var text: RemoteString
     var color: RemoteColor? = null
-    var fontSize: TextUnit = TextUnit.Unspecified
-    var fontWeight: FontWeight? = null
+    var fontSize: RemoteFloat = 14f.rf
+    var fontWeight: RemoteFloat = 400f.rf
     var fontStyle: FontStyle? = null
-    var fontFamily: FontFamily? = null
+    var fontFamily: String? = null
     var textAlign: TextAlign? = null
     var overflow: TextOverflow = TextOverflow.Clip
     var maxLines: Int = Int.MAX_VALUE
+    var minFontSize: Float? = null
+    var maxFontSize: Float? = null
+    var letterSpacing: Float? = null
+    var lineHeightAdd: Float? = null
+    var lineHeightMultiply: Float? = null
     var textDecoration: TextDecoration = TextDecoration.None
     var fontVariationSettings: FontVariation.Settings? = null
 
+    private fun extractFontSettings(
+        settings: List<FontVariation.Setting>?
+    ): Pair<Array<String>?, FloatArray?> {
+        val size = settings?.size ?: return Pair(null, null)
+
+        val fontAxisNames = Array(size) { settings[it].axisName }
+        val fontAxisValues = FloatArray(size) { settings[it].toVariationValue(null) }
+
+        return Pair(fontAxisNames, fontAxisValues)
+    }
+
     override fun render(creationState: RemoteComposeCreationState) {
-        val textId =
-            remoteText?.getIdForCreationState(creationState)
-                ?: text?.let { creationState.document.addText(it) }
-                ?: 0
+        val useCoreTextComponent =
+            creationState.profile.supportedOperations.contains(Operations.CORE_TEXT)
 
-        val colorInt = color?.constantValue?.toArgb() ?: android.graphics.Color.BLACK
-        val colorId =
-            if (color?.hasConstantValue == false) {
-                color!!.getIdForCreationState(creationState)
-            } else {
-                -1
-            }
+        if (useCoreTextComponent) {
+            val textIdValue = text.getIdForCreationState(creationState)
 
-        // density is available in creationState if needed, but for now we continue with simplified
-        // logic
-        val fontSizePx =
-            if (fontSize == TextUnit.Unspecified) {
-                14f * creationState.creationDisplayInfo.density
-            } else {
-                fontSize.value * creationState.creationDisplayInfo.density
-            }
+            val colorInt = color?.constantValue?.toArgb() ?: android.graphics.Color.BLACK
+            val colorId =
+                if (color?.hasConstantValue == false) {
+                    color!!.getIdForCreationState(creationState)
+                } else {
+                    -1
+                }
 
-        creationState.document.textComponent(
-            modifier.toRemoteCompose(),
-            textId,
-            colorInt,
-            colorId,
-            fontSizePx,
-            -1f, // minFontSize
-            -1f, // maxFontSize
-            fontStyle.toRemoteCompose(),
-            fontWeight?.weight?.toFloat() ?: 400f,
-            fontFamily.toRemoteCompose(),
-            textAlign.toRemoteCompose(),
-            overflow.toRemoteCompose(),
-            maxLines,
-            0f, // letterSpacing
-            0f, // lineHeightAdd
-            1f, // lineHeightMultiply
-            0, // lineBreakStrategy
-            0, // hyphenationFrequency
-            0, // justificationMode
-            textDecoration.contains(TextDecoration.Underline),
-            textDecoration.contains(TextDecoration.LineThrough),
-            null, // fontAxis
-            null, // fontAxisValues
-            false, // autosize
-            0, // flags
-            { /* content runs children if any, but RemoteTextV2 is a leaf */ },
-        )
+            val (fontAxisNames, fontAxisValues) =
+                extractFontSettings(fontVariationSettings?.settings)
+
+            val fontSizePx = fontSize.getFloatIdForCreationState(creationState)
+
+            creationState.document.startTextComponent(
+                modifier.toRemoteCompose(),
+                textIdValue,
+                colorInt,
+                colorId,
+                fontSizePx,
+                minFontSize ?: -1f,
+                maxFontSize ?: -1f,
+                fontStyle.toRemoteCompose(),
+                fontWeight.getFloatIdForCreationState(creationState),
+                fontFamily,
+                textAlign.toRemoteCompose(),
+                overflow.toRemoteCompose(),
+                maxLines,
+                letterSpacing ?: 0f,
+                lineHeightAdd ?: 0f,
+                lineHeightMultiply ?: 1f,
+                0, // lineBreakStrategy
+                0, // hyphenationFrequency
+                0, // justificationMode
+                textDecoration.contains(TextDecoration.Underline),
+                textDecoration.contains(TextDecoration.LineThrough),
+                fontAxisNames,
+                fontAxisValues,
+                false, // autosize
+                0, // flags
+            )
+            creationState.document.endTextComponent()
+        } else {
+            val textId = text.getIdForCreationState(creationState)
+
+            val colorInt = color?.constantValue?.toArgb() ?: android.graphics.Color.BLACK
+            val colorId =
+                if (color?.hasConstantValue == false) {
+                    color!!.getIdForCreationState(creationState)
+                } else {
+                    -1
+                }
+
+            val colorValue =
+                color?.constantValue?.toArgb()
+                    ?: (if (color?.hasConstantValue == false) {
+                        color!!.getIdForCreationState(creationState)
+                    } else {
+                        android.graphics.Color.BLACK
+                    })
+            val flags =
+                if (color?.hasConstantValue == false) {
+                    TextLayout.FLAG_IS_DYNAMIC_COLOR.toShort()
+                } else {
+                    0.toShort()
+                }
+
+            val fontSizePx = fontSize.getFloatIdForCreationState(creationState)
+            creationState.document.startTextComponent(
+                modifier.toRemoteCompose(),
+                textId,
+                colorValue,
+                fontSizePx,
+                fontStyle.toRemoteCompose(),
+                fontWeight.constantValue ?: 400f,
+                fontFamily,
+                flags,
+                textAlign.toRemoteCompose().toShort(),
+                overflow.toRemoteCompose(),
+                maxLines,
+            )
+            creationState.document.endTextComponent()
+        }
     }
 }
 
@@ -216,6 +269,7 @@ private fun FontStyle?.toRemoteCompose(): Int =
 
 private fun FontFamily?.toRemoteCompose(): String? =
     when (this) {
+        null -> null
         FontFamily.Default -> "default"
         FontFamily.SansSerif -> "sans-serif"
         FontFamily.Serif -> "serif"

@@ -123,24 +123,6 @@ public fun RemoteText(
     style: TextStyle = LocalTextStyle.current,
     fontVariationSettings: FontVariation.Settings? = null,
 ) {
-    if (currentComposer.applier is RemoteComposeApplierV2) {
-        RemoteTextV2(
-            remoteText = text,
-            modifier = modifier,
-            color = color,
-            fontSize = fontSize,
-            fontWeight = fontWeight,
-            fontStyle = fontStyle,
-            fontFamily = fontFamily,
-            textAlign = textAlign,
-            overflow = overflow,
-            maxLines = maxLines,
-            textDecoration = style.textDecoration ?: TextDecoration.None,
-            fontVariationSettings = fontVariationSettings,
-        )
-        return
-    }
-
     val textColor = color ?: RemoteColor(style.color.takeOrElse { Color.Black })
 
     val style =
@@ -209,6 +191,29 @@ public fun RemoteText(
     fontVariationSettings: FontVariation.Settings? = null,
 ) {
     val captureMode = LocalRemoteComposeCreationState.current
+
+    if (currentComposer.applier is RemoteComposeApplierV2) {
+        RemoteTextV2(
+            text = text,
+            modifier = modifier,
+            color = color,
+            fontSize = fontSize,
+            fontWeight = fontWeight,
+            fontStyle = fontStyle,
+            fontFamily = fontFamily,
+            textAlign = textAlign,
+            overflow = overflow,
+            maxLines = maxLines,
+            minFontSize = minFontSize,
+            maxFontSize = maxFontSize,
+            letterSpacing = letterSpacing,
+            lineHeightAdd = lineHeightAdd,
+            lineHeightMultiply = lineHeightMultiply,
+            textDecoration = textDecoration ?: TextDecoration.None,
+            fontVariationSettings = fontVariationSettings,
+        )
+        return
+    }
 
     val useCoreTextComponent =
         LocalRemoteComposeCreationState.current.profile.supportedOperations.contains(
