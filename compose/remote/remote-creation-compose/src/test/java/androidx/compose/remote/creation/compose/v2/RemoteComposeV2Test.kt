@@ -30,13 +30,9 @@ import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.rs
-import androidx.compose.runtime.BroadcastFrameClock
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.yield
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -57,78 +53,50 @@ class RemoteComposeV2Test {
     @Test
     fun testCaptureDocument() = runTest {
         val displayInfo = CreationDisplayInfo(500, 500, 1)
-        val clock = BroadcastFrameClock()
-        val flow =
-            captureRemoteDocumentV2(displayInfo, context = coroutineContext + clock) {
+        val document =
+            captureSingleRemoteDocumentV2(displayInfo) {
                 RemoteBoxV2 { RemoteTextV2(text = "Hello V2".rs) }
             }
 
-        launch {
-            yield()
-            clock.sendFrame(0L)
-            yield()
-            clock.sendFrame(16_000_000L)
-        } // Trigger recomposition
-
-        val document = flow.first()
         assertNotNull(document)
-        assertTrue(document.isNotEmpty())
+        assertTrue(document.bytes.isNotEmpty())
     }
 
     @Test
     fun testComplexComposition() = runTest {
         val displayInfo = CreationDisplayInfo(500, 500, 1)
-        val clock = BroadcastFrameClock()
-        val flow =
-            captureRemoteDocumentV2(displayInfo, context = coroutineContext + clock) {
+        val document =
+            captureSingleRemoteDocumentV2(displayInfo) {
                 RemoteColumnV2 {
                     RemoteTextV2(text = "Item 1".rs)
                     RemoteRowV2 { RemoteTextV2(text = "Nested Item".rs) }
                 }
             }
 
-        launch {
-            yield()
-            clock.sendFrame(0L)
-            yield()
-            clock.sendFrame(16_000_000L)
-        } // Trigger recomposition
-
-        val document = flow.first()
         assertNotNull(document)
-        assertTrue(document.isNotEmpty())
+        assertTrue(document.bytes.isNotEmpty())
     }
 
     @Test
     fun testScopeAndSpacer() = runTest {
         val displayInfo = CreationDisplayInfo(500, 500, 1)
-        val clock = BroadcastFrameClock()
-        val flow =
-            captureRemoteDocumentV2(displayInfo, context = coroutineContext + clock) {
+        val document =
+            captureSingleRemoteDocumentV2(displayInfo) {
                 RemoteRowV2 {
                     RemoteSpacerV2(modifier = RemoteModifier.weight(1f))
                     RemoteTextV2(text = "End".rs)
                 }
             }
 
-        launch {
-            yield()
-            clock.sendFrame(0L)
-            yield()
-            clock.sendFrame(16_000_000L)
-        }
-
-        val document = flow.first()
         assertNotNull(document)
-        assertTrue(document.isNotEmpty())
+        assertTrue(document.bytes.isNotEmpty())
     }
 
     @Test
     fun testV1toV2Switching() = runTest {
         val displayInfo = CreationDisplayInfo(500, 500, 1)
-        val clock = BroadcastFrameClock()
-        val flow =
-            captureRemoteDocumentV2(displayInfo, context = coroutineContext + clock) {
+        val document =
+            captureSingleRemoteDocumentV2(displayInfo) {
                 // Using V1 components inside V2 capture
                 RemoteBox {
                     RemoteColumn {
@@ -138,24 +106,15 @@ class RemoteComposeV2Test {
                 }
             }
 
-        launch {
-            yield()
-            clock.sendFrame(0L)
-            yield()
-            clock.sendFrame(16_000_000L)
-        }
-
-        val document = flow.first()
         assertNotNull(document)
-        assertTrue(document.isNotEmpty())
+        assertTrue(document.bytes.isNotEmpty())
     }
 
     @Test
     fun testRemoteCanvasV2() = runTest {
         val displayInfo = CreationDisplayInfo(500, 500, 1)
-        val clock = BroadcastFrameClock()
-        val flow =
-            captureRemoteDocumentV2(displayInfo, context = coroutineContext + clock) {
+        val document =
+            captureSingleRemoteDocumentV2(displayInfo) {
                 RemoteCanvas {
                     drawRect(
                         paint =
@@ -164,15 +123,7 @@ class RemoteComposeV2Test {
                 }
             }
 
-        launch {
-            yield()
-            clock.sendFrame(0L)
-            yield()
-            clock.sendFrame(16_000_000L)
-        }
-
-        val document = flow.first()
         assertNotNull(document)
-        assertTrue(document.isNotEmpty())
+        assertTrue(document.bytes.isNotEmpty())
     }
 }
