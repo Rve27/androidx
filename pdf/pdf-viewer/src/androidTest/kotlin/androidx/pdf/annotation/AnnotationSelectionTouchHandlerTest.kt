@@ -41,10 +41,10 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class AnnotationHitTouchHandlerTest {
+class AnnotationSelectionTouchHandlerTest {
     private lateinit var annotationsView: AnnotationsView
-    private lateinit var hitHandler: AnnotationHitTouchHandler
-    private val testListener = FakeAnnotationHitListener()
+    private lateinit var selectionTouchHandler: AnnotationSelectionTouchHandler
+    private val testListener = FakeAnnotationSelectedListener()
 
     @Before
     fun setUp() {
@@ -78,8 +78,8 @@ class AnnotationHitTouchHandlerTest {
                 }
 
             annotationsView.pageInfoProvider = pageInfoProvider
-            hitHandler = AnnotationHitTouchHandler()
-            hitHandler.setListener(testListener)
+            selectionTouchHandler = AnnotationSelectionTouchHandler()
+            selectionTouchHandler.setListener(testListener)
         }
     }
 
@@ -99,10 +99,10 @@ class AnnotationHitTouchHandlerTest {
 
                 // Simulate Touch inside bounds
                 val event = obtainMotionEvent(MotionEvent.ACTION_DOWN, 150f, 150f)
-                val consumed = hitHandler.handleTouch(annotationsView, event)
+                val consumed = selectionTouchHandler.handleTouch(annotationsView, event)
 
                 assertThat(consumed).isTrue()
-                assertThat(testListener.lastHitAnnotation).isEqualTo(annotation)
+                assertThat(testListener.lastSelectedAnnotation).isEqualTo(annotation)
             }
         }
     }
@@ -118,10 +118,10 @@ class AnnotationHitTouchHandlerTest {
 
                 // Touch outside at (300, 300)
                 val event = obtainMotionEvent(MotionEvent.ACTION_DOWN, 300f, 300f)
-                val consumed = hitHandler.handleTouch(annotationsView, event)
+                val consumed = selectionTouchHandler.handleTouch(annotationsView, event)
 
                 assertThat(consumed).isFalse()
-                assertThat(testListener.lastHitAnnotation).isNull()
+                assertThat(testListener.lastSelectedAnnotation).isNull()
             }
         }
     }
@@ -137,10 +137,10 @@ class AnnotationHitTouchHandlerTest {
 
                 // Simulate ACTION_MOVE (Swipe) over the annotation
                 val event = obtainMotionEvent(MotionEvent.ACTION_MOVE, 150f, 150f)
-                val consumed = hitHandler.handleTouch(annotationsView, event)
+                val consumed = selectionTouchHandler.handleTouch(annotationsView, event)
 
                 assertThat(consumed).isTrue()
-                assertThat(testListener.lastHitAnnotation).isEqualTo(annotation)
+                assertThat(testListener.lastSelectedAnnotation).isEqualTo(annotation)
             }
         }
     }
@@ -160,12 +160,12 @@ class AnnotationHitTouchHandlerTest {
 
                 // Simulate Touch inside the overlapping bounds
                 val event = obtainMotionEvent(MotionEvent.ACTION_DOWN, 150f, 150f)
-                val consumed = hitHandler.handleTouch(annotationsView, event)
+                val consumed = selectionTouchHandler.handleTouch(annotationsView, event)
 
                 assertThat(consumed).isTrue()
                 // Should return topAnnotation because findAnnotationAtPoint iterates in reverse
-                assertThat(testListener.lastHitAnnotation).isEqualTo(topAnnotation)
-                assertThat(testListener.lastHitAnnotation).isNotEqualTo(bottomAnnotation)
+                assertThat(testListener.lastSelectedAnnotation).isEqualTo(topAnnotation)
+                assertThat(testListener.lastSelectedAnnotation).isNotEqualTo(bottomAnnotation)
             }
         }
     }
@@ -203,11 +203,11 @@ class AnnotationHitTouchHandlerTest {
         return MotionEvent.obtain(now, now, action, x, y, 0)
     }
 
-    class FakeAnnotationHitListener : OnAnnotationHitListener {
-        var lastHitAnnotation: PdfAnnotation? = null
+    class FakeAnnotationSelectedListener : OnAnnotationSelectedListener {
+        var lastSelectedAnnotation: PdfAnnotation? = null
 
-        override fun onAnnotationHit(keyedPdfAnnotation: KeyedPdfAnnotation) {
-            lastHitAnnotation = keyedPdfAnnotation.annotation
+        override fun onAnnotationSelected(keyedPdfAnnotation: KeyedPdfAnnotation) {
+            lastSelectedAnnotation = keyedPdfAnnotation.annotation
         }
     }
 

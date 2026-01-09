@@ -33,13 +33,13 @@ import kotlin.math.floor
  * This handler converts view coordinates to PDF page coordinates and checks for intersections with
  * annotations currently rendered by [AnnotationsView].
  */
-internal class AnnotationHitTouchHandler() {
+internal class AnnotationSelectionTouchHandler() {
 
-    private var onAnnotationHitListener: OnAnnotationHitListener? = null
+    private var onAnnotationSelectedListener: OnAnnotationSelectedListener? = null
 
     /** Registers a listener to be notified of annotation hit events. */
-    fun setListener(listener: OnAnnotationHitListener) {
-        onAnnotationHitListener = listener
+    fun setListener(listener: OnAnnotationSelectedListener) {
+        onAnnotationSelectedListener = listener
     }
 
     /** Handles the touch event to perform hit detection. */
@@ -52,13 +52,13 @@ internal class AnnotationHitTouchHandler() {
                     pageInfoProvider.getPageInfoFromViewCoordinates(event.x, event.y)
                         ?: return false
 
-                val hitAnnotation = findAnnotationAtPoint(annotationsView, pageInfo, event)
+                val selectedAnnotation = findAnnotationAtPoint(annotationsView, pageInfo, event)
 
-                if (hitAnnotation != null) {
+                if (selectedAnnotation != null) {
                     // TODO(b/470857248): Replace with actual keyedPdfAnnotation from
                     // annotationsView.
-                    val keyedPdfAnnotation = KeyedPdfAnnotation(KEY, hitAnnotation)
-                    onAnnotationHitListener?.onAnnotationHit(keyedPdfAnnotation)
+                    val keyedPdfAnnotation = KeyedPdfAnnotation(KEY, selectedAnnotation)
+                    onAnnotationSelectedListener?.onAnnotationSelected(keyedPdfAnnotation)
                     return true
                 }
                 false
