@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,29 @@ import androidx.build.SoftwareType
 
 plugins {
     id("AndroidXPlugin")
-    id("com.android.library")
     id("AndroidXComposePlugin")
-    id("androidx.benchmark")
+    id("com.android.library")
 }
 
 dependencies {
-    androidTestImplementation(project(":xr:glimmer:glimmer"))
-    androidTestImplementation(project(":xr:glimmer:test-utils"))
-    androidTestImplementation(project(":benchmark:benchmark-junit4"))
-    androidTestImplementation(project(":compose:benchmark-utils"))
-    androidTestImplementation(libs.testRules)
-    androidTestImplementation(libs.kotlinTest)
-    androidTestImplementation(libs.junit)
+    api("androidx.compose.ui:ui:1.10.0")
+    api("androidx.compose.ui:ui-test:1.10.0")
+    api(libs.junit)
+    implementation(libs.testCore)
+    implementation(libs.testRules)
 }
 
 android {
     compileSdk { version = release(35) }
-    namespace = "androidx.xr.glimmer.benchmark"
+    namespace = "androidx.xr.glimmer.testutils"
     defaultConfig {
-        // TODO: b/448363874 - Revert to 35 once API 35 devices are available for microbenchmarking.
-        minSdk { version = release(34) }
+        minSdk { version = release(33) }
     }
 }
 
 androidx {
-    type = SoftwareType.BENCHMARK
+    name = "Jetpack Compose Glimmer Internal Test Utils"
+    type = SoftwareType.INTERNAL_TEST_LIBRARY
+    inceptionYear = "2026"
+    description = "Jetpack Compose Glimmer internal test utils."
 }
