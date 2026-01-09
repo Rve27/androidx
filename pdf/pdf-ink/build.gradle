@@ -39,18 +39,16 @@ android {
 }
 
 dependencies {
-    def ink_version = "1.0.0-alpha07"
-
     implementation(project(":pdf:pdf-viewer-fragment"))
 
     implementation("androidx.core:core:1.13.0")
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.fragment:fragment-ktx:1.8.1")
-    implementation("androidx.ink:ink-authoring:${ink_version}")
-    implementation("androidx.ink:ink-brush:${ink_version}")
-    implementation("androidx.ink:ink-geometry:${ink_version}")
-    implementation("androidx.ink:ink-strokes:${ink_version}")
-    implementation("androidx.input:input-motionprediction:1.0.0-beta05")
+    implementation("androidx.ink:ink-authoring:1.0.0")
+    implementation("androidx.ink:ink-brush:1.0.0")
+    implementation("androidx.ink:ink-geometry:1.0.0")
+    implementation("androidx.ink:ink-strokes:1.0.0")
+    implementation("androidx.input:input-motionprediction:1.0.0")
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
 
