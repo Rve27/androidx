@@ -27,6 +27,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.modifier.toRecordingModifier
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
@@ -67,7 +68,7 @@ internal class RemoteCanvasNodeV2 : RemoteComposeNodeV2() {
                 setRemoteComposeCreationState(creationState)
             }
 
-        val recordingModifier = modifier.toRemoteCompose()
+        val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startCanvas(recordingModifier)
         onDraw?.let { drawLambda ->
             val remoteCanvas = RemoteCanvas(recordingCanvas)
@@ -96,11 +97,11 @@ internal class RemoteBoxNodeV2 : RemoteComposeNodeV2() {
     var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top
 
     override fun render(creationState: RemoteComposeCreationState) {
-        val recordingModifier = modifier.toRemoteCompose()
+        val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startBox(
             recordingModifier,
-            horizontalAlignment.toRemoteCompose(),
-            verticalArrangement.toRemoteCompose(),
+            horizontalAlignment.toRemote(),
+            verticalArrangement.toRemote(),
         )
         renderChildren(creationState)
         creationState.document.endBox()
@@ -112,11 +113,11 @@ internal class RemoteRowNodeV2 : RemoteComposeNodeV2() {
     var verticalAlignment: RemoteAlignment.Vertical = RemoteAlignment.Top
 
     override fun render(creationState: RemoteComposeCreationState) {
-        val recordingModifier = modifier.toRemoteCompose()
+        val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startRow(
             recordingModifier,
-            horizontalArrangement.toRemoteCompose(),
-            verticalAlignment.toRemoteCompose(),
+            horizontalArrangement.toRemote(),
+            verticalAlignment.toRemote(),
         )
         renderChildren(creationState)
         creationState.document.endRow()
@@ -128,11 +129,11 @@ internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
     var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start
 
     override fun render(creationState: RemoteComposeCreationState) {
-        val recordingModifier = modifier.toRemoteCompose()
+        val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startColumn(
             recordingModifier,
-            horizontalAlignment.toRemoteCompose(),
-            verticalArrangement.toRemoteCompose(),
+            horizontalAlignment.toRemote(),
+            verticalArrangement.toRemote(),
         )
         renderChildren(creationState)
         creationState.document.endColumn()
@@ -189,18 +190,18 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
             val fontSizePx = fontSize.getFloatIdForCreationState(creationState)
 
             creationState.document.startTextComponent(
-                modifier.toRemoteCompose(),
+                with(modifier) { creationState.toRecordingModifier() },
                 textIdValue,
                 colorInt,
                 colorId,
                 fontSizePx,
                 minFontSize ?: -1f,
                 maxFontSize ?: -1f,
-                fontStyle.toRemoteCompose(),
+                fontStyle.encode(),
                 fontWeight.getFloatIdForCreationState(creationState),
                 fontFamily,
-                textAlign.toRemoteCompose(),
-                overflow.toRemoteCompose(),
+                textAlign.encode(),
+                overflow.encode(),
                 maxLines,
                 letterSpacing ?: 0f,
                 lineHeightAdd ?: 0f,
@@ -243,16 +244,16 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
 
             val fontSizePx = fontSize.getFloatIdForCreationState(creationState)
             creationState.document.startTextComponent(
-                modifier.toRemoteCompose(),
+                with(modifier) { creationState.toRecordingModifier() },
                 textId,
                 colorValue,
                 fontSizePx,
-                fontStyle.toRemoteCompose(),
+                fontStyle.encode(),
                 fontWeight.constantValue ?: 400f,
                 fontFamily,
                 flags,
-                textAlign.toRemoteCompose().toShort(),
-                overflow.toRemoteCompose(),
+                textAlign.encode().toShort(),
+                overflow.encode(),
                 maxLines,
             )
             creationState.document.endTextComponent()
@@ -260,14 +261,14 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
     }
 }
 
-private fun FontStyle?.toRemoteCompose(): Int =
+private fun FontStyle?.encode(): Int =
     when (this) {
         FontStyle.Normal -> 0
         FontStyle.Italic -> 1
         else -> 0
     }
 
-private fun FontFamily?.toRemoteCompose(): String? =
+private fun FontFamily?.encode(): String? =
     when (this) {
         null -> null
         FontFamily.Default -> "default"
@@ -278,7 +279,7 @@ private fun FontFamily?.toRemoteCompose(): String? =
         else -> null
     }
 
-private fun TextAlign?.toRemoteCompose(): Int =
+private fun TextAlign?.encode(): Int =
     when (this) {
         TextAlign.Left -> 1
         TextAlign.Right -> 2
@@ -289,7 +290,7 @@ private fun TextAlign?.toRemoteCompose(): Int =
         else -> 5
     }
 
-private fun TextOverflow.toRemoteCompose(): Int =
+private fun TextOverflow.encode(): Int =
     when (this) {
         TextOverflow.Clip -> 0
         TextOverflow.Ellipsis -> 1
@@ -309,7 +310,7 @@ internal class RemoteImageNodeV2 : RemoteComposeNodeV2() {
                 ?: image?.let { creationState.document.addBitmap(it) }
                 ?: 0
         creationState.document.image(
-            modifier.toRemoteCompose(),
+            creationState.toRecordingModifier(modifier),
             bitmapId,
             contentScaleToInt(contentScale),
             alpha.getFloatIdForCreationState(creationState),

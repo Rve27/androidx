@@ -18,29 +18,28 @@
 package androidx.compose.remote.creation.compose.modifier
 
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.core.operations.layout.modifiers.ShapeType
+import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteDp
 import androidx.compose.remote.creation.compose.state.RemoteFloat
+import androidx.compose.remote.creation.compose.state.RemoteStateScope
+import androidx.compose.remote.creation.modifiers.BorderModifier as CreationBorderModifier
 import androidx.compose.remote.creation.modifiers.RecordingModifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class BorderModifier(public val width: RemoteFloat, public val color: Color) :
+public class BorderModifier(public val width: RemoteFloat, public val color: RemoteColor) :
     RemoteModifier.Element {
-    override fun toRemoteComposeElement(): RecordingModifier.Element {
-        return androidx.compose.remote.creation.modifiers.BorderModifier(
-            width.internalAsFloat(),
+    override fun RemoteStateScope.toRecordingModifierElement(): RecordingModifier.Element {
+        // TODO use addModifierDynamicBorder
+        return CreationBorderModifier(
+            width.floatId,
             0f,
-            color.toArgb(),
-            0,
+            color.constantValue!!.toArgb(),
+            ShapeType.RECTANGLE,
         )
     }
 }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun RemoteModifier.border(width: RemoteFloat, color: Color): RemoteModifier =
-    then(BorderModifier(width, color))
-
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun RemoteModifier.border(width: RemoteDp, color: Color): RemoteModifier =
-    border(width.toPx(), color)
+public fun RemoteModifier.border(width: RemoteDp, color: RemoteColor): RemoteModifier =
+    then(BorderModifier(width.toPx(), color))

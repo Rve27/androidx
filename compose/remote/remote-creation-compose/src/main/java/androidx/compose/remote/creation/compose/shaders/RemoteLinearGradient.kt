@@ -25,13 +25,16 @@ import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteMatrix3x3
+import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.TileMode as ComposeTileMode
 import androidx.compose.ui.graphics.toAndroidTileMode
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.util.fastMap
+import kotlin.collections.toFloatArray
 
 /**
  * Creates a linear gradient with the provided colors along the given start and end coordinates. The
@@ -309,7 +312,7 @@ public data class RemoteLinearGradient(
     private val tileMode: ComposeTileMode = ComposeTileMode.Clamp,
 ) : RemoteBrush() {
 
-    override fun createShader(size: RemoteSize): Shader {
+    override fun RemoteStateScope.createShader(size: RemoteSize): Shader {
         val realStart = start ?: RemoteOffset(0.0f.rf, 0.0f.rf)
         val realEnd = end ?: endVector(size)
 

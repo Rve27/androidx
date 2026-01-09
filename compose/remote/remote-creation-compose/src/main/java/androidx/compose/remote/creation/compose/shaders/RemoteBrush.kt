@@ -23,6 +23,7 @@ import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationSta
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteMatrix3x3
+import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Size
@@ -46,7 +47,7 @@ public abstract class RemoteBrush {
      */
     public val intrinsicSize: Size = Size.Unspecified
 
-    public abstract fun createShader(size: RemoteSize): Shader
+    public abstract fun RemoteStateScope.createShader(size: RemoteSize): Shader
 
     public open val hasShader: Boolean
         get() = true
