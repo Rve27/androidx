@@ -35,7 +35,6 @@ import org.tomlj.TomlTable
 @DisableCachingByDefault(because = "Interactive task, must run every time")
 abstract class ProjectCreatorTask : DefaultTask() {
     private val supportDir = project.getSupportRootFolder()
-    private val currentlySupportedProjectTypes = listOf(ProjectType.ANDROID_LIBRARY)
 
     @TaskAction
     fun exec() {
@@ -89,9 +88,8 @@ abstract class ProjectCreatorTask : DefaultTask() {
 
         val projectType = ProjectType.entries.find { it.description == projectTypeName }
 
-        // This is a temporary check that will be removed once all project types are supported
-        if (projectType == null || projectType !in currentlySupportedProjectTypes) {
-            error("Project type not yet supported")
+        if (projectType == null) {
+            error("Unknown project type: $projectTypeName")
         }
 
         return ProjectSpec(groupId, artifactId, projectType, projectDescription, supportDir)
@@ -136,7 +134,7 @@ abstract class ProjectCreatorTask : DefaultTask() {
 internal class GradleSettingsEditor(val settingsGradleFile: File) {
     fun updateSettingsGradle(spec: ProjectSpec) {
         val settingsLines = settingsGradleFile.readLines().toMutableList()
-        val newLine = getNewSettingsGradleLine(spec.groupId, spec.artifactId)
+        val newLine = getNewSettingsGradleLine(spec)
 
         val insertLine =
             settingsLines.indexOfFirst { it.contains("includeProject") && it > newLine }
@@ -149,10 +147,20 @@ internal class GradleSettingsEditor(val settingsGradleFile: File) {
         settingsGradleFile.writeText(settingsLines.joinToString("\n") + "\n")
     }
 
-    private fun getNewSettingsGradleLine(groupId: String, artifactId: String): String {
-        val buildType = if (isComposeProject(groupId, artifactId)) "COMPOSE" else "MAIN"
-        val gradlePath = getGradleProjectCoordinates(groupId, artifactId)
+    private fun getNewSettingsGradleLine(spec: ProjectSpec): String {
+        val buildType = getBuildType(spec)
+        val gradlePath = getGradleProjectCoordinates(spec.groupId, spec.artifactId)
         return "includeProject(\"$gradlePath\", [BuildType.$buildType])"
+    }
+
+    private fun getBuildType(spec: ProjectSpec): String {
+        return if (spec.projectType == ProjectType.KMP) {
+            "KMP"
+        } else if (isComposeProject(spec.groupId, spec.artifactId)) {
+            "COMPOSE"
+        } else {
+            "MAIN"
+        }
     }
 }
 
@@ -279,7 +287,7 @@ internal class DocsTotBuildGradleEditor(val docsTotBuildGradleFile: File) {
             return
         }
 
-        val newLine = getNewDocsTotBuildGradleLine(spec.groupId, spec.artifactId) ?: return
+        val newLine = spec.getNewDocsTotBuildGradleLine() ?: return
         val docLines = docsTotBuildGradleFile.readLines().toMutableList()
 
         val dependenciesBlockStart =
@@ -303,7 +311,7 @@ internal class DocsTotBuildGradleEditor(val docsTotBuildGradleFile: File) {
         docsTotBuildGradleFile.writeText(docLines.joinToString("\n", postfix = "\n"))
     }
 
-    private fun getNewDocsTotBuildGradleLine(groupId: String, artifactId: String): String? {
+    private fun ProjectSpec.getNewDocsTotBuildGradleLine(): String? {
         if ("sample" in artifactId) {
             println(
                 "Auto-detected sample project. Please add the sample dependency to the " +
@@ -312,7 +320,7 @@ internal class DocsTotBuildGradleEditor(val docsTotBuildGradleFile: File) {
             return null
         }
         val gradlePath = getGradleProjectCoordinates(groupId, artifactId)
-        return """    docs(project("$gradlePath"))"""
+        return """    ${if (projectType == ProjectType.KMP) "kmpDocs" else "docs"}(project("$gradlePath"))"""
     }
 }
 
@@ -321,19 +329,8 @@ internal class ProjectGenerator {
     fun createDirectories(spec: ProjectSpec, isGroupIdAtomic: Boolean) {
         spec.fullArtifactPath.mkdirs()
 
-        // create documentation md file
-        val docFile =
-            File(
-                spec.fullArtifactPath,
-                "src/main/kotlin/androidx/${spec.groupId.replace(".", "/")}/androidx-${
-            spec.groupId.replace(
-                ".",
-                "-",
-            )
-        }-${spec.artifactId}-documentation.md",
-            )
-        docFile.parentFile.mkdirs()
-        docFile.writeText(spec.toPackageDocsText())
+        // create src dir
+        createSrcDir(spec)
 
         // create OWNERS file
         val ownersFile = File(spec.fullArtifactPath, "OWNERS")
@@ -351,6 +348,58 @@ internal class ProjectGenerator {
                 if (signatureFileName != "res-current") "// Signature format: 4.0\n" else ""
             )
         }
+    }
+
+    private fun createSrcDir(spec: ProjectSpec) {
+        val basePath = if (spec.projectType == ProjectType.KMP) "src/commonMain" else "src/main"
+
+        val docFile =
+            File(
+                spec.fullArtifactPath,
+                "$basePath/kotlin/androidx/${spec.groupId.replace(".", "/")}/androidx-${
+                    spec.groupId.replace(
+                        ".",
+                        "-",
+                    )
+                }-${spec.artifactId}-documentation.md",
+            )
+        docFile.parentFile.mkdirs()
+        docFile.writeText(spec.toPackageDocsText())
+
+        if (spec.projectType == ProjectType.KMP) {
+            val testFile =
+                File(
+                    spec.fullArtifactPath,
+                    "src/commonTest/kotlin/androidx/${spec.groupId.replace(".", "/")}/Test.kt",
+                )
+            testFile.parentFile.mkdirs()
+            testFile.writeText(spec.createTestFileText())
+        }
+    }
+
+    private fun ProjectSpec.createTestFileText(): String {
+        return """
+            /*
+             * Copyright ${getYear()} The Android Open Source Project
+             *
+             * Licensed under the Apache License, Version 2.0 (the "License");
+             * you may not use this file except in compliance with the License.
+             * You may obtain a copy of the License at
+             *
+             *      http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
+            package androidx.${groupId}
+
+            class Test {
+            }
+        """
+            .trimIndent()
     }
 
     private fun ProjectSpec.toPackageDocsText(): String {
@@ -391,19 +440,44 @@ internal class ProjectGenerator {
              * modifying its settings.
              */
             import androidx.build.SoftwareType
+            ${if (projectType == ProjectType.KMP) "import androidx.build.PlatformIdentifier" else ""}
 
             plugins {
                 id("AndroidXPlugin")
-                id("com.android.library")
+                ${if (projectType == ProjectType.KMP) "" else "id(\"com.android.library\")"}
             }
 
             dependencies {
                 // Add dependencies here
             }
 
+            ${if (projectType == ProjectType.KMP) """
+            androidXMultiplatform {
+                ios()
+                js()
+                jvm()
+                linux()
+                mac()
+                mingwX64()
+                tvos()
+                wasmJs()
+                watchos()
+
+                defaultPlatform(PlatformIdentifier.JVM)
+
+                sourceSets {
+                    commonMain.dependencies {
+                    }
+
+                    commonTest.dependencies {
+                    }
+                }
+            }
+            """ else """
             android {
                 namespace = "${generatePackageName(groupId, artifactId)}"
             }
+            """}
 
             androidx {
                 name = "${groupId}:${artifactId}"
@@ -421,10 +495,16 @@ internal class ProjectGenerator {
 
 private fun getPackageDocumentationFileDir(spec: ProjectSpec): File {
     val subPath =
-        if (spec.projectType == ProjectType.ANDROID_LIBRARY) {
-            "src/main/kotlin/"
-        } else {
-            error("Project type not yet supported")
+        when (spec.projectType) {
+            ProjectType.ANDROID_LIBRARY -> {
+                "src/main/kotlin/"
+            }
+            ProjectType.KMP -> {
+                "src/commonMain/kotlin/"
+            }
+            else -> {
+                error("Project type not yet supported")
+            }
         } + spec.groupIdWithPrefix.replace('.', '/')
     return File(spec.fullArtifactPath, subPath)
 }
@@ -433,7 +513,7 @@ private fun getPackageDocumentationFileDir(spec: ProjectSpec): File {
 internal enum class ProjectType(val description: String) {
     ANDROID_LIBRARY("Android (AAR)"),
     KMP("KMP (All platforms) (AAR)"),
-    JAVA("Java (JAR)"),
+    JAVA("Java (JVM - JAR)"),
 }
 
 @VisibleForTesting
