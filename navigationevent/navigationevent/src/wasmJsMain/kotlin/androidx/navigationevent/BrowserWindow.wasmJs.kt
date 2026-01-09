@@ -17,6 +17,7 @@
 package androidx.navigationevent
 
 import androidx.annotation.VisibleForTesting
+import org.w3c.dom.Window
 import org.w3c.dom.events.Event
 
 @VisibleForTesting
@@ -28,14 +29,14 @@ internal interface BrowserWindow {
     fun removeEventListener(type: String, callback: (Event) -> Unit)
 }
 
-// @OptIn(ExperimentalWasmJsInterop::class)
-@VisibleForTesting
-internal interface BrowserHistory {
-    val state: JsAny?
+internal class BrowserWindowImpl(private val window: Window) : BrowserWindow {
+    override val history: BrowserHistory = BrowserHistoryImpl(window)
 
-    fun push(data: JsAny?, url: String?)
+    override fun addEventListener(type: String, callback: (Event) -> Unit) {
+        window.addEventListener(type, callback)
+    }
 
-    fun replace(data: JsAny?, url: String?)
-
-    suspend fun go(delta: Int)
+    override fun removeEventListener(type: String, callback: (Event) -> Unit) {
+        window.removeEventListener(type, callback)
+    }
 }
