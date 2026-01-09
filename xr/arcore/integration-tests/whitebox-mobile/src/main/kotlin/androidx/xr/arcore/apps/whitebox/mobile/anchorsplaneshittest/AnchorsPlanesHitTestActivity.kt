@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.apps.whitebox.mobile.anchors
+package androidx.xr.arcore.apps.whitebox.mobile.anchorsplaneshittest
 
 import android.opengl.EGL14
 import android.opengl.GLES11Ext
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
+import android.opengl.Matrix
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.Surface
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -44,12 +46,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.opengl.EGLExt
 import androidx.opengl.EGLImageKHR
+import androidx.window.layout.WindowMetricsCalculator
 import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.AnchorCreateSuccess
+import androidx.xr.arcore.HitResult
+import androidx.xr.arcore.Plane
 import androidx.xr.arcore.apps.whitebox.mobile.common.ArCoreVerificationHelper
 import androidx.xr.arcore.apps.whitebox.mobile.common.BackToMainActivityButton
 import androidx.xr.arcore.apps.whitebox.mobile.common.SessionLifecycleHelper
@@ -60,28 +67,53 @@ import androidx.xr.arcore.apps.whitebox.mobile.samplerender.Shader
 import androidx.xr.arcore.apps.whitebox.mobile.samplerender.Texture
 import androidx.xr.arcore.apps.whitebox.mobile.samplerender.maybeThrowGLException
 import androidx.xr.arcore.apps.whitebox.mobile.samplerender.renderers.BackgroundRenderer
+import androidx.xr.arcore.apps.whitebox.mobile.samplerender.renderers.PlaneRenderer
+import androidx.xr.arcore.hitTest
 import androidx.xr.arcore.playservices.ArCoreRuntime
+import androidx.xr.arcore.playservices.UnsupportedArCoreCompatApi
 import androidx.xr.arcore.playservices.cameraState
+import androidx.xr.runtime.Config
+import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Ray
+import androidx.xr.runtime.math.Vector3
 import java.io.IOException
+import java.util.concurrent.ArrayBlockingQueue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 /** Activity to test the Anchor APIs. */
-class AnchorsActivity :
+class AnchorsPlanesHitTestActivity :
     ComponentActivity(), DefaultLifecycleObserver, SampleRender.Companion.Renderer {
+    companion object {
+        private const val TAG = "AnchorsPlanesHitTestActivity"
+        private const val MAX_HIT_TEST_RESULTS = 10
+    }
+
     private lateinit var session: Session
     private lateinit var sessionHelper: SessionLifecycleHelper
     private lateinit var surfaceView: GLSurfaceView
     private lateinit var backgroundRenderer: BackgroundRenderer
     private lateinit var renderer: SampleRender
+    private lateinit var planeRenderer: PlaneRenderer
     private lateinit var virtualSceneFramebuffer: Framebuffer
+    private lateinit var updatePlanesJob: Job
+    private var screenWidth: Int = 1
+    private var screenHeight: Int = 1
     private var image: EGLImageKHR? = null
+    private val foundPlanes = mutableStateListOf<Plane>()
+    private var foundHits = MutableStateFlow<List<HitResult>>(mutableStateListOf<HitResult>())
     private val anchors = mutableStateListOf<Anchor>()
     private val arCoreVerificationHelper: ArCoreVerificationHelper =
         ArCoreVerificationHelper(this, onArCoreVerified = { sessionHelper.tryCreateSession() })
+    private val queuedTaps: ArrayBlockingQueue<MotionEvent> = ArrayBlockingQueue(16)
 
     // Virtual object (ARCore pawn)
     private lateinit var virtualObjectMesh: Mesh
@@ -102,6 +134,7 @@ class AnchorsActivity :
         sessionHelper =
             SessionLifecycleHelper(
                 this,
+                Config(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL),
                 onSessionAvailable = { session ->
                     this.session = session
                     surfaceView = GLSurfaceView(this)
@@ -113,23 +146,51 @@ class AnchorsActivity :
                 },
             )
         sessionHelper.tryCreateSession()
+
+        val windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this)
+        val currentBounds = windowMetrics.bounds
+
+        screenWidth = currentBounds.width()
+        screenHeight = currentBounds.height()
     }
 
-    override fun onResume(owner: LifecycleOwner) {
+    override fun onResume() {
+        super<ComponentActivity>.onResume()
+        if (::session.isInitialized) {
+            val supervisorJob = SupervisorJob()
+            val scope = CoroutineScope(supervisorJob + lifecycleScope.coroutineContext)
+            updatePlanesJob = scope.launch { Plane.subscribe(session).collect { updatePlanes(it) } }
+        }
         if (::surfaceView.isInitialized) {
             surfaceView.onResume()
+            surfaceView.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    queuedTaps.add(event)
+                }
+                true
+            }
         }
     }
 
     override fun onPause(owner: LifecycleOwner) {
+        super<ComponentActivity>.onPause()
         if (::surfaceView.isInitialized) {
             surfaceView.onPause()
         }
+        if (::updatePlanesJob.isInitialized) {
+            updatePlanesJob.cancel()
+        }
+    }
+
+    private fun updatePlanes(planes: Collection<Plane>) {
+        foundPlanes.clear()
+        foundPlanes.addAll(planes)
     }
 
     override fun onSurfaceCreated(render: SampleRender) {
         try {
             backgroundRenderer = BackgroundRenderer(render)
+            planeRenderer = PlaneRenderer(render)
             virtualSceneFramebuffer = Framebuffer(render, width = 1, height = 1)
 
             // Virtual object to render (ARCore pawn)
@@ -214,6 +275,15 @@ class AnchorsActivity :
             projectionMatrix = cameraState.projectionMatrix!!
             viewMatrix = cameraState.viewMatrix!!
 
+            planeRenderer.drawPlanes(
+                render,
+                Plane.subscribe(session).value,
+                checkNotNull(cameraState.displayOrientedPose) {
+                    "cameraState.displayOrientedPose is null"
+                },
+                projectionMatrix.copy().data,
+            )
+
             // Visualize anchors
             render.clear(virtualSceneFramebuffer, 0f, 0f, 0f, 0f)
             for (anchor in anchors) {
@@ -229,6 +299,17 @@ class AnchorsActivity :
                 virtualObjectShader.setMat4("u_ModelViewProjection", modelViewProjectionMatrix.data)
                 render.draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer)
             }
+
+            val drainedTaps = ArrayList<MotionEvent>()
+            queuedTaps.drainTo(drainedTaps)
+            for (tap in drainedTaps) {
+                getHits(tap.x, tap.y)
+            }
+
+            for (hit in foundHits.value) {
+                addAnchor(hit.hitPose)
+            }
+            foundHits.value = emptyList() // So we don't keep duplicating anchors
 
             // Draw the virtual scene.
             backgroundRenderer.drawVirtualScene(
@@ -254,13 +335,11 @@ class AnchorsActivity :
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     BackToMainActivityButton()
-                    Button(
-                        onClick = { addAnchor(cameraState?.cameraPose!!) },
-                        enabled = hasCameraTracking,
-                    ) {
+                    Button(onClick = { deleteAllAnchors() }, enabled = hasCameraTracking) {
                         Text(
-                            text = if (hasCameraTracking) "Add anchor" else "Camera not tracking",
-                            fontSize = 30.sp,
+                            text =
+                                if (hasCameraTracking) "Clear anchors" else "Camera not tracking",
+                            fontSize = 15.sp,
                         )
                     }
                 }
@@ -268,12 +347,32 @@ class AnchorsActivity :
         ) { innerPadding ->
             Column(
                 modifier =
-                    Modifier.background(color = Color.White)
-                        .fillMaxHeight()
-                        .fillMaxWidth()
-                        .padding(innerPadding)
+                    Modifier.background(color = Color.White).fillMaxWidth().padding(innerPadding)
             ) {
+                planesAndHitsInfo()
                 AndroidView(modifier = Modifier.fillMaxSize(), factory = { _ -> surfaceView })
+            }
+        }
+    }
+
+    @Composable
+    private fun planesAndHitsInfo() {
+        Column(
+            modifier = Modifier.background(color = Color.White).fillMaxWidth().fillMaxHeight(.15f)
+        ) {
+            for (hitResult in foundHits.value) {
+                Text(
+                    text =
+                        "Hit Result: ${hitResult.trackable.hashCode()} - ${hitResult.hitPose.translation}",
+                    fontSize = 14.sp,
+                )
+            }
+            for (plane in foundPlanes) {
+                Text(
+                    text =
+                        "Tracking Plane: ${plane.hashCode()} - ${plane.state.value.trackingState} - ${plane.type} - ${plane.state.value.label}",
+                    fontSize = 14.sp,
+                )
             }
         }
     }
@@ -293,12 +392,60 @@ class AnchorsActivity :
         anchors.add(anchorResult.anchor)
     }
 
-    private fun deleteAnchor(anchor: Anchor) {
-        anchor.detach()
-        anchors.remove(anchor)
+    private fun deleteAllAnchors() {
+        for (anchor in anchors) {
+            anchor.detach()
+        }
+        anchors.clear()
     }
 
-    companion object {
-        const val ACTIVITY_NAME = "AnchorsActivity"
+    @OptIn(UnsupportedArCoreCompatApi::class)
+    private fun getHits(x: Float, y: Float) {
+        if (lifecycle.currentStateFlow.value != Lifecycle.State.RESUMED) {
+            return
+        }
+        val cameraState = session.state.value.cameraState
+        if (cameraState == null || cameraState.displayOrientedPose == null) {
+            return
+        }
+        val pose = cameraState.displayOrientedPose!!
+        var projMatrix = FloatArray(16)
+        var viewMatrix = FloatArray(16)
+        projMatrix = cameraState.projectionMatrix!!.data
+        viewMatrix = cameraState.viewMatrix!!.data
+
+        val vpMatrix = FloatArray(16)
+        val invVpMatrix = FloatArray(16)
+        Matrix.multiplyMM(vpMatrix, 0, projMatrix, 0, viewMatrix, 0)
+        Matrix.invertM(invVpMatrix, 0, vpMatrix, 0)
+
+        val xNDC = (x / screenWidth) * 2 - 1
+        val yNDC = 1 - (y / screenHeight) * 2
+        val touchNDC = floatArrayOf(xNDC, yNDC, -1f, 1f)
+        val worldPointNear = FloatArray(4)
+        Matrix.multiplyMV(worldPointNear, 0, invVpMatrix, 0, touchNDC, 0)
+
+        val nearX = worldPointNear[0] / worldPointNear[3]
+        val nearY = worldPointNear[1] / worldPointNear[3]
+        val nearZ = worldPointNear[2] / worldPointNear[3]
+
+        val cameraPose = cameraState.displayOrientedPose
+        val direction =
+            Vector3(
+                nearX - cameraPose!!.translation.x,
+                nearY - cameraPose!!.translation.y,
+                nearZ - cameraPose!!.translation.z,
+            )
+
+        val ray = Ray(cameraPose.translation, direction)
+        val hitResults = hitTest(session, ray)
+        if (hitResults.isNotEmpty()) {
+            val newHits = mutableStateListOf<HitResult>()
+            newHits.addAll(hitResults)
+            while (newHits.size > MAX_HIT_TEST_RESULTS) {
+                newHits.removeAt(0)
+            }
+            foundHits.value = newHits
+        }
     }
 }
