@@ -28,6 +28,8 @@ import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -60,6 +62,7 @@ public fun captureRemoteDocumentV2(
     composition.setContent {
         CompositionLocalProvider(
             LocalRemoteComposeCreationState provides creationState,
+            LocalDensity provides Density(creationDisplayInfo.density),
             content = content,
         )
     }
