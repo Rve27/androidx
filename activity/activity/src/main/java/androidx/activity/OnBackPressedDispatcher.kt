@@ -75,18 +75,10 @@ public class OnBackPressedDispatcher(
     private var hasEnabledCallbacks = false
 
     /**
-     * Bridges this dispatcher to the underlying [NavigationEventDispatcher] lazily.
-     *
-     * Initialization of the [NavigationEventDispatcher] involves loading the `navigation-event`
-     * library classes. We use an anonymous object to hold the dispatcher and input together,
-     * ensuring they are initialized and linked atomically only when first accessed.
+     * Input source representing back events initiated by this dispatcher (for example, via a direct
+     * call to [onBackPressed]).
      */
-    private val impl by lazy {
-        object {
-            val dispatcher = NavigationEventDispatcher { fallbackOnBackPressed?.run() }
-            val input = OnBackPressedEventInput().also { dispatcher.addInput(it) }
-        }
-    }
+    private val eventInput by lazy { OnBackPressedEventInput() }
 
     /**
      * This [OnBackPressedDispatcher] class will delegate all interactions to [eventDispatcher],
@@ -96,14 +88,7 @@ public class OnBackPressedDispatcher(
      * @see [OnBackPressedCallback.eventHandlers]
      */
     internal val eventDispatcher
-        get() = impl.dispatcher
-
-    /**
-     * Input source representing back events initiated by this dispatcher (for example, via a direct
-     * call to [onBackPressed]).
-     */
-    private val eventInput
-        get() = impl.input
+        get() = eventInput.dispatcher
 
     @JvmOverloads
     public constructor(fallbackOnBackPressed: Runnable? = null) : this(fallbackOnBackPressed, null)
@@ -277,6 +262,15 @@ public class OnBackPressedDispatcher(
      *   [hasEnabledCallbacks] method and [onHasEnabledCallbacksChanged] callback.
      */
     private inner class OnBackPressedEventInput : NavigationEventInput() {
+
+        /**
+         * The underlying dispatcher that coordinates back events.
+         *
+         * This is hosted here and initialized lazily alongside the input to ensure they are linked
+         * atomically.
+         */
+        val dispatcher =
+            NavigationEventDispatcher { fallbackOnBackPressed?.run() }.also { it.addInput(this) }
 
         /**
          * Syncs the enabled-handler count back to [OnBackPressedDispatcher].
