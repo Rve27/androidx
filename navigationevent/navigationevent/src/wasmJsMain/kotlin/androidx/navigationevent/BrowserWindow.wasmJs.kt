@@ -20,22 +20,22 @@ import androidx.annotation.VisibleForTesting
 import org.w3c.dom.events.Event
 
 @VisibleForTesting
-public interface BrowserWindow {
-    public val history: BrowserHistory
+internal interface BrowserWindow {
+    val history: BrowserHistory
 
-    public fun addEventListener(type: String, callback: (Event) -> Unit)
+    fun addEventListener(type: String, callback: (Event) -> Unit)
 
-    public fun removeEventListener(type: String, callback: (Event) -> Unit)
+    fun removeEventListener(type: String, callback: (Event) -> Unit)
 }
 
 // @OptIn(ExperimentalWasmJsInterop::class)
 @VisibleForTesting
-public interface BrowserHistory {
-    public val state: JsAny?
+internal interface BrowserHistory {
+    val state: JsAny?
 
-    public fun push(data: JsAny?, url: String?)
+    fun push(data: JsAny?, url: String?)
 
-    public fun replace(data: JsAny?, url: String?)
+    fun replace(data: JsAny?, url: String?)
 
-    public suspend fun go(delta: Int)
+    suspend fun go(delta: Int)
 }
