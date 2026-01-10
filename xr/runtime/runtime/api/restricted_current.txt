@@ -585,6 +585,15 @@ package androidx.xr.runtime.internal {
     ctor public UnsupportedDeviceException();
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface XrDeviceCapabilityProvider extends androidx.lifecycle.LifecycleOwner {
+    method @InaccessibleFromKotlin public android.content.Context getContext();
+    property public abstract android.content.Context context;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface XrDeviceCapabilityProviderFactory extends androidx.xr.runtime.internal.Service {
+    method public androidx.xr.runtime.internal.XrDeviceCapabilityProvider create(android.content.Context context, kotlin.coroutines.CoroutineContext coroutineContext);
+  }
+
 }
 
 package androidx.xr.runtime.math {
