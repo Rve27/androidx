@@ -106,7 +106,7 @@ class ProjectCreatorTaskTest {
     }
 
     @Test
-    fun testUpdateSettingsGradleFile() {
+    fun testUpdateSettingsGradleFileAndroidProject() {
         val file = tempFolder.newFile()
         file.writeText(
             """
@@ -139,6 +139,40 @@ class ProjectCreatorTaskTest {
 
             includeProject(":activity:activity", [BuildType.MAIN, BuildType.FLAN, BuildType.COMPOSE])
             includeProject(":foo:foo-bar", [BuildType.MAIN])
+
+        """
+                    .trimIndent()
+            )
+    }
+
+    @Test
+    fun testUpdateSettingsGradleFileKMPProject() {
+        val file = tempFolder.newFile()
+        file.writeText(
+            """
+                // Stuff before includeProject section
+                class MyClass {
+                }
+                // End stuff before includeProject section
+
+                includeProject(":activity:activity", [BuildType.MAIN, BuildType.FLAN, BuildType.COMPOSE])
+            """
+                .trimIndent()
+        )
+        val gradleSettingsEditor = GradleSettingsEditor(file)
+        val projectSpec =
+            ProjectSpec("androidx.foo", "foo-bar", ProjectType.KMP, "", projectSetup.rootDir)
+        gradleSettingsEditor.updateSettingsGradle(projectSpec)
+        assertThat(file.readText())
+            .isEqualTo(
+                """
+            // Stuff before includeProject section
+            class MyClass {
+            }
+            // End stuff before includeProject section
+
+            includeProject(":activity:activity", [BuildType.MAIN, BuildType.FLAN, BuildType.COMPOSE])
+            includeProject(":foo:foo-bar", [BuildType.KMP])
 
         """
                     .trimIndent()
