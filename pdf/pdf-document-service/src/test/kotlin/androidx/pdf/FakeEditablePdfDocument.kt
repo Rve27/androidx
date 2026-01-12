@@ -30,6 +30,7 @@ import androidx.pdf.content.PageSelection
 import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import java.util.UUID
+import java.util.concurrent.Executor
 
 /** Fake implementation of [EditablePdfDocument] for testing. */
 internal class FakeEditablePdfDocument(
@@ -50,7 +51,8 @@ internal class FakeEditablePdfDocument(
     }
 
     override fun addOnPdfContentInvalidatedListener(
-        listener: PdfDocument.OnPdfContentInvalidatedListener
+        executor: Executor,
+        listener: PdfDocument.OnPdfContentInvalidatedListener,
     ) {
         TODO("Not yet implemented")
     }
