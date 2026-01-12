@@ -124,36 +124,19 @@ internal class PdfContentLayoutTouchListener(
         }
 
         val primaryPointerIndex = event.findPointerIndex(primaryPointerId)
-        if (isSingleTouchCommitted && currentDispatcher == annotationsTouchEventDispatcher) {
-            if (primaryPointerIndex != -1) {
-                val x = event.getX(primaryPointerIndex)
-                val y = event.getY(primaryPointerIndex)
-                val singlePointerMove =
-                    MotionEvent.obtain(
-                        event.downTime,
-                        event.eventTime,
-                        event.action,
-                        x,
-                        y,
-                        event.metaState,
-                    )
-                currentDispatcher?.dispatchTouchEvent(singlePointerMove)
-                singlePointerMove.recycle()
-            }
-        } else {
-            if (
-                currentDispatcher == annotationsTouchEventDispatcher &&
-                    !isSingleTouchCommitted &&
-                    primaryPointerIndex != -1
-            ) {
-                val dx = event.getX(primaryPointerIndex) - downX
-                val dy = event.getY(primaryPointerIndex) - downY
-                if (dx * dx + dy * dy > touchSlop * touchSlop) {
-                    isSingleTouchCommitted = true
-                }
-            }
-            currentDispatcher?.dispatchTouchEvent(event)
+        if (primaryPointerIndex == MotionEvent.INVALID_POINTER_ID) {
+            return
         }
+
+        if (currentDispatcher == annotationsTouchEventDispatcher && !isSingleTouchCommitted) {
+            val dx = event.getX(primaryPointerIndex) - downX
+            val dy = event.getY(primaryPointerIndex) - downY
+            if (dx * dx + dy * dy > touchSlop * touchSlop) {
+                isSingleTouchCommitted = true
+            }
+        }
+
+        currentDispatcher?.dispatchTouchEvent(event)
     }
 
     private fun handlePointerUp(event: MotionEvent) {
