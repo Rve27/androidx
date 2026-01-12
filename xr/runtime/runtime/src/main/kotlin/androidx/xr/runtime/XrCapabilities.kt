@@ -194,8 +194,7 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
  * permission is granted by the calling application.
  *
  * Setting this feature to [FaceTrackingMode.MESHES] requires the `CAMERA` Android permission to be
- * granted and that [Config.CameraFacingDirection] is set to
- * [Config.CameraFacingDirection.Companion.USER].
+ * granted and that [CameraFacingDirection] is set to [CameraFacingDirection.Companion.USER].
  */
 @SuppressWarnings("HiddenSuperclass")
 public class FaceTrackingMode
@@ -331,5 +330,35 @@ public class EyeTrackingMode private constructor(public val mode: Int) : Config.
          * - [EYE_TRACKING_FINE][androidx.xr.runtime.manifest.EYE_TRACKING_FINE]
          */
         @JvmField public val FINE_TRACKING: EyeTrackingMode = EyeTrackingMode(2)
+    }
+}
+
+/** Declare whether the Session should use the world-facing or user-facing camera. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public class CameraFacingDirection
+private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
+    Config.ConfigMode {
+    public companion object {
+        /**
+         * Use the world-facing camera. This is the default behavior across all devices.
+         *
+         * Supported runtimes:
+         * - Play Services
+         *
+         * Required permissions:
+         * - [CAMERA][android.Manifest.permission.CAMERA]
+         */
+        @JvmField public val WORLD: CameraFacingDirection = CameraFacingDirection(0)
+
+        /**
+         * Use the user-facing camera.
+         *
+         * Supported runtimes:
+         * - Play Services
+         *
+         * Required permissions:
+         * - [CAMERA][android.Manifest.permission.CAMERA]
+         */
+        @JvmField public val USER: CameraFacingDirection = CameraFacingDirection(1)
     }
 }
