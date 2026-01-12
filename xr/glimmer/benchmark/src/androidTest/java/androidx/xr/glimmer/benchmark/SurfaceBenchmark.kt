@@ -30,6 +30,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.surface
+import androidx.xr.glimmer.testutils.createGlimmerRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,8 +39,9 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class SurfaceBenchmark {
 
-    @get:Rule val benchmarkRule = ComposeBenchmarkRule()
-    @get:Rule val glimmerRule = GlimmerRule()
+    @get:Rule(0) val benchmarkRule = ComposeBenchmarkRule()
+
+    @get:Rule(1) val glimmerRule = createGlimmerRule()
 
     /**
      * Measures the time to do composition, measure, layout and draw to render the first frame
