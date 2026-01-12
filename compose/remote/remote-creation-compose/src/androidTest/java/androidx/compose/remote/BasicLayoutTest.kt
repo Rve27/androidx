@@ -1137,7 +1137,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
 """
         testLayout(result) {
             val colors =
-                listOf((Color.Red).copy(alpha = 0.5f).compositeOver(Color.Green), Color.Black)
+                listOf((Color.Red).copy(alpha = 0.5f).compositeOver(Color.Green).rc, Color.Black.rc)
             RemoteBox(
                 modifier =
                     RemoteModifier.fillMaxSize()
@@ -1186,7 +1186,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
 """
         testLayout(result) {
             val colors =
-                listOf((Color.Red).copy(alpha = 0.5f).compositeOver(Color.Green), Color.Black)
+                listOf((Color.Red).copy(alpha = 0.5f).compositeOver(Color.Green).rc, Color.Black.rc)
             RemoteBox(
                 modifier =
                     RemoteModifier.fillMaxSize()

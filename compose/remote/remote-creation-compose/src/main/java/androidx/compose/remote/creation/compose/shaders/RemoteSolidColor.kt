@@ -22,13 +22,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.graphics.toArgb
-
-@Stable
-public fun RemoteBrush.Companion.solidColor(color: Color): RemoteSolidColor =
-    RemoteSolidColor(RemoteColor(color.toArgb()))
 
 @Stable
 public fun RemoteBrush.Companion.solidColor(color: RemoteColor): RemoteSolidColor =
