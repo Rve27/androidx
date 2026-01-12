@@ -20,6 +20,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import com.google.ar.core.Config as ArCoreConfig
 import kotlin.time.ComparableTimeMark
@@ -99,8 +100,8 @@ internal constructor(
             setOf(
                 Config.CameraFacingDirection.WORLD,
                 Config.CameraFacingDirection.USER,
-                Config.DeviceTrackingMode.DISABLED,
-                Config.DeviceTrackingMode.LAST_KNOWN,
+                DeviceTrackingMode.DISABLED,
+                DeviceTrackingMode.LAST_KNOWN,
                 Config.FaceTrackingMode.DISABLED,
                 Config.FaceTrackingMode.MESHES,
                 PlaneTrackingMode.DISABLED,

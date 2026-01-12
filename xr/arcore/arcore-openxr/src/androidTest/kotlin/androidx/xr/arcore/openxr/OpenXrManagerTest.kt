@@ -23,6 +23,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
@@ -150,10 +151,10 @@ class OpenXrManagerTest {
     @Test
     fun configure_deviceTrackingEnabled_addsDeviceToUpdatables() = initOpenXrManagerAndRunTest {
         underTest.create()
-        check(underTest.config.deviceTracking == Config.DeviceTrackingMode.DISABLED)
+        check(underTest.config.deviceTracking == DeviceTrackingMode.DISABLED)
         check(perceptionManager.xrResources.updatables.isEmpty())
 
-        underTest.configure(Config(deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN))
+        underTest.configure(Config(deviceTracking = DeviceTrackingMode.LAST_KNOWN))
 
         assertThat(perceptionManager.xrResources.updatables)
             .containsExactly(perceptionManager.xrResources.arDevice)
@@ -162,14 +163,14 @@ class OpenXrManagerTest {
     @Test
     fun configure_deviceTrackingDisabled_removesDeviceToUpdatables() = initOpenXrManagerAndRunTest {
         underTest.create()
-        underTest.configure(Config(deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN))
+        underTest.configure(Config(deviceTracking = DeviceTrackingMode.LAST_KNOWN))
         check(
             perceptionManager.xrResources.updatables.contains(
                 perceptionManager.xrResources.arDevice
             )
         )
 
-        underTest.configure(Config(deviceTracking = Config.DeviceTrackingMode.DISABLED))
+        underTest.configure(Config(deviceTracking = DeviceTrackingMode.DISABLED))
 
         assertThat(perceptionManager.xrResources.updatables)
             .doesNotContain(perceptionManager.xrResources.arDevice)
@@ -183,7 +184,7 @@ class OpenXrManagerTest {
         underTest.configure(
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                deviceTracking = Config.DeviceTrackingMode.DISABLED,
+                deviceTracking = DeviceTrackingMode.DISABLED,
                 depthEstimation = Config.DepthEstimationMode.DISABLED,
                 anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
             )
@@ -205,7 +206,7 @@ class OpenXrManagerTest {
                 Config(
                     PlaneTrackingMode.DISABLED,
                     HandTrackingMode.DISABLED,
-                    Config.DeviceTrackingMode.DISABLED,
+                    DeviceTrackingMode.DISABLED,
                     Config.DepthEstimationMode.SMOOTH_AND_RAW,
                     Config.AnchorPersistenceMode.DISABLED,
                 )
@@ -222,7 +223,7 @@ class OpenXrManagerTest {
                 Config(
                     PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                     HandTrackingMode.DISABLED,
-                    Config.DeviceTrackingMode.DISABLED,
+                    DeviceTrackingMode.DISABLED,
                     Config.DepthEstimationMode.DISABLED,
                     Config.AnchorPersistenceMode.DISABLED,
                 )

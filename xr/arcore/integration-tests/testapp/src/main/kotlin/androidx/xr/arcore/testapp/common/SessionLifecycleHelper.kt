@@ -22,6 +22,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
@@ -96,7 +97,7 @@ class SessionLifecycleHelper(
         if (config.faceTracking != Config.FaceTrackingMode.DISABLED) {
             permissions.add(FACE_TRACKING)
         }
-        if (config.deviceTracking != Config.DeviceTrackingMode.DISABLED) {
+        if (config.deviceTracking != DeviceTrackingMode.DISABLED) {
             permissions.add(HEAD_TRACKING)
         }
         if (config.eyeTracking == Config.EyeTrackingMode.COARSE_TRACKING) {

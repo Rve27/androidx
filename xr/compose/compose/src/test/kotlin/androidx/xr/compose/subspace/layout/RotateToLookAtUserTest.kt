@@ -32,7 +32,7 @@ import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.assertRotationInRootIsEqualTo
 import androidx.xr.compose.testing.onSubspaceNodeWithTag
 import androidx.xr.compose.testing.session
-import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.Quaternion
@@ -328,7 +328,7 @@ class RotateToLookAtUserTest {
         assertThat(sessionCreateResult).isInstanceOf(SessionCreateSuccess::class.java)
         val session = (sessionCreateResult as SessionCreateSuccess).session
         session.configure(
-            config = session.config.copy(deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN)
+            config = session.config.copy(deviceTracking = DeviceTrackingMode.LAST_KNOWN)
         )
         composeTestRule.session = session
         val fakeRuntime = session.runtimes.filterIsInstance<FakePerceptionRuntime>().first()
