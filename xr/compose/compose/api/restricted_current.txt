@@ -331,12 +331,6 @@ package androidx.xr.compose.subspace {
     field public static final androidx.xr.compose.subspace.SpatialCurvedRowDefaults INSTANCE;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialExternalSurfaceDefaults {
-    method @BytecodeOnly public float getSphereRadius-D9Ej5fM();
-    property public androidx.compose.ui.unit.Dp sphereRadius;
-    field public static final androidx.xr.compose.subspace.SpatialExternalSurfaceDefaults INSTANCE;
-  }
-
   public final class SpatialExternalSurfaceKt {
     method @KotlinOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialExternalSurface(androidx.xr.compose.subspace.StereoMode stereoMode, optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialFeatheringEffect featheringEffect, optional androidx.xr.compose.subspace.SurfaceProtection surfaceProtection, optional androidx.xr.compose.subspace.DragPolicy? dragPolicy, optional androidx.xr.compose.subspace.ResizePolicy? resizePolicy, optional androidx.xr.compose.subspace.layout.InteractionPolicy? interactionPolicy, kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.SpatialExternalSurfaceScope,kotlin.Unit> content);
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialExternalSurface-3SPOwJ0(androidx.xr.scenecore.SurfaceEntity.StereoMode!, androidx.xr.compose.subspace.layout.SubspaceModifier!, androidx.xr.compose.subspace.layout.SpatialFeatheringEffect!, androidx.xr.scenecore.SurfaceEntity.SurfaceProtection!, androidx.xr.compose.subspace.DragPolicy!, androidx.xr.compose.subspace.ResizePolicy!, androidx.xr.compose.subspace.layout.InteractionPolicy!, kotlin.jvm.functions.Function3!, androidx.compose.runtime.Composer!, int, int);
