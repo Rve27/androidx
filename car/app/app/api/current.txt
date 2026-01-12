@@ -1478,6 +1478,7 @@ package androidx.car.app.model {
     method public androidx.car.app.model.CarIcon? getImage();
     method public int getImageType();
     method public androidx.car.app.model.OnClickDelegate? getOnClickDelegate();
+    method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public androidx.car.app.model.CarProgressBar? getProgressBar();
     method public androidx.car.app.model.CarText? getText();
     method public androidx.car.app.model.CarText? getTitle();
     method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public boolean isIndexable();
@@ -1496,6 +1497,7 @@ package androidx.car.app.model {
     method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public androidx.car.app.model.GridItem.Builder setIndexable(boolean);
     method public androidx.car.app.model.GridItem.Builder setLoading(boolean);
     method public androidx.car.app.model.GridItem.Builder setOnClickListener(androidx.car.app.model.OnClickListener);
+    method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public androidx.car.app.model.GridItem.Builder setProgressBar(androidx.car.app.model.CarProgressBar);
     method public androidx.car.app.model.GridItem.Builder setText(androidx.car.app.model.CarText);
     method public androidx.car.app.model.GridItem.Builder setText(CharSequence);
     method public androidx.car.app.model.GridItem.Builder setTitle(androidx.car.app.model.CarText?);
