@@ -55,7 +55,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.util.LruCache;
 import android.util.Range;
 import android.util.Rational;
 import android.util.Size;
@@ -70,13 +69,9 @@ import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.CameraInfo;
-import androidx.camera.core.CameraSelector;
 import androidx.camera.core.DynamicRange;
 import androidx.camera.core.Logger;
 import androidx.camera.core.SurfaceRequest;
-import androidx.camera.core.impl.AdapterCameraInfo;
-import androidx.camera.core.impl.CameraConfig;
-import androidx.camera.core.impl.CameraInfoInternal;
 import androidx.camera.core.impl.MutableStateObservable;
 import androidx.camera.core.impl.Observable;
 import androidx.camera.core.impl.StateObservable;
@@ -109,7 +104,6 @@ import androidx.camera.video.internal.encoder.InvalidConfigException;
 import androidx.camera.video.internal.encoder.OutputConfig;
 import androidx.camera.video.internal.encoder.VideoEncoderConfig;
 import androidx.camera.video.internal.encoder.VideoEncoderInfo;
-import androidx.camera.video.internal.encoder.VideoEncoderInfoImpl;
 import androidx.camera.video.internal.muxer.MediaMuxerImpl;
 import androidx.camera.video.internal.muxer.Muxer;
 import androidx.camera.video.internal.muxer.MuxerException;
@@ -380,11 +374,6 @@ public final class Recorder implements VideoOutput {
     private static final String INSUFFICIENT_STORAGE_ERROR_MSG =
             "Insufficient storage space. The available storage (%d bytes) is below the required "
                     + "threshold of %d bytes.";
-
-    @GuardedBy("sVideoCapabilitiesCache")
-    // A size of 16 is likely more than enough for all camera/config combinations on a device.
-    private static final LruCache<VideoCapabilitiesCacheKey, VideoCapabilities>
-            sVideoCapabilitiesCache = new LruCache<>(16);
 
     @VisibleForTesting
     static int sRetrySetupVideoMaxCount = RETRY_SETUP_VIDEO_MAX_COUNT;
@@ -3172,66 +3161,8 @@ public final class Recorder implements VideoOutput {
             @VideoRecordingType int videoRecordingType,
             @NonNull CameraInfo cameraInfo,
             @VideoCapabilitiesSource int videoCapabilitiesSource) {
-        if (shouldSkipCapabilitiesCache(cameraInfo)) {
-            return new RecorderVideoCapabilities(videoCapabilitiesSource,
-                    (CameraInfoInternal) cameraInfo, videoRecordingType,
-                    VideoEncoderInfoImpl.FINDER);
-        }
-
-        AdapterCameraInfo adapterCameraInfo = (AdapterCameraInfo) cameraInfo;
-
-        String cameraId = adapterCameraInfo.getCameraId();
-        CameraConfig cameraConfig = adapterCameraInfo.getCameraConfig();
-        VideoCapabilitiesCacheKey key = VideoCapabilitiesCacheKey.create(cameraId, cameraConfig,
-                videoRecordingType, videoCapabilitiesSource);
-
-        synchronized (sVideoCapabilitiesCache) {
-            VideoCapabilities capabilities = sVideoCapabilitiesCache.get(key);
-
-            if (capabilities == null) {
-                capabilities = new RecorderVideoCapabilities(videoCapabilitiesSource,
-                        (CameraInfoInternal) cameraInfo, videoRecordingType,
-                        VideoEncoderInfoImpl.FINDER);
-                sVideoCapabilitiesCache.put(key, capabilities);
-            }
-            return capabilities;
-        }
-    }
-
-    /**
-     * Checks whether the video capabilities for a given camera should be cached.
-     *
-     * <p>Caching is skipped for external cameras or cameras with an unknown lens facing, as their
-     * properties may not be stable across device reboots or during camera hot-plugging.
-     */
-    private static boolean shouldSkipCapabilitiesCache(@NonNull CameraInfo cameraInfo) {
-        if (cameraInfo instanceof AdapterCameraInfo) {
-            AdapterCameraInfo adapterCameraInfo = (AdapterCameraInfo) cameraInfo;
-            return adapterCameraInfo.isExternalCamera()
-                    || adapterCameraInfo.getLensFacing() == CameraSelector.LENS_FACING_UNKNOWN;
-        }
-        // If we can't determine the camera properties (e.g., not an AdapterCameraInfo),
-        // it's safer to skip caching.
-        return true;
-    }
-
-    @SuppressWarnings("unused") // Use as a key class, which methods are not called directly.
-    @AutoValue
-    abstract static class VideoCapabilitiesCacheKey {
-        static VideoCapabilitiesCacheKey create(@NonNull String cameraId,
-                @NonNull CameraConfig cameraConfig, @VideoRecordingType int videoRecordingType,
-                @VideoCapabilitiesSource int videoCapabilitiesSource) {
-            return new AutoValue_Recorder_VideoCapabilitiesCacheKey(cameraId, cameraConfig,
-                    videoRecordingType, videoCapabilitiesSource);
-        }
-
-        abstract @NonNull String getCameraId();
-
-        abstract @NonNull CameraConfig getCameraConfig();
-
-        abstract @VideoRecordingType int getVideoRecordingType();
-
-        abstract @VideoCapabilitiesSource int getVideoCapabilitiesSource();
+        return RecorderVideoCapabilitiesFactory.getCapabilities(cameraInfo, videoRecordingType,
+                videoCapabilitiesSource);
     }
 
     @AutoValue
