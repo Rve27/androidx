@@ -38,6 +38,7 @@ import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldValue
 import androidx.compose.material3.adaptive.layout.calculateThreePaneScaffoldValue
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntry
@@ -253,13 +254,34 @@ internal class ThreePaneScaffoldScene<T : Any>(
         ListDetailPaneScaffold(
             directive = directive,
             scaffoldState = scaffoldState,
-            listPane = lastList?.let { { AnimatedPane { it.Content() } } } ?: {},
-            detailPane = lastDetail?.let { { AnimatedPane { it.Content() } } } ?: detailPlaceholder,
-            extraPane = lastExtra?.let { { AnimatedPane { it.Content() } } },
+            listPane =
+                lastList?.let {
+                    {
+                        val sceneScope = ListDetailSceneScopeImpl(this)
+                        CompositionLocalProvider(LocalListDetailSceneScope provides sceneScope) {
+                            AnimatedPane { it.Content() }
+                        }
+                    }
+                } ?: {},
+            detailPane = {
+                val sceneScope = ListDetailSceneScopeImpl(this)
+                CompositionLocalProvider(LocalListDetailSceneScope provides sceneScope) {
+                    AnimatedPane { lastDetail?.Content() ?: detailPlaceholder() }
+                }
+            },
+            extraPane =
+                lastExtra?.let {
+                    {
+                        val sceneScope = ListDetailSceneScopeImpl(this)
+                        CompositionLocalProvider(LocalListDetailSceneScope provides sceneScope) {
+                            AnimatedPane { it.Content() }
+                        }
+                    }
+                },
         )
     }
 
-    @Composable()
+    @Composable
     private fun SupportingPaneContent(scaffoldState: ThreePaneScaffoldState) {
         val lastMain = entries.findLast { getPaneRole(it) == SupportingPaneScaffoldRole.Main }
         val lastSupporting =
@@ -269,9 +291,39 @@ internal class ThreePaneScaffoldScene<T : Any>(
         SupportingPaneScaffold(
             directive = directive,
             scaffoldState = scaffoldState,
-            mainPane = lastMain?.let { { AnimatedPane { it.Content() } } } ?: {},
-            supportingPane = lastSupporting?.let { { AnimatedPane { it.Content() } } } ?: {},
-            extraPane = lastExtra?.let { { AnimatedPane { it.Content() } } },
+            mainPane =
+                lastMain?.let {
+                    {
+                        val sceneScope = SupportingPaneSceneScopeImpl(this)
+                        CompositionLocalProvider(
+                            LocalSupportingPaneSceneScope provides sceneScope
+                        ) {
+                            AnimatedPane { it.Content() }
+                        }
+                    }
+                } ?: {},
+            supportingPane =
+                lastSupporting?.let {
+                    {
+                        val sceneScope = SupportingPaneSceneScopeImpl(this)
+                        CompositionLocalProvider(
+                            LocalSupportingPaneSceneScope provides sceneScope
+                        ) {
+                            AnimatedPane { it.Content() }
+                        }
+                    }
+                } ?: {},
+            extraPane =
+                lastExtra?.let {
+                    {
+                        val sceneScope = SupportingPaneSceneScopeImpl(this)
+                        CompositionLocalProvider(
+                            LocalSupportingPaneSceneScope provides sceneScope
+                        ) {
+                            AnimatedPane { it.Content() }
+                        }
+                    }
+                },
         )
     }
 
