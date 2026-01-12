@@ -87,7 +87,7 @@ internal class RemoteCanvasNodeV2 : RemoteComposeNodeV2() {
 
 internal class RemoteRootNodeV2 : RemoteComposeNodeV2() {
     override fun render(creationState: RemoteComposeCreationState) {
-        renderChildren(creationState)
+        creationState.document.root { renderChildren(creationState) }
     }
 }
 
