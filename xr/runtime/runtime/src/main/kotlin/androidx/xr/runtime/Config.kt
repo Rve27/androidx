@@ -520,36 +520,6 @@ constructor(
         }
     }
 
-    /** Feature that allows tracking of the user's eyes. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    @SuppressWarnings("HiddenSuperclass")
-    public class EyeTrackingMode private constructor(public val mode: Int) : ConfigMode {
-        public companion object {
-            /** Eye tracking is disabled. */
-            @JvmField public val DISABLED: EyeTrackingMode = EyeTrackingMode(0)
-            /**
-             * Enables coarse eye tracking, providing general gaze direction without high precision.
-             *
-             * Supported runtimes:
-             * - OpenXR
-             *
-             * Required permissions:
-             * - [EYE_TRACKING_COARSE][androidx.xr.runtime.manifest.EYE_TRACKING_COARSE]
-             */
-            @JvmField public val COARSE_TRACKING: EyeTrackingMode = EyeTrackingMode(1)
-            /**
-             * Enables fine eye tracking, providing more precise gaze direction.
-             *
-             * Supported runtimes:
-             * - OpenXR
-             *
-             * Required permissions:
-             * - [EYE_TRACKING_FINE][androidx.xr.runtime.manifest.EYE_TRACKING_FINE]
-             */
-            @JvmField public val FINE_TRACKING: EyeTrackingMode = EyeTrackingMode(2)
-        }
-    }
-
     /** Declare whether the Session should use the world-facing or user-facing camera. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public class CameraFacingDirection
