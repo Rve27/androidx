@@ -14,374 +14,304 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+package androidx.xr.scenecore.spatial.core
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
-import android.app.Activity;
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-
-import androidx.annotation.RestrictTo;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.Component;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.runtime.SpaceValue;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import android.app.Activity
+import android.content.Context
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.annotation.RestrictTo
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.Component
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.SpaceValue
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.math.max
+import kotlin.math.min
 
 /** Implementation of a subset of core Entity functionality. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 // TODO(b/452961674): Review RestrictTo annotations in SceneCore.
-public abstract class BaseEntity extends BaseScenePose implements Entity {
-    private final List<Entity> mChildren = new ArrayList<>();
-    private final List<Component> mComponentList = new ArrayList<>();
-    private AtomicReference<BaseEntity> mParent = new AtomicReference<>(null);
-    private Pose mPose = new Pose();
-    private Vector3 mScale = new Vector3(1.0f, 1.0f, 1.0f);
-    private float mAlpha = 1.0f;
-    private boolean mHidden = false;
-    private ViewGroup mAccessibilityLayout = null;
-    private Context mContext;
+public abstract class BaseEntity internal constructor(private var _context: Context?) :
+    BaseScenePose(), Entity {
 
-    BaseEntity(Context context) {
-        mContext = context;
-    }
+    private val _children = ArrayList<Entity>()
+    private val _componentList = ArrayList<Component>()
+    private var _parent: AtomicReference<BaseEntity?> = AtomicReference<BaseEntity?>(null)
+    private var _pose = Pose()
+    private var _scale = Vector3(1.0f, 1.0f, 1.0f)
+    private var _alpha = 1.0f
+    private var _hidden = false
+    private var accessibilityLayout: ViewGroup? = null
 
-    protected void addChildInternal(@NonNull Entity child) {
-        synchronized (mChildren) {
-            if (mChildren.contains(child)) {
-                throw new IllegalStateException("Trying to add child who is already a child.");
+    protected fun addChildInternal(child: Entity) {
+        synchronized(_children) {
+            if (child in _children) {
+                throw IllegalStateException("Trying to add child who is already a child.")
             }
-            mChildren.add(child);
+            _children.add(child)
         }
     }
 
-    protected void removeChildInternal(@NonNull Entity child) {
-        synchronized (mChildren) {
-            if (!mChildren.contains(child)) {
-                throw new IllegalStateException("Trying to remove child who is not a child.");
+    protected fun removeChildInternal(child: Entity) {
+        synchronized(_children) {
+            if (child !in _children) {
+                throw IllegalStateException("Trying to remove child who is not a child.")
             }
-            mChildren.remove(child);
+            _children.remove(child)
         }
     }
 
-    private View getAccessibilityView() {
-        Activity activity = getActivity();
-        if (activity == null) {
-            throw new IllegalStateException(
-                    "Activity is not set and unable to create accessibility view");
+    private fun getAccessibilityView(): View {
+        val activity =
+            activity
+                ?: throw IllegalStateException(
+                    "Activity is not set and unable to create accessibility view"
+                )
+
+        if (accessibilityLayout == null) {
+            val mainLayout = activity.window.decorView as ViewGroup
+            accessibilityLayout =
+                FrameLayout(activity).apply { layoutParams = FrameLayout.LayoutParams(1, 1) }
+            mainLayout.addView(accessibilityLayout)
         }
-        if (mAccessibilityLayout == null) {
-            ViewGroup mainLayout = (ViewGroup) activity.getWindow().getDecorView();
-            mAccessibilityLayout = new FrameLayout(activity);
-            mAccessibilityLayout.setLayoutParams(new FrameLayout.LayoutParams(1, 1));
-            mainLayout.addView(mAccessibilityLayout);
-        }
+
         // There should be only one child as per this design
-        if (mAccessibilityLayout.getChildCount() > 0) {
-            return mAccessibilityLayout.getChildAt(0);
+        accessibilityLayout?.let { layout ->
+            if (layout.childCount > 0) {
+                return layout.getChildAt(0)
+            }
+            // If no view exists create one
+            val view =
+                View(activity).apply {
+                    isFocusable = true
+                    isFocusableInTouchMode = true
+                }
+            layout.addView(view)
+            return view
         }
-        // If the no view exists create one
-        View view = new View(activity);
-        view.setFocusable(true);
-        view.setFocusableInTouchMode(true);
-        mAccessibilityLayout.addView(view);
-        return view;
+        throw IllegalStateException("Accessibility layout is null unexpectedly")
     }
 
-    private void destroyAccessibilityView() {
-        Activity activity = getActivity();
-        if (activity != null && mAccessibilityLayout != null) {
-            ViewGroup mainLayout = (ViewGroup) activity.getWindow().getDecorView();
-            mainLayout.removeView(mAccessibilityLayout);
-            mAccessibilityLayout = null;
-        }
-    }
-
-    @Nullable
-    protected Context getContext() {
-        return mContext;
-    }
-
-    @Nullable
-    protected Activity getActivity() {
-        if (mContext instanceof Activity) {
-            return (Activity) mContext;
-        }
-        return null;
-    }
-
-    @Override
-    public void addChild(@NonNull Entity child) {
-        child.setParent(this);
-    }
-
-    @Override
-    public void addChildren(@NonNull List<? extends Entity> mChildren) {
-        for (Entity child : mChildren) {
-            child.setParent(this);
-        }
-    }
-
-    @Override
-    public @Nullable Entity getParent() {
-        return mParent.get();
-    }
-
-    @Override
-    public void setParent(@Nullable Entity parent) {
-        if ((parent != null) && !(parent instanceof BaseEntity)) {
-            throw new IllegalStateException(
-                    "Cannot set non-BaseEntity as a parent of a BaseEntity");
-        }
-        BaseEntity newParent = (BaseEntity) parent;
-        BaseEntity oldParent = mParent.getAndSet(newParent);
-        if (oldParent != null) {
-            oldParent.removeChildInternal(this);
-        }
-        if (newParent != null) {
-            newParent.addChildInternal(this);
-        }
-    }
-
-    @Override
-    public @NonNull List<Entity> getChildren() {
-        synchronized (mChildren) {
-            // Returns a new copy of the list to avoid ConcurrentModificationException during
-            // external iteration.
-            return new ArrayList<>(mChildren);
-        }
-    }
-
-    @Override
-    @NonNull
-    public CharSequence getContentDescription() {
-        if (mAccessibilityLayout != null) {
-            View view = getAccessibilityView();
-            if (view != null) {
-                return view.getContentDescription();
+    private fun destroyAccessibilityView() {
+        activity?.let {
+            if (accessibilityLayout != null) {
+                val mainLayout = it.window.decorView as ViewGroup
+                mainLayout.removeView(accessibilityLayout)
+                accessibilityLayout = null
             }
         }
-        // content description is not provided
-        return "";
     }
 
-    @Override
-    public void setContentDescription(@NonNull CharSequence text) {
-        if (text.length() == 0) {
-            // setContentDescription ignoring empty string.
-            if (mAccessibilityLayout != null) {
-                destroyAccessibilityView();
+    protected val context: Context?
+        get() = _context
+
+    protected val activity: Activity?
+        get() = _context as? Activity
+
+    override fun addChild(child: Entity) {
+        child.parent = this
+    }
+
+    override fun addChildren(children: List<Entity>) {
+        for (child in children) {
+            child.parent = this
+        }
+    }
+
+    override var parent: Entity?
+        get() = _parent.get()
+        set(value) {
+            if (value != null && value !is BaseEntity) {
+                throw IllegalStateException("Cannot set non-BaseEntity as a parent of a BaseEntity")
             }
-            return;
-        }
-        View view = getAccessibilityView();
-        if (view != null) {
-            view.setContentDescription(text);
-        } else {
-            throw new IllegalStateException("setContentDescription is unable to get view.");
-        }
-    }
 
-    @Override
-    public @NonNull Pose getPose(@SpaceValue int relativeTo) {
-        return mPose;
-    }
-
-    @Override
-    public void setPose(@NonNull Pose pose, @SpaceValue int relativeTo) {
-        mPose = pose;
-    }
-
-    @Override
-    public @NonNull Pose getActivitySpacePose() {
-        BaseEntity parent = mParent.get();
-        // Any parentless "space" entities (such as the root and anchor entities) are expected to
-        // override this method non-recursively so that this error is never thrown.
-        if (parent == null) {
-            throw new IllegalStateException("Cannot get pose in ActivitySpace with a null parent");
+            val oldParent: BaseEntity? = _parent.getAndSet(value)
+            oldParent?.removeChildInternal(this)
+            value?.addChildInternal(this)
         }
 
-        return parent.getActivitySpacePose()
-                .compose(
-                        new Pose(
-                                mPose.getTranslation().scale(parent.getActivitySpaceScale()),
-                                mPose.getRotation()));
-    }
-
-    @Override
-    public @NonNull Vector3 getScale(@SpaceValue int relativeTo) {
-        switch (relativeTo) {
-            case Space.PARENT:
-                return mScale;
-            case Space.ACTIVITY:
-                return getActivitySpaceScale();
-            case Space.REAL_WORLD:
-                return getWorldSpaceScale();
-            default:
-                throw new IllegalArgumentException("Unsupported relativeTo value: " + relativeTo);
+    override val children: List<Entity>
+        get() {
+            synchronized(_children) {
+                // Returns a new copy of the list to avoid ConcurrentModificationException during
+                // external iteration.
+                return ArrayList<Entity>(_children)
+            }
         }
-    }
 
-    @Override
-    public void setScale(@NonNull Vector3 scale, @SpaceValue int relativeTo) {
-        BaseEntity parent = mParent.get();
-        switch (relativeTo) {
-            case Space.PARENT:
-                mScale = scale;
-                break;
-            case Space.ACTIVITY:
-                if (parent == null) {
-                    throw new IllegalStateException(
-                            "Cannot set scale relative to ActivitySpace with a null parent");
+    override var contentDescription: CharSequence
+        get() {
+            if (accessibilityLayout != null) {
+                try {
+                    val view = getAccessibilityView()
+                    return view.contentDescription ?: ""
+                } catch (e: IllegalStateException) {
+                    // Accessibility view is not set.
                 }
-                mScale = scale.scale(parent.getActivitySpaceScale().inverse());
-                break;
-            case Space.REAL_WORLD:
-                if (parent == null) {
-                    throw new IllegalStateException(
-                            "Cannot set scale relative to WorldSpace with a null parent");
+            }
+            return ""
+        }
+        set(value) {
+            if (value.isEmpty()) {
+                if (accessibilityLayout != null) {
+                    destroyAccessibilityView()
                 }
-                mScale = scale.scale(parent.getWorldSpaceScale().inverse());
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported relativeTo value: " + relativeTo);
+                return
+            }
+            val view = getAccessibilityView()
+            view.contentDescription = value
+        }
+
+    override fun getPose(@SpaceValue relativeTo: Int): Pose {
+        return _pose
+    }
+
+    override fun setPose(pose: Pose, @SpaceValue relativeTo: Int) {
+        _pose = pose
+    }
+
+    override val activitySpacePose: Pose
+        get() {
+            // Any parentless "space" entities (such as the root and anchor entities) are expected
+            // to override this method non-recursively so that this error is never thrown.
+            val parent =
+                _parent.get()
+                    ?: throw IllegalStateException(
+                        "Cannot get pose in ActivitySpace with a null parent"
+                    )
+            return parent.activitySpacePose.compose(
+                Pose(_pose.translation.scale(parent.activitySpaceScale), _pose.rotation)
+            )
+        }
+
+    override fun getScale(@SpaceValue relativeTo: Int): Vector3 {
+        return when (relativeTo) {
+            Space.PARENT -> _scale
+            Space.ACTIVITY -> activitySpaceScale
+            Space.REAL_WORLD -> worldSpaceScale
+            else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
         }
     }
 
-    // Purely sets the value of the scale.
-    protected final void setScaleInternal(@NonNull Vector3 scale) {
-        mScale = scale;
-    }
-
-    @Override
-    public float getAlpha(@SpaceValue int relativeTo) {
-        switch (relativeTo) {
-            case Space.PARENT:
-                return mAlpha;
-            case Space.ACTIVITY:
-            case Space.REAL_WORLD:
-                return getActivitySpaceAlpha();
-            default:
-                throw new IllegalArgumentException("Unsupported relativeTo value: " + relativeTo);
+    override fun setScale(scale: Vector3, @SpaceValue relativeTo: Int) {
+        val parent = _parent.get()
+        when (relativeTo) {
+            Space.PARENT -> _scale = scale
+            Space.ACTIVITY -> {
+                if (parent == null) {
+                    throw IllegalStateException(
+                        "Cannot set scale relative to ActivitySpace with a null parent"
+                    )
+                }
+                _scale = scale.scale(parent.activitySpaceScale.inverse())
+            }
+            Space.REAL_WORLD -> {
+                if (parent == null) {
+                    throw IllegalStateException(
+                        "Cannot set scale relative to WorldSpace with a null parent"
+                    )
+                }
+                _scale = scale.scale(parent.worldSpaceScale.inverse())
+            }
+            else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
         }
     }
 
-    @Override
-    public void setAlpha(float alpha) {
-        mAlpha = max(0.0f, min(1.0f, alpha));
+    protected fun setScaleInternal(scale: Vector3) {
+        _scale = scale
     }
 
-    private float getActivitySpaceAlpha() {
-        BaseEntity parent = mParent.get();
-        if (parent == null) {
-            return mAlpha;
+    override fun getAlpha(@SpaceValue relativeTo: Int): Float {
+        return when (relativeTo) {
+            Space.PARENT -> _alpha
+            Space.ACTIVITY,
+            Space.REAL_WORLD -> getActivitySpaceAlpha()
+            else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
         }
-        return parent.getActivitySpaceAlpha() * mAlpha;
     }
 
-    @Override
-    public @NonNull Vector3 getWorldSpaceScale() {
-        BaseEntity parent = mParent.get();
-        if (parent == null) {
-            throw new IllegalStateException("Cannot get scale in WorldSpace with a null parent");
+    override fun setAlpha(alpha: Float) {
+        _alpha = max(0.0f, min(1.0f, alpha))
+    }
+
+    private fun getActivitySpaceAlpha(): Float {
+        val parent = _parent.get() ?: return _alpha
+        return parent.getActivitySpaceAlpha() * _alpha
+    }
+
+    override val worldSpaceScale: Vector3
+        get() {
+            val parent =
+                _parent.get()
+                    ?: throw IllegalStateException(
+                        "Cannot get scale in WorldSpace with a null parent"
+                    )
+            return parent.worldSpaceScale.scale(_scale)
         }
-        return parent.getWorldSpaceScale().scale(mScale);
-    }
 
-    @Override
-    public @NonNull Vector3 getActivitySpaceScale() {
-        BaseEntity parent = mParent.get();
-        if (parent == null) {
-            throw new IllegalStateException("Cannot get scale in ActivitySpace with a null parent");
+    override val activitySpaceScale: Vector3
+        get() {
+            val parent =
+                _parent.get()
+                    ?: throw IllegalStateException(
+                        "Cannot get scale in ActivitySpace with a null parent"
+                    )
+            return parent.activitySpaceScale.scale(_scale)
         }
-        return parent.getActivitySpaceScale().scale(mScale);
-    }
 
-    @Override
-    public boolean isHidden(boolean includeParents) {
-        BaseEntity parent = mParent.get();
+    override fun isHidden(includeParents: Boolean): Boolean {
+        val parent = _parent.get()
         if (!includeParents || parent == null) {
-            return mHidden;
+            return _hidden
         }
-        return mHidden || parent.isHidden(true);
+        return _hidden || parent.isHidden(true)
     }
 
-    @Override
-    public void setHidden(boolean hidden) {
-        mHidden = hidden;
+    override fun setHidden(hidden: Boolean) {
+        _hidden = hidden
     }
 
-    @Override
-    public void dispose() {
-        // Create a copy to avoid concurrent modification issues since the children detach
-        // themselves from their parents as they are disposed.
-        destroyAccessibilityView();
-        mContext = null;
+    override fun dispose() {
+        destroyAccessibilityView()
+        _context = null
     }
 
-    @Override
-    public boolean addComponent(@NonNull Component component) {
+    override fun addComponent(component: Component): Boolean {
         if (component.onAttach(this)) {
-            synchronized (mComponentList) {
-                mComponentList.add(component);
-            }
-            return true;
+            synchronized(_componentList) { _componentList.add(component) }
+            return true
         }
-        return false;
+        return false
     }
 
-    @Override
-    public <T extends Component> @NonNull List<T> getComponentsOfType(
-            @NonNull Class<? extends T> type) {
-        List<T> components = new ArrayList<>();
-        synchronized (mComponentList) {
-            for (Component component : mComponentList) {
-                if (type.isInstance(component)) {
-                    components.add(type.cast(component));
-                }
-            }
+    override fun <T : Component> getComponentsOfType(type: Class<out T>): List<T> {
+        synchronized(_componentList) {
+            return _componentList.filterIsInstance(type)
         }
-        return components;
     }
 
-    @Override
-    public @NonNull List<Component> getComponents() {
-        synchronized (mComponentList) {
+    override fun getComponents(): List<Component> {
+        synchronized(_componentList) {
             // Returns a new copy of the list to avoid ConcurrentModificationException during
             // external iteration.
-            return new ArrayList<>(mComponentList);
+            return ArrayList<Component>(_componentList)
         }
     }
 
-    @Override
-    public void removeComponent(@NonNull Component component) {
-        synchronized (mComponentList) {
-            if (mComponentList.contains(component)) {
-                component.onDetach(this);
-                mComponentList.remove(component);
-            }
+    override fun removeComponent(component: Component) {
+        synchronized(_componentList) {
+            component.takeIf { _componentList.remove(it) }?.onDetach(this)
         }
     }
 
-    @Override
-    public void removeAllComponents() {
-        synchronized (mComponentList) {
-            for (Component component : mComponentList) {
-                component.onDetach(this);
-            }
-            mComponentList.clear();
+    override fun removeAllComponents() {
+        synchronized(_componentList) {
+            _componentList.forEach { it.onDetach(this) }
+            _componentList.clear()
         }
     }
 }

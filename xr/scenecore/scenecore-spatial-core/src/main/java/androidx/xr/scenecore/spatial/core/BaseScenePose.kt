@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore.spatial.core
 
+import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.HitTestResult
@@ -26,7 +27,8 @@ import androidx.xr.scenecore.runtime.ScenePose
  *
  * <p>A ScenePose is an object that has a pose in the world space.
  */
-internal abstract class BaseScenePose : ScenePose {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public abstract class BaseScenePose : ScenePose {
     override val activitySpacePose: Pose
         get() =
             throw UnsupportedOperationException(
@@ -34,7 +36,7 @@ internal abstract class BaseScenePose : ScenePose {
             )
 
     /** Returns the pose for this entity, relative to the activity space root. */
-    open val poseInActivitySpace: Pose
+    public open val poseInActivitySpace: Pose
         get() =
             throw UnsupportedOperationException(
                 "getPoseInActivitySpace is not implemented for this ScenePose."
