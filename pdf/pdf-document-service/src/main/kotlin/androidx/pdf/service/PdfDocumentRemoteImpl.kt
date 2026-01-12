@@ -18,6 +18,7 @@ package androidx.pdf.service
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.pdf.content.PdfPageGotoLinkContent
 import android.graphics.pdf.content.PdfPageImageContent
@@ -42,6 +43,7 @@ import androidx.pdf.adapter.PdfDocumentRendererFactory
 import androidx.pdf.adapter.PdfDocumentRendererFactoryImpl
 import androidx.pdf.annotation.PageAnnotationsProviderImpl
 import androidx.pdf.annotation.models.PaginatedAnnotations
+import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.annotation.processor.PageAnnotationsPaginator
 import androidx.pdf.annotation.processor.PdfRendererAnnotationsProcessor
 import androidx.pdf.models.Dimensions
@@ -151,6 +153,20 @@ internal class PdfDocumentRemoteImpl(
 
     override fun getFormWidgetInfosOfType(pageNum: Int, types: IntArray): List<FormWidgetInfo>? {
         return rendererAdapter.withPage(pageNum) { page -> page.getFormWidgetInfos(types) }
+    }
+
+    override fun getTopPageObjectAtPosition(
+        pageNum: Int,
+        point: PointF,
+        types: IntArray,
+    ): PdfObject? {
+        return rendererAdapter.withPage(pageNum) { page ->
+            val topObjectResult = page.getTopPageObjectAtPosition(point, types)
+            topObjectResult?.let {
+                // TODO: b/447328448 - Convert AOSP Image PdfPageObject to Jetpack Image PdfObject
+                return@withPage null
+            }
+        }
     }
 
     override fun applyEdit(pageNum: Int, editRecord: FormEditRecord): List<Rect>? {
