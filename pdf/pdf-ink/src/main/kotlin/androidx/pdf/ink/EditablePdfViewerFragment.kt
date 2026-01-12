@@ -240,7 +240,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         object : OnAnnotationSelectedListener {
             override fun onAnnotationSelected(keyedPdfAnnotation: KeyedPdfAnnotation) {
                 if (documentViewModel.drawingMode.value == AnnotationDrawingMode.EraserMode) {
-                    // TODO: (b/473955799) Call removeAnnotation on EditableDocumentViewModel.
+                    documentViewModel.removeAnnotation(keyedPdfAnnotation.key)
                 }
             }
         }
