@@ -303,7 +303,7 @@ class PdfDocumentViewModelTest {
                     latch.countDown()
                 }
             }
-        document.addOnPdfContentInvalidatedListener(listener)
+        document.addOnPdfContentInvalidatedListener({ command -> command.run() }, listener)
 
         // Bounds in content coordinates of the widget on which the edit is applied
         val widgetArea = Rect(135, 70, 155, 90)
