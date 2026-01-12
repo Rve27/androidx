@@ -21,29 +21,21 @@
     android:animateLayoutChanges="true"
     android:padding="@dimen/padding_8dp">
 
-    <ScrollView
-        android:id="@+id/scrollable_tool_tray_container"
+    <LinearLayout
+        android:id="@+id/tool_tray"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
+        android:gravity="center"
+        android:divider="@drawable/annotation_tool_spacer"
+        android:showDividers="middle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:id="@+id/tool_tray"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:divider="@drawable/annotation_tool_spacer"
-            android:gravity="center"
-            android:showDividers="middle">
+        <!-- add in predefined tools supported -->
+        <include layout="@layout/annotation_tools" />
 
-            <!-- add in predefined tools supported -->
-            <include layout="@layout/annotation_tools" />
-
-        </LinearLayout>
-    </ScrollView>
-
+    </LinearLayout>
 
     <androidx.pdf.ink.view.tool.AnnotationToolView
         android:id="@+id/collapsed_tool"
