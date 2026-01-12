@@ -23,6 +23,7 @@ import androidx.xr.runtime.Config.ConfigMode
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.FaceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.PlaneTrackingMode
 import com.google.ar.core.Config as ArCoreConfig
 import kotlin.time.ComparableTimeMark
@@ -63,7 +64,7 @@ internal constructor(
     override fun isSupported(configMode: ConfigMode): Boolean {
         if (configMode is DepthEstimationMode) {
             return isDepthModeSupportedInArCore1x(configMode)
-        } else if (configMode is Config.GeospatialMode) {
+        } else if (configMode is GeospatialMode) {
             return isGeoSpatialModeSupportedInArCore1x(configMode)
         }
         return SUPPORTED_CONFIG_MODES.contains(configMode)
@@ -84,12 +85,10 @@ internal constructor(
         return lifecycleManager._session.isDepthModeSupported(arCoreDepthMode)
     }
 
-    private fun isGeoSpatialModeSupportedInArCore1x(
-        geospatialMode: Config.GeospatialMode
-    ): Boolean {
+    private fun isGeoSpatialModeSupportedInArCore1x(geospatialMode: GeospatialMode): Boolean {
         val arCoreGeospatialMode =
             when (geospatialMode) {
-                Config.GeospatialMode.VPS_AND_GPS -> ArCoreConfig.GeospatialMode.ENABLED
+                GeospatialMode.VPS_AND_GPS -> ArCoreConfig.GeospatialMode.ENABLED
                 else -> ArCoreConfig.GeospatialMode.DISABLED
             }
         return lifecycleManager._session.isGeospatialModeSupported(arCoreGeospatialMode)

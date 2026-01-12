@@ -89,14 +89,14 @@ class ArCoreRuntimeTest {
     fun isSupported_geospatialVpsAndGps_whenFalseIn1x_returnsFalse() = initRuntimeAndRunTest {
         whenever(mockSession.isGeospatialModeSupported(GeospatialMode.ENABLED)).thenReturn(false)
 
-        assertThat(underTest.isSupported(Config.GeospatialMode.VPS_AND_GPS)).isFalse()
+        assertThat(underTest.isSupported(androidx.xr.runtime.GeospatialMode.VPS_AND_GPS)).isFalse()
     }
 
     @Test
     fun isSupported_geospatialVpsAndGps_whenTrueIn1x_returnsTrue() = initRuntimeAndRunTest {
         whenever(mockSession.isGeospatialModeSupported(GeospatialMode.ENABLED)).thenReturn(true)
 
-        assertThat(underTest.isSupported(Config.GeospatialMode.VPS_AND_GPS)).isTrue()
+        assertThat(underTest.isSupported(androidx.xr.runtime.GeospatialMode.VPS_AND_GPS)).isTrue()
     }
 
     @Test

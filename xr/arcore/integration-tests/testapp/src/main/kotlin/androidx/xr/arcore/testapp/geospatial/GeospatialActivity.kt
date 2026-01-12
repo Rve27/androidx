@@ -61,6 +61,7 @@ import androidx.xr.arcore.testapp.helloar.rendering.PlaneRenderer
 import androidx.xr.arcore.testapp.ui.theme.GoogleYellow
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
@@ -120,10 +121,10 @@ class GeospatialActivity : ComponentActivity() {
                 ),
                 onSessionAvailable = { session ->
                     this.session = session
-                    if (session.config.geospatial == Config.GeospatialMode.DISABLED) {
-                        if (Config.GeospatialMode.VPS_AND_GPS.isSupported(session)) {
+                    if (session.config.geospatial == GeospatialMode.DISABLED) {
+                        if (GeospatialMode.VPS_AND_GPS.isSupported(session)) {
                             val newConfig =
-                                session.config.copy(geospatial = Config.GeospatialMode.VPS_AND_GPS)
+                                session.config.copy(geospatial = GeospatialMode.VPS_AND_GPS)
                             sessionHelper.tryUpdateConfig(newConfig)
                             return@SessionLifecycleHelper
                         } else {

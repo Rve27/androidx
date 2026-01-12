@@ -150,7 +150,7 @@ internal constructor(
             }
 
         arConfig.geospatialMode =
-            if (config.geospatial == Config.GeospatialMode.VPS_AND_GPS) {
+            if (config.geospatial == androidx.xr.runtime.GeospatialMode.VPS_AND_GPS) {
                 GeospatialMode.ENABLED
             } else {
                 GeospatialMode.DISABLED

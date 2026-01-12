@@ -28,6 +28,7 @@ import androidx.xr.arcore.testing.FakeLifecycleManager
 import androidx.xr.arcore.testing.FakePerceptionManager
 import androidx.xr.arcore.testing.FakeRuntimeGeospatial
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.GeospatialPose
@@ -90,7 +91,7 @@ class GeospatialTest {
                 session =
                     (Session.create(activity, coroutineDispatcher) as SessionCreateSuccess).session
                 xrResourcesManager.lifecycleManager = session.perceptionRuntime.lifecycleManager
-                session.configure(Config(geospatial = Config.GeospatialMode.VPS_AND_GPS))
+                session.configure(Config(geospatial = GeospatialMode.VPS_AND_GPS))
 
                 testBody()
             }
@@ -226,7 +227,7 @@ class GeospatialTest {
 
     @Test
     fun createPoseFromGeospatialPose_withVpsDisabled_throwsIllegalStateException() {
-        val newConfig = Config(geospatial = Config.GeospatialMode.DISABLED)
+        val newConfig = Config(geospatial = GeospatialMode.DISABLED)
         val fakeLifecycleManager = FakeLifecycleManager()
         fakeLifecycleManager.config = newConfig
         xrResourcesManager.lifecycleManager = fakeLifecycleManager

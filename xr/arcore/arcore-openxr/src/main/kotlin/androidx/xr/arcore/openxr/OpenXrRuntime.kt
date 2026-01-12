@@ -26,6 +26,7 @@ import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.DisplayBlendMode
 import androidx.xr.runtime.FaceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import kotlin.time.ComparableTimeMark
@@ -63,7 +64,7 @@ internal constructor(
     }
 
     override fun isSupported(configMode: ConfigMode): Boolean {
-        if (configMode == Config.GeospatialMode.VPS_AND_GPS) {
+        if (configMode == GeospatialMode.VPS_AND_GPS) {
             return nativeIsGeospatialSupported()
         }
         return SUPPORTED_CONFIG_MODES.contains(configMode)
@@ -95,7 +96,7 @@ internal constructor(
                 AnchorPersistenceMode.LOCAL,
                 FaceTrackingMode.DISABLED,
                 FaceTrackingMode.BLEND_SHAPES,
-                Config.GeospatialMode.DISABLED,
+                GeospatialMode.DISABLED,
                 Config.EyeTrackingMode.DISABLED,
                 Config.EyeTrackingMode.COARSE_TRACKING,
                 Config.EyeTrackingMode.FINE_TRACKING,

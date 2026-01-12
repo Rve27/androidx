@@ -24,6 +24,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
@@ -78,7 +79,7 @@ class SessionLifecycleHelper(
         if (config.planeTracking != PlaneTrackingMode.DISABLED) {
             permissions.add(ACCESS_COARSE_LOCATION)
         }
-        if (config.geospatial != Config.GeospatialMode.DISABLED) {
+        if (config.geospatial != GeospatialMode.DISABLED) {
             permissions.add(ACCESS_FINE_LOCATION)
         }
         return permissions

@@ -35,7 +35,7 @@ import androidx.annotation.RestrictTo
  * @property anchorPersistence Feature that allows anchors to be persisted through sessions. See
  *   [androidx.xr.runtime.AnchorPersistenceMode].
  * @property geospatial Feature that allows geospatial localization and tracking. See
- *   [Config.GeospatialMode].
+ *   [androidx.xr.runtime.GeospatialMode].
  */
 public class Config
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -54,7 +54,8 @@ constructor(
         androidx.xr.runtime.AnchorPersistenceMode.DISABLED,
     public val faceTracking: androidx.xr.runtime.FaceTrackingMode =
         androidx.xr.runtime.FaceTrackingMode.DISABLED,
-    public val geospatial: GeospatialMode = GeospatialMode.DISABLED,
+    public val geospatial: androidx.xr.runtime.GeospatialMode =
+        androidx.xr.runtime.GeospatialMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val eyeTracking: EyeTrackingMode = EyeTrackingMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -81,7 +82,7 @@ constructor(
      * @param faceTracking Feature that allows tracking of human faces. See
      *   [androidx.xr.runtime.FaceTrackingMode].
      * @param geospatial Feature that allows geospatial localization and tracking. See
-     *   [Config.GeospatialMode].
+     *   [androidx.xr.runtime.GeospatialMode].
      */
     @JvmOverloads
     public constructor(
@@ -97,7 +98,7 @@ constructor(
             androidx.xr.runtime.AnchorPersistenceMode.DISABLED,
         faceTracking: androidx.xr.runtime.FaceTrackingMode =
             androidx.xr.runtime.FaceTrackingMode.DISABLED,
-        geospatial: GeospatialMode = GeospatialMode.DISABLED,
+        geospatial: androidx.xr.runtime.GeospatialMode = androidx.xr.runtime.GeospatialMode.DISABLED,
     ) : this(
         planeTracking,
         /* augmentedObjectCategories= */ listOf(),
@@ -173,7 +174,7 @@ constructor(
         depthEstimation: androidx.xr.runtime.DepthEstimationMode = this.depthEstimation,
         anchorPersistence: androidx.xr.runtime.AnchorPersistenceMode = this.anchorPersistence,
         faceTracking: androidx.xr.runtime.FaceTrackingMode = this.faceTracking,
-        geospatial: GeospatialMode = this.geospatial,
+        geospatial: androidx.xr.runtime.GeospatialMode = this.geospatial,
         augmentedObjectCategories: List<AugmentedObjectCategory> = this.augmentedObjectCategories,
         eyeTracking: EyeTrackingMode = this.eyeTracking,
         cameraFacingDirection: CameraFacingDirection = this.cameraFacingDirection,
@@ -458,10 +459,15 @@ constructor(
      * Note that setting this mode will consume additional runtime resources.
      */
     @SuppressWarnings("HiddenSuperclass")
+    @Deprecated(
+        "Use androidx.xr.runtime.GeospatialMode instead.",
+        replaceWith = ReplaceWith("androidx.xr.runtime.GeospatialMode"),
+    )
     public class GeospatialMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
     ) : ConfigMode {
+        @Suppress("DEPRECATION")
         public companion object {
             /**
              * The Geospatial API is disabled. When GeospatialMode is disabled, current `Anchor`
@@ -511,10 +517,6 @@ constructor(
              * - [CAMERA][android.Manifest.permission.CAMERA] (Play Services runtimes only)
              */
             @JvmField public val VPS_AND_GPS: GeospatialMode = GeospatialMode(1)
-        }
-
-        override fun toString(): String {
-            return "Geospatial_" + if (mode == 0) "DISABLED" else "VPS_AND_GPS"
         }
     }
 

@@ -27,6 +27,7 @@ import android.os.IBinder
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.internal.LifecycleManager
@@ -99,13 +100,13 @@ internal constructor(
         // The service is required if tracking or geospatial are enabled.
         // I.E. if no features are needed from the service we don't require it.
         return config.deviceTracking == DeviceTrackingMode.LAST_KNOWN ||
-            config.geospatial == Config.GeospatialMode.VPS_AND_GPS
+            config.geospatial == GeospatialMode.VPS_AND_GPS
     }
 
     override fun configure(config: Config) {
         if (
             config.deviceTracking == DeviceTrackingMode.DISABLED &&
-                config.geospatial == Config.GeospatialMode.VPS_AND_GPS
+                config.geospatial == GeospatialMode.VPS_AND_GPS
         ) {
             throw UnsupportedOperationException(
                 "Geospatial mode is not supported when device tracking is disabled."
@@ -174,7 +175,7 @@ internal constructor(
         val serviceConfig = ProjectedConfig()
         // TODO: b/452091636 - Remove hardcoded config" so we remember to address this.
         // TODO: b/455872882 - Currently, Geo is not compatible with 3DoF tracking stack.
-        if (config.geospatial == Config.GeospatialMode.VPS_AND_GPS) {
+        if (config.geospatial == GeospatialMode.VPS_AND_GPS) {
             serviceConfig.geospatialMode = ProjectedGeospatialMode.ENABLED
             serviceConfig.trackingMode = ProjectedTrackingMode.PROJECTED_TRACKING_6DOF
         } else {
