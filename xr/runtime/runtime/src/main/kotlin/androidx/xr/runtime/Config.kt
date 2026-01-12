@@ -111,6 +111,292 @@ constructor(
         eyeTracking = EyeTrackingMode.DISABLED,
     )
 
+    /**
+     * Defines a configuration state of all available features to be set at runtime.
+     *
+     * An instance of this class should be passed to [Session.configure] to set the current
+     * configuration. Use [Config.copy] on [Session.config] to modify a copy of the existing
+     * configuration to pass to [Session.configure].
+     *
+     * @param planeTracking Feature that allows tracking of and provides information about scene
+     *   planes. See [Config.PlaneTrackingMode].
+     */
+    @Deprecated(
+        "Use the constructor with androidx.xr.runtime.* ConfigMode classes instead.",
+        replaceWith = ReplaceWith("Config(" + "planeTracking = planeTracking.toNewType(), " + ")"),
+    )
+    @Suppress("DEPRECATION")
+    public constructor(
+        planeTracking: Config.PlaneTrackingMode
+    ) : this(planeTracking = planeTracking.toNewType(), augmentedObjectCategories = listOf())
+
+    /**
+     * Defines a configuration state of all available features to be set at runtime.
+     *
+     * An instance of this class should be passed to [Session.configure] to set the current
+     * configuration. Use [Config.copy] on [Session.config] to modify a copy of the existing
+     * configuration to pass to [Session.configure].
+     *
+     * @param planeTracking Feature that allows tracking of and provides information about scene
+     *   planes. See [Config.PlaneTrackingMode].
+     * @param handTracking Feature that allows tracking of the user's hands and hand joints. See
+     *   [Config.HandTrackingMode].
+     */
+    @Deprecated(
+        "Use the constructor with androidx.xr.runtime.* ConfigMode classes instead.",
+        replaceWith =
+            ReplaceWith(
+                "Config(" +
+                    "planeTracking = planeTracking.toNewType(), " +
+                    "handTracking = handTracking.toNewType(), " +
+                    ")"
+            ),
+    )
+    @Suppress("DEPRECATION")
+    public constructor(
+        planeTracking: Config.PlaneTrackingMode,
+        handTracking: Config.HandTrackingMode,
+    ) : this(
+        planeTracking = planeTracking.toNewType(),
+        augmentedObjectCategories = listOf(),
+        handTracking = handTracking.toNewType(),
+    )
+
+    /**
+     * Defines a configuration state of all available features to be set at runtime.
+     *
+     * An instance of this class should be passed to [Session.configure] to set the current
+     * configuration. Use [Config.copy] on [Session.config] to modify a copy of the existing
+     * configuration to pass to [Session.configure].
+     *
+     * @param planeTracking Feature that allows tracking of and provides information about scene
+     *   planes. See [Config.PlaneTrackingMode].
+     * @param handTracking Feature that allows tracking of the user's hands and hand joints. See
+     *   [Config.HandTrackingMode].
+     * @param deviceTracking Feature that allows tracking of the AR device. See
+     *   [Config.DeviceTrackingMode].
+     */
+    @Deprecated(
+        "Use the constructor with androidx.xr.runtime.* ConfigMode classes instead.",
+        replaceWith =
+            ReplaceWith(
+                "Config(" +
+                    "planeTracking = planeTracking.toNewType(), " +
+                    "handTracking = handTracking.toNewType(), " +
+                    "deviceTracking = deviceTracking.toNewType(), " +
+                    ")"
+            ),
+    )
+    @Suppress("DEPRECATION")
+    public constructor(
+        planeTracking: Config.PlaneTrackingMode,
+        handTracking: Config.HandTrackingMode,
+        deviceTracking: Config.DeviceTrackingMode,
+    ) : this(
+        planeTracking = planeTracking.toNewType(),
+        augmentedObjectCategories = listOf(),
+        handTracking = handTracking.toNewType(),
+        deviceTracking = deviceTracking.toNewType(),
+    )
+
+    /**
+     * Defines a configuration state of all available features to be set at runtime.
+     *
+     * An instance of this class should be passed to [Session.configure] to set the current
+     * configuration. Use [Config.copy] on [Session.config] to modify a copy of the existing
+     * configuration to pass to [Session.configure].
+     *
+     * @param planeTracking Feature that allows tracking of and provides information about scene
+     *   planes. See [Config.PlaneTrackingMode].
+     * @param handTracking Feature that allows tracking of the user's hands and hand joints. See
+     *   [Config.HandTrackingMode].
+     * @param deviceTracking Feature that allows tracking of the AR device. See
+     *   [Config.DeviceTrackingMode].
+     * @param depthEstimation Feature that allows more accurate information about scene depth and
+     *   meshes. See [Config.DepthEstimationMode].
+     */
+    @Deprecated(
+        "Use the constructor with androidx.xr.runtime.* ConfigMode classes instead.",
+        replaceWith =
+            ReplaceWith(
+                "Config(" +
+                    "planeTracking = planeTracking.toNewType(), " +
+                    "handTracking = handTracking.toNewType(), " +
+                    "deviceTracking = deviceTracking.toNewType(), " +
+                    "depthEstimation = depthEstimation.toNewType(), " +
+                    ")"
+            ),
+    )
+    @Suppress("DEPRECATION")
+    public constructor(
+        planeTracking: Config.PlaneTrackingMode,
+        handTracking: Config.HandTrackingMode,
+        deviceTracking: Config.DeviceTrackingMode,
+        depthEstimation: Config.DepthEstimationMode,
+    ) : this(
+        planeTracking = planeTracking.toNewType(),
+        augmentedObjectCategories = listOf(),
+        handTracking = handTracking.toNewType(),
+        deviceTracking = deviceTracking.toNewType(),
+        depthEstimation = depthEstimation.toNewType(),
+    )
+
+    /**
+     * Defines a configuration state of all available features to be set at runtime.
+     *
+     * An instance of this class should be passed to [Session.configure] to set the current
+     * configuration. Use [Config.copy] on [Session.config] to modify a copy of the existing
+     * configuration to pass to [Session.configure].
+     *
+     * @param planeTracking Feature that allows tracking of and provides information about scene
+     *   planes. See [Config.PlaneTrackingMode].
+     * @param handTracking Feature that allows tracking of the user's hands and hand joints. See
+     *   [Config.HandTrackingMode].
+     * @param deviceTracking Feature that allows tracking of the AR device. See
+     *   [Config.DeviceTrackingMode].
+     * @param depthEstimation Feature that allows more accurate information about scene depth and
+     *   meshes. See [Config.DepthEstimationMode].
+     * @param anchorPersistence Feature that allows anchors to be persisted through sessions. See
+     *   [Config.AnchorPersistenceMode].
+     */
+    @Deprecated(
+        "Use the constructor with androidx.xr.runtime.* ConfigMode classes instead.",
+        replaceWith =
+            ReplaceWith(
+                "Config(" +
+                    "planeTracking = planeTracking.toNewType(), " +
+                    "handTracking = handTracking.toNewType(), " +
+                    "deviceTracking = deviceTracking.toNewType(), " +
+                    "depthEstimation = depthEstimation.toNewType(), " +
+                    "anchorPersistence = anchorPersistence.toNewType(), " +
+                    ")"
+            ),
+    )
+    @Suppress("DEPRECATION")
+    public constructor(
+        planeTracking: Config.PlaneTrackingMode,
+        handTracking: Config.HandTrackingMode,
+        deviceTracking: Config.DeviceTrackingMode,
+        depthEstimation: Config.DepthEstimationMode,
+        anchorPersistence: Config.AnchorPersistenceMode,
+    ) : this(
+        planeTracking = planeTracking.toNewType(),
+        augmentedObjectCategories = listOf(),
+        handTracking = handTracking.toNewType(),
+        deviceTracking = deviceTracking.toNewType(),
+        depthEstimation = depthEstimation.toNewType(),
+        anchorPersistence = anchorPersistence.toNewType(),
+    )
+
+    /**
+     * Defines a configuration state of all available features to be set at runtime.
+     *
+     * An instance of this class should be passed to [Session.configure] to set the current
+     * configuration. Use [Config.copy] on [Session.config] to modify a copy of the existing
+     * configuration to pass to [Session.configure].
+     *
+     * @param planeTracking Feature that allows tracking of and provides information about scene
+     *   planes. See [Config.PlaneTrackingMode].
+     * @param handTracking Feature that allows tracking of the user's hands and hand joints. See
+     *   [Config.HandTrackingMode].
+     * @param deviceTracking Feature that allows tracking of the AR device. See
+     *   [Config.DeviceTrackingMode].
+     * @param depthEstimation Feature that allows more accurate information about scene depth and
+     *   meshes. See [Config.DepthEstimationMode].
+     * @param anchorPersistence Feature that allows anchors to be persisted through sessions. See
+     *   [Config.AnchorPersistenceMode].
+     * @param faceTracking Feature that allows tracking of human faces. See
+     *   [Config.FaceTrackingMode].
+     */
+    @Deprecated(
+        "Use the constructor with androidx.xr.runtime.* ConfigMode classes instead.",
+        replaceWith =
+            ReplaceWith(
+                "Config(" +
+                    "planeTracking = planeTracking.toNewType(), " +
+                    "handTracking = handTracking.toNewType(), " +
+                    "deviceTracking = deviceTracking.toNewType(), " +
+                    "depthEstimation = depthEstimation.toNewType(), " +
+                    "anchorPersistence = anchorPersistence.toNewType(), " +
+                    "faceTracking = faceTracking.toNewType(), " +
+                    ")"
+            ),
+    )
+    @Suppress("DEPRECATION")
+    public constructor(
+        planeTracking: Config.PlaneTrackingMode,
+        handTracking: Config.HandTrackingMode,
+        deviceTracking: Config.DeviceTrackingMode,
+        depthEstimation: Config.DepthEstimationMode,
+        anchorPersistence: Config.AnchorPersistenceMode,
+        faceTracking: Config.FaceTrackingMode,
+    ) : this(
+        planeTracking = planeTracking.toNewType(),
+        augmentedObjectCategories = listOf(),
+        handTracking = handTracking.toNewType(),
+        deviceTracking = deviceTracking.toNewType(),
+        depthEstimation = depthEstimation.toNewType(),
+        anchorPersistence = anchorPersistence.toNewType(),
+        faceTracking = faceTracking.toNewType(),
+    )
+
+    /**
+     * Defines a configuration state of all available features to be set at runtime.
+     *
+     * An instance of this class should be passed to [Session.configure] to set the current
+     * configuration. Use [Config.copy] on [Session.config] to modify a copy of the existing
+     * configuration to pass to [Session.configure].
+     *
+     * @param planeTracking Feature that allows tracking of and provides information about scene
+     *   planes. See [Config.PlaneTrackingMode].
+     * @param handTracking Feature that allows tracking of the user's hands and hand joints. See
+     *   [Config.HandTrackingMode].
+     * @param deviceTracking Feature that allows tracking of the AR device. See
+     *   [Config.DeviceTrackingMode].
+     * @param depthEstimation Feature that allows more accurate information about scene depth and
+     *   meshes. See [Config.DepthEstimationMode].
+     * @param anchorPersistence Feature that allows anchors to be persisted through sessions. See
+     *   [Config.AnchorPersistenceMode].
+     * @param faceTracking Feature that allows tracking of human faces. See
+     *   [Config.FaceTrackingMode].
+     * @param geospatial Feature that allows geospatial localization and tracking. See
+     *   [Config.GeospatialMode].
+     */
+    @Deprecated(
+        "Use the constructor with androidx.xr.runtime.* ConfigMode classes instead.",
+        replaceWith =
+            ReplaceWith(
+                "Config(" +
+                    "planeTracking = planeTracking.toNewType(), " +
+                    "handTracking = handTracking.toNewType(), " +
+                    "deviceTracking = deviceTracking.toNewType(), " +
+                    "depthEstimation = depthEstimation.toNewType(), " +
+                    "anchorPersistence = anchorPersistence.toNewType(), " +
+                    "faceTracking = faceTracking.toNewType(), " +
+                    "geospatial = geospatial.toNewType()" +
+                    ")"
+            ),
+    )
+    @Suppress("DEPRECATION")
+    public constructor(
+        planeTracking: Config.PlaneTrackingMode,
+        handTracking: Config.HandTrackingMode,
+        deviceTracking: Config.DeviceTrackingMode,
+        depthEstimation: Config.DepthEstimationMode,
+        anchorPersistence: Config.AnchorPersistenceMode,
+        faceTracking: Config.FaceTrackingMode,
+        geospatial: Config.GeospatialMode,
+    ) : this(
+        planeTracking = planeTracking.toNewType(),
+        augmentedObjectCategories = listOf(),
+        handTracking = handTracking.toNewType(),
+        deviceTracking = deviceTracking.toNewType(),
+        depthEstimation = depthEstimation.toNewType(),
+        anchorPersistence = anchorPersistence.toNewType(),
+        faceTracking = faceTracking.toNewType(),
+        geospatial = geospatial.toNewType(),
+    )
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Config) return false
@@ -194,7 +480,7 @@ constructor(
     }
 
     /** Describes a specific value used to set the configuration via [Session.configure]. */
-    public interface ConfigMode {
+    public abstract class ConfigMode {
         /**
          * Queries whether the [ConfigMode] is supported and is available to be configured for the
          * [session] via [Session.configure]. Attempting to configure this [ConfigMode] if it is not
@@ -203,13 +489,12 @@ constructor(
          * @param session the [Session] to check support for.
          * @return true if supported, else false.
          */
-        public fun isSupported(session: Session): Boolean {
+        internal fun isSupported(session: Session): Boolean {
             return session.runtimes.map { it.isSupported(this) }.contains(true)
         }
     }
 
     /** Feature that allows tracking of and provides information about scene planes. */
-    @SuppressWarnings("HiddenSuperclass")
     @Deprecated(
         "Use androidx.xr.runtime.PlaneTrackingMode instead.",
         replaceWith = ReplaceWith("androidx.xr.runtime.PlaneTrackingMode"),
@@ -217,7 +502,7 @@ constructor(
     public class PlaneTrackingMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
-    ) : ConfigMode {
+    ) : ConfigMode() {
         @Suppress("DEPRECATION")
         public companion object {
             /** Planes will not be tracked. */
@@ -239,10 +524,18 @@ constructor(
              */
             @JvmField public val HORIZONTAL_AND_VERTICAL: PlaneTrackingMode = PlaneTrackingMode(1)
         }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun toNewType(): androidx.xr.runtime.PlaneTrackingMode =
+            when (this) {
+                DISABLED -> androidx.xr.runtime.PlaneTrackingMode.DISABLED
+                HORIZONTAL_AND_VERTICAL ->
+                    androidx.xr.runtime.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL
+                else -> androidx.xr.runtime.PlaneTrackingMode.DISABLED
+            }
     }
 
     /** Feature that allows tracking of the user's hands and hand joints. */
-    @SuppressWarnings("HiddenSuperclass")
     @Deprecated(
         "Use androidx.xr.runtime.HandTrackingMode instead.",
         replaceWith = ReplaceWith("androidx.xr.runtime.HandTrackingMode"),
@@ -250,7 +543,7 @@ constructor(
     public class HandTrackingMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
-    ) : ConfigMode {
+    ) : ConfigMode() {
         @Suppress("DEPRECATION")
         public companion object {
             /** Hands will not be tracked. */
@@ -267,10 +560,17 @@ constructor(
              */
             @JvmField public val BOTH: HandTrackingMode = HandTrackingMode(1)
         }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun toNewType(): androidx.xr.runtime.HandTrackingMode =
+            when (this) {
+                DISABLED -> androidx.xr.runtime.HandTrackingMode.DISABLED
+                BOTH -> androidx.xr.runtime.HandTrackingMode.BOTH
+                else -> androidx.xr.runtime.HandTrackingMode.DISABLED
+            }
     }
 
     /** Feature that allows tracking of the AR device. */
-    @SuppressWarnings("HiddenSuperclass")
     @Deprecated(
         "Use androidx.xr.runtime.DeviceTrackingMode instead.",
         replaceWith = ReplaceWith("androidx.xr.runtime.DeviceTrackingMode"),
@@ -278,7 +578,7 @@ constructor(
     public class DeviceTrackingMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
-    ) : ConfigMode {
+    ) : ConfigMode() {
         @Suppress("DEPRECATION")
         public companion object {
             /**
@@ -301,10 +601,17 @@ constructor(
              */
             @JvmField public val LAST_KNOWN: DeviceTrackingMode = DeviceTrackingMode(1)
         }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun toNewType(): androidx.xr.runtime.DeviceTrackingMode =
+            when (this) {
+                DISABLED -> androidx.xr.runtime.DeviceTrackingMode.DISABLED
+                LAST_KNOWN -> androidx.xr.runtime.DeviceTrackingMode.LAST_KNOWN
+                else -> androidx.xr.runtime.DeviceTrackingMode.DISABLED
+            }
     }
 
     /** Feature that allows more accurate information about scene depth and meshes. */
-    @SuppressWarnings("HiddenSuperclass")
     @Deprecated(
         "Use androidx.xr.runtime.DepthEstimationMode instead.",
         replaceWith = ReplaceWith("androidx.xr.runtime.DepthEstimationMode"),
@@ -312,7 +619,7 @@ constructor(
     public class DepthEstimationMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
-    ) : ConfigMode {
+    ) : ConfigMode() {
         @Suppress("DEPRECATION")
         public companion object {
             /** No information about scene depth will be provided. */
@@ -361,10 +668,19 @@ constructor(
              */
             @JvmField public val SMOOTH_AND_RAW: DepthEstimationMode = DepthEstimationMode(3)
         }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun toNewType(): androidx.xr.runtime.DepthEstimationMode =
+            when (this) {
+                DISABLED -> androidx.xr.runtime.DepthEstimationMode.DISABLED
+                RAW_ONLY -> androidx.xr.runtime.DepthEstimationMode.RAW_ONLY
+                SMOOTH_ONLY -> androidx.xr.runtime.DepthEstimationMode.SMOOTH_ONLY
+                SMOOTH_AND_RAW -> androidx.xr.runtime.DepthEstimationMode.SMOOTH_AND_RAW
+                else -> androidx.xr.runtime.DepthEstimationMode.DISABLED
+            }
     }
 
     /** Feature that allows anchors to be persisted through sessions. */
-    @SuppressWarnings("HiddenSuperclass")
     @Deprecated(
         "Use androidx.xr.runtime.AnchorPersistenceMode instead.",
         replaceWith = ReplaceWith("androidx.xr.runtime.AnchorPersistenceMode"),
@@ -372,7 +688,7 @@ constructor(
     public class AnchorPersistenceMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
-    ) : ConfigMode {
+    ) : ConfigMode() {
         @Suppress("DEPRECATION")
         public companion object {
             /** Anchors cannot be persisted. */
@@ -387,6 +703,14 @@ constructor(
              */
             @JvmField public val LOCAL: AnchorPersistenceMode = AnchorPersistenceMode(1)
         }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun toNewType(): androidx.xr.runtime.AnchorPersistenceMode =
+            when (this) {
+                DISABLED -> androidx.xr.runtime.AnchorPersistenceMode.DISABLED
+                LOCAL -> androidx.xr.runtime.AnchorPersistenceMode.LOCAL
+                else -> androidx.xr.runtime.AnchorPersistenceMode.DISABLED
+            }
     }
 
     /**
@@ -398,7 +722,6 @@ constructor(
      * Setting this feature to [FaceTrackingMode.MESHES] requires the `CAMERA` Android permission to
      * be granted and that [CameraFacingDirection] is set to [CameraFacingDirection.USER].
      */
-    @SuppressWarnings("HiddenSuperclass")
     @Deprecated(
         "Use androidx.xr.runtime.FaceTrackingMode instead.",
         replaceWith = ReplaceWith("androidx.xr.runtime.FaceTrackingMode"),
@@ -406,7 +729,7 @@ constructor(
     public class FaceTrackingMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
-    ) : ConfigMode {
+    ) : ConfigMode() {
         @Suppress("DEPRECATION")
         public companion object {
             /** Faces will not be tracked. */
@@ -436,6 +759,15 @@ constructor(
             @JvmField
             public val MESHES: FaceTrackingMode = FaceTrackingMode(2)
         }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun toNewType(): androidx.xr.runtime.FaceTrackingMode =
+            when (this) {
+                DISABLED -> androidx.xr.runtime.FaceTrackingMode.DISABLED
+                BLEND_SHAPES -> androidx.xr.runtime.FaceTrackingMode.BLEND_SHAPES
+                MESHES -> androidx.xr.runtime.FaceTrackingMode.MESHES
+                else -> androidx.xr.runtime.FaceTrackingMode.DISABLED
+            }
     }
 
     /**
@@ -458,7 +790,6 @@ constructor(
      *
      * Note that setting this mode will consume additional runtime resources.
      */
-    @SuppressWarnings("HiddenSuperclass")
     @Deprecated(
         "Use androidx.xr.runtime.GeospatialMode instead.",
         replaceWith = ReplaceWith("androidx.xr.runtime.GeospatialMode"),
@@ -466,7 +797,7 @@ constructor(
     public class GeospatialMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
-    ) : ConfigMode {
+    ) : ConfigMode() {
         @Suppress("DEPRECATION")
         public companion object {
             /**
@@ -518,5 +849,13 @@ constructor(
              */
             @JvmField public val VPS_AND_GPS: GeospatialMode = GeospatialMode(1)
         }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun toNewType(): androidx.xr.runtime.GeospatialMode =
+            when (this) {
+                DISABLED -> androidx.xr.runtime.GeospatialMode.DISABLED
+                VPS_AND_GPS -> androidx.xr.runtime.GeospatialMode.VPS_AND_GPS
+                else -> androidx.xr.runtime.GeospatialMode.DISABLED
+            }
     }
 }
