@@ -14,15 +14,13 @@
   limitations under the License.
   -->
 
-<androidx.pdf.ink.view.AnnotationToolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/annotationToolbar"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/margin_12dp"
-    android:background="@drawable/annotation_toolbar_background"
-    android:clickable="true"
-    android:focusable="true"
-    android:elevation="@dimen/annotation_toolbar_elevation"
-    android:padding="@dimen/padding_8dp"
-    android:layout_gravity="bottom|center_horizontal"/>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="16dp" />
+    <solid android:color="?attr/colorSurfaceContainerLow" />
+    <stroke
+        android:width="2dp"
+        android:color="?attr/colorOutlineVariant"
+        android:dashGap="5dp"
+        android:dashWidth="10dp" />
+</shape>
