@@ -31,6 +31,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.xr.arcore.ArDevice
 import androidx.xr.arcore.RenderViewpoint
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
@@ -83,7 +84,7 @@ class SpatialUserActivity : AppCompatActivity() {
 
         session!!.configure(
             Config(
-                planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                 deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
             )
         )

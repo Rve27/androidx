@@ -25,7 +25,7 @@ import androidx.annotation.RestrictTo
  * configuration to pass to [Session.configure].
  *
  * @property planeTracking Feature that allows tracking of and provides information about scene
- *   planes. See [Config.PlaneTrackingMode].
+ *   planes. See [androidx.xr.runtime.PlaneTrackingMode].
  * @property handTracking Feature that allows tracking of the user's hands and hand joints. See
  *   [Config.HandTrackingMode].
  * @property deviceTracking Feature that allows tracking of the AR device. See
@@ -40,7 +40,8 @@ import androidx.annotation.RestrictTo
 public class Config
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 constructor(
-    public val planeTracking: PlaneTrackingMode = PlaneTrackingMode.DISABLED,
+    public val planeTracking: androidx.xr.runtime.PlaneTrackingMode =
+        androidx.xr.runtime.PlaneTrackingMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val augmentedObjectCategories: List<AugmentedObjectCategory> = listOf(),
     public val handTracking: HandTrackingMode = HandTrackingMode.DISABLED,
@@ -63,7 +64,7 @@ constructor(
      * configuration to pass to [Session.configure].
      *
      * @param planeTracking Feature that allows tracking of and provides information about scene
-     *   planes. See [Config.PlaneTrackingMode].
+     *   planes. See [androidx.xr.runtime.PlaneTrackingMode].
      * @param handTracking Feature that allows tracking of the user's hands and hand joints. See
      *   [Config.HandTrackingMode].
      * @param deviceTracking Feature that allows tracking of the AR device. See
@@ -79,7 +80,8 @@ constructor(
      */
     @JvmOverloads
     public constructor(
-        planeTracking: PlaneTrackingMode = PlaneTrackingMode.DISABLED,
+        planeTracking: androidx.xr.runtime.PlaneTrackingMode =
+            androidx.xr.runtime.PlaneTrackingMode.DISABLED,
         handTracking: HandTrackingMode = HandTrackingMode.DISABLED,
         deviceTracking: DeviceTrackingMode = DeviceTrackingMode.DISABLED,
         depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
@@ -132,7 +134,7 @@ constructor(
 
     @JvmOverloads
     public fun copy(
-        planeTracking: PlaneTrackingMode = this.planeTracking,
+        planeTracking: androidx.xr.runtime.PlaneTrackingMode = this.planeTracking,
         handTracking: HandTrackingMode = this.handTracking,
         deviceTracking: DeviceTrackingMode = this.deviceTracking,
         depthEstimation: DepthEstimationMode = this.depthEstimation,
@@ -155,7 +157,7 @@ constructor(
     @Suppress("MissingJvmstatic")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun copy(
-        planeTracking: PlaneTrackingMode = this.planeTracking,
+        planeTracking: androidx.xr.runtime.PlaneTrackingMode = this.planeTracking,
         handTracking: HandTrackingMode = this.handTracking,
         deviceTracking: DeviceTrackingMode = this.deviceTracking,
         depthEstimation: DepthEstimationMode = this.depthEstimation,
@@ -197,10 +199,15 @@ constructor(
 
     /** Feature that allows tracking of and provides information about scene planes. */
     @SuppressWarnings("HiddenSuperclass")
+    @Deprecated(
+        "Use androidx.xr.runtime.PlaneTrackingMode instead.",
+        replaceWith = ReplaceWith("androidx.xr.runtime.PlaneTrackingMode"),
+    )
     public class PlaneTrackingMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
     ) : ConfigMode {
+        @Suppress("DEPRECATION")
         public companion object {
             /** Planes will not be tracked. */
             @JvmField public val DISABLED: PlaneTrackingMode = PlaneTrackingMode(0)
@@ -220,10 +227,6 @@ constructor(
              * - [CAMERA][android.Manifest.permission.CAMERA] (Play Services runtimes only)
              */
             @JvmField public val HORIZONTAL_AND_VERTICAL: PlaneTrackingMode = PlaneTrackingMode(1)
-        }
-
-        override fun toString(): String {
-            return "PlaneTracking_" + if (mode == 0) "DISABLED" else "HORIZONTAL_AND_VERTICAL"
         }
     }
 

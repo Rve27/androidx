@@ -22,6 +22,7 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Log
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
 import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
 import androidx.xr.runtime.internal.ApkNotInstalledException
@@ -113,7 +114,7 @@ internal constructor(
         }
 
         arConfig.planeFindingMode =
-            if (config.planeTracking == Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL) {
+            if (config.planeTracking == PlaneTrackingMode.HORIZONTAL_AND_VERTICAL) {
                 PlaneFindingMode.HORIZONTAL_AND_VERTICAL
             } else {
                 PlaneFindingMode.DISABLED

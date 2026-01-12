@@ -20,6 +20,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
+import androidx.xr.runtime.PlaneTrackingMode
 import com.google.ar.core.Config as ArCoreConfig
 import kotlin.time.ComparableTimeMark
 
@@ -102,8 +103,8 @@ internal constructor(
                 Config.DeviceTrackingMode.LAST_KNOWN,
                 Config.FaceTrackingMode.DISABLED,
                 Config.FaceTrackingMode.MESHES,
-                Config.PlaneTrackingMode.DISABLED,
-                Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                PlaneTrackingMode.DISABLED,
+                PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
             )
     }
 }

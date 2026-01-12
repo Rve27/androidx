@@ -67,6 +67,7 @@ import androidx.xr.arcore.playservices.UnsupportedArCoreCompatApi
 import androidx.xr.arcore.playservices.cameraState
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Log
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Ray
@@ -96,7 +97,7 @@ class GeospatialActivity : ComponentActivity(), DefaultLifecycleObserver {
                 this,
                 config =
                     Config(
-                        planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                        planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                         deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
                         geospatial = Config.GeospatialMode.VPS_AND_GPS,
                     ),

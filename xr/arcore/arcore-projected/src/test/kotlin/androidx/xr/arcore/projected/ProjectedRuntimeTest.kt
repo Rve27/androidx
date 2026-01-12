@@ -18,6 +18,7 @@ package androidx.xr.arcore.projected
 
 import android.app.Activity
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.PlaneTrackingMode
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import org.junit.Before
@@ -60,7 +61,7 @@ class ProjectedRuntimeTest {
     fun isSupported_unsupportedModes_returnsFalse() {
         val unsupportedModes =
             listOf(
-                Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                 Config.HandTrackingMode.BOTH,
                 Config.DeviceTrackingMode.LAST_KNOWN,
                 Config.DepthEstimationMode.RAW_ONLY,
