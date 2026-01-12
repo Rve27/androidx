@@ -34,6 +34,7 @@ import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormWidgetInfo
+import java.util.concurrent.Executor
 import kotlin.random.Random
 
 /**
@@ -76,7 +77,8 @@ internal open class FakePdfDocument(
     }
 
     override fun addOnPdfContentInvalidatedListener(
-        listener: PdfDocument.OnPdfContentInvalidatedListener
+        executor: Executor,
+        listener: PdfDocument.OnPdfContentInvalidatedListener,
     ) {
         TODO("Not yet implemented")
     }

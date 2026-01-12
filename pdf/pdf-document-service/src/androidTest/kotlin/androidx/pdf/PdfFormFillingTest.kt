@@ -28,9 +28,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -839,6 +844,39 @@ class PdfFormFillingTest {
         verifyApplyEditThrowsException(TEXT_FORM, setChoiceOnTF)
     }
 
+    @Test
+    fun pdfContentInvalidatedListener_calledOnCorrectExecutorThread() = runTest {
+        withEditableDocument(CLICK_FORM) { document ->
+            var listenerThread: Thread? = null
+            val listenerLatch = CountDownLatch(1)
+
+            val callingThread: Thread = Thread.currentThread()
+            val customThreadName = "CustomThread"
+
+            val customExecutor =
+                Executors.newSingleThreadExecutor { command -> Thread(command, customThreadName) }
+
+            document.addOnPdfContentInvalidatedListener(
+                customExecutor,
+                object : PdfDocument.OnPdfContentInvalidatedListener {
+                    override fun onPdfContentInvalidated(pageNumber: Int, dirtyAreas: List<Rect>) {
+                        listenerThread = Thread.currentThread()
+                        listenerLatch.countDown()
+                    }
+                },
+            )
+            val clickPoint = PdfPoint(pageNum = 0, x = 145f, y = 80f)
+            val editRec = FormEditInfo.createClick(1, clickPoint = clickPoint)
+
+            document.applyEdit(editRec)
+
+            assertTrue(listenerLatch.await(5, TimeUnit.SECONDS))
+            assertNotEquals(callingThread, listenerThread)
+            assertEquals(listenerThread?.name, customThreadName)
+            customExecutor.shutdown()
+        }
+    }
+
     companion object {
         private const val CLICK_FORM = "click_form.pdf"
         private const val TEXT_FORM = "text_form.pdf"
@@ -892,6 +930,7 @@ class PdfFormFillingTest {
         ) {
             withEditableDocument(fileName) { document ->
                 document.addOnPdfContentInvalidatedListener(
+                    { command -> command.run() },
                     object : PdfDocument.OnPdfContentInvalidatedListener {
                         override fun onPdfContentInvalidated(
                             pageNumber: Int,
@@ -899,7 +938,7 @@ class PdfFormFillingTest {
                         ) {
                             assertThat(fullyContains(expectedDirtyArea, dirtyAreas)).isTrue()
                         }
-                    }
+                    },
                 )
                 val formWidgetInfos =
                     document.getFormWidgetInfos(pageNum, intArrayOf(before.widgetType))

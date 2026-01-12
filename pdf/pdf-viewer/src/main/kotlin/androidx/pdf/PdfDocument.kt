@@ -33,6 +33,7 @@ import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.models.FormWidgetInfo
 import java.io.Closeable
+import java.util.concurrent.Executor
 import kotlinx.coroutines.CancellationException
 
 /** Represents a PDF document and provides methods to interact with its content. */
@@ -216,9 +217,26 @@ public interface PdfDocument : Closeable {
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public fun addOnPdfContentInvalidatedListener(listener: OnPdfContentInvalidatedListener)
+    /**
+     * Adds a listener to receive notifications when some regions of the pdf content are
+     * invalidated.
+     *
+     * @param executor The executor on which the listener's methods will be called.
+     * @param listener The listener to add.
+     * @see [OnPdfContentInvalidatedListener]
+     */
+    public fun addOnPdfContentInvalidatedListener(
+        executor: Executor,
+        listener: OnPdfContentInvalidatedListener,
+    )
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
+    /**
+     * Removes the listener from the list of listeners which are notified when some regions of the
+     * pdf content are invalidated.
+     *
+     * @param listener The listener to remove.
+     */
     public fun removeOnPdfContentInvalidatedListener(listener: OnPdfContentInvalidatedListener)
 
     /**
