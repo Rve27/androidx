@@ -25,6 +25,7 @@ import androidx.xr.runtime.Config.ConfigMode
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.DisplayBlendMode
+import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import kotlin.time.ComparableTimeMark
@@ -87,7 +88,7 @@ internal constructor(
                 DeviceTrackingMode.DISABLED,
                 DepthEstimationMode.DISABLED,
                 AnchorPersistenceMode.DISABLED,
-                Config.FaceTrackingMode.DISABLED,
+                FaceTrackingMode.DISABLED,
                 Config.GeospatialMode.DISABLED,
                 Config.GeospatialMode.VPS_AND_GPS,
                 Config.EyeTrackingMode.DISABLED,

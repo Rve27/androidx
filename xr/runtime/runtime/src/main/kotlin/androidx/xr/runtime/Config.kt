@@ -52,7 +52,8 @@ constructor(
         androidx.xr.runtime.DepthEstimationMode.DISABLED,
     public val anchorPersistence: androidx.xr.runtime.AnchorPersistenceMode =
         androidx.xr.runtime.AnchorPersistenceMode.DISABLED,
-    public val faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
+    public val faceTracking: androidx.xr.runtime.FaceTrackingMode =
+        androidx.xr.runtime.FaceTrackingMode.DISABLED,
     public val geospatial: GeospatialMode = GeospatialMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val eyeTracking: EyeTrackingMode = EyeTrackingMode.DISABLED,
@@ -78,7 +79,7 @@ constructor(
      * @param anchorPersistence Feature that allows anchors to be persisted through sessions. See
      *   [androidx.xr.runtime.AnchorPersistenceMode].
      * @param faceTracking Feature that allows tracking of human faces. See
-     *   [Config.FaceTrackingMode].
+     *   [androidx.xr.runtime.FaceTrackingMode].
      * @param geospatial Feature that allows geospatial localization and tracking. See
      *   [Config.GeospatialMode].
      */
@@ -94,7 +95,8 @@ constructor(
             androidx.xr.runtime.DepthEstimationMode.DISABLED,
         anchorPersistence: androidx.xr.runtime.AnchorPersistenceMode =
             androidx.xr.runtime.AnchorPersistenceMode.DISABLED,
-        faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
+        faceTracking: androidx.xr.runtime.FaceTrackingMode =
+            androidx.xr.runtime.FaceTrackingMode.DISABLED,
         geospatial: GeospatialMode = GeospatialMode.DISABLED,
     ) : this(
         planeTracking,
@@ -170,7 +172,7 @@ constructor(
         deviceTracking: androidx.xr.runtime.DeviceTrackingMode = this.deviceTracking,
         depthEstimation: androidx.xr.runtime.DepthEstimationMode = this.depthEstimation,
         anchorPersistence: androidx.xr.runtime.AnchorPersistenceMode = this.anchorPersistence,
-        faceTracking: FaceTrackingMode = this.faceTracking,
+        faceTracking: androidx.xr.runtime.FaceTrackingMode = this.faceTracking,
         geospatial: GeospatialMode = this.geospatial,
         augmentedObjectCategories: List<AugmentedObjectCategory> = this.augmentedObjectCategories,
         eyeTracking: EyeTrackingMode = this.eyeTracking,
@@ -396,10 +398,15 @@ constructor(
      * be granted and that [CameraFacingDirection] is set to [CameraFacingDirection.USER].
      */
     @SuppressWarnings("HiddenSuperclass")
+    @Deprecated(
+        "Use androidx.xr.runtime.FaceTrackingMode instead.",
+        replaceWith = ReplaceWith("androidx.xr.runtime.FaceTrackingMode"),
+    )
     public class FaceTrackingMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
     ) : ConfigMode {
+        @Suppress("DEPRECATION")
         public companion object {
             /** Faces will not be tracked. */
             @JvmField public val DISABLED: FaceTrackingMode = FaceTrackingMode(0)

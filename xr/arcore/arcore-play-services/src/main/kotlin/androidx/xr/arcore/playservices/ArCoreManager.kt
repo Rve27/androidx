@@ -23,6 +23,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
+import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
@@ -143,8 +144,8 @@ internal constructor(
 
         arConfig.augmentedFaceMode =
             when (config.faceTracking) {
-                Config.FaceTrackingMode.MESHES -> AugmentedFaceMode.MESH3D
-                Config.FaceTrackingMode.DISABLED -> AugmentedFaceMode.DISABLED
+                FaceTrackingMode.MESHES -> AugmentedFaceMode.MESH3D
+                FaceTrackingMode.DISABLED -> AugmentedFaceMode.DISABLED
                 else -> throw UnsupportedOperationException()
             }
 
