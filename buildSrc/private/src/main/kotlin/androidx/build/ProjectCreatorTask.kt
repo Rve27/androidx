@@ -105,7 +105,6 @@ abstract class ProjectCreatorTask : DefaultTask() {
                     getPackageDocumentationFilename(
                         projectSpec.groupIdWithPrefix,
                         projectSpec.artifactId,
-                        projectSpec.projectType,
                     )
                 )
 
@@ -154,10 +153,10 @@ internal class GradleSettingsEditor(val settingsGradleFile: File) {
     }
 
     private fun getBuildType(spec: ProjectSpec): String {
-        return if (spec.projectType == ProjectType.KMP) {
-            "KMP"
-        } else if (isComposeProject(spec.groupId, spec.artifactId)) {
+        return if (isComposeProject(spec.groupId, spec.artifactId)) {
             "COMPOSE"
+        } else if (spec.projectType == ProjectType.KMP) {
+            "KMP"
         } else {
             "MAIN"
         }
@@ -352,32 +351,49 @@ internal class ProjectGenerator {
 
     private fun createSrcDir(spec: ProjectSpec) {
         val basePath = if (spec.projectType == ProjectType.KMP) "src/commonMain" else "src/main"
+        val fullPath =
+            "$basePath/${spec.projectType.getLanguage()}/androidx/${
+            spec.groupId.replace(
+                ".",
+                "/",
+            )
+        }"
 
         val docFile =
             File(
                 spec.fullArtifactPath,
-                "$basePath/kotlin/androidx/${spec.groupId.replace(".", "/")}/androidx-${
-                    spec.groupId.replace(
-                        ".",
-                        "-",
-                    )
-                }-${spec.artifactId}-documentation.md",
+                "$fullPath/${getPackageDocumentationFilename(spec.groupId, spec.artifactId)}",
             )
         docFile.parentFile.mkdirs()
         docFile.writeText(spec.toPackageDocsText())
+
+        if (spec.projectType == ProjectType.JAVA) {
+            val packageInfoFile = File(spec.fullArtifactPath, "$fullPath/package-info.java")
+
+            packageInfoFile.writeText(spec.getPackageInfoFileText())
+        }
 
         if (spec.projectType == ProjectType.KMP) {
             val testFile =
                 File(
                     spec.fullArtifactPath,
-                    "src/commonTest/kotlin/androidx/${spec.groupId.replace(".", "/")}/Test.kt",
+                    "${fullPath.replace("commonMain", "commonTest")}/Test.kt",
                 )
             testFile.parentFile.mkdirs()
             testFile.writeText(spec.createTestFileText())
         }
     }
 
-    private fun ProjectSpec.createTestFileText(): String {
+    private fun ProjectSpec.getPackageInfoFileText(): String {
+        return """
+            ${getAOSPHeader()}
+
+            package androidx.${groupId}.${artifactId.replace("-", ".")}
+        """
+            .trimIndent()
+    }
+
+    private fun getAOSPHeader(): String {
         return """
             /*
              * Copyright ${getYear()} The Android Open Source Project
@@ -394,6 +410,12 @@ internal class ProjectGenerator {
              * See the License for the specific language governing permissions and
              * limitations under the License.
              */
+        """
+    }
+
+    private fun ProjectSpec.createTestFileText(): String {
+        return """
+            ${getAOSPHeader()}
             package androidx.${groupId}
 
             class Test {
@@ -417,21 +439,7 @@ internal class ProjectGenerator {
 
     private fun ProjectSpec.getBuildGradleText(isGroupIdAtomic: Boolean): String {
         return """
-            /*
-             * Copyright (C) ${getYear()} The Android Open Source Project
-             *
-             * Licensed under the Apache License, Version 2.0 (the "License");
-             * you may not use this file except in compliance with the License.
-             * You may obtain a copy of the License at
-             *
-             *      http://www.apache.org/licenses/LICENSE-2.0
-             *
-             * Unless required by applicable law or agreed to in writing, software
-             * distributed under the License is distributed on an "AS IS" BASIS,
-             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-             * See the License for the specific language governing permissions and
-             * limitations under the License.
-             */
+            ${getAOSPHeader()}
 
             /**
              * This file was created using the `createProject` gradle task (./gradlew createProject)
@@ -444,14 +452,16 @@ internal class ProjectGenerator {
 
             plugins {
                 id("AndroidXPlugin")
-                ${if (projectType == ProjectType.KMP) "" else "id(\"com.android.library\")"}
+                ${projectType.getGradlePlugin()}
             }
 
             dependencies {
                 // Add dependencies here
             }
 
-            ${if (projectType == ProjectType.KMP) """
+            ${
+            when (projectType) {
+                ProjectType.KMP -> """
             androidXMultiplatform {
                 ios()
                 js()
@@ -473,11 +483,20 @@ internal class ProjectGenerator {
                     }
                 }
             }
-            """ else """
+                    """
+                ProjectType.ANDROID_LIBRARY -> """
             android {
                 namespace = "${generatePackageName(groupId, artifactId)}"
             }
-            """}
+                    """
+                ProjectType.JAVA -> """
+            java {
+                sourceCompatibility = JavaVersion.VERSION_1_8
+                targetCompatibility = JavaVersion.VERSION_1_8
+            }
+                    """
+            }
+            }
 
             androidx {
                 name = "${groupId}:${artifactId}"
@@ -488,6 +507,22 @@ internal class ProjectGenerator {
             }
         """
             .trimIndent()
+    }
+
+    private fun ProjectType.getGradlePlugin(): String {
+        return when (this) {
+            ProjectType.ANDROID_LIBRARY -> """id("com.android.library")"""
+            ProjectType.KMP -> ""
+            ProjectType.JAVA -> """id("java-library")"""
+        }
+    }
+
+    private fun ProjectType.getLanguage(): String {
+        return when (this) {
+            ProjectType.ANDROID_LIBRARY -> "kotlin"
+            ProjectType.KMP -> "kotlin"
+            ProjectType.JAVA -> "java"
+        }
     }
 
     private fun getYear(): String = LocalDate.now().year.toString()
@@ -502,8 +537,8 @@ private fun getPackageDocumentationFileDir(spec: ProjectSpec): File {
             ProjectType.KMP -> {
                 "src/commonMain/kotlin/"
             }
-            else -> {
-                error("Project type not yet supported")
+            ProjectType.JAVA -> {
+                "src/main/java/"
             }
         } + spec.groupIdWithPrefix.replace('.', '/')
     return File(spec.fullArtifactPath, subPath)
@@ -567,14 +602,6 @@ internal fun getLibraryType(artifactId: String): String =
         else -> "PUBLISHED_LIBRARY"
     }
 
-internal fun getPackageDocumentationFilename(
-    groupId: String,
-    artifactId: String,
-    projectType: ProjectType,
-): String {
-    return if (projectType == ProjectType.JAVA) {
-        "package-info.java"
-    } else {
-        "${groupId.replace('.', '-')}-$artifactId-documentation.md"
-    }
+internal fun getPackageDocumentationFilename(groupId: String, artifactId: String): String {
+    return "androidx-${groupId.replace('.', '-')}-$artifactId-documentation.md"
 }
