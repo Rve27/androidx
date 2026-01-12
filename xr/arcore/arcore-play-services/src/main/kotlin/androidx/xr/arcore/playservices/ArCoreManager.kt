@@ -20,6 +20,7 @@ import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.HandTrackingMode
@@ -136,7 +137,7 @@ internal constructor(
 
         perceptionManager.setDepthEstimationMode(config.depthEstimation)
 
-        if (config.anchorPersistence != Config.AnchorPersistenceMode.DISABLED) {
+        if (config.anchorPersistence != AnchorPersistenceMode.DISABLED) {
             throw UnsupportedOperationException()
         }
 

@@ -166,3 +166,23 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
         @JvmField public val SMOOTH_AND_RAW: DepthEstimationMode = DepthEstimationMode(3)
     }
 }
+
+/** Feature that allows anchors to be persisted through sessions. */
+@SuppressWarnings("HiddenSuperclass")
+public class AnchorPersistenceMode
+private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
+    Config.ConfigMode {
+    public companion object {
+        /** Anchors cannot be persisted. */
+        @JvmField public val DISABLED: AnchorPersistenceMode = AnchorPersistenceMode(0)
+        /**
+         * Anchors may be persisted and will be saved in the application's local storage.
+         *
+         * Supported runtimes:
+         * - OpenXR
+         *
+         * Required permissions: None
+         */
+        @JvmField public val LOCAL: AnchorPersistenceMode = AnchorPersistenceMode(1)
+    }
+}

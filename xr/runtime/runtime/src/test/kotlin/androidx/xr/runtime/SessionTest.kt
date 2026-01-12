@@ -211,7 +211,7 @@ class SessionTest {
                     handTracking = HandTrackingMode.BOTH,
                     deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                     depthEstimation = DepthEstimationMode.SMOOTH_AND_RAW,
-                    anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
+                    anchorPersistence = AnchorPersistenceMode.LOCAL,
                 )
         )
         val newConfig =
@@ -221,7 +221,7 @@ class SessionTest {
                 handTracking = HandTrackingMode.DISABLED,
                 deviceTracking = DeviceTrackingMode.DISABLED,
                 depthEstimation = DepthEstimationMode.DISABLED,
-                anchorPersistence = Config.AnchorPersistenceMode.DISABLED,
+                anchorPersistence = AnchorPersistenceMode.DISABLED,
             )
 
         val result = underTest.configure(newConfig)

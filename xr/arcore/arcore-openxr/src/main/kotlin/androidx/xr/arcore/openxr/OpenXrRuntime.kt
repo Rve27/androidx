@@ -19,6 +19,7 @@ package androidx.xr.arcore.openxr
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.xr.arcore.runtime.PerceptionRuntime
+import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
 import androidx.xr.runtime.DepthEstimationMode
@@ -89,8 +90,8 @@ internal constructor(
                 DepthEstimationMode.DISABLED,
                 DepthEstimationMode.RAW_ONLY,
                 DepthEstimationMode.SMOOTH_ONLY,
-                Config.AnchorPersistenceMode.DISABLED,
-                Config.AnchorPersistenceMode.LOCAL,
+                AnchorPersistenceMode.DISABLED,
+                AnchorPersistenceMode.LOCAL,
                 Config.FaceTrackingMode.DISABLED,
                 Config.FaceTrackingMode.BLEND_SHAPES,
                 Config.GeospatialMode.DISABLED,
