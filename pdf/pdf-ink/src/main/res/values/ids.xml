@@ -16,5 +16,4 @@
 
 <resources>
     <item name="pdf_annotation_view" type="id" />
-    <item name="pdf_annotation_toolbar_coordinator" type="id" />
 </resources>
