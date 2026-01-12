@@ -87,7 +87,6 @@ public fun captureRemoteDocumentV2(
 ): Flow<ByteArray> = flow {
     val rootNode = RemoteRootNodeV2()
     val applier = RemoteComposeApplierV2(rootNode)
-    val writerEvents = WriterEvents()
 
     val recomposer = Recomposer(currentCoroutineContext())
     val composition = Composition(applier, recomposer)
