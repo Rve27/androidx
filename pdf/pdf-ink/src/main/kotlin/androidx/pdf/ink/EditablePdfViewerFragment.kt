@@ -30,7 +30,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams
 import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -60,7 +59,6 @@ import androidx.pdf.ink.util.PageTransformCalculator
 import androidx.pdf.ink.util.toHighlighterConfig
 import androidx.pdf.ink.util.toInkBrush
 import androidx.pdf.ink.view.AnnotationToolbar
-import androidx.pdf.ink.view.draganddrop.ToolbarCoordinator
 import androidx.pdf.ink.view.tool.AnnotationToolInfo
 import androidx.pdf.view.PdfContentLayout
 import androidx.pdf.view.PdfView
@@ -204,25 +202,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private lateinit var wetStrokesViewTouchHandler: WetStrokesViewTouchHandler
     private lateinit var pdfContentLayoutTouchListener: PdfContentLayoutTouchListener
     private lateinit var annotationToolbar: AnnotationToolbar
-
-    private lateinit var toolbarCoordinator: ToolbarCoordinator
-
-    private val toolbarLayoutChangeListener =
-        View.OnLayoutChangeListener {
-            v,
-            left,
-            top,
-            right,
-            bottom,
-            oldLeft,
-            oldTop,
-            oldRight,
-            oldBottom ->
-            if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
-                wetStrokesView.maskPath = createToolbarMaskPath()
-            }
-        }
-
     private lateinit var pageInfoProvider: PageInfoProviderImpl
 
     private val annotationsViewDispatcher = AnnotationsViewTouchEventDispatcher()
@@ -281,7 +260,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
         wetStrokesView =
             InProgressStrokesView(requireContext()).apply {
-                id = R.id.pdf_wet_strokes_view
                 layoutParams =
                     ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -299,12 +277,9 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                     )
             }
-        annotationToolbar =
-            inflater.inflate(R.layout.annotation_toolbar_layout, null, false) as AnnotationToolbar
-        toolbarCoordinator =
-            ToolbarCoordinator(requireContext()).apply {
-                layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-            }
+
+        inflater.inflate(R.layout.annotation_toolbar_layout, rootView, true)
+        annotationToolbar = rootView.findViewById(R.id.annotationToolbar)
 
         val pdfContentLayout =
             rootView.findViewById<PdfContentLayout>(
@@ -312,8 +287,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
             )
         pdfContentLayout.addView(annotationView)
         pdfContentLayout.addView(wetStrokesView)
-
-        rootView.addView(toolbarCoordinator)
 
         return rootView
     }
@@ -345,7 +318,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         setupPdfViewListeners()
         setupAnnotationViewListeners()
         setupAnnotationToolbar()
-        setupToolbarCoordinator(annotationToolbar)
     }
 
     private fun setupAnnotationViewListeners() {
@@ -380,10 +352,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         }
     }
 
-    private fun setupToolbarCoordinator(toolbar: AnnotationToolbar) {
-        toolbarCoordinator.apply { attachToolbar(toolbar) }
-    }
-
     /**
      * If the document is an [EditablePdfDocument], sets it for editing and initializes draft state.
      * This method must call `super.onLoadDocumentSuccess(document)` first.
@@ -414,9 +382,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         wetStrokesView.removeFinishedStrokesListener(wetStrokesOnFinishedListener)
         annotationToolbar.setAnnotationToolbarListener(null)
         pdfContainer.setOnTouchListener(null)
-        if (::annotationToolbar.isInitialized) {
-            annotationToolbar.removeOnLayoutChangeListener(toolbarLayoutChangeListener)
-        }
     }
 
     private fun updateUiForEditMode(isEnabled: Boolean) {
@@ -431,9 +396,8 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         } else {
             annotationToolbar.apply {
                 reset()
-                wetStrokesView.maskPath = null
+                post { wetStrokesView.maskPath = null }
             }
-            toolbarCoordinator.updateLayout()
         }
     }
 
@@ -606,7 +570,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     }
 
     private fun setupAnnotationToolbar() {
-        annotationToolbar.addOnLayoutChangeListener(toolbarLayoutChangeListener)
         annotationToolbar.setAnnotationToolbarListener(
             object : AnnotationToolbar.AnnotationToolbarListener {
                 override fun onToolChanged(toolInfo: AnnotationToolInfo) {
