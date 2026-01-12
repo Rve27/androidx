@@ -16,6 +16,7 @@
 
 package androidx.compose.runtime.tooling
 
+import androidx.compose.runtime.internal.trace
 import kotlin.jvm.JvmField
 
 /**
@@ -61,3 +62,11 @@ public object ComposeToolingFlags {
     @JvmField
     public var isVerboseTracingEnabled: Boolean = false
 }
+
+internal inline fun <T> verboseTrace(name: String, block: () -> T): T =
+    @OptIn(ComposeToolingApi::class)
+    if (ComposeToolingFlags.isVerboseTracingEnabled) {
+        trace(name, block)
+    } else {
+        block()
+    }
