@@ -19,6 +19,7 @@ package androidx.xr.arcore.testing
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.LifecycleManager
 import kotlin.time.ComparableTimeMark
@@ -89,7 +90,7 @@ public class FakeLifecycleManager(
         Config(
             PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
             augmentedObjectCategories = AugmentedObjectCategory.Companion.all(),
-            Config.HandTrackingMode.BOTH,
+            HandTrackingMode.BOTH,
             Config.DeviceTrackingMode.LAST_KNOWN,
             Config.DepthEstimationMode.SMOOTH_AND_RAW,
             Config.AnchorPersistenceMode.LOCAL,

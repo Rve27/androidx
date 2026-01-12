@@ -23,6 +23,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
 import com.google.common.truth.Truth.assertThat
@@ -203,7 +204,7 @@ class OpenXrManagerTest {
             underTest.configure(
                 Config(
                     PlaneTrackingMode.DISABLED,
-                    Config.HandTrackingMode.DISABLED,
+                    HandTrackingMode.DISABLED,
                     Config.DeviceTrackingMode.DISABLED,
                     Config.DepthEstimationMode.SMOOTH_AND_RAW,
                     Config.AnchorPersistenceMode.DISABLED,
@@ -220,7 +221,7 @@ class OpenXrManagerTest {
             underTest.configure(
                 Config(
                     PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                    Config.HandTrackingMode.DISABLED,
+                    HandTrackingMode.DISABLED,
                     Config.DeviceTrackingMode.DISABLED,
                     Config.DepthEstimationMode.DISABLED,
                     Config.AnchorPersistenceMode.DISABLED,

@@ -63,3 +63,25 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
         @JvmField public val HORIZONTAL_AND_VERTICAL: PlaneTrackingMode = PlaneTrackingMode(1)
     }
 }
+
+/** Feature that allows tracking of the user's hands and hand joints. */
+@SuppressWarnings("HiddenSuperclass")
+public class HandTrackingMode
+private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
+    Config.ConfigMode {
+    public companion object {
+        /** Hands will not be tracked. */
+        @JvmField public val DISABLED: HandTrackingMode = HandTrackingMode(0)
+        /**
+         * Both the left and right hands will be tracked. Note that setting this mode will consume
+         * additional runtime resources.
+         *
+         * Supported runtimes:
+         * - OpenXR
+         *
+         * Required permissions:
+         * - [HAND_TRACKING][androidx.xr.runtime.manifest.HAND_TRACKING]
+         */
+        @JvmField public val BOTH: HandTrackingMode = HandTrackingMode(1)
+    }
+}

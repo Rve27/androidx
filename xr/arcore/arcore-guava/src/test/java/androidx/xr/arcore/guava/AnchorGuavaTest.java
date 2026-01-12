@@ -35,6 +35,7 @@ import androidx.xr.arcore.XrResourcesManager;
 import androidx.xr.arcore.testing.FakePerceptionManager;
 import androidx.xr.runtime.Config;
 import androidx.xr.runtime.Config.AnchorPersistenceMode;
+import androidx.xr.runtime.HandTrackingMode;
 import androidx.xr.runtime.PlaneTrackingMode;
 import androidx.xr.runtime.Session;
 import androidx.xr.runtime.SessionCreateSuccess;
@@ -104,7 +105,7 @@ public class AnchorGuavaTest {
                     mSession.configure(
                             new Config(
                                     PlaneTrackingMode.DISABLED,
-                                    Config.HandTrackingMode.DISABLED,
+                                    HandTrackingMode.DISABLED,
                                     Config.DeviceTrackingMode.DISABLED,
                                     Config.DepthEstimationMode.DISABLED,
                                     AnchorPersistenceMode.DISABLED));
