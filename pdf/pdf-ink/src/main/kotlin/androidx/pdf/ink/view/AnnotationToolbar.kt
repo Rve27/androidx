@@ -17,15 +17,12 @@
 package androidx.pdf.ink.view
 
 import android.content.Context
-import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
@@ -505,11 +502,4 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     internal companion object {
         private const val AUTO_TRANSITION_DURATION = 250L
     }
-}
-
-/** Helper function to check if a touch event is within the bounds of a given view. */
-internal fun View.isTouchInView(event: MotionEvent): Boolean {
-    val viewRect = Rect()
-    getHitRect(viewRect)
-    return viewRect.contains(event.x.toInt(), event.y.toInt())
 }
