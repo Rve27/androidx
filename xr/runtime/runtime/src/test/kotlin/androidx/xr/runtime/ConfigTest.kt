@@ -77,8 +77,8 @@ class ConfigTest {
 
     @Test
     fun equals_differentDepthEstimation_returnsFalse() {
-        val config1 = Config(depthEstimation = Config.DepthEstimationMode.SMOOTH_AND_RAW)
-        val config2 = Config(depthEstimation = Config.DepthEstimationMode.DISABLED)
+        val config1 = Config(depthEstimation = DepthEstimationMode.SMOOTH_AND_RAW)
+        val config2 = Config(depthEstimation = DepthEstimationMode.DISABLED)
 
         assertThat(config1).isNotEqualTo(config2)
     }

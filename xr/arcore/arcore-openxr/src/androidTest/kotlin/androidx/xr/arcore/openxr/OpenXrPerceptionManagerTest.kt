@@ -25,6 +25,7 @@ import androidx.xr.arcore.runtime.AnchorInvalidUuidException
 import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException
 import androidx.xr.arcore.runtime.HandJointType
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.PlaneTrackingMode
@@ -276,7 +277,7 @@ class OpenXrPerceptionManagerTest {
         check(underTest.rightDepthMap!!.smoothDepthMap == null)
         check(underTest.rightDepthMap!!.smoothConfidenceMap == null)
 
-        openXrManager.configure(Config(depthEstimation = Config.DepthEstimationMode.RAW_ONLY))
+        openXrManager.configure(Config(depthEstimation = DepthEstimationMode.RAW_ONLY))
         underTest.update(XR_TIME)
 
         assertThat(underTest.leftDepthMap!!.width).isEqualTo(80)
@@ -314,7 +315,7 @@ class OpenXrPerceptionManagerTest {
         check(underTest.rightDepthMap!!.smoothDepthMap == null)
         check(underTest.rightDepthMap!!.smoothConfidenceMap == null)
 
-        openXrManager.configure(Config(depthEstimation = Config.DepthEstimationMode.SMOOTH_ONLY))
+        openXrManager.configure(Config(depthEstimation = DepthEstimationMode.SMOOTH_ONLY))
         underTest.update(XR_TIME)
 
         assertThat(underTest.leftDepthMap!!.width).isEqualTo(80)

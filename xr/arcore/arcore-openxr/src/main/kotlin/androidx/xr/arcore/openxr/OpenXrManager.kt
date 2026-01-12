@@ -23,6 +23,7 @@ import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
@@ -90,13 +91,13 @@ internal constructor(
             augmentedObjectCategories = listOf(),
             HandTrackingMode.DISABLED,
             DeviceTrackingMode.DISABLED,
-            Config.DepthEstimationMode.DISABLED,
+            DepthEstimationMode.DISABLED,
             Config.AnchorPersistenceMode.LOCAL,
         )
         private set
 
     override fun configure(config: Config) {
-        if (config.depthEstimation == Config.DepthEstimationMode.SMOOTH_AND_RAW) {
+        if (config.depthEstimation == DepthEstimationMode.SMOOTH_AND_RAW) {
             throw UnsupportedOperationException(
                 "Failed to configure session, runtime does not support raw and smooth depth simultaneously."
             )

@@ -19,6 +19,7 @@ package androidx.xr.arcore.testing
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
@@ -93,7 +94,7 @@ public class FakeLifecycleManager(
             augmentedObjectCategories = AugmentedObjectCategory.Companion.all(),
             HandTrackingMode.BOTH,
             DeviceTrackingMode.LAST_KNOWN,
-            Config.DepthEstimationMode.SMOOTH_AND_RAW,
+            DepthEstimationMode.SMOOTH_AND_RAW,
             Config.AnchorPersistenceMode.LOCAL,
         )
 

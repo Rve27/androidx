@@ -22,6 +22,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
@@ -88,7 +89,7 @@ class SessionLifecycleHelper(
         if (config.planeTracking != PlaneTrackingMode.DISABLED) {
             permissions.add(SCENE_UNDERSTANDING_COARSE)
         }
-        if (config.depthEstimation != Config.DepthEstimationMode.DISABLED) {
+        if (config.depthEstimation != DepthEstimationMode.DISABLED) {
             permissions.add(SCENE_UNDERSTANDING_FINE)
         }
         if (config.handTracking != HandTrackingMode.DISABLED) {

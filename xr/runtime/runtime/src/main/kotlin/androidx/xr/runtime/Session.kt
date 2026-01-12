@@ -361,7 +361,7 @@ public constructor(
             augmentedObjectCategories = listOf(),
             HandTrackingMode.DISABLED,
             DeviceTrackingMode.DISABLED,
-            Config.DepthEstimationMode.DISABLED,
+            DepthEstimationMode.DISABLED,
             Config.AnchorPersistenceMode.DISABLED,
         )
         private set
