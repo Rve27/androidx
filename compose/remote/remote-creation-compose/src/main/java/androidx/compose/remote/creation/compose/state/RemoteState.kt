@@ -21,25 +21,11 @@ import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
-import androidx.compose.remote.creation.compose.capture.NoRemoteCompose
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.player.core.state.RemoteDomains
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-// TODO: Remove this and APIs using it.
-public object FallbackCreationState {
-    private var state_: RemoteComposeCreationState? = null
-
-    /** The [RemoteComposeCreationState] to use when the state isn\'t passed in. */
-    public var state: RemoteComposeCreationState
-        get() = state_ ?: NoRemoteCompose()
-        set(value) {
-            state_ = value
-        }
-}
 
 /** Common base interface for all Remote types. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)

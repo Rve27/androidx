@@ -110,7 +110,7 @@ class RemoteCanvasTest {
                 paint =
                     RemotePaint().apply {
                         color = Color.Red.toArgb()
-                        textSize = SMALL_FONT_SIZE.rf.id
+                        textSize = SMALL_FONT_SIZE
                     },
             )
             drawAnchoredText(
@@ -120,7 +120,7 @@ class RemoteCanvasTest {
                 paint =
                     RemotePaint().apply {
                         color = Color.Green.toArgb()
-                        textSize = MEDIUM_FONT_SIZE.rf.id
+                        textSize = MEDIUM_FONT_SIZE
                     },
             )
             drawAnchoredText(
@@ -130,7 +130,7 @@ class RemoteCanvasTest {
                 paint =
                     RemotePaint().apply {
                         color = Color.Blue.toArgb()
-                        textSize = LARGE_FONT_SIZE.rf.id
+                        textSize = LARGE_FONT_SIZE
                     },
             )
         }
@@ -180,7 +180,7 @@ class RemoteCanvasTest {
                 paint =
                     RemotePaint().apply {
                         applyRemoteBrush(RemoteBrush.solidColor(Color.Red.rc), remoteSize)
-                        textSize = SMALL_FONT_SIZE.rf.id
+                        textSize = SMALL_FONT_SIZE
                     },
             )
             drawAnchoredText(
@@ -190,7 +190,7 @@ class RemoteCanvasTest {
                 paint =
                     RemotePaint().apply {
                         applyRemoteBrush(RemoteBrush.solidColor(Color.Green.rc), remoteSize)
-                        textSize = MEDIUM_FONT_SIZE.rf.id
+                        textSize = MEDIUM_FONT_SIZE
                     },
             )
             drawAnchoredText(
@@ -200,7 +200,7 @@ class RemoteCanvasTest {
                 paint =
                     RemotePaint().apply {
                         applyRemoteBrush(RemoteBrush.solidColor(Color.Blue.rc), remoteSize)
-                        textSize = LARGE_FONT_SIZE.rf.id
+                        textSize = LARGE_FONT_SIZE
                     },
             )
         }
@@ -220,7 +220,7 @@ class RemoteCanvasTest {
                 paint =
                     RemotePaint().apply {
                         remoteColor = color
-                        textSize = SMALL_FONT_SIZE.rf.id
+                        textSize = SMALL_FONT_SIZE
                     },
             )
         }
