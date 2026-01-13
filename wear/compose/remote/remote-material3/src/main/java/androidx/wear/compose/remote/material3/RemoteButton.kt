@@ -915,7 +915,7 @@ private fun RemoteDrawScope.drawBorder(
         drawOutline(
             RemotePaint().apply {
                 remoteColor = borderColor
-                strokeWidth = borderStrokeWidth.id
+                strokeWidth = borderStrokeWidth.floatId
                 style = Paint.Style.STROKE
             }
         )

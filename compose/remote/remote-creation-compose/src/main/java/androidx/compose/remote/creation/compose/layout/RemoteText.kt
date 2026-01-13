@@ -24,13 +24,14 @@ import androidx.compose.remote.core.operations.layout.managers.TextLayout
 import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.toComposeUiLayout
+import androidx.compose.remote.creation.compose.modifier.toRecordingModifier
 import androidx.compose.remote.creation.compose.state.MutableRemoteString
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteIntReference
 import androidx.compose.remote.creation.compose.state.RemoteString
-import androidx.compose.remote.creation.compose.state.rememberRemoteString
 import androidx.compose.remote.creation.compose.state.rf
+import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.creation.compose.v2.RemoteComposeApplierV2
 import androidx.compose.remote.creation.compose.v2.RemoteTextV2
 import androidx.compose.remote.creation.modifiers.RecordingModifier
@@ -69,9 +70,8 @@ public fun RemoteText(
     maxLines: Int = Int.MAX_VALUE,
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val remoteText = rememberRemoteString { text }
     RemoteText(
-        remoteText,
+        text.rs,
         modifier,
         color,
         fontSize,
@@ -223,7 +223,7 @@ public fun RemoteText(
     if (useCoreTextComponent) {
         androidx.compose.foundation.layout.Box(
             RemoteComposeCoreTextComponentModifier(
-                    modifier = modifier.toRemoteCompose(),
+                    modifier = captureMode.toRecordingModifier(modifier),
                     id = text,
                     color = color,
                     fontSize = fontSize,
@@ -246,12 +246,12 @@ public fun RemoteText(
     } else {
         androidx.compose.foundation.layout.Box(
             RemoteComposeTextComponentModifier(
-                    modifier = modifier.toRemoteCompose(),
+                    modifier = captureMode.toRecordingModifier(modifier),
                     id = RemoteIntReference(text.getIdForCreationState(captureMode)),
                     color =
                         color.constantValue?.toArgb() ?: color.getIdForCreationState(captureMode),
                     isColorConstant = color.hasConstantValue,
-                    fontSize = fontSize.id,
+                    fontSize = with(LocalRemoteComposeCreationState.current) { fontSize.floatId },
                     fontStyle = fontStyle.encode(),
                     fontWeight = fontWeight.constantValue ?: 400f,
                     fontFamily = fontFamily,

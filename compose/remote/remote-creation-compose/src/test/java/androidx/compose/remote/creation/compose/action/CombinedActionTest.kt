@@ -19,6 +19,8 @@ package androidx.compose.remote.creation.compose.action
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.actions.Action as CoreAction
+import androidx.compose.remote.creation.compose.capture.NoRemoteCompose
+import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -27,26 +29,28 @@ import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
 class CombinedActionTest {
+    val testStateScope = NoRemoteCompose()
+
     @Test
     fun toRemoteAction_delegatesToChildren() {
         val recordedWrites = mutableListOf<String>()
 
         val action1 =
             object : Action {
-                override fun toRemoteAction(): CoreAction = CoreAction {
+                override fun RemoteStateScope.toRemoteAction(): CoreAction = CoreAction {
                     recordedWrites.add("action1")
                 }
             }
 
         val action2 =
             object : Action {
-                override fun toRemoteAction(): CoreAction = CoreAction {
+                override fun RemoteStateScope.toRemoteAction(): CoreAction = CoreAction {
                     recordedWrites.add("action2")
                 }
             }
 
         val combinedAction = CombinedAction(action1, action2)
-        val remoteAction = combinedAction.toRemoteAction()
+        val remoteAction = with(combinedAction) { testStateScope.toRemoteAction() }
 
         // Use a real writer
         val writer =
