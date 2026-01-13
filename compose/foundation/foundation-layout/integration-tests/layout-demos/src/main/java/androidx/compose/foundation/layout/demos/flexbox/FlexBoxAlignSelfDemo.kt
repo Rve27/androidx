@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalFlexBoxApi
 import androidx.compose.foundation.layout.FlexAlignItems
 import androidx.compose.foundation.layout.FlexAlignSelf
 import androidx.compose.foundation.layout.FlexBox
@@ -55,6 +56,7 @@ fun FlexBoxAlignSelfDemo() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignSelfSample() {
     FlexBox(
         config = {
@@ -118,6 +120,7 @@ private fun FlexBoxRowAlignSelfSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignSelfSample() {
     FlexBox(
         config = {

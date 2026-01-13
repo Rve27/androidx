@@ -19,6 +19,7 @@ package androidx.compose.foundation.layout.samples
 import androidx.annotation.Sampled
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalFlexBoxApi
 import androidx.compose.foundation.layout.FlexBox
 import androidx.compose.foundation.layout.FlexDirection
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 
 @Sampled
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 fun SimpleFlexBox() {
     // FlexBox defaults to a Row-like layout (FlexDirection.Row).
     // The children will be laid out horizontally.

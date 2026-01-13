@@ -50,6 +50,7 @@ class FlexBoxTest {
     @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     // Direction Tests
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_directionRow_defaultsToRow() {
         var width = 0
@@ -84,6 +85,7 @@ class FlexBoxTest {
         Truth.assertThat(height).isEqualTo(20)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_directionRow() {
         val xPositions = mutableListOf<Float>()
@@ -108,6 +110,7 @@ class FlexBoxTest {
         Truth.assertThat(xPositions).containsExactly(0f, 20f, 40f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_directionColumn() {
         val yPositions = mutableListOf<Float>()
@@ -132,6 +135,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(0f, 20f, 40f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_directionRowReverse() {
         val xPositions = mutableListOf<Float>()
@@ -160,6 +164,7 @@ class FlexBoxTest {
         Truth.assertThat(xPositions).containsExactly(180f, 160f, 140f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_directionColumnReverse() {
         val yPositions = mutableListOf<Float>()
@@ -188,6 +193,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(180f, 160f, 140f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_wrap() {
         var height = 0
@@ -213,6 +219,7 @@ class FlexBoxTest {
         Truth.assertThat(height).isEqualTo(40)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_wrapReverse() {
         val yPositions = mutableListOf<Float>()
@@ -244,6 +251,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions[5]).isEqualTo(0f)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_columnWrap() {
         var width = 0
@@ -271,6 +279,7 @@ class FlexBoxTest {
 
     // JustifyContent Tests
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_justifyContentStart() {
         val xPositions = mutableListOf<Float>()
@@ -301,6 +310,7 @@ class FlexBoxTest {
         Truth.assertThat(xPositions).containsExactly(0f, 20f, 40f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_justifyContentEnd() {
         val xPositions = mutableListOf<Float>()
@@ -332,6 +342,7 @@ class FlexBoxTest {
         Truth.assertThat(xPositions).containsExactly(140f, 160f, 180f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_justifyContentCenter() {
         val xPositions = mutableListOf<Float>()
@@ -363,6 +374,7 @@ class FlexBoxTest {
         Truth.assertThat(xPositions).containsExactly(70f, 90f, 110f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_justifyContentSpaceBetween() {
         val xPositions = mutableListOf<Float>()
@@ -395,6 +407,7 @@ class FlexBoxTest {
         Truth.assertThat(xPositions).containsExactly(0f, 90f, 180f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_justifyContentSpaceAround() {
         val xPositions = mutableListOf<Float>()
@@ -428,6 +441,7 @@ class FlexBoxTest {
         Truth.assertThat(xPositions).containsExactly(10f, 50f, 90f, 130f, 170f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_justifyContentSpaceEvenly() {
         val xPositions = mutableListOf<Float>()
@@ -462,6 +476,7 @@ class FlexBoxTest {
 
     // AlignItems Tests
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignItemsStart() {
         val yPositions = mutableListOf<Float>()
@@ -493,6 +508,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(0f, 0f, 0f)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignItemsEnd() {
         val yPositions = mutableListOf<Float>()
@@ -525,6 +541,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(20f, 0f, 10f)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignItemsCenter() {
         val yPositions = mutableListOf<Float>()
@@ -557,6 +574,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(10f, 0f, 5f)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignItemsStretch() {
         val heights = mutableListOf<Int>()
@@ -591,6 +609,7 @@ class FlexBoxTest {
 
     // Gap Tests
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_rowGap() {
         val yPositions = mutableListOf<Float>()
@@ -624,6 +643,7 @@ class FlexBoxTest {
         Truth.assertThat(uniqueYPositions).containsExactly(0f, 30f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_columnGap() {
         val xPositions = mutableListOf<Float>()
@@ -654,6 +674,7 @@ class FlexBoxTest {
         Truth.assertThat(xPositions).containsExactly(0f, 30f, 60f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_gap() {
         var height = 0
@@ -689,6 +710,7 @@ class FlexBoxTest {
         Truth.assertThat(height).isEqualTo(50)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_wrap_excludesTrailingGap() {
         var height = 0
@@ -722,6 +744,7 @@ class FlexBoxTest {
         Truth.assertThat(height).isEqualTo(45)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_wrap_gapPreservedAfterLineBreak() {
         var height = 0
@@ -758,6 +781,7 @@ class FlexBoxTest {
         Truth.assertThat(height).isEqualTo(90)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_layout_zeroSizeItem_hasGap() {
         val xPositions = mutableListOf<Float>()
@@ -796,6 +820,7 @@ class FlexBoxTest {
 
     // Flex Item Style Tests
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_flexGrow() {
         val widths = mutableListOf<Int>()
@@ -835,6 +860,7 @@ class FlexBoxTest {
         Truth.assertThat(widths[2]).isGreaterThan(widths[1])
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_flexShrink() {
         val widths = mutableListOf<Int>()
@@ -875,6 +901,7 @@ class FlexBoxTest {
         Truth.assertThat(widths[1]).isEqualTo(40)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_flexBasisDp() {
         val widths = mutableListOf<Int>()
@@ -897,6 +924,7 @@ class FlexBoxTest {
         Truth.assertThat(widths[0]).isEqualTo(50)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_flexBasisPercent() {
         val widths = mutableListOf<Int>()
@@ -922,6 +950,7 @@ class FlexBoxTest {
         Truth.assertThat(widths[0]).isEqualTo(100) // 50% of 200
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignSelf() {
         val yPositions = mutableListOf<Float>()
@@ -966,6 +995,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(0f, 20f, 10f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_order() {
         val xPositions = mutableMapOf<Int, Float>()
@@ -1007,6 +1037,7 @@ class FlexBoxTest {
 
     //  Empty and Single Item Tests
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_empty() {
         var width = 0
@@ -1033,6 +1064,7 @@ class FlexBoxTest {
         Truth.assertThat(height).isEqualTo(0)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_singleItem() {
         var width = 0
@@ -1070,6 +1102,7 @@ class FlexBoxTest {
 
     //  AlignContent Tests (multi-line)
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignContentStart() {
         val yPositions = mutableListOf<Float>()
@@ -1105,6 +1138,7 @@ class FlexBoxTest {
         Truth.assertThat(uniqueY).containsExactly(0f, 50f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignContentCenter() {
         val yPositions = mutableListOf<Float>()
@@ -1139,6 +1173,7 @@ class FlexBoxTest {
         Truth.assertThat(uniqueY).containsExactly(50f, 100f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignContentSpaceBetween() {
         val yPositions = mutableListOf<Float>()
@@ -1174,6 +1209,7 @@ class FlexBoxTest {
 
     //  Combined/Complex Tests
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_complexMultiLine() {
         val positions = mutableListOf<Pair<Float, Float>>()
@@ -1206,6 +1242,7 @@ class FlexBoxTest {
         Truth.assertThat(positions).hasSize(5)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_nestedFlexBox() {
         var outerWidth = 0
@@ -1235,6 +1272,7 @@ class FlexBoxTest {
 
     //  Style Reuse Tests
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_reusableStyle() {
         val xPositions1 = mutableListOf<Float>()
@@ -1280,6 +1318,7 @@ class FlexBoxTest {
 
     //  Edge Cases
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_zeroSizeChildren() {
         var flexBoxWidth = 0
@@ -1304,6 +1343,7 @@ class FlexBoxTest {
         Truth.assertThat(flexBoxHeight).isEqualTo(0)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_manyChildren() {
         var height = 0
@@ -1333,6 +1373,7 @@ class FlexBoxTest {
 
     // Baseline Test region
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignItemsBaseline_FirstBaseline() {
         val yPositions = mutableListOf<Float>()
@@ -1379,6 +1420,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(20f, 0f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignItemsToBaseline_FirstBaseline() {
         val yPositions = mutableListOf<Float>()
@@ -1425,6 +1467,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(20f, 0f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignItemsToBaseline_lambda() {
         val yPositions = mutableListOf<Float>()
@@ -1458,6 +1501,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(10f, 0f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignSelfToBaseline() {
         val yPositions = mutableListOf<Float>()
@@ -1503,6 +1547,7 @@ class FlexBoxTest {
         Truth.assertThat(yPositions).containsExactly(20f, 0f).inOrder()
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
     @Test
     fun testFlexBox_alignItemsToBaseline_Column_VerticalLine() {
         val xPositions = mutableListOf<Float>()

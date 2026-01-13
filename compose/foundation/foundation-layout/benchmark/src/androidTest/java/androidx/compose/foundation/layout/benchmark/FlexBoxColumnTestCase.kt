@@ -18,6 +18,7 @@ package androidx.compose.foundation.layout.benchmark
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalFlexBoxApi
 import androidx.compose.foundation.layout.FlexBox
 import androidx.compose.foundation.layout.FlexBoxConfig
 import androidx.compose.foundation.layout.FlexDirection
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
  *
  * Note: Each rectangle has its own model so changes should always affect only the first one.
  */
+@OptIn(ExperimentalFlexBoxApi::class)
 class FlexBoxColumnTestCase(
     private val amountOfRectangles: Int,
     private val modifier: Modifier = Modifier,

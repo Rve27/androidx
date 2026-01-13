@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalFlexBoxApi
 import androidx.compose.foundation.layout.FlexBox
 import androidx.compose.foundation.layout.FlexDirection
 import androidx.compose.foundation.layout.FlexWrap
@@ -61,6 +62,7 @@ fun SimpleRowFlexBox() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowDemo() {
     FlexBox(config = { direction = FlexDirection.Row }, modifier = Modifier.fillMaxWidth()) {
         repeat(4) {
@@ -77,6 +79,7 @@ private fun FlexBoxRowDemo() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowWrapDemo() {
     FlexBox(
         config = {
@@ -99,6 +102,7 @@ private fun FlexBoxRowWrapDemo() {
 
 // RowReverse sample
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowReverseDemo() {
     FlexBox(config = { direction = FlexDirection.RowReverse }, modifier = Modifier.fillMaxWidth()) {
         repeat(4) {
@@ -116,6 +120,7 @@ private fun FlexBoxRowReverseDemo() {
 
 // WrapReverse sample
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowWrapReverseDemo() {
     FlexBox(
         config = {

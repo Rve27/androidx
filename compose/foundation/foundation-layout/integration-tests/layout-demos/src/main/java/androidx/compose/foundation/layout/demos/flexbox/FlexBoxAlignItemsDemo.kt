@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalFlexBoxApi
 import androidx.compose.foundation.layout.FlexAlignItems
 import androidx.compose.foundation.layout.FlexBox
 import androidx.compose.foundation.layout.FlexDirection
@@ -91,6 +92,7 @@ fun FlexBoxAlignItemsDemo() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignItemsStretchSample() {
     FlexBox(
         config = {
@@ -128,6 +130,7 @@ private fun FlexBoxRowAlignItemsStretchSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignItemsCenterSample() {
     FlexBox(
         config = {
@@ -167,6 +170,7 @@ private fun FlexBoxRowAlignItemsCenterSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignItemsStartSample() {
     FlexBox(
         config = {
@@ -206,6 +210,7 @@ private fun FlexBoxRowAlignItemsStartSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignItemsEndSample() {
     FlexBox(
         config = {
@@ -245,6 +250,7 @@ private fun FlexBoxRowAlignItemsEndSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignItemsBaselineSample() {
     FlexBox(
         config = {
@@ -287,6 +293,7 @@ private fun FlexBoxRowAlignItemsBaselineSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignItemsToLastBaselineSample() {
     FlexBox(
         config = {
@@ -329,6 +336,7 @@ private fun FlexBoxRowAlignItemsToLastBaselineSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignItemsToCustomBaselineSample() {
     FlexBox(
         config = {
@@ -374,6 +382,7 @@ private fun FlexBoxRowAlignItemsToCustomBaselineSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignItemsStretchSample() {
     FlexBox(
         config = {
@@ -411,6 +420,7 @@ private fun FlexBoxColumnAlignItemsStretchSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignItemsCenterSample() {
     FlexBox(
         config = {
@@ -450,6 +460,7 @@ private fun FlexBoxColumnAlignItemsCenterSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignItemsStartSample() {
     FlexBox(
         config = {
@@ -489,6 +500,7 @@ private fun FlexBoxColumnAlignItemsStartSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignItemsEndSample() {
     FlexBox(
         config = {

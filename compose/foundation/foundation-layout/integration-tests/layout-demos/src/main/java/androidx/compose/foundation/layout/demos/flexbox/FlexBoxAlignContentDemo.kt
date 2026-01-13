@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalFlexBoxApi
 import androidx.compose.foundation.layout.FlexAlignContent
 import androidx.compose.foundation.layout.FlexBox
 import androidx.compose.foundation.layout.FlexDirection
@@ -94,6 +95,7 @@ fun FlexBoxAlignContentDemo() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignContentStretchSample() {
     FlexBox(
         config = {
@@ -117,6 +119,7 @@ private fun FlexBoxRowAlignContentStretchSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignContentCenterSample() {
     FlexBox(
         config = {
@@ -141,6 +144,7 @@ private fun FlexBoxRowAlignContentCenterSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignContentSpaceAroundSample() {
     FlexBox(
         config = {
@@ -165,6 +169,7 @@ private fun FlexBoxRowAlignContentSpaceAroundSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignContentSpaceBetweenSample() {
     FlexBox(
         config = {
@@ -189,6 +194,7 @@ private fun FlexBoxRowAlignContentSpaceBetweenSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignContentStartSample() {
     FlexBox(
         config = {
@@ -213,6 +219,7 @@ private fun FlexBoxRowAlignContentStartSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxRowAlignContentEndSample() {
     FlexBox(
         config = {
@@ -237,6 +244,7 @@ private fun FlexBoxRowAlignContentEndSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignContentStretchSample() {
     FlexBox(
         config = {
@@ -260,6 +268,7 @@ private fun FlexBoxColumnAlignContentStretchSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignContentCenterSample() {
     FlexBox(
         config = {
@@ -284,6 +293,7 @@ private fun FlexBoxColumnAlignContentCenterSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignContentSpaceAroundSample() {
     FlexBox(
         config = {
@@ -308,6 +318,7 @@ private fun FlexBoxColumnAlignContentSpaceAroundSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignContentSpaceBetweenSample() {
     FlexBox(
         config = {
@@ -332,6 +343,7 @@ private fun FlexBoxColumnAlignContentSpaceBetweenSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignContentStartSample() {
     FlexBox(
         config = {
@@ -356,6 +368,7 @@ private fun FlexBoxColumnAlignContentStartSample() {
 }
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 private fun FlexBoxColumnAlignContentEndSample() {
     FlexBox(
         config = {

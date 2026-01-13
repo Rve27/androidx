@@ -21,6 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalFlexBoxApi
 import androidx.compose.foundation.layout.FlexBox
 import androidx.compose.foundation.layout.FlexDirection
 import androidx.compose.foundation.layout.FlexWrap
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import kotlin.random.Random
 
 @Composable
+@OptIn(ExperimentalFlexBoxApi::class)
 fun FlexBoxAnimatedOrderDemo() {
     Column(
         modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),

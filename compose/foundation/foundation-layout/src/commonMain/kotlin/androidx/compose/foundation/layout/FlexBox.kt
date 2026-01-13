@@ -98,6 +98,7 @@ import kotlin.math.roundToInt
  * @see FlowColumn
  */
 @Composable
+@ExperimentalFlexBoxApi
 inline fun FlexBox(
     modifier: Modifier = Modifier,
     config: FlexBoxConfig = FlexBoxConfig,
@@ -118,6 +119,7 @@ inline fun FlexBox(
  */
 @PublishedApi
 @Composable
+@ExperimentalFlexBoxApi
 internal fun flexMultiContentMeasurePolicy(
     flexBoxConfigState: State<FlexBoxConfig>
 ): MeasurePolicy {
@@ -126,6 +128,7 @@ internal fun flexMultiContentMeasurePolicy(
     }
 }
 
+@OptIn(ExperimentalFlexBoxApi::class)
 private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBoxConfig>) :
     MeasurePolicy {
 
@@ -1023,6 +1026,7 @@ private inline fun intrinsicCrossAxisSize(
 @LayoutScopeMarker
 @Immutable
 @JvmDefaultWithCompatibility
+@ExperimentalFlexBoxApi
 interface FlexBoxScope {
     /**
      * Applies flex item properties using a [FlexConfig].
@@ -1042,6 +1046,7 @@ interface FlexBoxScope {
 }
 
 @PublishedApi
+@ExperimentalFlexBoxApi
 internal object FlexBoxScopeInstance : FlexBoxScope {
     @Stable
     override fun Modifier.flex(flexConfig: FlexConfig): Modifier {
@@ -1050,6 +1055,7 @@ internal object FlexBoxScopeInstance : FlexBoxScope {
 }
 
 /** ModifierNodeElement for flex item config. */
+@OptIn(ExperimentalFlexBoxApi::class)
 internal class FlexBoxChildElement(val config: FlexConfig) :
     ModifierNodeElement<FlexBoxChildDataNode>() {
 
@@ -1073,6 +1079,7 @@ internal class FlexBoxChildElement(val config: FlexConfig) :
     }
 }
 
+@OptIn(ExperimentalFlexBoxApi::class)
 internal class FlexBoxChildDataNode(var config: FlexConfig) :
     ParentDataModifierNode, Modifier.Node() {
 
@@ -1088,6 +1095,7 @@ internal class FlexBoxChildDataNode(var config: FlexConfig) :
  * @see FlexBoxConfigScope.direction
  */
 @JvmInline
+@ExperimentalFlexBoxApi
 value class FlexDirection @PublishedApi internal constructor(private val bits: Int) {
     override fun toString() =
         when (bits) {
@@ -1123,6 +1131,7 @@ value class FlexDirection @PublishedApi internal constructor(private val bits: I
  * @see FlexBoxConfigScope.wrap
  */
 @JvmInline
+@ExperimentalFlexBoxApi
 value class FlexWrap @PublishedApi internal constructor(private val bits: Int) {
     override fun toString(): String =
         when (bits) {
@@ -1165,6 +1174,7 @@ value class FlexWrap @PublishedApi internal constructor(private val bits: Int) {
  * @see FlexAlignSelf
  */
 @JvmInline
+@ExperimentalFlexBoxApi
 value class FlexAlignItems @PublishedApi internal constructor(private val bits: Int) {
     override fun toString(): String =
         when (bits) {
@@ -1212,6 +1222,7 @@ value class FlexAlignItems @PublishedApi internal constructor(private val bits: 
  * @see FlexAlignItems
  */
 @JvmInline
+@ExperimentalFlexBoxApi
 value class FlexAlignSelf @PublishedApi internal constructor(private val bits: Int) {
     override fun toString(): String =
         when (bits) {
@@ -1259,6 +1270,7 @@ value class FlexAlignSelf @PublishedApi internal constructor(private val bits: I
  * @see FlexBoxConfigScope.alignContent
  */
 @JvmInline
+@ExperimentalFlexBoxApi
 value class FlexAlignContent @PublishedApi internal constructor(private val bits: Int) {
     override fun toString(): String =
         when (bits) {
@@ -1310,6 +1322,7 @@ value class FlexAlignContent @PublishedApi internal constructor(private val bits
  * @see FlexBoxConfigScope.justifyContent
  */
 @JvmInline
+@ExperimentalFlexBoxApi
 value class FlexJustifyContent @PublishedApi internal constructor(private val bits: Int) {
     override fun toString(): String =
         when (bits) {
@@ -1361,6 +1374,7 @@ value class FlexJustifyContent @PublishedApi internal constructor(private val bi
  * @see FlexConfigScope.basis
  */
 @JvmInline
+@ExperimentalFlexBoxApi
 value class FlexBasis
 @PublishedApi
 internal constructor(@PublishedApi internal val packedValue: Long) {
@@ -1428,6 +1442,7 @@ internal constructor(@PublishedApi internal val packedValue: Long) {
  * @see FlexBox
  */
 @Stable
+@ExperimentalFlexBoxApi
 fun interface FlexBoxConfig {
     /**
      * Configures the FlexBox container properties. Called during the layout phase, not during
@@ -1449,6 +1464,7 @@ fun interface FlexBoxConfig {
  *
  * @see FlexBoxConfig
  */
+@ExperimentalFlexBoxApi
 sealed interface FlexBoxConfigScope : Density {
 
     /**
@@ -1520,6 +1536,7 @@ sealed interface FlexBoxConfigScope : Density {
     fun gap(value: Dp)
 }
 
+@OptIn(ExperimentalFlexBoxApi::class)
 internal class ResolvedFlexBoxConfig : FlexBoxConfigScope {
 
     private var _density: Density = DefaultDensity
@@ -1670,6 +1687,7 @@ internal class ResolvedFlexBoxConfig : FlexBoxConfigScope {
  * @see FlexBoxScope.flex
  */
 @Stable
+@ExperimentalFlexBoxApi
 fun interface FlexConfig {
 
     /**
@@ -1684,6 +1702,7 @@ fun interface FlexConfig {
  *
  * @see FlexConfig
  */
+@ExperimentalFlexBoxApi
 sealed interface FlexConfigScope : Density {
 
     /**
@@ -1777,6 +1796,7 @@ sealed interface FlexConfigScope : Density {
     fun basis(@FloatRange(from = 0.0, to = 1.0) value: Float)
 }
 
+@OptIn(ExperimentalFlexBoxApi::class)
 internal class ResolvedFlexItemInfo : FlexConfigScope {
     var baselineAlignmentLine: AlignmentLine? = null
         private set
