@@ -107,15 +107,10 @@ internal class PdfContentLayoutTouchListener(
         // If we receive a MOVE but haven't initialized state (because DOWN was consumed elsewhere),
         // we essentially treat this first MOVE as our "Start".
         if (primaryPointerId == MotionEvent.INVALID_POINTER_ID) {
-            val fakeDown =
-                MotionEvent.obtain(
-                    event.downTime,
-                    event.eventTime,
-                    MotionEvent.ACTION_DOWN,
-                    event.x,
-                    event.y,
-                    event.metaState,
-                )
+            val fakeDown = MotionEvent.obtain(event)
+            // Change the action to DOWN while keeping all other data intact
+            fakeDown.action = MotionEvent.ACTION_DOWN
+
             handleDown(fakeDown)
             fakeDown.recycle()
             // If the user has already dragged past touch slop in this single event history,
