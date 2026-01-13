@@ -1623,6 +1623,172 @@ class BinaryCompatibilityCheckerTest {
         testBeforeAndAfterIsCompatible(beforeText, afterText)
     }
 
+    @Test
+    fun newMethodToSealedClassExtendedByAbstractIsInvalid() {
+        val beforeText =
+            """
+            abstract class example/Abstract : example/Sealed { // example/Abstract|null[0]
+                constructor <init>() // example/Abstract.<init>|<init>(){}[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+            }
+        """
+        val afterText =
+            """
+            abstract class example/Abstract : example/Sealed { // example/Abstract|null[0]
+                constructor <init>() // example/Abstract.<init>|<init>(){}[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+                abstract fun newFunFromSealed() // example/Sealed.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+        """
+        testBeforeAndAfterIsIncompatible(
+            beforeText,
+            afterText,
+            listOf("Added declaration newFunFromSealed() to example/Sealed"),
+        )
+    }
+
+    @Test
+    @Ignore("Not implemented yet")
+    fun newMethodToSealedClassExtendedByAbstractIsValidIfAdditionIsConcreteInSubclass() {
+        val beforeText =
+            """
+            abstract class example/Concrete : example/Sealed { // example/Concrete|null[0]
+                constructor <init>() // example/Concrete.<init>|<init>(){}[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+            }
+        """
+        val afterText =
+            """
+            abstract class example/Concrete : example/Sealed { // example/Concrete|null[0]
+                constructor <init>() // example/Concrete.<init>|<init>(){}[0]
+                open fun newFunFromSealed() // example/Concrete.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+                abstract fun newFunFromSealed() // example/Sealed.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+        """
+        testBeforeAndAfterIsCompatible(beforeText, afterText)
+    }
+
+    @Test
+    fun newMethodToSealedClassWithAbstractSubclassThatIsAlsoSealedWithNoAbstractSubclass() {
+        val beforeText =
+            """
+            sealed class example/DoubleSealed : example/Sealed { // example/DoubleSealed|null[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+            }
+        """
+        val afterText =
+            """
+            sealed class example/DoubleSealed : example/Sealed { // example/DoubleSealed|null[0]
+                open fun newFunFromSealed() // example/DoubleSealed.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+                abstract fun newFunFromSealed() // example/Sealed.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+        """
+        testBeforeAndAfterIsCompatible(beforeText, afterText)
+    }
+
+    @Test
+    fun newMethodToSealedClassWithAbstractSubclassThatIsAlsoSealedWithAbstractSubclassIsIncompatible() {
+        val beforeText =
+            """
+            abstract class example/DoubleSealedAbstract : example/DoubleSealed { // example/DoubleSealedAbstract|null[0]
+                constructor <init>() // example/DoubleSealedAbstract.<init>|<init>(){}[0]
+            }
+            sealed class example/DoubleSealed : example/Sealed { // example/DoubleSealed|null[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+            }
+        """
+        val afterText =
+            """
+            abstract class example/DoubleSealedAbstract : example/DoubleSealed { // example/DoubleSealedAbstract|null[0]
+                constructor <init>() // example/DoubleSealedAbstract.<init>|<init>(){}[0]
+            }
+            sealed class example/DoubleSealed : example/Sealed { // example/DoubleSealed|null[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+                abstract fun newFunFromSealed() // example/Sealed.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+        """
+        testBeforeAndAfterIsIncompatible(
+            beforeText,
+            afterText,
+            listOf("Added declaration newFunFromSealed() to example/Sealed"),
+        )
+    }
+
+    @Test
+    fun newMethodToSealedClassExtendedByAnotherSealedWithNoAbstractChildren() {
+        val beforeText =
+            """
+            abstract class example/DoubleSealedChild : example/DoubleSealed { // example/DoubleSealedChild|null[0]
+                constructor <init>() // example/DoubleSealedChild.<init>|<init>(){}[0]
+            }
+            sealed class example/DoubleSealed : example/Sealed // example/DoubleSealed|null[0]
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+            }
+        """
+        val afterText =
+            """
+            abstract class example/DoubleSealedChild : example/DoubleSealed { // example/DoubleSealedChild|null[0]
+                constructor <init>() // example/DoubleSealedChild.<init>|<init>(){}[0]
+            }
+            sealed class example/DoubleSealed : example/Sealed // example/DoubleSealed|null[0]
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+                abstract fun newFunFromSealed() // example/Sealed.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+        """
+        testBeforeAndAfterIsIncompatible(
+            beforeText,
+            afterText,
+            listOf("Added declaration newFunFromSealed() to example/Sealed"),
+        )
+    }
+
+    @Test
+    fun newMethodToSealedClassNotExtendedByAbstractIsValid() {
+        val beforeText =
+            """
+            final class example/Concrete : example/Sealed { // example/Concrete|null[0]
+                constructor <init>() // example/Concrete.<init>|<init>(){}[0]
+                final fun funFromSealed() // example/Concrete.funFromSealed|funFromSealed(){}[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+            }
+        """
+        val afterText =
+            """
+            final class example/Concrete : example/Sealed { // example/Concrete|null[0]
+                constructor <init>() // example/Concrete.<init>|<init>(){}[0]
+                final fun funFromSealed() // example/Concrete.funFromSealed|funFromSealed(){}[0]
+                final fun newFunFromSealed() // example/Concrete.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+            sealed class example/Sealed { // example/Sealed|null[0]
+                abstract fun funFromSealed() // example/Sealed.funFromSealed|funFromSealed(){}[0]
+                abstract fun newFunFromSealed() // example/Sealed.newFunFromSealed|newFunFromSealed(){}[0]
+            }
+        """
+        testBeforeAndAfterIsCompatible(beforeText, afterText)
+    }
+
     @Ignore // b/409298472
     @Test
     fun changedOrdinalOfEnumEntries() {
