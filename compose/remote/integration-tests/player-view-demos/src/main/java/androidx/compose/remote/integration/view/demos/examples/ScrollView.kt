@@ -18,7 +18,6 @@ package androidx.compose.remote.integration.view.demos.examples
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
@@ -40,6 +39,8 @@ import androidx.compose.remote.creation.compose.modifier.rememberRemoteScrollSta
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.verticalScroll
 import androidx.compose.remote.creation.compose.modifier.width
+import androidx.compose.remote.creation.compose.shapes.RemoteRectangleShape
+import androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.abs
 import androidx.compose.remote.creation.compose.state.rdp
@@ -47,7 +48,6 @@ import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -96,7 +96,8 @@ fun CanvasCalendarMonth(modifier: RemoteModifier = RemoteModifier, month: Int = 
         daysValue[i] = number
     }
     RemoteColumn(
-        modifier = modifier.clip(RoundedCornerShape(18.dp)).background(Color(3, 169, 244, 173)),
+        modifier =
+            modifier.clip(RemoteRoundedCornerShape(18.rdp)).background(Color(3, 169, 244, 173)),
         horizontalAlignment = RemoteAlignment.CenterHorizontally,
         verticalArrangement = RemoteArrangement.Center,
     ) {
@@ -212,7 +213,7 @@ fun ScrollViewDemo() {
             modifier =
                 RemoteModifier.fillMaxWidth()
                     .height(h2)
-                    .clip(RectangleShape)
+                    .clip(RemoteRectangleShape)
                     // .background(Color.LightGray)
                     .verticalScroll(scrollState),
             verticalArrangement = RemoteArrangement.Center,
