@@ -19,9 +19,11 @@ package androidx.compose.remote.creation.compose.shaders
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.paint.PaintBundle
+import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteMatrix3x3
+import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -52,10 +54,10 @@ public abstract class RemoteBrush {
     public companion object {
         public fun fromComposeUi(brush: Brush): RemoteBrush {
             return when (brush) {
-                is SolidColor -> RemoteBrush.solidColor(brush.value)
+                is SolidColor -> RemoteBrush.solidColor(brush.value.rc)
                 else -> {
                     println("RemoteBrush.fromComposeUi not implemented for $brush")
-                    RemoteBrush.solidColor(Color.Transparent)
+                    RemoteBrush.solidColor(Color.Transparent.rc)
                 }
             }
         }
@@ -72,8 +74,8 @@ public abstract class RemoteBrush {
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Suppress("DEPRECATION")
-public interface RemoteShader {
-    public abstract fun apply(paintBundle: PaintBundle)
+public abstract class RemoteShader : android.graphics.Shader() {
+    public abstract fun apply(creationState: RemoteComposeCreationState, paintBundle: PaintBundle)
 
     /**
      * The [RemoteMatrix3x3] if any to apply to the shader. Note not all profiles will support

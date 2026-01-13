@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.compose.remote.creation.compose.layout
-
-import androidx.compose.remote.core.RemoteContext
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
+import androidx.compose.remote.creation.compose.layout.RemoteAlignment
+import androidx.compose.remote.creation.compose.layout.RemoteArrangement
+import androidx.compose.remote.creation.compose.layout.RemoteBox
+import androidx.compose.remote.creation.compose.layout.RemoteCanvas
+import androidx.compose.remote.creation.compose.layout.RemoteColumn
+import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.layout.RemoteOffset
+import androidx.compose.remote.creation.compose.layout.RemoteRow
+import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
@@ -29,6 +35,7 @@ import androidx.compose.remote.creation.compose.shaders.solidColor
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.rs
@@ -172,7 +179,7 @@ class RemoteCanvasTest {
                 anchorY = 40f.rf,
                 paint =
                     RemotePaint().apply {
-                        applyRemoteBrush(RemoteBrush.solidColor(Color.Red), remoteSize)
+                        applyRemoteBrush(RemoteBrush.solidColor(Color.Red.rc), remoteSize)
                         textSize = SMALL_FONT_SIZE.rf.id
                     },
             )
@@ -182,7 +189,7 @@ class RemoteCanvasTest {
                 anchorY = 80f.rf,
                 paint =
                     RemotePaint().apply {
-                        applyRemoteBrush(RemoteBrush.solidColor(Color.Green), remoteSize)
+                        applyRemoteBrush(RemoteBrush.solidColor(Color.Green.rc), remoteSize)
                         textSize = MEDIUM_FONT_SIZE.rf.id
                     },
             )
@@ -192,7 +199,7 @@ class RemoteCanvasTest {
                 anchorY = 120f.rf,
                 paint =
                     RemotePaint().apply {
-                        applyRemoteBrush(RemoteBrush.solidColor(Color.Blue), remoteSize)
+                        applyRemoteBrush(RemoteBrush.solidColor(Color.Blue.rc), remoteSize)
                         textSize = LARGE_FONT_SIZE.rf.id
                     },
             )
@@ -202,9 +209,7 @@ class RemoteCanvasTest {
     @RemoteComposable
     @Composable
     fun TestDrawAnchoredText_colorExpression() {
-        // this would be animated, but screenshots are frozen.
-        val color =
-            RemoteColor.fromARGB(0.5f.rf, 0.8f.rf, RemoteContext.FLOAT_CONTINUOUS_SEC.rf, 0.9f.rf)
+        val color = RemoteColor.fromARGB(0.9f.rf.createReference(), 0.8f.rf, 0.9f.rf, 0.9f.rf)
         val text = "Visible Hello".rs
         RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) {
             val w = remoteWidth
@@ -214,7 +219,7 @@ class RemoteCanvasTest {
                 anchorY = 40f.rf,
                 paint =
                     RemotePaint().apply {
-                        applyRemoteBrush(RemoteBrush.solidColor(color), remoteSize)
+                        remoteColor = color
                         textSize = SMALL_FONT_SIZE.rf.id
                     },
             )
@@ -284,7 +289,7 @@ class RemoteCanvasTest {
     private companion object {
         val Padding = 24.rdp
         val ContainerSize = 100.rdp
-        val ContainerColor = Color(0xFFCFD8DC)
+        val ContainerColor = Color(0xFFCFD8DC.toInt()).rc
         const val SMALL_FONT_SIZE = 16f
         const val MEDIUM_FONT_SIZE = 32f
         const val LARGE_FONT_SIZE = 48f
