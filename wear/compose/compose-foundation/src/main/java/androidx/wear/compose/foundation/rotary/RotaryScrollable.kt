@@ -949,7 +949,11 @@ internal class RotaryScrollHandler(private val scrollableState: ScrollableState)
             debugLog { "ScrollAnimation value before start: ${scrollAnimation.value}" }
 
             val animationSpec =
-                if (scrollableState.atTheEdge) spring(visibilityThreshold = 0.3f) else spring()
+                if (scrollableState.atTheEdge) {
+                    spring(visibilityThreshold = EdgeVisibilityThreshold)
+                } else {
+                    spring()
+                }
 
             scrollAnimation.animateTo(
                 targetValue,
@@ -1065,10 +1069,20 @@ internal class RotarySnapHandler(
 
                     continueFirstScroll = false
                     var prevPosition = anim.value
+
+                    val animationSpec =
+                        if (scrollableState.atTheEdge) {
+                            spring(visibilityThreshold = EdgeVisibilityThreshold)
+                        } else {
+                            spring(
+                                stiffness = defaultStiffness,
+                                visibilityThreshold = SnapVisibilityThreshold,
+                            )
+                        }
+
                     anim.animateTo(
                         prevPosition + expectedDistance,
-                        animationSpec =
-                            spring(stiffness = defaultStiffness, visibilityThreshold = 0.1f),
+                        animationSpec = animationSpec,
                         sequentialAnimation = (anim.velocity != 0f),
                     ) {
                         // Exit animation if snap target was updated
@@ -1101,15 +1115,22 @@ internal class RotarySnapHandler(
                         }
                     }
                 }
-                // Exit animation if snap target was updated
-                if (snapTargetUpdated) continue
+
+                // Exit animation if snap target was updated.
+                // If we are at the edge, we also skip the second part of the animation.
+                // This allows us to immediately trigger fling(0f), handing control to the
+                // OverscrollEffect for a smooth bounce-back.
+                if (snapTargetUpdated || scrollableState.atTheEdge) continue
 
                 // Second part of Animation - animating to the centre of target element.
                 var prevPosition = anim.value
                 anim.animateTo(
                     prevPosition + expectedDistance,
                     animationSpec =
-                        SpringSpec(stiffness = defaultStiffness, visibilityThreshold = 0.1f),
+                        SpringSpec(
+                            stiffness = defaultStiffness,
+                            visibilityThreshold = SnapVisibilityThreshold,
+                        ),
                     sequentialAnimation = (anim.velocity != 0f),
                 ) {
                     // Exit animation if snap target was updated
@@ -1854,6 +1875,9 @@ private val ScrollableState.atTheEdge
 private const val AxisScroll = MotionEvent.AXIS_SCROLL
 
 private const val RotaryInputSource = InputDevice.SOURCE_ROTARY_ENCODER
+
+private const val EdgeVisibilityThreshold = 0.3f
+private const val SnapVisibilityThreshold = 0.1f
 
 /** Debug logging that can be enabled. */
 private const val DEBUG = false
