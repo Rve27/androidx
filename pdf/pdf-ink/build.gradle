@@ -69,7 +69,9 @@ dependencies {
     androidTestImplementation(libs.kotlinCoroutinesTest)
     androidTestImplementation(libs.espressoCore)
     androidTestImplementation(libs.bundles.espressoContrib)
+    androidTestImplementation(libs.espressoIdlingResource)
     androidTestImplementation(project(":test:screenshot:screenshot"))
+    androidTestImplementation("androidx.fragment:fragment-testing:1.7.1")
 }
 
 androidx {
