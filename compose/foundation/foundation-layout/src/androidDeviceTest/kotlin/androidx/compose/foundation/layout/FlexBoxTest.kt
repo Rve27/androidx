@@ -16,7 +16,6 @@
 
 package androidx.compose.foundation.layout
 
-import androidx.compose.foundation.layout.FlexBoxScopeInstance.flex
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -29,7 +28,11 @@ import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -1598,6 +1601,177 @@ class FlexBoxTest {
         // Item 1 must shift right so its line (at 10) aligns with 30. Shift = 20. Position X = 20.
         // Item 2 line (at 30) is already at max. Shift = 0. Position X = 0.
         Truth.assertThat(xPositions).containsExactly(20f, 0f).inOrder()
+    }
+
+    // Test overflow behavior
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_overflow_mainAxis_itemClipped() {
+        val itemSize = 50
+        val containerSize = 120 // Can fit 2 items (50 + 50 = 100), third overflows hence clipped
+        val sizes = mutableListOf<Int>()
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(containerSize.dp),
+                    config = {
+                        direction = FlexDirection.Row
+                        wrap = FlexWrap.NoWrap
+                    },
+                ) {
+                    repeat(3) { index ->
+                        Box(
+                            Modifier.size(itemSize.dp)
+                                .flex { shrink = 0f }
+                                .onSizeChanged { sizes.add(it.width) }
+                        )
+                    }
+                }
+            }
+        }
+        Truth.assertThat(sizes).containsExactly(itemSize, itemSize, 20).inOrder()
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_overflow_crossAxis_itemsClipped() {
+        val itemSize = 50
+        val containerSize = 120 // Can fit 2 lines
+        val sizes = mutableListOf<Int>()
+        val expectedHeights = listOf<Int>(50, 50, 50, 50, 20, 20)
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(containerSize.dp),
+                    config = {
+                        direction = FlexDirection.Row
+                        wrap = FlexWrap.Wrap
+                    },
+                ) {
+                    repeat(6) { index ->
+                        Box(
+                            Modifier.size(itemSize.dp)
+                                .flex { shrink = 0f }
+                                .onSizeChanged { sizes.add(it.height) }
+                        )
+                    }
+                }
+            }
+        }
+
+        Truth.assertThat(sizes).containsExactlyElementsIn(expectedHeights).inOrder()
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_overflow_mainAxis_itemSkipped() {
+        val itemSize = 50
+        val containerSize = 100 // Can fit 2 items (50 + 50 = 100), third overflows hence skipped
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(containerSize.dp),
+                    config = {
+                        direction = FlexDirection.Row
+                        wrap = FlexWrap.NoWrap
+                    },
+                ) {
+                    repeat(3) { index ->
+                        Box(Modifier.size(itemSize.dp).testTag("item$index").flex { shrink = 0f })
+                    }
+                }
+            }
+        }
+
+        rule.onNodeWithTag("item0").assertIsDisplayed()
+        rule.onNodeWithTag("item1").assertIsDisplayed()
+        rule.onNodeWithTag("item2").assertIsNotDisplayed()
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_overflow_crossAxis_itemsSkipped() {
+        val itemSize = 50
+        val containerSize = 100 // Can fit 2 lines
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(containerSize.dp),
+                    config = {
+                        direction = FlexDirection.Row
+                        wrap = FlexWrap.Wrap
+                    },
+                ) {
+                    repeat(6) { index ->
+                        Box(Modifier.size(itemSize.dp).flex { shrink = 0f }.testTag("item$index"))
+                    }
+                }
+            }
+        }
+        rule.onNodeWithTag("item0").assertIsDisplayed()
+        rule.onNodeWithTag("item1").assertIsDisplayed()
+        rule.onNodeWithTag("item2").assertIsDisplayed()
+        rule.onNodeWithTag("item3").assertIsDisplayed()
+        // not displayed
+        rule.onNodeWithTag("item4").assertIsNotDisplayed()
+        rule.onNodeWithTag("item5").assertIsNotDisplayed()
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_overflow_column_mainAxis_itemsSkipped() {
+        val itemSize = 50
+        val containerSize = 100
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(containerSize.dp),
+                    config = {
+                        direction = FlexDirection.Column
+                        wrap = FlexWrap.NoWrap
+                    },
+                ) {
+                    repeat(3) { index ->
+                        Box(Modifier.size(itemSize.dp).testTag("item$index").flex { shrink = 0f })
+                    }
+                }
+            }
+        }
+
+        rule.onNodeWithTag("item0").assertIsDisplayed()
+        rule.onNodeWithTag("item1").assertIsDisplayed()
+        rule.onNodeWithTag("item2").assertIsNotDisplayed()
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_overflow_withGap_itemsSkipped() {
+        val itemSize = 40
+        val gap = 20
+        val containerSize = 100 // 40 + 20 + 40 = 100, third item overflows
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(containerSize.dp),
+                    config = {
+                        direction = FlexDirection.Row
+                        gap(gap.dp)
+                    },
+                ) {
+                    repeat(3) { index ->
+                        Box(Modifier.size(itemSize.dp).testTag("item$index").flex { shrink = 0f })
+                    }
+                }
+            }
+        }
+
+        rule.onNodeWithTag("item0").assertIsDisplayed()
+        rule.onNodeWithTag("item1").assertIsDisplayed()
+        rule.onNodeWithTag("item2").assertIsNotDisplayed()
     }
 
     companion object {

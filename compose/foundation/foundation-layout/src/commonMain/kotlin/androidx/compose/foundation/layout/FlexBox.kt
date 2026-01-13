@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceAtLeast
+import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
@@ -226,6 +227,7 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
                 flexBoxConfig = flexBoxConfig,
                 totalLinesCrossSize = totalLinesCrossSize,
                 needsUpfrontCrossAxisCalculation = needsUpfrontCrossAxisCalculation,
+                constraints = constraints,
             )
 
         // calculate the cross position for each line.
@@ -304,17 +306,22 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
             items.fastForEachUntil(line.startIndex, line.endIndex) { item ->
                 val x =
                     if (isHorizontal) {
-                        item.mainPosition.fastCoerceIn(0, layoutWidth)
+                        item.mainPosition
                     } else {
-                        item.crossPosition.fastCoerceIn(0, layoutWidth)
+                        item.crossPosition
                     }
 
                 val y =
                     if (isHorizontal) {
-                        item.crossPosition.fastCoerceIn(0, layoutHeight)
+                        item.crossPosition
                     } else {
-                        item.mainPosition.fastCoerceIn(0, layoutHeight)
+                        item.mainPosition
                     }
+
+                // Skip placing items that overflow the layout bounds.
+                // Items are measured with clamped constraints to fit remaining space,
+                // but if their position still exceeds bounds, they are not placed.
+                if (x >= layoutWidth || y >= layoutHeight) return@fastForEachUntil
 
                 item.placeable?.placeRelative(x = x, y = y)
             }
@@ -380,6 +387,8 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
         var totalLinesCrossSize = 0
         var lineStartIndex = 0
 
+        var remainingCrossAxisSize = constraints.crossAxisMax
+
         items.fastForEachIndexed { index, item ->
             if (
                 flexBoxConfig.isWrapEnabled &&
@@ -397,12 +406,16 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
                     // Subtract the trailing mainAxisGap here
                     currentLineHypotheticalMainAxisSize =
                         currentLineHypotheticalMainAxisSize - mainAxisGap,
-                    containerMainAxisSize = constraints.mainAxisMax,
                     needsUpfrontCrossAxisCalculation = needsUpfrontCrossAxisCalculation,
+                    constraints = constraints,
+                    remainingCrossAxisSize = remainingCrossAxisSize,
                 )
                 totalLinesCrossSize += currentLine.crossAxisSize
                 currentLine.crossStart = currentCrossPosition
                 currentCrossPosition += currentLine.crossAxisSize + crossAxisGap
+                remainingCrossAxisSize =
+                    (remainingCrossAxisSize - (currentLine.crossAxisSize + crossAxisGap))
+                        .fastCoerceAtLeast(0)
                 lines.add(currentLine)
                 // start a new line with the current item
                 currentLine = FlexLine()
@@ -423,8 +436,9 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
                 // Subtract the trailing mainAxisGap here
                 currentLineHypotheticalMainAxisSize =
                     currentLineHypotheticalMainAxisSize - mainAxisGap,
-                containerMainAxisSize = constraints.mainAxisMax,
                 needsUpfrontCrossAxisCalculation = needsUpfrontCrossAxisCalculation,
+                constraints = constraints,
+                remainingCrossAxisSize = remainingCrossAxisSize,
             )
             totalLinesCrossSize += currentLine.crossAxisSize
             currentLine.crossStart = currentCrossPosition
@@ -440,38 +454,49 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
         items: ArrayList<ResolvedFlexItemInfo>,
         flexBoxConfig: ResolvedFlexBoxConfig,
         currentLineHypotheticalMainAxisSize: Int,
-        containerMainAxisSize: Int,
         needsUpfrontCrossAxisCalculation: Boolean,
+        constraints: OrientationIndependentConstraints,
+        remainingCrossAxisSize: Int,
     ) {
 
         // resolve main-axis sizes (flex-grow/shrink).
-        val lineMainAxisSize =
+        line.mainAxisSize =
             resolveFlexibleLengths(
                 isHorizontal = flexBoxConfig.isHorizontal,
                 items = items,
+                flexBoxConfig = flexBoxConfig,
                 startIndex = line.startIndex,
                 endIndex = line.endIndex,
                 hypotheticalLineSize = currentLineHypotheticalMainAxisSize,
-                containerMainAxisSize = containerMainAxisSize,
+                containerMainAxisSize = constraints.mainAxisMax,
             )
-        line.mainAxisSize = lineMainAxisSize
+
         // calculate the line's height.
         if (needsUpfrontCrossAxisCalculation) {
-            calculateLineCrossAxisSize(flexBoxConfig = flexBoxConfig, line = line, items = items)
+            calculateLineCrossAxisSize(
+                flexBoxConfig = flexBoxConfig,
+                line = line,
+                items = items,
+                constraints = constraints,
+                remainingCrossAxisSize = remainingCrossAxisSize,
+            )
         }
     }
 
     private fun resolveFlexibleLengths(
         isHorizontal: Boolean,
         items: ArrayList<ResolvedFlexItemInfo>,
+        flexBoxConfig: ResolvedFlexBoxConfig,
         startIndex: Int,
         endIndex: Int,
         hypotheticalLineSize: Int,
         containerMainAxisSize: Int,
     ): Int {
+        val itemCount = endIndex - startIndex
+        val totalGap = if (itemCount > 0) (itemCount - 1) * flexBoxConfig.mainAxisGap() else 0
 
         if (containerMainAxisSize == Constraints.Infinity) {
-            return items.fastSumBy(startIndex, endIndex) { it.targetMainSize }
+            return items.fastSumBy(startIndex, endIndex) { it.targetMainSize } + totalGap
         }
 
         val initialFreeSpace = (containerMainAxisSize - hypotheticalLineSize).toDouble()
@@ -529,7 +554,7 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
             }
         }
 
-        return lineMainAxisSize
+        return lineMainAxisSize + totalGap
     }
 
     // stretch to distribute extra cross-axis space to lines.
@@ -576,8 +601,11 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
         flexBoxConfig: ResolvedFlexBoxConfig,
         totalLinesCrossSize: Int,
         needsUpfrontCrossAxisCalculation: Boolean,
+        constraints: OrientationIndependentConstraints,
     ): Int {
         var updatedTotalCrossSize = totalLinesCrossSize
+        var remainingMainAxisSize: Int = constraints.mainAxisMax
+        var remainingCrossAxisSize: Int = constraints.crossAxisMax
 
         lines.fastForEach { line ->
             var lineCrossAxisSize = if (needsUpfrontCrossAxisCalculation) line.crossAxisSize else 0
@@ -601,15 +629,26 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
                         flexBoxConfig = flexBoxConfig,
                         lineCrossAxisSize = if (shouldStretch) line.crossAxisSize else 0,
                         shouldStretch = shouldStretch,
+                        remainingMainAxisSize = remainingMainAxisSize,
+                        remainingCrossAxisSize = remainingCrossAxisSize,
                     )
                 if (!needsUpfrontCrossAxisCalculation) {
                     lineCrossAxisSize = max(lineCrossAxisSize, crossAxisSize)
                 }
+                remainingMainAxisSize =
+                    (remainingMainAxisSize - (item.mainAxisSize + flexBoxConfig.mainAxisGap()))
+                        .fastCoerceAtLeast(0)
             }
             if (!needsUpfrontCrossAxisCalculation) {
                 line.crossAxisSize = lineCrossAxisSize
                 updatedTotalCrossSize += lineCrossAxisSize
             }
+            // reset main axis size for new line
+            remainingMainAxisSize = constraints.mainAxisMax
+
+            remainingCrossAxisSize =
+                (remainingCrossAxisSize - line.crossAxisSize - flexBoxConfig.crossAxisGap())
+                    .fastCoerceAtLeast(0)
         }
         return if (needsUpfrontCrossAxisCalculation) totalLinesCrossSize else updatedTotalCrossSize
     }
@@ -776,13 +815,15 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
         items: ArrayList<ResolvedFlexItemInfo>,
         flexBoxConfig: ResolvedFlexBoxConfig,
         line: FlexLine,
+        constraints: OrientationIndependentConstraints,
+        remainingCrossAxisSize: Int,
     ) {
 
         var lineCrossAxisSize = 0
         var maxAboveBaseline = 0
         var maxBelowBaseline = 0
         val isHorizontal = flexBoxConfig.isHorizontal
-
+        var remainingMainAxisSize: Int = constraints.mainAxisMax
         items.fastForEachUntil(line.startIndex, line.endIndex) { itemInfo ->
             val crossAxisSize =
                 if (
@@ -794,6 +835,8 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
                         flexBoxConfig,
                         lineCrossAxisSize = 0,
                         shouldStretch = false,
+                        remainingMainAxisSize = remainingMainAxisSize,
+                        remainingCrossAxisSize = remainingCrossAxisSize,
                     )
 
                     val baseline =
@@ -802,7 +845,11 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
 
                     maxAboveBaseline = max(maxAboveBaseline, baseline)
                     maxBelowBaseline = max(maxBelowBaseline, itemInfo.crossAxisSize - baseline)
-
+                    remainingMainAxisSize =
+                        (remainingMainAxisSize -
+                                itemInfo.mainAxisSize -
+                                flexBoxConfig.mainAxisGap())
+                            .fastCoerceAtLeast(0)
                     // line cross Axis size
                     maxAboveBaseline + maxBelowBaseline
                 } else {
@@ -813,6 +860,11 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
                         else
                             itemInfo.measurable?.maxIntrinsicWidth(height = itemInfo.targetMainSize)
                                 ?: 0
+                    remainingMainAxisSize =
+                        (remainingMainAxisSize -
+                                itemInfo.targetMainSize -
+                                flexBoxConfig.mainAxisGap())
+                            .fastCoerceAtLeast(0)
                     itemInfo.crossAxisSize
                 }
             lineCrossAxisSize = max(lineCrossAxisSize, crossAxisSize)
@@ -830,20 +882,44 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
         flexBoxConfig: ResolvedFlexBoxConfig,
         lineCrossAxisSize: Int,
         shouldStretch: Boolean,
+        remainingMainAxisSize: Int,
+        remainingCrossAxisSize: Int,
     ): Int {
         val isHorizontal = flexBoxConfig.isHorizontal
-
+        val clampedMainAxisSize =
+            item.targetMainSize.fastCoerceAtMost(maximumValue = remainingMainAxisSize)
         val itemConstraints =
             if (shouldStretch && lineCrossAxisSize > 0) {
                 Constraints.fixed(
-                    width = if (isHorizontal) item.targetMainSize else lineCrossAxisSize,
-                    height = if (isHorizontal) lineCrossAxisSize else item.targetMainSize,
+                    width =
+                        if (isHorizontal) clampedMainAxisSize
+                        else
+                            lineCrossAxisSize.fastCoerceAtMost(
+                                maximumValue = remainingCrossAxisSize
+                            ),
+                    height =
+                        if (isHorizontal)
+                            lineCrossAxisSize.fastCoerceAtMost(
+                                maximumValue = remainingCrossAxisSize
+                            )
+                        else clampedMainAxisSize,
                 )
             } else {
+
                 if (isHorizontal) {
-                    Constraints.fixedWidth(item.targetMainSize)
+                    Constraints.fitPrioritizingWidth(
+                        minWidth = clampedMainAxisSize,
+                        maxWidth = clampedMainAxisSize,
+                        minHeight = 0,
+                        maxHeight = remainingCrossAxisSize,
+                    )
                 } else {
-                    Constraints.fixedHeight(item.targetMainSize)
+                    Constraints.fitPrioritizingHeight(
+                        minWidth = 0,
+                        maxWidth = remainingCrossAxisSize,
+                        minHeight = clampedMainAxisSize,
+                        maxHeight = clampedMainAxisSize,
+                    )
                 }
             }
 
@@ -853,6 +929,13 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
                 item.placeable?.height ?: 0
             } else {
                 item.placeable?.width ?: 0
+            }
+
+        item.mainAxisSize =
+            if (isHorizontal) {
+                item.placeable?.width ?: 0
+            } else {
+                item.placeable?.height ?: 0
             }
 
         return item.crossAxisSize
