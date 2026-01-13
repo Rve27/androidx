@@ -343,7 +343,7 @@ class SandboxedPdfDocumentTest {
         val pageNum = 0
         val editableFormWidget =
             document.getFormWidgetInfos(pageNum).find {
-                !it.readOnly && it.widgetType == FormWidgetInfo.WIDGET_TYPE_CHECKBOX
+                !it.isReadOnly && it.widgetType == FormWidgetInfo.WIDGET_TYPE_CHECKBOX
             }
         requireNotNull(editableFormWidget)
 
