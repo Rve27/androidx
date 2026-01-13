@@ -67,10 +67,9 @@ class AnnotationSelectionTouchHandlerTest {
                         viewX: Float,
                         viewY: Float,
                     ): PageInfoProvider.PageInfo {
-                        val pageBounds = RectF(0f, 0f, PAGE_WIDTH, PAGE_HEIGHT)
                         return PageInfoProvider.PageInfo(
                             pageNum = 0,
-                            pageBounds = pageBounds,
+                            pageBounds = RectF(0f, 0f, PAGE_WIDTH, PAGE_HEIGHT),
                             pageToViewTransform = Matrix(),
                             viewToPageTransform = Matrix(),
                         )
@@ -91,13 +90,12 @@ class AnnotationSelectionTouchHandlerTest {
     @Test
     fun handleTouchEvent_hitDetected_notifiesListener() {
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
-            val annotationBounds = RectF(100f, 100f, 200f, 200f)
-            val annotation = createStampAnnotation(annotationBounds)
+            val annotation = createStampAnnotation()
 
             scenario.onActivity {
                 setupAnnotationsOnView(listOf(annotation))
 
-                // Simulate Touch inside bounds
+                // Touch at (150, 150) is inside the first path (125, 125 to 175, 175)
                 val event = obtainMotionEvent(MotionEvent.ACTION_DOWN, 150f, 150f)
                 val consumed = selectionTouchHandler.handleTouch(annotationsView, event)
 
@@ -110,13 +108,12 @@ class AnnotationSelectionTouchHandlerTest {
     @Test
     fun handleTouchEvent_outsideBounds_returnsFalse() {
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
-            val annotationBounds = RectF(100f, 100f, 200f, 200f)
-            val annotation = createStampAnnotation(annotationBounds)
+            val annotation = createStampAnnotation()
 
             scenario.onActivity {
                 setupAnnotationsOnView(listOf(annotation))
 
-                // Touch outside at (300, 300)
+                // Touch at (300, 300) is outside the 100-200 bounds
                 val event = obtainMotionEvent(MotionEvent.ACTION_DOWN, 300f, 300f)
                 val consumed = selectionTouchHandler.handleTouch(annotationsView, event)
 
@@ -129,8 +126,7 @@ class AnnotationSelectionTouchHandlerTest {
     @Test
     fun handleTouchEvent_swipeGesture_hitDetected() {
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
-            val annotationBounds = RectF(100f, 100f, 200f, 200f)
-            val annotation = createStampAnnotation(annotationBounds)
+            val annotation = createStampAnnotation()
 
             scenario.onActivity {
                 setupAnnotationsOnView(listOf(annotation))
@@ -148,11 +144,8 @@ class AnnotationSelectionTouchHandlerTest {
     @Test
     fun handleTouchEvent_overlappingAnnotations_selectsTopMost() {
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
-            // Both annotations share the same bounds
-            val bounds = RectF(100f, 100f, 200f, 200f)
-            val bounds1 = RectF(125f, 125f, 175f, 175f)
-            val bottomAnnotation = createStampAnnotation(bounds)
-            val topAnnotation = createStampAnnotation(bounds1)
+            val bottomAnnotation = createStampAnnotation()
+            val topAnnotation = createStampAnnotation(10f)
 
             scenario.onActivity {
                 // The list order represents Z-order: index 0 is bottom, last index is top
@@ -170,7 +163,24 @@ class AnnotationSelectionTouchHandlerTest {
         }
     }
 
-    // Updated helper to support multiple annotations
+    @Test
+    fun handleTouchEvent_hitDetectedOnSecondPath_notifiesListener() {
+        ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
+            val annotation = createStampAnnotation()
+
+            scenario.onActivity {
+                setupAnnotationsOnView(listOf(annotation))
+
+                // Touch at (150, 190) is inside the second path (125, 180 to 175, 195)
+                val event = obtainMotionEvent(MotionEvent.ACTION_DOWN, 150f, 190f)
+                val consumed = selectionTouchHandler.handleTouch(annotationsView, event)
+
+                assertThat(consumed).isTrue()
+                assertThat(testListener.lastSelectedAnnotation).isEqualTo(annotation)
+            }
+        }
+    }
+
     private fun setupAnnotationsOnView(annotations: List<PdfAnnotation>) {
         val keyedAnnotations =
             annotations.map { KeyedPdfAnnotation(key = UUID.randomUUID().toString(), it) }
@@ -180,22 +190,39 @@ class AnnotationSelectionTouchHandlerTest {
         annotationsView.annotations = sparseArray
     }
 
-    private fun createStampAnnotation(bounds: RectF): StampAnnotation {
-        val width = bounds.width()
-        val height = bounds.height()
+    /**
+     * Creates a StampAnnotation with hard-coded bounds and paths for predictable testing. Overall
+     * Bounds: (100, 100, 200, 200) Path 1 (Square): (125, 125) to (175, 175) Path 2 (Rectangle):
+     * (125, 180) to (175, 195)
+     */
+    private fun createStampAnnotation(offset: Float = 0f): StampAnnotation {
+        val bounds = RectF(100f + offset, 100f + offset, 200f + offset, 200f + offset)
 
-        // Mock a simple rectangular path slightly inset from bounds
-        val pathInputs =
-            listOf(
-                PathPdfObject.PathInput(bounds.left + width / 4, bounds.top + height / 4),
-                PathPdfObject.PathInput(bounds.right - width / 4, bounds.top + height / 4),
-                PathPdfObject.PathInput(bounds.right - width / 4, bounds.bottom - height / 4),
-                PathPdfObject.PathInput(bounds.left + width / 4, bounds.bottom - height / 4),
-                PathPdfObject.PathInput(bounds.left + width / 4, bounds.top + height / 4),
+        val path1 =
+            PathPdfObject(
+                Color.RED,
+                0f,
+                listOf(
+                    PathPdfObject.PathInput(125f, 125f),
+                    PathPdfObject.PathInput(175f, 125f),
+                    PathPdfObject.PathInput(175f, 175f),
+                    PathPdfObject.PathInput(125f, 175f),
+                ),
             )
 
-        val pathObject = PathPdfObject(Color.RED, 10f, pathInputs)
-        return StampAnnotation(0, bounds, listOf(pathObject))
+        val path2 =
+            PathPdfObject(
+                Color.BLUE,
+                0f,
+                listOf(
+                    PathPdfObject.PathInput(125f, 180f),
+                    PathPdfObject.PathInput(175f, 180f),
+                    PathPdfObject.PathInput(175f, 195f),
+                    PathPdfObject.PathInput(125f, 195f),
+                ),
+            )
+
+        return StampAnnotation(0, bounds, listOf(path1, path2))
     }
 
     private fun obtainMotionEvent(action: Int, x: Float, y: Float): MotionEvent {

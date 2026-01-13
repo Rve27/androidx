@@ -122,7 +122,9 @@ internal class AnnotationSelectionTouchHandler() {
                             pathRegion.setPath(path, clip)
 
                             // Intersect the path region with our touch square region.
-                            return pathRegion.op(touchRegion, Region.Op.INTERSECT)
+                            if (pathRegion.op(touchRegion, Region.Op.INTERSECT) == true) {
+                                return true
+                            }
                         }
                         false
                     }
