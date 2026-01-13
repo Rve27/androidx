@@ -315,26 +315,25 @@ internal open class FakePdfDocument(
                     mapOf(
                         0 to
                             listOf(
-                                FormWidgetInfo(
-                                    widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+                                FormWidgetInfo.createRadioButton(
                                     widgetIndex = 0,
                                     widgetRect = Rect(50, 500, 100, 600),
                                     textValue = "false",
                                     accessibilityLabel = "Radio",
+                                    false,
                                 )
                             ),
                         1 to
                             listOf(
-                                FormWidgetInfo(
-                                    widgetType = FormWidgetInfo.WIDGET_TYPE_LISTBOX,
+                                FormWidgetInfo.createListBox(
                                     widgetIndex = 0,
                                     widgetRect = Rect(50, 400, 100, 550),
                                     textValue = "Banana",
                                     accessibilityLabel = "ListBox",
                                     listItems =
                                         listOf(ListItem("Apple", false), ListItem("Banana", false)),
-                                    multiSelect = true,
-                                    readOnly = true,
+                                    isMultiSelect = true,
+                                    isReadOnly = true,
                                 )
                             ),
                     ),
