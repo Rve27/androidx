@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,18 @@
 
 package androidx.compose.runtime.platform
 
-internal actual typealias SynchronizedObject = Any
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+internal actual typealias Monitor = Object
 
 @Suppress("NOTHING_TO_INLINE")
-internal actual inline fun makeSynchronizedObject(ref: Any?) = ref ?: SynchronizedObject()
+internal actual inline fun makeMonitor(ref: Any?) = if (ref == null) Monitor() else ref as Monitor
 
-@PublishedApi
-internal actual inline fun <R> synchronized(lock: SynchronizedObject, block: () -> R): R = block()
-
-internal actual class Monitor {
-    actual fun wait() {}
-
-    actual fun notifyAll() {}
+@Suppress("BanInlineOptIn")
+@OptIn(ExperimentalContracts::class)
+internal actual inline fun <R> synchronized(monitor: Monitor, block: () -> R): R {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return kotlin.synchronized(monitor, block)
 }
-
-@Suppress("NOTHING_TO_INLINE") internal actual inline fun makeMonitor(ref: Any?) = Monitor()
-
-internal actual inline fun <R> synchronized(monitor: Monitor, block: () -> R): R = block()
