@@ -56,6 +56,7 @@ import androidx.compose.remote.creation.compose.state.RemoteDp
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.rb
+import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
@@ -780,8 +781,8 @@ public object RemoteButtonDefaults {
      */
     @Composable
     public fun scrimBrush(size: RemoteSize): RemoteBrush {
-        val startColor = scrimGradientStartColor
-        val endColor = scrimGradientEndColor
+        val startColor = scrimGradientStartColor.rc
+        val endColor = scrimGradientEndColor.rc
         return RemoteBrush.linearGradient(
             colors = listOf(startColor, endColor),
             RemoteOffset.Zero,

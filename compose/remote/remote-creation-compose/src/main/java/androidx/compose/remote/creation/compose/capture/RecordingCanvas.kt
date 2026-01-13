@@ -339,7 +339,7 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
         val shader = paint.shader as? RemoteShader
         if (forceSendingPaint || shader != lastRemoteShader) {
             if (shader != null) {
-                shader.apply(paintBundle)
+                shader.apply(creationState, paintBundle)
                 if (usingShaderMatrix || shader.remoteMatrix3x3 != null) {
                     usingShaderMatrix = true
                     val remoteMatrix3x3 = shader.remoteMatrix3x3
