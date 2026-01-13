@@ -580,12 +580,18 @@ package androidx.xr.compose.subspace.layout {
   }
 
   public final class PaddingKt {
+    method @KotlinOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier absolutePadding(androidx.xr.compose.subspace.layout.SubspaceModifier, optional androidx.compose.ui.unit.Dp left, optional androidx.compose.ui.unit.Dp top, optional androidx.compose.ui.unit.Dp right, optional androidx.compose.ui.unit.Dp bottom, optional androidx.compose.ui.unit.Dp front, optional androidx.compose.ui.unit.Dp back);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier absolutePadding-0tawpAo(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float, float, float, float, float);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier! absolutePadding-0tawpAo$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, float, float, float, float, float, float, int, Object!);
     method @KotlinOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.compose.ui.unit.Dp all);
+    method @KotlinOnly @Deprecated public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, optional androidx.compose.ui.unit.Dp left, optional androidx.compose.ui.unit.Dp right);
     method @KotlinOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, optional androidx.compose.ui.unit.Dp horizontal, optional androidx.compose.ui.unit.Dp vertical, optional androidx.compose.ui.unit.Dp depth);
-    method @KotlinOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, optional androidx.compose.ui.unit.Dp left, optional androidx.compose.ui.unit.Dp top, optional androidx.compose.ui.unit.Dp right, optional androidx.compose.ui.unit.Dp bottom, optional androidx.compose.ui.unit.Dp front, optional androidx.compose.ui.unit.Dp back);
+    method @KotlinOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, optional androidx.compose.ui.unit.Dp start, optional androidx.compose.ui.unit.Dp top, optional androidx.compose.ui.unit.Dp end, optional androidx.compose.ui.unit.Dp bottom, optional androidx.compose.ui.unit.Dp front, optional androidx.compose.ui.unit.Dp back);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding-0tawpAo(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float, float, float, float, float);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier! padding-0tawpAo$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, float, float, float, float, float, float, int, Object!);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding-3ABfNKs(androidx.xr.compose.subspace.layout.SubspaceModifier, float);
+    method @BytecodeOnly @Deprecated public static androidx.xr.compose.subspace.layout.SubspaceModifier padding-VpY3zN4(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float);
+    method @BytecodeOnly @Deprecated public static androidx.xr.compose.subspace.layout.SubspaceModifier! padding-VpY3zN4$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, float, float, int, Object!);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding-qQh39rQ(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float, float);
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier! padding-qQh39rQ$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, float, float, float, int, Object!);
   }
@@ -1110,6 +1116,7 @@ package androidx.xr.compose.subspace.layout {
     method @InaccessibleFromKotlin public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? getCoordinates();
     method @InaccessibleFromKotlin protected abstract androidx.compose.ui.unit.LayoutDirection getParentLayoutDirection();
     method public final void place(androidx.xr.compose.subspace.layout.SubspacePlaceable, androidx.xr.runtime.math.Pose pose);
+    method public final void placeRelative(androidx.xr.compose.subspace.layout.SubspacePlaceable, androidx.xr.runtime.math.Pose pose);
     property public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? coordinates;
     property protected abstract androidx.compose.ui.unit.LayoutDirection parentLayoutDirection;
   }
