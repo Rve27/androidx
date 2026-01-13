@@ -55,7 +55,7 @@ class AnnotationsViewTest {
     private lateinit var annotationsView: AnnotationsView
     private lateinit var fakePdfDocument: FakePdfDocument
     private lateinit var testHighlightListener: FakeInProgressTextHighlightsListener
-    private lateinit var testOnAnnotationSelectedListener: FakeOnAnnotationSelectedListener
+    private lateinit var testOnAnnotationSelectedListener: FakeOnAnnotationLocatedListener
 
     private val startIdlingResource = CountingIdlingResource(HIGHLIGHT_START_RESOURCE_NAME)
     private val finishIdlingResource = CountingIdlingResource(HIGHLIGHT_FINISH_RESOURCE_NAME)
@@ -71,7 +71,7 @@ class AnnotationsViewTest {
 
         testHighlightListener =
             FakeInProgressTextHighlightsListener(startIdlingResource, finishIdlingResource)
-        testOnAnnotationSelectedListener = FakeOnAnnotationSelectedListener()
+        testOnAnnotationSelectedListener = FakeOnAnnotationLocatedListener()
 
         setupActivity()
     }
@@ -188,7 +188,7 @@ class AnnotationsViewTest {
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
             scenario.onActivity {
                 annotationsView.interactionMode = AnnotationMode.Select()
-                annotationsView.addOnAnnotationSelectedListener(testOnAnnotationSelectedListener)
+                annotationsView.addOnAnnotationLocatedListener(testOnAnnotationSelectedListener)
 
                 // Touch down on annotation free point.
                 val event = obtainMotionEvent(10f, 10f, MotionEvent.ACTION_DOWN)
@@ -206,7 +206,7 @@ class AnnotationsViewTest {
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
             scenario.onActivity {
                 annotationsView.interactionMode = AnnotationMode.Select()
-                annotationsView.addOnAnnotationSelectedListener(testOnAnnotationSelectedListener)
+                annotationsView.addOnAnnotationLocatedListener(testOnAnnotationSelectedListener)
 
                 // Touch down on annotation point.
                 val event = obtainMotionEvent(75f, 75f, MotionEvent.ACTION_DOWN)
