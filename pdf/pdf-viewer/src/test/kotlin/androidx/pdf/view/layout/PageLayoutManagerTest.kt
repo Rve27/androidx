@@ -543,11 +543,11 @@ private const val PAGE_HEIGHT = 200
 
 private val FORM_WIDGET_INFOS =
     listOf(
-        FormWidgetInfo(
-            FormWidgetInfo.WIDGET_TYPE_TEXTFIELD,
+        FormWidgetInfo.createCheckbox(
             widgetIndex = 0,
             widgetRect = Rect(10, 10, 20, 20),
             textValue = "Hello",
             accessibilityLabel = "Hello",
+            isReadOnly = false,
         )
     )

@@ -2225,7 +2225,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         visiblePageAreas.keyIterator().forEach { pageNum ->
             val editableFormWidgetsInPage =
-                pageManager?.pages[pageNum]?.formWidgetInfos?.filter { !it.readOnly }
+                pageManager?.pages[pageNum]?.formWidgetInfos?.filter { !it.isReadOnly }
 
             editableFormWidgetsInPage?.forEach { widget ->
                 if (visiblePageAreas.get(pageNum).contains(widget.widgetRect.toRectF())) {
