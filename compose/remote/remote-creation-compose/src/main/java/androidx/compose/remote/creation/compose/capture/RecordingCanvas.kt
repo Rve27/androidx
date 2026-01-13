@@ -48,6 +48,7 @@ import androidx.compose.remote.creation.compose.state.RemoteColorFilter
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.compose.state.RemotePaint
+import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.getFloatIdForCreationState
 import androidx.compose.remote.creation.compose.state.rf
@@ -83,7 +84,7 @@ import androidx.compose.ui.graphics.toArgb
  *   compose perspective (are paint objects reused this way?)
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
+public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateScope {
 
     private var lastStyleOrdinal: Int = -1
     private var typeface: Int = -1
@@ -101,8 +102,8 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap) {
     private var lastRemoteShader: RemoteShader? = null
     private var lastBlendMode: BlendMode? = null
     private var lastRemoteColorFilter: RemoteColorFilter? = null
-    public lateinit var document: RemoteComposeWriter
-    public lateinit var creationState: RemoteComposeCreationState
+    override lateinit var document: RemoteComposeWriter
+    override lateinit var creationState: RemoteComposeCreationState
 
     private var usingShaderMatrix: Boolean = false
 

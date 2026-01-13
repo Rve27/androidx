@@ -148,9 +148,9 @@ public open class RemotePaint : Paint {
         super.setColor(color)
     }
 
-    public fun applyRemoteBrush(remoteBrush: RemoteBrush, size: RemoteSize) {
+    public fun RemoteStateScope.applyRemoteBrush(remoteBrush: RemoteBrush, size: RemoteSize) {
         if (remoteBrush.hasShader) {
-            shader = remoteBrush.createShader(size)
+            shader = with(remoteBrush) { createShader(size) }
             remoteColor = null
         } else if (remoteBrush is RemoteSolidColor) {
             remoteColor = remoteBrush.color
