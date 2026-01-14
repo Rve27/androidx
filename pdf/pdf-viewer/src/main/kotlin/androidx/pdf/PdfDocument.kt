@@ -63,7 +63,7 @@ public interface PdfDocument : Closeable {
      *
      * @see [FormType] for the supported types.
      */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY) @FormType public val formType: Int
+    @FormType public val formType: Int
 
     /**
      * Asynchronously retrieves information about the specified page.
@@ -81,7 +81,6 @@ public interface PdfDocument : Closeable {
      *   any additional information by default.
      * @return A [PageInfo] object containing information about the page.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public suspend fun getPageInfo(
         pageNumber: Int,
         @PageInfoFlags pageInfoFlags: Long = PAGE_INFO_EXCLUDE_FORM_WIDGETS,
@@ -103,7 +102,6 @@ public interface PdfDocument : Closeable {
      *   any additional information by default.
      * @return A list of [PageInfo] objects, one for each page in the range.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public suspend fun getPageInfos(
         pageRange: IntRange,
         @PageInfoFlags pageInfoFlags: Long = PAGE_INFO_EXCLUDE_FORM_WIDGETS,
@@ -191,7 +189,6 @@ public interface PdfDocument : Closeable {
      * @return A list of [FormWidgetInfo] objects representing the form widgets of the specified
      *   types on the specified page.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public suspend fun getFormWidgetInfos(
         pageNum: Int,
         @FormWidgetTypeFlags types: Long = FORM_WIDGET_INCLUDE_ALL_TYPES,
@@ -212,7 +209,6 @@ public interface PdfDocument : Closeable {
      * Listener interface for receiving notifications when some regions of the PDF content are
      * invalidated.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public interface OnPdfContentInvalidatedListener {
         /**
          * Invoked when some regions of the PDF content are invalidated, and need to be re-rendered.
@@ -226,7 +222,6 @@ public interface PdfDocument : Closeable {
         public fun onPdfContentInvalidated(pageNumber: Int, dirtyAreas: List<Rect>)
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
     /**
      * Adds a listener to receive notifications when some regions of the PDF content are
      * invalidated.
@@ -240,7 +235,6 @@ public interface PdfDocument : Closeable {
         listener: OnPdfContentInvalidatedListener,
     )
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
     /**
      * Removes the listener from the list of listeners which are notified when some regions of the
      * PDF content are invalidated.
@@ -255,22 +249,18 @@ public interface PdfDocument : Closeable {
      * @property pageNum The page number (0-based).
      * @property height The height of the page in points.
      * @property width The width of the page in points.
+     * @property formWidgetInfos (Optional) A list of [FormWidgetInfo] objects representing the form
+     *   widgets present on the given [pageNum]. This property is only populated if
+     *   [PdfDocument.INCLUDE_PAGE_FORM_WIDGET_INFO] is set in the 'pageInfoFlags' passed to
+     *   [PdfDocument.getPageInfo]. It will be empty if FormWidgetInfo is not requested or if there
+     *   are no form widgets present on the page.
      */
-    public class PageInfo
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public constructor(
+    public class PageInfo(
         public val pageNum: Int,
         public val height: Int,
         public val width: Int,
-        @get:RestrictTo(RestrictTo.Scope.LIBRARY)
         public val formWidgetInfos: List<FormWidgetInfo> = emptyList(),
-    ) {
-        public constructor(
-            pageNum: Int,
-            height: Int,
-            width: Int,
-        ) : this(pageNum, height, width, formWidgetInfos = emptyList())
-    }
+    )
 
     /** A source for retrieving bitmap representations of PDF pages. */
     public interface BitmapSource : Closeable {
@@ -366,53 +356,42 @@ public interface PdfDocument : Closeable {
 
     public companion object {
         /** Represents a PDF with no form fields */
-        @RestrictTo(RestrictTo.Scope.LIBRARY) public const val PDF_FORM_TYPE_NONE: Int = 0
+        public const val PDF_FORM_TYPE_NONE: Int = 0
 
         /** Represents a PDF with form fields specified using the AcroForm spec */
-        @RestrictTo(RestrictTo.Scope.LIBRARY) public const val PDF_FORM_TYPE_ACRO_FORM: Int = 1
+        public const val PDF_FORM_TYPE_ACRO_FORM: Int = 1
 
         /** Represents a PDF with form fields specified using the entire XFA spec */
-        @RestrictTo(RestrictTo.Scope.LIBRARY) public const val PDF_FORM_TYPE_XFA_FULL: Int = 2
+        public const val PDF_FORM_TYPE_XFA_FULL: Int = 2
 
         /** Represents a PDF with form fields specified using the XFAF subset of the XFA spec */
-        @RestrictTo(RestrictTo.Scope.LIBRARY) public const val PDF_FORM_TYPE_XFA_FOREGROUND: Int = 3
+        public const val PDF_FORM_TYPE_XFA_FOREGROUND: Int = 3
 
         /**
          * Flag used with [getPageInfo] to exclude any additional information in the returned
          * [PageInfo]
          */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val PAGE_INFO_EXCLUDE_FORM_WIDGETS: Long = 0L
         /** Flag used with [getPageInfo] to include form widget metadata in the [PageInfo] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val PAGE_INFO_INCLUDE_FORM_WIDGET: Long = 1 shl 0
 
         /** Flag to include all types of form widgets in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_ALL_TYPES: Long = -1
         /** Flag to include [FormWidgetInfo.WIDGET_TYPE_UNKNOWN] in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_UNKNOWN_TYPE: Long = 1 shl 0
         /** Flag to include [FormWidgetInfo.WIDGET_TYPE_PUSHBUTTON] in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_PUSHBUTTON_TYPE: Long = 1 shl 1
         /** Flag to include [FormWidgetInfo.WIDGET_TYPE_CHECKBOX] in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_CHECKBOX_TYPE: Long = 1 shl 2
         /** Flag to include [FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON] in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_RADIOBUTTON_TYPE: Long = 1 shl 3
         /** Flag to include [FormWidgetInfo.WIDGET_TYPE_COMBOBOX] in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_COMBOBOX_TYPE: Long = 1 shl 4
         /** Flag to include [FormWidgetInfo.WIDGET_TYPE_LISTBOX] in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_LISTBOX_TYPE: Long = 1 shl 5
         /** Flag to include [FormWidgetInfo.WIDGET_TYPE_TEXTFIELD] in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_TEXTFIELD_TYPE: Long = 1 shl 6
         /** Flag to include [FormWidgetInfo.WIDGET_TYPE_SIGNATURE] in [getFormWidgetInfos] */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
         public const val FORM_WIDGET_INCLUDE_SIGNATURE_TYPE: Long = 1 shl 7
     }
 }
