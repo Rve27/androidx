@@ -106,8 +106,12 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
     private var lastRemoteShader: RemoteShader? = null
     private var lastBlendMode: BlendMode? = null
     private var lastRemoteColorFilter: RemoteColorFilter? = null
-    override lateinit var document: RemoteComposeWriter
     override lateinit var creationState: RemoteComposeCreationState
+    override val document: RemoteComposeWriter
+        get() = creationState.document
+
+    override val remoteDensity: RemoteDensity
+        get() = creationState.remoteDensity
 
     private var usingShaderMatrix: Boolean = false
 
@@ -137,7 +141,6 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
      */
     public fun setRemoteComposeCreationState(creationState: RemoteComposeCreationState) {
         this.creationState = creationState
-        this.document = creationState.document
     }
 
     /**
