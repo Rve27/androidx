@@ -89,17 +89,18 @@ internal open class FakePdfDocument(
         return FakeBitmapSource(pageNumber)
     }
 
-    override suspend fun getFormWidgetInfos(pageNum: Int): List<FormWidgetInfo> {
-        logFormWidgetRequest(pageNum)
-        return pageFormWidgetInfos[pageNum] ?: emptyList()
-    }
-
     private fun logFormWidgetRequest(pageNum: Int) {
         _formWidgetRequests.add(pageNum)
     }
 
-    override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
-        return pageFormWidgetInfos[pageNum]?.filter { it.widgetType in types } ?: emptyList()
+    override suspend fun getFormWidgetInfos(pageNum: Int, types: Long): List<FormWidgetInfo> {
+        logFormWidgetRequest(pageNum)
+        if (types == PdfDocument.FORM_WIDGET_INCLUDE_ALL_TYPES)
+            return pageFormWidgetInfos[pageNum] ?: emptyList()
+
+        return pageFormWidgetInfos[pageNum]?.filter {
+            (1 shl it.widgetType).toLong() and types != 0L
+        } ?: emptyList()
     }
 
     override suspend fun getTopPageObjectAtPosition(pageNum: Int, point: PointF): PdfObject? {
@@ -192,25 +193,22 @@ internal open class FakePdfDocument(
 
     override suspend fun getPageInfos(
         pageRange: IntRange,
-        pageInfoFlags: PdfDocument.PageInfoFlags,
+        pageInfoFlags: Long,
     ): List<PdfDocument.PageInfo> {
         return listOf()
     }
 
     override suspend fun getPageInfo(pageNumber: Int): PdfDocument.PageInfo {
-        return getPageInfo(pageNumber, PdfDocument.PageInfoFlags.of(0))
+        return getPageInfo(pageNumber, PdfDocument.PAGE_INFO_EXCLUDE_FORM_WIDGETS)
     }
 
-    override suspend fun getPageInfo(
-        pageNumber: Int,
-        pageInfoFlags: PdfDocument.PageInfoFlags,
-    ): PdfDocument.PageInfo {
+    override suspend fun getPageInfo(pageNumber: Int, pageInfoFlags: Long): PdfDocument.PageInfo {
         layoutReach = maxOf(pageNumber, layoutReach)
         val size = pages[pageNumber]
         if (size == null) {
             throw CancellationException()
         }
-        if (pageInfoFlags.value and PdfDocument.INCLUDE_FORM_WIDGET_INFO != 0L) {
+        if (pageInfoFlags and PdfDocument.PAGE_INFO_INCLUDE_FORM_WIDGET != 0L) {
             return PdfDocument.PageInfo(
                 pageNum = pageNumber,
                 height = size.y,
