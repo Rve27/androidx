@@ -72,8 +72,6 @@ jobs:
           # * disabling non-Jvm tests to avoid memory exhaustion
           gradle-flags: >
             --max-workers=2
-            -Dorg.gradle.jvmargs="-Xmx4g -XX:+HeapDumpOnOutOfMemoryError"
-            -Dkotlin.daemon.jvm.options="-Xmx2g"
             -Pkotlin.native.enableKlibsCrossCompilation=false
             -Dorg.gradle.internal.http.connectionTimeout=60000
             -Dorg.gradle.internal.http.socketTimeout=60000
