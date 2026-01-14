@@ -30,6 +30,7 @@ import androidx.annotation.RequiresExtension
 import androidx.pdf.PdfDocument
 import androidx.pdf.RenderParams
 import androidx.pdf.annotation.KeyedPdfAnnotation
+import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.SelectionBoundary
@@ -74,6 +75,10 @@ internal open class FakePdfDocument(
 
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
         return listOf()
+    }
+
+    override suspend fun getTopPageObjectAtPosition(pageNum: Int, point: PointF): PdfObject? {
+        return null
     }
 
     override fun addOnPdfContentInvalidatedListener(
