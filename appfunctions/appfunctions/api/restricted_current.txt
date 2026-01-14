@@ -120,7 +120,7 @@ package androidx.appfunctions {
 
   @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER}) public @interface AppFunctionIntValueConstraint {
     ctor @KotlinOnly public AppFunctionIntValueConstraint(optional int[] enumValues);
-    method @InaccessibleFromKotlin public abstract int[] enumValues();
+    method @InaccessibleFromKotlin public abstract int[] enumValues() default {};
     property public abstract int[] enumValues;
   }
 
@@ -213,7 +213,7 @@ package androidx.appfunctions {
 
   @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER}) public @interface AppFunctionStringValueConstraint {
     ctor @KotlinOnly public AppFunctionStringValueConstraint(optional String[] enumValues);
-    method @InaccessibleFromKotlin public abstract String[] enumValues();
+    method @InaccessibleFromKotlin public abstract String[] enumValues() default {};
     property public abstract String[] enumValues;
   }
 
