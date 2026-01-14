@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalGridApi::class)
+
 package androidx.compose.foundation.layout
 
 import androidx.compose.foundation.horizontalScroll
