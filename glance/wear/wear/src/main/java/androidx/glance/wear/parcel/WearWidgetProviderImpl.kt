@@ -20,6 +20,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.util.Log
 import androidx.glance.wear.ActiveWearWidgetHandle
+import androidx.glance.wear.ContainerInfo
 import androidx.glance.wear.GlanceWearWidget
 import androidx.glance.wear.WearWidgetParams
 import androidx.glance.wear.cache.WearWidgetCache
@@ -54,7 +55,16 @@ internal class WearWidgetProviderImpl(
         requireNotNull(callback) { "Invalid widget callback." }
         mainScope.launch {
             // TODO: Report errors in the callback if any of the following steps fail.
-            val params = WearWidgetParams.fromParcel(requestParcel)
+            val params =
+                WearWidgetParams.fromParcel(requestParcel).let { requestParams ->
+                    if (requestParams.containerType == ContainerInfo.CONTAINER_TYPE_FULLSCREEN) {
+                        requestParams.withContainerType(
+                            containerType = ContainerInfo.CONTAINER_TYPE_LARGE
+                        )
+                    } else {
+                        requestParams
+                    }
+                }
 
             launch {
                 widgetCache.update {
