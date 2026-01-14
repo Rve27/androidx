@@ -1135,7 +1135,7 @@ class CapturePipelineTest {
         val capturePipelineTorchCorrection =
             CapturePipelineTorchCorrection(
                 cameraProperties = FakeCameraProperties(),
-                capturePipelineImpl = capturePipeline,
+                capturePipelineImplProvider = { capturePipeline },
                 threads = fakeUseCaseThreads,
                 torchControl = torchControl,
             )
@@ -1312,7 +1312,7 @@ class CapturePipelineTest {
             threads = fakeUseCaseThreads,
             torchControl = torchControl,
             useCaseGraphContext = fakeUseCaseGraphContext,
-            useCaseCameraState = fakeUseCaseCameraState,
+            useCaseCameraStateProvider = { fakeUseCaseCameraState },
             useTorchAsFlash = useTorchAsFlash,
             flashControl = flashControl,
             videoUsageControl = VideoUsageControl(),
