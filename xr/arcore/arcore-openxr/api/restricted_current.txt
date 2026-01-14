@@ -218,9 +218,12 @@ package androidx.xr.arcore.openxr {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class OpenXrRuntime implements androidx.xr.arcore.runtime.PerceptionRuntime {
+    method @InaccessibleFromKotlin public androidx.xr.runtime.Config getConfig();
     method @InaccessibleFromKotlin public androidx.xr.arcore.openxr.OpenXrManager getLifecycleManager();
     method @InaccessibleFromKotlin public androidx.xr.arcore.openxr.OpenXrPerceptionManager getPerceptionManager();
+    method @InaccessibleFromKotlin public void setConfig(androidx.xr.runtime.Config);
     method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.time.ComparableTimeMark?>);
+    property public androidx.xr.runtime.Config config;
     property public androidx.xr.arcore.openxr.OpenXrManager lifecycleManager;
     property public androidx.xr.arcore.openxr.OpenXrPerceptionManager perceptionManager;
   }
