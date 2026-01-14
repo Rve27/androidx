@@ -18,7 +18,6 @@ package androidx.pdf
 
 import android.graphics.Rect
 import android.os.Build
-import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.SandboxedPdfDocumentTest.Companion.withDocument
 import androidx.pdf.SandboxedPdfDocumentTest.Companion.withEditableDocument
 import androidx.pdf.models.FormEditInfo
@@ -206,7 +205,7 @@ class PdfFormFillingTest {
         verifyFormWidgetInfos(
             CLICK_FORM,
             0,
-            intArrayOf(FormWidgetInfo.WIDGET_TYPE_CHECKBOX),
+            PdfDocument.FORM_WIDGET_INCLUDE_CHECKBOX_TYPE,
             listOf(readOnlyCheckBox, checkBox),
         )
     }
@@ -804,7 +803,7 @@ class PdfFormFillingTest {
     @Test
     fun getFormWidgetInfo_assertNoWidgetsInNonFormPdf() = runTest {
         withDocument("sample.pdf") { document ->
-            val widgetInfos = document.getFormWidgetInfos(0, intArrayOf())
+            val widgetInfos = document.getFormWidgetInfos(0)
             assertThat(widgetInfos).hasSize(0)
         }
     }
@@ -886,10 +885,7 @@ class PdfFormFillingTest {
         ) {
             withDocument(fileName) { document ->
                 val actualFormWidgetInfos =
-                    document.getPageInfo(
-                        pageNum,
-                        PdfDocument.PageInfoFlags.of(INCLUDE_FORM_WIDGET_INFO),
-                    )
+                    document.getPageInfo(pageNum, PdfDocument.PAGE_INFO_INCLUDE_FORM_WIDGET)
                 assertThat(actualFormWidgetInfos.formWidgetInfos)
                     .hasSize(expectedWidgetInfoList.size)
                 for (i in 0..expectedWidgetInfoList.size - 1) {
@@ -904,7 +900,7 @@ class PdfFormFillingTest {
         private suspend fun verifyFormWidgetInfos(
             fileName: String,
             pageNum: Int,
-            types: IntArray = intArrayOf(),
+            types: Long,
             expectedWidgetInfoList: List<FormWidgetInfo>,
         ) {
             withDocument(fileName) { document ->
@@ -937,7 +933,7 @@ class PdfFormFillingTest {
                     },
                 )
                 val formWidgetInfos =
-                    document.getFormWidgetInfos(pageNum, intArrayOf(before.widgetType))
+                    document.getFormWidgetInfos(pageNum, (1 shl before.widgetType).toLong())
                 for (i in 0..formWidgetInfos.size - 1) {
                     if (formWidgetInfos[i].widgetIndex == before.widgetIndex) {
                         assertEquals(formWidgetInfos[i], before)
@@ -947,7 +943,7 @@ class PdfFormFillingTest {
                 document.applyEdit(editRecord)
 
                 val actualFormWidgetInfos =
-                    document.getFormWidgetInfos(pageNum, intArrayOf(before.widgetType))
+                    document.getFormWidgetInfos(pageNum, (1 shl before.widgetType).toLong())
                 for (i in 0..actualFormWidgetInfos.size - 1) {
                     if (actualFormWidgetInfos[i].widgetIndex == after.widgetIndex) {
                         assertEquals(actualFormWidgetInfos[i], after)

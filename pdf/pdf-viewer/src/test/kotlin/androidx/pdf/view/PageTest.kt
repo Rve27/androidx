@@ -62,7 +62,7 @@ class PageTest {
                     FakeBitmapSource(invocation.getArgument(0))
                 }
             onBlocking { getPageContent(pageNumber = 0) } doReturn pageContent
-            onBlocking { getFormWidgetInfos(any()) } doReturn UPDATED_PAGE_WIDGET_INFOS
+            onBlocking { getFormWidgetInfos(any(), any()) } doReturn UPDATED_PAGE_WIDGET_INFOS
         }
 
     private val canvasSpy = spy(Canvas())
