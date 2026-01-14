@@ -42,6 +42,7 @@ import static androidx.core.util.Preconditions.checkArgument;
 import static androidx.core.util.Preconditions.checkNotNull;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
+import static java.util.Arrays.asList;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -336,7 +337,11 @@ public final class Recorder implements VideoOutput {
      *
      * @see QualitySelector
      */
-    public static final QualitySelector DEFAULT_QUALITY_SELECTOR = VideoSpec.QUALITY_SELECTOR_AUTO;
+    public static final QualitySelector DEFAULT_QUALITY_SELECTOR =
+            QualitySelector.fromOrderedList(
+                    asList(Quality.FHD, Quality.HD, Quality.SD),
+                    FallbackStrategy.higherQualityOrLowerThan(Quality.FHD)
+            );
 
     private static final VideoSpec VIDEO_SPEC_DEFAULT =
             VideoSpec.builder()
@@ -345,7 +350,7 @@ public final class Recorder implements VideoOutput {
                     .build();
     private static final MediaSpec MEDIA_SPEC_DEFAULT =
             MediaSpec.builder()
-                    .setOutputFormat(MediaSpec.OUTPUT_FORMAT_AUTO)
+                    .setOutputFormat(MediaSpec.OUTPUT_FORMAT_UNSPECIFIED)
                     .setVideoSpec(VIDEO_SPEC_DEFAULT)
                     .build();
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
@@ -735,8 +740,8 @@ public final class Recorder implements VideoOutput {
      * Gets the audio source of this Recorder.
      *
      * @return the value provided to {@link Builder#setAudioSource(int)} on the builder used to
-     * create this recorder, or the default value of {@link AudioSpec#SOURCE_AUTO} if no source was
-     * set.
+     * create this recorder, or the default value of {@link AudioSpec#SOURCE_UNSPECIFIED} if no
+     * source was set.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     @AudioSpec.Source
@@ -1700,7 +1705,7 @@ public final class Recorder implements VideoOutput {
             try {
                 MediaSpec mediaSpec = getObservableData(mMediaSpec);
                 int muxerOutputFormat =
-                        mediaSpec.getOutputFormat() == MediaSpec.OUTPUT_FORMAT_AUTO
+                        mediaSpec.getOutputFormat() == MediaSpec.OUTPUT_FORMAT_UNSPECIFIED
                                 ? supportedMuxerFormatOrDefaultFrom(mResolvedEncoderProfiles,
                                 MediaSpec.outputFormatToMuxerFormat(
                                         MEDIA_SPEC_DEFAULT.getOutputFormat()))
@@ -3631,7 +3636,7 @@ public final class Recorder implements VideoOutput {
          * options.
          */
         public Builder() {
-            mMediaSpecBuilder = MediaSpec.builder();
+            mMediaSpecBuilder = MEDIA_SPEC_DEFAULT.toBuilder();
         }
 
         /**
@@ -3791,9 +3796,9 @@ public final class Recorder implements VideoOutput {
          * enabled on a per-recording basis with {@link PendingRecording#withAudioEnabled()}
          * before starting the recording.
          *
-         * @param source The audio source to use. One of {@link AudioSpec#SOURCE_AUTO} or
+         * @param source The audio source to use. One of {@link AudioSpec#SOURCE_UNSPECIFIED} or
          *               {@link AudioSpec#SOURCE_CAMCORDER}. Default is
-         *               {@link AudioSpec#SOURCE_AUTO}.
+         *               {@link AudioSpec#SOURCE_UNSPECIFIED}.
          */
         @RestrictTo(RestrictTo.Scope.LIBRARY)
         public @NonNull Builder setAudioSource(@AudioSpec.Source int source) {
