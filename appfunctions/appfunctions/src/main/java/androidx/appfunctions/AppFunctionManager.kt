@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.Flow
  * Provides access to interact with App Functions. This is a backward-compatible wrapper for the
  * platform class [android.app.appfunctions.AppFunctionManager].
  */
-public class AppFunctionManagerCompat
+public class AppFunctionManager
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public constructor(
     private val context: Context,
@@ -146,7 +146,7 @@ public constructor(
         return processResponse(translator, functionMetadata, executeAppFunctionResponse)
     }
 
-    @Suppress("NewApi") // AppFunctionManagerCompat is only available when SDK >= 33
+    @Suppress("NewApi") // AppFunctionManager is only available when SDK >= 33
     private fun processResponse(
         translator: Translator?,
         functionMetadata: AppFunctionMetadata?,
@@ -245,21 +245,21 @@ public constructor(
             }
 
         /**
-         * Gets an instance of [AppFunctionManagerCompat] if the AppFunction feature is supported.
+         * Gets an instance of [AppFunctionManager] if the AppFunction feature is supported.
          *
          * The AppFunction feature is supported,
          * * If SDK version is greater or equal to 36
          * * If SDK version is greater or equal to 34 and the device implements App Function
          *   extension library.
          *
-         * @return an instance of [AppFunctionManagerCompat] if the AppFunction feature is supported
-         *   or `null`.
+         * @return an instance of [AppFunctionManager] if the AppFunction feature is supported or
+         *   `null`.
          */
         @JvmStatic
-        public fun getInstance(context: Context): AppFunctionManagerCompat? {
+        public fun getInstance(context: Context): androidx.appfunctions.AppFunctionManager? {
             return when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA -> {
-                    AppFunctionManagerCompat(
+                    AppFunctionManager(
                         context,
                         AppSearchAppFunctionReader(
                             context,
@@ -271,7 +271,7 @@ public constructor(
                 }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
                     isExtensionLibraryAvailable() -> {
-                    AppFunctionManagerCompat(
+                    AppFunctionManager(
                         context,
                         AppSearchAppFunctionReader(
                             context,
