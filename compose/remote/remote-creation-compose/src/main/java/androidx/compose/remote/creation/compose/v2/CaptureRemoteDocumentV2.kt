@@ -21,7 +21,6 @@ package androidx.compose.remote.creation.compose.v2
 import android.content.Context
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.RemoteClock
-import androidx.compose.remote.core.SystemClock
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.capture.CapturedDocument
 import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
@@ -65,7 +64,7 @@ public suspend fun captureSingleRemoteDocumentV2(
     creationDisplayInfo: CreationDisplayInfo,
     layoutDirection: LayoutDirection? = null,
     context: Context,
-    clock: RemoteClock = SystemClock(),
+    clock: RemoteClock = RemoteClock.SYSTEM,
     profile: Profile = RcPlatformProfiles.ANDROIDX,
     writerEvents: WriterEvents = WriterEvents(),
     coroutineContext: CoroutineContext = Dispatchers.Default,
@@ -96,7 +95,7 @@ public fun captureRemoteDocumentV2(
     layoutDirection: LayoutDirection? = null,
     writerEvents: WriterEvents,
     context: Context,
-    clock: RemoteClock = SystemClock(),
+    clock: RemoteClock = RemoteClock.SYSTEM,
     profile: Profile = RcPlatformProfiles.ANDROIDX,
     coroutineContext: CoroutineContext = Dispatchers.Default,
     content: @Composable () -> Unit,
