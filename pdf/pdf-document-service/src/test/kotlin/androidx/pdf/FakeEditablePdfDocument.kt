@@ -76,10 +76,7 @@ internal class FakeEditablePdfDocument(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getPageInfo(
-        pageNumber: Int,
-        pageInfoFlags: PdfDocument.PageInfoFlags,
-    ): PdfDocument.PageInfo {
+    override suspend fun getPageInfo(pageNumber: Int, pageInfoFlags: Long): PdfDocument.PageInfo {
         TODO("Not yet implemented")
     }
 
@@ -89,7 +86,7 @@ internal class FakeEditablePdfDocument(
 
     override suspend fun getPageInfos(
         pageRange: IntRange,
-        pageInfoFlags: PdfDocument.PageInfoFlags,
+        pageInfoFlags: Long,
     ): List<PdfDocument.PageInfo> {
         TODO("Not yet implemented")
     }
@@ -129,11 +126,7 @@ internal class FakeEditablePdfDocument(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getFormWidgetInfos(pageNum: Int): List<FormWidgetInfo> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
+    override suspend fun getFormWidgetInfos(pageNum: Int, types: Long): List<FormWidgetInfo> {
         TODO("Not yet implemented")
     }
 

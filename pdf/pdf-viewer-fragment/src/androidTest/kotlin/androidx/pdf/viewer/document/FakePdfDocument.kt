@@ -69,11 +69,7 @@ internal open class FakePdfDocument(
         return FakeBitmapSource(pageNumber)
     }
 
-    override suspend fun getFormWidgetInfos(pageNum: Int): List<FormWidgetInfo> {
-        return listOf()
-    }
-
-    override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
+    override suspend fun getFormWidgetInfos(pageNum: Int, types: Long): List<FormWidgetInfo> {
         return listOf()
     }
 
@@ -139,19 +135,16 @@ internal open class FakePdfDocument(
 
     override suspend fun getPageInfos(
         pageRange: IntRange,
-        pageInfoFlags: PdfDocument.PageInfoFlags,
+        pageInfoFlags: Long,
     ): List<PdfDocument.PageInfo> {
         return listOf()
     }
 
     override suspend fun getPageInfo(pageNumber: Int): PdfDocument.PageInfo {
-        return getPageInfo(pageNumber, PdfDocument.PageInfoFlags.of(0))
+        return getPageInfo(pageNumber, PdfDocument.PAGE_INFO_EXCLUDE_FORM_WIDGETS)
     }
 
-    override suspend fun getPageInfo(
-        pageNumber: Int,
-        pageInfoFlags: PdfDocument.PageInfoFlags,
-    ): PdfDocument.PageInfo {
+    override suspend fun getPageInfo(pageNumber: Int, pageInfoFlags: Long): PdfDocument.PageInfo {
         val size = pages[pageNumber]
         return PdfDocument.PageInfo(pageNumber, size.y, size.x)
     }

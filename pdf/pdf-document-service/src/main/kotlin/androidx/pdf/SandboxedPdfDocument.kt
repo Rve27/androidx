@@ -31,7 +31,6 @@ import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import androidx.pdf.PdfDocument.BitmapSource
-import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.PdfDocument.DocumentClosedException
 import androidx.pdf.PdfDocument.PdfPageContent
 import androidx.pdf.annotation.KeyedPdfAnnotation
@@ -114,14 +113,12 @@ public class SandboxedPdfDocument(
      */
     private var isDocumentClosedExplicitly = false
 
+    @Suppress("WrongConstant")
     override suspend fun getPageInfo(pageNumber: Int): PdfDocument.PageInfo {
-        return getPageInfo(pageNumber, PdfDocument.PageInfoFlags.of(0))
+        return getPageInfo(pageNumber, PdfDocument.PAGE_INFO_EXCLUDE_FORM_WIDGETS)
     }
 
-    override suspend fun getPageInfo(
-        pageNumber: Int,
-        pageInfoFlags: PdfDocument.PageInfoFlags,
-    ): PdfDocument.PageInfo {
+    override suspend fun getPageInfo(pageNumber: Int, pageInfoFlags: Long): PdfDocument.PageInfo {
         return withDocument { document ->
             // TODO(b/407777410): Update the logic so that callers can refetch the information in
             // case
@@ -130,10 +127,10 @@ public class SandboxedPdfDocument(
 
             // Check if the INCLUDE_FORM_WIDGET_INFO flag is set
             val formWidgetInfo =
-                if (pageInfoFlags.value and INCLUDE_FORM_WIDGET_INFO != 0L) {
+                if (pageInfoFlags and PdfDocument.PAGE_INFO_INCLUDE_FORM_WIDGET != 0L) {
                     document.getFormWidgetInfos(pageNumber).map { it.toContentClass() }
                 } else {
-                    null
+                    emptyList()
                 }
 
             if (dimensions == null || dimensions.height <= 0 || dimensions.width <= 0) {
@@ -155,7 +152,7 @@ public class SandboxedPdfDocument(
 
     override suspend fun getPageInfos(
         pageRange: IntRange,
-        pageInfoFlags: PdfDocument.PageInfoFlags,
+        pageInfoFlags: Long,
     ): List<PdfDocument.PageInfo> {
         return pageRange.map { getPageInfo(pageNumber = it, pageInfoFlags = pageInfoFlags) }
     }
@@ -225,13 +222,11 @@ public class SandboxedPdfDocument(
 
     override fun getPageBitmapSource(pageNumber: Int): BitmapSource = PageBitmapSource(pageNumber)
 
-    override suspend fun getFormWidgetInfos(pageNum: Int): List<FormWidgetInfo> {
-        return getFormWidgetInfos(pageNum, intArrayOf())
-    }
-
-    override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
+    override suspend fun getFormWidgetInfos(pageNum: Int, types: Long): List<FormWidgetInfo> {
         return withDocument { document ->
-            document.getFormWidgetInfosOfType(pageNum, types).map { it.toContentClass() }
+            document.getFormWidgetInfosOfType(pageNum, getFormWidgetTypesArray(types)).map {
+                it.toContentClass()
+            }
         }
     }
 
@@ -446,6 +441,28 @@ public class SandboxedPdfDocument(
             val remainingAnnotations = deferredRemainingBatches.awaitAll().flatten()
             firstAnnotations + remainingAnnotations
         }
+    }
+
+    private fun getFormWidgetTypesArray(types: Long): IntArray {
+        if (types == PdfDocument.FORM_WIDGET_INCLUDE_ALL_TYPES) return intArrayOf()
+
+        return buildList {
+                if (types and PdfDocument.FORM_WIDGET_INCLUDE_TEXTFIELD_TYPE != 0L)
+                    add(FormWidgetInfo.WIDGET_TYPE_TEXTFIELD)
+                if (types and PdfDocument.FORM_WIDGET_INCLUDE_PUSHBUTTON_TYPE != 0L)
+                    add(FormWidgetInfo.WIDGET_TYPE_PUSHBUTTON)
+                if (types and PdfDocument.FORM_WIDGET_INCLUDE_RADIOBUTTON_TYPE != 0L)
+                    add(FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON)
+                if (types and PdfDocument.FORM_WIDGET_INCLUDE_CHECKBOX_TYPE != 0L)
+                    add(FormWidgetInfo.WIDGET_TYPE_CHECKBOX)
+                if (types and PdfDocument.FORM_WIDGET_INCLUDE_COMBOBOX_TYPE != 0L)
+                    add(FormWidgetInfo.WIDGET_TYPE_COMBOBOX)
+                if (types and PdfDocument.FORM_WIDGET_INCLUDE_LISTBOX_TYPE != 0L)
+                    add(FormWidgetInfo.WIDGET_TYPE_LISTBOX)
+                if (types and PdfDocument.FORM_WIDGET_INCLUDE_SIGNATURE_TYPE != 0L)
+                    add(FormWidgetInfo.WIDGET_TYPE_SIGNATURE)
+            }
+            .toIntArray()
     }
 
     private companion object {
