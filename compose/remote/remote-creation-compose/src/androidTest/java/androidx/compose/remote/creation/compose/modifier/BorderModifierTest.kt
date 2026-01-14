@@ -19,6 +19,9 @@ package androidx.compose.remote.creation.compose.modifier
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.shapes.RemoteCircleShape
+import androidx.compose.remote.creation.compose.shapes.RemoteRectangleShape
+import androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rf
@@ -62,6 +65,42 @@ class BorderModifierTest {
                     { border(2.rdp, Color.Red.rc) },
                     { border(3.rdp, Color.Red.rc) },
                     { border(3.rdp, Color.Blue.rc.copy(alpha = 0.5f.rf)) },
+                    // Ensure a non constant color
+                    { border(3.rdp, Color.Blue.rc.copy(alpha = 0.5f.rf.createReference())) },
+                    { border(width = 2.rdp, color = Color.Green.rc, shape = RemoteRectangleShape) },
+                    { border(width = 2.rdp, color = Color.Magenta.rc, shape = RemoteCircleShape) },
+                    {
+                        border(
+                            width = 2.rdp,
+                            color = Color.Cyan.rc,
+                            shape = RemoteRoundedCornerShape(size = 10.rf),
+                        )
+                    },
+                    //                     Not supported in BorderModifierOperation
+                    //                    {
+                    //                        border(
+                    //                            width = 2.rdp,
+                    //                            color = Color.Cyan.rc,
+                    //                            shape = RemoteRoundedCornerShape(size = 10.rdp),
+                    //                        )
+                    //                    },
+                    //                    {
+                    //                        border(
+                    //                            width = 2.rdp,
+                    //                            color = Color.Gray.rc,
+                    //                            shape = RemoteRoundedCornerShape(percent = 50),
+                    //                        )
+                    //                    },
+                    //                    {
+                    //                        border(
+                    //                            width = 2.rdp,
+                    //                            color = Color.Black.rc,
+                    //                            shape = RemoteRoundedCornerShape(
+                    //                                topStart =
+                    //                                    10.rdp, bottomEnd = 10.rdp
+                    //                            ),
+                    //                        )
+                    //                    },
                 )
 
             gridScreenshotUI.GridContent(
