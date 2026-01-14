@@ -37,18 +37,18 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(minSdk = 33)
-class AppFunctionManagerCompatUnitTest {
+class AppFunctionManagerUnitTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val fakeAppFunctionReader = FakeAppFunctionReader()
     private val fakeTranslateSelector = FakeTranslatorSelector()
     private val fakeAppFunctionApi = FakeAppFunctionManagerApi()
     private val fakeTranslator = FakeTranslator()
-    private lateinit var appFunctionManagerCompat: AppFunctionManagerCompat
+    private lateinit var mAppFunctionManager: AppFunctionManager
 
     @Before
     fun setup() {
-        appFunctionManagerCompat =
-            AppFunctionManagerCompat(
+        mAppFunctionManager =
+            AppFunctionManager(
                 context,
                 fakeAppFunctionReader,
                 fakeAppFunctionApi,
@@ -62,7 +62,7 @@ class AppFunctionManagerCompatUnitTest {
             ExecuteAppFunctionResponse.Success(AppFunctionData.EMPTY)
 
         val response =
-            appFunctionManagerCompat.executeAppFunction(
+            mAppFunctionManager.executeAppFunction(
                 request = ExecuteAppFunctionRequest("x", "y", AppFunctionData.EMPTY)
             )
 
@@ -92,7 +92,7 @@ class AppFunctionManagerCompatUnitTest {
             ExecuteAppFunctionResponse.Success(AppFunctionData.EMPTY)
 
         val response =
-            appFunctionManagerCompat.executeAppFunction(
+            mAppFunctionManager.executeAppFunction(
                 request = ExecuteAppFunctionRequest(packageName, functionId, AppFunctionData.EMPTY)
             )
         assertThat(response).isInstanceOf(ExecuteAppFunctionResponse.Success::class.java)
@@ -123,7 +123,7 @@ class AppFunctionManagerCompatUnitTest {
             ExecuteAppFunctionResponse.Success(AppFunctionData.EMPTY)
 
         val response =
-            appFunctionManagerCompat.executeAppFunction(
+            mAppFunctionManager.executeAppFunction(
                 request = ExecuteAppFunctionRequest(packageName, functionId, AppFunctionData.EMPTY)
             )
 
