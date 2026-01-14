@@ -35,6 +35,7 @@ import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.PdfDocument.DocumentClosedException
 import androidx.pdf.PdfDocument.PdfPageContent
 import androidx.pdf.annotation.KeyedPdfAnnotation
+import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.annotation.processor.BatchPdfAnnotationsProcessor
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
@@ -231,6 +232,13 @@ public class SandboxedPdfDocument(
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
         return withDocument { document ->
             document.getFormWidgetInfosOfType(pageNum, types).map { it.toContentClass() }
+        }
+    }
+
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 19)
+    override suspend fun getTopPageObjectAtPosition(pageNum: Int, point: PointF): PdfObject? {
+        return withDocument { document ->
+            document.getTopPageObjectAtPosition(pageNum, point, intArrayOf())
         }
     }
 

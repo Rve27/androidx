@@ -25,6 +25,7 @@ import android.util.SparseArray
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.KeyedPdfAnnotation
+import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.PdfPageGotoLinkContent
@@ -197,6 +198,17 @@ public interface PdfDocument : Closeable {
         pageNum: Int,
         types: IntArray = intArrayOf(),
     ): List<FormWidgetInfo>
+
+    /**
+     * Returns the topmost page object at a specific point on the page.
+     *
+     * @param pageNum The page number (0-based).
+     * @param point The point on the page to query.
+     * @return The topmost [PdfObject] at the specified point or returns null if no page object is
+     *   present.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public suspend fun getTopPageObjectAtPosition(pageNum: Int, point: PointF): PdfObject?
 
     /**
      * Listener interface for receiving notifications when some regions of the pdf content are
