@@ -379,9 +379,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     private var frameRateCategoryView: View? = null
 
-    internal val isArrEnabled = SDK_INT >= VANILLA_ICE_CREAM
-
-    private val rootSemanticsNode = EmptySemanticsModifier()
+    internal val isArrEnabled: Boolean
+        get() = SDK_INT >= VANILLA_ICE_CREAM
 
     override val focusOwner: FocusOwner = FocusOwnerImpl(this, this)
 
@@ -617,11 +616,13 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     override val rectManager = RectManager(layoutNodes)
 
-    override val rootForTest: RootForTest = this
+    override val rootForTest: RootForTest
+        get() = this
+
     internal var uncaughtExceptionHandler: RootForTest.UncaughtExceptionHandler? = null
 
     override val semanticsOwner: SemanticsOwner =
-        SemanticsOwner(root, rootSemanticsNode, layoutNodes)
+        SemanticsOwner(root, EmptySemanticsModifier(), layoutNodes)
     private val composeAccessibilityDelegate = AndroidComposeViewAccessibilityDelegateCompat(this)
     internal var contentCaptureManager =
         AndroidContentCaptureManager(
@@ -835,20 +836,35 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     private var onReadyForComposition: ((ComposeViewContext) -> Unit)? = null
 
-    private val legacyTextInputServiceAndroid = TextInputServiceAndroid(view, this)
+    private var _legacyTextInputServiceAndroid: TextInputServiceAndroid? = null
+    private val legacyTextInputServiceAndroid: TextInputServiceAndroid
+        get() =
+            _legacyTextInputServiceAndroid
+                ?: TextInputServiceAndroid(view, this).also { _legacyTextInputServiceAndroid = it }
 
+    private var _textInputService: TextInputService? = null
     /**
      * The legacy text input service. This is only used for new text input sessions if
      * [textInputSessionMutex] is null.
      */
     @Deprecated("Use PlatformTextInputModifierNode instead.")
-    override val textInputService =
-        TextInputService(platformTextInputServiceInterceptor(legacyTextInputServiceAndroid))
+    override val textInputService: TextInputService
+        get() =
+            _textInputService
+                ?: TextInputService(
+                        platformTextInputServiceInterceptor(legacyTextInputServiceAndroid)
+                    )
+                    .also { _textInputService = it }
 
     private val textInputSessionMutex = SessionMutex<AndroidPlatformTextInputSession>()
 
-    override val softwareKeyboardController: SoftwareKeyboardController =
-        DelegatingSoftwareKeyboardController(textInputService)
+    private var _softwareKeyboardController: SoftwareKeyboardController? = null
+    override val softwareKeyboardController: SoftwareKeyboardController
+        get() =
+            _softwareKeyboardController
+                ?: DelegatingSoftwareKeyboardController(textInputService).also {
+                    _softwareKeyboardController = it
+                }
 
     override val placementScope: Placeable.PlacementScope
         get() = PlacementScope(this)
