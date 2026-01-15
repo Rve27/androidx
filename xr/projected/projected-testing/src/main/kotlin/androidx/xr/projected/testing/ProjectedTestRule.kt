@@ -19,19 +19,35 @@ package androidx.xr.projected.testing
 import android.annotation.SuppressLint
 import android.app.Application
 import android.companion.virtual.VirtualDeviceManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.IntentFilter
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
+import android.content.pm.ServiceInfo
 import android.hardware.display.VirtualDisplay
 import android.hardware.display.VirtualDisplayConfig
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.test.core.app.ApplicationProvider
+import androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction
+import androidx.xr.projected.experimental.ExperimentalProjectedApi
+import androidx.xr.projected.platform.IProjectedInputEventListener
+import androidx.xr.projected.platform.IProjectedService
+import androidx.xr.projected.platform.ProjectedInputEvent
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.util.concurrent.Executor
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
+import org.mockito.ArgumentCaptor
+import org.mockito.kotlin.any
+import org.mockito.kotlin.firstValue
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowVirtualDeviceManager
 
 /**
@@ -75,10 +91,6 @@ import org.robolectric.shadows.ShadowVirtualDeviceManager
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class ProjectedTestRule : TestRule {
 
-    private val context: Application = ApplicationProvider.getApplicationContext()
-    private val virtualDeviceManager =
-        context.getSystemService(Context.VIRTUAL_DEVICE_SERVICE) as VirtualDeviceManager
-
     /**
      * This property can be used to control whether the device is connected or not. By default, the
      * device is disconnected.
@@ -93,13 +105,53 @@ public class ProjectedTestRule : TestRule {
             field = value
         }
 
+    /**
+     * Controls whether [androidx.xr.projected.ProjectedActivityCompat.create] or
+     * [androidx.xr.projected.ProjectedDeviceController.create] throw an [IllegalStateException]
+     * when called. By default, the exception is not being thrown.
+     */
+    public var throwIllegalStateExceptionWhenCreatingControllers: Boolean = false
+        set(value) {
+            if (value) {
+                disableProjectedService()
+            } else {
+                enableProjectedService()
+            }
+            field = value
+        }
+
+    private val context: Application = ApplicationProvider.getApplicationContext()
+    private val virtualDeviceManager =
+        context.getSystemService(Context.VIRTUAL_DEVICE_SERVICE) as VirtualDeviceManager
+    private val mockProjectedService: IProjectedService = mock<IProjectedService>()
+    private val mockProjectedServiceStub =
+        mock<IProjectedService.Stub> {
+            on { queryLocalInterface(any()) }.thenReturn(mockProjectedService)
+        }
+
     override fun apply(base: Statement?, description: Description?): Statement =
         object : Statement() {
             override fun evaluate() {
+                throwIllegalStateExceptionWhenCreatingControllers = false
                 isDeviceConnected = true
                 base?.evaluate()
             }
         }
+
+    /**
+     * Emits a [ProjectedInputEvent] with the given [ProjectedInputAction] to
+     * [androidx.xr.projected.ProjectedActivityCompat.projectedInputEvents].
+     */
+    @ExperimentalProjectedApi
+    public fun sendProjectedInputEvent(projectedInputAction: ProjectedInputAction) {
+        val inputEventListenerCaptor =
+            ArgumentCaptor.forClass(IProjectedInputEventListener::class.java)
+        verify(mockProjectedService)
+            .registerProjectedInputEventListener(inputEventListenerCaptor.capture())
+        inputEventListenerCaptor.firstValue.onProjectedInputEvent(
+            ProjectedInputEvent().apply { action = projectedInputAction.code }
+        )
+    }
 
     // TODO: b/476403759 - Replace reflection with the shadow APIs when they are available.
     @SuppressLint("BanUncheckedReflection")
@@ -190,6 +242,31 @@ public class ProjectedTestRule : TestRule {
         }
     }
 
+    private fun enableProjectedService() {
+        shadowOf(context.packageManager).apply {
+            addServiceIfNotPresent(PROJECTED_SERVICE_COMPONENT_NAME)
+            addIntentFilterForService(
+                PROJECTED_SERVICE_COMPONENT_NAME,
+                IntentFilter(PROJECTED_ACTION_BIND),
+            )
+            installPackage(PROJECTED_PACKAGE_INFO)
+        }
+
+        shadowOf(context).apply {
+            setComponentNameAndServiceForBindService(
+                PROJECTED_SERVICE_COMPONENT_NAME,
+                mockProjectedServiceStub,
+            )
+            setBindServiceCallsOnServiceConnectedDirectly(true)
+        }
+    }
+
+    private fun disableProjectedService() {
+        shadowOf(context.packageManager).apply {
+            clearIntentFilterForService(PROJECTED_SERVICE_COMPONENT_NAME)
+        }
+    }
+
     private companion object {
         private const val PROJECTED_DEVICE_NAME = "ProjectionDevice"
         private const val PROJECTED_DISPLAY_NAME = "ProjectionDisplay"
@@ -197,5 +274,22 @@ public class ProjectedTestRule : TestRule {
         private const val DISPLAY_WIDTH = 10
         private const val DISPLAY_HEIGHT = 10
         private const val DISPLAY_DENSITY = 10
+
+        private const val PROJECTED_ACTION_BIND = "androidx.xr.projected.ACTION_BIND"
+        private const val SYSTEM_PACKAGE_NAME = "com.system.service"
+        private const val PROJECTED_SERVICE_CLASS_NAME = "com.system.service.ProjectedService"
+        private val PROJECTED_SERVICE_COMPONENT_NAME: ComponentName =
+            ComponentName(SYSTEM_PACKAGE_NAME, PROJECTED_SERVICE_CLASS_NAME)
+        private val PROJECTED_SERVICE_INFO =
+            ServiceInfo().apply {
+                packageName = SYSTEM_PACKAGE_NAME
+                name = PROJECTED_SERVICE_CLASS_NAME
+            }
+        private val PROJECTED_PACKAGE_INFO =
+            PackageInfo().apply {
+                packageName = SYSTEM_PACKAGE_NAME
+                services = arrayOf(PROJECTED_SERVICE_INFO)
+                applicationInfo = ApplicationInfo().apply { flags = ApplicationInfo.FLAG_SYSTEM }
+            }
     }
 }
