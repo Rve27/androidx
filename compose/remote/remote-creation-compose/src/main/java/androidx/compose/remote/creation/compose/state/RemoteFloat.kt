@@ -418,11 +418,14 @@ public abstract class RemoteFloat : BaseRemoteState<Float>() {
      * Returns a [RemoteFloat] that is a reference of this RemoteFloat.
      *
      * This is temporarily useful because the floatArray has a maximum size.
+     *
+     * @param forceRemote If true, forces the creation of a remote reference even if the value is
+     *   constant.
      */
-    // TODO: Remove the need for this.
-    public fun createReference(): RemoteFloat {
+    @JvmOverloads
+    public fun createReference(forceRemote: Boolean = false): RemoteFloat {
         return RemoteFloatExpression(
-            constantValue,
+            if (forceRemote) null else constantValue,
             { creationState -> floatArrayOf(getFloatIdForCreationState(creationState)) },
         )
     }
