@@ -265,7 +265,7 @@ private const val ONE_FRAME_120_HERTZ_IN_MILLISECONDS = 8L
 
 @Suppress("ViewConstructor", "VisibleForTests")
 @OptIn(InternalComposeUiApi::class)
-internal class AndroidComposeView(context: Context, coroutineContext: CoroutineContext) :
+internal class AndroidComposeView(context: Context, composeViewContext: ComposeViewContext) :
     ViewGroup(context),
     Owner,
     PlatformFocusOwner,
@@ -277,6 +277,44 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     ViewTreeObserver.OnScrollChangedListener,
     ViewTreeObserver.OnTouchModeChangeListener,
     FocusListener {
+
+    private var _composeViewContext by mutableStateOf(composeViewContext)
+    var composeViewContext: ComposeViewContext
+        get() = _composeViewContext
+        set(value) {
+            val currentComposeViewContext = Snapshot.withoutReadObservation { _composeViewContext }
+            if (value == currentComposeViewContext) {
+                return
+            }
+            val hasCoroutineContextChanged =
+                coroutineContext != value.compositionContext.effectCoroutineContext
+            if (isAttachedToWindow) {
+                currentComposeViewContext.decrementViewCount()
+                value.incrementViewCount()
+            }
+            _composeViewContext = value
+            // In some rare cases, the CoroutineContext is cancelled (because the parent
+            // CompositionContext containing the CoroutineContext is no longer associated with this
+            // class). Changing this CoroutineContext to the new CompositionContext's
+            // CoroutineContext needs to cancel all Pointer Input Nodes relying on the old
+            // CoroutineContext. See [Wrapper.android.kt] for more details.
+            if (hasCoroutineContextChanged) {
+                val headModifierNode = root.nodes.head
+
+                // Reset head Modifier.Node's pointer input handler (that is, the underlying
+                // coroutine used to run the handler for input pointer events).
+                if (headModifierNode is SuspendingPointerInputModifierNode) {
+                    headModifierNode.resetPointerInputHandler()
+                }
+
+                // Reset all other Modifier.Node's pointer input handler in the chain.
+                headModifierNode.visitSubtree(Nodes.PointerInput) {
+                    if (it is SuspendingPointerInputModifierNode) {
+                        it.resetPointerInputHandler()
+                    }
+                }
+            }
+        }
 
     /**
      * Remembers the position of the last pointer input event that was down. This position will be
@@ -345,30 +383,8 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         return IMPORTANT_FOR_AUTOFILL_YES
     }
 
-    override var coroutineContext: CoroutineContext = coroutineContext
-        // In some rare cases, the CoroutineContext is cancelled (because the parent
-        // CompositionContext containing the CoroutineContext is no longer associated with this
-        // class). Changing this CoroutineContext to the new CompositionContext's CoroutineContext
-        // needs to cancel all Pointer Input Nodes relying on the old CoroutineContext.
-        // See [Wrapper.android.kt] for more details.
-        set(value) {
-            field = value
-
-            val headModifierNode = root.nodes.head
-
-            // Reset head Modifier.Node's pointer input handler (that is, the underlying
-            // coroutine used to run the handler for input pointer events).
-            if (headModifierNode is SuspendingPointerInputModifierNode) {
-                headModifierNode.resetPointerInputHandler()
-            }
-
-            // Reset all other Modifier.Node's pointer input handler in the chain.
-            headModifierNode.visitSubtree(Nodes.PointerInput) {
-                if (it is SuspendingPointerInputModifierNode) {
-                    it.resetPointerInputHandler()
-                }
-            }
-        }
+    override val coroutineContext: CoroutineContext
+        get() = composeViewContext.compositionContext.effectCoroutineContext
 
     override val dragAndDropManager = AndroidDragAndDropManager(::startDrag)
 
@@ -947,6 +963,14 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
      */
     private var keyboardModifiersRequireUpdate = false
 
+    /**
+     * Used to track when [composeViewContext] calls [ComposeViewContext.incrementViewCount] during
+     * init. This is needed because once this has been added to the hierarchy, we don't need to
+     * specially treat it with respect to [ComposeViewContext]. It will stop composing when detached
+     * from the hierarchy.
+     */
+    internal var composeViewContextIncrementedDuringInit = false
+
     init {
         addOnAttachStateChangeListener(contentCaptureManager)
         setWillNotDraw(false)
@@ -977,6 +1001,18 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                 }
             frameRateCategoryView = view
             addView(view)
+        }
+    }
+
+    /**
+     * Called when [AbstractComposeView.composeViewContext] is set to `null`. This will remove the
+     * attachment of this AndroidComposeView from the ComposeViewContext so that it can stop
+     * observing when no AndroidComposeViews need it.
+     */
+    fun removeConnectionToComposeViewContext() {
+        if (composeViewContextIncrementedDuringInit) {
+            composeViewContext.decrementViewCount()
+            composeViewContextIncrementedDuringInit = false
         }
     }
 
@@ -2195,6 +2231,10 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             insetsListener.onViewAttachedToWindow(this)
         }
         addNotificationForSysPropsChange(this)
+        if (!composeViewContextIncrementedDuringInit) {
+            composeViewContext.incrementViewCount()
+        }
+        composeViewContextIncrementedDuringInit = false
         _windowInfo.isWindowFocused = hasWindowFocus()
         _windowInfo.setOnInitializeContainerSize { calculateWindowSize(this) }
         updateWindowMetrics()
@@ -2308,6 +2348,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         }
 
         removeNotificationForSysPropsChange(this)
+        composeViewContext.decrementViewCount()
         snapshotObserver.stopObserving()
         _windowInfo.setOnInitializeContainerSize(null)
         val lifecycle =
