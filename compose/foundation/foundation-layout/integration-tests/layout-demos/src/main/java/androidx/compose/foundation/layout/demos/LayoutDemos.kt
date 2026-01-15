@@ -29,5 +29,6 @@ val LayoutDemos =
             ComposableDemo("Contextual Flow Row") { ContextualFlowRowDemo() },
             ComposableDemo("Contextual FlowColumn") { ContextualFlowColumnDemo() },
             ComposableDemo("Rtl support") { RtlDemo() },
+            ComposableDemo("Grid") { GridDemo() },
         ),
     )
