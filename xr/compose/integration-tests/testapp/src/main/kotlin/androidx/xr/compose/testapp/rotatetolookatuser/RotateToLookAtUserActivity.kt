@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.testapp.lookatuser
+package androidx.xr.compose.testapp.rotatetolookatuser
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -56,10 +56,10 @@ import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.gravityAligned
 import androidx.xr.compose.subspace.layout.height
-import androidx.xr.compose.subspace.layout.lookAtUser
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.padding
 import androidx.xr.compose.subspace.layout.rotate
+import androidx.xr.compose.subspace.layout.rotateToLookAtUser
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testapp.ui.components.TopBarWithBackArrow
 import androidx.xr.compose.testapp.ui.theme.IntegrationTestsAppTheme
@@ -71,21 +71,21 @@ import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 
 /**
- * Integration test activity for the [lookAtUser] modifier.
+ * Integration test activity for the [rotateToLookAtUser] modifier.
  *
  * This activity provides a visual test bed to validate how spatial entities track the user's head
  * pose across different container types and modifier combinations.
  *
  * Test Scenarios
- * 1. Standard lookAtUser: Validates full 3D orientation tracking (pitch, yaw, and roll) applied to
- *    a [SpatialPanel], [SpatialRow], [SpatialColumn], and [SpatialExternalSurface].
+ * 1. Standard rotateToLookAtUser: Validates full 3D orientation tracking (pitch, yaw, and roll)
+ *    applied to a [SpatialPanel], [SpatialRow], [SpatialColumn], and [SpatialExternalSurface].
  * 2. Nested Hierarchies: Validates that the tracking logic correctly handles coordinate
  *    transformations when the child tracks the user inside a rotated [SpatialBox].
  * 3. Custom Up Vector: Validates tracking behavior when a specific 'up' orientation is provided,
  *    useful for tilted or non-standard tracking requirements.
  * 4. Billboard: Demonstrates and validates the "Billboard" effect, achieved by chaining
- *    [lookAtUser] with [gravityAligned]. This should result in horizontal-only tracking while the
- *    panel remains vertically upright.
+ *    [rotateToLookAtUser] with [gravityAligned]. This should result in horizontal-only tracking
+ *    while the panel remains vertically upright.
  *
  * Usage
  * - Use the global switch in the top control panel to toggle the tracking behavior for all test
@@ -93,7 +93,7 @@ import androidx.xr.runtime.math.Vector3
  * - Move the headset or camera around the spatial environment to verify that all panels actively
  *   rotate to maintain a front-facing orientation toward the user.
  */
-class LookAtUserActivity : ComponentActivity() {
+class RotateToLookAtUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { MainContent() }
@@ -108,7 +108,7 @@ class LookAtUserActivity : ComponentActivity() {
             config = session.config.copy(deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN)
         )
 
-        var isLookAtUserOn by remember { mutableStateOf(true) }
+        var isRotateToLookAtUserOn by remember { mutableStateOf(true) }
 
         IntegrationTestsAppTheme {
             Subspace(modifier = SubspaceModifier.width(1600.dp).height(1400.dp)) {
@@ -118,10 +118,10 @@ class LookAtUserActivity : ComponentActivity() {
                 ) {
                     SpatialColumn(verticalArrangement = SpatialArrangement.spacedBy(20.dp)) {
                         ControlPanel(
-                            isLookAtUserOn = isLookAtUserOn,
-                            onToggle = { isLookAtUserOn = it },
+                            isRotateToLookAtUserOn = isRotateToLookAtUserOn,
+                            onToggle = { isRotateToLookAtUserOn = it },
                         )
-                        TestGrid(isFeatureOn = isLookAtUserOn)
+                        TestGrid(isFeatureOn = isRotateToLookAtUserOn)
                     }
                 }
             }
@@ -131,7 +131,7 @@ class LookAtUserActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @SubspaceComposable
     @Composable
-    private fun ControlPanel(isLookAtUserOn: Boolean, onToggle: (Boolean) -> Unit) {
+    private fun ControlPanel(isRotateToLookAtUserOn: Boolean, onToggle: (Boolean) -> Unit) {
         SpatialPanel(modifier = SubspaceModifier.width(550.dp).height(200.dp).padding(25.dp)) {
             Column(
                 modifier = Modifier.fillMaxSize().background(PurpleGrey80),
@@ -142,7 +142,7 @@ class LookAtUserActivity : ComponentActivity() {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     TopBarWithBackArrow(
                         scrollBehavior = null,
-                        title = "Look At User Modifier Test",
+                        title = "RotateToLookAtUser Modifier Test",
                         onClick = { finish() },
                     )
                 }
@@ -154,21 +154,21 @@ class LookAtUserActivity : ComponentActivity() {
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        "Enable Look At User Modifier:",
+                        "Enable RotateToLookAtUser Modifier:",
                         color = PurpleGrey40,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(end = 20.dp),
                     )
-                    Switch(checked = isLookAtUserOn, onCheckedChange = onToggle)
+                    Switch(checked = isRotateToLookAtUserOn, onCheckedChange = onToggle)
                 }
             }
         }
     }
 
     /**
-     * A reusable container that encapsulates a spatial composable and applies the lookAtUser
-     * modifier based on the global state.
+     * A reusable container that encapsulates a spatial composable and applies the
+     * rotateToLookAtUser modifier based on the global state.
      */
     @SubspaceComposable
     @Composable
@@ -187,8 +187,8 @@ class LookAtUserActivity : ComponentActivity() {
         if (isFeatureOn) {
             finalModifier =
                 when {
-                    upVector != null -> finalModifier.lookAtUser(up = upVector)
-                    else -> finalModifier.lookAtUser()
+                    upVector != null -> finalModifier.rotateToLookAtUser(upDirection = upVector)
+                    else -> finalModifier.rotateToLookAtUser()
                 }
         }
 

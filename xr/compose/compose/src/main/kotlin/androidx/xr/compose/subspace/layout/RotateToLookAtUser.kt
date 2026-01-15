@@ -47,47 +47,50 @@ import kotlinx.coroutines.launch
  * session.config.copy(headTracking = Config.HeadTrackingMode.LAST_KNOWN) )`
  *
  * This modifier might not work as expected when used on content within a
- * [androidx.xr.compose.spatial.UserSubspace].
+ * [androidx.xr.compose.spatial.FollowingSubspace].
  *
  * The preceding rotate modifiers will be disregarded because this modifier will override them. But
- * the rotate after the lookAtUser modifier will be respected.
+ * the rotate after the `rotateToLookAtUser` modifier will be respected.
  *
  * To achieve a "billboard" effect—where the content rotates to face the user on the Y-axis while
  * remaining upright and aligned with gravity—combine this with [gravityAligned].
  *
- * @sample androidx.xr.compose.samples.LookAtUserSamples
- * @param up Defines the reference "up" direction for the content's orientation. Pointing the
- *   content's forward vector at the user leaves the rotation around that axis (roll) undefined;
+ * @sample androidx.xr.compose.samples.RotateToLookAtUserBillboardSample
+ * @sample androidx.xr.compose.samples.RotateToLookAtUserWithUpVectorSample
+ * @sample androidx.xr.compose.samples.RotateToLookAtUserUnderParentContainerSample
+ * @param upDirection Defines the reference "up" direction for the content's orientation. Pointing
+ *   the content's forward vector at the user leaves the rotation around that axis (roll) undefined;
  *   this vector resolves that ambiguity. The default is Vector3.Up, which corresponds to the up
  *   direction of the ActivitySpace.
  */
-// TODO(b/461808266): LookAtUser and UserSubspace not compatible with each other
+// TODO(b/461808266): LookAtUser and FollowingSubspace not compatible with each other
 // TODO(b/468104384): Optimize LookAtUser modifier initial rotation delay
-public fun SubspaceModifier.lookAtUser(up: Vector3 = Vector3.Up): SubspaceModifier =
-    this.then(LookAtUserElement(up))
+public fun SubspaceModifier.rotateToLookAtUser(
+    upDirection: Vector3 = Vector3.Up
+): SubspaceModifier = this.then(RotateToLookAtUserElement(upDirection))
 
-private class LookAtUserElement(private val up: Vector3) :
-    SubspaceModifierNodeElement<LookAtUserNode>() {
-    override fun create(): LookAtUserNode = LookAtUserNode(up)
+private class RotateToLookAtUserElement(private val upDirection: Vector3) :
+    SubspaceModifierNodeElement<RotateToLookAtUserNode>() {
+    override fun create(): RotateToLookAtUserNode = RotateToLookAtUserNode(upDirection)
 
-    override fun update(node: LookAtUserNode) {
-        node.up = up
+    override fun update(node: RotateToLookAtUserNode) {
+        node.upDirection = upDirection
     }
 
     override fun hashCode(): Int {
-        val result = up.hashCode()
+        val result = upDirection.hashCode()
         return result
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is LookAtUserElement) return false
-        if (up != other.up) return false
+        if (other !is RotateToLookAtUserElement) return false
+        if (upDirection != other.upDirection) return false
         return true
     }
 }
 
-internal class LookAtUserNode(var up: Vector3) :
+internal class RotateToLookAtUserNode(var upDirection: Vector3) :
     SubspaceModifier.Node(),
     SubspaceLayoutModifierNode,
     SubspaceLayoutAwareModifierNode,
@@ -135,7 +138,7 @@ internal class LookAtUserNode(var up: Vector3) :
             val currentActivitySpaceRotation = currentActivitySpaceTransformation.rotation
             val currentActivitySpaceTranslation =
                 currentActivitySpaceTransformation.translation.convertPixelsToMeters(
-                    this@LookAtUserNode.density
+                    this@RotateToLookAtUserNode.density
                 )
 
             // Calculate the desired forward vector in activity space, pointing from
@@ -143,7 +146,8 @@ internal class LookAtUserNode(var up: Vector3) :
             val targetVector = currentHeadPose.translation - currentActivitySpaceTranslation
             // Calculate the desired rotation of the node in activity space based on the desired
             // forward and up vectors.
-            val goalActivitySpaceRotation: Quaternion = Quaternion.fromLookTowards(targetVector, up)
+            val goalActivitySpaceRotation: Quaternion =
+                Quaternion.fromLookTowards(targetVector, upDirection)
             // Determine the local rotation that must be applied to the node to achieve the desired
             // rotation in activity space.
             val newLocalRotation = currentActivitySpaceRotation.inverse * goalActivitySpaceRotation
