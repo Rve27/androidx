@@ -23,8 +23,7 @@ import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteFloatExpression
 import androidx.compose.remote.creation.compose.state.RemoteStateScope
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteFloatContext internal constructor(public val state: RemoteStateScope) {
+public class RemoteFloatContext internal constructor(internal val state: RemoteStateScope) {
     public fun componentWidth(): RemoteFloat {
         val doc = state.document
         val value = doc.addComponentWidthValue()

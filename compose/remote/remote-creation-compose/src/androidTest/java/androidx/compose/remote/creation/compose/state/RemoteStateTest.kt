@@ -98,9 +98,9 @@ class RemoteStateTest {
     fun cachesRemoteInt() = runTest {
         withContext(Dispatchers.Main) {
             captureSingleRemoteDocument(context) {
-                val one = rememberNamedRemoteInt(name = "one", value = 1)
-                val two = rememberNamedRemoteInt(name = "two", value = 2)
-                val one2 = rememberNamedRemoteInt(name = "one", value = 3)
+                val one = rememberNamedRemoteInt(name = "one", defaultValue = 1)
+                val two = rememberNamedRemoteInt(name = "two", defaultValue = 2)
+                val one2 = rememberNamedRemoteInt(name = "one", defaultValue = 3)
 
                 AssertSameSameDifferent(one, one2, two)
             }
@@ -111,9 +111,9 @@ class RemoteStateTest {
     fun cachesRemoteLong() = runTest {
         withContext(Dispatchers.Main) {
             captureSingleRemoteDocument(context) {
-                val one = rememberNamedRemoteLong(name = "one", value = 1L)
-                val two = rememberNamedRemoteLong(name = "two", value = 2L)
-                val one2 = rememberNamedRemoteLong(name = "one", value = 3L)
+                val one = rememberNamedRemoteLong(name = "one", defaultValue = 1L)
+                val two = rememberNamedRemoteLong(name = "two", defaultValue = 2L)
+                val one2 = rememberNamedRemoteLong(name = "one", defaultValue = 3L)
 
                 AssertSameSameDifferent(one, one2, two)
             }
@@ -124,9 +124,9 @@ class RemoteStateTest {
     fun cachesRemoteString() = runTest {
         withContext(Dispatchers.Main) {
             captureSingleRemoteDocument(context) {
-                val blue = rememberNamedRemoteString(name = "blue", value = "blue")
-                val red = rememberNamedRemoteString(name = "red", value = "red")
-                val blue2 = rememberNamedRemoteString(name = "blue", value = "blue2")
+                val blue = rememberNamedRemoteString(name = "blue", defaultValue = "blue")
+                val red = rememberNamedRemoteString(name = "red", defaultValue = "red")
+                val blue2 = rememberNamedRemoteString(name = "blue", defaultValue = "blue2")
 
                 AssertSameSameDifferent(blue, blue2, red)
             }
@@ -141,14 +141,14 @@ class RemoteStateTest {
                     val s1 =
                         rememberNamedRemoteString(
                             name = "s1",
-                            value = "1",
+                            defaultValue = "1",
                             domain = RemoteState.Domain.User,
                         )
                     // Will be committed immediately in a global scope
                     val s2 =
                         rememberNamedRemoteString(
                                 name = "s2",
-                                value = "2",
+                                defaultValue = "2",
                                 domain = RemoteState.Domain.User,
                             )
                             .withGlobalScope()
