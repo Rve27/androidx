@@ -767,8 +767,8 @@ class RemoteFloatTest {
         val animatedId = animated.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
-        //        val floatId = animated.getFloatIdForCreationState(creationState)
-        //        assertThat(floatId).isNaN()
+        val floatId = animated.getFloatIdForCreationState(creationState)
+        assertThat(floatId).isNaN()
 
         assertThat(context.getFloat(animatedId)).isEqualTo(2f)
     }
