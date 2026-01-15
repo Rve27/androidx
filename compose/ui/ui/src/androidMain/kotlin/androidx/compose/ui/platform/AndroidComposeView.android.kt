@@ -897,7 +897,14 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         private set
 
     /** Provide haptic feedback to the user. Use the Android version of haptic feedback. */
-    override val hapticFeedBack: HapticFeedback = PlatformHapticFeedback(this)
+    override val hapticFeedBack: HapticFeedback =
+        // TODO: when removing the flag, change this to a get() block
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isSharedHapticsEnabled) {
+            composeViewContext.hapticFeedback
+        } else {
+            PlatformHapticFeedback(this)
+        }
 
     /** Provide an instance of [InputModeManager] which is available as a CompositionLocal. */
     private val _inputModeManager =

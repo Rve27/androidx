@@ -38,6 +38,8 @@ import androidx.compose.runtime.tooling.LocalInspectionTables
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.R
 import androidx.compose.ui.graphics.CanvasHolder
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.PlatformHapticFeedback
 import androidx.compose.ui.node.LayoutNodeDrawScope
 import androidx.compose.ui.res.ImageVectorCache
 import androidx.compose.ui.res.ResourceIdCache
@@ -124,6 +126,9 @@ internal class ComposeViewContext(
 
     /** [Clipboard] provided by [LocalClipboard] */
     internal val clipboard: AndroidClipboard = AndroidClipboard(clipboardManager)
+
+    /** [HapticFeedback] provided by [LocalHapticFeedback] */
+    internal val hapticFeedback: HapticFeedback = PlatformHapticFeedback(view)
 
     /** [ViewConfiguration] provided by [LocalViewConfiguration] */
     internal val viewConfiguration =
