@@ -29,6 +29,9 @@ internal interface OperationArgContainer {
 
 /** Error context to stitch operation execution in case an error is thrown. */
 internal interface OperationErrorContext {
+    /** Whether the stack trace is expected to contain source information. */
+    val sourceInformationEnabled: Boolean
+
     /**
      * Create a stack trace from the root of the enclosing context (composition or slot table) to a
      * child of the current group that is located at the slot specified by [currentOffset]. Current
