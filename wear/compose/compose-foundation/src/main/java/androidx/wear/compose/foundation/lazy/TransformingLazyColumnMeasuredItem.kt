@@ -102,6 +102,9 @@ internal data class TransformingLazyColumnMeasuredItem(
             }
         }
 
+    val responsiveVerticalPadding: ResponsiveVerticalPadding? =
+        (placeable?.parentData as? TransformingLazyColumnParentData)?.responsiveVerticalPadding
+
     private var lastMeasuredTransformedHeight = placeable?.height ?: 0
 
     /** The height of the item after transformations applied. */

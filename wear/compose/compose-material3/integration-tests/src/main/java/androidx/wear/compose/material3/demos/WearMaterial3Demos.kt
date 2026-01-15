@@ -50,6 +50,7 @@ import androidx.wear.compose.material3.samples.TitleCardWithImageWithTimeAndTitl
 import androidx.wear.compose.material3.samples.TransformingLazyColumnAnimationSample
 import androidx.wear.compose.material3.samples.TransformingLazyColumnExpandableCardSample
 import androidx.wear.compose.material3.samples.TransformingLazyColumnReducedMotionSample
+import androidx.wear.compose.material3.samples.TransformingLazyColumnResponsivePaddingSample
 import androidx.wear.compose.material3.samples.TransformingLazyColumnReverseLayoutSample
 
 val WearMaterial3Demos =
@@ -275,6 +276,9 @@ val WearMaterial3Demos =
                         },
                         ComposableDemo("Reversed layout") {
                             TransformingLazyColumnReverseLayoutSample()
+                        },
+                        ComposableDemo("Responsive Padding") {
+                            TransformingLazyColumnResponsivePaddingSample()
                         },
                         ComposableDemo("Reduced Motion") {
                             TransformingLazyColumnReducedMotionSample()

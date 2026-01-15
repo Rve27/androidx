@@ -2290,6 +2290,26 @@ package androidx.wear.compose.material3.lazy {
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.wear.compose.material3.lazy.TransformationSpec rememberTransformationSpec(androidx.wear.compose.material3.lazy.ResponsiveTransformationSpec![], androidx.compose.runtime.Composer?, int);
   }
 
+  public final class ResponsiveVerticalPaddingDefaults {
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding getButton();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding getButtonGroup();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding getCard();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding getCompactButton();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding getIconButton();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding getListHeader();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding getText();
+    method @InaccessibleFromKotlin public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding getTextButton();
+    property public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding Button;
+    property public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding ButtonGroup;
+    property public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding Card;
+    property public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding CompactButton;
+    property public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding IconButton;
+    property public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding ListHeader;
+    property public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding Text;
+    property public androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding TextButton;
+    field public static final androidx.wear.compose.material3.lazy.ResponsiveVerticalPaddingDefaults INSTANCE;
+  }
+
   public interface TransformationSpec {
     method @KotlinOnly public void applyContainerTransformation(androidx.compose.ui.graphics.GraphicsLayerScope, androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress scrollProgress);
     method @BytecodeOnly public void applyContainerTransformation-BvjJYIE(androidx.compose.ui.graphics.GraphicsLayerScope, long);

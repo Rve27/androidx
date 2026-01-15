@@ -37,7 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumnDefaults
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
@@ -174,4 +176,36 @@ fun TransformingLazyColumnScrollToItemSample() {
     }
 
     LaunchedEffect(state.anchorItemIndex) { println("Anchor item index: ${state.anchorItemIndex}") }
+}
+
+@Sampled
+@Preview
+@Composable
+fun TransformingLazyColumnResponsivePaddingSample() {
+    val transformationSpec = rememberTransformationSpec()
+    // In this sample, we implement our own ResponsiveVerticalPadding interface, but in practice
+    // we would expect to use vertical paddings defined by the design system, such as
+    // ResponsiveVerticalPaddingDefaults in Material3.
+    val buttonResponsivePadding = remember {
+        object : ResponsiveVerticalPadding {
+            override fun calculateTopPadding(containerHeight: Dp): Dp = containerHeight * 0.23f
+
+            override fun calculateBottomPadding(containerHeight: Dp): Dp = containerHeight * 0.23f
+        }
+    }
+
+    TransformingLazyColumn(contentPadding = PaddingValues(horizontal = 20.dp)) {
+        items(count = 20) { index ->
+            Button(
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                        .responsiveVerticalPadding(buttonResponsivePadding),
+                transformation = SurfaceTransformation(transformationSpec),
+                onClick = {},
+            ) {
+                Text(text = "Item $index")
+            }
+        }
+    }
 }

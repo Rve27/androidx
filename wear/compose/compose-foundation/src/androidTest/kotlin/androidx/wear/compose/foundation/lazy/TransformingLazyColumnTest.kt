@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTopPositionInRootIsEqualTo
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -1214,6 +1215,55 @@ class TransformingLazyColumnTest {
         }
     }
 
+    @Test
+    fun responsivePadding_pinnedToStart_appliedToTopPadding() {
+        val padding = 30.dp
+        val state = TransformingLazyColumnState()
+
+        rule.setContent {
+            TransformingLazyColumn(state = state, modifier = Modifier.size(200.dp)) {
+                item {
+                    Box(
+                        Modifier.size(50.dp)
+                            .responsiveVerticalPadding(responsivePadding(top = padding))
+                            .testTag(firstItemTag)
+                    )
+                }
+                items(10) { Box(Modifier.size(50.dp)) }
+            }
+        }
+
+        rule.onNodeWithTag(firstItemTag).assertTopPositionInRootIsEqualTo(padding)
+    }
+
+    @Test
+    fun responsivePadding_pinnedToEnd_appliedToBottomPadding() {
+        val padding = 30.dp
+        val containerHeight = 200.dp
+        val itemCount = 10
+        val itemSize = 50.dp
+        lateinit var state: TransformingLazyColumnState
+        rule.setContent {
+            state = rememberTransformingLazyColumnState()
+            TransformingLazyColumn(state = state, modifier = Modifier.size(containerHeight)) {
+                items(itemCount) { Box(Modifier.size(itemSize)) }
+                item {
+                    Box(
+                        Modifier.size(itemSize)
+                            .responsiveVerticalPadding(responsivePadding(bottom = padding))
+                            .testTag(lastItemTag)
+                    )
+                }
+            }
+        }
+
+        rule.runOnIdle { runBlocking { state.scrollToItem(itemCount) } }
+
+        rule
+            .onNodeWithTag(lastItemTag)
+            .assertTopPositionInRootIsEqualTo(containerHeight - padding - itemSize)
+    }
+
     private fun setupTlcWithMutableList(
         items: MutableList<String>,
         itemSize: Dp,
@@ -1268,6 +1318,13 @@ class TransformingLazyColumnTest {
 
         assertThat(state.anchorItemIndex).isEqualTo(scrollTarget)
     }
+
+    private fun responsivePadding(top: Dp = 0.dp, bottom: Dp = 0.dp): ResponsiveVerticalPadding =
+        object : ResponsiveVerticalPadding {
+            override fun calculateTopPadding(containerHeight: Dp): Dp = top
+
+            override fun calculateBottomPadding(containerHeight: Dp): Dp = bottom
+        }
 }
 
 /**

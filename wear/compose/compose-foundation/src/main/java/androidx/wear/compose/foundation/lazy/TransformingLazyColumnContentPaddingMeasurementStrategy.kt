@@ -33,6 +33,7 @@ import androidx.wear.compose.foundation.lazy.layout.LazyLayoutItemAnimator
 import androidx.wear.compose.foundation.lazy.layout.LazyLayoutKeyIndexMap
 import androidx.wear.compose.foundation.lazy.layout.hasAnimations
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.sign
 import kotlinx.coroutines.CoroutineScope
 
@@ -262,8 +263,8 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
         if (itemsCount == 0) {
             return emptyMeasureResult(
                 containerConstraints = containerConstraints,
-                beforeContentPadding = beforeContentPadding,
-                afterContentPadding = afterContentPadding,
+                beforeContentPadding = initialBeforeContentPadding,
+                afterContentPadding = initialAfterContentPadding,
                 layout = layout,
             )
         }
@@ -313,10 +314,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
             this.itemsCount = itemsCount
             this.itemSpacing = itemSpacing
             this.maxHeight = containerConstraints.maxHeight
-            this.beforeContentPadding =
-                this@TransformingLazyColumnContentPaddingMeasurementStrategy.beforeContentPadding
-            this.afterContentPadding =
-                this@TransformingLazyColumnContentPaddingMeasurementStrategy.afterContentPadding
+
             this.visibleItems.clear()
 
             fun TransformingLazyColumnMeasuredItem.isVisible(): Boolean =
@@ -333,6 +331,42 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
             // Add the rest of the items.
             addVisibleItemsAfter(measuredItemProvider)
             addVisibleItemsBefore(measuredItemProvider)
+
+            val containerHeightDp = with(density) { containerConstraints.maxHeight.toDp() }
+            val responsiveBeforeContentPadding =
+                visibleItems
+                    .firstOrNull()
+                    ?.takeIf { it.index == 0 }
+                    ?.responsiveVerticalPadding
+                    ?.run {
+                        with(density) {
+                            if (!reverseLayout) {
+                                calculateTopPadding(containerHeightDp).roundToPx()
+                            } else {
+                                calculateBottomPadding(containerHeightDp).roundToPx()
+                            }
+                        }
+                    } ?: 0
+
+            val responsiveAfterContentPadding =
+                visibleItems
+                    .lastOrNull()
+                    ?.takeIf { it.index == itemsCount - 1 }
+                    ?.responsiveVerticalPadding
+                    ?.run {
+                        with(density) {
+                            if (!reverseLayout) {
+                                calculateBottomPadding(containerHeightDp).roundToPx()
+                            } else {
+                                calculateTopPadding(containerHeightDp).roundToPx()
+                            }
+                        }
+                    } ?: 0
+
+            this.beforeContentPadding =
+                max(initialBeforeContentPadding, responsiveBeforeContentPadding)
+            this.afterContentPadding =
+                max(initialAfterContentPadding, responsiveAfterContentPadding)
 
             fun restoreLayoutIfNeeded() {
                 if (fitsScreen()) {
@@ -460,8 +494,8 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 coroutineScope = coroutineScope,
                 density = density,
                 itemSpacing = itemSpacingPx,
-                beforeContentPadding = beforeContentPadding,
-                afterContentPadding = afterContentPadding,
+                beforeContentPadding = measurementScope.beforeContentPadding,
+                afterContentPadding = measurementScope.afterContentPadding,
                 childConstraints = childConstraints,
                 reverseLayout = reverseLayout,
                 consumedScroll = consumedScroll,
@@ -477,7 +511,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
             }
     }
 
-    private val beforeContentPadding: Int =
+    private val initialBeforeContentPadding: Int =
         with(density) {
             if (!reverseLayout) {
                 contentPadding.calculateTopPadding().roundToPx()
@@ -486,7 +520,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
             }
         }
 
-    private val afterContentPadding: Int =
+    private val initialAfterContentPadding: Int =
         with(density) {
             if (!reverseLayout) {
                 contentPadding.calculateBottomPadding().roundToPx()

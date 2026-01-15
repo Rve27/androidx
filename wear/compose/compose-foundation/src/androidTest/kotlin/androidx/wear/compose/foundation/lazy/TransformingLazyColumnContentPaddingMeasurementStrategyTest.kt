@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
@@ -614,6 +615,172 @@ class TransformingLazyColumnContentPaddingMeasurementStrategyTest {
         assertThat(result.canScrollBackward).isFalse()
     }
 
+    @Test
+    fun responsivePadding_firstItemVisible_overridesInitialPadding() {
+        val initialTop = 10.dp
+        val responsiveTop = 50.dp
+        val responsiveTopPx = with(density) { responsiveTop.roundToPx() }
+        val strategy = measurementStrategy(PaddingValues(top = initialTop))
+        val padding = responsiveVerticalPadding(calculateTop = { responsiveTop })
+
+        val result =
+            strategy.measure(
+                itemHeights = listOf(screenHeight / 2, screenHeight / 2),
+                responsivePaddings = listOf(padding, null),
+                anchorItemScrollOffset = -25,
+            )
+
+        assertThat(result.visibleItems.first().offset).isEqualTo(responsiveTopPx)
+        assertThat(result.beforeContentPadding).isEqualTo(responsiveTopPx)
+    }
+
+    @Test
+    fun responsivePadding_scrollPositionInMiddle_returnsInitialPadding() {
+        val initialPadding = 10.dp
+        val initialPaddingPx = with(density) { initialPadding.roundToPx() }
+        val responsivePadding = 50.dp
+        val strategy = measurementStrategy(PaddingValues(initialPadding)) // 10.dp all around
+        val padding =
+            responsiveVerticalPadding(
+                calculateTop = { responsivePadding },
+                calculateBottom = { responsivePadding },
+            )
+
+        val result =
+            strategy.measure(
+                itemHeights = List(5) { screenHeight / 2 },
+                responsivePaddings = listOf(padding, null, null, null, padding),
+                anchorItemIndex = 2,
+            )
+
+        assertThat(result.beforeContentPadding).isEqualTo(initialPaddingPx)
+        assertThat(result.afterContentPadding).isEqualTo(initialPaddingPx)
+    }
+
+    @Test
+    fun responsivePadding_firstItemVisibleWithLargeInitialPadding_returnsInitialPadding() {
+        val initialTop = 100.dp
+        val initialTopPx = with(density) { initialTop.roundToPx() }
+        val responsiveTop = 10.dp
+
+        val strategy = measurementStrategy(PaddingValues(top = initialTop))
+        val padding = responsiveVerticalPadding(calculateTop = { responsiveTop })
+
+        val result =
+            strategy.measure(
+                itemHeights = List(3) { screenHeight / 2 },
+                responsivePaddings = listOf(padding, null, null),
+                anchorItemIndex = 0,
+            )
+
+        assertThat(result.beforeContentPadding).isEqualTo(initialTopPx)
+    }
+
+    @Test
+    fun responsivePadding_lastItemVisible_overridesInitialPadding() {
+        val initialBottom = 10.dp
+        val responsiveBottom = 50.dp
+        val responsiveBottomPx = with(density) { responsiveBottom.roundToPx() }
+
+        val strategy = measurementStrategy(PaddingValues(bottom = initialBottom))
+        val padding = responsiveVerticalPadding(calculateBottom = { responsiveBottom })
+
+        val result =
+            strategy.measure(
+                itemHeights = List(3) { screenHeight / 2 },
+                responsivePaddings = listOf(null, null, padding),
+                anchorItemIndex = 2,
+            )
+
+        assertThat(result.afterContentPadding).isEqualTo(responsiveBottomPx)
+    }
+
+    @Test
+    fun responsivePadding_lastItemVisibleWithLargeInitialPadding_returnsInitialPadding() {
+        val initialBottom = 100.dp
+        val initialBottomPx = with(density) { initialBottom.roundToPx() }
+        val responsiveBottom = 10.dp
+
+        val strategy = measurementStrategy(PaddingValues(bottom = initialBottom))
+        val padding = responsiveVerticalPadding(calculateBottom = { responsiveBottom })
+
+        val result =
+            strategy.measure(
+                itemHeights = List(3) { screenHeight / 2 },
+                responsivePaddings = listOf(null, null, padding),
+                anchorItemIndex = 2,
+            )
+
+        assertThat(result.afterContentPadding).isEqualTo(initialBottomPx)
+    }
+
+    @Test
+    fun responsivePadding_reverseLayoutAndFirstItemVisible_usesBottomPadding() {
+        val responsiveBottom = 50.dp
+        val responsiveBottomPx = with(density) { responsiveBottom.roundToPx() }
+        val strategy = measurementStrategy(PaddingValues(0.dp), reverseLayout = true)
+        val padding =
+            responsiveVerticalPadding(
+                calculateTop = { 10.dp },
+                calculateBottom = { responsiveBottom },
+            )
+
+        val result =
+            strategy.measure(
+                itemHeights = List(3) { screenHeight / 2 },
+                responsivePaddings = listOf(padding, null, null),
+                anchorItemIndex = 0,
+                reverseLayout = true,
+            )
+
+        assertThat(result.beforeContentPadding).isEqualTo(responsiveBottomPx)
+    }
+
+    @Test
+    fun responsivePadding_reverseLayoutAndLastItemVisible_usesTopPadding() {
+        val responsiveTop = 50.dp
+        val responsiveTopPx = with(density) { responsiveTop.roundToPx() }
+        val strategy = measurementStrategy(PaddingValues(0.dp), reverseLayout = true)
+        val padding =
+            responsiveVerticalPadding(calculateTop = { responsiveTop }, calculateBottom = { 10.dp })
+
+        val result =
+            strategy.measure(
+                itemHeights = List(3) { screenHeight / 2 },
+                responsivePaddings = listOf(null, null, padding),
+                anchorItemIndex = 2,
+                reverseLayout = true,
+            )
+
+        assertThat(result.afterContentPadding).isEqualTo(responsiveTopPx)
+    }
+
+    @Test
+    fun responsivePadding_singleItem_calculatesBothPaddings() {
+        val responsiveTop = 13.dp
+        val responsiveBottom = 23.dp
+        val responsiveTopPx = with(density) { responsiveTop.roundToPx() }
+        val responsiveBottomPx = with(density) { responsiveBottom.roundToPx() }
+        val strategy = measurementStrategy(PaddingValues(0.dp))
+        val padding =
+            responsiveVerticalPadding(
+                calculateTop = { responsiveTop },
+                calculateBottom = { responsiveBottom },
+            )
+
+        val result =
+            strategy.measure(
+                itemHeights = listOf(screenHeight / 4),
+                responsivePaddings = listOf(padding),
+                verticalArrangement = Arrangement.Top,
+                anchorItemIndex = 0,
+            )
+
+        assertThat(result.beforeContentPadding).isEqualTo(responsiveTopPx)
+        assertThat(result.afterContentPadding).isEqualTo(responsiveBottomPx)
+        assertThat(result.visibleItems.first().offset).isEqualTo(responsiveTopPx)
+    }
+
     private val mockGraphicContext =
         object : GraphicsContext {
             override fun createGraphicsLayer(): GraphicsLayer {
@@ -654,11 +821,18 @@ class TransformingLazyColumnContentPaddingMeasurementStrategyTest {
         lastMeasuredAnchorItemHeight: Int = Int.MIN_VALUE,
         scrollToBeConsumed: Float = 0f,
         reverseLayout: Boolean = false,
+        responsivePaddings: List<ResponsiveVerticalPadding?>? = null,
     ): TransformingLazyColumnMeasureResult =
         measure(
             itemsCount = itemHeights.size,
             measuredItemProvider =
-                makeMeasuredItemProvider(itemHeights, keys, transformedHeight, reverseLayout),
+                makeMeasuredItemProvider(
+                    itemHeights,
+                    keys,
+                    transformedHeight,
+                    reverseLayout,
+                    responsivePaddings,
+                ),
             keyIndexMap =
                 object : LazyLayoutKeyIndexMap {
                     override fun getIndex(key: Any): Int = keys.indexOf(key)
@@ -690,6 +864,7 @@ class TransformingLazyColumnContentPaddingMeasurementStrategyTest {
         width: Int,
         height: Int,
         val transformedHeight: ((Int, TransformingLazyColumnItemScrollProgress) -> Int)?,
+        val responsivePadding: ResponsiveVerticalPadding? = null,
     ) : Placeable() {
         init {
             measuredSize = IntSize(width, height)
@@ -704,7 +879,15 @@ class TransformingLazyColumnContentPaddingMeasurementStrategyTest {
         ) {}
 
         override val parentData: Any?
-            get() = transformedHeight?.let { TransformingLazyColumnParentData(it) }
+            get() =
+                if (transformedHeight != null || responsivePadding != null) {
+                    TransformingLazyColumnParentData(
+                        heightProvider = transformedHeight,
+                        responsiveVerticalPadding = responsivePadding,
+                    )
+                } else {
+                    null
+                }
     }
 
     private fun makeMeasuredItemProvider(
@@ -712,6 +895,7 @@ class TransformingLazyColumnContentPaddingMeasurementStrategyTest {
         keys: List<Any>,
         transformedHeight: ((Int, TransformingLazyColumnItemScrollProgress) -> Int)? = null,
         reverseLayout: Boolean = false,
+        responsivePaddings: List<ResponsiveVerticalPadding?>? = null,
     ) = MeasuredItemProvider { index, offset, measurementDirection, progressProvider ->
         TransformingLazyColumnMeasuredItem(
             index = index,
@@ -721,6 +905,7 @@ class TransformingLazyColumnContentPaddingMeasurementStrategyTest {
                     width = screenWidth,
                     height = itemHeights[index],
                     transformedHeight = transformedHeight,
+                    responsivePadding = responsivePaddings?.getOrNull(index),
                 ),
             containerConstraints = containerConstraints,
             spacing = 8,
@@ -735,4 +920,16 @@ class TransformingLazyColumnContentPaddingMeasurementStrategyTest {
             reverseLayout = reverseLayout,
         )
     }
+
+    private inline fun responsiveVerticalPadding(
+        crossinline calculateTop: (containerHeight: Dp) -> Dp = { 0.dp },
+        crossinline calculateBottom: (containerHeight: Dp) -> Dp = { 0.dp },
+    ): ResponsiveVerticalPadding =
+        object : ResponsiveVerticalPadding {
+            override fun calculateTopPadding(containerHeight: Dp): Dp =
+                calculateTop(containerHeight)
+
+            override fun calculateBottomPadding(containerHeight: Dp): Dp =
+                calculateBottom(containerHeight)
+        }
 }
