@@ -97,7 +97,7 @@ public open class RemotePaint : Paint {
             field = remoteColorFilter
             when {
                 remoteColorFilter is RemoteBlendModeColorFilter -> {
-                    val constantValue = remoteColorFilter.color.constantValue
+                    val constantValue = remoteColorFilter.color.constantValueOrNull
                     if (constantValue != null) {
                         super.setColorFilter(
                             BlendModeColorFilter(
@@ -131,7 +131,7 @@ public open class RemotePaint : Paint {
         set(value) {
             field = value
             if (value != null) {
-                val constantValue = value.constantValue
+                val constantValue = value.constantValueOrNull
                 if (constantValue != null) {
                     super.setColor(constantValue.toArgb())
                 } else {
@@ -162,7 +162,8 @@ public open class RemotePaint : Paint {
 
     internal fun getColorLong(creationState: RemoteComposeCreationState): Long? {
         remoteColor?.let {
-            return it.constantValue?.pack() ?: it.getIdForCreationState(creationState).toLong()
+            return it.constantValueOrNull?.pack()
+                ?: it.getIdForCreationState(creationState).toLong()
         }
         return null
     }

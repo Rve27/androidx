@@ -42,7 +42,7 @@ import kotlin.math.pow
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public open class RemoteColor
 internal constructor(
-    public override val constantValue: Color?,
+    public override val constantValueOrNull: Color?,
     alpha: RemoteFloat?,
     red: RemoteFloat?,
     green: RemoteFloat?,
@@ -60,7 +60,7 @@ internal constructor(
         green: RemoteFloat,
         blue: RemoteFloat,
     ) : this(
-        constantValue = null,
+        constantValueOrNull = null,
         alpha = alpha,
         red = red,
         green = green,
@@ -80,7 +80,7 @@ internal constructor(
     internal constructor(
         idProvider: (creationState: RemoteComposeCreationState) -> Int
     ) : this(
-        constantValue = null,
+        constantValueOrNull = null,
         alpha = null,
         red = null,
         green = null,
@@ -97,7 +97,7 @@ internal constructor(
     public constructor(
         color: Color
     ) : this(
-        constantValue = color,
+        constantValueOrNull = color,
         alpha = color.alpha().rf,
         red = color.red().rf,
         green = color.green().rf,
@@ -169,7 +169,7 @@ internal constructor(
      * [0..1].
      */
     private fun colorComponent(component: Short): RemoteFloat {
-        return RemoteFloatExpression(constantValue = null) { creationState ->
+        return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
             floatArrayOf(
                 creationState.document.getColorAttribute(idProvider(creationState), component)
             )
@@ -207,7 +207,7 @@ internal constructor(
      */
     public val hue: RemoteFloat
         get() =
-            constantValue?.let { Utils.getHue(it.toArgb()).rf }
+            constantValueOrNull?.let { Utils.getHue(it.toArgb()).rf }
                 ?: colorComponent(ColorAttribute.COLOR_HUE)
 
     /**
@@ -216,7 +216,7 @@ internal constructor(
      */
     public val saturation: RemoteFloat
         get() =
-            constantValue?.let { Utils.getSaturation(it.toArgb()).rf }
+            constantValueOrNull?.let { Utils.getSaturation(it.toArgb()).rf }
                 ?: colorComponent(ColorAttribute.COLOR_SATURATION)
 
     /**
@@ -225,7 +225,7 @@ internal constructor(
      */
     public val brightness: RemoteFloat
         get() =
-            constantValue?.let { Utils.getBrightness(it.toArgb()).rf }
+            constantValueOrNull?.let { Utils.getBrightness(it.toArgb()).rf }
                 ?: colorComponent(ColorAttribute.COLOR_BRIGHTNESS)
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -245,9 +245,9 @@ internal constructor(
             saturation: RemoteFloat,
             value: RemoteFloat,
         ): RemoteColor {
-            val constH = hue.constantValue
-            val constS = saturation.constantValue
-            val constV = value.constantValue
+            val constH = hue.constantValueOrNull
+            val constS = saturation.constantValueOrNull
+            val constV = value.constantValueOrNull
             if (constH != null && constS != null && constV != null) {
                 return RemoteColor(Color.valueOf(Utils.hsvToRgb(constH, constS, constV)))
             }
@@ -283,9 +283,9 @@ internal constructor(
             saturation: RemoteFloat,
             value: RemoteFloat,
         ): RemoteColor {
-            val constH = hue.constantValue
-            val constS = saturation.constantValue
-            val constV = value.constantValue
+            val constH = hue.constantValueOrNull
+            val constS = saturation.constantValueOrNull
+            val constV = value.constantValueOrNull
             if (constH != null && constS != null && constV != null) {
                 val argb = (alpha shl 24) or (0xffffff and Utils.hsvToRgb(constH, constS, constV))
                 return RemoteColor(Color.valueOf(argb))
@@ -320,10 +320,10 @@ internal constructor(
             green: RemoteFloat,
             blue: RemoteFloat,
         ): RemoteColor {
-            val constA = alpha.constantValue
-            val constR = red.constantValue
-            val constG = green.constantValue
-            val constB = blue.constantValue
+            val constA = alpha.constantValueOrNull
+            val constR = red.constantValueOrNull
+            val constG = green.constantValueOrNull
+            val constB = blue.constantValueOrNull
             if (constA != null && constR != null && constG != null && constB != null) {
                 val color = Color.valueOf(constR, constG, constB, constA)
                 return RemoteColor(color)
@@ -394,7 +394,7 @@ private fun interpolate(from: RemoteFloat, to: RemoteFloat, tween: RemoteFloat):
  * @return A new [RemoteColor] representing the tweened color.
  */
 public fun tween(@ColorInt from: Int, @ColorInt to: Int, tween: RemoteFloat): RemoteColor {
-    tween.constantValue?.let {
+    tween.constantValueOrNull?.let {
         return RemoteColor(Utils.interpolateColor(from, to, it))
     }
 
@@ -422,9 +422,9 @@ public fun tween(@ColorInt from: Int, @ColorInt to: Int, tween: RemoteFloat): Re
  * @return A new [RemoteColor] representing the tweened color.
  */
 public fun tween(from: RemoteColor, to: RemoteColor, tween: RemoteFloat): RemoteColor {
-    val constFrom = from.constantValue
-    val constTo = to.constantValue
-    val constTween = tween.constantValue
+    val constFrom = from.constantValueOrNull
+    val constTo = to.constantValueOrNull
+    val constTween = tween.constantValueOrNull
     if (constFrom != null && constTo != null && constTween != null) {
         return RemoteColor(Utils.interpolateColor(constFrom.toArgb(), constTo.toArgb(), constTween))
     }

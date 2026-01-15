@@ -176,7 +176,7 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
         if (useCoreTextComponent) {
             val textIdValue = text.getIdForCreationState(creationState)
 
-            val colorInt = color?.constantValue?.toArgb() ?: android.graphics.Color.BLACK
+            val colorInt = color?.constantValueOrNull?.toArgb() ?: android.graphics.Color.BLACK
             val colorId =
                 if (color?.hasConstantValue == false) {
                     color!!.getIdForCreationState(creationState)
@@ -220,7 +220,7 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
         } else {
             val textId = text.getIdForCreationState(creationState)
 
-            val colorInt = color?.constantValue?.toArgb() ?: android.graphics.Color.BLACK
+            val colorInt = color?.constantValueOrNull?.toArgb() ?: android.graphics.Color.BLACK
             val colorId =
                 if (color?.hasConstantValue == false) {
                     color!!.getIdForCreationState(creationState)
@@ -229,7 +229,7 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
                 }
 
             val colorValue =
-                color?.constantValue?.toArgb()
+                color?.constantValueOrNull?.toArgb()
                     ?: (if (color?.hasConstantValue == false) {
                         color!!.getIdForCreationState(creationState)
                     } else {
@@ -249,7 +249,7 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
                 colorValue,
                 fontSizePx,
                 fontStyle.encode(),
-                fontWeight.constantValue ?: 400f,
+                fontWeight.constantValueOrNull ?: 400f,
                 fontFamily,
                 flags,
                 textAlign.encode().toShort(),
