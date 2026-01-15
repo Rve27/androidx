@@ -46,7 +46,8 @@ import androidx.pdf.PdfWriteHandle
 import androidx.pdf.annotation.AnnotationsView
 import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
 import androidx.pdf.annotation.KeyedPdfAnnotation
-import androidx.pdf.annotation.OnAnnotationSelectedListener
+import androidx.pdf.annotation.LocatedAnnotations
+import androidx.pdf.annotation.OnAnnotationLocatedListener
 import androidx.pdf.annotation.highlights.InProgressTextHighlightsListener
 import androidx.pdf.annotation.highlights.models.InProgressHighlightId
 import androidx.pdf.annotation.models.AnnotationsDisplayState
@@ -257,11 +258,12 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
             }
         }
 
-    private val onAnnotationSelectedListener =
-        object : OnAnnotationSelectedListener {
-            override fun onAnnotationSelected(keyedPdfAnnotation: KeyedPdfAnnotation) {
+    private val onAnnotationLocatedListener =
+        object : OnAnnotationLocatedListener {
+            override fun onAnnotationsLocated(locatedAnnotations: LocatedAnnotations) {
                 if (documentViewModel.drawingMode.value == AnnotationDrawingMode.EraserMode) {
-                    documentViewModel.removeAnnotation(keyedPdfAnnotation.key)
+                    val topAnnotation = locatedAnnotations.annotations.first()
+                    documentViewModel.removeAnnotation(topAnnotation.key)
                 }
             }
         }
@@ -350,7 +352,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private fun setupAnnotationViewListeners() {
         annotationView.pageInfoProvider = pageInfoProvider
-        annotationView.addOnAnnotationSelectedListener(onAnnotationSelectedListener)
+        annotationView.addOnAnnotationLocatedListener(onAnnotationLocatedListener)
         annotationView.addInProgressTextHighlightsListener(inProgressTextHighlightsListener)
     }
 

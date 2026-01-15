@@ -16,11 +16,11 @@
 
 package androidx.pdf.annotation
 
-internal class FakeOnAnnotationSelectedListener : OnAnnotationSelectedListener {
+internal class FakeOnAnnotationLocatedListener : OnAnnotationLocatedListener {
     var isHit: Boolean = false
         private set
 
-    override fun onAnnotationSelected(keyedPdfAnnotation: KeyedPdfAnnotation) {
+    override fun onAnnotationsLocated(locatedAnnotations: LocatedAnnotations) {
         isHit = true
     }
 }
