@@ -70,6 +70,9 @@ internal class CompositionErrorContextImpl(private val composer: GapComposer) :
     override fun buildStackTrace(currentOffset: Int?): List<ComposeStackTraceFrame> =
         composer.parentStackTrace()
 
+    override val sourceInformationEnabled: Boolean
+        get() = composer.sourceMarkersEnabled
+
     companion object Key : CoroutineContext.Key<CompositionErrorContextImpl> {
         override fun toString(): String = "CompositionErrorContext"
     }

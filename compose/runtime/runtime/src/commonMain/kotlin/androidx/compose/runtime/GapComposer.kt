@@ -54,7 +54,6 @@ import androidx.compose.runtime.tooling.buildTrace
 import androidx.compose.runtime.tooling.findLocation
 import androidx.compose.runtime.tooling.findSubcompositionContextGroup
 import androidx.compose.runtime.tooling.traceForGroup
-import kotlin.collections.plus
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.jvm.JvmInline
@@ -254,7 +253,7 @@ internal class GapComposer(
     private var childrenComposing: Int = 0
     private var compositionToken: Int = 0
 
-    private var sourceMarkersEnabled =
+    internal var sourceMarkersEnabled =
         parentContext.collectingSourceInformation || parentContext.collectingCallByInformation
 
     private val derivedStateObserver =
@@ -2505,7 +2504,7 @@ internal class GapComposer(
                     stackTraceForGroup(groupIndex, dataIndex) + parentStackTrace()
                 } ?: emptyList()
 
-        return ComposeStackTrace(stackTrace)
+        return ComposeStackTrace(stackTrace, sourceMarkersEnabled)
     }
 
     @OptIn(ComposeToolingApi::class)
@@ -2516,7 +2515,8 @@ internal class GapComposer(
                     addAll(writer.buildTrace())
                     addAll(reader.buildTrace())
                     addAll(parentStackTrace())
-                }
+                },
+                sourceMarkersEnabled,
             )
         } else {
             null
