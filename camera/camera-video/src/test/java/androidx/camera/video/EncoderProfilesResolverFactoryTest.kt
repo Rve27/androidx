@@ -20,6 +20,8 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.impl.AdapterCameraInfo
 import androidx.camera.testing.fakes.FakeCameraInfoInternal
 import androidx.camera.testing.impl.fakes.FakeCameraConfig
+import androidx.camera.testing.impl.fakes.FakeVideoEncoderInfo
+import androidx.camera.video.internal.encoder.VideoEncoderInfo
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,10 +32,13 @@ import org.robolectric.annotation.internal.DoNotInstrument
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
 @Config(sdk = [Config.ALL_SDKS])
-class RecorderVideoCapabilitiesFactoryTest {
+class EncoderProfilesResolverFactoryTest {
+
+    private val videoEncoderInfoFinder: VideoEncoderInfo.Finder =
+        VideoEncoderInfo.Finder { FakeVideoEncoderInfo() }
 
     @Test
-    fun getCapabilities_returnsCachedInstanceForSameCamera() {
+    fun getResolver_returnsCachedInstanceForSameCamera() {
         val cameraInfo =
             AdapterCameraInfo(
                 FakeCameraInfoInternal("0", CameraSelector.LENS_FACING_BACK),
@@ -41,23 +46,25 @@ class RecorderVideoCapabilitiesFactoryTest {
             )
 
         val capabilities1 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
         val capabilities2 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
 
         assertThat(capabilities1).isSameInstanceAs(capabilities2)
     }
 
     @Test
-    fun getCapabilities_returnsNewInstanceForDifferentCamera() {
+    fun getResolver_returnsNewInstanceForDifferentCamera() {
         val cameraInfo1 =
             AdapterCameraInfo(
                 FakeCameraInfoInternal("0", CameraSelector.LENS_FACING_BACK),
@@ -70,23 +77,25 @@ class RecorderVideoCapabilitiesFactoryTest {
             )
 
         val capabilities1 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo1,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
         val capabilities2 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo2,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
 
         assertThat(capabilities1).isNotSameInstanceAs(capabilities2)
     }
 
     @Test
-    fun getCapabilities_returnsCachedInstanceForDifferentCameraInfoWithSameIdAndConfig() {
+    fun getResolver_returnsCachedInstanceForDifferentCameraInfoWithSameIdAndConfig() {
         val cameraConfig = FakeCameraConfig()
         val cameraInfo1 =
             AdapterCameraInfo(
@@ -100,23 +109,25 @@ class RecorderVideoCapabilitiesFactoryTest {
             )
 
         val capabilities1 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo1,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
         val capabilities2 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo2,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
 
         assertThat(capabilities1).isSameInstanceAs(capabilities2)
     }
 
     @Test
-    fun getCapabilities_returnsNewInstanceForDifferentRecordingType() {
+    fun getResolver_returnsNewInstanceForDifferentRecordingType() {
         val cameraInfo =
             AdapterCameraInfo(
                 FakeCameraInfoInternal("0", CameraSelector.LENS_FACING_BACK),
@@ -124,23 +135,25 @@ class RecorderVideoCapabilitiesFactoryTest {
             )
 
         val capabilities1 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
         val capabilities2 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_HIGH_SPEED,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
 
         assertThat(capabilities1).isNotSameInstanceAs(capabilities2)
     }
 
     @Test
-    fun getCapabilities_returnsNewInstanceForDifferentSource() {
+    fun getResolver_returnsNewInstanceForDifferentSource() {
         val cameraInfo =
             AdapterCameraInfo(
                 FakeCameraInfoInternal("0", CameraSelector.LENS_FACING_BACK),
@@ -148,23 +161,25 @@ class RecorderVideoCapabilitiesFactoryTest {
             )
 
         val capabilities1 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
         val capabilities2 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CODEC_CAPABILITIES,
+                videoEncoderInfoFinder,
             )
 
         assertThat(capabilities1).isNotSameInstanceAs(capabilities2)
     }
 
     @Test
-    fun getCapabilities_doesNotCacheForExternalCamera() {
+    fun getResolver_doesNotCacheForExternalCamera() {
         val cameraInfo =
             AdapterCameraInfo(
                 FakeCameraInfoInternal("external", CameraSelector.LENS_FACING_EXTERNAL),
@@ -172,23 +187,25 @@ class RecorderVideoCapabilitiesFactoryTest {
             )
 
         val capabilities1 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
         val capabilities2 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
 
         assertThat(capabilities1).isNotSameInstanceAs(capabilities2)
     }
 
     @Test
-    fun getCapabilities_doesNotCacheForUnknownLensFacingCamera() {
+    fun getResolver_doesNotCacheForUnknownLensFacingCamera() {
         val cameraInfo =
             AdapterCameraInfo(
                 FakeCameraInfoInternal("unknown", CameraSelector.LENS_FACING_UNKNOWN),
@@ -196,37 +213,41 @@ class RecorderVideoCapabilitiesFactoryTest {
             )
 
         val capabilities1 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
         val capabilities2 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
 
         assertThat(capabilities1).isNotSameInstanceAs(capabilities2)
     }
 
     @Test
-    fun getCapabilities_returnsDifferentInstancesForDifferentCameraConfigs() {
+    fun getResolver_returnsDifferentInstancesForDifferentCameraConfigs() {
         val cameraInfo1 = AdapterCameraInfo(FakeCameraInfoInternal("0"), FakeCameraConfig())
         val cameraInfo2 = AdapterCameraInfo(FakeCameraInfoInternal("0"), FakeCameraConfig())
 
         val capabilities1 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo1,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
         val capabilities2 =
-            RecorderVideoCapabilitiesFactory.getCapabilities(
+            EncoderProfilesResolverFactory.getResolver(
                 cameraInfo2,
                 Recorder.VIDEO_RECORDING_TYPE_REGULAR,
                 Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+                videoEncoderInfoFinder,
             )
 
         // Assert

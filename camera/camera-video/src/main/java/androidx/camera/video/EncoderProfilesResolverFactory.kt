@@ -22,22 +22,35 @@ import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.impl.AdapterCameraInfo
 import androidx.camera.core.impl.CameraInfoInternal
+import androidx.camera.video.Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE
+import androidx.camera.video.Recorder.VIDEO_RECORDING_TYPE_REGULAR
+import androidx.camera.video.internal.encoder.VideoEncoderInfo
 import androidx.camera.video.internal.encoder.VideoEncoderInfoImpl
 
-/** Factory for creating and caching [VideoCapabilities] instances. */
-internal object RecorderVideoCapabilitiesFactory {
-    @GuardedBy("capabilitiesCache")
-    private val capabilitiesCache = LruCache<CacheKey, VideoCapabilities>(16)
+/** Factory for creating and caching [EncoderProfilesResolver] instances. */
+internal object EncoderProfilesResolverFactory {
+    @GuardedBy("cache") private val cache = LruCache<CacheKey, EncoderProfilesResolver>(16)
 
     /** Gets or creates [VideoCapabilities] for the given camera and configuration. */
     @JvmStatic
-    fun getCapabilities(
+    fun getResolver(
         cameraInfo: CameraInfo,
-        @Recorder.VideoRecordingType videoRecordingType: Int,
-        @Recorder.VideoCapabilitiesSource videoCapabilitiesSource: Int,
-    ): VideoCapabilities {
+        @Recorder.VideoRecordingType videoRecordingType: Int = VIDEO_RECORDING_TYPE_REGULAR,
+        @Recorder.VideoCapabilitiesSource
+        videoCapabilitiesSource: Int = VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
+        videoEncoderInfoFinder: VideoEncoderInfo.Finder = VideoEncoderInfoImpl.FINDER,
+    ): EncoderProfilesResolver {
+        val createResolver by lazy {
+            createResolver(
+                cameraInfo,
+                videoRecordingType,
+                videoCapabilitiesSource,
+                videoEncoderInfoFinder,
+            )
+        }
+
         if (shouldSkipCache(cameraInfo)) {
-            return createCapabilities(cameraInfo, videoRecordingType, videoCapabilitiesSource)
+            return createResolver
         }
 
         val adapterInfo = cameraInfo as AdapterCameraInfo
@@ -47,20 +60,20 @@ internal object RecorderVideoCapabilitiesFactory {
                 adapterInfo.cameraConfig,
                 videoRecordingType,
                 videoCapabilitiesSource,
+                videoEncoderInfoFinder,
             )
 
-        synchronized(capabilitiesCache) {
-            return capabilitiesCache.get(key)
-                ?: createCapabilities(cameraInfo, videoRecordingType, videoCapabilitiesSource)
-                    .also { capabilitiesCache.put(key, it) }
+        synchronized(cache) {
+            return cache.get(key) ?: createResolver.also { cache.put(key, it) }
         }
     }
 
-    private fun createCapabilities(
+    private fun createResolver(
         cameraInfo: CameraInfo,
         videoRecordingType: Int,
         videoCapabilitiesSource: Int,
-    ): VideoCapabilities {
+        videoEncoderInfoFinder: VideoEncoderInfo.Finder,
+    ): EncoderProfilesResolver {
         val cameraInfoInternal = cameraInfo as CameraInfoInternal
         val qualitySource =
             if (videoRecordingType == Recorder.VIDEO_RECORDING_TYPE_HIGH_SPEED) {
@@ -74,10 +87,14 @@ internal object RecorderVideoCapabilitiesFactory {
                 cameraInfo = cameraInfoInternal,
                 videoCapabilitiesSource = videoCapabilitiesSource,
                 qualitySource = qualitySource,
-                videoEncoderInfoFinder = VideoEncoderInfoImpl.FINDER,
+                videoEncoderInfoFinder = videoEncoderInfoFinder,
             )
 
-        return RecorderVideoCapabilities(resolvedProvider, videoRecordingType, cameraInfoInternal)
+        return EncoderProfilesResolver(
+            resolvedProvider,
+            qualitySource,
+            cameraInfoInternal.supportedDynamicRanges,
+        )
     }
 
     /**
@@ -102,5 +119,6 @@ internal object RecorderVideoCapabilitiesFactory {
         val cameraConfig: Any,
         val videoRecordingType: Int,
         val videoCapabilitiesSource: Int,
+        val videoEncoderInfoFinder: VideoEncoderInfo.Finder,
     )
 }
