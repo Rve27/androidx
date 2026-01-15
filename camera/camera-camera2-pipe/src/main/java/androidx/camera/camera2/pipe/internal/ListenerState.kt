@@ -19,6 +19,7 @@ package androidx.camera.camera2.pipe.internal
 import androidx.camera.camera2.pipe.CameraTimestamp
 import androidx.camera.camera2.pipe.Frame
 import androidx.camera.camera2.pipe.FrameNumber
+import androidx.camera.camera2.pipe.StreamId
 import kotlinx.atomicfu.atomic
 
 internal class ListenerState(val listener: Frame.Listener) {
@@ -82,5 +83,14 @@ internal class ListenerState(val listener: Frame.Listener) {
         if (isCompletedInvoked.compareAndSet(false, true)) {
             listener.onFrameComplete()
         }
+    }
+
+    /**
+     * Invokes [listener.onImageAvailable(streamId)].
+     *
+     * @param streamId The [StreamId] that the image is available
+     */
+    fun invokeOnImageAvailable(streamId: StreamId) {
+        listener.onImageAvailable(streamId)
     }
 }
