@@ -23,6 +23,7 @@ import androidx.compose.remote.core.RemoteContext
 import androidx.compose.remote.core.operations.TextFromFloat
 import androidx.compose.remote.core.operations.TimeAttribute
 import androidx.compose.remote.core.operations.Utils
+import androidx.compose.remote.core.operations.Utils.asNan
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression.ABS
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression.IFELSE
@@ -426,7 +427,7 @@ public abstract class RemoteFloat : BaseRemoteState<Float>() {
     public fun createReference(forceRemote: Boolean = false): RemoteFloat {
         return RemoteFloatExpression(
             if (forceRemote) null else constantValue,
-            { creationState -> floatArrayOf(getFloatIdForCreationState(creationState)) },
+            { creationState -> floatArrayOf(asNan(getIdForCreationState(creationState))) },
         )
     }
 
@@ -1068,7 +1069,7 @@ internal constructor(
 public class AnimatedRemoteFloat(public val input: RemoteFloat, public val anim: FloatArray) :
     RemoteFloat() {
     public override val arrayProvider: (creationState: RemoteComposeCreationState) -> FloatArray
-        get() = { creationState -> floatArrayOf(getFloatIdForCreationState(creationState)) }
+        get() = { creationState -> floatArrayOf(asNan(getIdForCreationState(creationState))) }
 
     public override val constantValue: Float?
         get() = null
