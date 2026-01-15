@@ -16,11 +16,14 @@
 
 package androidx.pdf.annotation
 
+import android.content.Context
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Region
+import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.ViewConfiguration
+import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
 import androidx.pdf.annotation.models.PathPdfObject
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.StampAnnotation
@@ -33,47 +36,37 @@ import kotlin.math.floor
  * This handler converts view coordinates to PDF page coordinates and checks for intersections with
  * annotations currently rendered by [AnnotationsView].
  */
-internal class AnnotationSelectionTouchHandler() {
-
-    private var onAnnotationSelectedListener: OnAnnotationSelectedListener? = null
-
-    /** Registers a listener to be notified of annotation hit events. */
-    fun setListener(listener: OnAnnotationSelectedListener) {
-        onAnnotationSelectedListener = listener
-    }
+internal class AnnotationsLocator(
+    context: Context,
+    private val pageInfoProvider: PageInfoProvider,
+) {
+    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
 
     /** Handles the touch event to perform hit detection. */
-    internal fun handleTouch(annotationsView: AnnotationsView, event: MotionEvent): Boolean {
+    internal fun findAnnotations(
+        annotations: SparseArray<PageAnnotationsData>,
+        event: MotionEvent,
+    ): List<KeyedPdfAnnotation> {
         return when (event.actionMasked) {
             MotionEvent.ACTION_DOWN,
             MotionEvent.ACTION_MOVE -> {
-                val pageInfoProvider = annotationsView.pageInfoProvider ?: return false
-                val pageInfo =
-                    pageInfoProvider.getPageInfoFromViewCoordinates(event.x, event.y)
-                        ?: return false
-
-                val selectedAnnotation = findAnnotationAtPoint(annotationsView, pageInfo, event)
-
-                if (selectedAnnotation != null) {
-                    onAnnotationSelectedListener?.onAnnotationSelected(selectedAnnotation)
-                    return true
-                }
-                false
+                val pageInfo = pageInfoProvider.getPageInfoFromViewCoordinates(event.x, event.y)
+                pageInfo?.let { findAnnotationsAtPoint(it, annotations, event) } ?: emptyList()
             }
-            else -> false
+
+            else -> emptyList()
         }
     }
 
-    /** Finds the top-most annotation at the given touch point using precise path intersection. */
-    private fun findAnnotationAtPoint(
-        annotationsView: AnnotationsView,
+    /**
+     * Finds the list of annotations ordered by z-index (top -> bottom) at the given touch point
+     * using precise path intersection.
+     */
+    private fun findAnnotationsAtPoint(
         pageInfo: PageInfoProvider.PageInfo,
+        annotations: SparseArray<PageAnnotationsData>,
         event: MotionEvent,
-    ): KeyedPdfAnnotation? {
-        // Use the system's touch slop for a density-aware tolerance.
-        val touchSlop: Int = ViewConfiguration.get(annotationsView.context).scaledTouchSlop
-
-        // Calculate the Touch Delta in PDF coordinates using touchSlop for tolerance.
+    ): List<KeyedPdfAnnotation> {
         val touchRectView =
             RectF(
                 event.x - touchSlop,
@@ -87,12 +80,13 @@ internal class AnnotationSelectionTouchHandler() {
         val touchRegion = touchRectPdf.toRegion()
 
         val keyedPdfAnnotations =
-            annotationsView.annotations.get(pageInfo.pageNum)?.keyedAnnotations ?: return null
+            annotations.get(pageInfo.pageNum)?.keyedAnnotations ?: return emptyList()
 
-        // Iterate in reverse Z-order to find the top-most annotation.
-        return keyedPdfAnnotations.asReversed().firstOrNull { keyedPdfAnnotation ->
-            isAnnotationHit(keyedPdfAnnotation.annotation, touchRegion, touchRectPdf)
-        }
+        return keyedPdfAnnotations
+            .filter { keyedPdfAnnotation ->
+                isAnnotationHit(keyedPdfAnnotation.annotation, touchRegion, touchRectPdf)
+            }
+            .asReversed()
     }
 
     /**
