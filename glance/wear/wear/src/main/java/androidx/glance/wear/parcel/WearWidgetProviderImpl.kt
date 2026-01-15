@@ -42,7 +42,7 @@ internal class WearWidgetProviderImpl(
     private val widget: GlanceWearWidget,
 ) : IWearWidgetProvider.Stub() {
 
-    private val widgetCache: WearWidgetCache by lazy { WearWidgetCache(context) }
+    private val widgetCache: WearWidgetCache = WearWidgetCache(context)
 
     override fun getApiVersion(): Int = API_VERSION
 
