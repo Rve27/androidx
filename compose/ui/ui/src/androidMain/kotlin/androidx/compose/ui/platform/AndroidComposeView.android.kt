@@ -872,12 +872,23 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         replaceWith = ReplaceWith("fontFamilyResolver"),
     )
     @Suppress("DEPRECATION")
-    override val fontLoader: Font.ResourceLoader = AndroidFontResourceLoader(context)
+    override val fontLoader: Font.ResourceLoader =
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isSharedFontEnabled) {
+            composeViewContext.fontLoader
+        } else {
+            AndroidFontResourceLoader(context)
+        }
 
     // Backed by mutableStateOf so that the local provider recomposes when it changes
     // FontFamily.Resolver is not guaranteed to be stable or immutable, hence referential check
     override var fontFamilyResolver: FontFamily.Resolver by
-        mutableStateOf(createFontFamilyResolver(context), referentialEqualityPolicy())
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isSharedFontEnabled) {
+            composeViewContext.fontFamilyResolver
+        } else {
+            mutableStateOf(createFontFamilyResolver(context), referentialEqualityPolicy())
+        }
         private set
 
     private val Configuration.fontWeightAdjustmentCompat: Int
@@ -3101,7 +3112,11 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             updateWindowMetrics()
         }
         // Update the font family resolver if the font weight adjustment changed
-        if (oldConfig.fontWeightAdjustmentCompat != newConfig.fontWeightAdjustmentCompat) {
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (
+            !AndroidComposeUiFlags.isSharedFontEnabled &&
+                oldConfig.fontWeightAdjustmentCompat != newConfig.fontWeightAdjustmentCompat
+        ) {
             fontFamilyResolver = createFontFamilyResolver(context)
         }
     }
