@@ -16,10 +16,8 @@
 
 package androidx.navigation.serialization
 
-import android.os.Parcel
-import android.os.Parcelable
+import androidx.kruth.assertThat
 import androidx.navigation.NavType
-import com.google.common.truth.Truth.assertThat
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -32,10 +30,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
 class NavTypeConverterTest {
 
     @Test
@@ -427,13 +422,6 @@ class NavTypeConverterTest {
     }
 
     @Test
-    fun matchEnumClass() {
-        val descriptor = serializer<TestEnum>().descriptor
-        val kType = typeOf<TestEnum>()
-        assertThat(descriptor.matchKType(kType)).isTrue()
-    }
-
-    @Test
     fun matchWrongTypeParam() {
         val descriptor = serializer<Set<Int>>().descriptor
         val kType = typeOf<Set<Boolean>>()
@@ -516,20 +504,6 @@ class NavTypeConverterTest {
 
         val descriptor = serializer<TestClass>().descriptor
         val kType = typeOf<TestClass>()
-        assertThat(descriptor.matchKType(kType)).isTrue()
-    }
-
-    @Test
-    fun matchCustomParcelable() {
-        val descriptor = serializer<TestParcelable>().descriptor
-        val kType = typeOf<TestParcelable>()
-        assertThat(descriptor.matchKType(kType)).isTrue()
-    }
-
-    @Test
-    fun matchCustomSerializable() {
-        val descriptor = serializer<TestSerializable>().descriptor
-        val kType = typeOf<TestSerializable>()
         assertThat(descriptor.matchKType(kType)).isTrue()
     }
 
@@ -719,42 +693,6 @@ class NavTypeConverterTest {
     }
 
     @Test
-    fun getNavTypeParcelable() {
-        val type = serializer<TestParcelable>().descriptor.getNavType()
-        assertThat(type).isEqualTo(UNKNOWN)
-    }
-
-    @Test
-    fun getNavTypeParcelableArray() {
-        val type = serializer<Array<TestParcelable>>().descriptor.getNavType()
-        assertThat(type).isEqualTo(UNKNOWN)
-    }
-
-    @Test
-    fun getNavTypeSerializable() {
-        val type = serializer<TestSerializable>().descriptor.getNavType()
-        assertThat(type).isEqualTo(UNKNOWN)
-    }
-
-    @Test
-    fun getNavTypeSerializableArray() {
-        val type = serializer<Array<TestSerializable>>().descriptor.getNavType()
-        assertThat(type).isEqualTo(UNKNOWN)
-    }
-
-    @Test
-    fun getNavTypeEnumSerializable() {
-        val type = serializer<TestEnum>().descriptor.getNavType()
-        assertThat(type).isEqualTo(NavType.EnumType(TestEnum::class.java))
-    }
-
-    @Test
-    fun getNavTypeEnumArraySerializable() {
-        val type = serializer<Array<TestEnum>>().descriptor.getNavType()
-        assertThat(type).isEqualTo(UNKNOWN)
-    }
-
-    @Test
     fun getNavTypeUnsupportedArray() {
         assertThat(serializer<Array<Double>>().descriptor.getNavType()).isEqualTo(UNKNOWN)
 
@@ -796,26 +734,11 @@ class NavTypeConverterTest {
         val arg: String = "test"
     }
 
-    @Serializable
-    enum class TestEnum {
-        First,
-        Second,
-    }
-
     @Serializable class ParamDerivedTwo : Param()
 
     @Serializable class ParamDerived : Param()
 
     @Serializable open class Param
-
-    @Serializable
-    class TestParcelable(val arg: Int, val arg2: String) : Parcelable {
-        override fun describeContents() = 0
-
-        override fun writeToParcel(dest: Parcel, flags: Int) {}
-    }
-
-    @Serializable class TestSerializable(val arg: Int, val arg2: String) : java.io.Serializable
 
     class ArgClass
 

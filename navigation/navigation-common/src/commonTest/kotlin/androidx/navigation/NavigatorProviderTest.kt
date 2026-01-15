@@ -16,16 +16,13 @@
 
 package androidx.navigation
 
-import android.os.Bundle
+import androidx.kruth.assertThat
+import androidx.kruth.assertWithMessage
 import androidx.navigation.testing.TestNavigatorState
-import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth.assertWithMessage
-import org.junit.Assert.fail
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import androidx.savedstate.SavedState
+import kotlin.test.Test
+import kotlin.test.fail
 
-@RunWith(JUnit4::class)
 class NavigatorProviderTest {
     @Test
     fun addWithMissingAnnotationName() {
@@ -48,45 +45,6 @@ class NavigatorProviderTest {
         val navigator = NoNameNavigator()
         provider.addNavigator("name", navigator)
         assertThat(provider.getNavigator<NoNameNavigator>("name")).isEqualTo(navigator)
-    }
-
-    @Test
-    fun addWithExplicitNameGetWithExplicitName() {
-        val provider = NavigatorProvider()
-        val navigator = EmptyNavigator()
-        provider.addNavigator("name", navigator)
-
-        assertThat(provider.getNavigator<EmptyNavigator>("name")).isEqualTo(navigator)
-        try {
-            provider.getNavigator(EmptyNavigator::class.java)
-            fail("getNavigator(Class) with an invalid name should cause an IllegalStateException")
-        } catch (e: IllegalStateException) {
-            // Expected
-        }
-    }
-
-    @Test
-    fun addWithExplicitNameGetWithMissingAnnotationName() {
-        val provider = NavigatorProvider()
-        val navigator = NoNameNavigator()
-        provider.addNavigator("name", navigator)
-        try {
-            provider.getNavigator(NoNameNavigator::class.java)
-            fail(
-                "getNavigator(Class) with no @Navigator.Name should cause an " +
-                    "IllegalArgumentException"
-            )
-        } catch (e: IllegalArgumentException) {
-            // Expected
-        }
-    }
-
-    @Test
-    fun addWithAnnotationNameGetWithAnnotationName() {
-        val provider = NavigatorProvider()
-        val navigator = EmptyNavigator()
-        provider.addNavigator(navigator)
-        assertThat(provider.getNavigator(EmptyNavigator::class.java)).isEqualTo(navigator)
     }
 
     @Test
@@ -167,7 +125,7 @@ class NoNameNavigator : Navigator<NavDestination>() {
 
     override fun navigate(
         destination: NavDestination,
-        args: Bundle?,
+        args: SavedState?,
         navOptions: NavOptions?,
         navigatorExtras: Extras?,
     ): NavDestination? {
@@ -193,7 +151,7 @@ internal open class EmptyNavigator : Navigator<NavDestination>() {
 
     override fun navigate(
         destination: NavDestination,
-        args: Bundle?,
+        args: SavedState?,
         navOptions: NavOptions?,
         navigatorExtras: Extras?,
     ): NavDestination? {
