@@ -341,7 +341,14 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         IndirectPointerEventPrimaryDirectionalMotionAxis? =
         null
 
-    override val sharedDrawScope = LayoutNodeDrawScope()
+    override val sharedDrawScope =
+        // TODO: when removing the flag, change this to a get() block
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isSharedDrawingEnabled) {
+            composeViewContext.sharedDrawScope
+        } else {
+            LayoutNodeDrawScope()
+        }
 
     override val view: View
         get() = this
@@ -561,7 +568,14 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         return null
     }
 
-    private val canvasHolder = CanvasHolder()
+    private val canvasHolder: CanvasHolder =
+        // TODO: when removing the flag, change this to a get() block
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isSharedDrawingEnabled) {
+            composeViewContext.canvasHolder
+        } else {
+            CanvasHolder()
+        }
 
     override val viewConfiguration: ViewConfiguration =
         AndroidViewConfiguration(android.view.ViewConfiguration.get(context))
