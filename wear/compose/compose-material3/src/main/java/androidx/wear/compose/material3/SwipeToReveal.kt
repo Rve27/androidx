@@ -66,6 +66,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.annotation.FrequentlyChangingValue
+import androidx.compose.runtime.annotation.RememberInComposition
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -1195,7 +1197,7 @@ public value class RevealDirection private constructor(private val value: Int) {
  * @param initialValue The initial value of this state.
  * @constructor Create a [RevealState].
  */
-public class RevealState(initialValue: RevealValue) {
+public class RevealState @RememberInComposition constructor(initialValue: RevealValue) {
     /** The current [RevealValue] based on the status of the component. */
     public val currentValue: RevealValue
         get() = anchoredDraggableState.settledValue
@@ -1214,7 +1216,7 @@ public class RevealState(initialValue: RevealValue) {
 
     /** The current amount by which the revealable content has been revealed. */
     public val offset: Float
-        get() = anchoredDraggableState.offset
+        @FrequentlyChangingValue get() = anchoredDraggableState.offset
 
     /**
      * Snaps to the [targetValue] without any animation (if a previous item was already revealed,
