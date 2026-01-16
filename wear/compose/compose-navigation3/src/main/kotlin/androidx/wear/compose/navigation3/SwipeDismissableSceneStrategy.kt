@@ -50,7 +50,7 @@ public fun rememberSwipeDismissableSceneStrategyState(
  * alternating between list and detail entries:
  *
  * @sample androidx.wear.compose.navigation3.samples.ListDetailNavDisplaySample
- * @param [T] the KType of the backstack key
+ * @param [T] the type of the backstack key
  * @param swipeDismissableSceneStrategyState State containing information about ongoing swipe and
  *   animation. This parameter is unused API level 36 onwards, because the platform supports
  *   predictive back and [SwipeDismissableSceneStrategy] uses platform gestures to detect the back
@@ -98,7 +98,7 @@ public class SwipeDismissableSceneStrategyState(
  * alternating between list and detail entries:
  *
  * @sample androidx.wear.compose.navigation3.samples.ListDetailNavDisplaySample
- * @param [T] the KType of the backstack key
+ * @param [T] the type of the backstack key
  * @param state State containing information about ongoing swipe and animation. This parameter is
  *   unused API level 36 onwards, because the platform supports predictive back and
  *   [SwipeDismissableSceneStrategy] uses platform gestures to detect the back gestures.
