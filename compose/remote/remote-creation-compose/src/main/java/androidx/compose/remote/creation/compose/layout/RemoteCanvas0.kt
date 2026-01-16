@@ -640,7 +640,7 @@ internal fun RemoteStateScope.toPaint(
         this.alpha = alpha.floatId
         when (brush) {
             is RemoteSolidColor -> {
-                val constantValue = brush.color.constantValue
+                val constantValue = brush.color.constantValueOrNull
                 color =
                     if (constantValue != null) {
                         Color(constantValue.toArgb())

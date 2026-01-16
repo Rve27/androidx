@@ -55,7 +55,7 @@ public class BorderModifier(
             roundedCorner = shape.topStart.toPx(remoteSize).floatId
         }
 
-        val constantColor = color.constantValue
+        val constantColor = color.constantValueOrNull
         return if (constantColor != null) {
             CreationBorderModifier(width.floatId, roundedCorner, constantColor.toArgb(), shapeType)
         } else {
