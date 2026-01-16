@@ -558,7 +558,8 @@ public final class RuntimeUtilsTest {
     @Test
     public void getHitTestResult_convertsFromExtensionHitTestResult_withNoHit() {
         float distance = Float.POSITIVE_INFINITY;
-        Vec3 hitPosition = null;
+        Vector3 expectedNoHitPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        Vec3 hitPosition = new Vec3(0.0f, 0.0f, 0.0f);
         int surfaceType = com.android.extensions.xr.space.HitTestResult.SURFACE_UNKNOWN;
 
         com.android.extensions.xr.space.HitTestResult.Builder hitTestResultBuilder =
@@ -570,7 +571,7 @@ public final class RuntimeUtilsTest {
         HitTestResult hitTestResult = RuntimeUtils.getHitTestResult(extensionsHitTestResult);
 
         assertThat(hitTestResult.getDistance()).isEqualTo(distance);
-        assertThat(hitTestResult.getHitPosition()).isNull();
+        assertThat(hitTestResult.getHitPosition()).isEqualTo(expectedNoHitPosition);
         assertThat(hitTestResult.getSurfaceNormal()).isNull();
         assertThat(hitTestResult.getSurfaceType())
                 .isEqualTo(HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_UNKNOWN);
