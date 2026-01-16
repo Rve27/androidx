@@ -30,7 +30,7 @@ import androidx.compose.runtime.RememberManager
 import androidx.compose.runtime.RememberObserverHolder
 import androidx.compose.runtime.TestOnly
 import androidx.compose.runtime.composeRuntimeError
-import androidx.compose.runtime.composer.gapbuffer.Anchor
+import androidx.compose.runtime.composer.gapbuffer.GapAnchor
 import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.composer.gapbuffer.SlotWriter
 import androidx.compose.runtime.composer.gapbuffer.asGapBufferSlotTable
@@ -65,7 +65,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
-    protected open fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): Anchor? = null
+    protected open fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? = null
 
     protected abstract fun OperationArgContainer.execute(
         applier: Applier<*>,
@@ -256,7 +256,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
     object AppendValue : Operation(objects = 2) {
         inline val Anchor
-            get() = ObjectParameter<Anchor>(0)
+            get() = ObjectParameter<GapAnchor>(0)
 
         inline val Value
             get() = ObjectParameter<Any?>(1)
@@ -356,7 +356,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             get() = ObjectParameter<Any?>(0)
 
         inline val Anchor
-            get() = ObjectParameter<Anchor>(1)
+            get() = ObjectParameter<GapAnchor>(1)
 
         inline val GroupSlotIndex
             get() = 0
@@ -432,7 +432,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
     object EnsureGroupStarted : Operation(objects = 1) {
         inline val Anchor
-            get() = ObjectParameter<Anchor>(0)
+            get() = ObjectParameter<GapAnchor>(0)
 
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
@@ -621,7 +621,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
     object InsertSlots : Operation(objects = 2) {
         inline val Anchor
-            get() = ObjectParameter<Anchor>(0)
+            get() = ObjectParameter<GapAnchor>(0)
 
         inline val FromSlotTable
             get() = ObjectParameter<SlotTable>(1)
@@ -654,7 +654,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
     object InsertSlotsWithFixups : Operation(objects = 3) {
         inline val Anchor
-            get() = ObjectParameter<Anchor>(0)
+            get() = ObjectParameter<GapAnchor>(0)
 
         inline val FromSlotTable
             get() = ObjectParameter<SlotTable>(1)
@@ -706,7 +706,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             get() = 0
 
         inline val GroupAnchor
-            get() = ObjectParameter<Anchor>(1)
+            get() = ObjectParameter<GapAnchor>(1)
 
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
@@ -721,7 +721,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                 else -> super.objectParamName(parameter)
             }
 
-        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): Anchor? =
+        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? =
             getObject(GroupAnchor)
 
         override fun OperationArgContainer.execute(
@@ -746,7 +746,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             get() = 0
 
         inline val GroupAnchor
-            get() = ObjectParameter<Anchor>(0)
+            get() = ObjectParameter<GapAnchor>(0)
 
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
@@ -760,7 +760,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                 else -> super.objectParamName(parameter)
             }
 
-        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): Anchor? =
+        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? =
             getObject(GroupAnchor)
 
         override fun OperationArgContainer.execute(
@@ -809,7 +809,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             get() = ObjectParameter<IntRef>(0)
 
         inline val Anchor
-            get() = ObjectParameter<Anchor>(1)
+            get() = ObjectParameter<GapAnchor>(1)
 
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
@@ -1077,7 +1077,7 @@ private fun currentNodeIndex(slots: SlotWriter): Int {
     return index
 }
 
-private fun positionToInsert(slots: SlotWriter, anchor: Anchor, applier: Applier<Any?>): Int {
+private fun positionToInsert(slots: SlotWriter, anchor: GapAnchor, applier: Applier<Any?>): Int {
     val destination = slots.anchorIndex(anchor)
     runtimeCheck(slots.currentGroup < destination)
     positionToParentOf(slots, applier, destination)
@@ -1102,7 +1102,7 @@ private fun positionToInsert(slots: SlotWriter, anchor: Anchor, applier: Applier
 private inline fun withCurrentStackTrace(
     errorContext: OperationErrorContext?,
     writer: SlotWriter,
-    location: Anchor?,
+    location: GapAnchor?,
     block: () -> Unit,
 ) {
     try {
@@ -1117,7 +1117,7 @@ private inline fun withCurrentStackTrace(
 private fun Throwable.attachComposeStackTrace(
     errorContext: OperationErrorContext?,
     writer: SlotWriter,
-    anchor: Anchor?,
+    anchor: GapAnchor?,
 ): Throwable {
     if (errorContext == null) return this
     return attachComposeStackTrace {

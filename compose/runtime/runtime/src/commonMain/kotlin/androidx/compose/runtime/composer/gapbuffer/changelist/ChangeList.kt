@@ -29,7 +29,7 @@ import androidx.compose.runtime.RecomposeScopeImpl
 import androidx.compose.runtime.RememberManager
 import androidx.compose.runtime.RememberObserverHolder
 import androidx.compose.runtime.SlotStorage
-import androidx.compose.runtime.composer.gapbuffer.Anchor
+import androidx.compose.runtime.composer.gapbuffer.GapAnchor
 import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.composer.gapbuffer.SlotWriter
 import androidx.compose.runtime.composer.gapbuffer.asGapBufferSlotTable
@@ -135,14 +135,14 @@ internal class ChangeList : Changes() {
         }
     }
 
-    fun pushUpdateAnchoredValue(value: Any?, anchor: Anchor, groupSlotIndex: Int) {
+    fun pushUpdateAnchoredValue(value: Any?, anchor: GapAnchor, groupSlotIndex: Int) {
         operations.push(UpdateAnchoredValue) {
             setObjects(UpdateAnchoredValue.Value, value, UpdateAnchoredValue.Anchor, anchor)
             setInt(UpdateAnchoredValue.GroupSlotIndex, groupSlotIndex)
         }
     }
 
-    fun pushAppendValue(anchor: Anchor, value: Any?) {
+    fun pushAppendValue(anchor: GapAnchor, value: Any?) {
         operations.push(AppendValue) {
             setObjects(AppendValue.Anchor, anchor, AppendValue.Value, value)
         }
@@ -168,7 +168,7 @@ internal class ChangeList : Changes() {
         operations.push(EnsureRootGroupStarted)
     }
 
-    fun pushEnsureGroupStarted(anchor: Anchor) {
+    fun pushEnsureGroupStarted(anchor: GapAnchor) {
         operations.push(EnsureGroupStarted) { setObject(EnsureGroupStarted.Anchor, anchor) }
     }
 
@@ -184,13 +184,13 @@ internal class ChangeList : Changes() {
         operations.push(RemoveCurrentGroup)
     }
 
-    fun pushInsertSlots(anchor: Anchor, from: SlotTable) {
+    fun pushInsertSlots(anchor: GapAnchor, from: SlotTable) {
         operations.push(InsertSlots) {
             setObjects(InsertSlots.Anchor, anchor, InsertSlots.FromSlotTable, from)
         }
     }
 
-    fun pushInsertSlots(anchor: Anchor, from: SlotTable, fixups: FixupList) {
+    fun pushInsertSlots(anchor: GapAnchor, from: SlotTable, fixups: FixupList) {
         operations.push(InsertSlotsWithFixups) {
             setObjects(
                 InsertSlotsWithFixups.Anchor,
@@ -261,7 +261,7 @@ internal class ChangeList : Changes() {
         operations.push(SideEffect) { setObject(SideEffect.Effect, effect) }
     }
 
-    fun pushDetermineMovableContentNodeIndex(effectiveNodeIndexOut: IntRef, anchor: Anchor) {
+    fun pushDetermineMovableContentNodeIndex(effectiveNodeIndexOut: IntRef, anchor: GapAnchor) {
         operations.push(DetermineMovableContentNodeIndex) {
             setObjects(
                 DetermineMovableContentNodeIndex.EffectiveNodeIndexOut,
