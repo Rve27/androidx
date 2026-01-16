@@ -131,6 +131,28 @@ public abstract class TileService extends Service {
     public static final String METADATA_GROUP_KEY = "androidx.wear.tiles.GROUP";
 
     /**
+     * The name of the metadata key that contains the major schema version that the tile requires to
+     * be rendered properly.
+     *
+     * <p>If the device's renderer schema version is lower than the one provided, the tile provider
+     * will be ignored and not listed as a valid tile.
+     *
+     * <p>This metadata should be provided together with {@link #METADATA_SCHEMA_MINOR_VERSION_KEY}.
+     */
+    public static final String METADATA_SCHEMA_MAJOR_VERSION_KEY = "tiles_schema_major_version";
+
+    /**
+     * The name of the metadata key that contains the minor schema version that the tile requires to
+     * be rendered properly.
+     *
+     * <p>If the device's renderer schema version is lower than the one provided, the tile provider
+     * will be ignored and not listed as a valid tile.
+     *
+     * <p>This metadata should be provided together with {@link #METADATA_SCHEMA_MAJOR_VERSION_KEY}.
+     */
+    public static final String METADATA_SCHEMA_MINOR_VERSION_KEY = "tiles_schema_minor_version";
+
+    /**
      * Name of the SharedPreferences file used for getting the preferences from the application
      * context. The preferences are shared by all TileService implementations from the same app and
      * store information regarding the tiles considered to be active. The SharedPreferences key is
