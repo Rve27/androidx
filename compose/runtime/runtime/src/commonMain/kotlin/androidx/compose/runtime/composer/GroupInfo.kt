@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime
+package androidx.compose.runtime.composer
 
-@TestOnly
-fun Composition.getSlots(): Iterable<Any?> = (this as CompositionImpl).slotStorage.getSlots()
+internal class GroupInfo(
+    /**
+     * The current location of the slot relative to the start location of the pending slot changes
+     */
+    var slotIndex: Int,
 
-@TestOnly
-fun Composer.getInsertTableSlots(): Iterable<Any?> =
-    (this as GapComposer).insertTable.slots.asIterable()
+    /**
+     * The current location of the first node relative the start location of the pending node
+     * changes
+     */
+    var nodeIndex: Int,
+
+    /** The current number of nodes the group contains after changes have been applied */
+    var nodeCount: Int,
+)
