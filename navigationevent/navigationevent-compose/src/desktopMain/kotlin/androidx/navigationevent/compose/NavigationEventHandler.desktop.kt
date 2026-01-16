@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,6 @@
 
 package androidx.navigationevent.compose
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun implementedInJetBrainsFork(): Nothing =
-    throw NotImplementedError(
-        """
-        Implemented only in JetBrains fork.
-        Please use `org.jetbrains.navigationevent:navigationevent-compose` package instead.
-        """
-            .trimIndent()
-    )
+import androidx.compose.runtime.Composable
+
+@Composable internal actual fun isInspectionMode(): Boolean = false

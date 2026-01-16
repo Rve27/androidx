@@ -16,6 +16,9 @@
 
 package androidx.navigationevent.compose
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.HostDefaultKey
+import androidx.navigationevent.NavigationEventDispatcherOwner
 
-@Composable internal actual fun isInspectionMode(): Boolean = implementedInJetBrainsFork()
+public actual val NavigationEventDispatcherOwnerHostDefaultKey:
+    HostDefaultKey<NavigationEventDispatcherOwner?> =
+    object : HostDefaultKey<NavigationEventDispatcherOwner?> {}
