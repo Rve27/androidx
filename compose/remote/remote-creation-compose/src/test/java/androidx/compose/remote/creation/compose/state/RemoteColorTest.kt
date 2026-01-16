@@ -179,7 +179,7 @@ class RemoteColorTest {
         val color = Color.RED
         val red =
             RemoteColor(
-                constantValue = null,
+                constantValueOrNull = null,
                 alpha = RemoteFloat(Color.alpha(color).toFloat() / 255f),
                 red = RemoteFloat(Color.red(color).toFloat() / 255f),
                 green = RemoteFloat(Color.green(color).toFloat() / 255f),
@@ -309,7 +309,7 @@ class RemoteColorTest {
             )
         val result = a * b
 
-        assertThat(result.constantValue?.toArgb()).isEqualTo(Color.argb(204, 153, 102, 51))
+        assertThat(result.constantValue.toArgb()).isEqualTo(Color.argb(204, 153, 102, 51))
     }
 
     @Test
@@ -330,7 +330,7 @@ class RemoteColorTest {
             )
         val result = a * b
 
-        assertThat(result.constantValue).isNull()
+        assertThat(result.constantValueOrNull).isNull()
     }
 
     @Test

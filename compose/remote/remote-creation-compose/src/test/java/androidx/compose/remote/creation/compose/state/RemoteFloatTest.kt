@@ -349,7 +349,8 @@ class RemoteFloatTest {
     @Test
     fun constantValue_notConstant() {
         assertThat(
-                (RemoteFloat(10f) - RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC)).constantValue
+                (RemoteFloat(10f) - RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC))
+                    .constantValueOrNull
             )
             .isNull()
     }
@@ -748,7 +749,7 @@ class RemoteFloatTest {
         val ref = rf.createReference(forceRemote = true)
 
         assertThat(rf.constantValue).isEqualTo(10f)
-        assertThat(ref.constantValue).isNull()
+        assertThat(ref.constantValueOrNull).isNull()
 
         val refId = ref.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
