@@ -29,11 +29,12 @@ import androidx.compose.runtime.collection.MultiValueMap
 import androidx.compose.runtime.collection.ScopeMap
 import androidx.compose.runtime.composer.GroupInfo
 import androidx.compose.runtime.composer.GroupKind
-import androidx.compose.runtime.composer.gapbuffer.Anchor
+import androidx.compose.runtime.composer.gapbuffer.GapAnchor
 import androidx.compose.runtime.composer.gapbuffer.KeyInfo
 import androidx.compose.runtime.composer.gapbuffer.SlotReader
 import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.composer.gapbuffer.SlotWriter
+import androidx.compose.runtime.composer.gapbuffer.asGapAnchor
 import androidx.compose.runtime.composer.gapbuffer.asGapBufferSlotTable
 import androidx.compose.runtime.composer.gapbuffer.changelist.ChangeList
 import androidx.compose.runtime.composer.gapbuffer.changelist.ComposerChangeListWriter
@@ -284,7 +285,7 @@ internal class GapComposer(
     override var deferredChanges: ChangeList? = null
 
     private val changeListWriter = ComposerChangeListWriter(this, changes)
-    private var insertAnchor: Anchor = insertTable.read { it.anchor(0) }
+    private var insertAnchor: GapAnchor = insertTable.read { it.anchor(0) }
     private var insertFixups = FixupList()
 
     private var pausable: Boolean = false
@@ -1981,7 +1982,7 @@ internal class GapComposer(
     override fun tryImminentInvalidation(scope: RecomposeScopeImpl, instance: Any?): Boolean {
         val anchor = scope.anchor ?: return false
         val slotTable = reader.table
-        val location = anchor.toIndexFor(slotTable)
+        val location = anchor.asGapAnchor().toIndexFor(slotTable)
         if (isComposing && location >= reader.currentGroup) {
             // if we are invalidating a scope that is going to be traversed during this
             // composition.
@@ -2304,7 +2305,7 @@ internal class GapComposer(
         changeListWriter.withChangeList(lateChanges) {
             changeListWriter.resetSlots()
             references.fastForEach { (to, from) ->
-                val anchor = to.anchor
+                val anchor = to.anchor.asGapAnchor()
                 val toSlotTable = to.slotStorage.asGapBufferSlotTable()
                 val location = toSlotTable.anchorIndex(anchor)
                 val effectiveNodeIndex = IntRef()
@@ -2354,7 +2355,7 @@ internal class GapComposer(
                     val resolvedState = parentContext.movableContentStateResolve(from)
                     val resolvedSlotTable = resolvedState?.slotStorage?.asGapBufferSlotTable()
                     val fromTable = resolvedSlotTable ?: from.slotStorage.asGapBufferSlotTable()
-                    val fromAnchor = resolvedSlotTable?.anchor(0) ?: from.anchor
+                    val fromAnchor = (resolvedSlotTable?.anchor(0) ?: from.anchor).asGapAnchor()
                     val nodesToInsert = fromTable.collectNodesFrom(fromAnchor)
 
                     // Insert nodes if necessary
@@ -2383,7 +2384,7 @@ internal class GapComposer(
 
                     fromTable.read { reader ->
                         withReader(reader) {
-                            val newLocation = fromTable.anchorIndex(fromAnchor)
+                            val newLocation = fromTable.anchorIndex(fromAnchor.asGapAnchor())
                             reader.reposition(newLocation)
                             changeListWriter.moveReaderToAbsolute(newLocation)
                             val offsetChanges = ChangeList()
@@ -2591,7 +2592,7 @@ internal class GapComposer(
         // that are no longer in the slot table.
         for (i in invalidations.lastIndex downTo 0) {
             val invalidation = invalidations[i]
-            val anchor = invalidation.scope.anchor
+            val anchor = invalidation.scope.anchor?.asGapAnchor()
             if (anchor != null && anchor.valid) {
                 if (invalidation.location != anchor.location)
                     invalidation.location = anchor.location
@@ -2603,7 +2604,7 @@ internal class GapComposer(
         // Add the requested invalidations
         invalidationsRequested.map.forEach { scope, instances ->
             scope as RecomposeScopeImpl
-            val location = scope.anchor?.location ?: return@forEach
+            val location = scope.anchor?.asGapAnchor()?.location ?: return@forEach
             invalidations.add(
                 Invalidation(scope, location, instances.takeUnless { it === ScopeInvalidated })
             )
@@ -2689,7 +2690,7 @@ internal class GapComposer(
         runtimeCheck(!nodeExpected) { "A call to createNode(), emitNode() or useNode() expected" }
     }
 
-    private fun recordInsert(anchor: Anchor) {
+    private fun recordInsert(anchor: GapAnchor) {
         if (insertFixups.isEmpty()) {
             changeListWriter.insertSlots(anchor, insertTable)
         } else {
@@ -3330,7 +3331,7 @@ private fun Boolean.asInt() = if (this) 1 else 0
 
 private fun Int.asBool() = this != 0
 
-private fun SlotTable.collectNodesFrom(anchor: Anchor): List<Any?> {
+private fun SlotTable.collectNodesFrom(anchor: GapAnchor): List<Any?> {
     val result = mutableListOf<Any?>()
     read { reader ->
         val index = anchorIndex(anchor)

@@ -18,7 +18,7 @@ package androidx.compose.runtime.composer.gapbuffer.changelist
 
 import androidx.compose.runtime.Applier
 import androidx.compose.runtime.RememberManager
-import androidx.compose.runtime.composer.gapbuffer.Anchor
+import androidx.compose.runtime.composer.gapbuffer.GapAnchor
 import androidx.compose.runtime.composer.gapbuffer.SlotWriter
 import androidx.compose.runtime.runtimeCheck
 
@@ -56,7 +56,7 @@ internal class FixupList : OperationsDebugStringFormattable() {
         )
     }
 
-    fun createAndInsertNode(factory: () -> Any?, insertIndex: Int, groupAnchor: Anchor) {
+    fun createAndInsertNode(factory: () -> Any?, insertIndex: Int, groupAnchor: GapAnchor) {
         operations.push(Operation.InsertNodeFixup) {
             setObject(Operation.InsertNodeFixup.Factory, factory)
             setInt(Operation.InsertNodeFixup.InsertIndex, insertIndex)
