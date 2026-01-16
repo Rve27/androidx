@@ -17,6 +17,7 @@
 package androidx.navigation.serialization
 
 import androidx.kruth.assertThat
+import androidx.navigation.CollectionNavType
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavArgument
 import androidx.navigation.NavType
@@ -648,6 +649,33 @@ class NavArgumentGeneratorTest {
     }
 
     @Test
+    fun convertToEnumArray() {
+        @Serializable class TestClass(val arg: Array<TestEnum>)
+        val navType =
+            object : CollectionNavType<Array<TestEnum>>(false) {
+                override fun put(bundle: SavedState, key: String, value: Array<TestEnum>) {}
+
+                override fun serializeAsValues(value: Array<TestEnum>) = emptyList<String>()
+
+                override fun emptyCollection(): Array<TestEnum> = emptyArray()
+
+                override fun get(bundle: SavedState, key: String) = null
+
+                override fun parseValue(value: String) = emptyArray<TestEnum>()
+            }
+        val converted =
+            serializer<TestClass>()
+                .generateNavArguments(mapOf(typeOf<Array<TestEnum>>() to navType))
+        val expected =
+            navArgument("arg") {
+                type = navType
+                nullable = false
+            }
+        assertThat(converted).containsExactlyInOrder(expected)
+        assertThat(converted[0].argument.isDefaultValueUnknown).isFalse()
+    }
+
+    @Test
     fun convertValueClass() {
         // test value class as destination route
         val converted = serializer<TestValueClass>().generateNavArguments()
@@ -1143,6 +1171,14 @@ class NavArgumentGeneratorTest {
     enum class TestEnumCustomSerialName {
         TEST
     }
+
+    @Serializable
+    private class EnumWrapper {
+        enum class NestedEnum {
+            ONE,
+            TWO,
+        }
+    }
 }
 
 internal fun List<NamedNavArgument>.containsExactlyInOrder(vararg expectedArgs: NamedNavArgument) {
@@ -1182,4 +1218,8 @@ internal fun NavArgument.isEqual(other: NavArgument): Boolean {
     return if (!isDefaultValuePresent) {
         defaultValue == null && other.defaultValue == null
     } else true
+}
+
+enum class TestTopLevelEnum {
+    TEST
 }
