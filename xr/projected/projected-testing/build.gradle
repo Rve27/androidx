@@ -29,10 +29,16 @@ plugins {
 }
 
 dependencies {
-    // Add dependencies here
+    implementation(libs.junit)
+    implementation(libs.testCoreKtx)
+    implementation(libs.robolectric)
+    implementation(libs.mockitoCore4)
+    implementation(libs.mockitoKotlin4)
+    implementation("androidx.annotation:annotation:1.8.1")
 }
 
 android {
+    compileSdk { version = release(36) }
     namespace = "androidx.xr.projected.testing"
 }
 
@@ -41,4 +47,5 @@ androidx {
     type = SoftwareType.PUBLISHED_TEST_LIBRARY
     inceptionYear = "2026"
     description = "Libraries to aid in unit testing Projected clients."
+    enableRobolectric()
 }
