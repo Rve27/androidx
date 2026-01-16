@@ -386,7 +386,7 @@ public fun RemoteCompactButton(
             modifier
                 .compactButtonModifier()
                 .padding(tapPadding)
-                .clickable(onClick, enabled = enabled.constantValue ?: false)
+                .clickable(onClick, enabled = enabled.constantValueOrNull ?: false)
     ) {
         if (label != null) {
             RemoteButtonImpl(
@@ -471,7 +471,7 @@ private fun RemoteButtonImpl(
     val containerModifier =
         RemoteModifier.clickable(
                 actions = buildList { onClick?.let { add(it) } },
-                enabled = enabled.constantValue ?: false && onClick != null,
+                enabled = enabled.constantValueOrNull ?: false && onClick != null,
             )
             .padding(contentPadding)
 

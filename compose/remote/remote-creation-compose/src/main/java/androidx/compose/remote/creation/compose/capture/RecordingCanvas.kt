@@ -158,7 +158,7 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
                 if (remoteColor == null) {
                     paint.color.toLong() shl 32
                 } else {
-                    val constantValue = remoteColor.constantValue
+                    val constantValue = remoteColor.constantValueOrNull
                     if (constantValue == null) {
                         remoteColor.getIdForCreationState(creationState).toLong() shl
                             6 or
@@ -287,7 +287,7 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
             if (tmpLastRemoteColorFilter != null) {
                 when (tmpLastRemoteColorFilter) {
                     is RemoteBlendModeColorFilter -> {
-                        val constantColor = tmpLastRemoteColorFilter.color.constantValue
+                        val constantColor = tmpLastRemoteColorFilter.color.constantValueOrNull
 
                         if (constantColor != null) {
                             // Where possible use a constant instead of an expression.
