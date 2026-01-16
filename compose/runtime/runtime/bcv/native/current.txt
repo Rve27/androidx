@@ -360,9 +360,18 @@ abstract interface androidx.compose.runtime/RecomposeScope { // androidx.compose
     abstract fun invalidate() // androidx.compose.runtime/RecomposeScope.invalidate|invalidate(){}[0]
 }
 
+abstract interface androidx.compose.runtime/RecomposerErrorInformation { // androidx.compose.runtime/RecomposerErrorInformation|null[0]
+    abstract val cause // androidx.compose.runtime/RecomposerErrorInformation.cause|{}cause[0]
+        abstract fun <get-cause>(): kotlin/Throwable // androidx.compose.runtime/RecomposerErrorInformation.cause.<get-cause>|<get-cause>(){}[0]
+    abstract val isRecoverable // androidx.compose.runtime/RecomposerErrorInformation.isRecoverable|{}isRecoverable[0]
+        abstract fun <get-isRecoverable>(): kotlin/Boolean // androidx.compose.runtime/RecomposerErrorInformation.isRecoverable.<get-isRecoverable>|<get-isRecoverable>(){}[0]
+}
+
 abstract interface androidx.compose.runtime/RecomposerInfo { // androidx.compose.runtime/RecomposerInfo|null[0]
     abstract val changeCount // androidx.compose.runtime/RecomposerInfo.changeCount|{}changeCount[0]
         abstract fun <get-changeCount>(): kotlin/Long // androidx.compose.runtime/RecomposerInfo.changeCount.<get-changeCount>|<get-changeCount>(){}[0]
+    abstract val errorState // androidx.compose.runtime/RecomposerInfo.errorState|{}errorState[0]
+        abstract fun <get-errorState>(): kotlinx.coroutines.flow/StateFlow<androidx.compose.runtime/RecomposerErrorInformation?> // androidx.compose.runtime/RecomposerInfo.errorState.<get-errorState>|<get-errorState>(){}[0]
     abstract val hasPendingWork // androidx.compose.runtime/RecomposerInfo.hasPendingWork|{}hasPendingWork[0]
         abstract fun <get-hasPendingWork>(): kotlin/Boolean // androidx.compose.runtime/RecomposerInfo.hasPendingWork.<get-hasPendingWork>|<get-hasPendingWork>(){}[0]
     abstract val state // androidx.compose.runtime/RecomposerInfo.state|{}state[0]

@@ -77,6 +77,7 @@
 [iosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [iosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [iosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[iosArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [iosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [iosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [iosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -151,6 +152,7 @@
 [iosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [iosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [iosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[iosSimulatorArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [linuxArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [linuxArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [linuxArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -225,6 +227,7 @@
 [linuxArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [linuxArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [linuxArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[linuxArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [linuxX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [linuxX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [linuxX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -299,6 +302,7 @@
 [linuxX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [linuxX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [linuxX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[linuxX64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [macosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [macosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [macosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -373,6 +377,7 @@
 [macosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [macosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [macosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[macosArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [mingwX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [mingwX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [mingwX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -447,6 +452,7 @@
 [mingwX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [mingwX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [mingwX64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[mingwX64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [tvosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [tvosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [tvosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -521,6 +527,7 @@
 [tvosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [tvosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [tvosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[tvosArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [tvosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [tvosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [tvosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -595,6 +602,7 @@
 [tvosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [tvosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [tvosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[tvosSimulatorArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [watchosArm32]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [watchosArm32]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [watchosArm32]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -669,6 +677,7 @@
 [watchosArm32]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [watchosArm32]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [watchosArm32]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[watchosArm32]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [watchosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [watchosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [watchosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -743,6 +752,7 @@
 [watchosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [watchosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [watchosArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[watchosArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [watchosDeviceArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [watchosDeviceArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [watchosDeviceArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -817,6 +827,7 @@
 [watchosDeviceArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [watchosDeviceArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [watchosDeviceArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[watchosDeviceArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
 [watchosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AdvanceSlotsBy$stableprop from androidx.compose.runtime:runtime
 [watchosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_AppendValue$stableprop from androidx.compose.runtime:runtime
 [watchosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_ApplyChangeList$stableprop from androidx.compose.runtime:runtime
@@ -891,3 +902,4 @@
 [watchosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UpdateValue$stableprop_getter() from androidx.compose.runtime:runtime
 [watchosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_Ups$stableprop_getter() from androidx.compose.runtime:runtime
 [watchosSimulatorArm64]: Removed declaration androidx.compose.runtime.changelist/androidx_compose_runtime_changelist_Operation_UseCurrentNode$stableprop_getter() from androidx.compose.runtime:runtime
+[watchosSimulatorArm64]: Added declaration errorState to androidx.compose.runtime/RecomposerInfo
