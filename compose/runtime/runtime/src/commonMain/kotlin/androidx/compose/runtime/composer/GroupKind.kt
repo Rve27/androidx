@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime
+package androidx.compose.runtime.composer
 
-@TestOnly
-fun Composition.getSlots(): Iterable<Any?> = (this as CompositionImpl).slotStorage.getSlots()
+import kotlin.jvm.JvmInline
 
-@TestOnly
-fun Composer.getInsertTableSlots(): Iterable<Any?> =
-    (this as GapComposer).insertTable.slots.asIterable()
+/** Group types used with [Composer.start] to differentiate between different types of groups */
+@JvmInline
+internal value class GroupKind private constructor(val value: Int) {
+    inline val isNode
+        get() = value != Group.value
+
+    inline val isReusable
+        get() = value != Node.value
+
+    companion object {
+        val Group = GroupKind(0)
+        val Node = GroupKind(1)
+        val ReusableNode = GroupKind(2)
+    }
+}
