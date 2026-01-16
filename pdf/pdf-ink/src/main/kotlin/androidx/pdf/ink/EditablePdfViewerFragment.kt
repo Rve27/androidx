@@ -16,6 +16,7 @@
 
 package androidx.pdf.ink
 
+import android.content.Context
 import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.PointF
@@ -40,9 +41,9 @@ import androidx.ink.authoring.InProgressStrokesView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.pdf.EditablePdfDocument
-import androidx.pdf.PdfDocument
+import androidx.pdf.PdfSandboxHandle
 import androidx.pdf.PdfWriteHandle
+import androidx.pdf.SandboxedPdfLoader
 import androidx.pdf.annotation.AnnotationsView
 import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
 import androidx.pdf.annotation.KeyedPdfAnnotation
@@ -99,8 +100,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     public constructor() : super()
 
     protected constructor(pdfStylingOptions: PdfStylingOptions) : super(pdfStylingOptions)
-
-    private var lastViewportUpdate: ViewportUpdate? = null
 
     /**
      * If `true`, the fragment is in edit mode, allowing for annotating or editing. If `false`, the
@@ -208,6 +207,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     private lateinit var annotationToolbar: AnnotationToolbar
 
     private lateinit var toolbarCoordinator: ToolbarCoordinator
+    private lateinit var pdfLoaderHandle: PdfSandboxHandle
 
     private val toolbarLayoutChangeListener =
         View.OnLayoutChangeListener {
@@ -276,6 +276,22 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override val documentViewModel: EditableDocumentViewModel by viewModels {
         EditableDocumentViewModel.Factory
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        /**
+         * By starting initialization early, subsequent calls to load a document—whether through a
+         * new [documentUri] or a forced reload via[EditableDocumentViewModel.forceLoadDocument] can
+         * reuse the existing service connection, significantly reducing latency by avoiding
+         * repeated connect/disconnect cycles.
+         */
+        pdfLoaderHandle = SandboxedPdfLoader.startInitialization(context)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        pdfLoaderHandle.close()
     }
 
     override fun onCreateView(
@@ -389,27 +405,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private fun setupToolbarCoordinator(toolbar: AnnotationToolbar) {
         toolbarCoordinator.apply { attachToolbar(toolbar) }
-    }
-
-    /**
-     * If the document is an [EditablePdfDocument], sets it for editing and initializes draft state.
-     * This method must call `super.onLoadDocumentSuccess(document)` first.
-     *
-     * @param document The loaded [PdfDocument].
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override fun onLoadDocumentSuccess(document: PdfDocument) {
-        super.onLoadDocumentSuccess(document)
-        val initialMatrices =
-            lastViewportUpdate?.let { update ->
-                generatePageRangeTransformationMatrices(
-                    update.firstVisiblePage,
-                    update.visiblePagesCount,
-                    update.pageLocations,
-                    update.zoomLevel,
-                )
-            }
-        documentViewModel.maybeInitialiseForDocument(document, initialMatrices)
     }
 
     override fun onDestroyView() {
@@ -541,14 +536,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                     pageLocations: SparseArray<RectF>,
                     zoomLevel: Float,
                 ) {
-                    lastViewportUpdate =
-                        ViewportUpdate(
-                            firstVisiblePage,
-                            visiblePagesCount,
-                            pageLocations,
-                            zoomLevel,
-                        )
-
                     updateAnnotationDisplayState(
                         firstVisiblePage,
                         visiblePagesCount,
