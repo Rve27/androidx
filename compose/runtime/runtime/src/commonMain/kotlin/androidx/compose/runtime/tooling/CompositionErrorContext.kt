@@ -18,7 +18,7 @@ package androidx.compose.runtime.tooling
 
 import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.GapComposer
-import androidx.compose.runtime.changelist.OperationErrorContext
+import androidx.compose.runtime.composer.gapbuffer.changelist.OperationErrorContext
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlin.coroutines.CoroutineContext
 
