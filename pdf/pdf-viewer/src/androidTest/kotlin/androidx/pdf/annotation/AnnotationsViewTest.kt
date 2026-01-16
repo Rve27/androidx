@@ -57,20 +57,18 @@ class AnnotationsViewTest {
     private lateinit var testHighlightListener: FakeInProgressTextHighlightsListener
     private lateinit var testOnAnnotationSelectedListener: FakeOnAnnotationLocatedListener
 
-    private val startIdlingResource = CountingIdlingResource(HIGHLIGHT_START_RESOURCE_NAME)
-    private val finishIdlingResource = CountingIdlingResource(HIGHLIGHT_FINISH_RESOURCE_NAME)
+    private val highlightIdlingResource = CountingIdlingResource(HIGHLIGHT_RESOURCE_NAME)
 
     @Before
     fun setUp() {
-        IdlingRegistry.getInstance().register(startIdlingResource, finishIdlingResource)
+        IdlingRegistry.getInstance().register(highlightIdlingResource)
 
         val pageText =
             PdfPageTextContent(bounds = listOf(RectF(0f, 0f, 100f, 100f)), text = "Test Content")
         fakePdfDocument =
             FakePdfDocument(pages = listOf(Point(100, 100)), textContents = listOf(pageText))
 
-        testHighlightListener =
-            FakeInProgressTextHighlightsListener(startIdlingResource, finishIdlingResource)
+        testHighlightListener = FakeInProgressTextHighlightsListener(highlightIdlingResource)
         testOnAnnotationSelectedListener = FakeOnAnnotationLocatedListener()
 
         setupActivity()
@@ -78,7 +76,7 @@ class AnnotationsViewTest {
 
     @After
     fun tearDown() {
-        IdlingRegistry.getInstance().unregister(startIdlingResource, finishIdlingResource)
+        IdlingRegistry.getInstance().unregister(highlightIdlingResource)
         PdfViewTestActivity.onCreateCallback = {}
     }
 
@@ -109,7 +107,7 @@ class AnnotationsViewTest {
     @Test
     fun onTouchEvent_whenHighlighterEnabled_consumesAndDispatchesEvents() {
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
-            startIdlingResource.increment()
+            highlightIdlingResource.increment()
 
             scenario.onActivity {
                 val config =
@@ -156,13 +154,11 @@ class AnnotationsViewTest {
 
     @Test
     fun addInProgressTextHighlightsListener_multipleListeners_allReceiveEvents() {
-        val listenerA =
-            FakeInProgressTextHighlightsListener(startIdlingResource, finishIdlingResource)
-        val listenerB =
-            FakeInProgressTextHighlightsListener(startIdlingResource, finishIdlingResource)
+        val listenerA = FakeInProgressTextHighlightsListener(highlightIdlingResource)
+        val listenerB = FakeInProgressTextHighlightsListener(highlightIdlingResource)
 
         ActivityScenario.launch(PdfViewTestActivity::class.java).use { scenario ->
-            repeat(2) { startIdlingResource.increment() }
+            repeat(2) { highlightIdlingResource.increment() }
 
             scenario.onActivity {
                 val config = AnnotationsView.HighlighterConfig(Color.YELLOW, fakePdfDocument)
@@ -280,7 +276,6 @@ class AnnotationsViewTest {
     }
 
     companion object {
-        private val HIGHLIGHT_START_RESOURCE_NAME = "TextHighlightStart-${UUID.randomUUID()}"
-        private val HIGHLIGHT_FINISH_RESOURCE_NAME = "TextHighlightFinish-${UUID.randomUUID()}"
+        private val HIGHLIGHT_RESOURCE_NAME = "TextHighlight-${UUID.randomUUID()}"
     }
 }

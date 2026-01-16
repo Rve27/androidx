@@ -53,6 +53,7 @@ import androidx.pdf.annotation.highlights.models.InProgressHighlightId
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.VisiblePdfAnnotations
+import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.featureflag.PdfFeatureFlags
 import androidx.pdf.ink.model.ApplyEditsState
 import androidx.pdf.ink.model.ApplyInProgressException
@@ -245,7 +246,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 )
             }
 
-            override fun onTextHighlightFailed(viewPoint: PointF) {
+            override fun onTextHighlightRejected(viewPoint: PointF) {
                 annotationsTouchEventDispatcher.switchActiveDispatcher(inkViewDispatcher, viewPoint)
             }
 
@@ -255,6 +256,10 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 annotations.forEach { (_, annotation) ->
                     documentViewModel.addDraftAnnotation(annotation)
                 }
+            }
+
+            override fun onTextHighlightError(exception: RequestFailedException) {
+                // TODO(b/409464802): Propagate it through event callback
             }
         }
 
