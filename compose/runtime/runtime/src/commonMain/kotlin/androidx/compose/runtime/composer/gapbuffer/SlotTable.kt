@@ -45,6 +45,7 @@ import androidx.compose.runtime.collection.fastCopyInto
 import androidx.compose.runtime.collection.fastFilter
 import androidx.compose.runtime.collection.sortedBy
 import androidx.compose.runtime.composeRuntimeError
+import androidx.compose.runtime.composer.GroupSourceInformation
 import androidx.compose.runtime.deactivateCurrentGroup
 import androidx.compose.runtime.debugRuntimeCheck
 import androidx.compose.runtime.extractMovableContentAtCurrent
@@ -163,7 +164,7 @@ internal class SlotTable : SlotStorage(), CompositionData, Iterable<CompositionG
     internal var anchors: ArrayList<GapAnchor> = arrayListOf()
 
     /** A map of source information to anchor. */
-    internal var sourceInformationMap: HashMap<GapAnchor, GroupSourceInformation>? = null
+    internal var sourceInformationMap: HashMap<GapAnchor, GapGroupSourceInformation>? = null
 
     /**
      * A map of source marker numbers to their, potentially indirect, parent key. This is recorded
@@ -299,7 +300,7 @@ internal class SlotTable : SlotStorage(), CompositionData, Iterable<CompositionG
     /** Close [reader]. */
     internal fun close(
         reader: SlotReader,
-        sourceInformationMap: HashMap<GapAnchor, GroupSourceInformation>?,
+        sourceInformationMap: HashMap<GapAnchor, GapGroupSourceInformation>?,
     ) {
         runtimeCheck(reader.table === this && readers > 0) { "Unexpected reader close()" }
         readers--
@@ -327,7 +328,7 @@ internal class SlotTable : SlotStorage(), CompositionData, Iterable<CompositionG
         slots: Array<Any?>,
         slotsSize: Int,
         anchors: ArrayList<GapAnchor>,
-        sourceInformationMap: HashMap<GapAnchor, GroupSourceInformation>?,
+        sourceInformationMap: HashMap<GapAnchor, GapGroupSourceInformation>?,
         calledByMap: MutableIntObjectMap<MutableIntSet>?,
     ) {
         requirePrecondition(writer.table === this && this.writer) { "Unexpected writer close()" }
@@ -345,7 +346,7 @@ internal class SlotTable : SlotStorage(), CompositionData, Iterable<CompositionG
         slots: Array<Any?>,
         slotsSize: Int,
         anchors: ArrayList<GapAnchor>,
-        sourceInformationMap: HashMap<GapAnchor, GroupSourceInformation>?,
+        sourceInformationMap: HashMap<GapAnchor, GapGroupSourceInformation>?,
         calledByMap: MutableIntObjectMap<MutableIntSet>?,
     ) {
         // Adopt the slots from the writer
@@ -558,7 +559,7 @@ internal class SlotTable : SlotStorage(), CompositionData, Iterable<CompositionG
         }
 
         // Verify source information is well-formed
-        fun verifySourceGroup(group: GroupSourceInformation) {
+        fun verifySourceGroup(group: GapGroupSourceInformation) {
             group.groups?.fastForEach { item ->
                 when (item) {
                     is GapAnchor -> {
@@ -567,7 +568,7 @@ internal class SlotTable : SlotStorage(), CompositionData, Iterable<CompositionG
                             "Source map anchor is not owned by the slot table"
                         }
                     }
-                    is GroupSourceInformation -> verifySourceGroup(item)
+                    is GapGroupSourceInformation -> verifySourceGroup(item)
                 }
             }
         }
@@ -824,17 +825,17 @@ private inline fun <T> Array<T>.fastForEach(action: (T) -> Unit) {
     for (i in 0 until size) action(this[i])
 }
 
-internal class GroupSourceInformation(
-    val key: Int,
-    var sourceInformation: String?,
-    val dataStartOffset: Int,
-) {
-    var groups: ArrayList<Any /* Anchor | GroupSourceInformation */>? = null
-    var closed = false
-    var dataEndOffset: Int = 0
+internal class GapGroupSourceInformation(
+    override val key: Int,
+    override var sourceInformation: String?,
+    override val dataStartOffset: Int,
+) : GroupSourceInformation {
+    override var groups: ArrayList<Any /* Anchor | GroupSourceInformation */>? = null
+    override var closed = false
+    override var dataEndOffset: Int = 0
 
     fun startGrouplessCall(key: Int, sourceInformation: String, dataOffset: Int) {
-        openInformation().add(GroupSourceInformation(key, sourceInformation, dataOffset))
+        openInformation().add(GapGroupSourceInformation(key, sourceInformation, dataOffset))
     }
 
     fun endGrouplessCall(dataOffset: Int) {
@@ -856,7 +857,7 @@ internal class GroupSourceInformation(
                 val anchor = writer.tryAnchor(predecessor)
                 if (anchor != null) {
                     groups.fastIndexOf {
-                        it == anchor || (it is GroupSourceInformation && it.hasAnchor(anchor))
+                        it == anchor || (it is GapGroupSourceInformation && it.hasAnchor(anchor))
                     }
                 } else 0
             } else 0
@@ -869,10 +870,10 @@ internal class GroupSourceInformation(
     }
 
     // Return the current open nested source information or this.
-    private fun openInformation(): GroupSourceInformation =
+    private fun openInformation(): GapGroupSourceInformation =
         (groups?.let { groups ->
-                groups.fastLastOrNull { it is GroupSourceInformation && !it.closed }
-            } as? GroupSourceInformation)
+                groups.fastLastOrNull { it is GapGroupSourceInformation && !it.closed }
+            } as? GapGroupSourceInformation)
             ?.openInformation() ?: this
 
     private fun add(group: Any /* Anchor | GroupSourceInformation */) {
@@ -883,7 +884,7 @@ internal class GroupSourceInformation(
 
     private fun hasAnchor(anchor: GapAnchor): Boolean =
         groups?.fastAny {
-            it == anchor || (it is GroupSourceInformation && it.hasAnchor(anchor))
+            it == anchor || (it is GapGroupSourceInformation && it.hasAnchor(anchor))
         } == true
 
     fun removeAnchor(anchor: GapAnchor): Boolean {
@@ -893,7 +894,7 @@ internal class GroupSourceInformation(
             while (index >= 0) {
                 when (val item = groups[index]) {
                     is GapAnchor -> if (item == anchor) groups.removeAt(index)
-                    is GroupSourceInformation ->
+                    is GapGroupSourceInformation ->
                         if (!item.removeAnchor(anchor)) {
                             groups.removeAt(index)
                         }
@@ -953,7 +954,7 @@ internal class SlotReader(
      * A local copy of the [sourceInformationMap] being created to be merged into [table] when the
      * reader closes.
      */
-    private var sourceInformationMap: HashMap<GapAnchor, GroupSourceInformation>? = null
+    private var sourceInformationMap: HashMap<GapAnchor, GapGroupSourceInformation>? = null
 
     /** True if the reader has been closed */
     var closed: Boolean = false
@@ -1715,9 +1716,9 @@ internal class SlotWriter(
     private fun groupSourceInformationFor(
         parent: Int,
         sourceInformation: String?,
-    ): GroupSourceInformation? =
+    ): GapGroupSourceInformation? =
         sourceInformationMap?.getOrPut(anchor(parent)) {
-            val result = GroupSourceInformation(0, sourceInformation, 0)
+            val result = GapGroupSourceInformation(0, sourceInformation, 0)
 
             // If we called from a groupless call then the groups added before this call
             // are not reflected in this group information so they need to be added now
@@ -3139,7 +3140,7 @@ internal class SlotWriter(
         } else false
     }
 
-    internal fun sourceInformationOf(group: Int): GroupSourceInformation? =
+    internal fun sourceInformationOf(group: Int): GapGroupSourceInformation? =
         sourceInformationMap?.let { map -> tryAnchor(group)?.let { anchor -> map[anchor] } }
 
     internal fun tryAnchor(group: Int) =
@@ -3207,7 +3208,7 @@ internal class SlotWriter(
     private fun removeAnchors(
         gapStart: Int,
         size: Int,
-        sourceInformationMap: HashMap<GapAnchor, GroupSourceInformation>?,
+        sourceInformationMap: HashMap<GapAnchor, GapGroupSourceInformation>?,
     ): Boolean {
         val gapLen = groupGapLen
         val removeEnd = gapStart + size
@@ -3597,7 +3598,7 @@ private class RelativeGroupPath(val parent: SourceInformationGroupPath, val inde
 private class SourceInformationSlotTableGroup(
     val table: SlotTable,
     val parent: Int,
-    val sourceInformation: GroupSourceInformation,
+    val sourceInformation: GapGroupSourceInformation,
     val identityPath: SourceInformationGroupPath,
 ) : CompositionGroup, Iterable<CompositionGroup> {
     override val key: Any = sourceInformation.key
@@ -3679,7 +3680,7 @@ private class DataIterator(val table: SlotTable, group: Int) : Iterable<Any?>, I
 private class SourceInformationGroupDataIterator(
     val table: SlotTable,
     group: Int,
-    sourceInformation: GroupSourceInformation,
+    sourceInformation: GapGroupSourceInformation,
 ) : Iterable<Any?>, Iterator<Any?> {
     private val base = table.groups.dataAnchor(group)
     private val start: Int = sourceInformation.dataStartOffset
@@ -3695,7 +3696,7 @@ private class SourceInformationGroupDataIterator(
             // Filter any groups
             val groups = sourceInformation.groups ?: return@also
             groups.fastForEach { info ->
-                if (info is GroupSourceInformation) {
+                if (info is GapGroupSourceInformation) {
                     it.setRange(info.dataStartOffset, info.dataEndOffset)
                 }
             }
@@ -3858,7 +3859,7 @@ private val Long.firstBitSet
 private class SourceInformationGroupIterator(
     val table: SlotTable,
     val parent: Int,
-    val group: GroupSourceInformation,
+    val group: GapGroupSourceInformation,
     val path: SourceInformationGroupPath,
 ) : Iterator<CompositionGroup> {
     private val version = table.version
@@ -3869,7 +3870,7 @@ private class SourceInformationGroupIterator(
     override fun next(): CompositionGroup {
         return when (val group = group.groups?.get(index++)) {
             is GapAnchor -> SlotTableGroup(table, group.location, version)
-            is GroupSourceInformation ->
+            is GapGroupSourceInformation ->
                 SourceInformationSlotTableGroup(
                     table = table,
                     parent = parent,
