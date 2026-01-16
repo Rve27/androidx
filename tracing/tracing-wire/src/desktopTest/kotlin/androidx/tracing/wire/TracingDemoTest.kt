@@ -41,7 +41,7 @@ class TracingDemoTest {
     @Volatile internal var count = 0L
     internal val driver =
         TraceDriver(sink = TraceSink(sequenceId = 1, directory = File("/tmp")), isEnabled = true)
-    internal val tracer = driver.createTracer(name = "TracingDemoTest")
+    internal val tracer = driver.tracer
     internal val counter = tracer.counter(category = "Counters", name = "Batches Completed")
 
     @Test
