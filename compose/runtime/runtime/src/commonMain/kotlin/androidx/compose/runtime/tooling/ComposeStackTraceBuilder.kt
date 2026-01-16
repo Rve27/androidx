@@ -20,8 +20,8 @@ import androidx.compose.runtime.Composer
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.GapComposer.CompositionContextHolder
 import androidx.compose.runtime.RememberObserverHolder
+import androidx.compose.runtime.composer.GroupSourceInformation
 import androidx.compose.runtime.composer.gapbuffer.GapAnchor
-import androidx.compose.runtime.composer.gapbuffer.GroupSourceInformation
 import androidx.compose.runtime.composer.gapbuffer.SlotReader
 import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.composer.gapbuffer.SlotWriter
