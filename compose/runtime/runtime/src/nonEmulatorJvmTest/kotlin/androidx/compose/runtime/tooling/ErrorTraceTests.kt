@@ -23,6 +23,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.ExperimentalComposeRuntimeApi
 import androidx.compose.runtime.ReusableContent
 import androidx.compose.runtime.ReusableContentHost
+import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mock.CompositionTestScope
@@ -713,7 +714,13 @@ class ErrorTraceTests {
                 // Remove source information stored for this composition
                 // `Composer.disableSourceInformation` does not work here as it is used for
                 // configuring stack trace mode as well.
-                (composition as CompositionImpl).slotTable.sourceInformationMap = null
+                when (val slotStorage = (composition as CompositionImpl).slotStorage) {
+                    is SlotTable -> slotStorage.sourceInformationMap = null
+                    else ->
+                        throw UnsupportedOperationException(
+                            "Unsupported slot storage implementation $slotStorage"
+                        )
+                }
 
                 state = true
                 advance()

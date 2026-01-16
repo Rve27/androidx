@@ -33,6 +33,7 @@ import androidx.compose.runtime.composeRuntimeError
 import androidx.compose.runtime.composer.gapbuffer.Anchor
 import androidx.compose.runtime.composer.gapbuffer.SlotTable
 import androidx.compose.runtime.composer.gapbuffer.SlotWriter
+import androidx.compose.runtime.composer.gapbuffer.asGapBufferSlotTable
 import androidx.compose.runtime.deactivateCurrentGroup
 import androidx.compose.runtime.extractMovableContentAtCurrent
 import androidx.compose.runtime.internal.IntRef
@@ -910,7 +911,8 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             // state to be inserted. The state is at index 2 in the table (for the
             // two groups) and is inserted into the provider group at offset 1 from the
             // current location.
-            val anchors = slots.moveIntoGroupFrom(1, resolvedState.slotTable, 2)
+            val anchors =
+                slots.moveIntoGroupFrom(1, resolvedState.slotStorage.asGapBufferSlotTable(), 2)
 
             // For all the anchors that moved, if the anchor is tracking a recompose
             // scope, update it to reference its new composer.
