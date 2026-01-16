@@ -76,7 +76,7 @@ fun RcTicker(context: Context): RemoteComposeContext {
         color = RcTickerColorPack(this)
         fontSize = RcFontSizes(this)
         root {
-            column(Modifier.fillMaxSize().backgroundId(color.backgroundId)) {
+            column(Modifier.fillMaxWidth().backgroundId(color.backgroundId)) {
                 row(Modifier.padding(32f)) {
                     val imageId = addBitmap(refresh)
                     text(
@@ -91,10 +91,12 @@ fun RcTicker(context: Context): RemoteComposeContext {
                 }
                 MyScroll() {
                     bigstock("Dow Jones", 47739.32f, "-0.45%")
-                    stock("S&P 500", 6846.51f, "-0.35%")
-                    stock("Nasdaq", 23545.9f, "-0.14%")
-                    stock("Russell", 2520.98f, "-0.020%")
-                    stock("NYA", 21703.2f, "-0.49%")
+                    flow(Modifier.fillMaxWidth()) {
+                        stock("S&P 500", 6846.51f, "-0.35%")
+                        stock("Nasdaq", 23545.9f, "-0.14%")
+                        stock("Russell", 2520.98f, "-0.020%")
+                        stock("NYA", 21703.2f, "-0.49%")
+                    }
                     followInvestments()
                 }
             }
@@ -104,7 +106,7 @@ fun RcTicker(context: Context): RemoteComposeContext {
 
 @Suppress("RestrictedApiAndroidX")
 fun RemoteComposeContextAndroid.MyScroll(content: RemoteComposeContextAndroid.() -> Unit) {
-    box(Modifier.fillMaxWidth().verticalWeight(1f).fillMaxWidth()) {
+    box(Modifier.fillMaxWidth()) {
         val position = rf(0f)
         lateinit var sHeight: RFloat
         column(
@@ -158,7 +160,9 @@ fun RemoteComposeContextAndroid.stock(name: String, price: Float, change: String
         Modifier.padding(32, 0, 32, 28)
             .clip(RoundedRectShape(s, s, s, s))
             .backgroundId(color.panelsId)
-            .padding(24, 24, 24, 8)
+            .horizontalWeight(1f)
+            .widthIn(160f, Float.MAX_VALUE)
+            .padding(24)
     ) {
         column {
             row(vertical = RowLayout.BOTTOM) {
@@ -393,7 +397,7 @@ private class RcTickerColorPack(val rc: RemoteComposeContextAndroid) {
         followTextId = rc.mColor(system_accent2_800, system_accent1_200)
 
         val system_neutral2_800 = rc.addNamedColor("color.system_neutral2_800", 0xFF113311.toInt())
-        val system_neutral2_200 = rc.addNamedColor("color.system_neutral2_200", 0xFFFF9966.toInt())
+        val system_neutral2_200 = rc.addNamedColor("color.system_neutral2_400", 0xFFFF9966.toInt())
         stockNameId = rc.mColor(system_neutral2_800, system_neutral2_200)
 
         val system_accent1_900 = rc.addNamedColor("color.system_accent1_900", 0xFF113311.toInt())

@@ -88,6 +88,7 @@ public class CoreDocument implements Serializable {
     ////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final int DEFAULT_FEATURE_PAINT_MEASURE = 1;
+    private static final int DEFAULT_FEATURE_MEASURE_VERSION = 2;
 
     ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -101,6 +102,7 @@ public class CoreDocument implements Serializable {
     Header mHeader = null;
 
     boolean mUseFeaturePaintMeasure = false;
+    int mMeasureVersion = DEFAULT_FEATURE_MEASURE_VERSION;
 
     boolean mNeedsInitialMeasure = true;
 
@@ -661,6 +663,22 @@ public class CoreDocument implements Serializable {
         return useFeature(featureId, 0);
     }
 
+    /**
+     * Returns the feature value
+     *
+     * @param featureId
+     * @return
+     */
+    public int featureIntValue(short featureId) {
+        if (mHeader == null) {
+            return -1;
+        }
+        if (featureId == Header.FEATURE_MEASURE_VERSION) {
+            return mHeader.getInt(featureId, DEFAULT_FEATURE_MEASURE_VERSION);
+        }
+        return mHeader.getInt(featureId, -1);
+    }
+
     private interface Visitor {
         void visit(Operation op);
     }
@@ -940,6 +958,7 @@ public class CoreDocument implements Serializable {
             }
         }
         mUseFeaturePaintMeasure = useFeature(Header.FEATURE_PAINT_MEASURE);
+        mMeasureVersion = featureIntValue(Header.FEATURE_MEASURE_VERSION);
         mBitmapMemory = 0;
         mOperations = inflateComponents(mOperations);
 
@@ -1590,6 +1609,7 @@ public class CoreDocument implements Serializable {
         context.clearLastOpCount();
         assert context.getPaintContext() != null;
         context.getPaintContext().clearNeedsRepaint();
+        context.getPaintContext().setMeasureVersion(mMeasureVersion);
         context.mMode = RemoteContext.ContextMode.UNSET;
         // current theme starts as UNSPECIFIED, until a Theme setter
         // operation gets executed and modify it.

@@ -156,6 +156,15 @@ public open class RemoteComposeContext {
         mRemoteWriter.row(modifier, horizontal, vertical) { content() }
     }
 
+    public fun flow(
+        modifier: RecordingModifier = Modifier,
+        horizontal: Int = RowLayout.START,
+        vertical: Int = RowLayout.TOP,
+        content: RemoteComposeContext.() -> Unit,
+    ) {
+        mRemoteWriter.flow(modifier, horizontal, vertical) { content() }
+    }
+
     public fun box(
         modifier: RecordingModifier = Modifier,
         horizontal: Int = BoxLayout.START,
