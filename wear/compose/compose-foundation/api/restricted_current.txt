@@ -1,10 +1,10 @@
 // Signature format: 4.0
 package androidx.wear.compose.foundation {
 
-  @androidx.compose.runtime.Immutable public sealed exhaustive interface AmbientMode {
+  public abstract class AmbientMode {
   }
 
-  public static final class AmbientMode.Ambient implements androidx.wear.compose.foundation.AmbientMode {
+  public static final class AmbientMode.Ambient extends androidx.wear.compose.foundation.AmbientMode {
     ctor public AmbientMode.Ambient(boolean isBurnInProtectionRequired, boolean isLowBitAmbientSupported);
     method @InaccessibleFromKotlin public boolean isBurnInProtectionRequired();
     method @InaccessibleFromKotlin public boolean isLowBitAmbientSupported();
@@ -12,7 +12,7 @@ package androidx.wear.compose.foundation {
     property public boolean isLowBitAmbientSupported;
   }
 
-  public static final class AmbientMode.Interactive implements androidx.wear.compose.foundation.AmbientMode {
+  public static final class AmbientMode.Interactive extends androidx.wear.compose.foundation.AmbientMode {
     field public static final androidx.wear.compose.foundation.AmbientMode.Interactive INSTANCE;
   }
 
