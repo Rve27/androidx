@@ -99,7 +99,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -200,6 +199,9 @@ public class TileServiceTest {
     @After
     public void tearDown() {
         TileService.setUseWearSdkImpl(null); // Reset WearSdk detection
+        mSavedResourcesSharedPref.edit().clear().commit();
+        mFakeTileServiceController.get().mResourcesToSend.clear();
+        mFakeTileServiceController.get().mResourcesToSendCounter.clear();
     }
 
     @Test
@@ -1463,10 +1465,10 @@ public class TileServiceTest {
         expect.that(mSavedResourcesSharedPref.getAll()).isNotEmpty();
         Map<String, ?> allPref = mSavedResourcesSharedPref.getAll();
         expect.that(allPref).isNotEmpty();
-        expect.that(allPref).hasSize(1);
+        expect.that(allPref).hasSize(2);
 
         // Get resources so we can compare that onTileResReq returns the same
-        String key = getOnlyKeyFromMap(allPref);
+        String key = allPref.keySet().stream().findFirst().orElseThrow().replace(";counter", "");
         Resources resources =
                 Resources.fromProto(
                         ResourceProto.Resources.parseFrom(
@@ -1509,6 +1511,7 @@ public class TileServiceTest {
                         resourcesVersion,
                         Base64.encodeToString(resources.toProto().toByteArray(), Base64.DEFAULT))
                 .apply();
+        mSavedResourcesSharedPref.edit().putInt(resourcesVersion + ";counter", 1).apply();
 
         Resources fetchedResource =
                 mFakeTileServiceController.get().removeSavedResources(resourcesVersion);
@@ -1537,6 +1540,7 @@ public class TileServiceTest {
                                         .toByteArray(),
                                 Base64.DEFAULT))
                 .apply();
+        mSavedResourcesSharedPref.edit().putInt(resourcesVersion + ";counter", 1).apply();
         mFakeTileServiceController.get().mResourcesToSend.put(resourcesVersion, resources);
 
         Resources fetchedResource =
@@ -1639,16 +1643,6 @@ public class TileServiceTest {
                 .isTrue();
         expect.that(scope.hasCapability(ProtoLayoutScope.RendererCapability.LOTTIE_COLOR_FOR_SLOT))
                 .isFalse();
-    }
-
-    private static String getOnlyKeyFromMap(Map<String, ?> allPref) {
-        String key = "";
-        for (Entry<String, ?> entry : allPref.entrySet()) {
-            // We know we have 1 entry
-            key = entry.getKey();
-            break;
-        }
-        return key;
     }
 
     private void assertActiveTilesSnapshot(@NonNull String tileIdentifier) throws Exception {
