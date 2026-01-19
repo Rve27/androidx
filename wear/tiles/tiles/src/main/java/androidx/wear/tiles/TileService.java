@@ -75,6 +75,8 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -200,12 +202,21 @@ public abstract class TileService extends Service {
     private static Boolean sUseWearSdkImpl;
 
     /**
+     * Pattern for matching the resources version.
+     *
+     * <p>The saved resources version is expected to be in the format of "tileId;string;hashCode"
+     * where the tileId is an integer value.
+     */
+    private static final Pattern RESOURCES_VERSION_PATTERN =
+            Pattern.compile("^(-?\\d+);[^;]+;-?\\d+$");
+
+    /**
      * Map of all {@link Resources} for the tile instances that have requested new layout, but are
      * not yet requested resources (i.e. on older renderers, who don't handle it in one call).
      *
      * <p>This field is **not** thread safe and should only be accessed from main thread.
      */
-    @VisibleForTesting final Map<Integer, Resources> mResourcesToSend = new HashMap<>();
+    @VisibleForTesting final Map<String, Resources> mResourcesToSend = new HashMap<>();
 
     /**
      * Returns and removes saved {@link Resources} for the tile instance with the given ID that
@@ -216,18 +227,18 @@ public abstract class TileService extends Service {
      */
     @SuppressWarnings("RestrictedApiAndroidX") // Tiles is allowed to use ProtoLayout's APIs
     @MainThread
-    @Nullable Resources removeSavedResources(int tileId) {
-        Resources resource = mResourcesToSend.remove(tileId);
+    @Nullable Resources removeSavedResources(String resourcesVersion) {
+        Resources resource = mResourcesToSend.remove(resourcesVersion);
         DiskAccessAllowedPrefs sharedPref = getSavedResourcesSharedPref(this);
-        String key = String.valueOf(tileId);
 
-        if (resource == null && sharedPref.contains(key)) {
+        if (resource == null && sharedPref.contains(resourcesVersion)) {
             try {
                 resource =
                         Resources.fromProto(
                                 ResourceProto.Resources.parseFrom(
                                         Base64.decode(
-                                                sharedPref.getString(key, /* defValue= */ ""),
+                                                sharedPref.getString(
+                                                        resourcesVersion, /* defValue= */ ""),
                                                 Base64.DEFAULT)));
             } catch (InvalidProtocolBufferException ex) {
                 Log.e(TAG, "Error deserializing Resources payload.", ex);
@@ -235,7 +246,7 @@ public abstract class TileService extends Service {
         }
 
         // Remove if there was any saved on disk.
-        sharedPref.remove(key);
+        sharedPref.remove(resourcesVersion);
 
         return resource;
     }
@@ -246,14 +257,14 @@ public abstract class TileService extends Service {
      * <p>This method is not thread safe and should be called only from main thread.
      */
     @MainThread
-    void saveResources(int tileId, @NonNull Resources resources) {
+    void saveResources(@NonNull Resources resources) {
         // Save in memory
-        mResourcesToSend.put(tileId, resources);
+        mResourcesToSend.put(resources.getVersion(), resources);
 
         // Save on disk if service gets destroyed
         getSavedResourcesSharedPref(this)
                 .putString(
-                        /* key= */ String.valueOf(tileId),
+                        /* key= */ resources.getVersion(),
                         /* value= */ Base64.encodeToString(
                                 resources.toProto().toByteArray(), Base64.DEFAULT));
     }
@@ -589,7 +600,9 @@ public abstract class TileService extends Service {
                                             // resources to match generated one.
                                             incomingResVer =
                                                     mergeTileAndScopeResourcesVersion(
-                                                            incomingResVer, resourcesFromScope);
+                                                            tileId,
+                                                            incomingResVer,
+                                                            resourcesFromScope);
                                             tileBuilder.setResourcesVersion(incomingResVer);
                                             resourcesFromScope =
                                                     Resources.fromProto(
@@ -606,8 +619,7 @@ public abstract class TileService extends Service {
                                             // Save resources for onResReq if they were in the scope
                                             if (hasScopeResources) {
                                                 // This will override any previously saved resources
-                                                tileService.saveResources(
-                                                        tileId, resourcesFromScope);
+                                                tileService.saveResources(resourcesFromScope);
                                             }
                                             // Generated version will be propagated from Tile's
                                             // version (updated above) via ResourcesRequest
@@ -660,7 +672,6 @@ public abstract class TileService extends Service {
                                                         .build();
                                         onResourcesRequestInternal(
                                                 resourcesRequest,
-                                                /* shouldTryToFetchSavedResources= */ false,
                                                 /* onSuccess= */ resources -> {
                                                     if (finalIncomingResVer.equals(
                                                             resources.getVersion())) {
@@ -732,12 +743,6 @@ public abstract class TileService extends Service {
 
                         onResourcesRequestInternal(
                                 req,
-                                // This is called from V1 renderer who doesn't support resources
-                                // within a Tile. If
-                                // developer is using V2 provider with ProtoLayoutScope, we need to
-                                // signal to fetch
-                                // those resources saved in TileService or on disk.
-                                /* shouldTryToFetchSavedResources= */ true,
                                 /* onSuccess= */ resources ->
                                         updateResources(
                                                 callback, resources.toProto().toByteArray()));
@@ -750,27 +755,32 @@ public abstract class TileService extends Service {
          */
         private void onResourcesRequestInternal(
                 @NonNull ResourcesRequest resourcesRequest,
-                boolean shouldTryToFetchSavedResources,
                 @NonNull Consumer<Resources> onSuccess) {
             TileService tileService = mServiceRef.get();
             if (tileService == null) {
                 return;
             }
 
-            int tileId = resourcesRequest.getTileId();
-            // In case we might have had saved resources, but they were removed once the Service was
-            // destroyed. We will try to fetch them from disk if they aren't existing in the
-            // service. If
-            // this method was called for older providers, who don't use scope, we don't need to ask
-            // Service for it.
-            Resources maybeSavedResources =
-                    shouldTryToFetchSavedResources
-                            ? tileService.removeSavedResources(tileId)
-                            : null;
-
-            if (maybeSavedResources != null) {
-                // We can just send this resources and no need to call service.
-                onSuccess.accept(maybeSavedResources);
+            String resourcesVersion = resourcesRequest.getVersion();
+            // The resources version can be generated by the `ProtoLayoutScope` in `onTileRequest`.
+            // This generated version follows a specific pattern including the tile ID. If the
+            // requested `resourcesVersion` matches this pattern and the tile ID, it means these
+            // resources were generated from a `ProtoLayoutScope` during a prior `onTileRequest`
+            // call. We attempt to retrieve these saved resources, which could be in memory or
+            // persisted to disk. If the saved resources are found, they are used. If not found, an
+            // error is logged as they were expected to be present.
+            Matcher matcher = RESOURCES_VERSION_PATTERN.matcher(resourcesVersion);
+            if (matcher.matches()
+                    && Integer.parseInt(matcher.group(1)) == resourcesRequest.getTileId()) {
+                Resources savedResources = tileService.removeSavedResources(resourcesVersion);
+                if (savedResources == null) {
+                    Log.e(
+                            TAG,
+                            "Saved resources not found for version: "
+                                    + resourcesRequest.getVersion());
+                    return;
+                }
+                onSuccess.accept(savedResources);
                 return;
             }
 
@@ -1001,8 +1011,8 @@ public abstract class TileService extends Service {
      */
     @VisibleForTesting
     static @NonNull String mergeTileAndScopeResourcesVersion(
-            String incomingTileResVer, Resources resourcesFromScope) {
-        return incomingTileResVer + ";" + resourcesFromScope.getVersion();
+            int tileId, String incomingTileResVer, Resources resourcesFromScope) {
+        return tileId + ";" + incomingTileResVer + ";" + resourcesFromScope.getVersion();
     }
 
     private static void updateTileDataV1(
