@@ -39,7 +39,7 @@ import androidx.wear.watchface.complications.data.test.R
 import com.google.common.truth.Expect
 import java.time.Instant
 import java.util.Locale
-import kotlin.use
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -518,6 +518,41 @@ class StaticPreviewDataParserTest {
                     complicationData.title!!.getTextAt(context.resources, Instant.ofEpochMilli(0))
                 expect.that(dateText).isEqualTo("01.01.")
                 expect.that(timeText).isEqualTo("01:01")
+            }
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun timeComponentComplication() {
+        runTestForLocale(Locale.US) { context ->
+            context.resources.getXml(R.xml.static_preview_data_time_component).use { parser ->
+                val previewData = PreviewData.inflate(context, context, parser)
+                val shortTextComplication =
+                    previewData[ComplicationType.SHORT_TEXT] as ShortTextComplicationData
+                val longTextComplication =
+                    previewData[ComplicationType.LONG_TEXT] as LongTextComplicationData
+
+                val timeOnlyText =
+                    shortTextComplication.text.getTextAt(context.resources, Instant.ofEpochMilli(0))
+                val amPmOnlyText =
+                    longTextComplication.text.getTextAt(context.resources, Instant.ofEpochMilli(0))
+
+                expect.that(timeOnlyText).isEqualTo("1:01")
+                expect.that(amPmOnlyText).isEqualTo("AM")
+            }
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun timeComponentAndShortenAmPmThrows() {
+        runTestForLocale(Locale.US) { context ->
+            context.resources.getXml(R.xml.static_preview_data_time_component_invalid).use { parser
+                ->
+                assertThrows(IllegalArgumentException::class.java) {
+                    PreviewData.inflate(context, context, parser)
+                }
             }
         }
     }

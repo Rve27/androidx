@@ -52,6 +52,7 @@ import androidx.wear.watchface.complications.data.WeightedElementsComplicationDa
 import androidx.wear.watchface.complications.data.formatting.ComplicationTextFormatting
 import java.io.IOException
 import java.time.Instant
+import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import org.xmlpull.v1.XmlPullParser
@@ -106,6 +107,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         private const val ATTR_WEIGHT = "weight"
         private const val ATTR_COLOR = "color"
         private const val ATTR_BACKGROUND_COLOR = "backgroundColor"
+        private const val ATTR_TIME_COMPONENT = "timeComponent"
 
         // Complication Type Strings
         private const val TYPE_STR_GOAL_PROGRESS = "GOAL_PROGRESS"
@@ -125,6 +127,10 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         private const val PLAIN_TEXT_TYPE_INT = "integer"
         private const val PLAIN_TEXT_TYPE_LONG = "long"
         private const val PLAIN_TEXT_TYPE_FLOAT = "float"
+
+        // Time component types
+        private const val TIME_COMPONENT_TIME_ONLY = "timeOnly"
+        private const val TIME_COMPONENT_AM_PM_ONLY = "amPmOnly"
 
         /**
          * Inflates a [PreviewData] object from an XML resource.
@@ -781,6 +787,11 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                 val instant = Instant.ofEpochSecond(instantStr.toLong())
                 val shouldShorten =
                     parser.getAttributeValue(null, ATTR_SHOULD_SHORTEN_AM_PM)?.toBoolean() ?: false
+                val timeComponent = parser.getAttributeValue(null, ATTR_TIME_COMPONENT)
+
+                require(timeComponent == null || !shouldShorten) {
+                    "shouldShortenAmPm should not be used when timeComponent is specified"
+                }
 
                 val timePattern =
                     if (shouldShorten) {
@@ -797,9 +808,29 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                         }
                     }
 
-                return TimeFormatComplicationText.Builder(
-                        requireNotNull(timePattern) { "Invalid time pattern" }
-                    )
+                val format = requireNotNull(timePattern) { "Invalid time pattern" }
+
+                if (timeComponent != null) {
+                    return when (timeComponent) {
+                        TIME_COMPONENT_TIME_ONLY -> {
+                            val timeOnlyFormat = format.replace("a", "").trim()
+                            DateFormat.format(timeOnlyFormat, Date.from(instant)).toString()
+                        }
+                        TIME_COMPONENT_AM_PM_ONLY -> {
+                            DateFormat.format("a", Date.from(instant)).toString()
+                        }
+                        else -> {
+                            Log.w(TAG, "Unknown timeComponent: $timeComponent")
+                            TimeFormatComplicationText.Builder(format)
+                                .setTimeZone(TimeZone.GMT_ZONE)
+                                .build()
+                                .getTextAt(parserContext.resources, instant)
+                                .toString()
+                        }
+                    }
+                }
+
+                return TimeFormatComplicationText.Builder(format)
                     .setTimeZone(TimeZone.GMT_ZONE)
                     .build()
                     .getTextAt(parserContext.resources, instant)
