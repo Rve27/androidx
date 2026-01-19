@@ -812,7 +812,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     }
 
     @VisibleForTesting internal var pdfViewAccessibilityManager: PdfViewAccessibilityManager? = null
-    @VisibleForTesting
+
     internal var isAccessibilityEnabled: Boolean =
         Accessibility.get().isAccessibilityEnabled(context)
         set(value) {
