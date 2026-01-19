@@ -29,6 +29,7 @@ import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.util.fastMap
 
 /**

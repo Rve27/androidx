@@ -32,6 +32,7 @@ import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.modifiers.BorderModifier as CreationBorderModifier
 import androidx.compose.remote.creation.modifiers.DynamicBorderModifier
 import androidx.compose.remote.creation.modifiers.RecordingModifier
+import androidx.compose.ui.graphics.toArgb
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class BorderModifier(
