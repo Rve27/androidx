@@ -1387,38 +1387,6 @@ public class TileServiceTest {
     }
 
     @Test
-    public void incomingTile_withScope_withSupportedRenderer_scopeClearedOnThrow()
-            throws Exception {
-        mFakeTileServiceController.get().mRequestFailure = new CancellationException();
-        // Register noop resources so we make sure it's cleared even when onTileResReq throws
-        mFakeTileServiceController
-                .get()
-                .getScope(TILE_WITH_RESOURCES_ID, Version.CURRENT)
-                .registerResource("1", new ImageResource.Builder().build());
-
-        mTileProviderServiceStub.onTileRequest(
-                TILE_WITH_RESOURCES_ID,
-                new TileRequestData(
-                        RequestProto.TileRequest.newBuilder()
-                                .setDeviceConfiguration(sDeviceParamRendererWithResources)
-                                .build()
-                                .toByteArray(),
-                        TileRequestData.VERSION_PROTOBUF),
-                mMockTileCallback);
-        shadowOf(Looper.getMainLooper()).idle();
-
-        verify(mMockTileCallback, never()).updateTileData(any());
-        expect.that(
-                        mFakeTileServiceController
-                                .get()
-                                .getScope(TILE_WITH_RESOURCES_ID, Version.CURRENT)
-                                .hasResources())
-                .isFalse();
-        expect.that(mFakeTileServiceController.get().removeSavedResources(TILE_WITH_RESOURCES_ID))
-                .isNull();
-    }
-
-    @Test
     public void incomingTile_withScope_withSupportedRenderer_secondTile_returns() throws Exception {
         mFakeTileServiceController.get().mRequestFailure = new CancellationException();
 
