@@ -17,7 +17,6 @@
 
 package androidx.compose.remote.creation.compose.state
 
-import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.ColorAttribute
@@ -26,6 +25,7 @@ import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationSta
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.player.core.state.RemoteDomains
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import kotlin.math.pow
 
@@ -98,10 +98,10 @@ internal constructor(
         color: Color
     ) : this(
         constantValueOrNull = color,
-        alpha = color.alpha().rf,
-        red = color.red().rf,
-        green = color.green().rf,
-        blue = color.blue().rf,
+        alpha = color.alpha.rf,
+        red = color.red.rf,
+        green = color.green.rf,
+        blue = color.blue.rf,
         idProvider = { creationState -> creationState.document.addColor(color.toArgb()) },
     )
 
@@ -111,17 +111,7 @@ internal constructor(
      *
      * @param color The ARGB integer representation of the color.
      */
-    public constructor(@ColorInt color: Int) : this(Color.valueOf(color))
-
-    /**
-     * Constructor for creating a [RemoteColor] from a [androidx.compose.ui.graphics.Color] value.
-     * This creates a constant remote color that is added to the remote document.
-     *
-     * @param color The [androidx.compose.ui.graphics.Color] value
-     */
-    public constructor(
-        color: androidx.compose.ui.graphics.Color
-    ) : this(Color.valueOf(color.toArgb()))
+    public constructor(@ColorInt color: Int) : this(Color(color))
 
     public override fun writeToDocument(creationState: RemoteComposeCreationState): Int =
         idProvider(creationState)
@@ -249,7 +239,7 @@ internal constructor(
             val constS = saturation.constantValueOrNull
             val constV = value.constantValueOrNull
             if (constH != null && constS != null && constV != null) {
-                return RemoteColor(Color.valueOf(Utils.hsvToRgb(constH, constS, constV)))
+                return RemoteColor(Color(color = Utils.hsvToRgb(constH, constS, constV)))
             }
 
             val idFactory = Memorize { creationState ->
@@ -288,7 +278,7 @@ internal constructor(
             val constV = value.constantValueOrNull
             if (constH != null && constS != null && constV != null) {
                 val argb = (alpha shl 24) or (0xffffff and Utils.hsvToRgb(constH, constS, constV))
-                return RemoteColor(Color.valueOf(argb))
+                return RemoteColor(Color(color = argb))
             }
 
             val idFactory = Memorize { creationState ->
@@ -325,7 +315,7 @@ internal constructor(
             val constG = green.constantValueOrNull
             val constB = blue.constantValueOrNull
             if (constA != null && constR != null && constG != null && constB != null) {
-                val color = Color.valueOf(constR, constG, constB, constA)
+                val color = Color(red = constR, green = constG, blue = constB, alpha = constA)
                 return RemoteColor(color)
             }
 
@@ -342,7 +332,7 @@ internal constructor(
          * @return A new [RemoteColor] derived from the provided ARGB components.
          */
         public fun fromARGB(alpha: Float, red: Float, green: Float, blue: Float): RemoteColor =
-            RemoteColor(Color.valueOf(red, green, blue, alpha))
+            RemoteColor(Color(red = red, green = green, blue = blue, alpha = alpha))
     }
 }
 
@@ -359,7 +349,7 @@ internal constructor(
 public fun rememberRemoteColor(
     name: String,
     domain: RemoteDomains = RemoteDomains.USER,
-    value: () -> androidx.compose.ui.graphics.Color,
+    value: () -> Color,
 ): RemoteColor {
     return rememberNamedState(name, domain) {
         val color = value().toArgb()
@@ -456,7 +446,11 @@ private class Memorize(val idProvider: (creationState: RemoteComposeCreationStat
 }
 
 /** Extension property to convert a [Color] to a [RemoteColor]. */
-public val androidx.compose.ui.graphics.Color.rc: RemoteColor
+public val Color.rc: RemoteColor
     get() {
         return RemoteColor(this)
     }
+
+/** Extension function to pack a [Color] into a Long for protocol use. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun Color.pack(): Long = android.graphics.Color.pack(toArgb())

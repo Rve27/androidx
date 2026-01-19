@@ -32,6 +32,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.TileMode as ComposeTileMode
 import androidx.compose.ui.graphics.toAndroidTileMode
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.util.fastMap
 
 /**
