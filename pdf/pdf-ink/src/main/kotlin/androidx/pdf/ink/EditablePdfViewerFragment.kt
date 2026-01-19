@@ -701,7 +701,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     internal inner class AnnotationsViewTouchEventDispatcher : TouchEventDispatcher {
         override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-            return annotationView.onTouchEvent(event)
+            return annotationView.dispatchTouchEvent(event)
         }
     }
 
@@ -713,7 +713,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     internal inner class PdfViewTouchEventDispatcher : TouchEventDispatcher {
         override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-            return pdfView.onTouchEvent(event)
+            return pdfView.dispatchTouchEvent(event)
         }
     }
 
