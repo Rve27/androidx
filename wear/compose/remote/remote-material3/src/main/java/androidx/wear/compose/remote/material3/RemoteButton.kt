@@ -911,7 +911,7 @@ private fun RemoteDrawScope.drawBorder(
     w: RemoteFloat,
     h: RemoteFloat,
 ) {
-    with(shape.createOutline(RemoteSize(w, h), layoutDirection)) {
+    with(shape.createOutline(RemoteSize(w, h), remoteDensity, layoutDirection)) {
         drawOutline(
             RemotePaint().apply {
                 remoteColor = borderColor
@@ -930,7 +930,7 @@ private fun RemoteDrawScope.drawSolidColorShape(
     h: RemoteFloat,
     color: RemoteColor? = null,
 ) {
-    with(shape.createOutline(RemoteSize(w, h), layoutDirection)) {
+    with(shape.createOutline(RemoteSize(w, h), remoteDensity, layoutDirection)) {
         drawOutline(
             RemotePaint().apply {
                 style = Paint.Style.FILL
