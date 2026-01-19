@@ -1295,6 +1295,12 @@ package androidx.compose.runtime.tooling {
   @SuppressCompatibility @kotlin.RequiresOptIn(message="This API is for tooling only and is likely to change in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ComposeToolingApi {
   }
 
+  @SuppressCompatibility @androidx.compose.runtime.tooling.ComposeToolingApi public final class ComposeToolingFlags {
+    property public boolean isVerboseTracingEnabled;
+    field public static final androidx.compose.runtime.tooling.ComposeToolingFlags INSTANCE;
+    field public static boolean isVerboseTracingEnabled;
+  }
+
   public interface CompositionData {
     method public default androidx.compose.runtime.tooling.CompositionGroup? find(Object identityToFind);
     method @InaccessibleFromKotlin public Iterable<androidx.compose.runtime.tooling.CompositionGroup> getCompositionGroups();

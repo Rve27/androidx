@@ -1045,6 +1045,12 @@ sealed class androidx.compose.runtime.snapshots/SnapshotApplyResult { // android
     }
 }
 
+final object androidx.compose.runtime.tooling/ComposeToolingFlags { // androidx.compose.runtime.tooling/ComposeToolingFlags|null[0]
+    final var isVerboseTracingEnabled // androidx.compose.runtime.tooling/ComposeToolingFlags.isVerboseTracingEnabled|{}isVerboseTracingEnabled[0]
+        final fun <get-isVerboseTracingEnabled>(): kotlin/Boolean // androidx.compose.runtime.tooling/ComposeToolingFlags.isVerboseTracingEnabled.<get-isVerboseTracingEnabled>|<get-isVerboseTracingEnabled>(){}[0]
+        final fun <set-isVerboseTracingEnabled>(kotlin/Boolean) // androidx.compose.runtime.tooling/ComposeToolingFlags.isVerboseTracingEnabled.<set-isVerboseTracingEnabled>|<set-isVerboseTracingEnabled>(kotlin.Boolean){}[0]
+}
+
 final const val androidx.compose.runtime/EmptyCompositeKeyHashCode // androidx.compose.runtime/EmptyCompositeKeyHashCode|{}EmptyCompositeKeyHashCode[0]
     final fun <get-EmptyCompositeKeyHashCode>(): kotlin/Long // androidx.compose.runtime/EmptyCompositeKeyHashCode.<get-EmptyCompositeKeyHashCode>|<get-EmptyCompositeKeyHashCode>(){}[0]
 final const val androidx.compose.runtime/compositionLocalMapKey // androidx.compose.runtime/compositionLocalMapKey|{}compositionLocalMapKey[0]
@@ -1122,6 +1128,7 @@ final val androidx.compose.runtime.tooling/LocalCompositionErrorContext // andro
     final fun <get-LocalCompositionErrorContext>(): androidx.compose.runtime/CompositionLocal<androidx.compose.runtime.tooling/CompositionErrorContext?> // androidx.compose.runtime.tooling/LocalCompositionErrorContext.<get-LocalCompositionErrorContext>|<get-LocalCompositionErrorContext>(){}[0]
 final val androidx.compose.runtime.tooling/LocalInspectionTables // androidx.compose.runtime.tooling/LocalInspectionTables|{}LocalInspectionTables[0]
     final fun <get-LocalInspectionTables>(): androidx.compose.runtime/ProvidableCompositionLocal<kotlin.collections/MutableSet<androidx.compose.runtime.tooling/CompositionData>?> // androidx.compose.runtime.tooling/LocalInspectionTables.<get-LocalInspectionTables>|<get-LocalInspectionTables>(){}[0]
+final val androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_ComposeToolingFlags$stableprop // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_ComposeToolingFlags$stableprop|#static{}androidx_compose_runtime_tooling_ComposeToolingFlags$stableprop[0]
 final val androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_LocationSourceInformation$stableprop // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_LocationSourceInformation$stableprop|#static{}androidx_compose_runtime_tooling_LocationSourceInformation$stableprop[0]
 final val androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_ParameterSourceInformation$stableprop // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_ParameterSourceInformation$stableprop|#static{}androidx_compose_runtime_tooling_ParameterSourceInformation$stableprop[0]
 final val androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_SourceInformation$stableprop // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_SourceInformation$stableprop|#static{}androidx_compose_runtime_tooling_SourceInformation$stableprop[0]
@@ -1271,6 +1278,7 @@ final fun androidx.compose.runtime.snapshots/androidx_compose_runtime_snapshots_
 final fun androidx.compose.runtime.snapshots/androidx_compose_runtime_snapshots_SnapshotStateSet$stableprop_getter(): kotlin/Int // androidx.compose.runtime.snapshots/androidx_compose_runtime_snapshots_SnapshotStateSet$stableprop_getter|androidx_compose_runtime_snapshots_SnapshotStateSet$stableprop_getter(){}[0]
 final fun androidx.compose.runtime.snapshots/androidx_compose_runtime_snapshots_StateRecord$stableprop_getter(): kotlin/Int // androidx.compose.runtime.snapshots/androidx_compose_runtime_snapshots_StateRecord$stableprop_getter|androidx_compose_runtime_snapshots_StateRecord$stableprop_getter(){}[0]
 final fun androidx.compose.runtime.snapshots/notifyWrite(androidx.compose.runtime.snapshots/Snapshot, androidx.compose.runtime.snapshots/StateObject) // androidx.compose.runtime.snapshots/notifyWrite|notifyWrite(androidx.compose.runtime.snapshots.Snapshot;androidx.compose.runtime.snapshots.StateObject){}[0]
+final fun androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_ComposeToolingFlags$stableprop_getter(): kotlin/Int // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_ComposeToolingFlags$stableprop_getter|androidx_compose_runtime_tooling_ComposeToolingFlags$stableprop_getter(){}[0]
 final fun androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_LocationSourceInformation$stableprop_getter(): kotlin/Int // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_LocationSourceInformation$stableprop_getter|androidx_compose_runtime_tooling_LocationSourceInformation$stableprop_getter(){}[0]
 final fun androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_ParameterSourceInformation$stableprop_getter(): kotlin/Int // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_ParameterSourceInformation$stableprop_getter|androidx_compose_runtime_tooling_ParameterSourceInformation$stableprop_getter(){}[0]
 final fun androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_SourceInformation$stableprop_getter(): kotlin/Int // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_SourceInformation$stableprop_getter|androidx_compose_runtime_tooling_SourceInformation$stableprop_getter(){}[0]
