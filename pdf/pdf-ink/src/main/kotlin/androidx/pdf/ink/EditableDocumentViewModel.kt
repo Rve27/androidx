@@ -249,6 +249,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
                 val handle = document.createWriteHandle()
 
                 recordsHistoryManager?.clear()
+                annotationsManager?.discardChanges()
                 _applyEditsStatus.value = ApplyEditsState.Success(handle)
             } catch (e: Exception) {
                 _applyEditsStatus.value = ApplyEditsState.Failure(e)

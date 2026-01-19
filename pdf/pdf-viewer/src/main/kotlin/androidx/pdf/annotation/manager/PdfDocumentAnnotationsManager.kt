@@ -147,7 +147,9 @@ internal class PdfDocumentAnnotationsManager(
 
     override fun discardChanges() {
         draftState.clear()
+        handleRegistry.clear()
         operationsTracker.clear()
+        annotationsRepository.clear()
     }
 
     /**
