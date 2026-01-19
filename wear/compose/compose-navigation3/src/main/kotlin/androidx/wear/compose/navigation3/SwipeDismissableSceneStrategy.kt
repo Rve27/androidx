@@ -50,6 +50,11 @@ public fun rememberSwipeDismissableSceneStrategyState(
  * alternating between list and detail entries:
  *
  * @sample androidx.wear.compose.navigation3.samples.ListDetailNavDisplaySample
+ *
+ * Example of a [androidx.navigation3.ui.NavDisplay] with [SwipeDismissableSceneStrategy] and on
+ * back behavior:
+ *
+ * @sample androidx.wear.compose.navigation3.samples.NavDisplayWithOnBackBehaviorSample
  * @param [T] the type of the backstack key
  * @param swipeDismissableSceneStrategyState State containing information about ongoing swipe and
  *   animation. This parameter is unused API level 36 onwards, because the platform supports
