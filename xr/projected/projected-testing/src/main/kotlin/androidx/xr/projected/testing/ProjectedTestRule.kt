@@ -17,20 +17,26 @@
 package androidx.xr.projected.testing
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.companion.virtual.VirtualDeviceManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.ServiceInfo
 import android.hardware.display.VirtualDisplay
 import android.hardware.display.VirtualDisplayConfig
 import android.os.Build
+import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
+import androidx.xr.projected.ProjectedDeviceController.Capability
 import androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import androidx.xr.projected.platform.IProjectedInputEventListener
@@ -47,6 +53,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowVirtualDeviceManager
 
@@ -89,6 +96,7 @@ import org.robolectric.shadows.ShadowVirtualDeviceManager
  */
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+@ExperimentalProjectedApi
 public class ProjectedTestRule : TestRule {
 
     /**
@@ -120,6 +128,20 @@ public class ProjectedTestRule : TestRule {
             field = value
         }
 
+    /**
+     * This property can be used to control the Projected device capabilities. By default, the set
+     * of capabilities includes the [Capability.CAPABILITY_VISUAL_UI].
+     */
+    public var capabilities: Set<Capability> = setOf(Capability.CAPABILITY_VISUAL_UI)
+        set(value) {
+            if (value.contains(Capability.CAPABILITY_VISUAL_UI)) {
+                whenever(mockProjectedService.isDisplayCapable()).thenReturn(true)
+            } else {
+                whenever(mockProjectedService.isDisplayCapable()).thenReturn(false)
+            }
+            field = value
+        }
+
     private val context: Application = ApplicationProvider.getApplicationContext()
     private val virtualDeviceManager =
         context.getSystemService(Context.VIRTUAL_DEVICE_SERVICE) as VirtualDeviceManager
@@ -134,6 +156,7 @@ public class ProjectedTestRule : TestRule {
             override fun evaluate() {
                 throwIllegalStateExceptionWhenCreatingControllers = false
                 isDeviceConnected = true
+                capabilities = setOf(Capability.CAPABILITY_VISUAL_UI)
                 base?.evaluate()
             }
         }
@@ -142,7 +165,6 @@ public class ProjectedTestRule : TestRule {
      * Emits a [ProjectedInputEvent] with the given [ProjectedInputAction] to
      * [androidx.xr.projected.ProjectedActivityCompat.projectedInputEvents].
      */
-    @ExperimentalProjectedApi
     public fun sendProjectedInputEvent(projectedInputAction: ProjectedInputAction) {
         val inputEventListenerCaptor =
             ArgumentCaptor.forClass(IProjectedInputEventListener::class.java)
@@ -151,6 +173,24 @@ public class ProjectedTestRule : TestRule {
         inputEventListenerCaptor.firstValue.onProjectedInputEvent(
             ProjectedInputEvent().apply { action = projectedInputAction.code }
         )
+    }
+
+    /**
+     * Launches a test [Activity] on the Projected device.
+     *
+     * @param block The block to execute on the test activity.
+     */
+    public fun launchTestProjectedDeviceActivity(block: (Activity) -> Unit) {
+        shadowOf(context.packageManager)
+            .addOrUpdateActivity(
+                ActivityInfo().apply {
+                    name = TestProjectedDeviceActivity::class.java.name
+                    packageName = context.packageName
+                }
+            )
+        val activityScenario: ActivityScenario<TestProjectedDeviceActivity> =
+            ActivityScenario.launch(Intent(context, TestProjectedDeviceActivity::class.java))
+        activityScenario.onActivity { activity -> block(activity) }
     }
 
     // TODO: b/476403759 - Replace reflection with the shadow APIs when they are available.
@@ -264,6 +304,21 @@ public class ProjectedTestRule : TestRule {
     private fun disableProjectedService() {
         shadowOf(context.packageManager).apply {
             clearIntentFilterForService(PROJECTED_SERVICE_COMPONENT_NAME)
+        }
+    }
+
+    private class TestProjectedDeviceActivity : Activity() {
+
+        private lateinit var virtualDeviceManager: VirtualDeviceManager
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            virtualDeviceManager = getSystemService(VIRTUAL_DEVICE_SERVICE) as VirtualDeviceManager
+            ProjectedTestRule().createVirtualDevice()
+        }
+
+        override fun getDeviceId(): Int {
+            return virtualDeviceManager.virtualDevices.first().deviceId
         }
     }
 
