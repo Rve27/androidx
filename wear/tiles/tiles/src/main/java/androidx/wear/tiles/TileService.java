@@ -200,45 +200,12 @@ public abstract class TileService extends Service {
     private static Boolean sUseWearSdkImpl;
 
     /**
-     * Map of all {@link ProtoLayoutScope} for the tile instances this service has.
-     *
-     * <p>This field is **not** thread safe and should only be accessed from main thread.
-     */
-    private final Map<Integer, ProtoLayoutScope> mScopes = new HashMap<>();
-
-    /**
      * Map of all {@link Resources} for the tile instances that have requested new layout, but are
      * not yet requested resources (i.e. on older renderers, who don't handle it in one call).
      *
      * <p>This field is **not** thread safe and should only be accessed from main thread.
      */
     @VisibleForTesting final Map<Integer, Resources> mResourcesToSend = new HashMap<>();
-
-    /**
-     * Returns {@link ProtoLayoutScope} for the tile instance with the given ID. If the scope
-     * doesn't exist, a new one will be created.
-     *
-     * <p>This method is not thread safe and should be called only from main thread.
-     */
-    @MainThread
-    @SuppressWarnings("RestrictedApiAndroidX") // Tiles is allowed to use ProtoLayout's APIs
-    @NonNull ProtoLayoutScope getScope(int tileId, VersionInfo rendererVersionInfo) {
-        return mScopes.computeIfAbsent(
-                tileId,
-                id ->
-                        new ProtoLayoutScope(
-                                VersionBuilders.VersionInfo.fromProto(rendererVersionInfo)));
-    }
-
-    /**
-     * Removes the {@link ProtoLayoutScope} for the tile instance with the given ID.
-     *
-     * <p>This method is not thread safe and should be called only from main thread.
-     */
-    @MainThread
-    void removeScope(int tileId) {
-        mScopes.remove(tileId);
-    }
 
     /**
      * Returns and removes saved {@link Resources} for the tile instance with the given ID that
@@ -583,17 +550,15 @@ public abstract class TileService extends Service {
                                                 .getRendererSchemaVersion();
                             }
 
-                            scope = tileService.getScope(tileId, rendererVersion);
-
+                            scope =
+                                    new ProtoLayoutScope(
+                                            VersionBuilders.VersionInfo.fromProto(rendererVersion));
                             tileRequest =
                                     TileRequest.fromProto(tileRequestProtoBuilder.build(), scope);
                         } catch (InvalidProtocolBufferException ex) {
                             Log.e(TAG, "Error deserializing TileRequest payload.", ex);
                             return;
                         }
-
-                        // Clear the scope before provider stores resources and intents.
-                        scope.clearAll();
 
                         ListenableFuture<Tile> tileFuture = tileService.onTileRequest(tileRequest);
 
@@ -632,10 +597,6 @@ public abstract class TileService extends Service {
                                                                     .setVersion(incomingResVer)
                                                                     .build());
                                         }
-
-                                        // Everything is collected, clear the scope for this tile
-                                        // instance.
-                                        scope.clearAll();
 
                                         // Legacy behaviour for older renderers, where tile and
                                         // resources are separated.
@@ -888,7 +849,6 @@ public abstract class TileService extends Service {
 
                                 tileService.markTileAsInactiveLegacy(evt.getTileId());
                                 tileService.onTileRemoveEvent(evt);
-                                tileService.removeScope(evt.getTileId());
                             } catch (InvalidProtocolBufferException ex) {
                                 Log.e(TAG, "Error deserializing TileRemoveEvent payload.", ex);
                             }
