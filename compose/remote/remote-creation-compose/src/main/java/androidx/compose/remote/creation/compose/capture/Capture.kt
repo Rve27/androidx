@@ -48,6 +48,7 @@ public open class RemoteComposeCreationState : RemoteStateScope {
 
     public val creationDisplayInfo: CreationDisplayInfo
     public val profile: Profile
+    public override lateinit var remoteDensity: RemoteDensity
 
     public val animCache: MutableIntObjectMap<AnimatedRemoteFloat> = MutableIntObjectMap()
     public val expressionCache: MutableIntObjectMap<RemoteFloat> = MutableIntObjectMap()
@@ -73,16 +74,19 @@ public open class RemoteComposeCreationState : RemoteStateScope {
         this.creationDisplayInfo = creationDisplayInfo
         this.profile = profile
         document = profile.create(creationDisplayInfo, null) as RemoteComposeWriterAndroid
+        this.remoteDensity = RemoteDensity.from(creationDisplayInfo)
     }
 
     public constructor(
         creationDisplayInfo: CreationDisplayInfo,
         profile: Profile,
         writerEvents: WriterEvents?,
+        remoteDensity: RemoteDensity = RemoteDensity.from(creationDisplayInfo),
     ) {
         this.creationDisplayInfo = creationDisplayInfo
         this.profile = profile
         document = profile.create(creationDisplayInfo, writerEvents) as RemoteComposeWriterAndroid
+        this.remoteDensity = remoteDensity
     }
 
     public constructor(platform: RcPlatformServices, size: Size) {
@@ -97,6 +101,7 @@ public open class RemoteComposeCreationState : RemoteStateScope {
             )
         this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 160)
         document = RemoteComposeWriterAndroid(size.width.toInt(), size.height.toInt(), "", platform)
+        this.remoteDensity = RemoteDensity.from(creationDisplayInfo)
     }
 
     public constructor(platform: RcPlatformServices, size: Size, apiLevel: Int, profiles: Int) {
@@ -124,6 +129,7 @@ public open class RemoteComposeCreationState : RemoteStateScope {
                     platform,
                 )
         }
+        this.remoteDensity = RemoteDensity.from(creationDisplayInfo)
     }
 
     public constructor(
@@ -134,12 +140,14 @@ public open class RemoteComposeCreationState : RemoteStateScope {
         this.creationDisplayInfo = creationDisplayInfo
         this.profile = profile
         this.document = writer
+        this.remoteDensity = RemoteDensity.from(creationDisplayInfo)
     }
 
     public constructor(size: Size, profile: Profile) {
         this.profile = profile
         this.creationDisplayInfo = CreationDisplayInfo(size.width.toInt(), size.height.toInt(), 160)
         this.document = profile.create(creationDisplayInfo, null)
+        this.remoteDensity = RemoteDensity.from(creationDisplayInfo)
     }
 
     public open fun <T : RemoteState<*>> getOrCreateNamedState(
