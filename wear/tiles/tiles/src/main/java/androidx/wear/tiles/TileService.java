@@ -219,6 +219,31 @@ public abstract class TileService extends Service {
     @VisibleForTesting final Map<String, Resources> mResourcesToSend = new HashMap<>();
 
     /**
+     * Map of all resources version counters for the tile instances that have requested new layout,
+     * but are not yet requested resources (i.e. on older renderers, who don't handle it in one
+     * call).
+     *
+     * <p>This field is **not** thread safe and should only be accessed from main thread.
+     *
+     * <p>The key is a combination of the resources version and a counter, formatted as
+     * "resourcesVersion;counter". The value is the number of times this specific resources version
+     * has been requested for a given tile instance.
+     *
+     * <p>The `resourcesVersion` part of the key is expected to be in the format
+     * "tileId;string;hashCode". Since the `tileId` is included, different tile instances, even if
+     * they generate the same underlying resource content, will have distinct keys in this map, thus
+     * maintaining separate counters.
+     */
+    @VisibleForTesting final Map<String, Integer> mResourcesToSendCounter = new HashMap<>();
+
+    /**
+     * Shared preferences for saved resources.
+     *
+     * <p>This field will be initialized lazily when needed.
+     */
+    private @Nullable DiskAccessAllowedPrefs mSavedResourcesSharedPref = null;
+
+    /**
      * Returns and removes saved {@link Resources} for the tile instance with the given ID that
      * should be sent for resources request as layout has already been requested. If no resources
      * are saved, scope wasn't used or tile didn't have its layout requested, return null.
@@ -228,25 +253,50 @@ public abstract class TileService extends Service {
     @SuppressWarnings("RestrictedApiAndroidX") // Tiles is allowed to use ProtoLayout's APIs
     @MainThread
     @Nullable Resources removeSavedResources(String resourcesVersion) {
-        Resources resource = mResourcesToSend.remove(resourcesVersion);
-        DiskAccessAllowedPrefs sharedPref = getSavedResourcesSharedPref(this);
+        String resourcesVersionCounter = getSavedResourcesCounterKey(resourcesVersion);
 
-        if (resource == null && sharedPref.contains(resourcesVersion)) {
-            try {
-                resource =
-                        Resources.fromProto(
-                                ResourceProto.Resources.parseFrom(
-                                        Base64.decode(
-                                                sharedPref.getString(
-                                                        resourcesVersion, /* defValue= */ ""),
-                                                Base64.DEFAULT)));
-            } catch (InvalidProtocolBufferException ex) {
-                Log.e(TAG, "Error deserializing Resources payload.", ex);
-            }
+        loadSavedResourcesCounter(resourcesVersionCounter);
+        Integer updatedCounter =
+                mResourcesToSendCounter.compute(
+                        resourcesVersionCounter, (unusedKey, value) -> value - 1);
+
+        if (updatedCounter < 0) {
+            // No resources available for this version, this should never happen.
+            Log.e(TAG, "No resources available for version: " + resourcesVersion);
+            mResourcesToSendCounter.remove(resourcesVersionCounter);
+            return null;
         }
 
+        DiskAccessAllowedPrefs sharedPref = getSavedResourcesSharedPref();
+        if (updatedCounter > 0) {
+            sharedPref.putInt(resourcesVersionCounter, updatedCounter);
+        }
+
+        Resources resource =
+                mResourcesToSend.computeIfAbsent(
+                        resourcesVersion,
+                        (key) -> {
+                            try {
+                                return Resources.fromProto(
+                                        ResourceProto.Resources.parseFrom(
+                                                Base64.decode(
+                                                        sharedPref.getString(
+                                                                key, /* defValue= */ ""),
+                                                        Base64.DEFAULT)));
+                            } catch (InvalidProtocolBufferException ex) {
+                                Log.e(TAG, "Error deserializing Resources payload.", ex);
+                                return null;
+                            }
+                        });
+
         // Remove if there was any saved on disk.
-        sharedPref.remove(resourcesVersion);
+        if (updatedCounter == 0 || resource == null) {
+            mResourcesToSendCounter.remove(resourcesVersionCounter);
+            sharedPref.remove(resourcesVersionCounter);
+
+            mResourcesToSend.remove(resourcesVersion);
+            sharedPref.remove(resourcesVersion);
+        }
 
         return resource;
     }
@@ -258,15 +308,44 @@ public abstract class TileService extends Service {
      */
     @MainThread
     void saveResources(@NonNull Resources resources) {
+        String resourcesVersion = resources.getVersion();
+        String resourcesVersionCounter = getSavedResourcesCounterKey(resourcesVersion);
+
+        loadSavedResourcesCounter(resourcesVersionCounter);
+        Integer updatedCounter =
+                mResourcesToSendCounter.compute(
+                        resourcesVersionCounter, (unusedKey, value) -> value + 1);
+
+        DiskAccessAllowedPrefs sharedPref = getSavedResourcesSharedPref();
+        sharedPref.putInt(resourcesVersionCounter, updatedCounter);
+
         // Save in memory
-        mResourcesToSend.put(resources.getVersion(), resources);
+        mResourcesToSend.put(resourcesVersion, resources);
+        if (updatedCounter > 1) {
+            // We already have resources cached for this version, nothing to do.
+            return;
+        }
 
         // Save on disk if service gets destroyed
-        getSavedResourcesSharedPref(this)
-                .putString(
-                        /* key= */ resources.getVersion(),
-                        /* value= */ Base64.encodeToString(
-                                resources.toProto().toByteArray(), Base64.DEFAULT));
+        sharedPref.putString(
+                /* key= */ resourcesVersion,
+                /* value= */ Base64.encodeToString(
+                        resources.toProto().toByteArray(), Base64.DEFAULT));
+    }
+
+    /**
+     * Loads the counter for the given resources version.
+     *
+     * <p>If the counter doesn't exist, it will be created with a value of 0.
+     */
+    private void loadSavedResourcesCounter(String resourcesVersionCounter) {
+        mResourcesToSendCounter.computeIfAbsent(
+                resourcesVersionCounter, (key) -> getSavedResourcesSharedPref().getInt(key, 0));
+    }
+
+    /** Returns the counter key for the given resources version. */
+    private String getSavedResourcesCounterKey(String resourcesVersion) {
+        return resourcesVersion + ";counter";
     }
 
     /**
@@ -1172,6 +1251,15 @@ public abstract class TileService extends Service {
         }
     }
 
+    /** Returns the {@code SAVED_RESOURCES_SHARED_PREF_NAME} shared preferences. */
+    private DiskAccessAllowedPrefs getSavedResourcesSharedPref() {
+        if (mSavedResourcesSharedPref == null) {
+            mSavedResourcesSharedPref =
+                    DiskAccessAllowedPrefs.wrap(this, SAVED_RESOURCES_SHARED_PREF_NAME);
+        }
+        return mSavedResourcesSharedPref;
+    }
+
     /**
      * Clean-up method to remove entries with timestamps that haven't been updated for longer than
      * {@code INACTIVE_TILE_PERIOD_MS}. In such cases the tiles are considered inactive and will be
@@ -1234,10 +1322,6 @@ public abstract class TileService extends Service {
 
     private static DiskAccessAllowedPrefs getActiveTilesSharedPrefLegacy(@NonNull Context context) {
         return DiskAccessAllowedPrefs.wrap(context, ACTIVE_TILES_SHARED_PREF_NAME);
-    }
-
-    private static DiskAccessAllowedPrefs getSavedResourcesSharedPref(@NonNull Context context) {
-        return DiskAccessAllowedPrefs.wrap(context, SAVED_RESOURCES_SHARED_PREF_NAME);
     }
 
     /**
