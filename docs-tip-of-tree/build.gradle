@@ -437,6 +437,7 @@ dependencies {
     docs(project(":xr:runtime:runtime-testing"))
     docs(project(":xr:scenecore:scenecore"))
     docs(project(":xr:scenecore:scenecore-guava"))
+    docs(project(":xr:scenecore:scenecore-projected"))
     docs(project(":xr:scenecore:scenecore-runtime"))
     docs(project(":xr:scenecore:scenecore-spatial-core"))
     docs(project(":xr:scenecore:scenecore-spatial-rendering"))
