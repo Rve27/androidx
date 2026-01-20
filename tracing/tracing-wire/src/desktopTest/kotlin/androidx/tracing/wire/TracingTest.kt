@@ -102,7 +102,7 @@ class TracingTest {
     internal fun setUp() {
         sink.packets.clear()
         driver = TraceDriver(sink = sink, isEnabled = true)
-        tracer = driver.createTracer("TracingTest")
+        tracer = driver.tracer
     }
 
     @Test
@@ -260,7 +260,7 @@ class TracingTest {
             )
         val driver = TraceDriver(sink = sink, isEnabled = true)
         // Create the Tracer
-        val tracer = driver.createTracer("tracer")
+        val tracer = driver.tracer
         // Warm up tracks
         tracer.trace(category = "category", name = "name") {}
         // Discount the preamble packets

@@ -22,24 +22,16 @@ import kotlinx.coroutines.withContext
 /**
  * A [Tracer] is the entry point for all Tracing APIs.
  *
- * To create a Tracer use the `createTracer` API.
+ * To obtain an instance of `Tracer` use [TraceDriver.tracer].
  */
 // False positive: https://youtrack.jetbrains.com/issue/KTIJ-22326
 @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 public abstract class Tracer(
-    /**
-     * The name of the event that is being traced. Typically [Tracer] instances are associated with
-     * application entry points so each trace can be disambiguated.
-     */
-    @JvmField
-    @field:Suppress("MutableBareField") // public / mutable to minimize overhead
-    public val name: String,
-
     /** Is set to `true` if Tracing is enabled. */
     @JvmField
     @field:Suppress("MutableBareField") // public / mutable to minimize overhead
-    public val isEnabled: Boolean,
-) : AutoCloseable {
+    public val isEnabled: Boolean
+) {
 
     /**
      * Creates a [PropagationToken] that can be used for manual context propagation in
