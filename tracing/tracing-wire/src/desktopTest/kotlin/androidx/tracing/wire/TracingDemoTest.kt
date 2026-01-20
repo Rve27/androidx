@@ -70,6 +70,29 @@ class TracingDemoTest {
     }
 
     @Test
+    internal fun testSimpleTracingTestWithCorrelationIds() = runBlocking {
+        driver.use {
+            withContext(context = Dispatchers.Default) {
+                val correlationId = 1L
+                tracer.traceCoroutine(
+                    "category",
+                    "section",
+                    metadataBlock = { addCorrelationId(correlationId) },
+                ) {
+                    delay(100L)
+                }
+                tracer.traceCoroutine(
+                    "category",
+                    "section2",
+                    metadataBlock = { addCorrelationId(correlationId) },
+                ) {
+                    delay(1000L)
+                }
+            }
+        }
+    }
+
+    @Test
     internal fun testTracingEndToEnd(): Unit = runBlocking {
         driver.use {
             withContext(context = Dispatchers.Default) {
