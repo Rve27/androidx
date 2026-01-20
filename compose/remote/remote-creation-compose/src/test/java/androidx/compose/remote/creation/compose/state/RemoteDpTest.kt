@@ -146,4 +146,17 @@ class RemoteDpTest {
 
         assertThat(context.getFloat(resultDpId)).isEqualTo(px)
     }
+
+    @Test
+    fun asRdpFloatIdIsConstant() {
+        val dp = 152.dp
+
+        val resultFloat =
+            remoteComposeTestRule.initialise {
+                val remoteFloatDp = dp.asRdp()
+                with(it) { remoteFloatDp.floatId }
+            }
+
+        assertThat(resultFloat).isEqualTo(304f)
+    }
 }
