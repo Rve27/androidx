@@ -26,6 +26,7 @@ import android.util.TypedValue;
 
 import androidx.core.util.TypedValueCompat;
 import androidx.xr.runtime.FieldOfView;
+import androidx.xr.runtime.SpatialApiVersionHelper;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector2;
 import androidx.xr.runtime.math.Vector3;
@@ -61,9 +62,15 @@ abstract class BasePanelEntity extends AndroidXrEntity implements PanelEntity {
     }
 
     protected float getDefaultPixelDensity() {
-        return mExtensions
-                .getConfig()
-                .defaultPixelsPerMeter(Resources.getSystem().getDisplayMetrics().density);
+        // Spatial api versions 1 and 2+, have different density behaviors. In 2+, pixels per
+        // meter should remain a constant value even when system density changes.
+        if (SpatialApiVersionHelper.getSpatialApiVersion() >= 2) {
+            return mExtensions.getUnderlyingObject().getConfig().defaultPixelsPerMeter();
+        } else {
+            return mExtensions
+                    .getConfig()
+                    .defaultPixelsPerMeter(Resources.getSystem().getDisplayMetrics().density);
+        }
     }
 
     protected float getDefaultCornerRadiusInMeters() {
