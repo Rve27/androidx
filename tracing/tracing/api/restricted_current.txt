@@ -30,6 +30,8 @@ package androidx.tracing {
   public abstract class EventMetadata {
     method public abstract void addCallStackEntry(String name, String? sourceFile, int lineNumber);
     method public abstract void addCategory(String name);
+    method public abstract void addCorrelationId(String id);
+    method public abstract void addCorrelationId(long id);
     method public abstract void addMetadataEntry(String name, boolean value);
     method public abstract void addMetadataEntry(String name, double value);
     method public abstract void addMetadataEntry(String name, String value);
@@ -163,6 +165,8 @@ package androidx.tracing {
     method @kotlin.PublishedApi internal inline void setEndSection(long trackUuid);
     method @kotlin.PublishedApi internal inline void setInstant(long trackUuid, String name);
     property public java.util.List<java.lang.String> categories;
+    property public Long? correlationId;
+    property public String? correlationIdString;
     property public Double? counterDoubleValue;
     property public Long? counterLongValue;
     property public java.util.List<java.lang.Long> flowIds;
@@ -178,6 +182,8 @@ package androidx.tracing {
     property public long trackUuid;
     property public int type;
     field public java.util.List<java.lang.String> categories;
+    field public Long? correlationId;
+    field public String? correlationIdString;
     field public Double? counterDoubleValue;
     field public Long? counterLongValue;
     field public java.util.List<java.lang.Long> flowIds;

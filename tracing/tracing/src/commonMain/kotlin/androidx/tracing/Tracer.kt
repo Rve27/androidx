@@ -77,7 +77,7 @@ public abstract class Tracer(
      *   trace `flow` (connection) between trace sections must share an ID, so each `Long` must be
      *   unique to each `flow` in the trace. When a `null` value is specified, the [Tracer]
      *   implementation obtains the token by calling [tokenFromThreadContext].
-     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     * @param isRoot A hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
      * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
@@ -108,7 +108,7 @@ public abstract class Tracer(
      *   trace `flow` (connection) between trace sections must share an ID, so each `Long` must be
      *   unique to each `flow` in the trace. When a `null` value is specified, the [Tracer] obtains
      *   a token by calling [tokenFromCoroutineContext].
-     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     * @param isRoot A hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
      * @return A [EventMetadataCloseable] instance that can be used to add additional metadata and
@@ -148,7 +148,7 @@ public abstract class Tracer(
      *   trace `flow` (connection) between trace sections must share an ID, so each `Long` must be
      *   unique to each `flow` in the trace. When a `null` value is specified, the [Tracer]
      *   implementation obtains the token by calling [tokenFromThreadContext].
-     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     * @param isRoot A hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
      * @param metadataBlock The lambda that can be used to decorate the trace event with additional
@@ -183,8 +183,8 @@ public abstract class Tracer(
      * the section will be present in the trace, but non-terminating (generally shown as fading out
      * to the left).
      *
-     * @param category The category that the trace section belongs to. Apps can potentially filter
-     *   sections to the categories that they are interested in looking into.
+     * @param category The [String] category. It's useful to categorize [TraceEvent]s, so that they
+     *   can be filtered if necessary using the appropriate trace configuration.
      * @param name The name of the code section to appear in the trace.
      * @param token An optional [PropagationToken] that can be used for context propagation. The
      *   default implementation uses a list of [Long]s which will connect this trace section to
@@ -222,12 +222,12 @@ public abstract class Tracer(
     /**
      * Traces the [block] as a named section of code in the trace with context propagation.
      *
-     * @param category The [String] category. Its useful to categorize [TraceEvent]s, so that they
-     *   can be filtered if necessary using the [metadataBlock].
+     * @param category The [String] category. It's useful to categorize [TraceEvent]s, so that they
+     *   can be filtered if necessary using the appropriate trace configuration.
      * @param name The name of the trace section.
      * @param token The optional [PropagationToken] instance to use for context propagation. This
      *   defaults to the token returned by [tokenFromThreadContext].
-     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     * @param isRoot A hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
      * @param metadataBlock The lambda that can be used to decorate the trace event with additional
@@ -270,15 +270,15 @@ public abstract class Tracer(
      * propagation. The [tokenFromCoroutineContext] method is used to obtain the [PropagationToken]
      * for context propagation.
      *
-     * @param category The [String] category. Its useful to categorize [TraceEvent]s, so that they
-     *   can be filtered if necessary using the [metadataBlock].
+     * @param category The [String] category. It's useful to categorize [TraceEvent]s, so that they
+     *   can be filtered if necessary using the appropriate trace configuration.
      * @param name The name of the trace section.
      * @param token An optional explicit [PropagationToken] instance that is intended to be used for
      *   manual context propagation. This might be useful in instances where the implementation of
      *   context propagation was to distinguish between job executions that are well scoped vs. fire
      *   and forget. When `null`, the [Tracer] instance delegates to the implementation of
      *   [tokenFromCoroutineContext].
-     * @param isRoot An hint that tells the [Tracer] that this trace section is an entry point that
+     * @param isRoot A hint that tells the [Tracer] that this trace section is an entry point that
      *   all subsequent trace spans can be attributed to. Some [Tracer] implementations treat trace
      *   sections as a forest, and require that there is at least one top level root span.
      * @param metadataBlock The lambda that can be used to decorate the trace event with additional
@@ -316,7 +316,8 @@ public abstract class Tracer(
             // lambda allocation because of the use of withContext(...).
             val contextElement = result.propagationToken.contextElementOrNull()
             return if (contextElement != null) {
-                withContext(context = currentCoroutineContext() + contextElement) { block() }
+                val context = currentCoroutineContext()
+                withContext(context = context + contextElement) { block() }
             } else {
                 block()
             }

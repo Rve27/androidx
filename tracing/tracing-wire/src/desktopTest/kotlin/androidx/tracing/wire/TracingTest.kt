@@ -139,6 +139,39 @@ class TracingTest {
     }
 
     @Test
+    internal fun testTrackEventsWithCorrelationIds() {
+        val correlationId = 10L
+        val correlationIdString = "correlationId"
+        driver.use {
+            tracer.trace(
+                category = "category",
+                name = "section",
+                metadataBlock = { addCorrelationId(correlationId) },
+            ) {}
+            tracer.trace(
+                category = "category",
+                name = "section2",
+                metadataBlock = { addCorrelationId(correlationIdString) },
+            ) {}
+        }
+        // 2 packets for track descriptors (process + thread)
+        // 2 * 2 packets for begin and end section.
+        assertEquals(6, sink.packets.size)
+        assertNotNull(sink.packets.find { it.track_descriptor?.process?.process_name != null })
+        assertNotNull(sink.packets.find { it.track_descriptor?.thread?.thread_name != null })
+        sink.firstStartStopWithName("section") { start, _ ->
+            assertEquals(correlationId, start.track_event!!.correlation_id)
+            // There should be only one category
+            assertEquals(1, start.track_event!!.categories.size)
+        }
+        sink.firstStartStopWithName("section2") { start, _ ->
+            assertEquals(correlationIdString, start.track_event!!.correlation_id_str)
+            // There should be only one category
+            assertEquals(1, start.track_event!!.categories.size)
+        }
+    }
+
+    @Test
     internal fun testTrackEventsWithMultipleSlices() {
         driver.use {
             tracer.trace(category = "category", name = "section") {}
