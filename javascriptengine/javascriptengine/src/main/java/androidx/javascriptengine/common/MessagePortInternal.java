@@ -312,6 +312,9 @@ public final class MessagePortInternal {
             if (string.length() <= MAX_BINDER_STRING_LENGTH) {
                 remote.sendString(string);
             } else {
+                // TODO(b/484314333):
+                //  Mangles illegal code units into '?'. If we needed to change this to U+FFFD like
+                //  most other parts of JavaScriptEngine, we could use a customized CharsetEncoder.
                 byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
                 try (AssetFileDescriptor afd = Utils.writeBytesIntoPipeAsync(bytes, mIoExecutor)) {
                     remote.sendStringOverFd(afd);
