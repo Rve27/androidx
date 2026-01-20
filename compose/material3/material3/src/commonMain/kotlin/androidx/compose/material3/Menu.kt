@@ -47,6 +47,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.internal.rememberAnimatedShape
@@ -1047,6 +1048,14 @@ internal val MenuItemShapes.hasRoundedCornerShapes: Boolean
 internal val MenuGroupShapes.hasRoundedCornerShapes: Boolean
     get() = shape is RoundedCornerShape && inactiveShape is RoundedCornerShape
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+internal val MenuItemShapes.hasCornerBasedShapes: Boolean
+    get() = shape is CornerBasedShape && selectedShape is CornerBasedShape
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+internal val MenuGroupShapes.hasCornerBasedShapes: Boolean
+    get() = shape is CornerBasedShape && inactiveShape is CornerBasedShape
+
 @Composable
 internal fun DropdownMenuItemContent(
     text: @Composable () -> Unit,
@@ -1169,6 +1178,10 @@ private fun shapeByInteraction(
         return key(shapes.shape, shapes.selectedShape) {
             rememberAnimatedShape(shape as RoundedCornerShape, animationSpec)
         }
+    else if (shapes.hasCornerBasedShapes)
+        return key(shapes.shape, shapes.selectedShape) {
+            rememberAnimatedShape(shape as CornerBasedShape, animationSpec)
+        }
 
     return shape
 }
@@ -1191,6 +1204,10 @@ private fun shapeByInteraction(
     if (shapes.hasRoundedCornerShapes)
         return key(shapes.shape, shapes.inactiveShape) {
             rememberAnimatedShape(shape as RoundedCornerShape, animationSpec)
+        }
+    else if (shapes.hasCornerBasedShapes)
+        return key(shapes.shape, shapes.inactiveShape) {
+            rememberAnimatedShape(shape as CornerBasedShape, animationSpec)
         }
 
     return shape
