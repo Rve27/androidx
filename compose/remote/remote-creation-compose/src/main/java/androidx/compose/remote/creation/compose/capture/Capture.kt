@@ -23,6 +23,7 @@ import androidx.collection.MutableIntObjectMap
 import androidx.collection.MutableObjectIntMap
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.RcPlatformServices
+import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid
@@ -61,6 +62,7 @@ public open class RemoteComposeCreationState : RemoteStateScope {
     public val namedState: HashMap<String, RemoteState<*>> = HashMap()
 
     public val time: MutableState<Long> = mutableLongStateOf(0L)
+    private val textFromFloatCache = MutableObjectIntMap<TextFromFloatParams>()
 
     public val platform: RcPlatformServices
         get() = profile.platform
@@ -150,6 +152,23 @@ public open class RemoteComposeCreationState : RemoteStateScope {
     ): T {
         return type.cast(namedState.getOrPut("$domain:$name", function))!!
     }
+
+    internal data class TextFromFloatParams(
+        val id: Int,
+        val before: Int,
+        val after: Int,
+        val flags: Int,
+    )
+
+    internal fun createTextFromFloat(params: TextFromFloatParams): Int =
+        textFromFloatCache.getOrPut(params) {
+            document.createTextFromFloat(
+                Utils.asNan(params.id),
+                params.before,
+                params.after,
+                params.flags,
+            )
+        }
 }
 
 // Density and Size should be taken from Compose in this mode

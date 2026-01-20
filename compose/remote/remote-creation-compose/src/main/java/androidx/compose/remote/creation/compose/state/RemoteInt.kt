@@ -132,11 +132,13 @@ internal constructor(
             constantValue = null,
             object : LazyRemoteString {
                 override fun reserveTextId(creationState: RemoteComposeCreationState): Int {
-                    return creationState.document.createTextFromFloat(
-                        getFloatIdForCreationState(creationState),
-                        before,
-                        0,
-                        flags,
+                    return creationState.createTextFromFloat(
+                        RemoteComposeCreationState.TextFromFloatParams(
+                            getIdForCreationState(creationState),
+                            before,
+                            0,
+                            flags,
+                        )
                     )
                 }
 
