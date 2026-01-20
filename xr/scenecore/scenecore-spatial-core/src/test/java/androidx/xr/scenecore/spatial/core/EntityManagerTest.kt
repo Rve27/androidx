@@ -13,314 +13,340 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.app.Activity
+import android.hardware.display.DisplayManager
+import android.os.SystemClock
+import android.view.View
+import android.view.ViewGroup
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.runtime.math.Matrix4
+import androidx.xr.runtime.math.Pose
+import androidx.xr.scenecore.runtime.ActivityPanelEntity
+import androidx.xr.scenecore.runtime.ActivitySpace
+import androidx.xr.scenecore.runtime.AnchorEntity
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.GltfEntity
+import androidx.xr.scenecore.runtime.PanelEntity
+import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeGltfFeature
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.android.extensions.xr.node.Node
+import com.google.common.truth.Truth.assertThat
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static org.mockito.Mockito.mock;
-
-import android.app.Activity;
-import android.content.Context;
-import android.hardware.display.DisplayManager;
-import android.os.SystemClock;
-import android.view.Display;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.runtime.math.Matrix4;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.scenecore.runtime.ActivityPanelEntity;
-import androidx.xr.scenecore.runtime.ActivitySpace;
-import androidx.xr.scenecore.runtime.AnchorEntity;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.GltfEntity;
-import androidx.xr.scenecore.runtime.PanelEntity;
-import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeGltfFeature;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public class EntityManagerTest {
-
-    private static final int VGA_WIDTH = 640;
-    private static final int VGA_HEIGHT = 480;
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
-    private final AndroidXrEntity mActivitySpaceRoot = mock(AndroidXrEntity.class);
-    private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
-    private final Node mPanelEntityNode = mXrExtensions.createNode();
-    private final Node mAnchorEntityNode = mXrExtensions.createNode();
-    private final EntityManager mEntityManager = new EntityManager();
-    private Node mGroupEntityNode;
-    private Node mGltfEntityNode;
-    private Activity mActivity;
-    private SpatialSceneRuntime mSpatialSceneRuntime;
-    private ActivitySpaceImpl mActivitySpace;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class EntityManagerTest {
+    private val xrExtensions = getXrExtensions()!!
+    private val fakeScheduledExecutorService = FakeScheduledExecutorService()
+    private val panelEntityNode: Node = xrExtensions.createNode()
+    private val anchorEntityNode: Node = xrExtensions.createNode()
+    private val entityManager = EntityManager()
+    private lateinit var groupEntityNode: Node
+    private lateinit var gltfEntityNode: Node
+    private val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
+    private lateinit var spatialSceneRuntime: SpatialSceneRuntime
+    private lateinit var activitySpace: ActivitySpaceImpl
 
     @Before
-    public void setUp() {
-        try (ActivityController<Activity> activityController =
-                Robolectric.buildActivity(Activity.class)) {
-            mActivity = activityController.create().start().get();
-        }
-        mSpatialSceneRuntime =
-                SpatialSceneRuntime.create(
-                        mActivity, mFakeExecutor, mXrExtensions, mEntityManager, false);
-        Node taskNode = mXrExtensions.createNode();
-        mActivitySpace =
-                new ActivitySpaceImpl(
-                        taskNode,
-                        mActivity,
-                        mXrExtensions,
-                        mEntityManager,
-                        () -> mXrExtensions.getSpatialState(mActivity),
-                        /* unscaledGravityAlignedActivitySpace= */ false,
-                        mExecutor);
-        long currentTimeMillis = 1000000000L;
-        SystemClock.setCurrentTimeMillis(currentTimeMillis);
+    fun setUp() {
+        spatialSceneRuntime =
+            SpatialSceneRuntime.create(
+                activity,
+                fakeScheduledExecutorService,
+                xrExtensions,
+                entityManager,
+                false,
+            )
+        val taskNode = xrExtensions.createNode()
+        activitySpace =
+            ActivitySpaceImpl(
+                taskNode,
+                activity,
+                xrExtensions,
+                entityManager,
+                { xrExtensions.getSpatialState(activity) },
+                /* unscaledGravityAlignedActivitySpace= */ false,
+                fakeScheduledExecutorService,
+            )
+        val currentTimeMillis = 1000000000L
+        SystemClock.setCurrentTimeMillis(currentTimeMillis)
 
         // By default, set the activity space to the root of the underlying OpenXR reference space.
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
     }
 
     @After
-    public void tearDown() {
+    fun tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
-        mSpatialSceneRuntime.destroy();
+        spatialSceneRuntime.destroy()
     }
 
     @Test
-    public void creatingEntity_addsEntityToEntityManager() {
-        GltfEntity gltfEntity = createGltfEntity();
-        PanelEntity panelEntity = createPanelEntity();
-        Entity groupEntity = createGroupEntity();
-        AnchorEntity anchorEntity = createAnchorEntity();
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
+    fun creatingEntity_addsEntityToEntityManager() {
+        val gltfEntity = createGltfEntity()
+        val panelEntity = createPanelEntity()
+        val groupEntity = createGroupEntity()
+        val anchorEntity = createAnchorEntity()
+        val activityPanelEntity = createActivityPanelEntity()
 
         // Entity manager also contains the main panel entity and activity space, which are created
         // when
         // the runtime is created.
-        assertThat(mEntityManager.getAllEntities().size()).isAtLeast(5);
-        assertThat(mEntityManager.getAllEntities())
-                .containsAtLeast(
-                        gltfEntity, panelEntity, groupEntity, anchorEntity, activityPanelEntity);
+        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
+        assertThat(entityManager.getAllEntities())
+            .containsAtLeast(
+                gltfEntity,
+                panelEntity,
+                groupEntity,
+                anchorEntity,
+                activityPanelEntity,
+            )
     }
 
     @Test
-    public void getEntityForNode_returnsEntity() {
-        GltfEntity gltfEntity = createGltfEntity();
-        PanelEntity panelEntity = createPanelEntity();
-        Entity groupEntity = createGroupEntity();
-        AnchorEntity anchorEntity = createAnchorEntity();
-        Node testNode = mXrExtensions.createNode();
+    fun getEntityForNode_returnsEntity() {
+        val gltfEntity = createGltfEntity()
+        val panelEntity = createPanelEntity()
+        val groupEntity = createGroupEntity()
+        val anchorEntity = createAnchorEntity()
+        val testNode = xrExtensions.createNode()
 
-        assertThat(mEntityManager.getEntityForNode(mGltfEntityNode)).isEqualTo(gltfEntity);
-        assertThat(mEntityManager.getEntityForNode(mPanelEntityNode)).isEqualTo(panelEntity);
-        assertThat(mEntityManager.getEntityForNode(mGroupEntityNode)).isEqualTo(groupEntity);
-        assertThat(mEntityManager.getEntityForNode(mAnchorEntityNode)).isEqualTo(anchorEntity);
-        assertThat(mEntityManager.getEntityForNode(testNode)).isNull();
+        assertThat(entityManager.getEntityForNode(gltfEntityNode)).isEqualTo(gltfEntity)
+        assertThat(entityManager.getEntityForNode(panelEntityNode)).isEqualTo(panelEntity)
+        assertThat(entityManager.getEntityForNode(groupEntityNode)).isEqualTo(groupEntity)
+        assertThat(entityManager.getEntityForNode(anchorEntityNode)).isEqualTo(anchorEntity)
+        assertThat(entityManager.getEntityForNode(testNode)).isNull()
     }
 
     @Test
-    public void getEntityByType_returnsEntityOfType() {
-        GltfEntity gltfEntity = createGltfEntity();
-        PanelEntity panelEntity = createPanelEntity();
-        Entity groupEntity = createGroupEntity();
-        AnchorEntity anchorEntity = createAnchorEntity();
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
+    fun getEntityByType_returnsEntityOfType() {
+        val gltfEntity = createGltfEntity()
+        val panelEntity = createPanelEntity()
+        val groupEntity = createGroupEntity()
+        val anchorEntity = createAnchorEntity()
+        val activityPanelEntity = createActivityPanelEntity()
 
-        assertThat(mEntityManager.getEntitiesOfType(GltfEntity.class)).containsExactly(gltfEntity);
+        assertThat(entityManager.getEntitiesOfType(GltfEntity::class.java))
+            .containsExactly(gltfEntity)
         // MainPanel is also a PanelEntity.
-        assertThat(mEntityManager.getEntitiesOfType(PanelEntity.class)).contains(panelEntity);
+        assertThat(entityManager.getEntitiesOfType(PanelEntity::class.java)).contains(panelEntity)
         // Base class of all entities.
-        assertThat(mEntityManager.getEntitiesOfType(Entity.class)).contains(groupEntity);
-        assertThat(mEntityManager.getEntitiesOfType(AnchorEntity.class))
-                .containsExactly(anchorEntity);
-        assertThat(mEntityManager.getEntitiesOfType(ActivityPanelEntity.class))
-                .containsExactly(activityPanelEntity);
-    }
-
-    @Test
-    public void removeEntity_removesFromEntityManager() {
-        GltfEntity gltfEntity = createGltfEntity();
-        PanelEntity panelEntity = createPanelEntity();
-        Entity groupEntity = createGroupEntity();
-        AnchorEntity anchorEntity = createAnchorEntity();
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-
-        assertThat(mEntityManager.getAllEntities().size()).isAtLeast(5);
-        assertThat(mEntityManager.getAllEntities())
-                .containsAtLeast(
-                        gltfEntity, panelEntity, groupEntity, anchorEntity, activityPanelEntity);
-
-        mEntityManager.removeEntityForNode(mGroupEntityNode);
-
-        assertThat(mEntityManager.getAllEntities().size()).isAtLeast(4);
-        assertThat(mEntityManager.getAllEntities()).doesNotContain(groupEntity);
-    }
-
-    @Test
-    public void disposeEntity_removesFromEntityManager() {
-        GltfEntity gltfEntity = createGltfEntity();
-        PanelEntity panelEntity = createPanelEntity();
-        Entity groupEntity = createGroupEntity();
-        AnchorEntity anchorEntity = createAnchorEntity();
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-
-        assertThat(mEntityManager.getAllEntities().size()).isAtLeast(5);
-        assertThat(mEntityManager.getAllEntities())
-                .containsAtLeast(
-                        gltfEntity, panelEntity, groupEntity, anchorEntity, activityPanelEntity);
-
-        groupEntity.dispose();
-
-        assertThat(mEntityManager.getAllEntities().size()).isAtLeast(4);
-        assertThat(mEntityManager.getAllEntities()).doesNotContain(groupEntity);
-    }
-
-    @Test
-    public void getAllSystemSpaceScenePoses_returnsAllSystemSpaceScenePoses() {
-        assertThat(mEntityManager.getAllSystemSpaceActivityPoses().size()).isAtLeast(2);
-        assertThat(mEntityManager.getAllSystemSpaceActivityPoses())
-                .containsAtLeast(
-                        mSpatialSceneRuntime.getActivitySpace(),
-                        mSpatialSceneRuntime.getPerceptionSpaceActivityPose());
-    }
-
-    @Test
-    public void getSystemSpaceScenePoseOfType_returnsSystemSpaceScenePoseOfType() {
-        assertThat(mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace.class).get(0))
-                .isInstanceOf(ActivitySpaceImpl.class);
+        assertThat(entityManager.getEntitiesOfType<Entity>(Entity::class.java))
+            .contains(groupEntity)
+        assertThat(entityManager.getEntitiesOfType<AnchorEntity>(AnchorEntity::class.java))
+            .containsExactly(anchorEntity)
         assertThat(
-                        mEntityManager
-                                .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose.class)
-                                .get(0))
-                .isInstanceOf(PerceptionSpaceScenePoseImpl.class);
+                entityManager.getEntitiesOfType<ActivityPanelEntity>(
+                    ActivityPanelEntity::class.java
+                )
+            )
+            .containsExactly(activityPanelEntity)
     }
 
     @Test
-    public void clearEntityManager_removesAllEntityFromEntityManager() {
-        GltfEntity gltfEntity = createGltfEntity();
-        PanelEntity panelEntity = createPanelEntity();
-        Entity groupEntity = createGroupEntity();
-        AnchorEntity anchorEntity = createAnchorEntity();
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
+    fun removeEntity_removesFromEntityManager() {
+        val gltfEntity = createGltfEntity()
+        val panelEntity = createPanelEntity()
+        val groupEntity = createGroupEntity()
+        val anchorEntity = createAnchorEntity()
+        val activityPanelEntity = createActivityPanelEntity()
 
-        assertThat(mEntityManager.getAllEntities().size()).isAtLeast(5);
-        assertThat(mEntityManager.getAllEntities())
-                .containsAtLeast(
-                        gltfEntity, panelEntity, groupEntity, anchorEntity, activityPanelEntity);
+        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
+        assertThat(entityManager.getAllEntities())
+            .containsAtLeast(
+                gltfEntity,
+                panelEntity,
+                groupEntity,
+                anchorEntity,
+                activityPanelEntity,
+            )
 
-        mEntityManager.clear();
+        entityManager.removeEntityForNode(groupEntityNode)
 
-        assertThat(mEntityManager.getAllEntities()).isEmpty();
-        assertThat(mEntityManager.getAllSystemSpaceActivityPoses()).isEmpty();
+        assertThat(entityManager.getAllEntities().size).isAtLeast(4)
+        assertThat(entityManager.getAllEntities()).doesNotContain(groupEntity)
     }
 
     @Test
-    public void setEntityForMultipleNodes_getEntityForNode_returnsSameEntityForBothNodes() {
-        GltfEntity primaryEntity = createGltfEntity();
-        Node primaryNode = ((AndroidXrEntity) primaryEntity).getNode();
+    fun disposeEntity_removesFromEntityManager() {
+        val gltfEntity = createGltfEntity()
+        val panelEntity = createPanelEntity()
+        val groupEntity = createGroupEntity()
+        val anchorEntity = createAnchorEntity()
+        val activityPanelEntity = createActivityPanelEntity()
 
-        Node aliasNode = mXrExtensions.createNode();
+        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
+        assertThat(entityManager.getAllEntities())
+            .containsAtLeast(
+                gltfEntity,
+                panelEntity,
+                groupEntity,
+                anchorEntity,
+                activityPanelEntity,
+            )
 
-        mEntityManager.setEntityForNode(aliasNode, primaryEntity);
+        groupEntity.dispose()
 
-        assertThat(mEntityManager.getEntityForNode(primaryNode)).isSameInstanceAs(primaryEntity);
-        assertThat(mEntityManager.getEntityForNode(aliasNode)).isSameInstanceAs(primaryEntity);
+        assertThat(entityManager.getAllEntities().size).isAtLeast(4)
+        assertThat(entityManager.getAllEntities()).doesNotContain(groupEntity)
     }
 
     @Test
-    public void setEntityForMultipleNodes_getAllEntities_returnsNonDuplicateEntities() {
-        GltfEntity primaryEntity = createGltfEntity();
+    fun getAllSystemSpaceScenePoses_returnsAllSystemSpaceScenePoses() {
+        assertThat(entityManager.getAllSystemSpaceActivityPoses().size).isAtLeast(2)
+        assertThat(entityManager.getAllSystemSpaceActivityPoses())
+            .containsAtLeast(
+                spatialSceneRuntime.activitySpace,
+                spatialSceneRuntime.perceptionSpaceActivityPose,
+            )
+    }
 
-        Node aliasNode = mXrExtensions.createNode();
+    @Test
+    fun getSystemSpaceScenePoseOfType_returnsSystemSpaceScenePoseOfType() {
+        assertThat(entityManager.getSystemSpaceActivityPoseOfType(ActivitySpace::class.java).get(0))
+            .isInstanceOf(ActivitySpaceImpl::class.java)
+        assertThat(
+                entityManager
+                    .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)
+                    .get(0)
+            )
+            .isInstanceOf(PerceptionSpaceScenePoseImpl::class.java)
+    }
 
-        mEntityManager.setEntityForNode(aliasNode, primaryEntity);
+    @Test
+    fun clearEntityManager_removesAllEntityFromEntityManager() {
+        val gltfEntity = createGltfEntity()
+        val panelEntity = createPanelEntity()
+        val groupEntity = createGroupEntity()
+        val anchorEntity = createAnchorEntity()
+        val activityPanelEntity = createActivityPanelEntity()
 
-        assertThat(mEntityManager.getAllEntities()).containsNoDuplicates();
+        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
+        assertThat(entityManager.getAllEntities())
+            .containsAtLeast(
+                gltfEntity,
+                panelEntity,
+                groupEntity,
+                anchorEntity,
+                activityPanelEntity,
+            )
+
+        entityManager.clear()
+
+        assertThat(entityManager.getAllEntities()).isEmpty()
+        assertThat(entityManager.getAllSystemSpaceActivityPoses()).isEmpty()
+    }
+
+    @Test
+    fun setEntityForMultipleNodes_getEntityForNode_returnsSameEntityForBothNodes() {
+        val primaryEntity = createGltfEntity()
+        val primaryNode = (primaryEntity as AndroidXrEntity).getNode()
+
+        val aliasNode = xrExtensions.createNode()
+
+        entityManager.setEntityForNode(aliasNode, primaryEntity)
+
+        assertThat(entityManager.getEntityForNode(primaryNode)).isSameInstanceAs(primaryEntity)
+        assertThat(entityManager.getEntityForNode(aliasNode)).isSameInstanceAs(primaryEntity)
+    }
+
+    @Test
+    fun setEntityForMultipleNodes_getAllEntities_returnsNonDuplicateEntities() {
+        val primaryEntity = createGltfEntity()
+
+        val aliasNode = xrExtensions.createNode()
+
+        entityManager.setEntityForNode(aliasNode, primaryEntity)
+
+        assertThat(entityManager.getAllEntities()).containsNoDuplicates()
     }
 
     /** Creates a generic glTF entity. */
-    private GltfEntity createGltfEntity() {
-        NodeHolder<?> nodeHolder = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
-        GltfEntityImpl gltfEntity =
-                new GltfEntityImpl(
-                        mActivity,
-                        new FakeGltfFeature(nodeHolder),
-                        mActivitySpaceRoot,
-                        mXrExtensions,
-                        mEntityManager,
-                        mExecutor);
-        mGltfEntityNode = gltfEntity.getNode();
-        mEntityManager.setEntityForNode(mGltfEntityNode, gltfEntity);
-        return gltfEntity;
+    private fun createGltfEntity(): GltfEntity {
+        val nodeHolder = NodeHolder<Node>(xrExtensions.createNode(), Node::class.java)
+        val gltfEntity =
+            GltfEntityImpl(
+                activity,
+                FakeGltfFeature(nodeHolder),
+                activitySpace,
+                xrExtensions,
+                entityManager,
+                fakeScheduledExecutorService,
+            )
+        gltfEntityNode = gltfEntity.getNode()
+        entityManager.setEntityForNode(gltfEntityNode, gltfEntity)
+        return gltfEntity
     }
 
-    private PanelEntity createPanelEntity() {
-        Display display = mActivity.getSystemService(DisplayManager.class).getDisplays()[0];
-        Context displayContext = mActivity.createDisplayContext(display);
-        View view = new View(displayContext);
-        view.setLayoutParams(new LayoutParams(VGA_WIDTH, VGA_HEIGHT));
-        PanelEntityImpl panelEntity =
-                new PanelEntityImpl(
-                        displayContext,
-                        mPanelEntityNode,
-                        view,
-                        mXrExtensions,
-                        mEntityManager,
-                        new PixelDimensions(VGA_WIDTH, VGA_HEIGHT),
-                        "panel",
-                        mExecutor);
-        mEntityManager.setEntityForNode(mPanelEntityNode, panelEntity);
-        return panelEntity;
+    private fun createPanelEntity(): PanelEntity {
+        val display = activity!!.getSystemService(DisplayManager::class.java).displays[0]
+        val displayContext = activity.createDisplayContext(display!!)
+        val view = View(displayContext)
+        view.setLayoutParams(ViewGroup.LayoutParams(VGA_WIDTH, VGA_HEIGHT))
+        val panelEntity =
+            PanelEntityImpl(
+                displayContext,
+                panelEntityNode,
+                view,
+                xrExtensions,
+                entityManager,
+                PixelDimensions(VGA_WIDTH, VGA_HEIGHT),
+                "panel",
+                fakeScheduledExecutorService,
+            )
+        entityManager.setEntityForNode(panelEntityNode, panelEntity)
+        return panelEntity
     }
 
-    private Entity createGroupEntity() {
-        Entity groupEntity =
-                mSpatialSceneRuntime.createGroupEntity(
-                        new Pose(), "testGroup", mSpatialSceneRuntime.getActivitySpace());
-        mGroupEntityNode = ((AndroidXrEntity) groupEntity).getNode();
-        mEntityManager.setEntityForNode(mGroupEntityNode, groupEntity);
-        return groupEntity;
+    private fun createGroupEntity(): Entity {
+        val groupEntity =
+            spatialSceneRuntime.createGroupEntity(
+                Pose(),
+                "testGroup",
+                spatialSceneRuntime.activitySpace,
+            )
+        groupEntityNode = (groupEntity as AndroidXrEntity).getNode()
+        entityManager.setEntityForNode(groupEntityNode, groupEntity)
+        return groupEntity
     }
 
-    private AnchorEntity createAnchorEntity() {
-        AnchorEntityImpl anchorEntity =
-                AnchorEntityImpl.create(
-                        mActivity,
-                        mAnchorEntityNode,
-                        mActivitySpace,
-                        mXrExtensions,
-                        mEntityManager,
-                        mExecutor);
-        mEntityManager.setEntityForNode(mAnchorEntityNode, anchorEntity);
-        return anchorEntity;
+    private fun createAnchorEntity(): AnchorEntity {
+        val anchorEntity =
+            AnchorEntityImpl.create(
+                activity,
+                anchorEntityNode,
+                activitySpace,
+                xrExtensions,
+                entityManager,
+                fakeScheduledExecutorService,
+            )
+        entityManager.setEntityForNode(anchorEntityNode, anchorEntity)
+        return anchorEntity
     }
 
-    private ActivityPanelEntity createActivityPanelEntity() {
-        return mSpatialSceneRuntime.createActivityPanelEntity(
-                new Pose(),
-                new PixelDimensions(VGA_WIDTH, VGA_HEIGHT),
-                "test",
-                mActivity,
-                mActivitySpace);
+    private fun createActivityPanelEntity(): ActivityPanelEntity {
+        return spatialSceneRuntime.createActivityPanelEntity(
+            Pose(),
+            PixelDimensions(VGA_WIDTH, VGA_HEIGHT),
+            "test",
+            activity!!,
+            activitySpace,
+        )
+    }
+
+    companion object {
+        private const val VGA_WIDTH = 640
+        private const val VGA_HEIGHT = 480
     }
 }

@@ -14,108 +14,85 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+@file:Suppress("BanConcurrentHashMap")
 
-import static java.util.stream.Collectors.toCollection;
+package androidx.xr.scenecore.spatial.core
 
-import androidx.annotation.RestrictTo;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.ScenePose;
+import androidx.annotation.RestrictTo
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.ScenePose
+import com.android.extensions.xr.node.Node
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
-import com.android.extensions.xr.node.Node;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-/**
- * Manages the mapping between {@link Node} and {@link Entity} for a given {@link
- * SpatialSceneRuntime}.
- */
-@SuppressWarnings("BanConcurrentHashMap")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-// TODO(b/452961674): Review RestrictTo annotations in SceneCore.
-public final class EntityManager {
-    private final Map<Node, Entity> mNodeEntityMap = new ConcurrentHashMap<>();
-    private final List<ScenePose> mSystemSpaces = new ArrayList<>();
+/** Manages the mapping between [Node] and [Entity]. */
+@RestrictTo(
+    RestrictTo.Scope.LIBRARY_GROUP
+) // TODO(b/452961674): Review RestrictTo annotations in SceneCore.
+public class EntityManager public constructor() {
+    private val nodeEntityMap = ConcurrentHashMap<Node, Entity>()
+    private val systemSpaces = CopyOnWriteArrayList<ScenePose>()
 
     /**
-     * Returns the {@link Entity} associated with the given {@link Node}.
+     * Returns the [Entity] associated with the given [Node].
      *
-     * @param node the {@link Node} to get the associated {@link Entity} for.
-     * @return the {@link Entity} associated with the given {@link Node}, or null if no such {@link
-     *     Entity} exists.
+     * @param node the [Node] to get the associated [Entity] for.
+     * @return the [Entity] associated with the given [Node], or null if no such [ ] exists.
      */
-    @Nullable Entity getEntityForNode(@NonNull Node node) {
-        return mNodeEntityMap.get(node);
+    public fun getEntityForNode(node: Node): Entity? {
+        return nodeEntityMap[node]
     }
 
     /**
-     * Sets the {@link Entity} associated with the given {@link Node}.
+     * Sets the [Entity] associated with the given [Node].
      *
-     * @param node the {@link Node} to set the associated {@link Entity} for.
-     * @param entity the {@link Entity} to associate with the given {@link Node}.
+     * @param node the [Node] to set the associated [Entity] for.
+     * @param entity the [Entity] to associate with the given [Node].
      */
-    void setEntityForNode(@NonNull Node node, @NonNull Entity entity) {
-        mNodeEntityMap.put(node, entity);
+    public fun setEntityForNode(node: Node, entity: Entity) {
+        nodeEntityMap[node] = entity
     }
 
     /**
-     * Returns a list of all {@link Entity}s of type {@code T} (including subtypes of {@code T}).
+     * Returns a list of all [Entity]s of type `T` (including subtypes of `T`).
      *
-     * @param entityClass the type of {@link Entity} to return.
-     * @return a list of all {@link Entity}s of type {@code T} (including subtypes of {@code T}).
+     * @param type the type of [Entity] to return.
+     * @return a list of all [Entity]s of type `T` (including subtypes of `T`).
      */
-    <T extends Entity> List<T> getEntitiesOfType(@NonNull Class<T> entityClass) {
-        return mNodeEntityMap.values().stream()
-                .distinct()
-                .filter(entityClass::isInstance)
-                .map(entityClass::cast)
-                .collect(toCollection(ArrayList::new));
-    }
+    public fun <T : Entity> getEntitiesOfType(type: Class<out T>): List<T> =
+        nodeEntityMap.values.distinct().filterIsInstance(type).toList()
 
-    /** Returns a collection of all {@link Entity}s. */
-    Collection<Entity> getAllEntities() {
-        return mNodeEntityMap.values().stream().distinct().collect(toCollection(ArrayList::new));
-    }
+    /** Returns a collection of all [Entity]s. */
+    public fun getAllEntities(): Collection<Entity> = nodeEntityMap.values.distinct()
 
-    /** Removes the given {@link Node} from the map. */
-    void removeEntityForNode(@NonNull Node node) {
-        mNodeEntityMap.remove(node);
+    /** Removes the given [Node] from the map. */
+    public fun removeEntityForNode(node: Node) {
+        nodeEntityMap.remove(node)
     }
 
     /** Adds a system space activity pose to the EntityManager. */
-    void addSystemSpaceActivityPose(@NonNull ScenePose systemSpaceScenePose) {
-        mSystemSpaces.add(systemSpaceScenePose);
+    public fun addSystemSpaceActivityPose(systemSpaceScenePose: ScenePose) {
+        systemSpaces.add(systemSpaceScenePose)
     }
 
     /** Returns a collection of all system space activity poses. */
-    List<ScenePose> getAllSystemSpaceActivityPoses() {
-        return mSystemSpaces;
+    public fun getAllSystemSpaceActivityPoses(): List<ScenePose> {
+        return systemSpaces
     }
 
     /**
-     * Returns a list of all {@link ScenePose}s of type {@code T} (including subtypes of {@code T}).
+     * Returns a list of all [ScenePose]s of type `T` (including subtypes of `T`).
      *
-     * @param systemSpaceScenePoseClass the type of {@link ScenePose} to return.
-     * @return a list of all {@link ScenePose}s of type {@code T} (including subtypes of {@code T}).
+     * @param systemSpaceScenePoseClass the type of [ScenePose] to return.
+     * @return a list of all [ScenePose]s of type `T` (including subtypes of `T`).
      */
-    <T extends ScenePose> List<T> getSystemSpaceActivityPoseOfType(
-            @NonNull Class<T> systemSpaceScenePoseClass) {
-        return mSystemSpaces.stream()
-                .filter(systemSpaceScenePoseClass::isInstance)
-                .map(systemSpaceScenePoseClass::cast)
-                .collect(toCollection(ArrayList::new));
-    }
+    public fun <T : ScenePose> getSystemSpaceActivityPoseOfType(
+        systemSpaceScenePoseClass: Class<T>
+    ): List<T> = systemSpaces.filterIsInstance(systemSpaceScenePoseClass).toList()
 
     /** Clears the EntityManager. */
-    void clear() {
-        mNodeEntityMap.clear();
-        mSystemSpaces.clear();
+    public fun clear() {
+        nodeEntityMap.clear()
+        systemSpaces.clear()
     }
 }
