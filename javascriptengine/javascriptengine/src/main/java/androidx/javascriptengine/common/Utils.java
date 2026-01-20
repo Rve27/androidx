@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Utility methods for use in both service and client side of JavaScriptEngine.
@@ -70,6 +71,9 @@ public class Utils {
 
     /**
      * Creates a pipe, writes the given bytes into one end and returns the other end.
+     *
+     * @throws RejectedExecutionException if the ExecutorService rejects the task used for writing
+     * the bytes in the background.
      */
     @NonNull
     public static AssetFileDescriptor writeBytesIntoPipeAsync(byte @NonNull [] inputBytes,
@@ -79,8 +83,13 @@ public class Utils {
         ParcelFileDescriptor writeSide = pipe[1];
         OutputStream outputStream =
                 new ParcelFileDescriptor.AutoCloseOutputStream(writeSide);
-        executorService.execute(
-                () -> Utils.writeByteArrayToStream(inputBytes, outputStream));
+        try {
+            executorService.execute(
+                    () -> Utils.writeByteArrayToStream(inputBytes, outputStream));
+        } catch (RejectedExecutionException e) {
+            closeQuietly(outputStream);
+            throw e;
+        }
         return new AssetFileDescriptor(readSide, 0, inputBytes.length);
     }
 

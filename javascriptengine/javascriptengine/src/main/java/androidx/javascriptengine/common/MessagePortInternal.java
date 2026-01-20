@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -318,6 +319,13 @@ public final class MessagePortInternal {
                     throw new RuntimeException(e);
                 }
             }
+        } catch (RejectedExecutionException e) {
+            // On the app side, this probably means the sandbox is closed, but it could also mean
+            // something has gone horribly wrong (like exhausting a task queue limit), which should
+            // be handled separately.
+            //
+            // At the very least, it's no longer valid to send messages on this port.
+            closeLocally();
         } catch (DeadObjectException e) {
             // The remote process has died, so we can ignore this error.
         } catch (RemoteException e) {
@@ -344,6 +352,13 @@ public final class MessagePortInternal {
                     throw new RuntimeException(e);
                 }
             }
+        } catch (RejectedExecutionException e) {
+            // On the app side, this probably means the sandbox is closed, but it could also mean
+            // something has gone horribly wrong (like exhausting a task queue limit), which should
+            // be handled separately.
+            //
+            // At the very least, it's no longer valid to send messages on this port.
+            closeLocally();
         } catch (DeadObjectException e) {
             // The remote process has died, so we can ignore this error.
         } catch (RemoteException e) {
