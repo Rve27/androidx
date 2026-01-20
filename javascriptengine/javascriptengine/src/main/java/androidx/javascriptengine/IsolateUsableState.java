@@ -446,13 +446,13 @@ final class IsolateUsableState implements IsolateState {
                 try {
                     mJsIsolateStub.evaluateJavascriptWithFd(codeAfd,
                             callbackStub);
+                    addPending(completer);
                 } catch (DeadObjectException e) {
                     final TerminationInfo terminationInfo = killSandbox(e);
                     completer.setException(terminationInfo.toJavaScriptException());
                 } catch (RemoteException | RuntimeException e) {
                     throw killSandboxAndGetRuntimeException(e);
                 }
-                addPending(completer);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
