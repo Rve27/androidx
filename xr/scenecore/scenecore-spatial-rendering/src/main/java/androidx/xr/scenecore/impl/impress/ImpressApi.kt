@@ -96,8 +96,8 @@ public interface ImpressApi {
     /**
      * Specifies the color standard of the content.
      *
-     * Values here match values from androidx.media3.common.C.ColorSpace For the enum values, please
-     * see:
+     * Values here match values from androidx.media3.common.C.ColorSpace. For the enum values,
+     * please see:
      * https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/media/java/android/media/MediaFormat.java
      */
     @Retention(AnnotationRetention.SOURCE)
@@ -128,7 +128,7 @@ public interface ImpressApi {
     /**
      * Specifies the transfer function of the content.
      *
-     * Values here match values from androidx.media3.common.C.ColorTransfer For the enum values
+     * Values here match values from androidx.media3.common.C.ColorTransfer. For the enum values
      * (except sRGB and Gamma 2.2), please see:
      * https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/media/java/android/media/MediaFormat.java
      */
@@ -155,8 +155,8 @@ public interface ImpressApi {
     /**
      * Specifies the color range of the content.
      *
-     * Values here match values from androidx.media3.common.C.ColorRange For the enum values, please
-     * see:
+     * Values here match values from androidx.media3.common.C.ColorRange. For the enum values,
+     * please see:
      * https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/media/java/android/media/MediaFormat.java
      */
     @Retention(AnnotationRetention.SOURCE)
@@ -254,9 +254,9 @@ public interface ImpressApi {
     public fun setGltfReformAffordanceEnabled(impressNode: ImpressNode, enabled: Boolean)
 
     /**
-     * Starts an animation on an instanced GLTFModel.
+     * Starts an animation on an instanced glTF model.
      *
-     * @param impressNode The object of the Impress node for the instance of the GLTF
+     * @param impressNode The object of the Impress node for the instance of the glTF model.
      * @param animationName A nullable String which contains a requested animation to play. If null
      *   is provided, this will attempt to play the first animation it finds
      * @param looping True if the animation should loop. Note that if the animation is looped, the
@@ -272,16 +272,16 @@ public interface ImpressApi {
     ): Void?
 
     /**
-     * Stops an animation on an instanced GLTFModel.
+     * Stops an animation on an instanced glTF model.
      *
-     * @param impressNode The object of the Impress node for the instance of the GLTF
+     * @param impressNode The object of the Impress node for the instance of the glTF model.
      */
     public fun stopGltfModelAnimation(impressNode: ImpressNode)
 
     /**
      * Toggles the playback of a glTF model's animation to pause or resume.
      *
-     * @param impressNode The object of the Impress node for the instance of the GLTF
+     * @param impressNode The object of the Impress node for the instance of the glTF model.
      * @param playing `true` to resume the animation, `false` to pause it.
      */
     public fun toggleGltfModelAnimation(impressNode: ImpressNode, playing: Boolean)
@@ -297,7 +297,7 @@ public interface ImpressApi {
      * centered at the origin. The concrete implementation should query the underlying rendering
      * engine for the actual bounds.
      *
-     * @param impressNode The integer ID of the Impress node for the instance of the glTF.
+     * @param impressNode The integer ID of the Impress node for the instance of the glTF model.
      * @return A [BoundingBox] object representing the model's bounding box. The
      *   [BoundingBox.center] defines the geometric center of the box, and the
      *   [BoundingBox.halfExtents] defines the distance from the center to each face. The total size
@@ -317,7 +317,7 @@ public interface ImpressApi {
 
     /**
      * This method creates an Impress node with a stereo panel and returns the node object. Note
-     * that the StereoSurfaceEntity will not be render anything until the canvas shape is set.
+     * that the StereoSurfaceEntity will not render anything until the canvas shape is set.
      * Furthermore, the surface cannot be used to render secure content.
      *
      * @param stereoMode The [Int] stereoMode to apply. Must be a member of StereoMode.
@@ -329,7 +329,7 @@ public interface ImpressApi {
 
     /**
      * This method creates an Impress node with a stereo panel and returns the node object. Note
-     * that the StereoSurfaceEntity will not be render anything until the canvas shape is set.
+     * that the StereoSurfaceEntity will not render anything until the canvas shape is set.
      *
      * @param stereoMode The [Int] stereoMode to apply. Must be a member of StereoMode.
      * @param contentSecurityLevel The [Int] contentSecurityLevel to apply. Must be a member of
@@ -344,7 +344,7 @@ public interface ImpressApi {
 
     /**
      * This method creates an Impress node with a stereo panel and returns the node object. Note
-     * that the StereoSurfaceEntity will not be render anything until the canvas shape is set.
+     * that the StereoSurfaceEntity will not render anything until the canvas shape is set.
      *
      * @param stereoMode The [Int] stereoMode to apply. Must be a member of StereoMode.
      * @param contentSecurityLevel The [Int] contentSecurityLevel to apply. Must be a member of
@@ -362,7 +362,7 @@ public interface ImpressApi {
 
     /**
      * This method creates an Impress node with a stereo panel and returns the node object. Note
-     * that the StereoSurfaceEntity will not be render anything until the canvas shape is set.
+     * that the StereoSurfaceEntity will not render anything until the canvas shape is set.
      *
      * @param stereoMode The [Int] stereoMode to apply. Must be a member of StereoMode.
      * @param mediaBlendingMode The [Int] mediaBlendingMode to apply. Must be a member of
@@ -383,7 +383,7 @@ public interface ImpressApi {
     ): ImpressNode
 
     /**
-     * This method sets the Surface pixel dimenesions for a StereoSurfaceEntity.
+     * This method sets the Surface pixel dimensions for a StereoSurfaceEntity.
      *
      * @param impressNode The Impress node which hosts the StereoSurfaceEntity to be updated.
      * @param width The width in pixels to set the buffer size for the Surface.
