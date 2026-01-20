@@ -196,11 +196,13 @@ public abstract class RemoteFloat : BaseRemoteState<Float>() {
             constantValueOrNull = null,
             object : LazyRemoteString {
                 override fun reserveTextId(creationState: RemoteComposeCreationState): Int {
-                    return creationState.document.createTextFromFloat(
-                        getFloatIdForCreationState(creationState),
-                        before,
-                        after,
-                        flags,
+                    return creationState.createTextFromFloat(
+                        RemoteComposeCreationState.TextFromFloatParams(
+                            getIdForCreationState(creationState),
+                            before,
+                            after,
+                            flags,
+                        )
                     )
                 }
 
