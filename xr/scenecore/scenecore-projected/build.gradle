@@ -27,6 +27,7 @@ plugins {
     id("AndroidXPlugin")
     id("com.android.library")
     id("com.android.experimental.built-in-kotlin")
+    id("androidx.stableaidl")
 }
 
 dependencies {
@@ -37,6 +38,15 @@ android {
     namespace = "androidx.xr.scenecore.projected"
     defaultConfig {
         minSdk { version = release(24) }
+    }
+    buildFeatures {
+        aidl = true
+    }
+
+    buildTypes.all {
+        stableAidl {
+            version = 1
+        }
     }
 }
 
