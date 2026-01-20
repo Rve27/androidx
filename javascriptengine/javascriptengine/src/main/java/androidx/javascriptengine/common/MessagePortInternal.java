@@ -218,7 +218,7 @@ public final class MessagePortInternal {
      * Creates a new MessagePortInternal that can later be entangled.
      *
      * @param executorService The ExecutorService that will run the pipe reading.
-     * @param maxMessageSize The maximum size allowed for a received message.
+     * @param maxMessageSize The maximum size in bytes allowed for a received message.
      * @return a new MessagePortInternal.
      */
     public MessagePortInternal(@NonNull ExecutorService executorService, int maxMessageSize) {
