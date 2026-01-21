@@ -16,8 +16,6 @@
 
 package androidx.compose.foundation
 
-import androidx.compose.foundation.gestures.detectTapAndPress
-import androidx.compose.foundation.gestures.detectTapGestures
 import kotlin.jvm.JvmField
 
 /**
@@ -54,13 +52,6 @@ import kotlin.jvm.JvmField
  */
 @ExperimentalFoundationApi
 object ComposeFoundationFlags {
-    /**
-     * Whether to use more immediate coroutine dispatching in [detectTapGestures] and
-     * [detectTapAndPress], true by default.
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isDetectTapGesturesImmediateCoroutineDispatchEnabled = true
 
     /**
      * Whether to use the new context menu API and default implementations in

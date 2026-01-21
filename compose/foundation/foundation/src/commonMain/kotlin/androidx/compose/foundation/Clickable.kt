@@ -17,10 +17,8 @@
 package androidx.compose.foundation
 
 import androidx.collection.mutableLongObjectMapOf
-import androidx.compose.foundation.ComposeFoundationFlags.isDetectTapGesturesImmediateCoroutineDispatchEnabled
 import androidx.compose.foundation.gestures.PressGestureScope
 import androidx.compose.foundation.gestures.ScrollableContainerNode
-import androidx.compose.foundation.gestures.detectTapAndPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.isChangedToDown
 import androidx.compose.foundation.interaction.HoverInteraction
@@ -680,6 +678,7 @@ private val KeyEvent.isEnter: Boolean
             Key.Enter,
             Key.NumPadEnter,
             Key.Spacebar -> true
+
             else -> false
         }
 
@@ -870,27 +869,6 @@ internal open class ClickableNode(
         onClick = onClick,
     ) {
 
-    @OptIn(ExperimentalFoundationApi::class)
-    private val isSuspendingPointerInputEnabled =
-        // old behavior prior this flag was heavily relying on coroutines dispatching
-        !isDetectTapGesturesImmediateCoroutineDispatchEnabled
-
-    override fun createPointerInputNodeIfNeeded(): SuspendingPointerInputModifierNode? =
-        if (isSuspendingPointerInputEnabled) {
-            SuspendingPointerInputModifierNode {
-                detectTapAndPress(
-                    onPress = { offset ->
-                        if (enabled) {
-                            handlePressInteraction(offset)
-                        }
-                    },
-                    onTap = { if (enabled) onClick() },
-                )
-            }
-        } else {
-            null
-        }
-
     private fun getExtendedTouchPadding(size: IntSize): Size {
         // copied from SuspendingPointerInputModifierNodeImpl.extendedTouchPadding:
         // TODO expose this as a new public api available outside of suspending apis b/422396609
@@ -911,9 +889,6 @@ internal open class ClickableNode(
         bounds: IntSize,
     ) {
         super.onPointerEvent(pointerEvent, pass, bounds)
-        if (isSuspendingPointerInputEnabled) {
-            return
-        }
         if (pass == PointerEventPass.Main) {
             val downEvent = this.downEvent
             if (downEvent == null) {
@@ -1298,8 +1273,10 @@ internal abstract class AbstractClickableNode(
     /**
      * Handles subclass-specific click related pointer input logic. Hover is already handled
      * elsewhere, so this should only handle clicks.
+     *
+     * TODO(b/477836055) Migrate to non-suspending API.
      */
-    abstract fun createPointerInputNodeIfNeeded(): SuspendingPointerInputModifierNode?
+    open fun createPointerInputNodeIfNeeded(): SuspendingPointerInputModifierNode? = null
 
     open fun SemanticsPropertyReceiver.applyAdditionalSemantics() {}
 
@@ -1550,6 +1527,7 @@ internal abstract class AbstractClickableNode(
                 }
                 onClickKeyDownEvent(event) || wasInteractionHandled
             }
+
             enabled && event.isClick -> {
                 val press = currentKeyPressInteractions.remove(keyCode)
                 if (press != null) {
@@ -1565,6 +1543,7 @@ internal abstract class AbstractClickableNode(
                 // Only consume if we were previously pressed for this key event
                 press != null
             }
+
             else -> false
         }
     }
