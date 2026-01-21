@@ -24,6 +24,7 @@ import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import kotlin.math.pow
@@ -220,6 +221,49 @@ internal constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
         /**
+         * Creates a [RemoteColor] from a literal [Color] value.
+         *
+         * @param value The [Color] value.
+         * @return A [RemoteColor] representing the constant color.
+         */
+        public operator fun invoke(value: Color): RemoteColor = RemoteColor(value)
+
+        /**
+         * Creates a [RemoteColor] referencing a remote ID.
+         *
+         * @param id The remote ID.
+         * @return A [RemoteColor] referencing the ID.
+         */
+        internal fun createForId(id: Int): RemoteColor = RemoteColor(idProvider = { id })
+
+        /**
+         * Creates a named [RemoteColor] with an initial value. Named remote colors can be set via
+         * AndroidRemoteContext.setNamedColor.
+         *
+         * @param name The unique name for this remote color.
+         * @param domain The domain of the named color (defaults to [RemoteState.Domain.User]).
+         * @param initialValue The initial [Color] value for the named remote color.
+         * @return A [RemoteColor] representing the named color.
+         */
+        @JvmStatic
+        public fun createNamedRemoteColor(
+            name: String,
+            initialValue: Color,
+            domain: RemoteState.Domain = RemoteState.Domain.User,
+        ): RemoteColor {
+            return RemoteColor(
+                constantValueOrNull = null,
+                alpha = null,
+                red = null,
+                green = null,
+                blue = null,
+                idProvider = { creationState ->
+                    creationState.document.addNamedColor("$domain:$name", initialValue.toArgb())
+                },
+            )
+        }
+
+        /**
          * Creates a [RemoteColor] from remote [hue], [saturation], and [value] (brightness)
          * components. The resulting color is expressed as a [RemoteColor] expression that combines
          * these inputs.
@@ -336,27 +380,50 @@ internal constructor(
 }
 
 /**
- * A Composable function to remember and provide a named [RemoteColor].
+ * Remembers a named remote color expression.
  *
  * @param name The unique name for this remote color.
- * @param domain The domain of the named color (defaults to "USER").
+ * @param domain The domain of the named color (defaults to [RemoteState.Domain.User]).
+ * @param value The initial value.
+ * @return A [RemoteColor] representing the named remote color expression.
+ */
+@Composable
+@RemoteComposable
+public fun rememberNamedRemoteColor(
+    name: String,
+    value: Color,
+    domain: RemoteState.Domain = RemoteState.Domain.User,
+): RemoteColor {
+    val idFactory =
+        remember(name, domain) {
+            Memorize { creationState ->
+                val id = creationState.document.addNamedColor("$domain:$name", value.toArgb())
+                id
+            }
+        }
+
+    return rememberNamedState(name, domain) {
+        RemoteColor { creationState -> idFactory.getId(creationState) }
+    }
+}
+
+/**
+ * A Composable function to remember and provide a named mutable [RemoteColor].
+ *
+ * @param name The unique name for this remote color.
+ * @param domain The domain of the named color (defaults to [RemoteState.Domain.User]).
  * @param value A lambda that provides the initial [Color] value.
  * @return A [RemoteColor] instance that will be remembered across recompositions.
  */
 @Composable
 @RemoteComposable
+@Deprecated("Use rememberNamedRemoteColor with content lambda providing RemoteColor")
 public fun rememberRemoteColor(
     name: String,
     domain: RemoteState.Domain = RemoteState.Domain.User,
     value: () -> Color,
 ): RemoteColor {
-    return rememberNamedState(name, domain) {
-        val color = value().toArgb()
-        val idFactory = Memorize { creationState ->
-            creationState.document.addNamedColor("$domain:$name", color)
-        }
-        RemoteColor(idProvider = { creationState -> idFactory.getId(creationState) })
-    }
+    return rememberNamedRemoteColor(name, value(), domain)
 }
 
 /** The same calculation as [Utils.interpolateColor]. */
