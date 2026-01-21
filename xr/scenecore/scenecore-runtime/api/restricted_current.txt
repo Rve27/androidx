@@ -1199,7 +1199,7 @@ package androidx.xr.scenecore.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SystemSpaceEntity extends androidx.xr.scenecore.runtime.Entity {
-    method public void setOnSpaceUpdatedListener(Runnable? listener, java.util.concurrent.Executor? executor);
+    method public void setOnOriginChangedListener(Runnable? listener, java.util.concurrent.Executor? executor);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface TextureResource extends androidx.xr.scenecore.runtime.Resource {
