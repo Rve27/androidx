@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 @file:Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 
-package androidx.compose.runtime.composer.gapbuffer.changelist
+package androidx.compose.runtime.composer.linkbuffer.changelist
 
 import androidx.compose.runtime.Applier
 import androidx.compose.runtime.EnableDebugRuntimeChecks
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.collection.fastCopyInto
+import androidx.compose.runtime.composer.DebugStringFormattable
 import androidx.compose.runtime.composer.RememberManager
-import androidx.compose.runtime.composer.gapbuffer.SlotWriter
-import androidx.compose.runtime.composer.gapbuffer.changelist.Operation.ObjectParameter
+import androidx.compose.runtime.composer.gapbuffer.changelist.OperationErrorContext
+import androidx.compose.runtime.composer.linkbuffer.SlotTableEditor
+import androidx.compose.runtime.composer.linkbuffer.changelist.Operation.ObjectParameter
 import androidx.compose.runtime.debugRuntimeCheck
 import androidx.compose.runtime.requirePrecondition
 import kotlin.contracts.ExperimentalContracts
@@ -47,7 +49,25 @@ internal const val OperationsInitialCapacity = 16
  *
  * `Operations` is not a thread safe data structure.
  */
-internal class Operations : OperationsDebugStringFormattable() {
+internal class Operations : DebugStringFormattable() {
+
+    /**
+     * Indicates whether this sequence of operations contains externally visible effects.
+     * Effectively, this tracks whether this sequence of operation only contains operations that
+     * clear invalidations in the SlotTable, or whether a structural change to the composition has
+     * occurred. In either case, the sequence of operations still need to run for the results of
+     * composition to be accepted.
+     *
+     * If true, the operations in this list require executing in a standard applier phase. If false,
+     * then the operations can be executed without an Applier or RememberManager, and will not
+     * trigger any externally visible changes or side effects.
+     *
+     * This field is maintained as the aggregate of all contained [Operation.isExternallyVisible]
+     * or-ed together.
+     */
+    var requiresApplication = false
+        private set
+
     // To create an array of non-nullable references, Kotlin would normally force us to pass an
     // initializer lambda to the array constructor, which could be expensive for larger arrays.
     // Using an array of Operation? allows us to bypass the initialization of every entry, but it
@@ -96,6 +116,7 @@ internal class Operations : OperationsDebugStringFormattable() {
         // Clear the object arguments array to prevent leaking memory
         objectArgs.fill(null, fromIndex = 0, toIndex = objectArgsSize)
         objectArgsSize = 0
+        requiresApplication = false
     }
 
     /**
@@ -127,6 +148,8 @@ internal class Operations : OperationsDebugStringFormattable() {
         opCodes[opCodesSize++] = operation
         intArgsSize += operation.ints
         objectArgsSize += operation.objects
+
+        if (operation.isExternallyVisible) requiresApplication = true
     }
 
     private fun determineNewSize(currentSize: Int, requiredSize: Int): Int {
@@ -341,7 +364,7 @@ internal class Operations : OperationsDebugStringFormattable() {
 
     fun executeAndFlushAllPendingOperations(
         applier: Applier<*>,
-        slots: SlotWriter,
+        slots: SlotTableEditor,
         rememberManager: RememberManager,
         errorContext: OperationErrorContext?,
     ) {
@@ -378,6 +401,11 @@ internal class Operations : OperationsDebugStringFormattable() {
                 }
                 intArgs[topIntIndexOf(parameter)] = value
             }
+
+        fun setLong(highParameter: IntParameter, lowParameter: IntParameter, value: Long) {
+            setInt(highParameter, (value ushr Int.SIZE_BITS).toInt())
+            setInt(lowParameter, value.toInt())
+        }
 
         inline fun setInts(
             parameter1: IntParameter,
@@ -518,6 +546,18 @@ internal class Operations : OperationsDebugStringFormattable() {
                 objectArgs[base + parameter3.offset] = value3
                 objectArgs[base + parameter4.offset] = value4
             }
+
+        /**
+         * Manually flag that this sequence of operations has been updated with an operation that
+         * requires the applier. This is typically handled automatically by checking the value of
+         * [Operation.isExternallyVisible].
+         *
+         * This is intended for [Operation.ApplyChangeList], since `isExternallyVisible` in this
+         * context is a function of the nested change list, and isn't knowable statically.
+         */
+        fun requireApplication() {
+            stack.requiresApplication = true
+        }
     }
 
     inner class OpIterator : OperationArgContainer {
@@ -628,7 +668,7 @@ internal class Operations : OperationsDebugStringFormattable() {
             is FloatArray -> asIterable().toCollectionString(linePrefix)
             is DoubleArray -> asIterable().toCollectionString(linePrefix)
             is Iterable<*> -> toCollectionString(linePrefix)
-            is OperationsDebugStringFormattable -> toDebugString(linePrefix)
+            is DebugStringFormattable -> toDebugString(linePrefix)
             else -> toString()
         }
 
@@ -636,8 +676,4 @@ internal class Operations : OperationsDebugStringFormattable() {
         joinToString(prefix = "[", postfix = "]", separator = ", ") {
             it.formatOpArgumentToString(linePrefix)
         }
-}
-
-internal abstract class OperationsDebugStringFormattable {
-    abstract fun toDebugString(linePrefix: String = "  "): String
 }
