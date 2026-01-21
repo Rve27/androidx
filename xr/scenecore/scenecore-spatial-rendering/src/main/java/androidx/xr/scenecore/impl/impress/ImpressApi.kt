@@ -26,6 +26,8 @@ import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec
 import androidx.xr.scenecore.runtime.TextureSampler
 import com.google.ar.imp.view.View
+import java.nio.FloatBuffer
+import java.nio.IntBuffer
 
 /** Interface for the JNI API for communicating with the Impress Split Engine instance. */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -58,6 +60,21 @@ public interface ImpressApi {
             public const val MULTIVIEW_LEFT_PRIMARY: Int = 4
             // Multiview video, [primary, auxiliary] views will map to [right, left] eyes
             public const val MULTIVIEW_RIGHT_PRIMARY: Int = 5
+        }
+    }
+
+    /**
+     * Specifies the draw mode of the surface.
+     *
+     * Values here match values from imp::PrimitiveType
+     */
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(DrawMode.TRIANGLES, DrawMode.TRIANGLE_STRIP, DrawMode.TRIANGLE_FAN)
+    public annotation class DrawMode {
+        public companion object {
+            public const val TRIANGLES: Int = 0
+            public const val TRIANGLE_STRIP: Int = 1
+            public const val TRIANGLE_FAN: Int = 2
         }
     }
 
@@ -422,6 +439,33 @@ public interface ImpressApi {
      * @param radius The radius in local spatial units of the hemisphere.
      */
     public fun setStereoSurfaceEntityCanvasShapeHemisphere(impressNode: ImpressNode, radius: Float)
+
+    /**
+     * This method sets the canvas shape of a StereoSurfaceEntity using its Impress node object.
+     *
+     * @param impressNode The Impress node which hosts the StereoSurfaceEntity to be updated.
+     * @param leftPositions The positions of the left eye mesh.
+     * @param leftTexCoords The texture coordinates of the left eye mesh.
+     * @param leftIndices The indices of the left eye mesh.
+     * @param rightPositions The positions of the right eye mesh.
+     * @param rightTexCoords The texture coordinates of the right eye mesh.
+     * @param rightIndices The indices of the right eye mesh.
+     * @param drawMode The draw mode of the mesh.
+     * @throws IllegalArgumentException if the number of positions and texcoords do not correspond
+     *   to the same number of vertices for either eye (i.e. `positions.capacity() / 3 !=
+     *   texCoords.capacity() / 2`), or if values in the indices are out of bounds (greater than or
+     *   equal to the number of vertices).
+     */
+    public fun setStereoSurfaceEntityCanvasShapeCustomMesh(
+        impressNode: ImpressNode,
+        leftPositions: FloatBuffer,
+        leftTexCoords: FloatBuffer,
+        leftIndices: IntBuffer?,
+        rightPositions: FloatBuffer?,
+        rightTexCoords: FloatBuffer?,
+        rightIndices: IntBuffer?,
+        @DrawMode drawMode: Int,
+    )
 
     /**
      * Dynamically enables or disables the collider for the StereoSurfaceEntity.
