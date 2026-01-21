@@ -2969,7 +2969,11 @@ internal fun SearchBarImpl(
             {
                 Column(Modifier.graphicsLayer { alpha = animationProgress.value }) {
                     HorizontalDivider(color = colors.dividerColor)
-                    content()
+                    CompositionLocalProvider(
+                        LocalContentColor provides contentColorFor(colors.containerColor)
+                    ) {
+                        content()
+                    }
                 }
             }
         } else null
