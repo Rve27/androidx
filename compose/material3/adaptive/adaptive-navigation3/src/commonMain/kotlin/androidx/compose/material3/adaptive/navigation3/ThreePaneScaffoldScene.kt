@@ -26,6 +26,7 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.MutableThreePaneScaffoldState
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.PaneExpansionState
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldRole
@@ -73,6 +74,8 @@ internal class ThreePaneScaffoldScene<T : Any>(
     val entriesAsNavItems: List<ThreePaneScaffoldDestinationItem<Any>>,
     val getPaneRole: (NavEntry<T>) -> ThreePaneScaffoldRole?,
     val scaffoldType: ThreePaneScaffoldType,
+    val paneExpansionDragHandle: (@Composable ThreePaneScaffoldScope.(PaneExpansionState) -> Unit)?,
+    val paneExpansionState: PaneExpansionState?,
 ) : Scene<T> {
     override val entries: List<NavEntry<T>>
         get() = scaffoldEntries
@@ -278,6 +281,8 @@ internal class ThreePaneScaffoldScene<T : Any>(
                         }
                     }
                 },
+            paneExpansionDragHandle = paneExpansionDragHandle,
+            paneExpansionState = paneExpansionState,
         )
     }
 
@@ -324,6 +329,8 @@ internal class ThreePaneScaffoldScene<T : Any>(
                         }
                     }
                 },
+            paneExpansionDragHandle = paneExpansionDragHandle,
+            paneExpansionState = paneExpansionState,
         )
     }
 

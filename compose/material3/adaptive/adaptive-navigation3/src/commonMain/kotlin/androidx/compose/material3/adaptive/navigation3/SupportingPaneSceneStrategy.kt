@@ -19,12 +19,14 @@ package androidx.compose.material3.adaptive.navigation3
 import androidx.collection.mutableIntListOf
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.PaneExpansionState
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldDefaults
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldAdaptStrategies
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldScope
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.runtime.Composable
@@ -50,6 +52,10 @@ import kotlin.jvm.JvmName
  *   adapted if they can't fit on screen in the [PaneAdaptedValue.Expanded] state. It is recommended
  *   to use [SupportingPaneScaffoldDefaults.adaptStrategies] as a default, but custom
  *   [ThreePaneScaffoldAdaptStrategies] are supported as well.
+ * @param paneExpansionDragHandle when two panes are displayed side-by-side, a non-null drag handle
+ *   allows users to resize the panes and change the pane expansion state.
+ * @param paneExpansionState the state object of pane expansion. If this is null but a
+ *   [paneExpansionDragHandle] is provided, a default implementation will be created.
  */
 @ExperimentalMaterial3AdaptiveApi
 @Composable
@@ -60,6 +66,9 @@ public fun <T : Any> rememberSupportingPaneSceneStrategy(
     directive: PaneScaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo()),
     adaptStrategies: ThreePaneScaffoldAdaptStrategies =
         SupportingPaneScaffoldDefaults.adaptStrategies(),
+    paneExpansionDragHandle: (@Composable ThreePaneScaffoldScope.(PaneExpansionState) -> Unit)? =
+        null,
+    paneExpansionState: PaneExpansionState? = null,
 ): SupportingPaneSceneStrategy<T> {
     return remember(
         shouldHandleSinglePaneLayout,
@@ -72,6 +81,8 @@ public fun <T : Any> rememberSupportingPaneSceneStrategy(
             backNavigationBehavior = backNavigationBehavior,
             directive = directive,
             adaptStrategies = adaptStrategies,
+            paneExpansionDragHandle = paneExpansionDragHandle,
+            paneExpansionState = paneExpansionState,
         )
     }
 }
@@ -94,6 +105,10 @@ public fun <T : Any> rememberSupportingPaneSceneStrategy(
  *   adapted if they can't fit on screen in the [PaneAdaptedValue.Expanded] state. It is recommended
  *   to use [SupportingPaneScaffoldDefaults.adaptStrategies] as a default, but custom
  *   [ThreePaneScaffoldAdaptStrategies] are supported as well.
+ * @param paneExpansionDragHandle when two panes are displayed side-by-side, a non-null drag handle
+ *   allows users to resize the panes and change the pane expansion state.
+ * @param paneExpansionState the state object of pane expansion. If this is null but a
+ *   [paneExpansionDragHandle] is provided, a default implementation will be created.
  */
 @ExperimentalMaterial3AdaptiveApi
 public class SupportingPaneSceneStrategy<T : Any>(
@@ -101,6 +116,10 @@ public class SupportingPaneSceneStrategy<T : Any>(
     public val backNavigationBehavior: BackNavigationBehavior,
     public val directive: PaneScaffoldDirective,
     public val adaptStrategies: ThreePaneScaffoldAdaptStrategies,
+    public val paneExpansionDragHandle:
+        (@Composable
+        ThreePaneScaffoldScope.(PaneExpansionState) -> Unit)?,
+    public val paneExpansionState: PaneExpansionState?,
 ) : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
@@ -145,6 +164,8 @@ public class SupportingPaneSceneStrategy<T : Any>(
                 entriesAsNavItems = entriesAsNavItems,
                 getPaneRole = { getPaneMetadata(it)?.role },
                 scaffoldType = ThreePaneScaffoldType.SupportingPane,
+                paneExpansionDragHandle = paneExpansionDragHandle,
+                paneExpansionState = paneExpansionState,
             )
 
         return when {

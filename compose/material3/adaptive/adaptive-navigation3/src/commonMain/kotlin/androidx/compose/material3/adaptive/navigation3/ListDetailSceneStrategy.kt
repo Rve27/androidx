@@ -22,6 +22,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldDefaults
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.PaneExpansionState
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldAdaptStrategies
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
@@ -53,6 +54,10 @@ import kotlin.jvm.JvmName
  *   adapted if they can't fit on screen in the [PaneAdaptedValue.Expanded] state. It is recommended
  *   to use [ListDetailPaneScaffoldDefaults.adaptStrategies] as a default, but custom
  *   [ThreePaneScaffoldAdaptStrategies] are supported as well.
+ * @param paneExpansionDragHandle when two panes are displayed side-by-side, a non-null drag handle
+ *   allows users to resize the panes and change the pane expansion state.
+ * @param paneExpansionState the state object of pane expansion. If this is null but a
+ *   [paneExpansionDragHandle] is provided, a default implementation will be created.
  * @sample androidx.compose.material3.adaptive.samples.ListDetailWithNavigation3Sample
  */
 @ExperimentalMaterial3AdaptiveApi
@@ -64,18 +69,25 @@ public fun <T : Any> rememberListDetailSceneStrategy(
     directive: PaneScaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo()),
     adaptStrategies: ThreePaneScaffoldAdaptStrategies =
         ListDetailPaneScaffoldDefaults.adaptStrategies(),
+    paneExpansionDragHandle: (@Composable ThreePaneScaffoldScope.(PaneExpansionState) -> Unit)? =
+        null,
+    paneExpansionState: PaneExpansionState? = null,
 ): ListDetailSceneStrategy<T> {
     return remember(
         shouldHandleSinglePaneLayout,
         backNavigationBehavior,
         directive,
         adaptStrategies,
+        paneExpansionDragHandle,
+        paneExpansionState,
     ) {
         ListDetailSceneStrategy(
             shouldHandleSinglePaneLayout = shouldHandleSinglePaneLayout,
             backNavigationBehavior = backNavigationBehavior,
             directive = directive,
             adaptStrategies = adaptStrategies,
+            paneExpansionDragHandle = paneExpansionDragHandle,
+            paneExpansionState = paneExpansionState,
         )
     }
 }
@@ -99,6 +111,10 @@ public fun <T : Any> rememberListDetailSceneStrategy(
  *   adapted if they can't fit on screen in the [PaneAdaptedValue.Expanded] state. It is recommended
  *   to use [ListDetailPaneScaffoldDefaults.adaptStrategies] as a default, but custom
  *   [ThreePaneScaffoldAdaptStrategies] are supported as well.
+ * @param paneExpansionDragHandle when two panes are displayed side-by-side, a non-null drag handle
+ *   allows users to resize the panes and change the pane expansion state.
+ * @param paneExpansionState the state object of pane expansion. If this is null but a
+ *   [paneExpansionDragHandle] is provided, a default implementation will be created.
  * @sample androidx.compose.material3.adaptive.samples.ListDetailWithNavigation3Sample
  */
 @ExperimentalMaterial3AdaptiveApi
@@ -107,6 +123,10 @@ public class ListDetailSceneStrategy<T : Any>(
     public val backNavigationBehavior: BackNavigationBehavior,
     public val directive: PaneScaffoldDirective,
     public val adaptStrategies: ThreePaneScaffoldAdaptStrategies,
+    public val paneExpansionDragHandle:
+        (@Composable
+        ThreePaneScaffoldScope.(PaneExpansionState) -> Unit)?,
+    public val paneExpansionState: PaneExpansionState?,
 ) : SceneStrategy<T> {
 
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
@@ -156,6 +176,8 @@ public class ListDetailSceneStrategy<T : Any>(
                 entriesAsNavItems = entriesAsNavItems,
                 getPaneRole = { getPaneMetadata(it)?.role },
                 scaffoldType = ThreePaneScaffoldType.ListDetail(detailPlaceholder ?: {}),
+                paneExpansionDragHandle = paneExpansionDragHandle,
+                paneExpansionState = paneExpansionState,
             )
 
         return when {
