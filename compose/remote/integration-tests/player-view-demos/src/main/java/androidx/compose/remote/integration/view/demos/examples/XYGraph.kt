@@ -245,13 +245,7 @@ class Plot(val data: RFloat) : PlotBase {
         val rRight = params.right - params.insertRight
         val rBottom = params.bottom - params.insertBottom
 
-        return params.prop.setPlotFill(
-            paint,
-            rLeft.toFloat(),
-            rTop.toFloat(),
-            rLeft.toFloat(),
-            params.offsetY.toFloat(),
-        )
+        return params.prop.setPlotFill(paint, rLeft, rTop, rLeft, params.offsetY.toFloat())
     }
 
     override fun plot(rc: RemoteComposeContextAndroid, params: PlotParams) {
