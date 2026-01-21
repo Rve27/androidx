@@ -44,7 +44,6 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.NavigationEventTransitionState
-import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 
@@ -214,12 +213,6 @@ internal class ThreePaneScaffoldScene<T : Any>(
                 repeat(allEntries.size - onBackResult.previousEntries.size) { onBack() }
             },
         )
-
-        val dispatcher =
-            checkNotNull(LocalNavigationEventDispatcherOwner.current) {
-                    "No NavigationEventDispatcher was provided via LocalNavigationEventDispatcherOwner"
-                }
-                .navigationEventDispatcher
 
         val transitionState = gestureState.transitionState
         LaunchedEffect(transitionState) {
