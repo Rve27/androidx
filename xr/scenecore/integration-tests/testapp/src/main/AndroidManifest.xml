@@ -85,6 +85,9 @@
             android:name=".model.GltfModelAnimationActivity"
             android:exported="true" />
         <activity
+            android:name=".surfacecustommesh.SurfaceEntityCustomMeshActivity"
+            android:exported="true" />
+        <activity
             android:name=".surfaceimage.SurfaceEntityImageActivity"
             android:exported="true" />
         <activity

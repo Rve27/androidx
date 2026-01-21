@@ -55,6 +55,7 @@ import androidx.xr.scenecore.testapp.spatialaudio.SpatialAudioActivity
 import androidx.xr.scenecore.testapp.spatialcapabilities.SpatialCapabilitiesActivity
 import androidx.xr.scenecore.testapp.spatialuser.SpatialUserActivity
 import androidx.xr.scenecore.testapp.standalone.StandaloneActivity
+import androidx.xr.scenecore.testapp.surfacecustommesh.SurfaceEntityCustomMeshActivity
 import androidx.xr.scenecore.testapp.surfaceimage.SurfaceEntityImageActivity
 import androidx.xr.scenecore.testapp.surfaceinteraction.SurfaceEntityInteractionActivity
 import androidx.xr.scenecore.testapp.surfaceplayback.SurfaceEntityPlaybackActivity
@@ -177,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                 getString(R.string.cuj_surface_entity_imagetest),
                 getString(R.string.cuj_panel_coordinates_test),
                 getString(R.string.cuj_gltf_model_animation_test),
+                getString(R.string.cuj_surface_entity_custom_mesh_test),
             )
         val customAdapter = TestCasesRecyclerViewAdapter(dataset)
         val recyclerView: RecyclerView = findViewById(R.id.cuj_buttons_recycler)
@@ -288,6 +290,9 @@ class MainActivity : AppCompatActivity() {
 
             Tests.MEMORY_LEAK_TEST.test -> startActivity(createIntent<MemoryLeakActivity>())
 
+            Tests.SURFACE_CUSTOM_MESH_TEST.test ->
+                startActivity(createIntent<SurfaceEntityCustomMeshActivity>())
+
             Tests.SURFACE_ENTITY_IMAGE_TEST.test ->
                 startActivity(createIntent<SurfaceEntityImageActivity>())
 
@@ -380,5 +385,6 @@ class MainActivity : AppCompatActivity() {
         SURFACE_ENTITY_IMAGE_TEST(27),
         PANEL_COORDINATES_TEST(28),
         GLTF_MODEL_ANIMATION_TEST(29),
+        SURFACE_CUSTOM_MESH_TEST(30),
     }
 }
