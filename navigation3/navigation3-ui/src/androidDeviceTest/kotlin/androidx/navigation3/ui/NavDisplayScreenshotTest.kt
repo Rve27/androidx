@@ -29,6 +29,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -630,8 +631,9 @@ class NavDisplayScreenshotTest {
             NavDisplay(
                 backStack,
                 popTransitionSpec = {
-                    slideInHorizontally(tween(duration)) { it / 2 } togetherWith
-                        slideOutHorizontally(tween(duration)) { -it / 2 }
+                    // both slides down
+                    slideInVertically(tween(duration)) { -it / 2 } togetherWith
+                        slideOutVertically(tween(duration)) { it / 2 }
                 },
                 sceneStrategy = TestTwoPaneSceneStrategy(),
                 modifier = Modifier.testTag(navHostTag),
@@ -656,6 +658,7 @@ class NavDisplayScreenshotTest {
 
         composeTestRule.waitForIdle()
 
+        // outgoing scene should be on top of incoming scene
         composeTestRule
             .onNodeWithTag(navHostTag)
             .captureToImage()
