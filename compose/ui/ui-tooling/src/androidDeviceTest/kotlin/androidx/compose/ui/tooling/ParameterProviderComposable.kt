@@ -24,38 +24,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-@Preview
 @Composable
 fun OneStringParameter(parameter: String) {
     Surface(color = Color.Red) { Text(parameter) }
 }
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-@Preview
 @Composable
 fun OneIntParameter(parameter: Integer) {
     Surface(color = Color.Red) { Text("$parameter") }
 }
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-@Preview
 @Composable
 fun ColorsParameter(parameter: ColorScheme) {
     MaterialTheme(colorScheme = parameter) { Button(onClick = {}) { Text("Hello colors") } }
 }
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-@Preview
 @Composable
 fun BooleanParameter(valueParameter: Boolean) {
     Text(valueParameter.toString())
 }
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-@Preview
 @Composable
 fun CornerRadiusParameter(radius: CornerRadius) {
     Text(radius.toString())
