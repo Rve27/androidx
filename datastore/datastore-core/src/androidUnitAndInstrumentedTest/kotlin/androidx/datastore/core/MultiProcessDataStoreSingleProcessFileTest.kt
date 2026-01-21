@@ -57,11 +57,13 @@ class MultiProcessDataStoreSingleProcessFileTest :
         // ensure the file exists by writing into it
         testFile.file.writeText("")
         testFile.file.setReadable(false)
+        val result = runCatching { store.data.first() }
 
-        assertThrows<IOException> { store.data.first() }
+        assertThat(result.exceptionOrNull()).isInstanceOf<IOException>()
+        assertThat(result.exceptionOrNull())
             .hasCauseThat()
             .hasMessageThat()
-            .containsMatch("Permission denied|Inoperable file")
+            .contains("Permission denied")
     }
 
     @Test
@@ -73,7 +75,7 @@ class MultiProcessDataStoreSingleProcessFileTest :
         assertThrows<IOException> { store.data.first() }
             .hasCauseThat()
             .hasMessageThat()
-            .containsMatch("Permission denied|Inoperable file")
+            .contains("Permission denied")
 
         testFile.file.setReadable(true)
         assertThat(store.data.first()).isEqualTo(0)
