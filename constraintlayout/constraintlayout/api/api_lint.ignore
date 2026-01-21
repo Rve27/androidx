@@ -2056,4 +2056,4 @@ StaticFinalBuilder: androidx.constraintlayout.motion.widget.TransitionBuilder:
 
 
 TopLevelBuilder: androidx.constraintlayout.motion.widget.TransitionBuilder:
-    Builder should be defined as inner class: androidx.constraintlayout.motion.widget.TransitionBuilder
+    Builder should be defined as nested class: androidx.constraintlayout.motion.widget.TransitionBuilder
