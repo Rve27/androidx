@@ -1673,6 +1673,7 @@ package androidx.compose.ui.text.intl {
   @androidx.compose.runtime.Immutable public final class Locale {
     ctor public Locale(String languageTag);
     ctor public Locale(java.util.Locale platformLocale);
+    method public operator boolean equals(Object? other);
     method @InaccessibleFromKotlin public String getLanguage();
     method @InaccessibleFromKotlin public java.util.Locale getPlatformLocale();
     method @InaccessibleFromKotlin public String getRegion();
@@ -1724,7 +1725,7 @@ package androidx.compose.ui.text.intl {
     property public androidx.compose.ui.text.intl.LocaleList current;
   }
 
-  public typealias PlatformLocale = java.util.Locale;
+  @Deprecated public typealias PlatformLocale = java.util.Locale;
 
 }
 
