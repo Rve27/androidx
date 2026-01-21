@@ -28,11 +28,14 @@ import androidx.xr.scenecore.impl.impress.ImpressApi.ColorRange
 import androidx.xr.scenecore.impl.impress.ImpressApi.ColorSpace
 import androidx.xr.scenecore.impl.impress.ImpressApi.ColorTransfer
 import androidx.xr.scenecore.impl.impress.ImpressApi.ContentSecurityLevel
+import androidx.xr.scenecore.impl.impress.ImpressApi.DrawMode
 import androidx.xr.scenecore.impl.impress.ImpressApi.MediaBlendingMode
 import androidx.xr.scenecore.impl.impress.ImpressApi.StereoMode
 import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec
 import androidx.xr.scenecore.runtime.TextureSampler
 import com.google.ar.imp.view.View
+import java.nio.FloatBuffer
+import java.nio.IntBuffer
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -544,6 +547,28 @@ public class ImpressApiImpl : ImpressApi {
             getViewNativeHandle(view),
             impressNode.handle,
             radius,
+        )
+
+    override fun setStereoSurfaceEntityCanvasShapeCustomMesh(
+        impressNode: ImpressNode,
+        leftPositions: FloatBuffer,
+        leftTexCoords: FloatBuffer,
+        leftIndices: IntBuffer?,
+        rightPositions: FloatBuffer?,
+        rightTexCoords: FloatBuffer?,
+        rightIndices: IntBuffer?,
+        @DrawMode drawMode: Int,
+    ): Unit =
+        nSetStereoSurfaceEntityCanvasShapeCustomMesh(
+            getViewNativeHandle(view),
+            impressNode.handle,
+            leftPositions,
+            leftTexCoords,
+            leftIndices,
+            rightPositions,
+            rightTexCoords,
+            rightIndices,
+            drawMode,
         )
 
     override fun setStereoSurfaceEntityColliderEnabled(
@@ -1554,6 +1579,18 @@ public class ImpressApiImpl : ImpressApi {
         view: Long,
         impressNode: Int,
         radius: Float,
+    )
+
+    private external fun nSetStereoSurfaceEntityCanvasShapeCustomMesh(
+        view: Long,
+        impressNode: Int,
+        leftPositions: FloatBuffer,
+        leftTexCoords: FloatBuffer,
+        leftIndices: IntBuffer?,
+        rightPositions: FloatBuffer?,
+        rightTexCoords: FloatBuffer?,
+        rightIndices: IntBuffer?,
+        drawMode: Int,
     )
 
     private external fun nSetStereoSurfaceEntityColliderEnabled(

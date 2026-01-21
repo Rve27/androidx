@@ -27,11 +27,14 @@ import androidx.xr.scenecore.impl.impress.ImpressApi.ColorRange
 import androidx.xr.scenecore.impl.impress.ImpressApi.ColorSpace
 import androidx.xr.scenecore.impl.impress.ImpressApi.ColorTransfer
 import androidx.xr.scenecore.impl.impress.ImpressApi.ContentSecurityLevel
+import androidx.xr.scenecore.impl.impress.ImpressApi.DrawMode
 import androidx.xr.scenecore.impl.impress.ImpressApi.MediaBlendingMode
 import androidx.xr.scenecore.impl.impress.ImpressApi.StereoMode
 import androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec
 import androidx.xr.scenecore.runtime.TextureSampler
 import com.google.ar.imp.view.View
+import java.nio.FloatBuffer
+import java.nio.IntBuffer
 import kotlinx.coroutines.CompletableDeferred
 
 /**
@@ -65,12 +68,20 @@ public class FakeImpressApiImpl : ImpressApi {
         public var surfaceWidth: Int = 1,
         public var surfaceHeight: Int = 1,
         public var colliderEnabled: Boolean = false,
+        public var leftPositions: FloatBuffer? = null,
+        public var leftTexCoords: FloatBuffer? = null,
+        public var leftIndices: IntBuffer? = null,
+        public var rightPositions: FloatBuffer? = null,
+        public var rightTexCoords: FloatBuffer? = null,
+        public var rightIndices: IntBuffer? = null,
+        @DrawMode public var drawMode: Int = 0,
     ) {
         /** Enum representing the different canvas shapes that can be created. */
         public enum class CanvasShape {
             QUAD,
             VR_360_SPHERE,
             VR_180_HEMISPHERE,
+            CUSTOM_MESH,
         }
     }
 
@@ -415,6 +426,29 @@ public class FakeImpressApiImpl : ImpressApi {
                 ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
         data.canvasShape = StereoSurfaceEntityData.CanvasShape.VR_180_HEMISPHERE
         data.radius = radius
+    }
+
+    override fun setStereoSurfaceEntityCanvasShapeCustomMesh(
+        impressNode: ImpressNode,
+        leftPositions: FloatBuffer,
+        leftTexCoords: FloatBuffer,
+        leftIndices: IntBuffer?,
+        rightPositions: FloatBuffer?,
+        rightTexCoords: FloatBuffer?,
+        rightIndices: IntBuffer?,
+        @DrawMode drawMode: Int,
+    ) {
+        val data =
+            stereoSurfaceEntities[impressNode]
+                ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
+        data.canvasShape = StereoSurfaceEntityData.CanvasShape.CUSTOM_MESH
+        data.leftPositions = leftPositions
+        data.leftTexCoords = leftTexCoords
+        data.leftIndices = leftIndices
+        data.rightPositions = rightPositions
+        data.rightTexCoords = rightTexCoords
+        data.rightIndices = rightIndices
+        data.drawMode = drawMode
     }
 
     override fun setStereoSurfaceEntityColliderEnabled(
