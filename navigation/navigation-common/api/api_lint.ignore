@@ -174,19 +174,19 @@ StaticFinalBuilder: androidx.navigation.NavDestinationBuilder:
 
 
 TopLevelBuilder: androidx.navigation.AnimBuilder:
-    Builder should be defined as inner class: androidx.navigation.AnimBuilder
+    Builder should be defined as nested class: androidx.navigation.AnimBuilder
 TopLevelBuilder: androidx.navigation.NavActionBuilder:
-    Builder should be defined as inner class: androidx.navigation.NavActionBuilder
+    Builder should be defined as nested class: androidx.navigation.NavActionBuilder
 TopLevelBuilder: androidx.navigation.NavArgumentBuilder:
-    Builder should be defined as inner class: androidx.navigation.NavArgumentBuilder
+    Builder should be defined as nested class: androidx.navigation.NavArgumentBuilder
 TopLevelBuilder: androidx.navigation.NavDeepLinkDslBuilder:
-    Builder should be defined as inner class: androidx.navigation.NavDeepLinkDslBuilder
+    Builder should be defined as nested class: androidx.navigation.NavDeepLinkDslBuilder
 TopLevelBuilder: androidx.navigation.NavDestinationBuilder:
-    Builder should be defined as inner class: androidx.navigation.NavDestinationBuilder
+    Builder should be defined as nested class: androidx.navigation.NavDestinationBuilder
 TopLevelBuilder: androidx.navigation.NavOptionsBuilder:
-    Builder should be defined as inner class: androidx.navigation.NavOptionsBuilder
+    Builder should be defined as nested class: androidx.navigation.NavOptionsBuilder
 TopLevelBuilder: androidx.navigation.PopUpToBuilder:
-    Builder should be defined as inner class: androidx.navigation.PopUpToBuilder
+    Builder should be defined as nested class: androidx.navigation.PopUpToBuilder
 
 
 TypeParameterName: androidx.navigation.NavArgsLazy:
