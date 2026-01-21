@@ -14,62 +14,86 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.composer.gapbuffer.changelist
+package androidx.compose.runtime.composer.linkbuffer.changelist
 
+import androidx.collection.mutableIntSetOf
 import androidx.compose.runtime.Applier
+import androidx.compose.runtime.ComposeNodeLifecycleCallback
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.ControlledComposition
+import androidx.compose.runtime.IntStack
 import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.InvalidationResult
 import androidx.compose.runtime.MovableContentState
 import androidx.compose.runtime.MovableContentStateReference
 import androidx.compose.runtime.OffsetApplier
 import androidx.compose.runtime.RecomposeScopeImpl
 import androidx.compose.runtime.RecomposeScopeOwner
 import androidx.compose.runtime.RememberObserverHolder
+import androidx.compose.runtime.ScopeInvalidated
 import androidx.compose.runtime.TestOnly
 import androidx.compose.runtime.composeRuntimeError
 import androidx.compose.runtime.composer.RememberManager
-import androidx.compose.runtime.composer.gapbuffer.GapAnchor
-import androidx.compose.runtime.composer.gapbuffer.SlotTable
-import androidx.compose.runtime.composer.gapbuffer.SlotWriter
-import androidx.compose.runtime.composer.gapbuffer.asGapBufferSlotTable
-import androidx.compose.runtime.deactivateCurrentGroup
-import androidx.compose.runtime.extractMovableContentAtCurrent
+import androidx.compose.runtime.composer.gapbuffer.changelist.OperationErrorContext
+import androidx.compose.runtime.composer.linkbuffer.AnchorHandle
+import androidx.compose.runtime.composer.linkbuffer.GroupAddress
+import androidx.compose.runtime.composer.linkbuffer.GroupHandle
+import androidx.compose.runtime.composer.linkbuffer.IsMovableContentFlag
+import androidx.compose.runtime.composer.linkbuffer.IsRecompositionRequiredFlag
+import androidx.compose.runtime.composer.linkbuffer.LAZY_ADDRESS
+import androidx.compose.runtime.composer.linkbuffer.LinkAnchor
+import androidx.compose.runtime.composer.linkbuffer.NULL_ADDRESS
+import androidx.compose.runtime.composer.linkbuffer.NULL_GROUP_HANDLE
+import androidx.compose.runtime.composer.linkbuffer.SlotTable
+import androidx.compose.runtime.composer.linkbuffer.SlotTableEditor
+import androidx.compose.runtime.composer.linkbuffer.adoptScopesInGroupToNewParent
+import androidx.compose.runtime.composer.linkbuffer.asLinkAnchor
+import androidx.compose.runtime.composer.linkbuffer.asLinkBufferSlotTable
+import androidx.compose.runtime.composer.linkbuffer.buildTrace
+import androidx.compose.runtime.composer.linkbuffer.deactivateGroup
+import androidx.compose.runtime.composer.linkbuffer.group
+import androidx.compose.runtime.composer.linkbuffer.groupChild
+import androidx.compose.runtime.composer.linkbuffer.makeGroupHandle
+import androidx.compose.runtime.composer.linkbuffer.removeGroupAndForgetSlots
 import androidx.compose.runtime.internal.IntRef
 import androidx.compose.runtime.internal.identityHashCode
-import androidx.compose.runtime.removeCurrentGroup
+import androidx.compose.runtime.movableContentKey
 import androidx.compose.runtime.runtimeCheck
 import androidx.compose.runtime.snapshots.fastForEachIndexed
 import androidx.compose.runtime.tooling.ComposeStackTrace
 import androidx.compose.runtime.tooling.ComposeStackTraceFrame
 import androidx.compose.runtime.tooling.ComposeToolingApi
 import androidx.compose.runtime.tooling.attachComposeStackTrace
-import androidx.compose.runtime.tooling.buildTrace
 import kotlin.jvm.JvmInline
 
 internal typealias IntParameter = Int
 
-internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
+internal sealed class Operation(
+    val ints: Int = 0,
+    val objects: Int = 0,
+    val isExternallyVisible: Boolean = true,
+) {
     val name: String
         get() = this::class.simpleName.orEmpty()
 
     fun OperationArgContainer.executeWithComposeStackTrace(
         applier: Applier<*>,
-        slots: SlotWriter,
+        slots: SlotTableEditor,
         rememberManager: RememberManager,
         errorContext: OperationErrorContext?,
     ) {
-        withCurrentStackTrace(errorContext, slots, getGroupAnchor(slots)) {
+        withCurrentStackTrace(errorContext, slots, getGroupHandle(slots)) {
             execute(applier, slots, rememberManager, errorContext)
         }
     }
 
-    protected open fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? = null
+    protected open fun OperationArgContainer.getGroupHandle(slots: SlotTableEditor): GroupHandle =
+        NULL_GROUP_HANDLE
 
     protected abstract fun OperationArgContainer.execute(
         applier: Applier<*>,
-        slots: SlotWriter,
+        slots: SlotTableEditor,
         rememberManager: RememberManager,
         errorContext: OperationErrorContext?,
     )
@@ -96,7 +120,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -116,7 +140,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -128,23 +152,71 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
-    object AdvanceSlotsBy : Operation(ints = 1) {
-        inline val Distance
+    object SeekToAnchor : Operation(objects = 1, isExternallyVisible = false) {
+        inline val AnchorHandle
+            get() = ObjectParameter<AnchorHandle>(0)
+
+        override fun objectParamName(parameter: ObjectParameter<*>): String =
+            when (parameter) {
+                AnchorHandle -> "anchorHandle"
+                else -> super.objectParamName(parameter)
+            }
+
+        override fun OperationArgContainer.execute(
+            applier: Applier<*>,
+            slots: SlotTableEditor,
+            rememberManager: RememberManager,
+            errorContext: OperationErrorContext?,
+        ) {
+            val anchorHandle = getObject(AnchorHandle)
+            slots.seek(anchorHandle.toHandle())
+        }
+    }
+
+    object SeekToGroupHandle : Operation(ints = 2, isExternallyVisible = false) {
+        inline val GroupHandleHighBits
             get() = 0
+
+        inline val GroupHandleLowBits
+            get() = 1
 
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
-                Distance -> "distance"
+                GroupHandleHighBits -> "group[32..63]"
+                GroupHandleLowBits -> "group[0..31]"
                 else -> super.intParamName(parameter)
             }
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            slots.advanceBy(getInt(Distance))
+            val handle = getLong(GroupHandleHighBits, GroupHandleLowBits)
+            slots.seek(handle)
+        }
+    }
+
+    object StartGroup : Operation() {
+        override fun OperationArgContainer.execute(
+            applier: Applier<*>,
+            slots: SlotTableEditor,
+            rememberManager: RememberManager,
+            errorContext: OperationErrorContext?,
+        ) {
+            slots.startGroup()
+        }
+    }
+
+    object SkipGroup : Operation() {
+        override fun OperationArgContainer.execute(
+            applier: Applier<*>,
+            slots: SlotTableEditor,
+            rememberManager: RememberManager,
+            errorContext: OperationErrorContext?,
+        ) {
+            slots.skipGroup()
         }
     }
 
@@ -163,7 +235,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -183,7 +255,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -203,7 +275,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -224,7 +296,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -245,7 +317,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -254,74 +326,88 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
-    object AppendValue : Operation(objects = 2) {
-        inline val Anchor
-            get() = ObjectParameter<GapAnchor>(0)
-
+    object AppendValue : Operation(objects = 1) {
         inline val Value
-            get() = ObjectParameter<Any?>(1)
+            get() = ObjectParameter<Any?>(0)
 
         override fun objectParamName(parameter: ObjectParameter<*>): String =
             when (parameter) {
-                Anchor -> "anchor"
                 Value -> "value"
                 else -> super.objectParamName(parameter)
             }
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            val anchor = getObject(Anchor)
             val value = getObject(Value)
             if (value is RememberObserverHolder) {
                 rememberManager.remembering(value)
             }
-            slots.appendSlot(anchor, value)
+            slots.appendSlot(value)
         }
     }
 
-    object TrimParentValues : Operation(ints = 1) {
-        inline val Count
+    object RemoveTailGroupsAndValues : Operation(ints = 2) {
+        inline val FirstTailGroupToRemove
             get() = 0
+
+        inline val TailSlotCount
+            get() = 1
 
         override fun intParamName(parameter: IntParameter): String =
             when (parameter) {
-                Count -> "count"
+                FirstTailGroupToRemove -> "firstTailGroupToRemove"
+                TailSlotCount -> "tailSlotCount"
                 else -> super.intParamName(parameter)
             }
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            val count = getInt(Count)
-            slots.forEachTailSlot(slots.parent, count) { slotIndex, value ->
+            val tailSlotCount = getInt(TailSlotCount)
+            val firstTailGroupToRemove = getInt(FirstTailGroupToRemove)
+
+            slots.visitTailSlotsInRememberOrder(
+                inGroup = slots.parentGroup,
+                firstTailGroupToVisit = firstTailGroupToRemove,
+                tailSlots = tailSlotCount,
+            ) { _, _, value ->
                 when (value) {
-                    is RememberObserverHolder -> {
-                        rememberManager.forgetting(instance = value)
-                    }
+                    is ComposeNodeLifecycleCallback -> value.onRelease()
+                    is RememberObserverHolder -> rememberManager.forgetting(value)
                     is RecomposeScopeImpl -> value.release()
                 }
+                false
             }
-            slots.trimTailSlots(count)
+
+            slots.trimSlots(tailSlotCount)
+
+            while (slots.currentGroup != firstTailGroupToRemove) {
+                slots.skipGroup()
+            }
+
+            while (slots.currentGroup >= 0) {
+                slots.removeGroup(true)
+            }
         }
     }
 
     object UpdateValue : Operation(ints = 1, objects = 1) {
+        inline val SlotAddress
+            get() = 0
+
         inline val Value
             get() = ObjectParameter<Any?>(0)
 
-        inline val GroupSlotIndex
-            get() = 0
-
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
-                GroupSlotIndex -> "groupSlotIndex"
+                SlotAddress -> "slotAddress"
                 else -> super.intParamName(parameter)
             }
 
@@ -333,64 +419,87 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
             val value = getObject(Value)
-            val groupSlotIndex = getInt(GroupSlotIndex)
+            val slot = getInt(SlotAddress)
             if (value is RememberObserverHolder) {
                 rememberManager.remembering(value)
             }
-            when (val previous = slots.set(groupSlotIndex, value)) {
-                is RememberObserverHolder -> {
-                    rememberManager.forgetting(previous)
-                }
+            when (val previous = slots.setAbsolute(slot, value)) {
+                is RememberObserverHolder -> rememberManager.forgetting(previous)
                 is RecomposeScopeImpl -> previous.release()
             }
         }
     }
 
-    object UpdateAnchoredValue : Operation(objects = 2, ints = 1) {
-        inline val Value
-            get() = ObjectParameter<Any?>(0)
-
-        inline val Anchor
-            get() = ObjectParameter<GapAnchor>(1)
-
-        inline val GroupSlotIndex
+    object UpdateRememberObserverHolderOrdering : Operation(ints = 1, objects = 1) {
+        inline val After
             get() = 0
+
+        inline val Holder
+            get() = ObjectParameter<RememberObserverHolder>(0)
 
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
-                GroupSlotIndex -> "groupSlotIndex"
+                After -> "after"
+                else -> super.intParamName(parameter)
+            }
+
+        override fun objectParamName(parameter: ObjectParameter<*>) =
+            when (parameter) {
+                Holder -> "rememberObserverHolder"
+                else -> super.objectParamName(parameter)
+            }
+
+        override fun OperationArgContainer.execute(
+            applier: Applier<*>,
+            slots: SlotTableEditor,
+            rememberManager: RememberManager,
+            errorContext: OperationErrorContext?,
+        ) {
+            val holder = getObject(Holder)
+            val after = getInt(After)
+
+            holder.afterGroupIndex = after
+        }
+    }
+
+    object UpdateValueRelative : Operation(ints = 1, objects = 1) {
+        inline val SlotIndex
+            get() = 0
+
+        inline val Value
+            get() = ObjectParameter<Any?>(0)
+
+        override fun intParamName(parameter: IntParameter) =
+            when (parameter) {
+                SlotIndex -> "slotIndex"
                 else -> super.intParamName(parameter)
             }
 
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
                 Value -> "value"
-                Anchor -> "anchor"
                 else -> super.objectParamName(parameter)
             }
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
             val value = getObject(Value)
-            val anchor = getObject(Anchor)
-            val groupSlotIndex = getInt(GroupSlotIndex)
+            val slotIndex = getInt(SlotIndex)
             if (value is RememberObserverHolder) {
                 rememberManager.remembering(value)
             }
-            val groupIndex = slots.anchorIndex(anchor)
-            when (val previous = slots.set(groupIndex, groupSlotIndex, value)) {
-                is RememberObserverHolder -> {
-                    rememberManager.forgetting(previous)
-                }
+
+            when (val previous = slots.setRelative(slotIndex, value)) {
+                is RememberObserverHolder -> rememberManager.forgetting(previous)
                 is RecomposeScopeImpl -> previous.release()
             }
         }
@@ -411,7 +520,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -419,49 +528,18 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
-    object EnsureRootGroupStarted : Operation() {
+    object RemoveGroup : Operation() {
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            slots.ensureStarted(0)
+            slots.removeGroupAndForgetSlots(rememberManager)
         }
     }
 
-    object EnsureGroupStarted : Operation(objects = 1) {
-        inline val Anchor
-            get() = ObjectParameter<GapAnchor>(0)
-
-        override fun objectParamName(parameter: ObjectParameter<*>) =
-            when (parameter) {
-                Anchor -> "anchor"
-                else -> super.objectParamName(parameter)
-            }
-
-        override fun OperationArgContainer.execute(
-            applier: Applier<*>,
-            slots: SlotWriter,
-            rememberManager: RememberManager,
-            errorContext: OperationErrorContext?,
-        ) {
-            slots.ensureStarted(getObject(Anchor))
-        }
-    }
-
-    object RemoveCurrentGroup : Operation() {
-        override fun OperationArgContainer.execute(
-            applier: Applier<*>,
-            slots: SlotWriter,
-            rememberManager: RememberManager,
-            errorContext: OperationErrorContext?,
-        ) {
-            slots.removeCurrentGroup(rememberManager)
-        }
-    }
-
-    object MoveCurrentGroup : Operation(ints = 1) {
+    object MoveGroup : Operation(ints = 1) {
         inline val Offset
             get() = 0
 
@@ -473,7 +551,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -481,25 +559,14 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
-    object EndCurrentGroup : Operation() {
+    object ClearAllRecompositionRequired : Operation(isExternallyVisible = false) {
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            slots.endGroup()
-        }
-    }
-
-    object SkipToEndOfCurrentGroup : Operation() {
-        override fun OperationArgContainer.execute(
-            applier: Applier<*>,
-            slots: SlotWriter,
-            rememberManager: RememberManager,
-            errorContext: OperationErrorContext?,
-        ) {
-            slots.skipToGroupEnd()
+            slots.removeAllInstancesOfFlags(IsRecompositionRequiredFlag)
         }
     }
 
@@ -519,7 +586,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -533,7 +600,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
     object UseCurrentNode : Operation() {
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -557,7 +624,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -583,7 +650,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -611,7 +678,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -619,52 +686,65 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
-    object InsertSlots : Operation(objects = 2) {
-        inline val Anchor
-            get() = ObjectParameter<GapAnchor>(0)
+    object InsertSlots : Operation(ints = 2, objects = 1) {
+        inline val SourceHighBits
+            get() = 0
+
+        inline val SourceLowBits
+            get() = 1
 
         inline val FromSlotTable
-            get() = ObjectParameter<SlotTable>(1)
+            get() = ObjectParameter<SlotTable>(0)
+
+        override fun intParamName(parameter: IntParameter) =
+            when (parameter) {
+                SourceHighBits -> "source[32..63]"
+                SourceLowBits -> "source[0..31]"
+                else -> super.intParamName(parameter)
+            }
 
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
-                Anchor -> "anchor"
                 FromSlotTable -> "from"
                 else -> super.objectParamName(parameter)
             }
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            val insertTable = getObject(FromSlotTable)
-            val anchor = getObject(Anchor)
-
-            slots.beginInsert()
             slots.moveFrom(
-                table = insertTable,
-                index = anchor.toIndexFor(insertTable),
-                removeSourceGroup = false,
+                sourceTable = getObject(FromSlotTable),
+                sourceHandle = getLong(SourceHighBits, SourceLowBits),
             )
-            slots.endInsert()
+            slots.skipGroup()
         }
     }
 
-    object InsertSlotsWithFixups : Operation(objects = 3) {
-        inline val Anchor
-            get() = ObjectParameter<GapAnchor>(0)
+    object InsertSlotsWithFixups : Operation(ints = 2, objects = 2) {
+        inline val SourceHighBits
+            get() = 0
+
+        inline val SourceLowBits
+            get() = 1
 
         inline val FromSlotTable
-            get() = ObjectParameter<SlotTable>(1)
+            get() = ObjectParameter<SlotTable>(0)
 
         inline val Fixups
-            get() = ObjectParameter<FixupList>(2)
+            get() = ObjectParameter<FixupList>(1)
+
+        override fun intParamName(parameter: IntParameter) =
+            when (parameter) {
+                SourceHighBits -> "sourceHandle[32..63]"
+                SourceLowBits -> "sourceHandle[0..31]"
+                else -> super.intParamName(parameter)
+            }
 
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
-                Anchor -> "anchor"
                 FromSlotTable -> "from"
                 Fixups -> "fixups"
                 else -> super.objectParamName(parameter)
@@ -672,41 +752,85 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
             val insertTable = getObject(FromSlotTable)
-            val anchor = getObject(Anchor)
             val fixups = getObject(Fixups)
 
-            insertTable.write { writer ->
+            insertTable.edit {
                 fixups.executeAndFlushAllPendingFixups(
                     applier,
-                    writer,
+                    this,
                     rememberManager,
                     errorContext?.withCurrentStackTrace(slots),
                 )
             }
-            slots.beginInsert()
             slots.moveFrom(
-                table = insertTable,
-                index = anchor.toIndexFor(insertTable),
-                removeSourceGroup = false,
+                sourceTable = insertTable,
+                sourceHandle = getLong(SourceHighBits, SourceLowBits),
             )
-            slots.endInsert()
+            slots.skipGroup()
         }
     }
 
-    object InsertNodeFixup : Operation(ints = 1, objects = 2) {
+    object InsertNodeFixup : Operation(ints = 3, objects = 1) {
         inline val Factory
             get() = ObjectParameter<() -> Any?>(0)
 
         inline val InsertIndex
             get() = 0
 
-        inline val GroupAnchor
-            get() = ObjectParameter<GapAnchor>(1)
+        inline val GroupHandleHigh
+            get() = 1
+
+        inline val GroupHandleLow
+            get() = 2
+
+        override fun intParamName(parameter: IntParameter) =
+            when (parameter) {
+                InsertIndex -> "insertIndex"
+                GroupHandleHigh -> "groupHandleHigh"
+                GroupHandleLow -> "groupHandleLow"
+                else -> super.intParamName(parameter)
+            }
+
+        override fun objectParamName(parameter: ObjectParameter<*>) =
+            when (parameter) {
+                Factory -> "factory"
+                else -> super.objectParamName(parameter)
+            }
+
+        override fun OperationArgContainer.getGroupHandle(slots: SlotTableEditor): GroupHandle =
+            getLong(GroupHandleHigh, GroupHandleLow)
+
+        override fun OperationArgContainer.execute(
+            applier: Applier<*>,
+            slots: SlotTableEditor,
+            rememberManager: RememberManager,
+            errorContext: OperationErrorContext?,
+        ) {
+            val node = getObject(Factory).invoke()
+            val insertIndex = getInt(InsertIndex)
+            val groupAddress = getGroupHandle(slots).group
+
+            val nodeApplier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>)
+            slots.updateNode(groupAddress, node)
+            nodeApplier.insertTopDown(insertIndex, node)
+            nodeApplier.down(node)
+        }
+    }
+
+    object InsertNodeFixupByAnchor : Operation(ints = 1, objects = 2) {
+        inline val Factory
+            get() = ObjectParameter<() -> Any?>(0)
+
+        inline val InsertIndex
+            get() = 0
+
+        inline val Anchor
+            get() = ObjectParameter<LinkAnchor>(1)
 
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
@@ -717,36 +841,69 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
                 Factory -> "factory"
-                GroupAnchor -> "groupAnchor"
+                Anchor -> "anchor"
                 else -> super.objectParamName(parameter)
             }
 
-        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? =
-            getObject(GroupAnchor)
-
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
             val node = getObject(Factory).invoke()
-            val groupAnchor = getObject(GroupAnchor)
             val insertIndex = getInt(InsertIndex)
+            val groupAddress = getObject(Anchor).address
 
             val nodeApplier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>)
-            slots.updateNode(groupAnchor, node)
+            slots.updateNode(groupAddress, node)
             nodeApplier.insertTopDown(insertIndex, node)
             nodeApplier.down(node)
         }
     }
 
-    object PostInsertNodeFixup : Operation(ints = 1, objects = 1) {
+    object PostInsertNodeFixup : Operation(ints = 3) {
         inline val InsertIndex
             get() = 0
 
-        inline val GroupAnchor
-            get() = ObjectParameter<GapAnchor>(0)
+        inline val GroupHandleHigh
+            get() = 1
+
+        inline val GroupHandleLow
+            get() = 2
+
+        override fun intParamName(parameter: IntParameter) =
+            when (parameter) {
+                InsertIndex -> "insertIndex"
+                GroupHandleHigh -> "groupHandleHigh"
+                GroupHandleLow -> "groupHandleLow"
+                else -> super.intParamName(parameter)
+            }
+
+        override fun OperationArgContainer.getGroupHandle(slots: SlotTableEditor): GroupHandle =
+            getLong(GroupHandleHigh, GroupHandleLow)
+
+        override fun OperationArgContainer.execute(
+            applier: Applier<*>,
+            slots: SlotTableEditor,
+            rememberManager: RememberManager,
+            errorContext: OperationErrorContext?,
+        ) {
+            val insertIndex = getInt(InsertIndex)
+            val groupAddress = getLong(GroupHandleHigh, GroupHandleLow).group
+
+            applier.up()
+            val nodeApplier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>)
+            nodeApplier.insertBottomUp(insertIndex, slots.node(groupAddress))
+        }
+    }
+
+    object PostInsertNodeFixupByAnchor : Operation(ints = 1, objects = 1) {
+        inline val InsertIndex
+            get() = 0
+
+        inline val Anchor
+            get() = ObjectParameter<LinkAnchor>(0)
 
         override fun intParamName(parameter: IntParameter) =
             when (parameter) {
@@ -754,39 +911,35 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                 else -> super.intParamName(parameter)
             }
 
-        override fun objectParamName(parameter: ObjectParameter<*>) =
+        override fun objectParamName(parameter: ObjectParameter<*>): String =
             when (parameter) {
-                GroupAnchor -> "groupAnchor"
+                Anchor -> "anchor"
                 else -> super.objectParamName(parameter)
             }
 
-        override fun OperationArgContainer.getGroupAnchor(slots: SlotWriter): GapAnchor? =
-            getObject(GroupAnchor)
-
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            val groupAnchor = getObject(GroupAnchor)
             val insertIndex = getInt(InsertIndex)
+            val groupAddress = getObject(Anchor).address
 
             applier.up()
             val nodeApplier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>)
-            val nodeToInsert = slots.node(groupAnchor)
-            nodeApplier.insertBottomUp(insertIndex, nodeToInsert)
+            nodeApplier.insertBottomUp(insertIndex, slots.node(groupAddress))
         }
     }
 
-    object DeactivateCurrentGroup : Operation() {
+    object DeactivateGroup : Operation() {
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            slots.deactivateCurrentGroup(rememberManager)
+            slots.deactivateGroup(rememberManager)
         }
     }
 
@@ -796,7 +949,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
     object ResetSlots : Operation() {
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -804,23 +957,40 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
-    object DetermineMovableContentNodeIndex : Operation(objects = 2) {
+    /**
+     * Determine the insert node index and navigate the applier to the location of the parent node
+     * children will be inserted into by performing all the up and downs necessary.
+     *
+     * NOTE: As a side-effect of this code, the slots parameter is navigated to the groupHandle
+     * location. This is relied on by the relative update commands that usually following this task
+     * in the change list.
+     */
+    object DetermineMovableContentNodeIndex : Operation(ints = 2, objects = 1) {
         inline val EffectiveNodeIndexOut
             get() = ObjectParameter<IntRef>(0)
 
-        inline val Anchor
-            get() = ObjectParameter<GapAnchor>(1)
+        inline val GroupHandleLowBits
+            get() = 0
+
+        inline val GroupHandleHighBits
+            get() = 1
+
+        override fun intParamName(parameter: IntParameter) =
+            when (parameter) {
+                GroupHandleLowBits -> "groupHandle[32..63]"
+                GroupHandleHighBits -> "groupHandle[0..31]"
+                else -> super.intParamName(parameter)
+            }
 
         override fun objectParamName(parameter: ObjectParameter<*>) =
             when (parameter) {
                 EffectiveNodeIndexOut -> "effectiveNodeIndexOut"
-                Anchor -> "anchor"
                 else -> super.objectParamName(parameter)
             }
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -829,7 +999,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             effectiveNodeIndexOut.element =
                 positionToInsert(
                     slots = slots,
-                    anchor = getObject(Anchor),
+                    destination = getLong(GroupHandleHighBits, GroupHandleLowBits),
                     applier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>),
                 )
         }
@@ -853,7 +1023,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -868,8 +1038,22 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         }
     }
 
+    object EndMovableContentPlacement : Operation() {
+        override fun OperationArgContainer.execute(
+            applier: Applier<*>,
+            slots: SlotTableEditor,
+            rememberManager: RememberManager,
+            errorContext: OperationErrorContext?,
+        ) {
+            while (slots.parentGroup >= 0) {
+                if (slots.isParentGroupANode) applier.up()
+                slots.endGroup()
+            }
+        }
+    }
+
     @OptIn(InternalComposeApi::class)
-    object CopySlotTableToAnchorLocation : Operation(objects = 4) {
+    object CopySlotTableToHandleLocation : Operation(objects = 4) {
         inline val ResolvedState
             get() = ObjectParameter<MovableContentState?>(0)
 
@@ -893,7 +1077,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -906,42 +1090,38 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                     ?: parentCompositionContext.movableContentStateResolve(from)
                     ?: composeRuntimeError("Could not resolve state for movable content")
 
-            // The slot table contains the movable content group plus the group
-            // containing the movable content's table which then contains the actual
-            // state to be inserted. The state is at index 2 in the table (for the
-            // two groups) and is inserted into the provider group at offset 1 from the
-            // current location.
-            val anchors =
-                slots.moveIntoGroupFrom(1, resolvedState.slotStorage.asGapBufferSlotTable(), 2)
+            val resolvedTable = resolvedState.slotStorage.asLinkBufferSlotTable()
+            val newGroup =
+                resolvedTable.edit {
+                    // At this point, slots' currentGroup and the root of the resolvedTable both
+                    // point to the wrapper group containing the MovableContent instance and the
+                    // IsMovableContent flag. We want to move the content itself, which is the
+                    // grandchild of this group (the child group is from invokeMovableContentLambda,
+                    // which we also don't want to copy)
+                    startGroup()
+                    startGroup()
+                    slots.moveFrom(
+                        sourceEditor = this@edit,
+                        sourceHandle = handle(),
+                        destination =
+                            makeGroupHandle(
+                                groupContext = slots.firstChildOf(slots.currentGroup),
+                                group = NULL_ADDRESS,
+                            ),
+                    )
+                }
 
             // For all the anchors that moved, if the anchor is tracking a recompose
             // scope, update it to reference its new composer.
-            RecomposeScopeImpl.adoptAnchoredScopes(
-                slots = slots,
-                anchors = anchors,
+            slots.table.adoptScopesInGroupToNewParent(
+                group = newGroup.group,
                 newOwner = to.composition as RecomposeScopeOwner,
             )
         }
     }
 
-    object EndMovableContentPlacement : Operation() {
-        override fun OperationArgContainer.execute(
-            applier: Applier<*>,
-            slots: SlotWriter,
-            rememberManager: RememberManager,
-            errorContext: OperationErrorContext?,
-        ) {
-            positionToParentOf(
-                slots = slots,
-                applier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>),
-                index = 0,
-            )
-            slots.endGroup()
-        }
-    }
-
     @OptIn(InternalComposeApi::class)
-    object ReleaseMovableGroupAtCurrent : Operation(objects = 3) {
+    object ReleaseMovableGroup : Operation(objects = 3) {
         inline val Composition
             get() = ObjectParameter<ControlledComposition>(0)
 
@@ -961,25 +1141,43 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
-            val composition = getObject(Composition)
-            val reference = getObject(Reference)
-            val parentContext = getObject(ParentCompositionContext)
-            val state =
-                extractMovableContentAtCurrent(
-                    composition = composition,
-                    reference = reference,
-                    slots = slots,
-                    applier = null,
-                )
-            parentContext.movableContentStateReleased(reference, state, applier)
+            releaseMovableGroup(
+                composition = getObject(Composition),
+                parentContext = getObject(ParentCompositionContext),
+                reference = getObject(Reference),
+                slots = slots,
+                applier = applier,
+            )
         }
     }
 
-    object ApplyChangeList : Operation(objects = 2) {
+    @OptIn(InternalComposeApi::class)
+    object DisposeMovableContentState : Operation(objects = 1) {
+        inline val ResolvedState
+            get() = ObjectParameter<MovableContentState>(0)
+
+        override fun objectParamName(parameter: ObjectParameter<*>) =
+            when (parameter) {
+                ResolvedState -> "resolvedState"
+                else -> super.objectParamName(parameter)
+            }
+
+        override fun OperationArgContainer.execute(
+            applier: Applier<*>,
+            slots: SlotTableEditor,
+            rememberManager: RememberManager,
+            errorContext: OperationErrorContext?,
+        ) {
+            val resolvedState = getObject(ResolvedState)
+            resolvedState.dispose()
+        }
+    }
+
+    object ApplyChangeList : Operation(objects = 2, isExternallyVisible = false) {
         inline val Changes
             get() = ObjectParameter<ChangeList>(0)
 
@@ -995,7 +1193,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ) {
@@ -1028,7 +1226,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
     constructor(
         ints: Int = 0,
         objects: Int = 0,
-        val block: (Applier<*>, SlotWriter, RememberManager) -> Unit = { _, _, _ -> },
+        val block: (Applier<*>, SlotTableEditor, RememberManager) -> Unit = { _, _, _ -> },
     ) : Operation(ints, objects) {
         @Suppress("PrimitiveInCollection") val intParams = List(ints) { it }
         @Suppress("PrimitiveInCollection")
@@ -1036,7 +1234,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
 
         override fun OperationArgContainer.execute(
             applier: Applier<*>,
-            slots: SlotWriter,
+            slots: SlotTableEditor,
             rememberManager: RememberManager,
             errorContext: OperationErrorContext?,
         ): Unit = block(applier, slots, rememberManager)
@@ -1046,69 +1244,225 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
     }
 }
 
-private fun positionToParentOf(slots: SlotWriter, applier: Applier<Any?>, index: Int) {
-    while (!slots.indexInParent(index)) {
-        slots.skipToGroupEnd()
-        if (slots.isNode(slots.parent)) applier.up()
-        slots.endGroup()
-    }
-}
+/**
+ * Repositions both the SlotTableEditor and Applier so that they point to any parent of the given
+ * [handle].
+ */
+private fun positionToParentOf(
+    slots: SlotTableEditor,
+    applier: Applier<Any?>,
+    handle: GroupHandle,
+) {
+    if (slots.parentGroup >= 0) {
+        val parents =
+            mutableIntSetOf().apply {
+                val slotTable = slots.table
+                slotTable.traverseGroupAndParents(slots.parentOf(handle.group)) { parent ->
+                    add(parent)
+                }
+            }
 
-private fun currentNodeIndex(slots: SlotWriter): Int {
-    val original = slots.currentGroup
-
-    // Find parent node
-    var current = slots.parent
-    while (current >= 0 && !slots.isNode(current)) {
-        current = slots.parent(current)
-    }
-
-    var index = 0
-    current++
-    while (current < original) {
-        if (slots.indexInGroup(original, current)) {
-            if (slots.isNode(current)) index = 0
-            current++
-        } else {
-            index += if (slots.isNode(current)) 1 else slots.nodeCount(current)
-            current += slots.groupSize(current)
+        while (slots.parentGroup >= 0 && slots.parentGroup !in parents) {
+            if (slots.isParentGroupANode) applier.up()
+            slots.endGroup()
         }
     }
-    return index
 }
 
-private fun positionToInsert(slots: SlotWriter, anchor: GapAnchor, applier: Applier<Any?>): Int {
-    val destination = slots.anchorIndex(anchor)
-    runtimeCheck(slots.currentGroup < destination)
+/**
+ * Repositions [slots] to the provided [destination] handle. When this function returns, the
+ * SlotTableEditor's currentGroup will point to the group encoded in the destination handle, and the
+ * applier will point to the corresponding node location of this position in the SlotTable.
+ *
+ * This operation is used to realize the positioning of movable content.
+ *
+ * @return The destination group's node index within the closest parent node
+ */
+private fun positionToInsert(
+    slots: SlotTableEditor,
+    destination: GroupHandle,
+    applier: Applier<Any?>,
+): Int {
     positionToParentOf(slots, applier, destination)
-    var nodeIndex = currentNodeIndex(slots)
-    while (slots.currentGroup < destination) {
+
+    // Enumerate the parents of the destination into a queue. These are the groups we will
+    // need to start.
+    val startParentGroup = slots.parentGroup
+    val target = destination.group
+    val parents =
+        IntStack().apply {
+            slots.table.traverseGroupAndParents(target) { parent ->
+                if (parent == startParentGroup) return@apply
+                push(parent)
+            }
+        }
+
+    runtimeCheck(slots.parentGroup == startParentGroup) {
+        "Unexpected slot table structure when inserting movable content"
+    }
+
+    val startingGroup = slots.currentGroup
+    var nodeIndex = 0
+    var foundParentNode = false
+
+    // Traverse to the destination. Skip groups until we get to the next parent we're
+    // expecting, then start it. After starting all parents, we still need to skip until
+    // we reach the target group.
+    while (slots.currentGroup != target) {
         when {
-            slots.indexInCurrentGroup(destination) -> {
+            parents.isNotEmpty() && slots.currentGroup == parents.peek() -> {
                 if (slots.isNode) {
-                    applier.down(slots.node(slots.currentGroup))
+                    applier.down(slots.node)
                     nodeIndex = 0
+                    foundParentNode = true
                 }
                 slots.startGroup()
+                parents.pop()
             }
             else -> nodeIndex += slots.skipGroup()
         }
     }
 
-    runtimeCheck(slots.currentGroup == destination)
-    return nodeIndex
+    // If one of the parents was a node group, we're done. Otherwise, we need to go back to
+    // the parents of the starting point to resolve the index, in case there were other node
+    // groups before this section of the SlotTable we just explored.
+    return nodeIndex + if (!foundParentNode) nodeIndex(slots, startingGroup) else 0
+}
+
+/**
+ * @return The node index of the given [group] as it appears in its closest parent's node group. In
+ *   other words, this returns the number of nodes before [group] in a preorder traversal of the
+ *   SlotTable, starting from the first parent group that is a node group and not recursively
+ *   counting child nodes.
+ *
+ * (As an implementation detail, the algorithm itself is implemented entirely bottom-up as this is
+ * the more efficient route to take.)
+ */
+private fun nodeIndex(slots: SlotTableEditor, group: GroupAddress): Int {
+    if (group < 0) return 0
+
+    val slotTable = slots.table
+    var index = 0
+    var lastExploredGroup = group
+
+    // Iterate through all parents until a parent node group is reached
+    slotTable.traverseGroupAndParents(lastExploredGroup) { parent ->
+        if (slots.isNode(parent)) return index
+
+        val grandParent = slots.parentOf(parent)
+        val firstSibling =
+            if (grandParent < 0) {
+                slotTable.root
+            } else {
+                slots.firstChildOf(grandParent)
+            }
+
+        // Count all node counts in siblings before this group
+        slotTable.traverseSiblings(firstSibling) { predecessor ->
+            if (predecessor == lastExploredGroup) {
+                lastExploredGroup = grandParent
+                return@traverseGroupAndParents
+            }
+            index += slots.nodeCountOf(predecessor)
+        }
+        lastExploredGroup = grandParent
+    }
+
+    return index
+}
+
+/**
+ * Release the movable group stored in [slots] to the recomposer to be used to insert in another
+ * location if needed.
+ */
+@OptIn(InternalComposeApi::class)
+private fun releaseMovableGroup(
+    composition: ControlledComposition,
+    parentContext: CompositionContext,
+    reference: MovableContentStateReference,
+    slots: SlotTableEditor,
+    applier: Applier<*>,
+) {
+    // Write a table that as if it was written by a calling
+    // invokeMovableContentLambda because this might be removed from the
+    // composition before the new composition can be composed to receive it. When
+    // the new composition receives the state it must recompose over the state by
+    // calling invokeMovableContentLambda.
+    val slotTable =
+        slots.table.buildSubTable {
+            // Add the prefix created by invokeMovableContentLambda
+            startGroup(movableContentKey, reference.content)
+            addFlags(IsMovableContentFlag)
+            append(reference.parameter)
+
+            // Get the first child inside of the MovableContentStateReference to move the content
+            // itself and not the reference's container
+            val wrapperGroup = reference.anchor.asLinkAnchor().address
+            val movableContentReference = slots.table.addressSpace.groups.groupChild(wrapperGroup)
+
+            moveFrom(
+                sourceEditor = slots,
+                sourceHandle = makeGroupHandle(LAZY_ADDRESS, movableContentReference),
+            )
+            endGroup()
+        }
+
+    val state = MovableContentState(slotTable)
+    if (slotTable.hasRecomposeScopes(slotTable.root)) {
+        // If any recompose scopes are invalidated while the movable content is outside
+        // a composition, ensure the reference is updated to contain the invalidation.
+        val movableContentRecomposeScopeOwner =
+            object : RecomposeScopeOwner {
+                override fun invalidate(
+                    scope: RecomposeScopeImpl,
+                    instance: Any?,
+                ): InvalidationResult {
+                    // Try sending this to the original owner first.
+                    val result =
+                        (composition as? RecomposeScopeOwner)?.invalidate(scope, instance)
+                            ?: InvalidationResult.IGNORED
+
+                    // If the original owner ignores this then we need to record it in the
+                    // reference
+                    if (result == InvalidationResult.IGNORED) {
+                        reference.invalidations += scope to (instance ?: ScopeInvalidated)
+                        return InvalidationResult.SCHEDULED
+                    }
+                    return result
+                }
+
+                // The only reason [recomposeScopeReleased] is called is when the recompose scope is
+                // removed from the table. First, this never happens for content that is moving, and
+                // 2) even if it did the only reason we tell the composer is to clear tracking
+                // tables that contain this information which is not relevant here.
+                override fun recomposeScopeReleased(scope: RecomposeScopeImpl) {
+                    // Nothing to do
+                }
+
+                // [recordReadOf] this is also something that would happen only during active
+                // recomposition which doesn't happened to a slot table that is moving.
+                override fun recordReadOf(value: Any) {
+                    // Nothing to do
+                }
+            }
+        slotTable.adoptScopesInGroupToNewParent(
+            group = slotTable.root,
+            newOwner = movableContentRecomposeScopeOwner,
+        )
+    }
+    parentContext.movableContentStateReleased(reference, state, applier)
 }
 
 private inline fun withCurrentStackTrace(
     errorContext: OperationErrorContext?,
-    writer: SlotWriter,
-    location: GapAnchor?,
+    editor: SlotTableEditor,
+    location: GroupHandle,
     block: () -> Unit,
 ) {
     try {
         block()
     } catch (e: Throwable) {
-        throw e.attachComposeStackTrace(errorContext, writer, location)
+        throw e.attachComposeStackTrace(errorContext, editor, location)
     }
 }
 
@@ -1116,15 +1470,15 @@ private inline fun withCurrentStackTrace(
 @Suppress("ListIterator")
 private fun Throwable.attachComposeStackTrace(
     errorContext: OperationErrorContext?,
-    writer: SlotWriter,
-    anchor: GapAnchor?,
+    editor: SlotTableEditor,
+    handle: GroupHandle,
 ): Throwable {
     if (errorContext == null) return this
     return attachComposeStackTrace {
-        if (anchor != null) {
-            writer.seek(anchor)
+        if (handle != NULL_GROUP_HANDLE) {
+            editor.seek(handle)
         }
-        val trace = writer.buildTrace()
+        val trace = editor.buildTrace()
         val offset = trace.lastOrNull()?.groupOffset
         val parentTrace =
             errorContext.buildStackTrace(offset).let {
@@ -1140,16 +1494,17 @@ private fun Throwable.attachComposeStackTrace(
     }
 }
 
-private fun OperationErrorContext.withCurrentStackTrace(slots: SlotWriter): OperationErrorContext {
+private fun OperationErrorContext.withCurrentStackTrace(
+    slots: SlotTableEditor
+): OperationErrorContext {
     val parent = this
     return object : OperationErrorContext {
         override fun buildStackTrace(currentOffset: Int?): List<ComposeStackTraceFrame> {
             val parentTrace = parent.buildStackTrace(null)
             // Slots are positioned at the start of the next group when insertion happens
-            val currentGroup = slots.parent
+            val currentGroup = slots.parentGroup
             if (currentGroup < 0) return parentTrace
-            return slots.buildTrace(currentOffset, currentGroup, slots.parent(currentGroup)) +
-                parentTrace
+            return slots.buildTrace(currentOffset, currentGroup) + parentTrace
         }
 
         override val sourceInformationEnabled: Boolean
