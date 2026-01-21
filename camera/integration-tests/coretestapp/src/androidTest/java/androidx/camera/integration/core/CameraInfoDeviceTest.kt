@@ -347,7 +347,7 @@ class CameraInfoDeviceTest(private val implName: String, private val cameraXConf
             }
         }
 
-        assertThat(formats).containsExactlyElementsIn(expectedFormats)
+        assertThat(formats).containsExactlyElementsIn(expectedFormats.toSet())
     }
 
     @Test
