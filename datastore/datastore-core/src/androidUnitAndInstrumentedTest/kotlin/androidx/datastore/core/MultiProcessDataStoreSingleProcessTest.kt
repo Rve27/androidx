@@ -90,7 +90,12 @@ abstract class MultiProcessDataStoreSingleProcessTest<F : TestFile<F>>(
             storage =
                 testIO.getStorage(
                     serializerConfig,
-                    { MultiProcessCoordinator(scope.coroutineContext, getJavaFile(testFile)) },
+                    {
+                        MultiProcessCoordinator(
+                            dataStoreScope.coroutineContext,
+                            getJavaFile(testFile),
+                        )
+                    },
                 ) {
                     file
                 },
