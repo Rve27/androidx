@@ -190,19 +190,25 @@ class TransformationActivity : AppCompatActivity() {
     }
 
     private fun createActivitySpaceDebugPanel() {
+        val largeLabelDimensions = FloatSize3d(280f, 100f)
         activitySpaceDebugPanel =
-            createDebugPanelAndLabel("ActivitySpace", session!!.scene.activitySpace).also { panel ->
-                panel.view.setLine(
-                    "onActivitySpaceUpdatedCount",
-                    (++onActivitySpaceUpdatedCount).toString(),
+            createDebugPanelAndLabel(
+                    "ActivitySpace",
+                    session!!.scene.activitySpace,
+                    largeLabelDimensions,
                 )
-                session!!.scene.activitySpace.addOnSpaceUpdatedListener {
+                .also { panel ->
                     panel.view.setLine(
                         "onActivitySpaceUpdatedCount",
                         (++onActivitySpaceUpdatedCount).toString(),
                     )
+                    session!!.scene.activitySpace.addOnSpaceUpdatedListener {
+                        panel.view.setLine(
+                            "onActivitySpaceUpdatedCount",
+                            (++onActivitySpaceUpdatedCount).toString(),
+                        )
+                    }
                 }
-            }
     }
 
     private fun updateLabelPanelSize(
@@ -368,7 +374,7 @@ class TransformationActivity : AppCompatActivity() {
         val largeLabelDimensions = FloatSize3d(700f, 200f)
         createDebugPanelAndLabel("SunEntity", sunEntity, largeLabelDimensions)
         createDebugPanelAndLabel("PlanetEntity", planetEntity, largeLabelDimensions)
-        createDebugPanelAndLabel("MoonEntity", moonEntity, largeLabelDimensions)
+        createDebugPanelAndLabel("MoonEntity", moonEntity, largeLabelDimensions.times(2))
     }
 
     private fun orbitModelAroundParent(
