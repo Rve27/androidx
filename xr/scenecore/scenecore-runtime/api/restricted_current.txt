@@ -526,7 +526,7 @@ package androidx.xr.scenecore.runtime {
     method public androidx.xr.scenecore.runtime.TextureResource? borrowReflectionTexture();
     method public androidx.xr.scenecore.runtime.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.GltfModelResource loadedGltf, androidx.xr.scenecore.runtime.Entity? parentEntity);
     method public suspend Object? createKhronosPbrMaterial(androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.MaterialResource>);
-    method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(int stereoMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape, @androidx.xr.scenecore.runtime.SurfaceEntity.SurfaceProtection int surfaceProtection, int superSampling, androidx.xr.scenecore.runtime.Entity? parentEntity);
+    method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(int stereoMode, @androidx.xr.scenecore.runtime.SurfaceEntity.MediaBlendingMode int mediaBlendingMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape, @androidx.xr.scenecore.runtime.SurfaceEntity.SurfaceProtection int surfaceProtection, int superSampling, androidx.xr.scenecore.runtime.Entity? parentEntity);
     method public suspend Object? createWaterMaterial(boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.MaterialResource>);
     method public void destroyExrImage(androidx.xr.scenecore.runtime.ExrImageResource exrImage);
     method public void destroyGltfModel(androidx.xr.scenecore.runtime.GltfModelResource gltfModel);
@@ -1034,6 +1034,19 @@ package androidx.xr.scenecore.runtime {
     method @InaccessibleFromKotlin public float getTopBottom();
     property public float leftRight;
     property public float topBottom;
+  }
+
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface SurfaceEntity.MediaBlendingMode {
+    field public static final androidx.xr.scenecore.runtime.SurfaceEntity.MediaBlendingMode.Companion Companion;
+    field public static final int OPAQUE = 1; // 0x1
+    field public static final int TRANSPARENT = 0; // 0x0
+  }
+
+  public static final class SurfaceEntity.MediaBlendingMode.Companion {
+    property public static int OPAQUE;
+    property public static int TRANSPARENT;
+    field public static final int OPAQUE = 1; // 0x1
+    field public static final int TRANSPARENT = 0; // 0x0
   }
 
   public static interface SurfaceEntity.Shape {
