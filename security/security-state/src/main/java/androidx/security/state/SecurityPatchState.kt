@@ -816,6 +816,15 @@ constructor(
      *    suspension.
      * 2. It executes the blocking IPC call on a background thread to avoid ANRs on the main thread.
      *
+     * **Telemetry & Identity:** The `Intent` used to bind includes the client's package name as a
+     * data URI (`package:com.example.client`). This serves two purposes:
+     * 1. **Identity:** Allows the service to identify the caller in its `onClientConnected` and
+     *    `onClientDisconnected` lifecycle hooks (e.g., for tracking session duration).
+     * 2. **Session Tracking:** Forces the Android system to treat each client's connection as a
+     *    unique binding. By default, Android caches the Binder for identical Intents and suppresses
+     *    subsequent `onBind` calls. Adding unique data ensures the service receives a lifecycle
+     *    event for *every* client session.
+     *
      * @param component The [ComponentName] of the [IUpdateInfoService] to bind to.
      * @param timeoutMillis The maximum time to wait for the service to respond.
      * @return An [UpdateCheckResult] containing the data from the provider. If the operation fails,
@@ -839,7 +848,12 @@ constructor(
             withTimeout(timeoutMillis) {
                 suspendCancellableCoroutine { continuation ->
                     val intent =
-                        Intent(ACTION_UPDATE_INFO_SERVICE).apply { this.component = component }
+                        Intent(ACTION_UPDATE_INFO_SERVICE).apply {
+                            this.component = component
+                            // Attach unique data to identify the caller and force a fresh bind for
+                            // each client
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
 
                     val connection =
                         object : ServiceConnection {

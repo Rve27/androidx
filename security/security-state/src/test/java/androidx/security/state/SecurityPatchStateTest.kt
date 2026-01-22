@@ -70,6 +70,7 @@ class SecurityPatchStateTest {
 
     @Before
     fun setup() {
+        `when`(mockContext.packageName).thenReturn("com.example.test")
         `when`(mockContext.packageManager).thenReturn(mockPackageManager)
         `when`(mockBinder.queryLocalInterface(anyString())).thenReturn(mockService)
         securityState = SecurityPatchState(mockContext, listOf(), mockSecurityStateManagerCompat)
@@ -2032,6 +2033,49 @@ class SecurityPatchStateTest {
 
             // AND verify we unbound from the service
             verifyUpdateInfoServiceUnbound()
+        }
+    }
+
+    @Test
+    fun testQueryAllAvailableUpdates_sendsPackageNameInIntentData() {
+        runBlocking {
+            // GIVEN the client app has a specific package name
+            val clientPackageName = "com.example.myclient"
+            `when`(mockContext.packageName).thenReturn(clientPackageName)
+
+            // AND a trusted provider exists
+            val trustedInfo =
+                createUpdateInfoServiceResolveInfo("com.google.android.gms", isSystem = true)
+            `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(trustedInfo))
+
+            setupUpdateInfoServiceResponse(emptyList(), "com.google.android.gms")
+
+            // CAPTURE the Intent passed to bindService
+            val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
+            `when`(
+                    mockContext.bindService(
+                        intentCaptor.capture(),
+                        any(ServiceConnection::class.java),
+                        anyInt(),
+                    )
+                )
+                .thenReturn(true)
+
+            // WHEN we query for all available updates
+            securityState.queryAllAvailableUpdates()
+
+            // THEN the Intent contains the correct Data URI
+            val capturedIntent = intentCaptor.value
+            val data = capturedIntent.data
+
+            assertNotNull("Intent data should not be null", data)
+            assertEquals("scheme should be 'package'", "package", data?.scheme)
+            assertEquals(
+                "schemeSpecificPart should be package name",
+                clientPackageName,
+                data?.schemeSpecificPart,
+            )
         }
     }
 
