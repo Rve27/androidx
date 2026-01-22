@@ -374,9 +374,19 @@ public class ImpressApiImpl : ImpressApi {
      * @param impressNode The integer ID of the impress node for the instance of the gLTF
      * @param enabled A boolean indicated whether to add or remove the reform affordance for the
      *   gLTF model.
+     * @param systemMovable A boolean indicating whether to handle the move input events or not.
      */
-    override fun setGltfReformAffordanceEnabled(impressNode: ImpressNode, enabled: Boolean): Unit =
-        nSetGltfReformAffordanceEnabled(getViewNativeHandle(view), impressNode.handle, enabled)
+    override fun setGltfReformAffordanceEnabled(
+        impressNode: ImpressNode,
+        enabled: Boolean,
+        systemMovable: Boolean,
+    ): Unit =
+        nSetGltfReformAffordanceEnabled(
+            getViewNativeHandle(view),
+            impressNode.handle,
+            enabled,
+            systemMovable,
+        )
 
     /**
      * Starts an animation on an instanced GLTFModel.
@@ -1515,6 +1525,7 @@ public class ImpressApiImpl : ImpressApi {
         view: Long,
         impressNode: Int,
         enabled: Boolean,
+        systemMovable: Boolean,
     )
 
     private external fun nAnimateGltfModel(
