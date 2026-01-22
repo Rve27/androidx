@@ -557,9 +557,9 @@ internal class UpdatingDataContextElement(
     companion object {
         internal val NESTED_UPDATE_ERROR_MESSAGE =
             """
-                Calling updateData inside updateData on the same DataStore instance is not supported
-                since updates made in the parent updateData call will not be visible to the nested
-                updateData call. See https://issuetracker.google.com/issues/241760537 for details.
+            Calling updateData inside updateData on the same DataStore instance is not supported
+            since updates made in the parent updateData call will not be visible to the nested
+            updateData call. See https://issuetracker.google.com/issues/241760537 for details.
             """
                 .trimIndent()
 

@@ -637,11 +637,11 @@ class SubjectTest {
 
         assertFailsWithMessage(
             """
-                msg1
-                msg2
-                msg3
-                msg4
-                but was: 0
+            msg1
+            msg2
+            msg3
+            msg4
+            but was: 0
             """
                 .trimIndent()
         ) {
@@ -664,13 +664,13 @@ class SubjectTest {
 
         assertFailsWithMessage(
             """
-                msg1
-                msg2
-                msg3
-                msg4
-                but was:
-                    a
-                    b
+            msg1
+            msg2
+            msg3
+            msg4
+            but was:
+                a
+                b
             """
                 .trimIndent()
         ) {
@@ -693,10 +693,10 @@ class SubjectTest {
 
         assertFailsWithMessage(
             """
-                msg1
-                msg2
-                msg3
-                msg4
+            msg1
+            msg2
+            msg3
+            msg4
             """
                 .trimIndent()
         ) {
@@ -719,10 +719,10 @@ class SubjectTest {
 
         assertFailsWithMessage(
             """
-                msg1
-                msg2
-                msg3
-                msg4
+            msg1
+            msg2
+            msg3
+            msg4
             """
                 .trimIndent()
         ) {

@@ -90,9 +90,9 @@ internal fun TestCompilationArguments.withAtLeastOneKotlinSource(): TestCompilat
                     "SyntheticSource.kt",
                     code =
                         """
-                package xprocessing.generated
-                class SyntheticKotlinSource
-            """
+                        package xprocessing.generated
+                        class SyntheticKotlinSource
+                        """
                             .trimIndent(),
                 )
     )
