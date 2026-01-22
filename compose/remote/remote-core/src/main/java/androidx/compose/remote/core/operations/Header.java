@@ -107,6 +107,9 @@ public class Header extends Operation implements RemoteComposeOperation {
     /** direct measure in paint, instead of wrap behavior */
     public static final short FEATURE_PAINT_MEASURE = 15;
 
+    /** Direct player to be verbose levels= 0=off,1,2,3 */
+    public static final short DEBUG = 16;
+
     /** The object is an integer */
     private static final short DATA_TYPE_INT = 0;
 
@@ -129,7 +132,8 @@ public class Header extends Operation implements RemoteComposeOperation {
         DOC_DATA_UPDATE,
         HOST_EXCEPTION_HANDLER,
         DOC_PROFILES,
-            FEATURE_PAINT_MEASURE
+        FEATURE_PAINT_MEASURE,
+        DEBUG
     };
     private static final String[] KEY_NAMES = {
         "DOC_WIDTH",
@@ -142,7 +146,7 @@ public class Header extends Operation implements RemoteComposeOperation {
         "HOST_EXCEPTION_HANDLER",
         "DOC_PROFILES",
         "PAINT_MEASURE",
-    };
+        "DEBUG"};
 
     /**
      * It encodes the version of the document (following semantic versioning) as well as the
