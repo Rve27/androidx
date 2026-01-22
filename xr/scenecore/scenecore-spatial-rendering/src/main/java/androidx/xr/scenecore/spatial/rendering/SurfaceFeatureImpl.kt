@@ -39,6 +39,7 @@ internal class SurfaceFeatureImpl(
     splitEngineSubspaceManager: SplitEngineSubspaceManager,
     extensions: XrExtensions,
     @SurfaceEntity.StereoMode stereoMode: Int,
+    @SurfaceEntity.MediaBlendingMode mediaBlendingMode: Int,
     canvasShape: SurfaceEntity.Shape,
     @SurfaceEntity.SurfaceProtection surfaceProtection: Int,
     @SurfaceEntity.SuperSampling superSampling: Int,
@@ -56,6 +57,8 @@ internal class SurfaceFeatureImpl(
             }
             field = value
         }
+
+    @SurfaceEntity.MediaBlendingMode private val mediaBlendingMode: Int = mediaBlendingMode
 
     @SurfaceEntity.SurfaceProtection private val surfaceProtection: Int = surfaceProtection
 
@@ -171,6 +174,7 @@ internal class SurfaceFeatureImpl(
             entityImpressNode =
                 impressApi.createStereoSurface(
                     stereoMode,
+                    toImpressMediaBlendingMode(mediaBlendingMode),
                     toImpressContentSecurityLevel(surfaceProtection),
                     toImpressSuperSampling(superSampling),
                 )
@@ -273,6 +277,18 @@ internal class SurfaceFeatureImpl(
     }
 
     companion object {
+        // Converts SurfaceEntity's MediaBlendingMode to an Impress MediaBlendingMode.
+        private fun toImpressMediaBlendingMode(
+            @SurfaceEntity.MediaBlendingMode mediaBlendingMode: Int
+        ): Int {
+            return when (mediaBlendingMode) {
+                SurfaceEntity.MediaBlendingMode.TRANSPARENT ->
+                    ImpressApi.MediaBlendingMode.TRANSPARENT
+                SurfaceEntity.MediaBlendingMode.OPAQUE -> ImpressApi.MediaBlendingMode.OPAQUE
+                else -> ImpressApi.MediaBlendingMode.TRANSPARENT
+            }
+        }
+
         // Converts SurfaceEntity's SurfaceProtection to an Impress ContentSecurityLevel.
         private fun toImpressContentSecurityLevel(
             @SurfaceEntity.SurfaceProtection contentSecurityLevel: Int
