@@ -85,18 +85,18 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room3.*
-            class User
-            interface BaseDao<T> {
-                @Transaction
-                fun upsert(obj: T) {
-                    TODO("")
+                import androidx.room3.*
+                class User
+                interface BaseDao<T> {
+                    @Transaction
+                    fun upsert(obj: T) {
+                        TODO("")
+                    }
                 }
-            }
 
-            @Dao
-            interface SubjectDao : BaseDao<User>
-            """
+                @Dao
+                interface SubjectDao : BaseDao<User>
+                """
                     .trimIndent(),
             )
         compileInEachDefaultsMode(source) { generated ->
@@ -115,18 +115,18 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room3.*
-            class User
-            interface BaseDao<T> {
-                @Transaction
-                suspend fun upsert(obj: T) {
-                    TODO("")
+                import androidx.room3.*
+                class User
+                interface BaseDao<T> {
+                    @Transaction
+                    suspend fun upsert(obj: T) {
+                        TODO("")
+                    }
                 }
-            }
 
-            @Dao
-            interface SubjectDao : BaseDao<User>
-            """
+                @Dao
+                interface SubjectDao : BaseDao<User>
+                """
                     .trimIndent(),
             )
         compileInEachDefaultsMode(source) { generated ->
@@ -145,18 +145,18 @@ class DefaultsInDaoTest(private val jvmDefaultMode: String) {
             Source.kotlin(
                 "Foo.kt",
                 """
-            import androidx.room3.*
-            @Dao
-            interface SubjectDao {
-                private fun upsert() {
-                    TODO("")
-                }
+                import androidx.room3.*
+                @Dao
+                interface SubjectDao {
+                    private fun upsert() {
+                        TODO("")
+                    }
 
-                private suspend fun suspendUpsert() {
-                    TODO("")
+                    private suspend fun suspendUpsert() {
+                        TODO("")
+                    }
                 }
-            }
-            """
+                """
                     .trimIndent(),
             )
         compileInEachDefaultsMode(

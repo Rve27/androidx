@@ -351,9 +351,9 @@ private class MigrateOpenDelegate(
             connection
                 .prepare(
                     """
-                SELECT name FROM sqlite_master
-                WHERE type = 'table' AND name NOT IN (?, ?, ?)
-                """
+                    SELECT name FROM sqlite_master
+                    WHERE type = 'table' AND name NOT IN (?, ?, ?)
+                    """
                         .trimIndent()
                 )
                 .use { statement ->
