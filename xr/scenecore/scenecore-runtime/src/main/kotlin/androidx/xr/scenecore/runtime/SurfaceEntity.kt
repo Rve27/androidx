@@ -298,6 +298,16 @@ public interface SurfaceEntity : Entity {
         }
     }
 
+    /** Specifies the blending mode of the content. */
+    public annotation class MediaBlendingMode {
+        public companion object {
+            // Content is alpha-blended with the background.
+            public const val TRANSPARENT: Int = 0
+            // Content is opaque and does not blend with the background.
+            public const val OPAQUE: Int = 1
+        }
+    }
+
     /** Represents the shape of the spatial canvas which the surface is texture mapped to. */
     public interface Shape {
         public val dimensions: Dimensions
