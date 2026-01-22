@@ -542,13 +542,13 @@ internal fun floatToString(v: Float, before: Int, after: Int, flags: Int) =
             TextFromFloat.SEPARATOR_SPACE_COMMA -> StringUtils.SEPARATOR_SPACE_COMMA
             TextFromFloat.SEPARATOR_UNDER_PERIOD -> StringUtils.SEPARATOR_UNDER_PERIOD
             else -> StringUtils.SEPARATOR_PERIOD_COMMA
-        }.toByte(),
+        },
         when (flags and (3 shl 4)) {
             TextFromFloat.GROUPING_BY3 -> StringUtils.GROUPING_BY3
             TextFromFloat.GROUPING_BY4 -> StringUtils.GROUPING_BY4
             TextFromFloat.GROUPING_BY32 -> StringUtils.GROUPING_BY32
             else -> StringUtils.GROUPING_NONE
-        }.toByte(),
+        },
         flags shr 8,
     )
 
