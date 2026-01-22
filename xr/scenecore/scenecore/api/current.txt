@@ -231,6 +231,7 @@ package androidx.xr.scenecore {
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model);
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model, optional androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.GltfModelEntity.AnimationState getAnimationState();
+    method @InaccessibleFromKotlin @MainThread public java.util.List<androidx.xr.scenecore.GltfModelNode> getNodes();
     method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String nodeName);
     method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String nodeName, optional int primitiveIndex);
     method @BytecodeOnly @MainThread public static void setMaterialOverride$default(androidx.xr.scenecore.GltfModelEntity!, androidx.xr.scenecore.Material!, String!, int, int, Object!);
@@ -240,6 +241,7 @@ package androidx.xr.scenecore {
     method @BytecodeOnly @MainThread public static void startAnimation$default(androidx.xr.scenecore.GltfModelEntity!, boolean, int, Object!);
     method @MainThread public void stopAnimation();
     property public androidx.xr.scenecore.GltfModelEntity.AnimationState animationState;
+    property @MainThread public java.util.List<androidx.xr.scenecore.GltfModelNode> nodes;
     field public static final androidx.xr.scenecore.GltfModelEntity.Companion Companion;
   }
 
@@ -258,6 +260,31 @@ package androidx.xr.scenecore {
     method @MainThread public androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model);
     method @MainThread public androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model, optional androidx.xr.runtime.math.Pose pose);
     method @BytecodeOnly @MainThread public static androidx.xr.scenecore.GltfModelEntity! create$default(androidx.xr.scenecore.GltfModelEntity.Companion!, androidx.xr.runtime.Session!, androidx.xr.scenecore.GltfModel!, androidx.xr.runtime.math.Pose!, int, Object!);
+  }
+
+  public final class GltfModelNode {
+    method @MainThread public void clearMaterialOverride();
+    method @MainThread public void clearMaterialOverride(optional int primitiveIndex);
+    method @BytecodeOnly @MainThread public static void clearMaterialOverride$default(androidx.xr.scenecore.GltfModelNode!, int, int, Object!);
+    method @InaccessibleFromKotlin public int getIndex();
+    method @InaccessibleFromKotlin @MainThread public androidx.xr.runtime.math.Pose getLocalPose();
+    method @InaccessibleFromKotlin @MainThread public androidx.xr.runtime.math.Vector3 getLocalScale();
+    method @InaccessibleFromKotlin @MainThread public androidx.xr.runtime.math.Pose getModelPose();
+    method @InaccessibleFromKotlin @MainThread public androidx.xr.runtime.math.Vector3 getModelScale();
+    method @InaccessibleFromKotlin public String? getName();
+    method @InaccessibleFromKotlin @MainThread public void setLocalPose(androidx.xr.runtime.math.Pose);
+    method @InaccessibleFromKotlin @MainThread public void setLocalScale(androidx.xr.runtime.math.Vector3);
+    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material);
+    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, optional int primitiveIndex);
+    method @BytecodeOnly @MainThread public static void setMaterialOverride$default(androidx.xr.scenecore.GltfModelNode!, androidx.xr.scenecore.Material!, int, int, Object!);
+    method @InaccessibleFromKotlin @MainThread public void setModelPose(androidx.xr.runtime.math.Pose);
+    method @InaccessibleFromKotlin @MainThread public void setModelScale(androidx.xr.runtime.math.Vector3);
+    property public int index;
+    property @MainThread public androidx.xr.runtime.math.Pose localPose;
+    property @MainThread public androidx.xr.runtime.math.Vector3 localScale;
+    property @MainThread public androidx.xr.runtime.math.Pose modelPose;
+    property @MainThread public androidx.xr.runtime.math.Vector3 modelScale;
+    property public String? name;
   }
 
   public final class GroupEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.scenecore.runtime.Entity> {
