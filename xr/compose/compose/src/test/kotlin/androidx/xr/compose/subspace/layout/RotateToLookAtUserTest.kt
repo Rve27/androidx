@@ -52,7 +52,7 @@ import org.robolectric.Robolectric
 import org.robolectric.android.controller.ActivityController
 
 @RunWith(AndroidJUnit4::class)
-class LookAtUserTest {
+class RotateToLookAtUserTest {
     private val testDispatcher = StandardTestDispatcher()
     // Migrate to `androidx.compose.ui.test.junit4.v2.createAndroidComposeRule`,
     // available starting with v1.11.0.
@@ -71,13 +71,13 @@ class LookAtUserTest {
     }
 
     @Test
-    fun lookAtUser_userTranslationChanges_contentTurnsTowardsUser() =
+    fun rotateToLookAtUser_userTranslationChanges_contentTurnsTowardsUser() =
         runTest(testDispatcher) {
             val fakePerceptionManager = createSessionAndGetPerceptionManager()
 
             composeTestRule.setContent {
                 Subspace {
-                    SpatialPanel(SubspaceModifier.testTag("TheWatcher").lookAtUser()) {
+                    SpatialPanel(SubspaceModifier.testTag("TheWatcher").rotateToLookAtUser()) {
                         Text(text = "Panel")
                     }
                 }
@@ -107,7 +107,7 @@ class LookAtUserTest {
         }
 
     @Test
-    fun lookAtUser_withGravityAligned_ignoresPitchRotation_andContentTurnsTowardsUser() =
+    fun rotateToLookAtUser_withGravityAligned_ignoresPitchRotation_andContentTurnsTowardsUser() =
         runTest(testDispatcher) {
             val fakePerceptionManager = createSessionAndGetPerceptionManager()
 
@@ -117,7 +117,7 @@ class LookAtUserTest {
                         SubspaceModifier.testTag("TheWatcher")
                             // Apply an initial pitch rotation to test billboard behavior
                             .rotate(pitch = 30f)
-                            .lookAtUser()
+                            .rotateToLookAtUser()
                             .gravityAligned()
                     ) {
                         Text(text = "Panel")
@@ -155,7 +155,7 @@ class LookAtUserTest {
         }
 
     @Test
-    fun lookAtUser_withRotation_retainsOffset() =
+    fun rotateToLookAtUser_withRotation_retainsOffset() =
         runTest(testDispatcher) {
             val fakePerceptionManager = createSessionAndGetPerceptionManager()
             val fixedRotateOffset = Quaternion.fromEulerAngles(pitch = 40f, yaw = 30f, roll = 20f)
@@ -164,7 +164,7 @@ class LookAtUserTest {
                 Subspace {
                     SpatialPanel(
                         SubspaceModifier.testTag("TheWatcher")
-                            .lookAtUser()
+                            .rotateToLookAtUser()
                             .rotate(pitch = 40f, yaw = 30f, roll = 20f)
                     ) {
                         Text(text = "Panel")
@@ -198,7 +198,7 @@ class LookAtUserTest {
         }
 
     @Test
-    fun lookAtUser_withGravityAlignedAndRotation_retainsOffset() =
+    fun rotateToLookAtUser_withGravityAlignedAndRotation_retainsOffset() =
         runTest(testDispatcher) {
             val fakePerceptionManager = createSessionAndGetPerceptionManager()
             val fixedRotateOffset = Quaternion.fromEulerAngles(pitch = 40f, yaw = 30f, roll = 20f)
@@ -209,7 +209,7 @@ class LookAtUserTest {
                         SubspaceModifier.testTag("TheWatcher")
                             // Apply an initial pitch rotation to test billboard behavior
                             .rotate(pitch = 30f)
-                            .lookAtUser()
+                            .rotateToLookAtUser()
                             .gravityAligned()
                             .rotate(pitch = 40f, yaw = 30f, roll = 20f)
                     ) {
@@ -243,7 +243,7 @@ class LookAtUserTest {
         }
 
     @Test
-    fun lookAtUser_precededByRotation_ignoresRotation() =
+    fun rotateToLookAtUser_precededByRotation_ignoresRotation() =
         runTest(testDispatcher) {
             val fakePerceptionManager = createSessionAndGetPerceptionManager()
             val localRotation = Quaternion.fromEulerAngles(pitch = 40f, yaw = 30f, roll = 20f)
@@ -251,7 +251,9 @@ class LookAtUserTest {
             composeTestRule.setContent {
                 Subspace {
                     SpatialPanel(
-                        SubspaceModifier.testTag("TheWatcher").rotate(localRotation).lookAtUser()
+                        SubspaceModifier.testTag("TheWatcher")
+                            .rotate(localRotation)
+                            .rotateToLookAtUser()
                     ) {
                         Text(text = "Panel")
                     }
@@ -282,7 +284,7 @@ class LookAtUserTest {
         }
 
     @Test
-    fun lookAtUser_withRotatedParent_ignoresParentRotation() =
+    fun rotateToLookAtUser_withRotatedParent_ignoresParentRotation() =
         runTest(testDispatcher) {
             val fakePerceptionManager = createSessionAndGetPerceptionManager()
             val parentRotation = Quaternion.fromEulerAngles(pitch = 40f, yaw = 30f, roll = 20f)
@@ -290,7 +292,7 @@ class LookAtUserTest {
             composeTestRule.setContent {
                 Subspace {
                     SpatialBox(SubspaceModifier.rotate(parentRotation)) {
-                        SpatialPanel(SubspaceModifier.testTag("child").lookAtUser()) {
+                        SpatialPanel(SubspaceModifier.testTag("child").rotateToLookAtUser()) {
                             Text(text = "Panel")
                         }
                     }
