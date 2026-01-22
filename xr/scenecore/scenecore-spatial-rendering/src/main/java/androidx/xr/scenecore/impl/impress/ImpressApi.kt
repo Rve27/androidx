@@ -267,8 +267,13 @@ public interface ImpressApi {
      *
      * @param impressNode The object of Impress node for the instance of the glTF model.
      * @param enabled If the reform affordance should be added or removed.
+     * @param systemMovable If the system should handle move input events.
      */
-    public fun setGltfReformAffordanceEnabled(impressNode: ImpressNode, enabled: Boolean)
+    public fun setGltfReformAffordanceEnabled(
+        impressNode: ImpressNode,
+        enabled: Boolean,
+        systemMovable: Boolean,
+    )
 
     /**
      * Starts an animation on an instanced glTF model.
