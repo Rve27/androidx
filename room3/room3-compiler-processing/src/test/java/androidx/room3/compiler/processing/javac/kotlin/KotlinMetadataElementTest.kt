@@ -843,7 +843,7 @@ class KotlinMetadataElementTest(private val preCompiled: Boolean) {
                 """
                     .trimIndent(),
             )
-        simpleRun(sources = listOf(src), kotlincArgs = listOf("-Xjvm-default=disable")) { env ->
+        simpleRun(sources = listOf(src), kotlincArgs = listOf("-jvm-default=disable")) { env ->
             val subjectElement = env.requireTypeElement("Subject.DefaultImpls")
             // Call metadata derived API causing it to be read
             assertThat(subjectElement.isKotlinObject()).isFalse()
