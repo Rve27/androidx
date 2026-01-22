@@ -64,6 +64,12 @@ public class RemoteBitmapFont(
 
         /** The margin in pixels below the glyph bitmap. */
         public val marginBottom: Short,
+
+        /** The width of the glyph, defaults to the bitmap width. */
+        public val width: Short = bitmap?.width?.toShort() ?: 0,
+
+        /** The height of the glyph, defaults to the bitmap height. */
+        public val height: Short = bitmap?.height?.toShort() ?: 0,
     )
 
     public override val constantValueOrNull: Any?
@@ -80,8 +86,8 @@ public class RemoteBitmapFont(
                     glyph.marginTop,
                     glyph.marginRight,
                     glyph.marginBottom,
-                    glyph.bitmap?.width?.toShort() ?: 0,
-                    glyph.bitmap?.height?.toShort() ?: 0,
+                    glyph.width,
+                    glyph.height,
                 )
             },
             kerningTable,
