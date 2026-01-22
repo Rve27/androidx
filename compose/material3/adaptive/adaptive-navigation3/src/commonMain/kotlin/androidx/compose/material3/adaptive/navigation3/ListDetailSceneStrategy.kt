@@ -33,6 +33,7 @@ import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.Dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
@@ -248,6 +249,72 @@ public class ListDetailSceneStrategy<T : Any>(
          */
         public fun extraPane(sceneKey: Any = Unit): Map<String, Any> =
             mapOf(ListDetailRoleKey to ExtraMetadata(sceneKey))
+
+        /**
+         * Constructs metadata to set the preferred size of a pane within a list-detail scaffold,
+         * defined in [Dp]s.
+         *
+         * If the value is unset or set to [Dp.Unspecified],
+         * [defaultPanePreferredWidth][PaneScaffoldDirective.defaultPanePreferredWidth] and
+         * [defaultPanePreferredHeight][PaneScaffoldDirective.defaultPanePreferredHeight] from
+         * [directive] will be used instead.
+         *
+         * @param width the preferred width of the pane, defined in Dp. The implementation will try
+         *   to respect this value when the pane is rendered as a fixed pane. Note that the
+         *   preferred width may be ignored when this pane has higher priority than the other panes
+         *   so it is forced to fill the available width, or if the pane needs to shrink or expand
+         *   to avoid intersecting with the hinge areas.
+         * @param height the preferred height of the pane, defined in Dp. The implementation will
+         *   try to respect this value when the pane is rendered in a [PaneAdaptedValue.Reflowed] or
+         *   [PaneAdaptedValue.Levitated] state. Note that the preferred height may be ignored when
+         *   the pane is expanded to stretch the available height, or if the pane needs to shrink or
+         *   expand to avoid intersecting with the hinge areas.
+         */
+        public fun preferredPaneSize(
+            width: Dp = Dp.Unspecified,
+            height: Dp = Dp.Unspecified,
+        ): Map<String, Any> = buildMap {
+            if (width != Dp.Unspecified) {
+                put(MetadataPreferredWidthKey, width)
+            }
+            if (height != Dp.Unspecified) {
+                put(MetadataPreferredHeightKey, height)
+            }
+        }
+
+        /**
+         * Constructs metadata to set the preferred size of a pane within a list-detail scaffold,
+         * defined as a fraction of the total scaffold size.
+         *
+         * If the value is unset or set to [Dp.Unspecified],
+         * [defaultPanePreferredWidth][PaneScaffoldDirective.defaultPanePreferredWidth] and
+         * [defaultPanePreferredHeight][PaneScaffoldDirective.defaultPanePreferredHeight] from
+         * [directive] will be used instead.
+         *
+         * @param width the preferred width of the pane, defined as a fraction from 0.0 to 1.0 of
+         *   the total scaffold width. The implementation will try to respect this value when the
+         *   pane is rendered as a fixed pane. Note that the preferred width may be ignored when
+         *   this pane has higher priority than the other panes so it is forced to fill the
+         *   available width, or if the pane needs to shrink or expand to avoid intersecting with
+         *   the hinge areas.
+         * @param height the preferred height of the pane, defined as a fraction from 0.0 to 1.0 of
+         *   the total scaffold height. The implementation will try to respect this value when the
+         *   pane is rendered in a [PaneAdaptedValue.Reflowed] or [PaneAdaptedValue.Levitated]
+         *   state. Note that the preferred height may be ignored when the pane is expanded to
+         *   stretch the available height, or if the pane needs to shrink or expand to avoid
+         *   intersecting with the hinge areas.
+         */
+        public fun preferredPaneSize(
+            width: Float = Float.NaN,
+            height: Float = Float.NaN,
+        ): Map<String, Any> = buildMap {
+            if (!width.isNaN()) {
+                put(MetadataPreferredWidthKey, width)
+            }
+            if (!height.isNaN()) {
+                put(MetadataPreferredHeightKey, height)
+            }
+        }
 
         private fun <T : Any> getPaneMetadata(entry: NavEntry<T>): PaneMetadata? =
             entry.metadata[ListDetailRoleKey] as? PaneMetadata

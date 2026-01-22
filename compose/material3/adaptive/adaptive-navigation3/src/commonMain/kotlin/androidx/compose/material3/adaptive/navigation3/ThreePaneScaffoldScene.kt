@@ -42,6 +42,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
 import androidx.navigationevent.NavigationEventInfo
@@ -262,14 +264,18 @@ internal class ThreePaneScaffoldScene<T : Any>(
                     {
                         val sceneScope = ListDetailSceneScopeImpl(this)
                         CompositionLocalProvider(LocalListDetailSceneScope provides sceneScope) {
-                            AnimatedPane { it.Content() }
+                            AnimatedPane(modifier = preferredSizeModifier(lastList)) {
+                                it.Content()
+                            }
                         }
                     }
                 } ?: {},
             detailPane = {
                 val sceneScope = ListDetailSceneScopeImpl(this)
                 CompositionLocalProvider(LocalListDetailSceneScope provides sceneScope) {
-                    AnimatedPane { lastDetail?.Content() ?: detailPlaceholder() }
+                    AnimatedPane(modifier = preferredSizeModifier(lastDetail)) {
+                        lastDetail?.Content() ?: detailPlaceholder()
+                    }
                 }
             },
             extraPane =
@@ -277,7 +283,9 @@ internal class ThreePaneScaffoldScene<T : Any>(
                     {
                         val sceneScope = ListDetailSceneScopeImpl(this)
                         CompositionLocalProvider(LocalListDetailSceneScope provides sceneScope) {
-                            AnimatedPane { it.Content() }
+                            AnimatedPane(modifier = preferredSizeModifier(lastExtra)) {
+                                it.Content()
+                            }
                         }
                     }
                 },
@@ -303,7 +311,9 @@ internal class ThreePaneScaffoldScene<T : Any>(
                         CompositionLocalProvider(
                             LocalSupportingPaneSceneScope provides sceneScope
                         ) {
-                            AnimatedPane { it.Content() }
+                            AnimatedPane(modifier = preferredSizeModifier(lastMain)) {
+                                it.Content()
+                            }
                         }
                     }
                 } ?: {},
@@ -314,7 +324,9 @@ internal class ThreePaneScaffoldScene<T : Any>(
                         CompositionLocalProvider(
                             LocalSupportingPaneSceneScope provides sceneScope
                         ) {
-                            AnimatedPane { it.Content() }
+                            AnimatedPane(modifier = preferredSizeModifier(lastSupporting)) {
+                                it.Content()
+                            }
                         }
                     }
                 } ?: {},
@@ -325,13 +337,35 @@ internal class ThreePaneScaffoldScene<T : Any>(
                         CompositionLocalProvider(
                             LocalSupportingPaneSceneScope provides sceneScope
                         ) {
-                            AnimatedPane { it.Content() }
+                            AnimatedPane(modifier = preferredSizeModifier(lastExtra)) {
+                                it.Content()
+                            }
                         }
                     }
                 },
             paneExpansionDragHandle = paneExpansionDragHandle,
             paneExpansionState = paneExpansionState,
         )
+    }
+
+    @Suppress("ModifierFactoryExtensionFunction")
+    private fun ThreePaneScaffoldScope.preferredSizeModifier(entry: NavEntry<T>?): Modifier {
+        if (entry == null) return Modifier
+
+        val widthModifier =
+            when (val width = entry.metadata[MetadataPreferredWidthKey]) {
+                is Float -> Modifier.preferredWidth(width)
+                is Dp -> Modifier.preferredWidth(width)
+                else -> Modifier
+            }
+
+        val heightModifier =
+            when (val height = entry.metadata[MetadataPreferredHeightKey]) {
+                is Float -> Modifier.preferredHeight(height)
+                is Dp -> Modifier.preferredHeight(height)
+                else -> Modifier
+            }
+        return widthModifier.then(heightModifier)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -370,6 +404,12 @@ internal class ThreePaneScaffoldScene<T : Any>(
             "scaffoldEntryIndices=$scaffoldEntryIndices, entriesAsNavItems=$entriesAsNavItems)"
     }
 }
+
+internal const val MetadataPreferredWidthKey: String =
+    "androidx.compose.material3.adaptive.layout.preferredWidth"
+
+internal const val MetadataPreferredHeightKey: String =
+    "androidx.compose.material3.adaptive.layout.preferredHeight"
 
 private data class ThreePaneScaffoldSceneInfo(val key: Any, val entries: List<NavEntry<*>>) :
     NavigationEventInfo()

@@ -174,6 +174,9 @@ fun NavScreen(
     paneExpansionDragHandle: (@Composable ThreePaneScaffoldScope.(PaneExpansionState) -> Unit)? =
         null,
     paneExpansionState: PaneExpansionState? = null,
+    additionalListMetadata: Map<String, Any> = emptyMap(),
+    additionalDetailMetadata: Map<String, Any> = emptyMap(),
+    additionalExtraMetadata: Map<String, Any> = emptyMap(),
 ) {
     val listDetailSceneStrategy =
         rememberListDetailSceneStrategy<TestKey>(
@@ -197,16 +200,21 @@ fun NavScreen(
                                 "Placeholder",
                                 Modifier.testTag(DetailPlaceholderScreenTestTag),
                             )
-                        }
+                        } + additionalListMetadata
                 ) {
                     BlueBox("List", Modifier.testTag(ListScreenTestTag))
                 }
 
-                entry<DetailKey>(metadata = ListDetailSceneStrategy.detailPane(ListKey)) {
+                entry<DetailKey>(
+                    metadata =
+                        ListDetailSceneStrategy.detailPane(ListKey) + additionalDetailMetadata
+                ) {
                     GreenBox("Detail(${it.id})", Modifier.testTag(DetailScreenTestTag))
                 }
 
-                entry<ExtraKey>(metadata = ListDetailSceneStrategy.extraPane(ListKey)) {
+                entry<ExtraKey>(
+                    metadata = ListDetailSceneStrategy.extraPane(ListKey) + additionalExtraMetadata
+                ) {
                     OrangeBox("Extra", Modifier.testTag(ExtraScreenTestTag))
                 }
             },
