@@ -1073,7 +1073,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                     .trimIndent(),
             )
         runTest(
-            sources = listOf(src, databaseSrc, COMMON.COROUTINES_ROOM),
+            sources = listOf(src, databaseSrc),
             expectedFilePath = getTestGoldenPath(testName.methodName),
         )
     }
@@ -1506,7 +1506,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                     .trimIndent(),
             )
         runTest(
-            sources = listOf(src, databaseSrc, COMMON.COROUTINES_ROOM, COMMON.ROOM_DATABASE_KTX),
+            sources = listOf(src, databaseSrc),
             expectedFilePath = getTestGoldenPath(testName),
             jvmDefaultMode = jvmDefaultMode,
         )
@@ -1583,7 +1583,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                     .trimIndent(),
             )
         runTest(
-            sources = listOf(src, databaseSrc, COMMON.COROUTINES_ROOM, COMMON.ROOM_DATABASE_KTX),
+            sources = listOf(src, databaseSrc),
             expectedFilePath = getTestGoldenPath(testName.methodName),
         )
     }
@@ -2559,7 +2559,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                     .trimIndent(),
             )
         runTest(
-            sources = listOf(src, databaseSrc, COMMON.FLOW, COMMON.COROUTINES_ROOM),
+            sources = listOf(src, databaseSrc, COMMON.FLOW),
             expectedFilePath = getTestGoldenPath(testName.methodName),
         )
     }
@@ -2746,7 +2746,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                     .trimIndent(),
             )
         runTest(
-            sources = listOf(src, databaseSrc, COMMON.COROUTINES_ROOM),
+            sources = listOf(src, databaseSrc),
             expectedFilePath = getTestGoldenPath(testName.methodName),
             compiledFiles = compileFiles(listOf(COMMON.LIVE_DATA)),
         )
@@ -2785,7 +2785,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                     .trimIndent(),
             )
         runTest(
-            sources = listOf(src, databaseSrc, COMMON.COROUTINES_ROOM),
+            sources = listOf(src, databaseSrc),
             expectedFilePath = getTestGoldenPath(testName.methodName),
         )
     }
