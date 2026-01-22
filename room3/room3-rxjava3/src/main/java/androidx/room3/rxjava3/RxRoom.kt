@@ -37,8 +37,7 @@ import kotlinx.coroutines.rx3.rxMaybe
 import kotlinx.coroutines.rx3.rxSingle
 
 /** Marker class used by annotation processor to identify dependency is in the classpath. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class Rx3RoomArtifactMarker private constructor()
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public class Rx3RoomArtifactMarker private constructor()
 
 /** Data dispatched by the publisher created by [createFlowable]. */
 @JvmField public val NOTHING: Any = Any()
