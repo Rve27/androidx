@@ -16,9 +16,8 @@
 
 package androidx.lifecycle.viewmodel.compose
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.HostDefaultKey
 import androidx.lifecycle.ViewModelStoreOwner
 
-@Composable
-internal actual fun findDefaultViewModelStoreOwner(): ViewModelStoreOwner? =
-    implementedInJetBrainsFork()
+public actual val ViewModelStoreOwnerHostDefaultKey: HostDefaultKey<ViewModelStoreOwner?> =
+    object : HostDefaultKey<ViewModelStoreOwner?> {}
