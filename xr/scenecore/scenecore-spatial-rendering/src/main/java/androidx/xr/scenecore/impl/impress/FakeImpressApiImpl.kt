@@ -220,7 +220,11 @@ public class FakeImpressApiImpl : ImpressApi {
         throw IllegalArgumentException("not implemented")
     }
 
-    override fun setGltfReformAffordanceEnabled(impressNode: ImpressNode, enabled: Boolean) {
+    override fun setGltfReformAffordanceEnabled(
+        impressNode: ImpressNode,
+        enabled: Boolean,
+        systemMovable: Boolean,
+    ) {
         throw IllegalArgumentException("not implemented")
     }
 
