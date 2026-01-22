@@ -119,9 +119,9 @@ public class TextData extends Operation implements SerializableToString, Seriali
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
         doc.operation("Data Operations", OP_CODE, CLASS_NAME)
-                .description("Encode a string ")
-                .field(DocumentedOperation.INT, "id", "id string")
-                .field(UTF8, "text", "encode text as a string");
+                .description("Define a static string and associate it with an ID")
+                .field(DocumentedOperation.INT, "textId", "The ID of the text")
+                .field(UTF8, "text", "The string value");
     }
 
     @Override
