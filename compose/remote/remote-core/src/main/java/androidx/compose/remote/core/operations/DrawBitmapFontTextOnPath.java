@@ -161,28 +161,20 @@ public class DrawBitmapFontTextOnPath extends PaintOperation implements Variable
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Draw Operations", id(), CLASS_NAME)
-                .description("Draw a run of bitmap font text, all in a single direction")
-                .field(DocumentedOperation.INT, "textId", "id of bitmap")
-                .field(DocumentedOperation.INT, "bitmapFontId", "id of the bitmap font")
-                .field(DocumentedOperation.INT, "pathId", "id of the path")
+        doc.operation("Canvas Operations", id(), CLASS_NAME)
+                .description("Draw text using a bitmap font along a path")
+                .field(DocumentedOperation.INT, "textId", "The ID of the text to render")
+                .field(DocumentedOperation.INT, "bitmapFontId", "The ID of the bitmap font")
+                .field(DocumentedOperation.INT, "pathId", "The ID of the path to follow")
                 .field(
                         DocumentedOperation.INT,
                         "start",
-                        "The start of the text to render. -1=end of string")
-                .field(DocumentedOperation.INT, "end", "The end of the text to render")
-                .field(
-                        DocumentedOperation.INT,
-                        "contextStart",
-                        "the index of the start of the shaping context")
-                .field(
-                        DocumentedOperation.INT,
-                        "contextEnd",
-                        "the index of the end of the shaping context")
+                        "The start index of the text to render")
+                .field(DocumentedOperation.INT, "end", "The end index of the text to render")
                 .field(
                         DocumentedOperation.FLOAT,
                         "yAdj",
-                        "the index of the end of the shaping context");
+                        "Vertical adjustment relative to the path");
     }
 
     private int measureWidth(String text, BitmapFontData bitmapFont) {

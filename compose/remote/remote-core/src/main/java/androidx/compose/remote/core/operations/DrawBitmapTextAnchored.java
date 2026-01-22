@@ -208,31 +208,31 @@ public class DrawBitmapTextAnchored extends PaintOperation implements VariableSu
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Draw Operations", id(), CLASS_NAME)
-                .description("Draw a bitmap font text, all in a single direction")
-                .field(DocumentedOperation.INT, "textId", "id of bitmap")
-                .field(DocumentedOperation.INT, "bitmapFontId", "id of the bitmap font")
+        doc.operation("Canvas Operations", id(), CLASS_NAME)
+                .description("Draw bitmap font text anchored to a point with alignment (pan)")
+                .field(DocumentedOperation.INT, "textId", "The ID of the text to render")
+                .field(DocumentedOperation.INT, "bitmapFontId", "The ID of the bitmap font")
                 .field(
                         DocumentedOperation.FLOAT,
                         "start",
-                        "The start of the text to render. -1=end of string")
-                .field(DocumentedOperation.FLOAT, "end", "The end of the text to render")
+                        "The start index of the text to render")
+                .field(DocumentedOperation.FLOAT, "end", "The end index of the text to render")
                 .field(
                         DocumentedOperation.FLOAT,
                         "x",
-                        "The x anchor point to which to draw the text")
+                        "The x-position of the anchor point")
                 .field(
                         DocumentedOperation.FLOAT,
                         "y",
-                        "The y anchor point to which to draw the text")
+                        "The y-position of the anchor point")
                 .field(
                         DocumentedOperation.FLOAT,
                         "panX",
-                        "The x position relative to the anchor point")
+                        "The horizontal pan from left(-1) to right(1), 0 being centered")
                 .field(
                         DocumentedOperation.FLOAT,
                         "panY",
-                        "The y position relative to the anchor point");
+                        "The vertical pan from top(-1) to bottom(1), 0 being centered");
     }
 
     float @NonNull [] mBounds = new float[4];
