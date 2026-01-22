@@ -143,7 +143,7 @@ internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
 
 internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
     lateinit var text: RemoteString
-    var color: RemoteColor? = null
+    lateinit var color: RemoteColor
     var fontSize: RemoteFloat = 14f.rf
     var fontWeight: RemoteFloat = 400f.rf
     var fontStyle: FontStyle? = null
@@ -177,10 +177,10 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
         if (useCoreTextComponent) {
             val textIdValue = text.getIdForCreationState(creationState)
 
-            val colorInt = color?.constantValueOrNull?.toArgb() ?: android.graphics.Color.BLACK
+            val colorInt = color.constantValueOrNull?.toArgb() ?: android.graphics.Color.BLACK
             val colorId =
-                if (color?.hasConstantValue == false) {
-                    color!!.getIdForCreationState(creationState)
+                if (!color.hasConstantValue) {
+                    color.getIdForCreationState(creationState)
                 } else {
                     -1
                 }
@@ -221,26 +221,18 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
         } else {
             val textId = text.getIdForCreationState(creationState)
 
-            val colorInt = color?.constantValueOrNull?.toArgb() ?: android.graphics.Color.BLACK
-            val colorId =
-                if (color?.hasConstantValue == false) {
-                    color!!.getIdForCreationState(creationState)
+            val colorValue =
+                if (color.hasConstantValue) {
+                    color.constantValue.toArgb()
                 } else {
-                    -1
+                    color.getIdForCreationState(creationState)
                 }
 
-            val colorValue =
-                color?.constantValueOrNull?.toArgb()
-                    ?: (if (color?.hasConstantValue == false) {
-                        color!!.getIdForCreationState(creationState)
-                    } else {
-                        android.graphics.Color.BLACK
-                    })
             val flags =
-                if (color?.hasConstantValue == false) {
-                    TextLayout.FLAG_IS_DYNAMIC_COLOR.toShort()
-                } else {
+                if (color.hasConstantValue) {
                     0.toShort()
+                } else {
+                    TextLayout.FLAG_IS_DYNAMIC_COLOR.toShort()
                 }
 
             val fontSizePx = fontSize.getFloatIdForCreationState(creationState)
