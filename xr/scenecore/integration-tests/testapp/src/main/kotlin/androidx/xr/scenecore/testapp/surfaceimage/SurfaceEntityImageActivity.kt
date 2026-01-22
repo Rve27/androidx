@@ -609,6 +609,7 @@ class SurfaceEntityImageActivity : ComponentActivity() {
                             pose = Pose.Identity,
                             shape = canvasShape,
                             stereoMode = stereoMode,
+                            mediaBlendingMode = SurfaceEntity.MediaBlendingMode.TRANSPARENT,
                             superSampling = superSamplingMode,
                             surfaceProtection = surfaceContentLevel,
                         )
