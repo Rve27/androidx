@@ -411,7 +411,7 @@ private fun RemoteComposeContextAndroid.axis(
 }
 
 @Suppress("RestrictedApiAndroidX")
-fun niceIncrement(range: RFloat, minSteps: Int): RFloat {
+private fun niceIncrement(range: RFloat, minSteps: Int): RFloat {
     val maxIncrement = range / minSteps.toFloat()
     val n = floor(log(maxIncrement))
     val powerOf10 = pow(10f, n)
