@@ -29,6 +29,7 @@ import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCharacteristics
 import android.location.Location
 import android.media.MediaCodec
+import android.media.MediaFormat.MIMETYPE_VIDEO_AVC
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.net.Uri
@@ -1295,6 +1296,15 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
         val videoCapabilities = Recorder.getHighSpeedVideoCapabilities(camera.cameraInfo)
 
         assertThat(videoCapabilities).isNull()
+    }
+
+    @Test
+    fun getVideoCapabilities_withMimeType_returnsCapabilities() {
+        val capabilities = Recorder.getVideoCapabilities(camera.cameraInfo, MIMETYPE_VIDEO_AVC)
+
+        assertThat(capabilities).isNotNull()
+        // We expect at least SDR to be supported for AVC
+        assertThat(capabilities.supportedDynamicRanges).contains(DynamicRange.SDR)
     }
 
     private fun testRecorderIsConfiguredBasedOnTargetVideoEncodingBitrate(targetBitrate: Int) {
