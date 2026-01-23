@@ -35,15 +35,7 @@ import androidx.compose.ui.node.traverseAncestors
 internal fun gestureNode(gestureCoordinator: GestureCoordinator): DelegatableNode =
     GestureNode(gestureCoordinator)
 
-/** Represents a Node that interprets and process gesture data. */
-private class GestureNode(val gestureCoordinator: GestureCoordinator) :
-    TraversableNode, DelegatableNode, Modifier.Node() {
-    override val traverseKey: Any
-        get() = TraverseKey
-
-    companion object TraverseKey
-}
-
+/** Allows high level gesture coordination between nodes that perform input handling. */
 internal interface GestureCoordinator {
     /**
      * Allows this node to demonstrate interest over a pointer event change. Interest signals that a
@@ -58,10 +50,12 @@ internal interface GestureCoordinator {
     fun isInterested(event: PointerInputChange): Boolean = false
 
     /**
-     * Allows this node to demonstrate interest over an indirect pointer event change. At a given
-     * moment in a node's gesture recognition process they can query their parent or children to see
-     * if they're also interested in this specific change. If so they can decide to give priority to
-     * the other node in the chain.
+     * Allows this node to demonstrate interest over an indirect pointer event change. Interest
+     * signals that a node is interested in this event, and it needs additional information (e.g.
+     * time or more events) in order to decide if it will consume it. At a given moment in a node's
+     * gesture recognition process they can query their parent or children to see if they're also
+     * interested in this specific change. If so they can decide to give priority to the other node
+     * in the chain.
      *
      * @param event The [IndirectPointerInputChange] this node will react to.
      */
@@ -78,9 +72,20 @@ internal val DelegatableNode.parentGestureCoordinator: GestureCoordinator?
  * Note: The parameter [block]'s return boolean value will determine if the traversal will continue
  * (true = continue, false = cancel).
  */
-internal fun DelegatableNode.traverseGestureCoordinators(block: (GestureCoordinator) -> Boolean) {
+internal fun DelegatableNode.traverseAncestorGestureCoordinators(
+    block: (GestureCoordinator) -> Boolean
+) {
     traverseAncestors(GestureNode.TraverseKey) { node ->
         check(node is GestureNode) { "Node is not a GestureNode instance" }
         block(node.gestureCoordinator)
     }
+}
+
+/** Represents a Node that interprets and process gesture data. */
+private class GestureNode(val gestureCoordinator: GestureCoordinator) :
+    TraversableNode, DelegatableNode, Modifier.Node() {
+    override val traverseKey: Any
+        get() = TraverseKey
+
+    companion object TraverseKey
 }
