@@ -52,10 +52,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -204,7 +201,7 @@ fun TransitionPreview(padding: PaddingValues = PaddingValues.Zero) {
         shape = MaterialTheme.shapes.large.copy(topStart = CornerSize(checkBoxCorner)),
         modifier = Modifier.toggleable(value = selected, onValueChange = onSelected),
     ) {
-        Icon(imageVector = Icons.Filled.Done, contentDescription = null)
+        Box(Modifier.size(50.dp).background(Color.Blue))
     }
 }
 
