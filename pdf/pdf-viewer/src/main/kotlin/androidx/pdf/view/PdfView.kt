@@ -1699,7 +1699,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     pageSignalsToJoin?.join()
                     launch { manager.invalidationSignalFlow.collect { invalidate() } }
 
-                    launch { manager.bitmapReadyFlow.collect { isAnyBitmapAvailable = true } }
+                    launch {
+                        manager.bitmapUpdatedFlow.collect { pageBitmapState ->
+                            if (pageBitmapState is PageBitmapState.PageBitmapReady) {
+                                isAnyBitmapAvailable = true
+                            }
+                        }
+                    }
 
                     launch {
                         manager.pageTextReadyFlow.collect { pageNum ->
