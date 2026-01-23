@@ -166,7 +166,7 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Canvas Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Draw text using a bitmap font")
                 .field(DocumentedOperation.INT, "textId", "The ID of the text to render")
                 .field(DocumentedOperation.INT, "bitmapFontId", "The ID of the bitmap font")

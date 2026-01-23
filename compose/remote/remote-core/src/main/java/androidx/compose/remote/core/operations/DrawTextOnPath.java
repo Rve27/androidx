@@ -146,7 +146,7 @@ public class DrawTextOnPath extends PaintOperation implements VariableSupport, S
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Canvas Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Draw text along a path")
                 .field(DocumentedOperation.INT, "textId", "The ID of the text")
                 .field(DocumentedOperation.INT, "pathId", "The ID of the path")

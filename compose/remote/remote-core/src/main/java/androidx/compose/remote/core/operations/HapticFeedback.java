@@ -101,7 +101,7 @@ public class HapticFeedback extends Operation implements SerializableToString, S
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Protocol Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Miscellaneous Operations", OP_CODE, CLASS_NAME)
                 .description("Generate an haptic feedback")
                 .field(DocumentedOperation.INT, "hapticFeedbackType", "Type of haptic feedback");
     }

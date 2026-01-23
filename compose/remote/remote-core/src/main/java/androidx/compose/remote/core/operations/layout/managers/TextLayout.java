@@ -634,7 +634,7 @@ public class TextLayout extends LayoutManager implements VariableSupport, Access
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Layout Operations", id(), name())
+        doc.operation("Text Operations", id(), name())
                 .description("Text layout implementation")
                 .field(INT, "componentId", "Unique ID for this component")
                 .field(

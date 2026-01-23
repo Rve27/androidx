@@ -128,7 +128,7 @@ public class BitmapTextMeasure extends PaintOperation {
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Logic & Expressions Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Measure text dimensions specifically for bitmap fonts")
                 .field(INT, "id", "The ID of the float variable to store the result")
                 .field(INT, "textId", "The ID of the text to measure")

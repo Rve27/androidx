@@ -158,7 +158,7 @@ public class DrawTextOnCircle extends PaintOperation implements VariableSupport,
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Canvas Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Draw text along a circle")
                 .field(DocumentedOperation.INT, "textId", "The ID of the text")
                 .field(DocumentedOperation.FLOAT, "centerX", "The x coordinate of the center")

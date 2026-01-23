@@ -703,17 +703,16 @@ public class Header extends Operation implements RemoteComposeOperation {
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Protocol Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Document Protocol Operations", OP_CODE, CLASS_NAME)
                 .description(
                         "Document metadata, containing the version,"
                                 + " original size & density, capabilities mask")
-                .field(INT, "MAJOR_VERSION", "Major version")
-                .field(INT, "MINOR_VERSION", "Minor version")
-                .field(INT, "PATCH_VERSION", "Patch version")
-                .field(INT, "WIDTH", "Major version")
-                .field(INT, "HEIGHT", "Major version")
-                // .field(FLOAT, "DENSITY", "Major version")
-                .field(LONG, "CAPABILITIES", "Major version");
+                .field(INT, "majorVersion", "Major version")
+                .field(INT, "minorVersion", "Minor version")
+                .field(INT, "patchVersion", "Patch version")
+                .field(INT, "width", "Document width in pixels")
+                .field(INT, "height", "Document height in pixels")
+                .field(LONG, "capabilities", "Capabilities mask");
     }
 
     /**

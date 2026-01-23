@@ -279,7 +279,7 @@ public class BitmapFontData extends Operation implements Serializable {
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Data Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Define a bitmap font with glyph metadata and optional kerning")
                 .field(DocumentedOperation.INT, "id", "The ID of the bitmap font")
                 .field(DocumentedOperation.INT, "versionAndNumGlyphs",

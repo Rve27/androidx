@@ -1129,7 +1129,7 @@ public class CoreText extends LayoutManager implements VariableSupport, Accessib
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Layout Operations", id(), name())
+        doc.operation("Text Operations", id(), name())
                 .description("Core text layout implementation with advanced styling")
                 .field(INT, "textId", "The ID of the text to display")
                 .field(INT, "componentId", "Unique ID for this component")
