@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(InternalComposeApi::class)
-
 package androidx.compose.runtime
 
 import androidx.compose.runtime.external.kotlinx.collections.immutable.persistentHashMapOf
