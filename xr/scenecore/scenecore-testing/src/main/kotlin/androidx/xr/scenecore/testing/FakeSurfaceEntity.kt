@@ -67,7 +67,7 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
 
     /** Specifies the blending mode of the content. */
     @SurfaceEntity.MediaBlendingMode
-    public var mediaBlendingMode: Int
+    override var mediaBlendingMode: Int
         get() {
             return _mediaBlendingMode
         }
