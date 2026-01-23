@@ -29,13 +29,16 @@ import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
+import androidx.compose.remote.creation.compose.RemoteComposeCreationComposeFlags.isRemoteApplierEnabled
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.v2.captureSingleRemoteDocumentV2
 import androidx.compose.remote.creation.compose.widgets.toLayoutDirection
 import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,37 +62,62 @@ public fun rememberRemoteDocument(
     onCreate: ((CoreDocument) -> Unit)? = null,
     content: @Composable () -> Unit,
 ): MutableState<CoreDocument?> {
+    val layoutDirection = LocalLayoutDirection.current
     val doc: MutableState<CoreDocument?> = remember { mutableStateOf(null) }
-    val done = remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val virtualDisplay = rememberVirtualDisplay(creationDisplayInfo)
-    RemoteComposeCapture(
-        context = context,
-        virtualDisplay = virtualDisplay,
-        creationDisplayInfo = creationDisplayInfo,
-        layoutDirection = LocalLayoutDirection.current,
-        immediateCapture = true,
-        onPaint = { _, writer ->
-            if (!done.value) {
-                val buffer = writer.buffer()
-                val bufferSize = writer.bufferSize()
-                val inputStream = ByteArrayInputStream(buffer, 0, bufferSize)
-                val document = CoreDocument()
-                val rcBuffer = RemoteComposeBuffer.fromInputStream(inputStream)
-                document.initFromBuffer(rcBuffer)
-                doc.value = document
-                done.value = true
-                if (onCreate != null) {
-                    onCreate(document)
+    if (isRemoteApplierEnabled) {
+        val context = LocalContext.current
+        LaunchedEffect(Unit) {
+            val document =
+                captureSingleRemoteDocumentV2(
+                    creationDisplayInfo = createCreationDisplayInfo(context),
+                    layoutDirection = layoutDirection,
+                    context = context,
+                    content = content,
+                    profile = profile,
+                )
+            val coreDocument =
+                CoreDocument().apply {
+                    initFromBuffer(
+                        RemoteComposeBuffer.fromInputStream(ByteArrayInputStream(document.bytes))
+                    )
                 }
+            if (onCreate != null) {
+                onCreate(coreDocument)
             }
-            done.value
-        },
-        onCaptureReady = @Composable {},
-        profile = profile,
-        writerEvents = writerEvents,
-        content = content,
-    )
+            doc.value = coreDocument
+        }
+    } else {
+        val done = remember { mutableStateOf(false) }
+        val context = LocalContext.current
+        val virtualDisplay = rememberVirtualDisplay(creationDisplayInfo)
+        RemoteComposeCapture(
+            context = context,
+            virtualDisplay = virtualDisplay,
+            creationDisplayInfo = creationDisplayInfo,
+            layoutDirection = layoutDirection,
+            immediateCapture = true,
+            onPaint = { _, writer ->
+                if (!done.value) {
+                    val buffer = writer.buffer()
+                    val bufferSize = writer.bufferSize()
+                    val inputStream = ByteArrayInputStream(buffer, 0, bufferSize)
+                    val document = CoreDocument()
+                    val rcBuffer = RemoteComposeBuffer.fromInputStream(inputStream)
+                    document.initFromBuffer(rcBuffer)
+                    doc.value = document
+                    done.value = true
+                    if (onCreate != null) {
+                        onCreate(document)
+                    }
+                }
+                done.value
+            },
+            onCaptureReady = @Composable {},
+            profile = profile,
+            writerEvents = writerEvents,
+            content = content,
+        )
+    }
     return doc
 }
 
@@ -333,44 +361,66 @@ public fun RemoteComposeExecution(
 @Composable
 public fun RememberRemoteDocumentInline(
     profile: Profile = RcPlatformProfiles.ANDROIDX,
+    layoutDirection: LayoutDirection = LayoutDirection.Ltr,
     onDocument: (CoreDocument) -> Unit,
     content: @RemoteComposable @Composable () -> Unit,
 ) {
-    val generated = remember { mutableStateOf(false) }
-    if (!generated.value) {
-        val creationDisplayInfo = createCreationDisplayInfo()
-        val layoutDirection = LocalLayoutDirection.current
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { context ->
-                CaptureComposeView(
-                        context = context,
-                        immediateCapture = true,
-                        onPaint = { _, writer ->
-                            val buffer = writer.buffer()
-                            val bufferSize = writer.bufferSize()
-                            val inputStream = ByteArrayInputStream(buffer, 0, bufferSize)
-                            val coreDocument = CoreDocument()
-                            val rcBuffer = RemoteComposeBuffer.fromInputStream(inputStream)
-                            coreDocument.initFromBuffer(rcBuffer)
-                            onDocument(coreDocument)
-                            true
-                        },
-                        onCaptureReady = {},
+    val layoutDirection = LocalLayoutDirection.current
+    if (isRemoteApplierEnabled) {
+        val context = LocalContext.current
+        LaunchedEffect(Unit) {
+            val document =
+                captureSingleRemoteDocumentV2(
+                    creationDisplayInfo = createCreationDisplayInfo(context),
+                    layoutDirection = layoutDirection,
+                    context = context,
+                    content = content,
+                )
+            onDocument.invoke(
+                CoreDocument().apply {
+                    initFromBuffer(
+                        RemoteComposeBuffer.fromInputStream(ByteArrayInputStream(document.bytes))
                     )
-                    .apply {
-                        setContent {
-                            RemoteComposeExecution(
-                                captureComposeView = this,
-                                creationDisplayInfo = creationDisplayInfo,
-                                layoutDirection = layoutDirection,
-                                profile = profile,
-                                writerEvents = null,
-                                content = content,
-                            )
+                }
+            )
+        }
+    } else {
+
+        val generated = remember { mutableStateOf(false) }
+        if (!generated.value) {
+            val creationDisplayInfo = createCreationDisplayInfo()
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { context ->
+                    CaptureComposeView(
+                            context = context,
+                            immediateCapture = true,
+                            onPaint = { _, writer ->
+                                val buffer = writer.buffer()
+                                val bufferSize = writer.bufferSize()
+                                val inputStream = ByteArrayInputStream(buffer, 0, bufferSize)
+                                val coreDocument = CoreDocument()
+                                val rcBuffer = RemoteComposeBuffer.fromInputStream(inputStream)
+                                coreDocument.initFromBuffer(rcBuffer)
+                                onDocument(coreDocument)
+                                true
+                            },
+                            onCaptureReady = {},
+                        )
+                        .apply {
+                            setContent {
+                                RemoteComposeExecution(
+                                    captureComposeView = this,
+                                    creationDisplayInfo = creationDisplayInfo,
+                                    layoutDirection = layoutDirection,
+                                    profile = profile,
+                                    writerEvents = null,
+                                    content = content,
+                                )
+                            }
                         }
-                    }
-            },
-        )
+                },
+            )
+        }
     }
 }
