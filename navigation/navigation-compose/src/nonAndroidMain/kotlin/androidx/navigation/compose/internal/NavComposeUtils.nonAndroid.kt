@@ -83,6 +83,14 @@ internal actual object DefaultNavTransitions {
         AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition
         get() = implementedInJetBrainsFork()
 
+    actual val predictivePopEnterTransition:
+        AnimatedContentTransitionScope<NavBackStackEntry>.(Int) -> EnterTransition
+        get() = implementedInJetBrainsFork()
+
+    actual val predictivePopExitTransition:
+        AnimatedContentTransitionScope<NavBackStackEntry>.(Int) -> ExitTransition
+        get() = implementedInJetBrainsFork()
+
     actual val sizeTransform:
         (AnimatedContentTransitionScope<NavBackStackEntry>.() -> SizeTransform?)?
         get() = implementedInJetBrainsFork()
