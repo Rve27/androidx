@@ -3,6 +3,8 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeActivityPanelEntity extends androidx.xr.scenecore.testing.FakePanelEntity implements androidx.xr.scenecore.runtime.ActivityPanelEntity {
     ctor public FakeActivityPanelEntity();
+    ctor public FakeActivityPanelEntity(optional String name);
+    ctor @BytecodeOnly public FakeActivityPanelEntity(String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public android.os.Bundle? getLaunchBundle();
     method @InaccessibleFromKotlin public android.content.Intent getLaunchIntent();
     method @InaccessibleFromKotlin public android.app.Activity getMovedActivity();
@@ -96,6 +98,8 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeEntity extends androidx.xr.scenecore.testing.FakeScenePose implements androidx.xr.scenecore.runtime.Entity {
     ctor public FakeEntity();
+    ctor public FakeEntity(optional String name);
+    ctor @BytecodeOnly public FakeEntity(String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public void addChild(androidx.xr.scenecore.runtime.Entity child);
     method public void addChildren(java.util.List<? extends androidx.xr.scenecore.runtime.Entity> children);
     method public boolean addComponent(androidx.xr.scenecore.runtime.Component component);
@@ -107,6 +111,7 @@ package androidx.xr.scenecore.testing {
     method public <T extends androidx.xr.scenecore.runtime.Component> java.util.List<T> getComponentsOfType(Class<? extends T> type);
     method @InaccessibleFromKotlin public CharSequence getContentDescription();
     method @InaccessibleFromKotlin public final java.util.Map<androidx.xr.scenecore.runtime.InputEventListener,java.util.concurrent.Executor> getInputEventListenerMap();
+    method @InaccessibleFromKotlin public final String getName();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Entity? getParent();
     method public androidx.xr.runtime.math.Pose getPose(@androidx.xr.scenecore.runtime.SpaceValue int relativeTo);
     method public androidx.xr.runtime.math.Vector3 getScale(@androidx.xr.scenecore.runtime.SpaceValue int relativeTo);
@@ -123,6 +128,7 @@ package androidx.xr.scenecore.testing {
     property public java.util.List<androidx.xr.scenecore.runtime.Entity> children;
     property public CharSequence contentDescription;
     property public final java.util.Map<androidx.xr.scenecore.runtime.InputEventListener,java.util.concurrent.Executor> inputEventListenerMap;
+    property public final String name;
     property public androidx.xr.scenecore.runtime.Entity? parent;
   }
 
@@ -257,12 +263,13 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakePanelEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.runtime.PanelEntity {
     ctor public FakePanelEntity();
-    ctor public FakePanelEntity(optional android.view.View? view);
-    ctor @BytecodeOnly public FakePanelEntity(android.view.View!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor public FakePanelEntity(optional android.view.View? view, optional String name);
+    ctor @BytecodeOnly public FakePanelEntity(android.view.View!, String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @InaccessibleFromKotlin public float getCornerRadius();
     method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.FieldOfView renderViewFov);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PixelDimensions getSizeInPixels();
+    method @InaccessibleFromKotlin public final android.view.View? getView();
     method @InaccessibleFromKotlin public void setCornerRadius(float);
     method public final void setPerceivedResolution(androidx.xr.scenecore.runtime.PerceivedResolutionResult perceivedResolution);
     method @InaccessibleFromKotlin public void setSize(androidx.xr.scenecore.runtime.Dimensions);
@@ -272,6 +279,7 @@ package androidx.xr.scenecore.testing {
     property public float cornerRadius;
     property public androidx.xr.scenecore.runtime.Dimensions size;
     property public androidx.xr.scenecore.runtime.PixelDimensions sizeInPixels;
+    property public final android.view.View? view;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakePerceptionSpaceScenePose extends androidx.xr.scenecore.testing.FakeScenePose implements androidx.xr.scenecore.runtime.PerceptionSpaceScenePose {
