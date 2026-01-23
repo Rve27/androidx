@@ -114,6 +114,7 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performMouseInput
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.performTrackpadInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.test.swipe
@@ -402,6 +403,40 @@ class ScrollableTest {
         }
 
         assertThat(total).isEqualTo(0)
+    }
+
+    @Test
+    fun scrollable_horizontalScroll_trackpad() {
+        var total = 0f
+        val controller =
+            ScrollableState(
+                consumeScrollDelta = {
+                    total += it
+                    it
+                }
+            )
+        setScrollableContent {
+            Modifier.scrollable(state = controller, orientation = Orientation.Horizontal)
+        }
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            this.scroll(Offset(100f, 0f)) // only moved horizontally
+        }
+
+        var lastTotal =
+            rule.runOnIdle {
+                assertThat(total).isGreaterThan(0)
+                total
+            }
+
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            this.scroll(Offset(0f, 100f)) // only moved vertically
+        }
+
+        rule.runOnIdle { assertThat(total).isEqualTo(lastTotal) }
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            this.scroll(Offset(-100f, 0f)) // only moved horizontally
+        }
+        rule.runOnIdle { assertThat(total).isLessThan(0.01f) }
     }
 
     /*
@@ -865,6 +900,40 @@ class ScrollableTest {
             assertThat(totalVerticalScroll).isGreaterThan(0)
             assertThat(totalHorizontalScroll).isGreaterThan(0)
         }
+    }
+
+    @Test
+    fun scrollable_verticalScroll_trackpad() {
+        var total = 0f
+        val controller =
+            ScrollableState(
+                consumeScrollDelta = {
+                    total += it
+                    it
+                }
+            )
+        setScrollableContent {
+            Modifier.scrollable(state = controller, orientation = Orientation.Vertical)
+        }
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            this.scroll(Offset(0f, 100f)) // only moved vertically
+        }
+
+        var lastTotal =
+            rule.runOnIdle {
+                assertThat(total).isGreaterThan(0)
+                total
+            }
+
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            this.scroll(Offset(100f, 0f)) // only moved horizontally
+        }
+
+        rule.runOnIdle { assertThat(total).isEqualTo(lastTotal) }
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            this.scroll(Offset(0f, -100f)) // only moved vertically
+        }
+        rule.runOnIdle { assertThat(total).isLessThan(0.01f) }
     }
 
     /*

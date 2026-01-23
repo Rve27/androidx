@@ -124,4 +124,15 @@ object ComposeFoundationFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isDelayPressesUsingGestureConsumptionEnabled = true
+
+    /**
+     * Enables support of trackpad gesture events in foundation components.
+     *
+     * This uses the additional trackpad gesture information enabled by
+     * `ComposeUiFlags.isTrackpadGestureHandlingEnabled`
+     */
+    // TODO: b/475634969 remove the temporary flag
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isTrackpadGestureHandlingEnabled: Boolean = false
 }
