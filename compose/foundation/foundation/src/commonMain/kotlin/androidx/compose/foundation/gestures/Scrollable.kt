@@ -552,7 +552,11 @@ internal class ScrollableNode(
         }
         initializeGestureCoordination()
         if (enabled) {
-            if (pass == PointerEventPass.Initial && pointerEvent.type == PointerEventType.Scroll) {
+            if (
+                pass == PointerEventPass.Initial &&
+                    (pointerEvent.type == PointerEventType.Scroll ||
+                        pointerEvent.type == PointerEventType.Pan)
+            ) {
                 ensureMouseWheelScrollNodeInitialized()
             }
             mouseWheelScrollingLogic?.onPointerEvent(pointerEvent, pass, bounds)
