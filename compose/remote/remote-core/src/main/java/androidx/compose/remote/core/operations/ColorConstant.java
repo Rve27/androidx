@@ -33,7 +33,7 @@ import java.util.List;
 
 /** Operation that defines a simple Color based on ID Mainly for colors in theming. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class ColorConstant extends Operation implements Serializable {
+public class ColorConstant extends Operation implements Serializable, ComponentData {
     private static final int OP_CODE = Operations.COLOR_CONSTANT;
     private static final String CLASS_NAME = "ColorConstant";
 
