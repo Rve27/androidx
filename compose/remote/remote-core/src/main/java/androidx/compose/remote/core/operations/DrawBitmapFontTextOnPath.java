@@ -161,7 +161,7 @@ public class DrawBitmapFontTextOnPath extends PaintOperation implements Variable
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Canvas Operations", id(), CLASS_NAME)
+        doc.operation("Text Operations", id(), CLASS_NAME)
                 .description("Draw text using a bitmap font along a path")
                 .field(DocumentedOperation.INT, "textId", "The ID of the text to render")
                 .field(DocumentedOperation.INT, "bitmapFontId", "The ID of the bitmap font")

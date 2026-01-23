@@ -184,7 +184,7 @@ public class DrawText extends PaintOperation implements VariableSupport {
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Canvas Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Draw a run of text, all in a single direction")
                 .field(DocumentedOperation.INT, "textId", "The ID of the text to render")
                 .field(

@@ -251,7 +251,7 @@ public class TextFromFloat extends Operation implements VariableSupport, Seriali
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Logic & Expressions Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Convert a float value into a formatted string")
                 .field(DocumentedOperation.INT, "textId", "The ID of the resulting text")
                 .field(DocumentedOperation.FLOAT, "value", "The float value to convert")
