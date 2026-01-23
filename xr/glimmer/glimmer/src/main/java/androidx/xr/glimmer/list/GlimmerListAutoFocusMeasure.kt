@@ -162,8 +162,15 @@ private fun ListLayoutProperties.applyMeasureResultWithAutoFocus(
             layout = layout,
         )
 
+    val prevAutoFocusProperties = state.autoFocusState.properties
+    val expectedFocusScrollDelta = state.scrollToBeConsumed - expectedContentScrollDelta
+
     val consumedContentScrollDelta = measureResult.consumedScroll
+    val consumedFocusScrollDelta =
+        calculateConsumedFocusDelta(consumedContentScrollDelta, prevAutoFocusProperties)
+
     val unconsumedContentDelta = expectedContentScrollDelta - consumedContentScrollDelta
+    val unconsumedFocusDelta = expectedFocusScrollDelta - consumedFocusScrollDelta
 
     val consumedScroll =
         when {
@@ -171,8 +178,8 @@ private fun ListLayoutProperties.applyMeasureResultWithAutoFocus(
             abs(expectedContentScrollDelta) <= 0.5f -> state.scrollToBeConsumed
             // Reports that we consumed all, since we actually did — except for rounding errors.
             abs(unconsumedContentDelta) <= 0.5f -> state.scrollToBeConsumed
-            // Content didn't consume all, so return a real consumpted part.
-            else -> measureResult.consumedScroll
+            // Content didn't consume all, so return a real consumed part.
+            else -> consumedContentScrollDelta + consumedFocusScrollDelta
         }
 
     val accumulatedScroll =
@@ -180,7 +187,7 @@ private fun ListLayoutProperties.applyMeasureResultWithAutoFocus(
             // We pretend that we consume all, but we will actually use it in the next pass.
             abs(expectedContentScrollDelta) <= 0.5f -> state.scrollToBeConsumed
             // We consume all, but let's accumulate errors after roundings.
-            abs(unconsumedContentDelta) <= 0.5f -> unconsumedContentDelta
+            abs(unconsumedContentDelta) <= 0.5f -> unconsumedContentDelta + unconsumedFocusDelta
             // There was more scroll than we could even consume, so no accumulation remained.
             else -> 0f
         }
@@ -218,6 +225,31 @@ private fun convertUserScrollDeltaToContentScrollDelta(
 
     // Restore the original sign.
     return -dSc
+}
+
+/** Uses the previous measure results to correctly calculate how much focus scroll was consumed. */
+private fun calculateConsumedFocusDelta(
+    consumedContentDelta: Float,
+    prevAutoFocusProperties: GlimmerListAutoFocusProperties?,
+): Float {
+    // If there is no previous measurements, assume that focus consumed everything.
+    if (prevAutoFocusProperties == null) {
+        return consumedContentDelta
+    }
+    // Forward scroll is negative, backward scroll is positive, so we need to invert it.
+    val dSc = -consumedContentDelta
+    val nextSc = prevAutoFocusProperties.contentScroll + dSc
+    val nextSu =
+        AutoFocusScrollConverter.convertContentScrollToUserScroll(
+            // Uses the new real position of the content that contains rounding errors.
+            contentScroll = nextSc,
+            // Uses the previous measurement results that contains the _old_ estimation error.
+            properties = prevAutoFocusProperties,
+        )
+    val nextSf = nextSu - nextSc
+    val dSf = nextSf - prevAutoFocusProperties.focusScroll
+    // Restore the original sign.
+    return -dSf
 }
 
 // TODO: b/431258694 - Support reverse scrolling.
