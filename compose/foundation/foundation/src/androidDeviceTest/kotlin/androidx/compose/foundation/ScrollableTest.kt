@@ -20,6 +20,7 @@ import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.rememberSplineBasedDecay
+import androidx.compose.foundation.ComposeFoundationFlags.isDelayPressesUsingGestureConsumptionEnabled
 import androidx.compose.foundation.gestures.DefaultFlingBehavior
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
@@ -78,14 +79,19 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
 import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.input.pointer.util.VelocityTrackerAddPointsFix
 import androidx.compose.ui.materialize
+import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.PointerInputModifierNode
 import androidx.compose.ui.node.TraversableNode
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.platform.InspectableValue
@@ -117,6 +123,7 @@ import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.swipeWithVelocity
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -146,6 +153,7 @@ import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.After
 import org.junit.Assert
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -2936,8 +2944,10 @@ class ScrollableTest {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Test
     fun scrollable_setsModifierLocalScrollableContainer() {
+        Assume.assumeFalse(isDelayPressesUsingGestureConsumptionEnabled)
         val scrollableState = ScrollableState { it }
 
         var isOuterInScrollableContainer: Boolean? = null
@@ -2969,6 +2979,121 @@ class ScrollableTest {
         rule.runOnIdle {
             assertThat(isOuterInScrollableContainer).isFalse()
             assertThat(isInnerInScrollableContainer).isTrue()
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Test
+    fun scrollable_isInterestedInDownEvents() {
+        Assume.assumeTrue(isDelayPressesUsingGestureConsumptionEnabled)
+        val scrollableState = ScrollableState { it }
+
+        var isOuterInterested: Boolean? = null
+        var isInnerInterested: Boolean? = null
+        rule.setContent {
+            Box {
+                Box(
+                    modifier =
+                        Modifier.testTag(scrollableBoxTag)
+                            .size(100.dp)
+                            .then(
+                                InspectGestureNodeElement { parentCoordinator, event ->
+                                    isOuterInterested = parentCoordinator.isInterested(event)
+                                }
+                            )
+                            .scrollable(
+                                state = scrollableState,
+                                orientation = Orientation.Horizontal,
+                            )
+                            .then(
+                                InspectGestureNodeElement { parentCoordinator, event ->
+                                    isInnerInterested = parentCoordinator.isInterested(event)
+                                }
+                            )
+                )
+            }
+        }
+
+        rule.onRoot().performTouchInput { down(center) }
+
+        rule.runOnIdle {
+            assertThat(isOuterInterested).isNull()
+            assertThat(isInnerInterested).isTrue()
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Test
+    fun scrollable_isInterestedInDownEvents_handlesParentEnabledState() {
+        Assume.assumeTrue(isDelayPressesUsingGestureConsumptionEnabled)
+        val scrollableState = ScrollableState { it }
+
+        var isOuterInterested: Boolean? = null
+        var isInnerInterested: Boolean? = null
+        var isEnabled by mutableStateOf(false)
+        rule.setContent {
+            Box {
+                Box(
+                    modifier =
+                        Modifier.testTag(scrollableBoxTag)
+                            .size(100.dp)
+                            .then(
+                                InspectGestureNodeElement { parentCoordinator, event ->
+                                    isOuterInterested = parentCoordinator.isInterested(event)
+                                }
+                            )
+                            .scrollable(
+                                state = scrollableState,
+                                orientation = Orientation.Horizontal,
+                                enabled = isEnabled,
+                            )
+                            .then(
+                                InspectGestureNodeElement { parentCoordinator, event ->
+                                    isInnerInterested = parentCoordinator.isInterested(event)
+                                }
+                            )
+                )
+            }
+        }
+
+        rule.onRoot().performTouchInput {
+            down(center)
+            up()
+        }
+
+        rule.runOnIdle {
+            assertThat(isOuterInterested).isNull()
+            assertThat(isInnerInterested).isFalse()
+        }
+
+        rule.runOnUiThread {
+            isOuterInterested = null
+            isInnerInterested = null
+            isEnabled = true
+        }
+        rule.onRoot().performTouchInput {
+            down(center)
+            up()
+        }
+
+        rule.runOnIdle {
+            assertThat(isOuterInterested).isNull()
+            assertThat(isInnerInterested).isTrue()
+        }
+
+        rule.runOnUiThread {
+            isOuterInterested = null
+            isInnerInterested = null
+            isEnabled = false
+        }
+        rule.onRoot().performTouchInput {
+            down(center)
+            up()
+        }
+
+        rule.runOnIdle {
+            assertThat(isOuterInterested).isNull()
+            assertThat(isInnerInterested).isFalse()
         }
     }
 
@@ -3009,8 +3134,10 @@ class ScrollableTest {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Test
     fun scrollable_setsModifierLocalScrollableContainer_scrollUpdates() {
+        Assume.assumeFalse(isDelayPressesUsingGestureConsumptionEnabled)
         val scrollableState = ScrollableState { it }
 
         var isInnerInScrollableContainer: Boolean? = null
@@ -4190,4 +4317,52 @@ internal class ScrollableContainerReaderNode(var hasScrollableBlock: (Boolean) -
     }
 
     companion object TraverseKey
+}
+
+internal class InspectGestureNodeElement(
+    val onDownEvent: (GestureCoordinator, PointerInputChange) -> Unit
+) : ModifierNodeElement<InspectGestureNode>() {
+    override fun create(): InspectGestureNode {
+        return InspectGestureNode(onDownEvent)
+    }
+
+    override fun update(node: InspectGestureNode) {
+        node.onDownEvent = onDownEvent
+    }
+
+    override fun hashCode(): Int = onDownEvent.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other === null) return false
+        if (this::class != other::class) return false
+
+        other as InspectGestureNodeElement
+
+        if (onDownEvent !== other.onDownEvent) return false
+
+        return true
+    }
+}
+
+internal class InspectGestureNode(
+    var onDownEvent: (GestureCoordinator, PointerInputChange) -> Unit
+) : PointerInputModifierNode, DelegatingNode() {
+
+    override fun onPointerEvent(
+        pointerEvent: PointerEvent,
+        pass: PointerEventPass,
+        bounds: IntSize,
+    ) {
+        if (
+            pass == PointerEventPass.Main &&
+                pointerEvent.changes.first().changedToDownIgnoreConsumed()
+        ) {
+            parentGestureCoordinator?.let { onDownEvent(it, pointerEvent.changes.first()) }
+        }
+    }
+
+    override fun onCancelPointerInput() {
+        // no-op
+    }
 }
