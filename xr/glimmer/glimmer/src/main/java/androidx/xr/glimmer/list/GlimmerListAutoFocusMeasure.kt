@@ -33,43 +33,46 @@ internal fun ListLayoutProperties.applyMeasureResult(
     density: Density,
     layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult,
 ): MeasureResult {
-    return if (state.canScrollForward || state.canScrollBackward) {
-        applyScrollableMeasureResult(
-            state = state,
-            itemsCount = itemsCount,
-            measuredItemProvider = measuredItemProvider,
-            firstVisibleItemIndex = firstVisibleItemIndex,
-            firstVisibleItemScrollOffset = firstVisibleItemScrollOffset,
-            pinnedIndices = pinnedIndices,
-            reverseLayout = reverseLayout,
-            density = density,
-            layout = layout,
-        )
-    } else {
-        // Non-scrollable
-        val measureResult =
-            measureGlimmerList(
+    val measureResult =
+        if (state.autoFocusState.isAutoFocusEnabled) {
+            applyMeasureResultWithAutoFocus(
+                state = state,
                 itemsCount = itemsCount,
                 measuredItemProvider = measuredItemProvider,
                 firstVisibleItemIndex = firstVisibleItemIndex,
                 firstVisibleItemScrollOffset = firstVisibleItemScrollOffset,
-                scrollToBeConsumed = state.scrollToBeConsumed,
                 pinnedIndices = pinnedIndices,
                 reverseLayout = reverseLayout,
                 density = density,
                 layout = layout,
             )
-        state.autoFocusState.applyAutoFocusProperties(null)
-        state.applyMeasureResult(
-            result = measureResult,
-            consumedScroll = 0f,
-            accumulatedScroll = 0f,
-        )
-        measureResult
-    }
+        } else {
+            applyMeasureResultWithoutAutoFocus(
+                state = state,
+                itemsCount = itemsCount,
+                measuredItemProvider = measuredItemProvider,
+                firstVisibleItemIndex = firstVisibleItemIndex,
+                firstVisibleItemScrollOffset = firstVisibleItemScrollOffset,
+                pinnedIndices = pinnedIndices,
+                reverseLayout = reverseLayout,
+                density = density,
+                layout = layout,
+            )
+        }
+
+    // Calculates new autofocus properties based on the latest list measure result.
+    val autoFocusProperties =
+        calculateAutoFocusProperties(layoutProperties = this, measureResult = measureResult)
+
+    // Keep the autofocus state updated, even if it is disabled. If the user switches back to
+    // non-direct input, they will have the correct numbers for calculating the focus position.
+    state.autoFocusState.applyAutoFocusProperties(autoFocusProperties)
+
+    return measureResult
 }
 
-private fun ListLayoutProperties.applyScrollableMeasureResult(
+/** Applies user scroll as-is without any autofocus adjustments (ΔSu == ΔSc). */
+private fun ListLayoutProperties.applyMeasureResultWithoutAutoFocus(
     state: ListState,
     itemsCount: Int,
     measuredItemProvider: GlimmerListMeasuredItemProvider,
@@ -79,19 +82,70 @@ private fun ListLayoutProperties.applyScrollableMeasureResult(
     reverseLayout: Boolean,
     density: Density,
     layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult,
-): MeasureResult {
-    val expectedContentScrollDelta =
-        if (state.autoFocusState.isAutoFocusEnabled) {
-            // The user-dispatched scroll (ΔSu) is shared between the scroll of the content (ΔSc)
-            // and the moving focus line (ΔSf). The proportion is not constant and depends on the
-            // state of the list. This method calculates a proper share of `ΔSu = ΔSc + ΔSf`.
-            convertUserScrollDeltaToContentScrollDelta(
-                properties = state.autoFocusState.properties,
-                userScrollToBeConsumed = state.scrollToBeConsumed,
-            )
-        } else {
-            state.scrollToBeConsumed
+): GlimmerListMeasureResult {
+    val measureResult =
+        measureGlimmerList(
+            itemsCount = itemsCount,
+            measuredItemProvider = measuredItemProvider,
+            firstVisibleItemIndex = firstVisibleItemIndex,
+            firstVisibleItemScrollOffset = firstVisibleItemScrollOffset,
+            scrollToBeConsumed = state.scrollToBeConsumed,
+            pinnedIndices = pinnedIndices,
+            reverseLayout = reverseLayout,
+            density = density,
+            layout = layout,
+        )
+
+    val unconsumedScroll = state.scrollToBeConsumed - measureResult.consumedScroll
+    val consumedScroll =
+        when {
+            // Reports that we consume all because we accumulated it for the next pass.
+            abs(state.scrollToBeConsumed) <= 0.5f -> state.scrollToBeConsumed
+            // Reports that we consumed all, since we actually did — except for rounding errors.
+            abs(unconsumedScroll) <= 0.5f -> state.scrollToBeConsumed
+            // Content didn't consume all, so return a real consumed part.
+            else -> measureResult.consumedScroll
         }
+
+    val accumulatedScroll =
+        when {
+            // We pretend that we consume all, but we will actually use it in the next pass.
+            abs(state.scrollToBeConsumed) <= 0.5f -> state.scrollToBeConsumed
+            // We consume all, but let's accumulate errors after roundings.
+            abs(unconsumedScroll) <= 0.5f -> unconsumedScroll
+            // There was more scroll than we could even consume, so no accumulation remained.
+            else -> 0f
+        }
+
+    state.applyMeasureResult(
+        result = measureResult,
+        consumedScroll = consumedScroll,
+        accumulatedScroll = accumulatedScroll,
+    )
+
+    return measureResult
+}
+
+/** Splits user-dispatched scroll between focus and content scroll (ΔSu = ΔSc + ΔSf). */
+private fun ListLayoutProperties.applyMeasureResultWithAutoFocus(
+    state: ListState,
+    itemsCount: Int,
+    measuredItemProvider: GlimmerListMeasuredItemProvider,
+    firstVisibleItemIndex: Int,
+    firstVisibleItemScrollOffset: Int,
+    pinnedIndices: IntList,
+    reverseLayout: Boolean,
+    density: Density,
+    layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult,
+): GlimmerListMeasureResult {
+    // The user-dispatched scroll (ΔSu) is shared between the scroll of the content (ΔSc)
+    // and the moving focus line (ΔSf). The proportion is not constant and depends on the
+    // state of the list. This method calculates a proper share of `ΔSu = ΔSc + ΔSf`.
+    val expectedContentScrollDelta =
+        convertUserScrollDeltaToContentScrollDelta(
+            properties = state.autoFocusState.properties,
+            userScrollToBeConsumed = state.scrollToBeConsumed,
+        )
 
     // Here's the original logic, with a modified input - the content scroll (ΔSc) is passed instead
     // of the user-dispatched scroll (ΔSu).
@@ -130,13 +184,6 @@ private fun ListLayoutProperties.applyScrollableMeasureResult(
             // There was more scroll than we could even consume, so no accumulation remained.
             else -> 0f
         }
-
-    // Calculates new auto focus properties based on the latest list measure result.
-    val autoFocusProperties =
-        calculateAutoFocusProperties(layoutProperties = this, measureResult = measureResult)
-
-    // Save auto focus measure result for the next pass.
-    state.autoFocusState.applyAutoFocusProperties(autoFocusProperties)
 
     state.applyMeasureResult(
         result = measureResult,
