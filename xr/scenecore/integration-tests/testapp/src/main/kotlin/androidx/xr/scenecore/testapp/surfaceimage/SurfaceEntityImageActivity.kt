@@ -805,6 +805,27 @@ class SurfaceEntityImageActivity : ComponentActivity() {
                         ) {
                             Text(text = "Toggle Alpha Mask", fontSize = 18.sp)
                         }
+                        val isTransparent = remember { mutableStateOf(true) }
+                        Button(
+                            onClick = {
+                                @Suppress("RestrictedApi")
+                                if (isTransparent.value) {
+                                    surfaceEntity!!.mediaBlendingMode =
+                                        SurfaceEntity.MediaBlendingMode.OPAQUE
+                                    isTransparent.value = false
+                                } else {
+                                    surfaceEntity!!.mediaBlendingMode =
+                                        SurfaceEntity.MediaBlendingMode.TRANSPARENT
+                                    isTransparent.value = true
+                                }
+                            }
+                        ) {
+                            Text(
+                                text =
+                                    if (isTransparent.value) "Make Opaque" else "Make Transparent",
+                                fontSize = 18.sp,
+                            )
+                        }
                     }
                 }
             }
