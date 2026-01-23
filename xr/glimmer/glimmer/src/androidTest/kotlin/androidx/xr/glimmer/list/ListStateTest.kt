@@ -21,12 +21,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.testutils.assertIsEqualTo
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
@@ -40,6 +38,7 @@ import androidx.test.filters.MediumTest
 import androidx.xr.glimmer.AutoTestFrameClock
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.setGlimmerThemeContent
+import androidx.xr.glimmer.testutils.setContentWithDensity
 import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
@@ -193,15 +192,13 @@ class ListStateTest(orientation: Orientation) : BaseListTestWithOrientation(orie
     fun initialState_withNonZeroParameters_isAppliedCorrectly() {
         // Set up list with non-trivial state.
         val state = ListState(firstVisibleItemIndex = 50, firstVisibleItemScrollOffset = 42)
-        rule.setContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                TestList(
-                    state = state,
-                    itemsCount = 100,
-                    modifier = Modifier.size(400.dp),
-                    itemContent = { FocusableItem(it, Modifier.size(100.dp)) },
-                )
-            }
+        rule.setContentWithDensity(Density(1f)) {
+            TestList(
+                state = state,
+                itemsCount = 100,
+                modifier = Modifier.size(400.dp),
+                itemContent = { FocusableItem(it, Modifier.size(100.dp)) },
+            )
         }
 
         // Check the auto focus parameters were calculated correctly.
@@ -215,15 +212,13 @@ class ListStateTest(orientation: Orientation) : BaseListTestWithOrientation(orie
     @Test
     fun scrollBy_reportsCorrectConsumedValue() {
         val state = ListState()
-        rule.setContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                TestList(
-                    state = state,
-                    itemsCount = 100,
-                    modifier = Modifier.size(400.dp),
-                    itemContent = { FocusableItem(it, Modifier.size(100.dp)) },
-                )
-            }
+        rule.setContentWithDensity(Density(1f)) {
+            TestList(
+                state = state,
+                itemsCount = 100,
+                modifier = Modifier.size(400.dp),
+                itemContent = { FocusableItem(it, Modifier.size(100.dp)) },
+            )
         }
 
         state.scrollByAndCheckConsumedValue(0.2f)
@@ -241,15 +236,13 @@ class ListStateTest(orientation: Orientation) : BaseListTestWithOrientation(orie
     @Test
     fun scrollBy_onTheEdge_doesNotConsumeAllTheDelta() {
         val state = ListState()
-        rule.setContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                TestList(
-                    state = state,
-                    itemsCount = 100,
-                    modifier = Modifier.size(400.dp),
-                    itemContent = { FocusableItem(it, Modifier.size(25.dp)) },
-                )
-            }
+        rule.setContentWithDensity(Density(1f)) {
+            TestList(
+                state = state,
+                itemsCount = 100,
+                modifier = Modifier.size(400.dp),
+                itemContent = { FocusableItem(it, Modifier.size(25.dp)) },
+            )
         }
 
         // Scroll down by 50dp.
@@ -261,15 +254,13 @@ class ListStateTest(orientation: Orientation) : BaseListTestWithOrientation(orie
     @Test
     fun tinyValues_thatNotConsumed_areAccumulatedForSuccessiveScrolls() {
         val state = ListState()
-        rule.setContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                TestList(
-                    state = state,
-                    itemsCount = 100,
-                    modifier = Modifier.size(500.dp),
-                    itemContent = { FocusableItem(it, Modifier.size(40.dp)) },
-                )
-            }
+        rule.setContentWithDensity(Density(1f)) {
+            TestList(
+                state = state,
+                itemsCount = 100,
+                modifier = Modifier.size(500.dp),
+                itemContent = { FocusableItem(it, Modifier.size(40.dp)) },
+            )
         }
 
         // These numbers are specifically chosen for the given parameters
