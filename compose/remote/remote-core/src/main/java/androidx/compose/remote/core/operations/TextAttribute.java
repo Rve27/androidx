@@ -126,7 +126,7 @@ public class TextAttribute extends PaintOperation implements Serializable {
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Logic & Expressions Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Extract text-related properties (width, length, etc.)")
                 .field(INT, "id", "The ID of the float variable to store the result")
                 .field(INT, "textId", "The ID of the text variable to measure")

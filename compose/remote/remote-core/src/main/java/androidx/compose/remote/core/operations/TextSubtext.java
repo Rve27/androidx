@@ -121,7 +121,7 @@ public class TextSubtext extends Operation implements VariableSupport, Serializa
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Logic & Expressions Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Extract a substring from a source string")
                 .field(DocumentedOperation.INT, "textId", "The ID of the resulting substring")
                 .field(INT, "srcId1", "The ID of the source string")

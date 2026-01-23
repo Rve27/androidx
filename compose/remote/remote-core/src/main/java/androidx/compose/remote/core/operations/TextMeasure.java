@@ -131,7 +131,7 @@ public class TextMeasure extends PaintOperation implements VariableSupport {
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Logic & Expressions Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Measure text dimensions and store the result in a float variable")
                 .field(INT, "id", "The ID of the float variable to store the result")
                 .field(INT, "textId", "The ID of the text to measure")

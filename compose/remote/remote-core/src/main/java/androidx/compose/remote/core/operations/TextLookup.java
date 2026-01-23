@@ -136,7 +136,7 @@ public class TextLookup extends Operation implements VariableSupport, Serializab
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Logic & Expressions Operations", OP_CODE, CLASS_NAME)
+        doc.operation("Text Operations", OP_CODE, CLASS_NAME)
                 .description("Look up a string from a collection via index")
                 .field(INT, "textId", "The ID of the resulting text")
                 .field(INT, "dataSetId", "The ID of the string collection")
