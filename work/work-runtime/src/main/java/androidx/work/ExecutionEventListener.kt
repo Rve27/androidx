@@ -22,15 +22,15 @@ import androidx.work.ListenableWorker.Result
  *
  * Note that a given work request may have multiple executions due to stops and retries.
  */
-@ExperimentalConfigurationApi
-public interface WorkExecutionEventListener {
+@ExperimentalEventsApi
+public interface ExecutionEventListener {
 
     /**
      * Called when a work request starts executing i.e. [ListenableWorker.startWork].
      *
      * @param workInfo Snapshot of the work info
      */
-    public suspend fun onStart(workInfo: WorkInfo)
+    public suspend fun onStarted(workInfo: WorkInfo)
 
     /**
      * Called when a work request is stopped by the system after it has started.
@@ -38,7 +38,7 @@ public interface WorkExecutionEventListener {
      * @param stopReason Reason why work stopped
      * @param workInfo Snapshot of the work info
      */
-    public suspend fun onStop(@StopReason stopReason: Int, workInfo: WorkInfo)
+    public suspend fun onStopped(@StopReason stopReason: Int, workInfo: WorkInfo)
 
     /**
      * Called when the worker finishes and returns a value.
@@ -46,7 +46,7 @@ public interface WorkExecutionEventListener {
      * @param result [Result] from work finishing
      * @param workInfo Snapshot of the work info
      */
-    public suspend fun onEnd(result: Result, workInfo: WorkInfo)
+    public suspend fun onFinished(result: Result, workInfo: WorkInfo)
 
     /**
      * Called when the work request fails from an exception after it has started.
