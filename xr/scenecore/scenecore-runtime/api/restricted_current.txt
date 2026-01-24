@@ -915,6 +915,7 @@ package androidx.xr.scenecore.runtime {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getDimensions();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather getEdgeFeather();
     method @InaccessibleFromKotlin public int getMaxContentLightLevel();
+    method @InaccessibleFromKotlin public int getMediaBlendingMode();
     method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.FieldOfView renderViewFov);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SurfaceEntity.Shape getShape();
     method @InaccessibleFromKotlin public int getStereoMode();
@@ -923,6 +924,7 @@ package androidx.xr.scenecore.runtime {
     method public void setAuxiliaryAlphaMaskTexture(androidx.xr.scenecore.runtime.TextureResource? alphaMask);
     method public void setContentColorMetadata(int colorSpace, int colorTransfer, int colorRange, int maxContentLightLevel);
     method @InaccessibleFromKotlin public void setEdgeFeather(androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather);
+    method @InaccessibleFromKotlin public void setMediaBlendingMode(int);
     method public void setPrimaryAlphaMaskTexture(androidx.xr.scenecore.runtime.TextureResource? alphaMask);
     method @InaccessibleFromKotlin public void setShape(androidx.xr.scenecore.runtime.SurfaceEntity.Shape);
     method @InaccessibleFromKotlin public void setStereoMode(int);
@@ -934,6 +936,7 @@ package androidx.xr.scenecore.runtime {
     property public abstract androidx.xr.scenecore.runtime.Dimensions dimensions;
     property public abstract androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather edgeFeather;
     property public abstract int maxContentLightLevel;
+    property public abstract int mediaBlendingMode;
     property public abstract androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape;
     property public abstract int stereoMode;
     property public abstract android.view.Surface surface;
@@ -1164,6 +1167,7 @@ package androidx.xr.scenecore.runtime {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getDimensions();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather getEdgeFeather();
     method @InaccessibleFromKotlin public int getMaxContentLightLevel();
+    method @InaccessibleFromKotlin public int getMediaBlendingMode();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SurfaceEntity.Shape getShape();
     method @InaccessibleFromKotlin public int getStereoMode();
     method @InaccessibleFromKotlin public android.view.Surface getSurface();
@@ -1172,6 +1176,7 @@ package androidx.xr.scenecore.runtime {
     method public void setColliderEnabled(boolean enableCollider);
     method public void setContentColorMetadata(@androidx.xr.scenecore.runtime.SurfaceEntity.ColorSpace int colorSpace, @androidx.xr.scenecore.runtime.SurfaceEntity.ColorTransfer int colorTransfer, @androidx.xr.scenecore.runtime.SurfaceEntity.ColorRange int colorRange, int maxCLL);
     method @InaccessibleFromKotlin public void setEdgeFeather(androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather);
+    method @InaccessibleFromKotlin public void setMediaBlendingMode(int);
     method public void setPrimaryAlphaMaskTexture(androidx.xr.scenecore.runtime.TextureResource? alphaMask);
     method @InaccessibleFromKotlin public void setShape(androidx.xr.scenecore.runtime.SurfaceEntity.Shape);
     method @InaccessibleFromKotlin public void setStereoMode(int);
@@ -1183,6 +1188,7 @@ package androidx.xr.scenecore.runtime {
     property public abstract androidx.xr.scenecore.runtime.Dimensions dimensions;
     property public abstract androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather edgeFeather;
     property public abstract int maxContentLightLevel;
+    property @androidx.xr.scenecore.runtime.SurfaceEntity.MediaBlendingMode public abstract int mediaBlendingMode;
     property public abstract androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape;
     property @androidx.xr.scenecore.runtime.SurfaceEntity.StereoMode public abstract int stereoMode;
     property public abstract android.view.Surface surface;

@@ -505,6 +505,18 @@ public interface ImpressApi {
     )
 
     /**
+     * Updates the blending mode for an impress node hosting a StereoSurface.
+     *
+     * @param panelImpressNode The Impress node which hosts the panel to be updated.
+     * @param blendingMode The [Int] blending mode to apply. Must be a member of MediaBlendingMode.
+     * @throws IllegalArgumentException if blendingMode is invalid.
+     */
+    public fun setBlendingModeForStereoSurfaceEntity(
+        panelImpressNode: ImpressNode,
+        @MediaBlendingMode blendingMode: Int,
+    )
+
+    /**
      * Updates the color information for an impress node hosting a StereoSurface.
      *
      * @param stereoSurfaceNode The Impress node which hosts the StereoSurface to be updated.

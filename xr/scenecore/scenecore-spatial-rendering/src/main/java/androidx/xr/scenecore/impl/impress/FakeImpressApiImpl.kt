@@ -506,6 +506,16 @@ public class FakeImpressApiImpl : ImpressApi {
         data.stereoMode = stereoMode
     }
 
+    override fun setBlendingModeForStereoSurfaceEntity(
+        panelImpressNode: ImpressNode,
+        @MediaBlendingMode blendingMode: Int,
+    ) {
+        val data =
+            stereoSurfaceEntities[panelImpressNode]
+                ?: throw IllegalArgumentException("Couldn't find stereo surface entity!")
+        data.mediaBlendingMode = blendingMode
+    }
+
     override fun setContentColorMetadataForStereoSurface(
         stereoSurfaceNode: ImpressNode,
         @ColorSpace colorSpace: Int,

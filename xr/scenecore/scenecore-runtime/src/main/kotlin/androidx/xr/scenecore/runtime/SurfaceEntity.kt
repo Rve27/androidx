@@ -43,6 +43,13 @@ public interface SurfaceEntity : Entity {
     public var stereoMode: Int
 
     /**
+     * Specifies the blending mode of the content.
+     *
+     * @throws kotlin.IllegalStateException when setting this value if the Entity has been disposed.
+     */
+    public var mediaBlendingMode: Int
+
+    /**
      * Specifies the geometry of the spatial canvas which the surface is texture mapped to.
      *
      * @throws kotlin.IllegalStateException when setting this value if the Entity has been disposed.

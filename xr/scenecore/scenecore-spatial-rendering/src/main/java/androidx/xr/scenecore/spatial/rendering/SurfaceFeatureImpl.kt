@@ -58,7 +58,16 @@ internal class SurfaceFeatureImpl(
             field = value
         }
 
-    @SurfaceEntity.MediaBlendingMode private val mediaBlendingMode: Int = mediaBlendingMode
+    @get:SurfaceEntity.MediaBlendingMode
+    override var mediaBlendingMode: Int = SurfaceEntity.MediaBlendingMode.TRANSPARENT
+        set(value) {
+            try {
+                impressApi.setBlendingModeForStereoSurfaceEntity(entityImpressNode, value)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalStateException(e)
+            }
+            field = value
+        }
 
     @SurfaceEntity.SurfaceProtection private val surfaceProtection: Int = surfaceProtection
 
