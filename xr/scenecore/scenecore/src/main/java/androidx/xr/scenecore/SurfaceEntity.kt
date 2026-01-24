@@ -549,6 +549,14 @@ private constructor(
             }
         }
 
+        private fun getMediaBlendingModeFromRt(mediaBlendingMode: Int): MediaBlendingMode {
+            return when (mediaBlendingMode) {
+                RtSurfaceEntity.MediaBlendingMode.TRANSPARENT -> MediaBlendingMode.TRANSPARENT
+                RtSurfaceEntity.MediaBlendingMode.OPAQUE -> MediaBlendingMode.OPAQUE
+                else -> MediaBlendingMode.TRANSPARENT
+            }
+        }
+
         private fun getRtSurfaceProtection(surfaceProtection: SurfaceProtection): Int {
             return when (surfaceProtection) {
                 SurfaceProtection.NONE -> RtSurfaceEntity.SurfaceProtection.NONE
@@ -746,6 +754,25 @@ private constructor(
         set(value) {
             checkNotDisposed()
             rtEntity!!.stereoMode = getRtStereoMode(value)
+        }
+
+    /**
+     * Controls the blending mode of the content.
+     *
+     * @throws IllegalStateException when setting this value if the Entity has been disposed.
+     */
+    public var mediaBlendingMode: MediaBlendingMode
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        get() {
+            checkNotDisposed()
+            return getMediaBlendingModeFromRt(rtEntity!!.mediaBlendingMode)
+        }
+        @MainThread
+        @SuppressLint("HiddenTypeParameter")
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        set(value) {
+            checkNotDisposed()
+            rtEntity!!.mediaBlendingMode = getRtMediaBlendingMode(value)
         }
 
     /**

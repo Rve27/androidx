@@ -601,6 +601,16 @@ public class ImpressApiImpl : ImpressApi {
             validateStereoMode(stereoMode),
         )
 
+    override fun setBlendingModeForStereoSurfaceEntity(
+        panelImpressNode: ImpressNode,
+        @MediaBlendingMode blendingMode: Int,
+    ): Unit =
+        nSetBlendingModeForStereoSurfaceEntity(
+            getViewNativeHandle(view),
+            panelImpressNode.handle,
+            validateMediaBlendingMode(blendingMode),
+        )
+
     override fun setContentColorMetadataForStereoSurface(
         stereoSurfaceNode: ImpressNode,
         @ColorSpace colorSpace: Int,
@@ -1626,6 +1636,12 @@ public class ImpressApiImpl : ImpressApi {
         view: Long,
         panelImpressNode: Int,
         stereoMode: Int,
+    )
+
+    private external fun nSetBlendingModeForStereoSurfaceEntity(
+        view: Long,
+        panelImpressNode: Int,
+        blendingMode: Int,
     )
 
     private external fun nSetContentColorMetadataForStereoSurfaceEntity(
