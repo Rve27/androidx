@@ -5,6 +5,7 @@ package @SuppressCompatibility androidx.xr.projected.testing {
     ctor public ProjectedTestRule();
     method public org.junit.runners.model.Statement apply(org.junit.runners.model.Statement? base, org.junit.runner.Description? description);
     method @InaccessibleFromKotlin public java.util.Set<androidx.xr.projected.ProjectedDeviceController.Capability> getCapabilities();
+    method @InaccessibleFromKotlin public int getProjectedLayoutParamFlags();
     method @InaccessibleFromKotlin public boolean getThrowIllegalStateExceptionWhenCreatingControllers();
     method @InaccessibleFromKotlin public boolean isDeviceConnected();
     method public void launchTestProjectedDeviceActivity(kotlin.jvm.functions.Function1<? super android.app.Activity,kotlin.Unit> block);
@@ -14,6 +15,7 @@ package @SuppressCompatibility androidx.xr.projected.testing {
     method @InaccessibleFromKotlin public void setThrowIllegalStateExceptionWhenCreatingControllers(boolean);
     property public java.util.Set<androidx.xr.projected.ProjectedDeviceController.Capability> capabilities;
     property public boolean isDeviceConnected;
+    property public int projectedLayoutParamFlags;
     property public boolean throwIllegalStateExceptionWhenCreatingControllers;
   }
 
