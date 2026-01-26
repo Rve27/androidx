@@ -139,6 +139,54 @@ internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
     }
 }
 
+internal class RemoteFitBoxNodeV2 : RemoteComposeNodeV2() {
+    var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start
+    var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top
+
+    override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
+        val recordingModifier = creationState.toRecordingModifier(modifier)
+        creationState.document.startFitBox(
+            recordingModifier,
+            horizontalAlignment.toRemote(),
+            verticalArrangement.toRemote(),
+        )
+        renderChildren(creationState, remoteCanvas)
+        creationState.document.endFitBox()
+    }
+}
+
+internal class RemoteCollapsibleColumnNodeV2 : RemoteComposeNodeV2() {
+    var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start
+    var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top
+
+    override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
+        val recordingModifier = creationState.toRecordingModifier(modifier)
+        creationState.document.startCollapsibleColumn(
+            recordingModifier,
+            horizontalAlignment.toRemote(),
+            verticalArrangement.toRemote(),
+        )
+        renderChildren(creationState, remoteCanvas)
+        creationState.document.endCollapsibleColumn()
+    }
+}
+
+internal class RemoteCollapsibleRowNodeV2 : RemoteComposeNodeV2() {
+    var horizontalArrangement: RemoteArrangement.Horizontal = RemoteArrangement.Start
+    var verticalAlignment: RemoteAlignment.Vertical = RemoteAlignment.Top
+
+    override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
+        val recordingModifier = creationState.toRecordingModifier(modifier)
+        creationState.document.startCollapsibleRow(
+            recordingModifier,
+            horizontalArrangement.toRemote(),
+            verticalAlignment.toRemote(),
+        )
+        renderChildren(creationState, remoteCanvas)
+        creationState.document.endCollapsibleRow()
+    }
+}
+
 internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
     lateinit var text: RemoteString
     lateinit var color: RemoteColor

@@ -22,8 +22,11 @@ import android.content.Context
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.RemoteComposeCreationComposeFlags
+import androidx.compose.remote.creation.compose.layout.FitBox
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas
+import androidx.compose.remote.creation.compose.layout.RemoteCollapsibleColumn
+import androidx.compose.remote.creation.compose.layout.RemoteCollapsibleRow
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteText
@@ -123,6 +126,35 @@ class RemoteComposeV2Test {
                         paint =
                             RemotePaint().apply { remoteColor = RemoteColor(Color.Red.toArgb()) }
                     )
+                }
+            }
+
+        assertNotNull(document)
+        assertTrue(document.bytes.isNotEmpty())
+    }
+
+    @Test
+    fun testFitBoxV2() = runTest {
+        val displayInfo = CreationDisplayInfo(500, 500, 1)
+        val document =
+            captureSingleRemoteDocumentV2(creationDisplayInfo = displayInfo, context = context) {
+                FitBox { RemoteText(text = "Fit Content") }
+            }
+
+        assertNotNull(document)
+        assertTrue(document.bytes.isNotEmpty())
+    }
+
+    @Test
+    fun testCollapsibleLayoutsV2() = runTest {
+        val displayInfo = CreationDisplayInfo(500, 500, 1)
+        val document =
+            captureSingleRemoteDocumentV2(creationDisplayInfo = displayInfo, context = context) {
+                RemoteCollapsibleColumn {
+                    RemoteText(text = "Fixed")
+                    RemoteCollapsibleRow(modifier = RemoteModifier.weight(1f)) {
+                        RemoteText(text = "Weighted Row Content")
+                    }
                 }
             }
 
