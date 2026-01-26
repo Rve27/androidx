@@ -282,16 +282,46 @@ private fun StandardBottomSheet(
                     constraints ->
                     val layoutHeight = constraints.maxHeight.toFloat()
                     val sheetHeight = sheetSize.height.toFloat()
+
                     val newAnchors = DraggableAnchors {
-                        if (!state.skipPartiallyExpanded) {
+                        val isHiddenAnchorAvailable =
+                            sheetHeight == 0f || peekHeightPx == 0f || !state.skipHiddenState
+
+                        // We are preserving ambiguous anchor reconciliation for first layout pass.
+                        // This handles the use case where sheetPeekHeight is backed by a mutable
+                        // value which is backed by 0.dp before being recalculated. We can assume
+                        // the state is in its first pass by asserting anchor sizes are zero, as we
+                        // enforce at least 1 anchor below. We then settle at partial as this is
+                        // the anchor external users have access to via sheetPeekHeight API.
+                        val isInitialLayout = state.anchoredDraggableState.anchors.size == 0
+                        val isStableAtPartial =
+                            state.currentValue == PartiallyExpanded && !state.isAnimationRunning
+
+                        val isAmbiguousPartialAllowed =
+                            peekHeightPx == 0f && (isInitialLayout || isStableAtPartial)
+
+                        val isPartiallyExpandedAnchorAvailable =
+                            !state.skipPartiallyExpanded &&
+                                (peekHeightPx > 0f || isAmbiguousPartialAllowed) &&
+                                peekHeightPx != sheetHeight
+
+                        val isExpandedAnchorAvailable = sheetHeight > 0f
+
+                        require(
+                            isHiddenAnchorAvailable ||
+                                isPartiallyExpandedAnchorAvailable ||
+                                isExpandedAnchorAvailable
+                        ) {
+                            "BottomSheetScaffold: Require at least 1 anchor to be initialized"
+                        }
+
+                        if (isPartiallyExpandedAnchorAvailable) {
                             PartiallyExpanded at (layoutHeight - peekHeightPx)
                         }
-                        // Ensure when there is no content, there is just one anchor set to
-                        // layoutHeight. Hidden overrides skipHiddenState in this use case.
-                        if (sheetHeight == 0f || !state.skipHiddenState) {
+                        if (isHiddenAnchorAvailable) {
                             Hidden at layoutHeight
                         }
-                        if (sheetHeight > 0f) {
+                        if (isExpandedAnchorAvailable) {
                             Expanded at layoutHeight - sheetHeight
                         }
                     }
