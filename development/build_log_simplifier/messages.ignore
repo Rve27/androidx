@@ -69,6 +69,7 @@ WARN: .*\/unzippedJvmSources\/androidx\/appsearch\/app\/ShortcutAdapter\.java:[0
 WARN: .*\/unzippedJvmSources\/androidx\/appsearch\/localstorage\/LocalStorage\.java:[0-9]+ Missing @param tag for parameter `context` in DFunction Builder
 WARN: .*\/unzippedJvmSources\/androidx\/appsearch\/platformstorage\/PlatformStorage\.java:[0-9]+ Missing @param tag for parameter `context` in DFunction Builder
 WARN: .*\/unzippedJvmSources\/androidx\/appsearch\/playservicesstorage\/PlayServicesStorage\.java:[0-9]+ Missing @param tag for parameter `context` in DFunction Builder
+WARN: .*\/unzippedJvmSources\/androidx\/benchmark\/macro\/Metric\.kt:[0-9]+ Failed to resolve See androidx\.tracing\.trace in DClass TraceSectionMetric
 WARN: .*\/unzippedJvmSources\/androidx\/camera\/view\/RotationProvider\.java:[0-9]+ Missing @param tag for parameter `listener` in DFunction addListener
 WARN: .*\/unzippedJvmSources\/androidx\/car\/app\/CarToast\.java:[0-9]+ Missing @param tag for parameter `carContext` in DFunction makeText
 WARN: .*\/unzippedJvmSources\/androidx\/car\/app\/model\/AlertCallbackDelegate\.java:[0-9]+ Missing @param tag for parameter `reason` in DFunction sendCancel
