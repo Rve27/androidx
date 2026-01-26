@@ -242,88 +242,111 @@ suspend fun PointerInputScope.detectDragGestures(
     shouldAwaitTouchSlop: () -> Boolean = { true },
     onDrag: (change: PointerInputChange, dragAmount: Offset) -> Unit,
 ) {
-    var overSlop: Offset
-
     awaitEachGesture {
         val initialDown = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-        val awaitTouchSlop = shouldAwaitTouchSlop()
+        processDragGesture(
+            initialDown = initialDown,
+            shouldAwaitTouchSlop = shouldAwaitTouchSlop,
+            orientationLock = orientationLock,
+            onDragStart = onDragStart,
+            onDrag = onDrag,
+            onDragCancel = onDragCancel,
+            onDragEnd = onDragEnd,
+        )
+    }
+}
 
-        if (!awaitTouchSlop) {
-            initialDown.consume()
-        }
-        val down = awaitFirstDown(requireUnconsumed = false)
-        var drag: PointerInputChange?
-        overSlop = Offset.Zero
-        if (awaitTouchSlop) {
-            do {
-                drag =
-                    awaitPointerSlopOrCancellation(
-                        down.id,
-                        down.type,
-                        orientation = orientationLock,
-                    ) { change, over ->
-                        change.consume()
-                        overSlop = over
-                    }
-            } while (drag != null && !drag.isConsumed)
-        } else {
-            drag = initialDown
-        }
+/**
+ * A gesture detector for a single drag gesture. This should be called in a loop, such as
+ * [awaitEachGesture] to detect gestures on an ongoing basis.
+ *
+ * @param [initialDown] the initial down event for the gesture. This must be a down event that was
+ *   from the [PointerEventPass.Initial], which may be used to determine whether or not to process a
+ *   drag gesture or a different gesture.
+ * @see detectDragGestures
+ */
+internal suspend fun AwaitPointerEventScope.processDragGesture(
+    initialDown: PointerInputChange,
+    shouldAwaitTouchSlop: () -> Boolean,
+    orientationLock: Orientation?,
+    onDragStart: (PointerInputChange, PointerInputChange, Offset) -> Unit,
+    onDrag: (PointerInputChange, Offset) -> Unit,
+    onDragCancel: () -> Unit,
+    onDragEnd: (PointerInputChange) -> Unit,
+) {
+    val awaitTouchSlop = shouldAwaitTouchSlop()
 
-        // if the pointer is still down, keep reading events in case we need to pick up the gesture.
-        while (drag == null && currentEvent.changes.fastAny { it.pressed }) {
-            var event: PointerEvent
-            do {
-                // use final pass so we only pick up a gesture if it was really ignored by
-                // everyone else
-                event = awaitPointerEvent(pass = PointerEventPass.Final)
-            } while (
-                event.changes.fastAny { it.isConsumed } && event.changes.fastAny { it.pressed }
+    if (!awaitTouchSlop) {
+        initialDown.consume()
+    }
+    val down = awaitFirstDown(requireUnconsumed = false)
+    var drag: PointerInputChange?
+    var overSlop: Offset = Offset.Zero
+    if (awaitTouchSlop) {
+        do {
+            drag =
+                awaitPointerSlopOrCancellation(down.id, down.type, orientation = orientationLock) {
+                    change,
+                    over ->
+                    change.consume()
+                    overSlop = over
+                }
+        } while (drag != null && !drag.isConsumed)
+    } else {
+        drag = initialDown
+    }
+
+    // if the pointer is still down, keep reading events in case we need to pick up the gesture.
+    while (drag == null && currentEvent.changes.fastAny { it.pressed }) {
+        var event: PointerEvent
+        do {
+            // use final pass so we only pick up a gesture if it was really ignored by
+            // everyone else
+            event = awaitPointerEvent(pass = PointerEventPass.Final)
+        } while (event.changes.fastAny { it.isConsumed } && event.changes.fastAny { it.pressed })
+
+        // an event was not consumed and there's still a pointer in the screen
+        if (event.changes.fastAny { it.pressed }) {
+            // await touch slop again, using the initial down as starting point.
+            // For most cases this should return immediately since we probably moved
+            // far enough from the initial down event.
+            val initialPositionChange =
+                (event.changes.firstOrNull()?.position ?: Offset.Zero) - down.position
+            drag =
+                awaitPointerSlopOrCancellation(
+                    down.id,
+                    down.type,
+                    orientation = orientationLock,
+                    initialPositionChange = initialPositionChange,
+                ) { change, _ ->
+                    change.consume()
+                    // the triggering event will be used as over slop
+                    overSlop = change.positionChange()
+                }
+        }
+    }
+
+    if (drag != null) {
+        onDragStart.invoke(down, drag, overSlop)
+        onDrag(drag, overSlop)
+        val upEvent =
+            drag(
+                pointerId = drag.id,
+                onDrag = {
+                    onDrag(it, it.positionChange())
+                    it.consume()
+                },
+                // once drag starts we want to capture drags in any direction, though
+                // they will be propagated on the correct direction above we want to
+                // consume any new drag to avoid the cases where we start dragging
+                // on a given direction and then change directions.
+                orientation = null,
+                motionConsumed = { it.isConsumed },
             )
-
-            // an event was not consumed and there's still a pointer in the screen
-            if (event.changes.fastAny { it.pressed }) {
-                // await touch slop again, using the initial down as starting point.
-                // For most cases this should return immediately since we probably moved
-                // far enough from the initial down event.
-                val initialPositionChange =
-                    (event.changes.firstOrNull()?.position ?: Offset.Zero) - down.position
-                drag =
-                    awaitPointerSlopOrCancellation(
-                        down.id,
-                        down.type,
-                        orientation = orientationLock,
-                        initialPositionChange = initialPositionChange,
-                    ) { change, _ ->
-                        change.consume()
-                        // the triggering event will be used as over slop
-                        overSlop = change.positionChange()
-                    }
-            }
-        }
-
-        if (drag != null) {
-            onDragStart.invoke(down, drag, overSlop)
-            onDrag(drag, overSlop)
-            val upEvent =
-                drag(
-                    pointerId = drag.id,
-                    onDrag = {
-                        onDrag(it, it.positionChange())
-                        it.consume()
-                    },
-                    // once drag starts we want to capture drags in any direction, though
-                    // they will be propagated on the correct direction above we want to
-                    // consume any new drag to avoid the cases where we start dragging
-                    // on a given direction and then change directions.
-                    orientation = null,
-                    motionConsumed = { it.isConsumed },
-                )
-            if (upEvent == null) {
-                onDragCancel()
-            } else {
-                onDragEnd(upEvent)
-            }
+        if (upEvent == null) {
+            onDragCancel()
+        } else {
+            onDragEnd(upEvent)
         }
     }
 }
