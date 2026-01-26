@@ -18,28 +18,9 @@ package androidx.glance
 
 import androidx.annotation.RestrictTo
 
-/**
- * Represents what backend is in use during composition/translation.
- *
- * TODO: unrestrict in followup cl
- */
+/** Represents what backend is in use during composition/translation. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public enum class Backend {
     RemoteView,
     RemoteCompose,
-}
-
-/**
- * Represents what backend a developer's AppWidget would like to use
- *
- * TODO: revisit the concept of BackendPreference and Backend. b/461555982
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // TODO: unrestrict in next CL
-@JvmInline
-public value class GlanceBackendPreference(public val value: Int) {
-    public companion object {
-        public val RemoteViews: GlanceBackendPreference = GlanceBackendPreference(0)
-        public val RemoteCompose: GlanceBackendPreference = GlanceBackendPreference(1)
-        public val Default: GlanceBackendPreference = GlanceBackendPreference(2)
-    }
 }
