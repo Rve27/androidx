@@ -428,6 +428,6 @@ private fun niceIncrement(range: RFloat, minSteps: Int): RFloat {
     return ret
 }
 
-@Preview @Composable fun PlotWavePreview() = RemoteDocPreview(plotWave())
+@Preview @Composable private fun PlotWavePreview() = RemoteDocPreview(plotWave())
 
-@Preview @Composable fun BasicPlotPreview() = RemoteDocPreview(basicPlot())
+@Preview @Composable private fun BasicPlotPreview() = RemoteDocPreview(basicPlot())
