@@ -37,6 +37,7 @@ import androidx.annotation.RestrictTo
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.xr.projected.ProjectedDeviceController.Capability
+import androidx.xr.projected.ProjectedDisplayController.ProjectedLayoutParamsFlags
 import androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import androidx.xr.projected.platform.IProjectedInputEventListener
@@ -50,6 +51,7 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.mockito.ArgumentCaptor
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.firstValue
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -142,10 +144,31 @@ public class ProjectedTestRule : TestRule {
             field = value
         }
 
+    /**
+     * Returns the currently set Projected layout param flags, reflecting the state after calls to
+     * [androidx.xr.projected.ProjectedDisplayController.addLayoutParamsFlags] and
+     * [androidx.xr.projected.ProjectedDisplayController.removeLayoutParamsFlags].
+     */
+    @ProjectedLayoutParamsFlags
+    public var projectedLayoutParamFlags: Int = 0
+        private set
+
     private val context: Application = ApplicationProvider.getApplicationContext()
     private val virtualDeviceManager =
         context.getSystemService(Context.VIRTUAL_DEVICE_SERVICE) as VirtualDeviceManager
-    private val mockProjectedService: IProjectedService = mock<IProjectedService>()
+    private val mockProjectedService: IProjectedService =
+        mock<IProjectedService> {
+            on { addWindowFlags(any()) } doAnswer
+                { invocation ->
+                    val flag = invocation.arguments[0] as Int
+                    projectedLayoutParamFlags = projectedLayoutParamFlags or flag
+                }
+            on { clearWindowFlags(any()) } doAnswer
+                { invocation ->
+                    val flag = invocation.arguments[0] as Int
+                    projectedLayoutParamFlags = projectedLayoutParamFlags and flag.inv()
+                }
+        }
     private val mockProjectedServiceStub =
         mock<IProjectedService.Stub> {
             on { queryLocalInterface(any()) }.thenReturn(mockProjectedService)
