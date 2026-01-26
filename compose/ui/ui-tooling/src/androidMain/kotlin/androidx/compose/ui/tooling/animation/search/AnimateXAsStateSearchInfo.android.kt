@@ -36,6 +36,21 @@ internal data class AnimateXAsStateSearchInfo<T, V : AnimationVector>(
     val animationSpec: AnimationSpec<T>,
     val toolingOverride: ToolingOverride<T>,
 ) : SearchInfo<AnimateXAsStateComposeAnimation<*, *>, AnimateXAsStateClock<*, *>> {
+
+    override var initialState: Any? = null
+        private set
+
+    override var targetState: Any? = null
+        private set
+
+    override fun setInitialStateToCurrentAnimationValue() {
+        initialState = animatable.targetValue
+    }
+
+    override fun setTargetStateToCurrentAnimationValue() {
+        targetState = animatable.targetValue
+    }
+
     override fun createAnimation(): AnimateXAsStateComposeAnimation<*, *>? {
         return this.parse()
     }

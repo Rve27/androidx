@@ -75,4 +75,16 @@ class InfiniteTransitionSearchInfoTest {
             assertEquals(300L, searchInfo.toolingOverride.override.value?.value)
         }
     }
+
+    @Test
+    fun findInitialAndTargetStates() {
+        val search = AnimationSearch.InfiniteTransitionSearch {}
+        rule.addAnimations(search) { rememberInfiniteTransition() }
+        val searchInfo = search.animations.first()
+        // rememberInfiniteTransition doesn't have states.
+        searchInfo.setInitialStateToCurrentAnimationValue()
+        assertNull(searchInfo.initialState)
+        searchInfo.setTargetStateToCurrentAnimationValue()
+        assertNull(searchInfo.targetState)
+    }
 }
