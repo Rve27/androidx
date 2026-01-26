@@ -342,6 +342,7 @@ internal class RemoteImageNodeV2 : RemoteComposeNodeV2() {
     var remoteBitmap: RemoteBitmap? = null
     var contentScale: ContentScale = ContentScale.Fit
     var alpha: RemoteFloat = RemoteFloat(1f)
+    var contentDescription: RemoteString? = null
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val bitmapId =
