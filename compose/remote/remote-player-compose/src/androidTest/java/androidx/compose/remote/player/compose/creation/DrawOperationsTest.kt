@@ -29,7 +29,6 @@ import androidx.compose.remote.core.operations.BitmapFontData
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.player.compose.ExperimentalRemotePlayerApi
-import androidx.compose.remote.player.compose.RemoteComposePlayerFlags
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer
 import androidx.compose.remote.player.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.player.compose.test.rule.ComposeScreenshotTestRule
@@ -42,8 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.matchers.MSSIMMatcher
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -61,16 +58,6 @@ class DrawOperationsComposeTest {
             moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
             matcher = MSSIMMatcher(threshold = 0.999),
         )
-
-    @Before
-    fun setUp() {
-        RemoteComposePlayerFlags.isViewPlayerEnabled = false
-    }
-
-    @After
-    fun tearDown() {
-        RemoteComposePlayerFlags.isViewPlayerEnabled = true
-    }
 
     @Test
     fun drawOperationsInGrid() {
