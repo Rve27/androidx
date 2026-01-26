@@ -164,10 +164,12 @@ public open class RemoteComposeCreationState : RemoteStateScope {
     public open fun <T : RemoteState<*>> getOrCreateNamedState(
         type: Class<T>,
         name: String,
-        domain: String,
+        domain: String?,
         function: (RemoteComposeCreationState) -> T,
     ): T {
-        return type.cast(namedState.getOrPut("$domain:$name", { function(this) }))!!
+        return type.cast(
+            namedState.getOrPut(if (domain != null) "$domain:$name" else name, { function(this) })
+        )!!
     }
 
     internal data class TextFromFloatParams(
@@ -195,7 +197,7 @@ public class NoRemoteCompose :
     override fun <T : RemoteState<*>> getOrCreateNamedState(
         type: Class<T>,
         name: String,
-        domain: String,
+        domain: String?,
         function: (RemoteComposeCreationState) -> T,
     ): T {
         // no need to cache here
