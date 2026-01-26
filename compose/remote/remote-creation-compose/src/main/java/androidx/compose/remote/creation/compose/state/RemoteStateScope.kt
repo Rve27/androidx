@@ -19,8 +19,11 @@ package androidx.compose.remote.creation.compose.state
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.RemoteComposeWriter
+import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RemoteDensity
+import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.LayoutDirection
 
 /** Scope for accessing remote state IDs. */
@@ -50,4 +53,21 @@ public interface RemoteStateScope {
     /** Returns the long ID for this state within the scope. */
     public val RemoteState<*>.longId: Long
         get() = (this as BaseRemoteState<*>).getLongIdForCreationState(creationState)
+}
+
+/**
+ * Allocates the RemoteState in global scope allowing assigning to global state IDs and
+ * document-level properties.
+ */
+@Composable
+@RemoteComposable
+public fun <T : RemoteState<*>> T.withGlobalScope(): T {
+    with(LocalRemoteComposeCreationState.current) {
+        this.document.beginGlobal()
+        // Force commit to the document via RemoteStateScope cache
+        this@withGlobalScope.id
+        this.document.endGlobal()
+    }
+
+    return this
 }
