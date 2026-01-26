@@ -36,7 +36,7 @@ public fun RemoteCollapsibleColumnV2(
 ) {
     val scope = remember { RemoteCollapsibleColumnScope() }
     RemoteComposeNode(
-        factory = { RemoteCollapsibleColumnNodeV2() },
+        factory = ::RemoteCollapsibleColumnNodeV2,
         update = {
             set(modifier) { nodeModifier -> this.modifier = nodeModifier }
             set(horizontalAlignment) { hAlign -> this.horizontalAlignment = hAlign }
