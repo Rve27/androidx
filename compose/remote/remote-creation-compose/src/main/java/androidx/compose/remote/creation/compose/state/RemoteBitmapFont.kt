@@ -99,15 +99,18 @@ public class RemoteBitmapFont(
      * drawn at position 0, 0.
      *
      * @param text The [RemoteString] whose width needs to be measured.
+     * @param glyphSpacing A [RemoteFloat] specifying a horizontal adjustment between glyphs in
+     *   pixels.
      * @return A [RemoteFloat] representing the calculated width in pixels.
      */
-    public fun measureWidth(text: RemoteString): RemoteFloat {
+    public fun measureWidth(text: RemoteString, glyphSpacing: RemoteFloat): RemoteFloat {
         return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
             floatArrayOf(
                 creationState.document.bitmapTextMeasure(
                     text.getIdForCreationState(creationState),
                     getIdForCreationState(creationState),
                     BitmapTextMeasure.MEASURE_WIDTH,
+                    glyphSpacing.getFloatIdForCreationState(creationState),
                 )
             )
         }
@@ -127,6 +130,7 @@ public class RemoteBitmapFont(
                     text.getIdForCreationState(creationState),
                     getIdForCreationState(creationState),
                     BitmapTextMeasure.MEASURE_HEIGHT,
+                    0f,
                 )
             )
         }

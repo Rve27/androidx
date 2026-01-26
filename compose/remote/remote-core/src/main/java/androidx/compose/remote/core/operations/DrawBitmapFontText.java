@@ -44,22 +44,32 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
     int mEnd;
     float mX;
     float mY;
+    float mGlyphSpacing;
     float mOutX;
     float mOutY;
+    float mOutGlyphSpacing;
 
-    public DrawBitmapFontText(int textId, int bitmapFontID, int start, int end, float x, float y) {
+    public DrawBitmapFontText(
+            int textId, int bitmapFontID, int start, int end, float x, float y,
+            float glyphSpacing) {
+        if (textId < 0) {
+            throw new IllegalArgumentException("textId must not be negative");
+        }
         mTextID = textId;
         mBitmapFontID = bitmapFontID;
         mStart = start;
         mEnd = end;
         mOutX = mX = x;
         mOutY = mY = y;
+        mOutGlyphSpacing = mGlyphSpacing = glyphSpacing;
     }
 
     @Override
     public void updateVariables(@NonNull RemoteContext context) {
         mOutX = Float.isNaN(mX) ? context.getFloat(Utils.idFromNan(mX)) : mX;
         mOutY = Float.isNaN(mY) ? context.getFloat(Utils.idFromNan(mY)) : mY;
+        mOutGlyphSpacing = Float.isNaN(mGlyphSpacing)
+                ? context.getFloat(Utils.idFromNan(mGlyphSpacing)) : mGlyphSpacing;
     }
 
     @Override
@@ -71,11 +81,14 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
         if (Float.isNaN(mY)) {
             context.listensTo(Utils.idFromNan(mY), this);
         }
+        if (Float.isNaN(mGlyphSpacing)) {
+            context.listensTo(Utils.idFromNan(mGlyphSpacing), this);
+        }
     }
 
     @Override
     public void write(@NonNull WireBuffer buffer) {
-        apply(buffer, mTextID, mBitmapFontID, mStart, mEnd, mX, mY);
+        apply(buffer, mTextID, mBitmapFontID, mStart, mEnd, mX, mY, mGlyphSpacing);
     }
 
     @NonNull
@@ -92,7 +105,9 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
                 + ", "
                 + floatToString(mX, mOutX)
                 + ", "
-                + floatToString(mY, mOutY);
+                + floatToString(mY, mOutY)
+                + ", "
+                + floatToString(mGlyphSpacing, mOutGlyphSpacing);
     }
 
     /**
@@ -103,12 +118,20 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         int text = buffer.readInt();
+        float glyphSpacing;
+        if ((text & 0x80000000) != 0) {
+            text = text & 0xFFFF;
+            glyphSpacing = buffer.readFloat();
+        } else {
+            glyphSpacing = 0f;
+        }
         int bitmapFont = buffer.readInt();
         int start = buffer.readInt();
         int end = buffer.readInt();
         float x = buffer.readFloat();
         float y = buffer.readFloat();
-        DrawBitmapFontText op = new DrawBitmapFontText(text, bitmapFont, start, end, x, y);
+        DrawBitmapFontText op =
+                new DrawBitmapFontText(text, bitmapFont, start, end, x, y, glyphSpacing);
 
         operations.add(op);
     }
@@ -142,6 +165,7 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
      * @param end end position
      * @param x position of where to draw
      * @param y position of where to draw
+     * @param glyphSpacing spacing between glyphs in pixels
      */
     public static void apply(
             @NonNull WireBuffer buffer,
@@ -150,9 +174,16 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
             int start,
             int end,
             float x,
-            float y) {
+            float y,
+            float glyphSpacing) {
         buffer.start(Operations.DRAW_BITMAP_FONT_TEXT_RUN);
-        buffer.writeInt(textId);
+        // Negative textId is used to signal the presence of glyphSpacing in the wire format.
+        if (glyphSpacing == 0f) {
+            buffer.writeInt(textId);
+        } else {
+            buffer.writeInt(textId | 0x80000000);
+            buffer.writeFloat(glyphSpacing);
+        }
         buffer.writeInt(bitmapFontID);
         buffer.writeInt(start);
         buffer.writeInt(end);
@@ -233,7 +264,7 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
                     mOutY + glyph.mMarginTop,
                     xPos2,
                     mOutY + glyph.mBitmapHeight + glyph.mMarginTop);
-            xPos = xPos2 + glyph.mMarginRight;
+            xPos = xPos2 + glyph.mMarginRight + mOutGlyphSpacing;
             prevGlyph = glyph.mChars;
         }
     }
@@ -247,6 +278,7 @@ public class DrawBitmapFontText extends PaintOperation implements VariableSuppor
                 .add("start", mStart)
                 .add("end", mEnd)
                 .add("x", mX, mOutX)
-                .add("y", mY, mOutY);
+                .add("y", mY, mOutY)
+                .add("mGlyphSpacing", mGlyphSpacing);
     }
 }
