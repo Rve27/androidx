@@ -17,6 +17,8 @@
 package androidx.compose.ui.tooling.animation.search
 
 import androidx.compose.animation.core.Transition
+import androidx.compose.ui.tooling.animation.AnimatedContentComposeAnimation
+import androidx.compose.ui.tooling.animation.AnimatedContentComposeAnimation.Companion.parseAnimatedContent
 
 /**
  * [SearchInfo] for [androidx.compose.animation.AnimatedContent] animation.
@@ -24,4 +26,8 @@ import androidx.compose.animation.core.Transition
  * @param transition used by [androidx.compose.animation.AnimatedContent]
  */
 internal class AnimatedContentSearchInfo(transition: Transition<*>) :
-    TransitionBasedSearchInfo(transition)
+    TransitionBasedSearchInfo<AnimatedContentComposeAnimation<*>>(transition) {
+    override fun createAnimation(): AnimatedContentComposeAnimation<*>? {
+        return transition.parseAnimatedContent()
+    }
+}

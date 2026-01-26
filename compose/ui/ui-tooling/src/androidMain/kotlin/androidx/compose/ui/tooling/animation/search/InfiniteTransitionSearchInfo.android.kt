@@ -17,6 +17,8 @@
 package androidx.compose.ui.tooling.animation.search
 
 import androidx.compose.animation.core.InfiniteTransition
+import androidx.compose.ui.tooling.animation.InfiniteTransitionComposeAnimation
+import androidx.compose.ui.tooling.animation.InfiniteTransitionComposeAnimation.Companion.parse
 import androidx.compose.ui.tooling.animation.ToolingState
 
 /**
@@ -28,4 +30,8 @@ import androidx.compose.ui.tooling.animation.ToolingState
 internal data class InfiniteTransitionSearchInfo(
     val infiniteTransition: InfiniteTransition,
     val toolingState: ToolingState<Long>,
-) : SearchInfo
+) : SearchInfo<InfiniteTransitionComposeAnimation> {
+    override fun createAnimation(): InfiniteTransitionComposeAnimation? {
+        return this.parse()
+    }
+}

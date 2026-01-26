@@ -17,10 +17,17 @@
 package androidx.compose.ui.tooling.animation.search
 
 import androidx.compose.animation.core.Transition
+import androidx.compose.ui.tooling.animation.AnimatedVisibilityComposeAnimation
+import androidx.compose.ui.tooling.animation.parseAnimatedVisibility
 
 /**
  * [SearchInfo] for [androidx.compose.animation.AnimatedVisibility] animation.
  *
  * @param transition used by [androidx.compose.animation.AnimatedVisibility]
  */
-internal class AnimatedVisibilitySearchInfo(val transition: Transition<*>) : SearchInfo
+internal class AnimatedVisibilitySearchInfo(val transition: Transition<Boolean>) :
+    SearchInfo<AnimatedVisibilityComposeAnimation> {
+    override fun createAnimation(): AnimatedVisibilityComposeAnimation {
+        return transition.parseAnimatedVisibility()
+    }
+}

@@ -19,6 +19,8 @@ package androidx.compose.ui.tooling.animation.search
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector
+import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation
+import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation.Companion.parse
 import androidx.compose.ui.tooling.animation.ToolingState
 
 /**
@@ -32,4 +34,8 @@ internal data class AnimateXAsStateSearchInfo<T, V : AnimationVector>(
     val animatable: Animatable<T, V>,
     val animationSpec: AnimationSpec<T>,
     val toolingState: ToolingState<T>,
-) : SearchInfo
+) : SearchInfo<AnimateXAsStateComposeAnimation<*, *>> {
+    override fun createAnimation(): AnimateXAsStateComposeAnimation<*, *>? {
+        return this.parse()
+    }
+}

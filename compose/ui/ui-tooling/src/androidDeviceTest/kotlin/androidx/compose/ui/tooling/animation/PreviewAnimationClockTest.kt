@@ -86,7 +86,7 @@ class PreviewAnimationClockTest {
     fun getAnimatedPropertiesReturnsValuesAtCurrentTime() {
         var rotationAnimation: ComposeAnimation? = null
         var offsetAnimation: ComposeAnimation? = null
-        var animatedVisibility: Transition<Any>? = null
+        var animatedVisibility: Transition<Boolean>? = null
 
         composeRule.setContent {
             rotationAnimation = setUpRotationColorScenario()
@@ -137,7 +137,7 @@ class PreviewAnimationClockTest {
     fun getAnimatedPropertiesWithNotSyncedTime() {
         var rotationAnimation: ComposeAnimation? = null
         var offsetAnimation: ComposeAnimation? = null
-        var animatedVisibility: Transition<Any>? = null
+        var animatedVisibility: Transition<Boolean>? = null
 
         composeRule.setContent {
             rotationAnimation = setUpRotationColorScenario()
@@ -228,7 +228,7 @@ class PreviewAnimationClockTest {
 
     @Test
     fun onSeekCallbackCalledWhenTrackingAnimatedVisibility() {
-        var animatedVisibility: Transition<Any>? = null
+        var animatedVisibility: Transition<Boolean>? = null
         var onSeekCalls = 0
         composeRule.setContent { animatedVisibility = createAnimationVisibility(1000) }
 
@@ -244,7 +244,7 @@ class PreviewAnimationClockTest {
     fun getTransitions() {
         var rotationAnimation: ComposeAnimation? = null
         var offsetAnimation: ComposeAnimation? = null
-        var animatedVisibility: Transition<Any>? = null
+        var animatedVisibility: Transition<Boolean>? = null
 
         composeRule.setContent {
             rotationAnimation = setUpRotationColorScenario()
@@ -330,8 +330,8 @@ class PreviewAnimationClockTest {
     fun maxDurationReturnsLongestDuration() {
         // When there are no animations, we should return an invalid duration.
         assertTrue(testClock.getMaxDuration() == 0L)
-        var animatedVisibility900: Transition<Any>? = null
-        var animatedVisibility1200: Transition<Any>? = null
+        var animatedVisibility900: Transition<Boolean>? = null
+        var animatedVisibility1200: Transition<Boolean>? = null
         composeRule.setContent {
             setUpRotationColorScenario() // 1000ms
             setUpOffsetScenario() // 800ms
@@ -355,7 +355,7 @@ class PreviewAnimationClockTest {
 
     @Test
     fun disposeShouldNotifyUnsubscribed() {
-        var animatedVisibilityTransition: Transition<Any>? = null
+        var animatedVisibilityTransition: Transition<Boolean>? = null
         composeRule.setContent {
             animatedVisibilityTransition = createAnimationVisibility()
             testClock.trackTransition(TransitionSearchInfo(updateTransition(Any())))
@@ -375,7 +375,7 @@ class PreviewAnimationClockTest {
 
     @Test
     fun trackTransitionShouldNotifySubscribed() {
-        var animatedVisibilityTransition: Transition<Any>? = null
+        var animatedVisibilityTransition: Transition<Boolean>? = null
         assertEquals(0, testClock.notifySubscribeCount)
         composeRule.setContent {
             animatedVisibilityTransition = createAnimationVisibility()
@@ -405,7 +405,7 @@ class PreviewAnimationClockTest {
 
     @Test
     fun disposeClearsCachedAnimations() {
-        var animatedVisibilityTransition: Transition<Any>? = null
+        var animatedVisibilityTransition: Transition<Boolean>? = null
         composeRule.setContent {
             setUpOffsetScenario()
             animatedVisibilityTransition = createAnimationVisibility()
@@ -444,7 +444,7 @@ class PreviewAnimationClockTest {
     @OptIn(ExperimentalAnimationApi::class)
     @Test
     fun updateAnimatedVisibilityModifiesCachedState() {
-        var animatedVisibilityTransition: Transition<Any>? = null
+        var animatedVisibilityTransition: Transition<Boolean>? = null
         composeRule.setContent {
             animatedVisibilityTransition = createAnimationVisibility(isEnter = true)
         }
@@ -462,8 +462,8 @@ class PreviewAnimationClockTest {
     @Test
     fun animationLabelIsSetExplicitlyOrImplicitly() {
         val someState = Any()
-        var animatedVisibilityTransition: Transition<Any>? = null
-        var animatedVisibilityTransitionExplicitLabel: Transition<Any>? = null
+        var animatedVisibilityTransition: Transition<Boolean>? = null
+        var animatedVisibilityTransitionExplicitLabel: Transition<Boolean>? = null
         composeRule.setContent {
             val transition = updateTransition(someState, "My animation label")
             testClock.trackTransition(TransitionSearchInfo(transition))
@@ -632,7 +632,7 @@ class PreviewAnimationClockTest {
         duration: Int = 500,
         isEnter: Boolean = true,
         label: String? = null,
-    ): Transition<Any> {
+    ): Transition<Boolean> {
         fun <T> linearTween() = tween<T>(duration, easing = LinearEasing)
         val parentAnimatedVisibility = updateTransition(!isEnter, label)
         parentAnimatedVisibility.AnimatedVisibility(
@@ -651,7 +651,7 @@ class PreviewAnimationClockTest {
                 }
             Box(Modifier.size((100 * scale).dp))
         }
-        return parentAnimatedVisibility as Transition<Any>
+        return parentAnimatedVisibility
     }
 
     private class TestPreviewAnimationClock(setClockTimeCallback: () -> Unit = {}) :
