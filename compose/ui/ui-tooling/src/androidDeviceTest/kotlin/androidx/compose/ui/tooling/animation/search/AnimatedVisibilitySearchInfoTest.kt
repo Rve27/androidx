@@ -43,6 +43,12 @@ class AnimatedVisibilitySearchInfoTest {
         rule.addAnimations(search) { AnimatedVisibility(true) { Text(text = "Text") } }
         assertEquals(1, search.animations.size)
 
-        search.animations.first().let { searchInfo -> assertNotNull(searchInfo.createAnimation()) }
+        search.animations.first().let { searchInfo ->
+            val animation = searchInfo.createAnimation()
+            assertNotNull(animation)
+            animation!!
+            val clock = searchInfo.createClock(animation)
+            assertNotNull(clock)
+        }
     }
 }

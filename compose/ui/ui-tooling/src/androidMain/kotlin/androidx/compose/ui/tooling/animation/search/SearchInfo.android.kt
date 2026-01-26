@@ -17,6 +17,7 @@
 package androidx.compose.ui.tooling.animation.search
 
 import androidx.compose.animation.tooling.ComposeAnimation
+import androidx.compose.ui.tooling.animation.clock.ComposeAnimationClock
 
 /**
  * Information found in slotTree required to create
@@ -26,8 +27,13 @@ import androidx.compose.animation.tooling.ComposeAnimation
  * [androidx.compose.ui.tooling.animation.ToolingState].
  *
  * @param AnimationType type of [ComposeAnimation] associated with this [SearchInfo].
+ * @param ClockType type of [ComposeAnimationClock] to be created using information from this
+ *   [SearchInfo].
  */
-internal interface SearchInfo<AnimationType : ComposeAnimation> {
+internal interface SearchInfo<
+    AnimationType : ComposeAnimation,
+    ClockType : ComposeAnimationClock<*, *>,
+> {
     /**
      * Create [ComposeAnimation] for this [SearchInfo].
      *
@@ -35,4 +41,7 @@ internal interface SearchInfo<AnimationType : ComposeAnimation> {
      *   animation could not be parsed or invalid.
      */
     fun createAnimation(): AnimationType?
+
+    /** Create [ComposeAnimationClock] for target [AnimationType]. */
+    fun createClock(animation: AnimationType): ClockType
 }

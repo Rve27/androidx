@@ -123,7 +123,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     fun trackTransition(searchInfo: TransitionSearchInfo) {
         trackAnimation(searchInfo.transition) {
             searchInfo.createAnimation()?.let {
-                transitionClocks[it] = TransitionClock(it)
+                transitionClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
                 return@trackAnimation
             }
@@ -140,7 +140,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
             val composeAnimation = searchInfo.createAnimation()
             onSeek()
             animatedVisibilityClocks[composeAnimation] =
-                AnimatedVisibilityClock(composeAnimation).apply { setClockTime(0L) }
+                searchInfo.createClock(composeAnimation).apply { setClockTime(0L) }
             notifySubscribe(composeAnimation)
         }
     }
@@ -148,7 +148,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     fun trackAnimateXAsState(searchInfo: AnimateXAsStateSearchInfo<*, *>) {
         trackAnimation(searchInfo.animatable) {
             searchInfo.createAnimation()?.let {
-                animateXAsStateClocks[it] = AnimateXAsStateClock(it)
+                animateXAsStateClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
                 return@trackAnimation
             }
@@ -173,7 +173,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     fun trackAnimatedContent(searchInfo: AnimatedContentSearchInfo) {
         trackAnimation(searchInfo.transition) {
             searchInfo.createAnimation()?.let {
-                animatedContentClocks[it] = TransitionClock(it)
+                animatedContentClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
                 return@trackAnimation
             }

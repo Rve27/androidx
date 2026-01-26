@@ -22,6 +22,7 @@ import androidx.compose.animation.core.AnimationVector
 import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation
 import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation.Companion.parse
 import androidx.compose.ui.tooling.animation.ToolingState
+import androidx.compose.ui.tooling.animation.clock.AnimateXAsStateClock
 
 /**
  * [SearchInfo] for [androidx.compose.animation.core.animateValueAsState] animation.
@@ -34,8 +35,14 @@ internal data class AnimateXAsStateSearchInfo<T, V : AnimationVector>(
     val animatable: Animatable<T, V>,
     val animationSpec: AnimationSpec<T>,
     val toolingState: ToolingState<T>,
-) : SearchInfo<AnimateXAsStateComposeAnimation<*, *>> {
+) : SearchInfo<AnimateXAsStateComposeAnimation<*, *>, AnimateXAsStateClock<*, *>> {
     override fun createAnimation(): AnimateXAsStateComposeAnimation<*, *>? {
         return this.parse()
+    }
+
+    override fun createClock(
+        animation: AnimateXAsStateComposeAnimation<*, *>
+    ): AnimateXAsStateClock<*, *> {
+        return AnimateXAsStateClock(animation)
     }
 }

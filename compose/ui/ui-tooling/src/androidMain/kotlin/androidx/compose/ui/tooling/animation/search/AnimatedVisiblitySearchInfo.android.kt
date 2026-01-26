@@ -18,6 +18,7 @@ package androidx.compose.ui.tooling.animation.search
 
 import androidx.compose.animation.core.Transition
 import androidx.compose.ui.tooling.animation.AnimatedVisibilityComposeAnimation
+import androidx.compose.ui.tooling.animation.clock.AnimatedVisibilityClock
 import androidx.compose.ui.tooling.animation.parseAnimatedVisibility
 
 /**
@@ -26,8 +27,14 @@ import androidx.compose.ui.tooling.animation.parseAnimatedVisibility
  * @param transition used by [androidx.compose.animation.AnimatedVisibility]
  */
 internal class AnimatedVisibilitySearchInfo(val transition: Transition<Boolean>) :
-    SearchInfo<AnimatedVisibilityComposeAnimation> {
+    SearchInfo<AnimatedVisibilityComposeAnimation, AnimatedVisibilityClock> {
     override fun createAnimation(): AnimatedVisibilityComposeAnimation {
         return transition.parseAnimatedVisibility()
+    }
+
+    override fun createClock(
+        animation: AnimatedVisibilityComposeAnimation
+    ): AnimatedVisibilityClock {
+        return AnimatedVisibilityClock(animation)
     }
 }
