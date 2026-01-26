@@ -29,6 +29,8 @@ import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
 import androidx.compose.remote.creation.plus
 import androidx.compose.remote.creation.sin
 import androidx.compose.remote.creation.times
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import kotlin.math.sin
 
 @Suppress("RestrictedApiAndroidX")
@@ -91,3 +93,7 @@ fun demoGraphs2(): RemoteComposeWriter {
         }
     return rc.writer
 }
+
+@Preview @Composable private fun DemoGraphsPreview() = RemoteDocPreview(demoGraphs())
+
+@Preview @Composable private fun DemoGraphs2Preview() = RemoteDocPreview(demoGraphs2())
