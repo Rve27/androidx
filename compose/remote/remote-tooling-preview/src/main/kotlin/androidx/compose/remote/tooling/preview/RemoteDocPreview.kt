@@ -21,7 +21,6 @@ import androidx.annotation.RestrictTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.remote.player.compose.ExperimentalRemotePlayerApi
-import androidx.compose.remote.player.compose.RemoteComposePlayerFlags
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
@@ -32,7 +31,6 @@ import androidx.compose.ui.platform.LocalWindowInfo
 @OptIn(ExperimentalRemotePlayerApi::class)
 @Composable
 public fun RemoteDocPreview(remoteDocument: RemoteDocument) {
-    RemoteComposePlayerFlags.isViewPlayerEnabled = false
     Box(modifier = Modifier.fillMaxSize()) {
         val windowInfo = LocalWindowInfo.current
         RemoteDocumentPlayer(
