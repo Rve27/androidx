@@ -147,7 +147,7 @@ public interface MutableRemoteState<T> : RemoteState<T> {}
 internal inline fun <reified T : RemoteState<*>> rememberNamedState(
     name: String,
     domain: RemoteState.Domain,
-    noinline function: () -> T,
+    noinline function: (RemoteComposeCreationState) -> T,
 ): T {
     return LocalRemoteComposeCreationState.current.getOrCreateNamedState(
         T::class.java,

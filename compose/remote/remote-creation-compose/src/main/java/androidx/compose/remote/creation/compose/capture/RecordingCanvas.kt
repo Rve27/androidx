@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.LayoutDirection
 
 /**
  * This provides a recording canvas implementation. This is the main way we intercept the output of
@@ -112,6 +113,9 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
 
     override val remoteDensity: RemoteDensity
         get() = creationState.remoteDensity
+
+    override val layoutDirection: LayoutDirection
+        get() = creationState.layoutDirection
 
     private var usingShaderMatrix: Boolean = false
 
