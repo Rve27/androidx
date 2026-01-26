@@ -1243,7 +1243,10 @@ public fun rememberMutableRemoteFloat(
     return remember {
         val context = RemoteFloatContext(state)
         val value = content(context)
-        MutableRemoteFloat { state -> value.getFloatIdForCreationState(state) }
+        MutableRemoteFloat { state ->
+            // Force creation of an id
+            asNan(value.getIdForCreationState(state))
+        }
     }
 }
 
