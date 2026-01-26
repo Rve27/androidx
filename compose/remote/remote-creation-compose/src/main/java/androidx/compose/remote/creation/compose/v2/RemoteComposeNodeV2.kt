@@ -33,6 +33,7 @@ import androidx.compose.remote.creation.compose.modifier.toRecordingModifier
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
+import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.runtime.Composable
@@ -136,6 +137,20 @@ internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
         )
         renderChildren(creationState, remoteCanvas)
         creationState.document.endColumn()
+    }
+}
+
+internal class RemoteStateLayoutNodeV2 : RemoteComposeNodeV2() {
+    lateinit var currentState: RemoteInt
+
+    override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
+        val recordingModifier = creationState.toRecordingModifier(modifier)
+        creationState.document.startStateLayout(
+            recordingModifier,
+            currentState.getIdForCreationState(creationState),
+        )
+        renderChildren(creationState, remoteCanvas)
+        creationState.document.endStateLayout()
     }
 }
 

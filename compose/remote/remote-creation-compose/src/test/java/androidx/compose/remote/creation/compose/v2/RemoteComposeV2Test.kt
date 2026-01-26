@@ -30,9 +30,12 @@ import androidx.compose.remote.creation.compose.layout.RemoteCollapsibleRow
 import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteText
+import androidx.compose.remote.creation.compose.layout.StateLayout
+import androidx.compose.remote.creation.compose.layout.rememberStateMachine
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemotePaint
+import androidx.compose.remote.creation.compose.state.rememberRemoteIntValue
 import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -155,6 +158,24 @@ class RemoteComposeV2Test {
                     RemoteCollapsibleRow(modifier = RemoteModifier.weight(1f)) {
                         RemoteText(text = "Weighted Row Content")
                     }
+                }
+            }
+
+        assertNotNull(document)
+        assertTrue(document.bytes.isNotEmpty())
+    }
+
+    @Test
+    fun testStateLayoutV2() = runTest {
+        val displayInfo = CreationDisplayInfo(500, 500, 1)
+        val document =
+            captureSingleRemoteDocumentV2(creationDisplayInfo = displayInfo, context = context) {
+                val checked = rememberRemoteIntValue { 1 }
+                val off = 0
+                val on = 1
+                val stateMachine = rememberStateMachine(checked, off, on)
+                StateLayout(stateMachine = stateMachine) { state ->
+                    RemoteText(text = "State $state")
                 }
             }
 
