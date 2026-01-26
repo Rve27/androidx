@@ -678,6 +678,7 @@ package androidx.xr.scenecore.runtime {
     method public void enablePanelDepthTest(boolean enabled);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.ActivitySpace getActivitySpace();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Entity? getKeyEntity();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PanelEntity getMainPanelEntity();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper getMediaPlayerExtensionsWrapper();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PerceptionSpaceScenePose getPerceptionSpaceActivityPose();
@@ -694,12 +695,14 @@ package androidx.xr.scenecore.runtime {
     method public void requestHomeSpaceMode();
     method public android.os.Bundle setFullSpaceMode(android.os.Bundle bundle);
     method public android.os.Bundle setFullSpaceModeWithEnvironmentInherited(android.os.Bundle bundle);
+    method @InaccessibleFromKotlin public void setKeyEntity(androidx.xr.scenecore.runtime.Entity?);
     method public void setPreferredAspectRatio(android.app.Activity activity, float preferredRatio);
     method @InaccessibleFromKotlin public void setSpatialModeChangeListener(androidx.xr.scenecore.runtime.SpatialModeChangeListener?);
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.runtime.SpatialVisibility> listener);
     property public abstract androidx.xr.scenecore.runtime.ActivitySpace activitySpace;
     property public abstract androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
     property public abstract boolean isBoundaryConsentGranted;
+    property public abstract androidx.xr.scenecore.runtime.Entity? keyEntity;
     property public abstract androidx.xr.scenecore.runtime.PanelEntity mainPanelEntity;
     property public abstract androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper mediaPlayerExtensionsWrapper;
     property public abstract androidx.xr.scenecore.runtime.PerceptionSpaceScenePose perceptionSpaceActivityPose;

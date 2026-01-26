@@ -367,4 +367,19 @@ final class RuntimeUtils {
                 return NodeTransaction.POINTER_ICON_TYPE_DEFAULT;
         }
     }
+
+    static android.extensions.xr.node.Vec3 getPositionFromTransform(Matrix4 transform) {
+        return new android.extensions.xr.node.Vec3(
+                transform.getTranslation().getX(),
+                transform.getTranslation().getY(),
+                transform.getTranslation().getZ());
+    }
+
+    static android.extensions.xr.node.Quatf getRotationFromTransform(Matrix4 transform) {
+        return new android.extensions.xr.node.Quatf(
+                transform.getRotation().getX(),
+                transform.getRotation().getY(),
+                transform.getRotation().getZ(),
+                transform.getRotation().getW());
+    }
 }

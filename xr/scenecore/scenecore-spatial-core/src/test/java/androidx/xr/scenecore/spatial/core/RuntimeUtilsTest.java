@@ -649,4 +649,56 @@ public final class RuntimeUtilsTest {
         assertThat(RuntimeUtils.convertSpatialPointerIconType(SpatialPointerIcon.TYPE_CIRCLE))
                 .isEqualTo(NodeTransaction.POINTER_ICON_TYPE_CIRCLE);
     }
+
+    @Test
+    public void getPositionFromTransform_returnsCorrectPosition() {
+        float[] transformData =
+                new float[] {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -10.5f, 20.1f, -30.0f, 1};
+        Matrix4 transform = new Matrix4(transformData);
+
+        android.extensions.xr.node.Vec3 position = RuntimeUtils.getPositionFromTransform(transform);
+
+        assertThat(position.x).isEqualTo(-10.5f);
+        assertThat(position.y).isEqualTo(20.1f);
+        assertThat(position.z).isEqualTo(-30.0f);
+    }
+
+    @Test
+    public void getRotationFromTransform_identity_returnsIdentity() {
+        float[] transformData =
+                new float[] {
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+                };
+        Matrix4 transform = new Matrix4(transformData);
+
+        android.extensions.xr.node.Quatf result = RuntimeUtils.getRotationFromTransform(transform);
+
+        assertThat(result.x).isEqualTo(0f);
+        assertThat(result.y).isEqualTo(0f);
+        assertThat(result.z).isEqualTo(0f);
+        assertThat(result.w).isEqualTo(1f);
+    }
+
+    @Test
+    public void getRotationFromTransform_rotationZ90_returnsCorrectRotation() {
+        // Rotate 90 degrees around Z axis.
+        float[] transformData =
+                new float[] {
+                    0, 1, 0, 0,
+                    -1, 0, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+                };
+        Matrix4 transform = new Matrix4(transformData);
+
+        android.extensions.xr.node.Quatf result = RuntimeUtils.getRotationFromTransform(transform);
+
+        assertThat(result.x).isWithin(1.0e-5f).of(0f);
+        assertThat(result.y).isWithin(1.0e-5f).of(0f);
+        assertThat(result.z).isWithin(1.0e-5f).of(0.70710678f);
+        assertThat(result.w).isWithin(1.0e-5f).of(0.70710678f);
+    }
 }
