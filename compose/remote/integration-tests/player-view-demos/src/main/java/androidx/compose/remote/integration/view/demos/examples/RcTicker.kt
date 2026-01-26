@@ -55,8 +55,7 @@ private lateinit var fontSize: RcFontSizes
 
 @Preview
 @Composable
-@Preview
-fun RcTickerPreview() {
+private fun RcTickerPreview() {
     val context = LocalContext.current
     RemoteDocPreview(RcTicker(context))
 }

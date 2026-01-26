@@ -33,6 +33,8 @@ import androidx.compose.remote.creation.actions.ValueFloatExpressionChange
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.remote.creation.modifiers.ScrollModifier
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 
 @Suppress("RestrictedApiAndroidX")
 fun colorList(): RemoteComposeWriter {
@@ -103,6 +105,8 @@ fun colorList(): RemoteComposeWriter {
     return rc.writer
 }
 
+@Preview @Composable private fun ColorListPreview() = RemoteDocPreview(colorList())
+
 @Suppress("RestrictedApiAndroidX")
 fun colorTable(): RemoteComposeWriter {
     val rc =
@@ -171,6 +175,8 @@ fun colorTable(): RemoteComposeWriter {
         }
     return rc.writer
 }
+
+@Preview @Composable private fun ColorTablePreview() = RemoteDocPreview(colorTable())
 
 @Suppress("RestrictedApiAndroidX")
 private fun RemoteComposeContextAndroid.makeColorTab(list: Array<String>) {
