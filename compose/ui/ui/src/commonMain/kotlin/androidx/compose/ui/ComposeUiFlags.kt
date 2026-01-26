@@ -197,5 +197,5 @@ object ComposeUiFlags {
     // TODO: b/475634969 remove the temporary flag
     @field:Suppress("MutableBareField")
     @JvmField
-    var isTrackpadGestureHandlingEnabled: Boolean = false
+    var isTrackpadGestureHandlingEnabled: Boolean = true
 }
