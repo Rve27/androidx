@@ -109,6 +109,8 @@ public class FakeSceneRuntime(
 
     override val mainPanelEntity: PanelEntity = FakePanelEntity()
 
+    override var keyEntity: Entity? = null
+
     override val spatialEnvironment: FakeSpatialEnvironment = FakeSpatialEnvironment()
 
     override var spatialModeChangeListener: SpatialModeChangeListener? =
