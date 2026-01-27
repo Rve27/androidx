@@ -69,7 +69,9 @@ class VerticalListWithTitleTest {
         val title = rule.onNodeWithTag("title").fetchSemanticsNode()
         val list = rule.onListNode().fetchSemanticsNode()
 
-        assertThat(title.boundsInRoot.center.y).isEqualTo(list.boundsInRoot.top)
+        val centerOfTitle = title.boundsInRoot.center.y.toInt()
+        val topOfList = list.boundsInRoot.top.toInt()
+        assertThat(centerOfTitle).isEqualTo(topOfList)
     }
 
     @Test
