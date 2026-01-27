@@ -41,15 +41,7 @@ import androidx.xr.scenecore.GroupEntity
  * The measurement, layout and intrinsic measurement behaviors of this layout will be defined by the
  * [SubspaceMeasurePolicy] instance. See [SubspaceMeasurePolicy] for more details.
  *
- * Example:
- * ```kotlin
- * fun ExactSizeSpacer(size: IntVolumeSize) {
- *   SubspaceLayout(SubspaceModifier.testTag("exactSizeSpacer")) {
- *     _, _ -> layout(size.width, size.height, size.depth) {}
- *   }
- * }
- * ```
- *
+ * @sample androidx.xr.compose.samples.SubspaceLayoutWithoutContentSample
  * @param modifier SubspaceModifier to apply during layout.
  * @param measurePolicy a policy defining the measurement and positioning of the layout.
  */
@@ -83,21 +75,8 @@ public inline fun SubspaceLayout(
  * The measurement, layout and intrinsic measurement behaviors of this layout will be defined by the
  * [SubspaceMeasurePolicy] instance. See [SubspaceMeasurePolicy] for more details.
  *
- * Example:
- * ```kotlin
- * fun MyLayout(
- *     modifier: SubspaceModifier = SubspaceModifier,
- *     content: @SubspaceComposable @Composable () -> Unit) {
- *   SubspaceLayout(content = content, modifier = modifier) {
- *     measurables, constraints ->
- *     val placeables = measurables.map { it.measure(constraints) }
- *     layout(constraints.maxWidth, constraints.maxHeight, constraints.maxDepth) {
- *       placeables.forEach { it.place(Pose.Identity) }
- *     }
- *   }
- * }
- * ```
- *
+ * @sample androidx.xr.compose.samples.SubspaceLayoutWithContentSample
+ * @sample androidx.xr.compose.samples.SubspaceLayoutWithCoreEntityNameSample
  * @param modifier SubspaceModifier to apply during layout
  * @param content the child composables to be laid out.
  * @param coreEntityName A name for the underlying [androidx.xr.scenecore.GroupEntity] that is
