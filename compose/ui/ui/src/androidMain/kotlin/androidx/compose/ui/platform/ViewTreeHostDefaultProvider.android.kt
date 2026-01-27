@@ -19,25 +19,32 @@ package androidx.compose.ui.platform
 import android.view.View
 import androidx.compose.runtime.HostDefaultKey
 import androidx.compose.runtime.HostDefaultProvider
+import androidx.compose.runtime.ViewTreeHostDefaultKey
 import androidx.core.viewtree.getParentOrViewTreeDisjointParent
 
 /**
- * Android implementation of [HostDefaultProvider].
+ * Android implementation of [HostDefaultProvider] that retrieves values from the [View] hierarchy.
  *
- * This provider resolves keys by treating them as Android Resource IDs (tags) and searching the
- * View hierarchy starting from the [AndroidComposeView] and walking up.
+ * This provider performs a bottom-up search starting from the provided [view]. It resolves
+ * [ViewTreeHostDefaultKey]s by querying [View.getTag] at each level of the tree.
  *
- * This mimics the behavior of `ViewTreeViewModelStoreOwner.get(view)` and similar APIs but allows
- * access from within the Composition without direct references to those APIs.
+ * By using [getParentOrViewTreeDisjointParent] during traversal, it can find values even when the
+ * Composition is hosted in "disjoint" windows like **Popups or Dialogs**. This mechanism allows the
+ * Compose runtime to access platform-provided owners (e.g., Lifecycle, SavedState, or
+ * ViewModelStore) without establishing hard-coded dependencies on those specific Android libraries.
  */
-internal class AndroidHostDefaultProvider(private val view: View) : HostDefaultProvider {
-
+internal class ViewTreeHostDefaultProvider(private val view: View) : HostDefaultProvider {
+    @Suppress("UNCHECKED_CAST")
     override fun <T> getHostDefault(key: HostDefaultKey<T>): T {
+        if (key !is ViewTreeHostDefaultKey<*>) {
+            // Skip view tree traversal if key has no ID.
+            return null as T
+        }
+
         var current: View? = view
         while (current != null) {
-            val service = current.getTag(key.id)
+            val service = current.getTag(/* key= */ key.tagKey)
             if (service != null) {
-                @Suppress("UNCHECKED_CAST")
                 return service as T
             }
 
@@ -45,7 +52,6 @@ internal class AndroidHostDefaultProvider(private val view: View) : HostDefaultP
             current = current.getParentOrViewTreeDisjointParent() as? View
         }
 
-        @Suppress("UNCHECKED_CAST")
         return null as T
     }
 }
