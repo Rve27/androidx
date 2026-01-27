@@ -47,7 +47,9 @@ import androidx.compose.ui.util.fastAll
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastFirstOrNull
 import androidx.compose.ui.util.fastForEach
+import kotlin.math.PI
 import kotlin.math.absoluteValue
+import kotlin.math.atan2
 import kotlin.math.sign
 import kotlinx.coroutines.CancellationException
 
@@ -877,9 +879,8 @@ internal suspend inline fun AwaitPointerEventScope.awaitPointerSlopOrCancellatio
             }
         } else {
             val postSlopOffset =
-                touchSlopDetector.addPositions(
-                    dragEvent.position,
-                    dragEvent.previousPosition,
+                touchSlopDetector.getPostSlopOffset(
+                    dragEvent.positionChangeIgnoreConsumed(),
                     touchSlop,
                 )
             if (postSlopOffset.isSpecified) {
@@ -929,9 +930,8 @@ internal suspend fun AwaitPointerEventScope.awaitAllPointersUpWithSlopDetection(
             }
         } else {
             val postSlopOffset =
-                touchSlopDetector.addPositions(
-                    dragEvent.position,
-                    dragEvent.previousPosition,
+                touchSlopDetector.getPostSlopOffset(
+                    dragEvent.positionChangeIgnoreConsumed(),
                     touchSlop,
                 )
             if (postSlopOffset.isSpecified) {
@@ -944,8 +944,8 @@ internal suspend fun AwaitPointerEventScope.awaitAllPointersUpWithSlopDetection(
 
 /**
  * Detects if touch slop has been crossed after adding a series of [PointerInputChange]. For every
- * new [PointerInputChange] one should add it to this detector using [addPositions]. If the position
- * change causes the touch slop to be crossed, [addPositions] will return true.
+ * new [PointerInputChange] one should add it to this detector using [getPostSlopOffset]. If the
+ * position change causes the touch slop to be crossed, [getPostSlopOffset] will return true.
  */
 internal class TouchSlopDetector(
     var orientation: Orientation? = null,
@@ -962,17 +962,27 @@ internal class TouchSlopDetector(
     /**
      * Adds [dragEvent] to this detector. If the accumulated position changes crosses the touch slop
      * provided by [touchSlop], this method will return the post slop offset, that is the total
-     * accumulated delta change minus the touch slop value, otherwise this should return null.
+     * accumulated delta change minus the touch slop value, otherwise this should return null. If
+     * [shouldCommit] is true, the delta will be added to the total position change.
      */
-    fun addPositions(currentPosition: Offset, previousPosition: Offset, touchSlop: Float): Offset {
-        val positionChange = currentPosition - previousPosition
-        totalPositionChange += positionChange
+    fun getPostSlopOffset(
+        positionChange: Offset,
+        touchSlop: Float,
+        shouldCommit: Boolean = true,
+    ): Offset {
+        val finalChange =
+            if (shouldCommit) {
+                totalPositionChange += positionChange
+                totalPositionChange
+            } else {
+                totalPositionChange + positionChange
+            }
 
         val inDirection =
             if (orientation == null) {
-                totalPositionChange.getDistance()
+                finalChange.getDistance()
             } else {
-                totalPositionChange.mainAxis().absoluteValue
+                finalChange.mainAxis().absoluteValue
             }
 
         val hasCrossedSlop = inDirection >= touchSlop
@@ -993,6 +1003,26 @@ internal class TouchSlopDetector(
      */
     fun reset(initialPositionAccumulator: Offset = Offset.Zero) {
         totalPositionChange = initialPositionAccumulator
+    }
+
+    fun isDeltaAtAngleOfInterest(delta: Offset): Boolean {
+        val projectedPositionChange = totalPositionChange + delta
+        val angle =
+            atan2(
+                x = projectedPositionChange.x.absoluteValue,
+                y = projectedPositionChange.y.absoluteValue,
+            ) * 180 / PI
+        return when (orientation) {
+            Orientation.Horizontal -> {
+                angle < 30
+            }
+            Orientation.Vertical -> {
+                angle > 30
+            }
+            else -> {
+                false
+            }
+        }
     }
 
     private fun calculatePostSlopOffset(touchSlop: Float): Offset {
