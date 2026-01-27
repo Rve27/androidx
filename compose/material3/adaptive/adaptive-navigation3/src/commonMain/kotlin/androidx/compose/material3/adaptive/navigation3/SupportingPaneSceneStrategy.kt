@@ -17,10 +17,14 @@
 package androidx.compose.material3.adaptive.navigation3
 
 import androidx.collection.mutableIntListOf
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.PaneExpansionState
+import androidx.compose.material3.adaptive.layout.PaneMotionDefaults
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldDefaults
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldRole
@@ -33,6 +37,7 @@ import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntRect
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
@@ -295,6 +300,33 @@ public class SupportingPaneSceneStrategy<T : Any>(
             }
             if (!height.isNaN()) {
                 put(MetadataPreferredHeightKey, height)
+            }
+        }
+
+        /**
+         * Constructs metadata to customize the animation of panes within a list-detail scaffold.
+         *
+         * If the value is null or unset, the default motions defined by [PaneMotionDefaults] will
+         * be used instead.
+         *
+         * @param enterTransition The [EnterTransition] used to animate the pane in.
+         * @param exitTransition The [ExitTransition] used to animate the pane out.
+         * @param boundsAnimationSpec The [FiniteAnimationSpec] used to animate the bounds of the
+         *   pane when it remains showing but changes its size and/or position.
+         */
+        public fun paneAnimation(
+            enterTransition: EnterTransition? = null,
+            exitTransition: ExitTransition? = null,
+            boundsAnimationSpec: FiniteAnimationSpec<IntRect>? = null,
+        ): Map<String, Any> = buildMap {
+            if (enterTransition != null) {
+                put(MetadataEnterTransitionKey, enterTransition)
+            }
+            if (exitTransition != null) {
+                put(MetadataExitTransitionKey, exitTransition)
+            }
+            if (boundsAnimationSpec != null) {
+                put(MetadataBoundsAnimationSpecKey, boundsAnimationSpec)
             }
         }
 
