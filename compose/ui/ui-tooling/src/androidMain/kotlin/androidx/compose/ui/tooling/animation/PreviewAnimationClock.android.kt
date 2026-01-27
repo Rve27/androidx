@@ -18,8 +18,6 @@ package androidx.compose.ui.tooling.animation
 
 import android.util.Log
 import androidx.annotation.VisibleForTesting
-import androidx.compose.animation.core.DecayAnimation
-import androidx.compose.animation.core.TargetBasedAnimation
 import androidx.compose.animation.core.Transition
 import androidx.compose.animation.tooling.ComposeAnimatedProperty
 import androidx.compose.animation.tooling.ComposeAnimation
@@ -34,6 +32,7 @@ import androidx.compose.ui.tooling.animation.search.AnimateXAsStateSearchInfo
 import androidx.compose.ui.tooling.animation.search.AnimatedContentSearchInfo
 import androidx.compose.ui.tooling.animation.search.AnimatedVisibilitySearchInfo
 import androidx.compose.ui.tooling.animation.search.InfiniteTransitionSearchInfo
+import androidx.compose.ui.tooling.animation.search.SearchInfo
 import androidx.compose.ui.tooling.animation.search.TransitionSearchInfo
 import androidx.compose.ui.tooling.animation.states.AnimatedVisibilityState
 import androidx.compose.ui.tooling.animation.states.TargetState
@@ -158,16 +157,8 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
         }
     }
 
-    fun trackAnimateContentSize(animation: Any) {
-        trackUnsupported(animation, "animateContentSize")
-    }
-
-    fun trackTargetBasedAnimations(animation: TargetBasedAnimation<*, *>) {
-        trackUnsupported(animation, "TargetBasedAnimation")
-    }
-
-    fun trackDecayAnimations(animation: DecayAnimation<*, *>) {
-        trackUnsupported(animation, "DecayAnimation")
+    fun trackUnsupported(searchInfo: SearchInfo<*, *>) {
+        trackAnimation(searchInfo.animationObject) { createUnsupported(searchInfo.label) }
     }
 
     fun trackAnimatedContent(searchInfo: AnimatedContentSearchInfo) {
@@ -204,10 +195,6 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     }
 
     @VisibleForTesting val trackedUnsupportedAnimations = linkedSetOf<UnsupportedComposeAnimation>()
-
-    private fun trackUnsupported(animation: Any, label: String) {
-        trackAnimation(animation) { createUnsupported(label) }
-    }
 
     private fun createUnsupported(label: String?) {
         UnsupportedComposeAnimation.create(label)?.let {
