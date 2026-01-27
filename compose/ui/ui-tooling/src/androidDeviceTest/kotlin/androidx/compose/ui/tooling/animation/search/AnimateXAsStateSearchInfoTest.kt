@@ -58,6 +58,22 @@ class AnimateXAsStateSearchInfoTest {
         }
     }
 
+    @Test
+    fun customLabel() {
+        val search = AnimationSearch.AnimateXAsStateSearch {}
+        rule.addAnimations(search) { animateIntAsState(1, label = "customLabel") }
+
+        assertEquals("customLabel", search.animations.first().label)
+    }
+
+    @Test
+    fun defaultLabel() {
+        val search = AnimationSearch.AnimateXAsStateSearch {}
+        rule.addAnimations(search) { animateIntAsState(1) }
+
+        assertEquals("IntAnimation", search.animations.first().label)
+    }
+
     @Suppress("UNCHECKED_CAST")
     @Test
     fun attachAndDetachOverride() {

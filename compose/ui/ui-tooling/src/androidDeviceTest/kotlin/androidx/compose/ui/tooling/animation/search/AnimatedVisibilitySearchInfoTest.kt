@@ -55,6 +55,22 @@ class AnimatedVisibilitySearchInfoTest {
     }
 
     @Test
+    fun customLabel() {
+        val search = AnimationSearch.AnimatedVisibilitySearch {}
+        rule.addAnimations(search) { AnimatedVisibility(true, label = "customLabel") {} }
+
+        assertEquals("customLabel", search.animations.first().label)
+    }
+
+    @Test
+    fun defaultLabel() {
+        val search = AnimationSearch.AnimatedVisibilitySearch {}
+        rule.addAnimations(search) { AnimatedVisibility(true) {} }
+
+        assertEquals("AnimatedVisibility", search.animations.first().label)
+    }
+
+    @Test
     fun findInitialAndTargetStates() {
         val search = AnimationSearch.AnimatedVisibilitySearch {}
         val state = mutableStateOf(true)

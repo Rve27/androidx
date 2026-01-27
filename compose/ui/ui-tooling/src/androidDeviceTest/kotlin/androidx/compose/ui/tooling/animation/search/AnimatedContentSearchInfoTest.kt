@@ -61,6 +61,28 @@ class AnimatedContentSearchInfoTest {
     }
 
     @Test
+    fun customLabel() {
+        val search = AnimationSearch.AnimatedContentSearch {}
+        rule.addAnimations(search) {
+            AnimatedContent(targetState = null, label = "customLabel") { state ->
+                Text(text = ("$state"))
+            }
+        }
+
+        assertEquals("customLabel", search.animations.first().label)
+    }
+
+    @Test
+    fun defaultLabel() {
+        val search = AnimationSearch.AnimatedContentSearch {}
+        rule.addAnimations(search) {
+            AnimatedContent(targetState = null) { state -> Text(text = ("$state")) }
+        }
+
+        assertEquals("AnimatedContent", search.animations.first().label)
+    }
+
+    @Test
     fun findInitialAndTargetDpStates() {
         val search = AnimationSearch.AnimatedContentSearch {}
         val state = mutableStateOf(0)

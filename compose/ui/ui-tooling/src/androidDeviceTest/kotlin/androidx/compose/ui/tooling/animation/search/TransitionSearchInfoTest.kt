@@ -56,6 +56,30 @@ class TransitionSearchInfoTest {
     }
 
     @Test
+    fun customLabel() {
+        val search = AnimationSearch.TransitionSearch {}
+        rule.addAnimations(search) { updateTransition(10.dp, label = "customLabel") }
+
+        assertEquals("customLabel", search.animations.first().label)
+    }
+
+    @Test
+    fun typeLabel() {
+        val search = AnimationSearch.TransitionSearch {}
+        rule.addAnimations(search) { updateTransition(10.dp) }
+
+        assertEquals("Dp", search.animations.first().label)
+    }
+
+    @Test
+    fun defaultLabel() {
+        val search = AnimationSearch.TransitionSearch {}
+        rule.addAnimations(search) { updateTransition(null) }
+
+        assertEquals("updateTransition", search.animations.first().label)
+    }
+
+    @Test
     fun findInitialAndTargetDpStates() {
         val search = AnimationSearch.TransitionSearch {}
         val state = mutableStateOf(0)

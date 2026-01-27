@@ -37,6 +37,11 @@ internal data class AnimateXAsStateSearchInfo<T, V : AnimationVector>(
     val toolingOverride: ToolingOverride<T>,
 ) : SearchInfo<AnimateXAsStateComposeAnimation<*, *>, AnimateXAsStateClock<*, *>> {
 
+    override val animationObject: Any = animatable
+
+    override val label: String
+        get() = animatable.label
+
     override var initialState: Any? = null
         private set
 

@@ -29,6 +29,11 @@ import androidx.compose.ui.tooling.animation.parseAnimatedVisibility
 internal class AnimatedVisibilitySearchInfo(val transition: Transition<Boolean>) :
     SearchInfo<AnimatedVisibilityComposeAnimation, AnimatedVisibilityClock> {
 
+    override val animationObject: Any = transition
+
+    override val label: String
+        get() = transition.label ?: "AnimatedVisibility"
+
     override var initialState: Boolean = transition.targetState
         private set
 

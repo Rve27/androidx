@@ -53,6 +53,22 @@ class InfiniteTransitionSearchInfoTest {
     }
 
     @Test
+    fun customLabel() {
+        val search = AnimationSearch.InfiniteTransitionSearch {}
+        rule.addAnimations(search) { rememberInfiniteTransition(label = "customLabel") }
+
+        assertEquals("customLabel", search.animations.first().label)
+    }
+
+    @Test
+    fun defaultLabel() {
+        val search = AnimationSearch.InfiniteTransitionSearch {}
+        rule.addAnimations(search) { rememberInfiniteTransition() }
+
+        assertEquals("InfiniteTransition", search.animations.first().label)
+    }
+
+    @Test
     fun attachAndDetachOverride() {
         val search = AnimationSearch.InfiniteTransitionSearch {}
         rule.addAnimations(search) { rememberInfiniteTransition() }

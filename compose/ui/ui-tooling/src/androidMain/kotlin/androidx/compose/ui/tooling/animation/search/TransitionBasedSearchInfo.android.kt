@@ -25,6 +25,8 @@ internal abstract class TransitionBasedSearchInfo<AnimationType : TransitionBase
     val transition: Transition<*>
 ) : SearchInfo<AnimationType, TransitionClock<*>> {
 
+    override val animationObject: Any = transition
+
     final override var initialState: Any? = null
         private set
 

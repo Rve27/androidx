@@ -121,7 +121,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     }
 
     fun trackTransition(searchInfo: TransitionSearchInfo) {
-        trackAnimation(searchInfo.transition) {
+        trackAnimation(searchInfo.animationObject) {
             searchInfo.createAnimation()?.let {
                 transitionClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
@@ -135,7 +135,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
 
     @Suppress("UNCHECKED_CAST")
     fun trackAnimatedVisibility(searchInfo: AnimatedVisibilitySearchInfo, onSeek: () -> Unit = {}) {
-        trackAnimation(searchInfo.transition) {
+        trackAnimation(searchInfo.animationObject) {
             searchInfo.transition as Transition<Boolean>
             val composeAnimation = searchInfo.createAnimation()
             onSeek()
@@ -146,7 +146,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     }
 
     fun trackAnimateXAsState(searchInfo: AnimateXAsStateSearchInfo<*, *>) {
-        trackAnimation(searchInfo.animatable) {
+        trackAnimation(searchInfo.animationObject) {
             searchInfo.createAnimation()?.let {
                 animateXAsStateClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
@@ -171,7 +171,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     }
 
     fun trackAnimatedContent(searchInfo: AnimatedContentSearchInfo) {
-        trackAnimation(searchInfo.transition) {
+        trackAnimation(searchInfo.animationObject) {
             searchInfo.createAnimation()?.let {
                 animatedContentClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
@@ -183,7 +183,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     }
 
     fun trackInfiniteTransition(searchInfo: InfiniteTransitionSearchInfo) {
-        trackAnimation(searchInfo.infiniteTransition) {
+        trackAnimation(searchInfo.animationObject) {
             searchInfo.createAnimation()?.let {
                 infiniteTransitionClocks[it] =
                     InfiniteTransitionClock(it) {

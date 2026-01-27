@@ -34,6 +34,12 @@ internal interface SearchInfo<
     AnimationType : ComposeAnimation,
     ClockType : ComposeAnimationClock<*, *>,
 > {
+    /** Animation object found in slotTree for which this [SearchInfo] is created. */
+    val animationObject: Any
+
+    /** Label of the animation. */
+    val label: String
+
     /** Initial state of the animation. */
     val initialState: Any?
 
@@ -41,13 +47,13 @@ internal interface SearchInfo<
     val targetState: Any?
 
     /**
-     * Set the [initialState] of this [SearchInfo] to the current value of the animationObject it's
-     * tracking.
+     * Set the [initialState] of this [SearchInfo] to the current value of the [animationObject]
+     * it's tracking.
      */
     fun setInitialStateToCurrentAnimationValue()
 
     /**
-     * Set the [targetState] of this [SearchInfo] to the current value of the animationObject it's
+     * Set the [targetState] of this [SearchInfo] to the current value of the [animationObject] it's
      * tracking.
      */
     fun setTargetStateToCurrentAnimationValue()
