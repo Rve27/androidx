@@ -18,10 +18,31 @@ package androidx.xr.glimmer.testutils
 
 import android.annotation.SuppressLint
 import android.os.Build
+import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.gestures.ScrollScope
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage as captureToImageOriginal
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.unit.Density
 import org.junit.Assume
+
+/**
+ * Sets the composable content of the test rule with a specific [Density]. This is useful for tests
+ * that require extra precision.
+ *
+ * @param density The [Density] to provide to the content.
+ * @param content The composable content to be displayed.
+ */
+fun ComposeContentTestRule.setContentWithDensity(
+    density: Density,
+    content: @Composable () -> Unit,
+) {
+    setContent { CompositionLocalProvider(LocalDensity provides density, content) }
+}
 
 /**
  * A wrapper around [captureToImage] that skips the test if the device does not satisfy the Glimmer
@@ -44,4 +65,11 @@ internal fun assumeGlimmerMinSdk() {
         "Skipping test: Glimmer tests should only run on SDK 33 or higher.",
         Build.VERSION.SDK_INT >= 33,
     )
+}
+
+/** Disables fling behavior. */
+object NoFlingBehavior : FlingBehavior {
+    override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
+        return 0f
+    }
 }
