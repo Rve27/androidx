@@ -26,6 +26,7 @@ import android.content.pm.ResolveInfo
 import android.os.IBinder
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.Log
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.math.Pose
@@ -67,6 +68,8 @@ internal constructor(
     internal val running = AtomicBoolean(false)
 
     private lateinit var serviceConnection: ServiceConnection
+    private var serviceBinder: IBinder? = null
+    private val serviceDeathRecipient = IBinder.DeathRecipient { disconnect() }
 
     /**
      * This method implements the [LifecycleManager.create] method.
@@ -77,10 +80,16 @@ internal constructor(
     override fun create() {
         runBlocking {
             checkProjectedSupportedAndUpToDate(activity)
-            if (testPerceptionService != null) {
-                perceptionManager.xrResources.service = testPerceptionService
-            } else {
+            if (testPerceptionService == null) {
                 bindPerceptionService(activity)
+            } else {
+                perceptionManager.xrResources.service = testPerceptionService
+                serviceConnection =
+                    object : ServiceConnection {
+                        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {}
+
+                        override fun onServiceDisconnected(name: ComponentName?) {}
+                    }
             }
         }
     }
@@ -156,6 +165,7 @@ internal constructor(
             return
         }
         stopServiceInternal()
+        disconnect()
     }
 
     private fun startServiceInternal(config: Config) {
@@ -184,13 +194,16 @@ internal constructor(
         running.set(false)
     }
 
-    internal suspend fun bindPerceptionService(context: Context): IBinder {
+    private suspend fun bindPerceptionService(context: Context): IBinder {
         return suspendCancellableCoroutine { continuation ->
             serviceConnection =
                 object : ServiceConnection {
                     override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
                         val service = IProjectedPerceptionService.Stub.asInterface(binder)
                         perceptionManager.xrResources.service = service
+                        serviceBinder = binder
+                        serviceBinder?.linkToDeath(serviceDeathRecipient, /* flags= */ 0)
+
                         // TODO: b/445567556 - Pass the API key to the service.
 
                         // When the service connects, we resume the coroutine with the binder.
@@ -200,8 +213,7 @@ internal constructor(
                     }
 
                     override fun onServiceDisconnected(name: ComponentName?) {
-                        running.set(false)
-                        // TODO: b/444521361 - Handle glassescore service disconnect
+                        disconnect()
                     }
 
                     override fun onBindingDied(name: ComponentName?) {
@@ -224,6 +236,21 @@ internal constructor(
         }
     }
 
+    private fun disconnect() {
+        running.set(false)
+        try {
+            if (::serviceConnection.isInitialized) {
+                activity.unbindService(serviceConnection)
+                serviceBinder?.unlinkToDeath(serviceDeathRecipient, /* flags= */ 0)
+            }
+        } catch (e: IllegalArgumentException) {
+            Log.warn(e) { "Tried to unbind service that was already unbound." }
+        } catch (e: NoSuchElementException) {
+            Log.warn(e) { "Tried to unbind service that was already unbound." }
+        }
+        serviceBinder = null
+    }
+
     // Verify that Projected is installed and using the current version.
     internal fun checkProjectedSupportedAndUpToDate(activity: Activity) {}
 
@@ -240,11 +267,12 @@ internal constructor(
      *   call unbindService to release the connection.
      */
     private fun bindPerception(context: Context, serviceConnection: ServiceConnection): Boolean {
-        return context.bindService(
-            getIntent(context, ACTION_PERCEPTION_BIND),
-            serviceConnection,
-            Context.BIND_AUTO_CREATE,
-        )
+        return testPerceptionService != null ||
+            context.bindService(
+                getIntent(context, ACTION_PERCEPTION_BIND),
+                serviceConnection,
+                Context.BIND_AUTO_CREATE,
+            )
     }
 
     // LINT.IfChange(get_intent)
