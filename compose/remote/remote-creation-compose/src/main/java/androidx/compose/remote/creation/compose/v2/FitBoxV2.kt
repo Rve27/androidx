@@ -33,7 +33,7 @@ public fun FitBoxV2(
     content: @RemoteComposable @Composable () -> Unit = {},
 ) {
     RemoteComposeNode(
-        factory = { RemoteFitBoxNodeV2() },
+        factory = ::RemoteFitBoxNodeV2,
         update = {
             set(modifier) { nodeModifier -> this.modifier = nodeModifier }
             set(horizontalAlignment) { hAlign -> this.horizontalAlignment = hAlign }
