@@ -610,6 +610,100 @@ class FlexBoxTest {
         Truth.assertThat(heights).containsExactly(40, 40)
     }
 
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_singleLine_fixedCrossAxis_alignItemsEnd() {
+        val yPositions = mutableListOf<Float>()
+        val itemSizes = listOf(20, 40, 30)
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(200.dp),
+                    config = {
+                        direction = FlexDirection.Row
+                        alignItems = FlexAlignItems.End
+                    },
+                ) {
+                    itemSizes.forEachIndexed { _, size ->
+                        Box(
+                            Modifier.size(20.dp, size.dp).onPlaced {
+                                yPositions.add(it.positionInParent().y)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        rule.waitForIdle()
+        // Max height is 200, items aligned to bottom
+        // Positions: 200-20=180, 200-40=160, 200-30=170
+        Truth.assertThat(yPositions).containsExactly(180f, 160f, 170f)
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_singleLine_fixedCrossAxis_alignItemsCenter() {
+        val yPositions = mutableListOf<Float>()
+        val itemSizes = listOf(20, 40, 30)
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(200.dp),
+                    config = {
+                        direction = FlexDirection.Row
+                        alignItems = FlexAlignItems.Center
+                    },
+                ) {
+                    itemSizes.forEachIndexed { _, size ->
+                        Box(
+                            Modifier.size(20.dp, size.dp).onPlaced {
+                                yPositions.add(it.positionInParent().y)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        rule.waitForIdle()
+        // Max height is 200, items centered
+        // Positions: (200-20)/2=90, (200-40)/2=80, (200-30)/2=85
+        Truth.assertThat(yPositions).containsExactly(90f, 80f, 85f)
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_singleLine_fixedCrossAxis_alignItemsStretch() {
+        val heights = mutableListOf<Int>()
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                FlexBox(
+                    modifier = Modifier.size(200.dp),
+                    config = {
+                        direction = FlexDirection.Row
+                        alignItems = FlexAlignItems.Stretch
+                    },
+                ) {
+                    repeat(2) { _ ->
+                        Box(
+                            Modifier.width(20.dp)
+                                // No height specified - should stretch
+                                .onSizeChanged { heights.add(it.height) }
+                        )
+                    }
+                }
+            }
+        }
+
+        rule.waitForIdle()
+        // All items should stretch to container height
+        Truth.assertThat(heights).containsExactly(200, 200)
+    }
+
     // Gap Tests
 
     @OptIn(ExperimentalFlexBoxApi::class)
