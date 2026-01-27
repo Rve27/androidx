@@ -26,7 +26,9 @@ import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope
+import androidx.compose.remote.creation.compose.layout.encode
 import androidx.compose.remote.creation.compose.layout.find
+import androidx.compose.remote.creation.compose.layout.toImageScalingInt
 import androidx.compose.remote.creation.compose.modifier.DrawWithContentModifier
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.toRecordingModifier
@@ -42,7 +44,6 @@ import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.Updater
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.style.TextAlign
@@ -207,9 +208,9 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
     lateinit var color: RemoteColor
     var fontSize: RemoteFloat = 14f.rf
     var fontWeight: RemoteFloat = 400f.rf
-    var fontStyle: FontStyle? = null
+    var fontStyle: FontStyle = FontStyle.Normal
     var fontFamily: String? = null
-    var textAlign: TextAlign? = null
+    var textAlign: TextAlign = TextAlign.Start
     var overflow: TextOverflow = TextOverflow.Clip
     var maxLines: Int = Int.MAX_VALUE
     var minFontSize: Float? = null
@@ -315,43 +316,6 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
     }
 }
 
-private fun FontStyle?.encode(): Int =
-    when (this) {
-        FontStyle.Normal -> 0
-        FontStyle.Italic -> 1
-        else -> 0
-    }
-
-private fun FontFamily?.encode(): String? =
-    when (this) {
-        null -> null
-        FontFamily.Default -> "default"
-        FontFamily.SansSerif -> "sans-serif"
-        FontFamily.Serif -> "serif"
-        FontFamily.Monospace -> "monospace"
-        FontFamily.Cursive -> "cursive"
-        else -> null
-    }
-
-private fun TextAlign?.encode(): Int =
-    when (this) {
-        TextAlign.Left -> 1
-        TextAlign.Right -> 2
-        TextAlign.Center -> 3
-        TextAlign.Justify -> 4
-        TextAlign.Start -> 5
-        TextAlign.End -> 6
-        else -> 5
-    }
-
-private fun TextOverflow.encode(): Int =
-    when (this) {
-        TextOverflow.Clip -> 0
-        TextOverflow.Ellipsis -> 1
-        TextOverflow.Visible -> 2
-        else -> 0
-    }
-
 internal class RemoteImageNodeV2 : RemoteComposeNodeV2() {
     var image: Any? = null
     var remoteBitmap: RemoteBitmap? = null
@@ -367,22 +331,10 @@ internal class RemoteImageNodeV2 : RemoteComposeNodeV2() {
         creationState.document.image(
             creationState.toRecordingModifier(modifier),
             bitmapId,
-            contentScaleToInt(contentScale),
+            contentScale.toImageScalingInt(),
             alpha.getFloatIdForCreationState(creationState),
         )
     }
-
-    private fun contentScaleToInt(scale: ContentScale): Int =
-        when (scale) {
-            ContentScale.Fit -> 1
-            ContentScale.Crop -> 2
-            ContentScale.FillBounds -> 3
-            ContentScale.FillWidth -> 4
-            ContentScale.FillHeight -> 5
-            ContentScale.Inside -> 6
-            ContentScale.None -> 7
-            else -> 1
-        }
 }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
