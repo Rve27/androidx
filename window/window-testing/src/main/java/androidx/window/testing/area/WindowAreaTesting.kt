@@ -30,8 +30,8 @@ import androidx.window.testing.layout.TestWindowMetrics
  * object, a type of [WindowArea.Type.TYPE_REAR_FACING] and a default [IBinder] token.
  *
  * @param metrics The [WindowMetrics] the [WindowArea] should represent.
- * @param type Indicates what type this `WindowAreaInfo` is.
- * @param token Identifying token for this ``WindowAreaInfo`
+ * @param type Indicates what type this [WindowArea] is.
+ * @param token Identifying token for this [WindowArea]
  * @return A [WindowArea] instance for testing.
  */
 @Suppress("FunctionName")
