@@ -2,13 +2,14 @@
 # -----------------------------------------------------------------------------
 # All of the following should be updated in sync.
 # -----------------------------------------------------------------------------
-androidGradlePlugin = "9.1.0-alpha02"
+androidGradlePlugin = "9.1.0-alpha06"
 # NOTE: When updating the lint version we also need to update the `api` version
 # supported by `IssueRegistry`'s.' For e.g. r.android.com/1331903
-androidLint = "32.1.0-alpha02"
+androidLint = "32.1.0-alpha06"
 # Once you have a chosen version of AGP to upgrade to, go to
 # https://developer.android.com/studio/archive and find the matching version of Studio.
-androidStudio = "2025.3.1.2"
+androidStudioIj = "2025.3.2.1"
+androidStudioName = "panda2-canary1"
 # -----------------------------------------------------------------------------
 
 androidLintMin = "31.1.1"
