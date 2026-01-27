@@ -123,6 +123,7 @@ import androidx.compose.remote.core.operations.layout.managers.CollapsibleRowLay
 import androidx.compose.remote.core.operations.layout.managers.ColumnLayout;
 import androidx.compose.remote.core.operations.layout.managers.CoreText;
 import androidx.compose.remote.core.operations.layout.managers.FitBoxLayout;
+import androidx.compose.remote.core.operations.layout.managers.FlowLayout;
 import androidx.compose.remote.core.operations.layout.managers.ImageLayout;
 import androidx.compose.remote.core.operations.layout.managers.RowLayout;
 import androidx.compose.remote.core.operations.layout.managers.StateLayout;
@@ -1854,6 +1855,22 @@ public class RemoteComposeBuffer {
             int componentId, int animationId, int horizontal, int vertical, float spacedBy) {
         mLastComponentId = getComponentId(componentId);
         CollapsibleRowLayout.apply(
+                mBuffer, mLastComponentId, animationId, horizontal, vertical, spacedBy);
+    }
+
+    /**
+     * Add a flow start tag
+     *
+     * @param componentId component id
+     * @param animationId animation id
+     * @param horizontal horizontal alignment
+     * @param vertical vertical alignment
+     * @param spacedBy spacing between items
+     */
+    public void addFlowStart(
+            int componentId, int animationId, int horizontal, int vertical, float spacedBy) {
+        mLastComponentId = getComponentId(componentId);
+        FlowLayout.apply(
                 mBuffer, mLastComponentId, animationId, horizontal, vertical, spacedBy);
     }
 

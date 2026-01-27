@@ -110,6 +110,10 @@ public class Header extends Operation implements RemoteComposeOperation {
     /** Direct player to be verbose levels= 0=off,1,2,3 */
     public static final short DEBUG = 16;
 
+    /** Specify measure implementation version */
+    public static final short FEATURE_MEASURE_VERSION = 17;
+
+
     /** The object is an integer */
     private static final short DATA_TYPE_INT = 0;
 
