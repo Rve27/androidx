@@ -21,10 +21,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
@@ -76,18 +74,16 @@ class VerticalListWithTitleTest {
 
     @Test
     fun listTop_isPositionedAt_theTallestTitleCenter() {
-        rule.setGlimmerThemeContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                VerticalList(
-                    modifier = Modifier.size(400.dp),
-                    title = {
-                        Box(Modifier.size(100.dp, 10.dp))
-                        Box(Modifier.size(100.dp, 20.dp))
-                        Box(Modifier.size(100.dp, 30.dp))
-                    },
-                ) {
-                    items(100) { ListItem { Text("Item-$it") } }
-                }
+        rule.setGlimmerThemeContent(density = Density(1f)) {
+            VerticalList(
+                modifier = Modifier.size(400.dp),
+                title = {
+                    Box(Modifier.size(100.dp, 10.dp))
+                    Box(Modifier.size(100.dp, 20.dp))
+                    Box(Modifier.size(100.dp, 30.dp))
+                },
+            ) {
+                items(100) { ListItem { Text("Item-$it") } }
             }
         }
 
@@ -100,14 +96,12 @@ class VerticalListWithTitleTest {
 
     @Test
     fun title_isWider_thanList() {
-        rule.setGlimmerThemeContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                VerticalList(
-                    contentPadding = PaddingValues(0.dp),
-                    title = { Box(Modifier.testTag("title").size(300.dp, 100.dp)) },
-                ) {
-                    item { Box(Modifier.testTag("item").size(100.dp, 100.dp)) }
-                }
+        rule.setGlimmerThemeContent(density = Density(1f)) {
+            VerticalList(
+                contentPadding = PaddingValues(0.dp),
+                title = { Box(Modifier.testTag("title").size(300.dp, 100.dp)) },
+            ) {
+                item { Box(Modifier.testTag("item").size(100.dp, 100.dp)) }
             }
         }
 
@@ -122,15 +116,13 @@ class VerticalListWithTitleTest {
 
     @Test
     fun list_occupies_restOfAvailableSpace() {
-        rule.setGlimmerThemeContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                Box(Modifier.height(325.dp)) {
-                    VerticalList(
-                        modifier = Modifier.testTag("root"),
-                        title = { Box(Modifier.size(100.dp, 50.dp)) },
-                    ) {
-                        items(100) { ListItem { Text("Item-$it") } }
-                    }
+        rule.setGlimmerThemeContent(density = Density(1f)) {
+            Box(Modifier.height(325.dp)) {
+                VerticalList(
+                    modifier = Modifier.testTag("root"),
+                    title = { Box(Modifier.size(100.dp, 50.dp)) },
+                ) {
+                    items(100) { ListItem { Text("Item-$it") } }
                 }
             }
         }
@@ -145,17 +137,15 @@ class VerticalListWithTitleTest {
 
     @Test
     fun allTitles_arePositionedAt_centerTop() {
-        rule.setGlimmerThemeContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                VerticalList(
-                    modifier = Modifier.size(400.dp),
-                    title = {
-                        Box(Modifier.testTag("title-1").size(200.dp, 100.dp))
-                        Box(Modifier.testTag("title-2").size(100.dp, 200.dp))
-                    },
-                ) {
-                    items(100) { ListItem { Text("Item-$it") } }
-                }
+        rule.setGlimmerThemeContent(density = Density(1f)) {
+            VerticalList(
+                modifier = Modifier.size(400.dp),
+                title = {
+                    Box(Modifier.testTag("title-1").size(200.dp, 100.dp))
+                    Box(Modifier.testTag("title-2").size(100.dp, 200.dp))
+                },
+            ) {
+                items(100) { ListItem { Text("Item-$it") } }
             }
         }
 
@@ -170,15 +160,13 @@ class VerticalListWithTitleTest {
 
     @Test
     fun title_isEmpty() {
-        rule.setGlimmerThemeContent {
-            CompositionLocalProvider(LocalDensity provides Density(1f)) {
-                Box(Modifier.size(400.dp)) {
-                    VerticalList(
-                        modifier = Modifier.testTag("root"),
-                        title = { /* No composables. */ },
-                    ) {
-                        items(100) { ListItem { Text("Item-$it") } }
-                    }
+        rule.setGlimmerThemeContent(density = Density(1f)) {
+            Box(Modifier.size(400.dp)) {
+                VerticalList(
+                    modifier = Modifier.testTag("root"),
+                    title = { /* No composables. */ },
+                ) {
+                    items(100) { ListItem { Text("Item-$it") } }
                 }
             }
         }
