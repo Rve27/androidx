@@ -36,7 +36,7 @@ public fun RemoteCollapsibleRowV2(
 ) {
     val scope = remember { RemoteCollapsibleRowScope() }
     RemoteComposeNode(
-        factory = { RemoteCollapsibleRowNodeV2() },
+        factory = ::RemoteCollapsibleRowNodeV2,
         update = {
             set(modifier) { nodeModifier -> this.modifier = nodeModifier }
             set(horizontalArrangement) { hArr -> this.horizontalArrangement = hArr }

@@ -55,7 +55,7 @@ public fun RemoteTextV2(
     fontVariationSettings: FontVariation.Settings? = null,
 ) {
     RemoteComposeNode(
-        factory = { RemoteTextNodeV2() },
+        factory = ::RemoteTextNodeV2,
         update = {
             set(text) { this.text = it }
             set(modifier) { this.modifier = it }
