@@ -101,15 +101,23 @@ public interface RemoteState<T> {
 
     /** Represents the domain (namespace) for named remote states. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public open class Domain internal constructor(internal val coreDomain: RemoteDomains) {
+    public open class Domain internal constructor(internal val coreDomain: String?) {
         /** The default user-defined domain. */
-        public object User : Domain(RemoteDomains.USER)
+        public object User : Domain(RemoteDomains.USER.toString())
 
         /** The system-defined domain, used for platform-level states. */
-        public object System : Domain(RemoteDomains.SYSTEM)
+        public object System : Domain(RemoteDomains.SYSTEM.toString())
 
         override fun toString(): String {
-            return coreDomain.name
+            return coreDomain ?: ""
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return other is Domain && other.coreDomain == coreDomain
+        }
+
+        override fun hashCode(): Int {
+            return coreDomain.hashCode()
         }
     }
 }
@@ -152,7 +160,7 @@ internal inline fun <reified T : RemoteState<*>> rememberNamedState(
     return LocalRemoteComposeCreationState.current.getOrCreateNamedState(
         T::class.java,
         name,
-        domain.coreDomain.name,
+        domain.coreDomain,
         function,
     )
 }

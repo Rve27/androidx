@@ -16,12 +16,16 @@
 
 package androidx.compose.remote.creation.compose.v2
 
+import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.StateMachineSpec
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.ui.util.fastForEach
 
+@SuppressLint("PrimitiveInCollection")
 @Composable
 @RemoteComposable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -31,15 +35,14 @@ public fun StateLayoutV2(
     content: @Composable @RemoteComposable (Int) -> Unit,
 ) {
     RemoteComposeNode(
-        factory = { RemoteStateLayoutNodeV2() },
+        factory = ::RemoteStateLayoutNodeV2,
         update = {
             set(modifier) { nodeModifier -> this.modifier = nodeModifier }
             set(stateMachine.currentState) { state -> this.currentState = state }
         },
         content = {
-            for (state in stateMachine.states) {
-                content(state)
-            }
+            val states = stateMachine.states
+            states.fastForEach { state -> key(state) { content(state) } }
         },
     )
 }
