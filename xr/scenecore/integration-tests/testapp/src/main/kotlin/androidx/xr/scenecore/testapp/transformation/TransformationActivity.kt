@@ -180,7 +180,7 @@ class TransformationActivity : AppCompatActivity() {
                     "onAnchorSpaceUpdatedCount",
                     (++onAnchorSpaceUpdatedCount).toString(),
                 )
-                anchor!!.setOnSpaceUpdatedListener({
+                anchor!!.setOnOriginChangedListener({
                     panel.view.setLine(
                         "onAnchorSpaceUpdatedCount",
                         (++onAnchorSpaceUpdatedCount).toString(),
@@ -202,7 +202,7 @@ class TransformationActivity : AppCompatActivity() {
                         "onActivitySpaceUpdatedCount",
                         (++onActivitySpaceUpdatedCount).toString(),
                     )
-                    session!!.scene.activitySpace.addOnSpaceUpdatedListener {
+                    session!!.scene.activitySpace.addOnOriginChangedListener {
                         panel.view.setLine(
                             "onActivitySpaceUpdatedCount",
                             (++onActivitySpaceUpdatedCount).toString(),
