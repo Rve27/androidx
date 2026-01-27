@@ -397,7 +397,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         val focusedRect = getEmbeddedViewFocusRect()?.toAndroidRect()
 
         val nextView =
-            FocusFinderCompat.instance.let {
+            FocusFinder.getInstance().let {
                 if (focusedRect == null) {
                     it.findNextFocus(this, findFocus(), direction)
                 } else {
@@ -422,7 +422,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
         val currentFocus = root.findFocus() ?: error("view hasFocus but root can't find it")
 
-        val focusFinder = FocusFinderCompat.instance
+        val focusFinder = FocusFinder.getInstance()
         val nextView = focusFinder.findNextFocus(root, currentFocus, direction)
         val focusedRect: Rect?
         if (focusDirection.is1dFocusSearch() && androidViewsHandler.hasFocus()) {
@@ -490,16 +490,8 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
         @OptIn(ExperimentalComposeUiApi::class)
         val nextView =
-            if (SDK_INT < 26 && ComposeUiFlags.isPre26FocusFinderFixEnabled) {
-                FocusFinderCompat.instance.findNextFocus(
-                    rootView as ViewGroup,
-                    currentlyFocusedView,
-                    direction,
-                )
-            } else {
-                FocusFinder.getInstance()
-                    .findNextFocus(rootView as ViewGroup, currentlyFocusedView, direction)
-            }
+            FocusFinder.getInstance()
+                .findNextFocus(rootView as ViewGroup, currentlyFocusedView, direction)
 
         if (nextView != null && interopView?.containsDescendant(nextView) == true) {
             return nextView
@@ -532,7 +524,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     // Used only when ComposeUiFlags.isViewFocusFixEnabled is true.
     private fun findNextNonChildView(direction: Int): View? {
         var currentView: View? = this
-        val focusFinder = FocusFinderCompat.instance
+        val focusFinder = FocusFinder.getInstance()
         while (currentView != null) {
             currentView = focusFinder.findNextFocus(rootView as ViewGroup, currentView, direction)
             if (currentView != null && !containsDescendant(currentView)) return currentView
@@ -1087,14 +1079,10 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         // the children. So we use rootView instead, and then check if the view returned by
         // findNextFocus is a descendant of this view.
         val root = rootView as ViewGroup
-        @OptIn(ExperimentalComposeUiApi::class)
         val nextView =
-            if (SDK_INT < 26 && ComposeUiFlags.isPre26FocusFinderFixEnabled) {
-                    FocusFinderCompat.instance.findNextFocus(root, focused, direction)
-                } else {
-                    FocusFinder.getInstance().findNextFocus(root, focused, direction)
-                }
-                ?.takeIf { containsDescendant(it) }
+            FocusFinder.getInstance().findNextFocus(root, focused, direction)?.takeIf {
+                containsDescendant(it)
+            }
 
         // Find the next composable using FocusOwner.
         val focusedBounds =

@@ -70,12 +70,6 @@ object ComposeUiFlags {
     var isBypassUnfocusableComposeViewEnabled: Boolean = true
 
     /**
-     * This flag enables a fix for b/378570682. For API >=26. We attempt to manually find the next
-     * focusable item for 1-D focus search cases when Compose does not have any focusable content.
-     */
-    @field:Suppress("MutableBareField") @JvmField var isPre26FocusFinderFixEnabled: Boolean = false
-
-    /**
      * This flag enables a fix for b/388590015. The view system ignores an invalid prevFocusRect
      * when requestFocus is called, so we support this behavior in Compose too.
      */
