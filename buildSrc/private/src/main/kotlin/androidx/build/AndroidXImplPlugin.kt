@@ -657,7 +657,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         minAgpVersion.set(
             minCompileSdk.map { value ->
                 // Taken from
-                // https://developer.android.com/build/releases/gradle-plugin#api-level-support
+                // https://developer.android.com/build/releases/about-agp#api-level-support
                 when (value) {
                     1 -> "7.2.0"
                     33 -> "7.2.0"
