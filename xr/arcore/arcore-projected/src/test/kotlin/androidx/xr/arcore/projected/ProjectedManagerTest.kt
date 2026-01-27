@@ -199,13 +199,14 @@ class ProjectedManagerTest {
     }
 
     @Test
-    fun stop_whenServiceIsRunning_stopsService() {
+    fun stop_whenServiceIsRunning_stopsServiceAndUnbinds() {
         underTest.create()
         underTest.running.set(true)
 
         underTest.stop()
 
         verify(mockPerceptionService).stop()
+        verify(mockActivity).unbindService(any())
     }
 
     @Test
@@ -215,5 +216,16 @@ class ProjectedManagerTest {
         underTest.stop()
 
         verify(mockPerceptionService, never()).stop()
+    }
+
+    @Test
+    fun stop_calledMultipleTimes_onlyUnbindsServiceOnce() {
+        underTest.create()
+        underTest.running.set(true)
+
+        underTest.stop()
+        underTest.stop()
+
+        verify(mockActivity, times(1)).unbindService(any())
     }
 }
