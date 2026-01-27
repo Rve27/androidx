@@ -64,6 +64,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.testutils.assertModifierIsPure
 import androidx.compose.testutils.first
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
@@ -106,6 +107,7 @@ import androidx.compose.ui.test.ScrollWheel
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.click
+import androidx.compose.ui.test.dragAndDrop
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -155,6 +157,7 @@ import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.After
 import org.junit.Assert
 import org.junit.Assume
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -258,6 +261,54 @@ class ScrollableTest {
 
         rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeBackward(rule)
         rule.runOnIdle { assertThat(total).isWithin(0.5f).of(0.0f) }
+    }
+
+    @Test
+    fun scrollable_mouseHorizontalDragDoesNotScroll() {
+        var total = 0f
+        val scrollableState =
+            ScrollableState(
+                consumeScrollDelta = {
+                    total += it
+                    it
+                }
+            )
+        setScrollableContent {
+            Modifier.scrollable(state = scrollableState, orientation = Orientation.Horizontal)
+        }
+        rule.onNodeWithTag(scrollableBoxTag).performMouseInput {
+            this.dragAndDrop(
+                start = this.center,
+                end = Offset(this.center.x + 100f, this.center.y),
+                durationMillis = 100,
+            )
+        }
+        assertThat(total).isEqualTo(0)
+    }
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    @Test
+    fun scrollable_trackpadHorizontalDragDoesNotScroll() {
+        assumeTrue(ComposeUiFlags.isTrackpadGestureHandlingEnabled)
+        var total = 0f
+        val scrollableState =
+            ScrollableState(
+                consumeScrollDelta = {
+                    total += it
+                    it
+                }
+            )
+        setScrollableContent {
+            Modifier.scrollable(state = scrollableState, orientation = Orientation.Horizontal)
+        }
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            this.dragAndDrop(
+                start = this.center,
+                end = Offset(this.center.x + 100f, this.center.y),
+                durationMillis = 100,
+            )
+        }
+        assertThat(total).isEqualTo(0)
     }
 
     @Test
@@ -702,6 +753,55 @@ class ScrollableTest {
     }
 
     @Test
+    fun scrollable_mouseVerticalDragDoesNotScroll() {
+        var total = 0f
+        val scrollableState =
+            ScrollableState(
+                consumeScrollDelta = {
+                    total += it
+                    it
+                }
+            )
+        setScrollableContent {
+            Modifier.scrollable(state = scrollableState, orientation = Orientation.Vertical)
+        }
+        rule.onNodeWithTag(scrollableBoxTag).performMouseInput {
+            this.dragAndDrop(
+                start = this.center,
+                end = Offset(this.center.x, this.center.y + 100f),
+                durationMillis = 100,
+            )
+        }
+        assertThat(total).isEqualTo(0)
+    }
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    @Test
+    fun scrollable_trackpadVerticalDragDoesNotScroll() {
+        assumeTrue(ComposeUiFlags.isTrackpadGestureHandlingEnabled)
+
+        var total = 0f
+        val scrollableState =
+            ScrollableState(
+                consumeScrollDelta = {
+                    total += it
+                    it
+                }
+            )
+        setScrollableContent {
+            Modifier.scrollable(state = scrollableState, orientation = Orientation.Vertical)
+        }
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            this.dragAndDrop(
+                start = this.center,
+                end = Offset(this.center.x, this.center.y + 100f),
+                durationMillis = 100,
+            )
+        }
+        assertThat(total).isEqualTo(0)
+    }
+
+    @Test
     fun scrollable_verticalScroll_2d_mouseWheel() {
         var total = 0f
         val scrollableState =
@@ -905,7 +1005,7 @@ class ScrollableTest {
     @Test
     fun scrollable_verticalScroll_trackpad() {
         var total = 0f
-        val controller =
+        val scrollableState =
             ScrollableState(
                 consumeScrollDelta = {
                     total += it
@@ -913,7 +1013,7 @@ class ScrollableTest {
                 }
             )
         setScrollableContent {
-            Modifier.scrollable(state = controller, orientation = Orientation.Vertical)
+            Modifier.scrollable(state = scrollableState, orientation = Orientation.Vertical)
         }
         rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
             this.scroll(Offset(0f, 100f)) // only moved vertically
