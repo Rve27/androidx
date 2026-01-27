@@ -34,7 +34,7 @@ internal class AnimatedContentSearchInfo(transition: Transition<*>) :
         get() = transition.label ?: "AnimatedContent"
 
     override fun createAnimation(): AnimatedContentComposeAnimation<*>? {
-        return transition.parseAnimatedContent()
+        return parseAnimatedContent()
     }
 
     override fun createClock(

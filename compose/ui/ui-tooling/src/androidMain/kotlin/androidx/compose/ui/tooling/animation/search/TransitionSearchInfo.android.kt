@@ -37,7 +37,7 @@ internal class TransitionSearchInfo(transition: Transition<*>) :
                 ?: "updateTransition"
 
     override fun createAnimation(): TransitionComposeAnimation<*>? {
-        return transition.parse()
+        return this.parse()
     }
 
     override fun createClock(
