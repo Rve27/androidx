@@ -36,7 +36,7 @@ public fun RemoteImageV2(
     contentDescription: RemoteString? = null,
 ) {
     RemoteComposeNode(
-        factory = { RemoteImageNodeV2() },
+        factory = ::RemoteImageNodeV2,
         update = {
             set(modifier) { nodeModifier -> this.modifier = nodeModifier }
             set(remoteBitmap) { this.remoteBitmap = it }
