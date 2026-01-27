@@ -174,7 +174,7 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
         var needsUpfrontCrossAxisCalculation =
             flexBoxConfig.alignItems == FlexAlignItems.Stretch ||
                 flexBoxConfig.alignItems == FlexAlignItems.Baseline ||
-                flexBoxConfig.isWrapEnabled.not()
+                flexBoxConfig.isWrapEnabled
 
         var needsSorting = false
         measurables.fastForEach { measurable ->
@@ -209,6 +209,13 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
             ) {
                 totalLinesCrossSize = it
             }
+
+        // If we have single line and constraints are defined then the size of line is the
+        // constraints instead of tallest item in the line.
+        if (lines.size == 1) {
+            val constrainedCrossSize = max(lines[0].crossAxisSize, constraints.crossAxisMin)
+            lines[0].crossAxisSize = constrainedCrossSize
+        }
         // handle `align-content: stretch`
         totalLinesCrossSize =
             applyAlignContentStretch(
@@ -634,6 +641,12 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
                     )
                 if (!needsUpfrontCrossAxisCalculation) {
                     lineCrossAxisSize = max(lineCrossAxisSize, crossAxisSize)
+                }
+
+                // If we have single line and constraints are defined then the size of line is the
+                // constraints instead of tallest item in the line.
+                if (lines.size == 1) {
+                    lineCrossAxisSize = max(lineCrossAxisSize, constraints.crossAxisMin)
                 }
                 remainingMainAxisSize =
                     (remainingMainAxisSize - (item.mainAxisSize + flexBoxConfig.mainAxisGap()))
