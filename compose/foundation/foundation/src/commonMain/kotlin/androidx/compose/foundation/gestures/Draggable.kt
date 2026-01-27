@@ -17,6 +17,7 @@
 package androidx.compose.foundation.gestures
 
 import androidx.compose.foundation.ComposeFoundationFlags.isDelayPressesUsingGestureConsumptionEnabled
+import androidx.compose.foundation.ComposeFoundationFlags.isNestedDraggablesTouchConflictFixEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.GestureCoordinator
 import androidx.compose.foundation.MutatePriority
@@ -29,6 +30,7 @@ import androidx.compose.foundation.gestures.DragEvent.DragStopped
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.internal.JvmDefaultWithCompatibility
+import androidx.compose.foundation.parentGestureCoordinator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -542,12 +544,6 @@ internal abstract class DragGestureNode(
         }
     }
 
-    override fun isInterested(event: PointerInputChange): Boolean {
-        // for now, if this is a down event it may become a drag so we're
-        // interested.
-        return event.changedToDownIgnoreConsumed() && enabled
-    }
-
     @OptIn(ExperimentalIndirectPointerApi::class)
     override fun isInterested(event: IndirectPointerInputChange): Boolean {
         // for now, if this is a down event it may become a drag so we're
@@ -582,6 +578,34 @@ internal abstract class DragGestureNode(
 
     override fun onCancelIndirectPointerInput() {
         indirectPointerInputDragCycleDetector?.resetDragDetectionState()
+    }
+
+    /**
+     * Draggable containers will be interested in the following events:
+     * 1) DOWN events. They may become a drag gesture later.
+     * 2) The touch slop trigger event if the preceding deltas form an angle of interest. The touch
+     *    slop trigger event is when, effectively, draggables will start consuming. So at this
+     *    point, we look at the collected deltas since the first down event, and we decide if we're
+     *    interested based on the angle that those deltas form. We will favor vertical drags over
+     *    horizontal drags more because UX-wise there's more freedom and uncertainty when a user
+     *    performs a vertical gesture vs. a horizontal gesture.
+     */
+    override fun isInterested(event: PointerInputChange): Boolean {
+        if (event.changedToDownIgnoreConsumed()) return enabled
+        if (!isNestedDraggablesTouchConflictFixEnabled) return false
+        if (event.changedToUpIgnoreConsumed()) return false
+
+        if (touchSlopDetector == null) {
+            touchSlopDetector = TouchSlopDetector(orientationLock)
+        }
+
+        val touchSlop = currentValueOf(LocalViewConfiguration).touchSlop
+        val positionChange = event.positionChange()
+
+        return with(requireTouchSlopDetector()) {
+            getPostSlopOffset(positionChange, touchSlop, false) != Offset.Unspecified &&
+                isDeltaAtAngleOfInterest(positionChange)
+        }
     }
 
     override fun onCancelPointerInput() {
@@ -827,16 +851,44 @@ internal abstract class DragGestureNode(
                     // add data to the slop detector
                     val postSlopOffset =
                         requireTouchSlopDetector()
-                            .addPositions(dragEvent.position, dragEvent.previousPosition, touchSlop)
+                            .getPostSlopOffset(dragEvent.positionChangeIgnoreConsumed(), touchSlop)
 
-                    // slop was crossed, dispatch the drag start event and change to dragging state
-                    if (postSlopOffset.isSpecified) {
-                        dragEvent.consume()
-                        sendDragStart(state.initialDown!!, dragEvent, postSlopOffset)
-                        sendDragEvent(dragEvent, postSlopOffset)
-                        moveToDraggingState(dragEvent.id)
+                    /**
+                     * Here we use the [gestureNode] and [GestureCoordinator] APIs to make a
+                     * decision. About this gesture. At this point we have all the triggers to start
+                     * a recognizing a gesture in this current
+                     * [androidx.compose.foundation.gestures.DragGestureNode]. This is the moment
+                     * that touch slop is recognized here in this node. During this time, before we
+                     * start consuming drag events we check the interested of the parent and our
+                     * self-interest. If the parent is interested and we're not (for this specific
+                     * event), we will give the parent a chance to do something by postponing the
+                     * remaining consumption to the final pass.
+                     */
+                    if (isNestedDraggablesTouchConflictFixEnabled) {
+                        if (postSlopOffset.isSpecified) {
+                            val isSelfInterested = isInterested(dragEvent)
+                            val isParentInterested =
+                                parentGestureCoordinator?.isInterested(dragEvent) == true
+                            if (!isSelfInterested && isParentInterested) {
+                                state.verifyConsumptionInFinalPass = true
+                            } else {
+                                dragEvent.consume()
+                                sendDragStart(state.initialDown!!, dragEvent, postSlopOffset)
+                                sendDragEvent(dragEvent, postSlopOffset)
+                                moveToDraggingState(dragEvent.id)
+                            }
+                        } else {
+                            state.verifyConsumptionInFinalPass = true
+                        }
                     } else {
-                        state.verifyConsumptionInFinalPass = true
+                        if (postSlopOffset.isSpecified) {
+                            dragEvent.consume()
+                            sendDragStart(state.initialDown!!, dragEvent, postSlopOffset)
+                            sendDragEvent(dragEvent, postSlopOffset)
+                            moveToDraggingState(dragEvent.id)
+                        } else {
+                            state.verifyConsumptionInFinalPass = true
+                        }
                     }
                 }
             } else {
@@ -875,6 +927,11 @@ internal abstract class DragGestureNode(
                     },
                 )
             } else {
+                /**
+                 * Self and nobody consumed dragEvent. We will only get here if self didn't consume
+                 * in the main pass OR if self wasn't interested during the main pass. In this case
+                 * we remain in the awaitTouchSlop state and wait for more information (events).
+                 */
                 state.verifyConsumptionInFinalPass = false
             }
         }
@@ -1067,7 +1124,7 @@ private sealed class DragDetectionState {
      * [consumedOnInitial]. We also save the [awaitTouchSlop] between passes so we don't call the
      * [DragGestureNode.startDragImmediately] as often.
      */
-    class AwaitDown(
+    data class AwaitDown(
         var awaitTouchSlop: AwaitTouchSlop = AwaitTouchSlop.NotInitialized,
         var consumedOnInitial: Boolean = false,
     ) : DragDetectionState() {
@@ -1083,7 +1140,7 @@ private sealed class DragDetectionState {
      * If drag should wait for touch slop, after the initial down recognition we move to this state.
      * Here we will collect drag events until touch slop is crossed.
      */
-    class AwaitTouchSlop(
+    data class AwaitTouchSlop(
         var initialDown: PointerInputChange? = null,
         var pointerId: PointerId = PointerId(Long.MAX_VALUE),
         var verifyConsumptionInFinalPass: Boolean = false,
@@ -1095,12 +1152,12 @@ private sealed class DragDetectionState {
      * that gesture. Once a gesture is lost the draggable will pass on to this state until all
      * fingers are up.
      */
-    class AwaitGesturePickup(
+    data class AwaitGesturePickup(
         var initialDown: PointerInputChange? = null,
         var pointerId: PointerId = PointerId(Long.MAX_VALUE),
         var touchSlopDetector: TouchSlopDetector? = null,
     ) : DragDetectionState()
 
     /** State where dragging is happening. */
-    class Dragging(var pointerId: PointerId = PointerId(Long.MAX_VALUE)) : DragDetectionState()
+    data class Dragging(var pointerId: PointerId = PointerId(Long.MAX_VALUE)) : DragDetectionState()
 }

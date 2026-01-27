@@ -135,4 +135,12 @@ object ComposeFoundationFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isTrackpadGestureHandlingEnabled: Boolean = true
+
+    /**
+     * With this flag on, nested draggable components (e.g. Lists, Pagers, Grids) will handle
+     * conflicting gestures by deciding which has a higher priority.
+     */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isNestedDraggablesTouchConflictFixEnabled = true
 }
