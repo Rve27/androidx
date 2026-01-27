@@ -3003,6 +3003,43 @@ public class RemoteComposeWriter {
     }
 
     /**
+     * Add a flow layout
+     *
+     * @param modifier   list of modifiers for the layout
+     * @param horizontal horizontal positioning
+     * @param vertical   vertical positioning
+     * @param content    content of the layout
+     */
+    public void flow(
+            @NonNull RecordingModifier modifier,
+            int horizontal,
+            int vertical,
+            @NonNull RemoteComposeWriterInterface content) {
+        startFlow(modifier, horizontal, vertical);
+        content.run();
+        endFlow();
+    }
+
+    /**
+     * Start a flow layout
+     */
+    public void startFlow(@NonNull RecordingModifier modifier, int horizontal, int vertical) {
+        int componentId = modifier.getComponentId();
+        float spacedBy = modifier.getSpacedBy();
+        mBuffer.addFlowStart(componentId, -1, horizontal, vertical, spacedBy);
+        for (RecordingModifier.Element m : modifier.getList()) {
+            m.write(this);
+        }
+        addContentStart();
+    }
+
+    /** End a flow layout */
+    public void endFlow() {
+        mBuffer.addContainerEnd();
+        mBuffer.addContainerEnd();
+    }
+
+    /**
      * Add a Canvas
      *
      * @param modifier list of modifiers for the layout
