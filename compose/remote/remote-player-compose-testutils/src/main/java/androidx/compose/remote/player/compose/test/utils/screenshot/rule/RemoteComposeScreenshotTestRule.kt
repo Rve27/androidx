@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
-
 package androidx.compose.remote.player.compose.test.utils.screenshot.rule
 
 import android.content.Context
@@ -26,7 +24,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.creation.CreationDisplayInfo
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.creation.compose.capture.createCreationDisplayInfo
 import androidx.compose.remote.creation.compose.capture.heightDp
@@ -35,8 +32,6 @@ import androidx.compose.remote.creation.compose.capture.widthDp
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
-import androidx.compose.remote.player.compose.ExperimentalRemotePlayerApi
-import androidx.compose.remote.player.compose.RemoteComposePlayerFlags
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer
 import androidx.compose.remote.player.compose.test.utils.screenshot.TargetPlayer
 import androidx.compose.remote.player.core.platform.BitmapLoader
@@ -76,7 +71,6 @@ import org.junit.runners.model.Statement
  * @param matcher The algorithm to be used to perform the matching. If null, it will let
  *   [androidx.compose.testutils.assertAgainstGolden] use its default.
  */
-@OptIn(ExperimentalRemotePlayerApi::class)
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
 class RemoteComposeScreenshotTestRule(
     moduleDirectory: String,
@@ -108,18 +102,6 @@ class RemoteComposeScreenshotTestRule(
 
     override fun apply(base: Statement, description: Description): Statement {
         return delegateChain.apply(base, description)
-    }
-
-    override fun before() {
-        super.before()
-
-        RemoteComposePlayerFlags.isViewPlayerEnabled = targetPlayer == TargetPlayer.View
-    }
-
-    override fun after() {
-        super.after()
-
-        RemoteComposePlayerFlags.isViewPlayerEnabled = true
     }
 
     suspend fun captureDocument(
