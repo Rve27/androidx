@@ -233,23 +233,23 @@ class AnchorEntityTest {
     }
 
     @Test
-    fun setOnSpaceUpdatedListener_withNullParams_callsRuntimeSetOnSpaceUpdatedListener() {
+    fun setOnOriginChangedListener_withNullParams_callsRuntimeSetOnOriginChangedListener() {
         val anchorEntity = AnchorEntity.create(fakeAnchorEntity, entityManager)
-        anchorEntity.setOnSpaceUpdatedListener(null)
-        assertThat(fakeAnchorEntity.onSpaceUpdatedListener).isNull()
+        anchorEntity.setOnOriginChangedListener(null)
+        assertThat(fakeAnchorEntity.onOriginChangedListener).isNull()
     }
 
     @Test
-    fun setOnSpaceUpdatedListener_receivesRuntimeSetOnSpaceUpdatedListenerCallbacks() {
+    fun setOnOriginChangedListener_receivesRuntimeSetOnOriginChangedListenerCallbacks() {
         var listenerCalled = false
         val anchorEntity = AnchorEntity.create(fakeAnchorEntity, entityManager)
-        anchorEntity.setOnSpaceUpdatedListener(directExecutor()) { listenerCalled = true }
+        anchorEntity.setOnOriginChangedListener(directExecutor()) { listenerCalled = true }
 
-        assertThat(fakeAnchorEntity.onSpaceUpdatedListener).isNotNull()
+        assertThat(fakeAnchorEntity.onOriginChangedListener).isNotNull()
         assertThat(listenerCalled).isFalse()
 
         // Simulates a runtime callback.
-        fakeAnchorEntity.onSpaceUpdated()
+        fakeAnchorEntity.onOriginChanged()
 
         assertThat(listenerCalled).isTrue()
     }
@@ -347,15 +347,15 @@ class AnchorEntityTest {
         val anchorEntity = AnchorEntity.create(fakeAnchorEntity, entityManager)
 
         anchorEntity.setOnStateChangedListener(directExecutor(), {})
-        anchorEntity.setOnSpaceUpdatedListener(directExecutor(), {})
+        anchorEntity.setOnOriginChangedListener(directExecutor(), {})
 
-        assertThat(fakeAnchorEntity.onSpaceUpdatedListener).isNotNull()
+        assertThat(fakeAnchorEntity.onOriginChangedListener).isNotNull()
         assertThat(anchorEntity.onStateChangedListener).isNotNull()
 
         anchorEntity.dispose()
         shadowOf(Looper.getMainLooper()).idle()
 
-        assertThat(fakeAnchorEntity.onSpaceUpdatedListener).isNull()
+        assertThat(fakeAnchorEntity.onOriginChangedListener).isNull()
         assertThat(anchorEntity.onStateChangedListener).isNull()
     }
 
