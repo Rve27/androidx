@@ -243,6 +243,7 @@ class AppFunctionManagerTest {
             .isInstanceOf(AppFunctionFunctionNotFoundException::class.java)
     }
 
+    @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35) // b/477730917
     @Test
     fun testExecuteAppFunction_functionSucceed() {
         val request =
@@ -264,6 +265,7 @@ class AppFunctionManagerTest {
             .isEqualTo("result")
     }
 
+    @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35) // b/477730917
     @Test
     fun testExecuteAppFunction_functionFail() {
         val request =
