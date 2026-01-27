@@ -87,13 +87,14 @@ abstract class StudioTask : DefaultTask() {
 
     @get:Internal protected open val installParentDir: File = project.rootDir
 
-    private val studioVersion by lazy { project.getVersionByName("androidStudio") }
+    private val studioVersion by lazy { project.getVersionByName("androidStudioIj") }
+    private val studioNameVersion by lazy { project.getVersionByName("androidStudioName") }
 
     /** Directory name (not path) that Studio will be unzipped into. */
     private val studioDirectoryName: String
         get() {
             val osName = StudioPlatformUtilities.osName
-            return "android-studio-$studioVersion-$osName"
+            return "android-studio-$studioNameVersion-$osName"
         }
 
     /** Filename (not path) of the Studio archive */
