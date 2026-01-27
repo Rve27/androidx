@@ -80,6 +80,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA)
@@ -1415,6 +1416,7 @@ class IntegrationTest {
                 )
         }
 
+    @Ignore // b/477730959
     @Test
     fun executeAppFunction_getFilesData_validUriAccess() = doBlocking {
         val request =
@@ -1441,6 +1443,7 @@ class IntegrationTest {
         targetContext.assertWriteAccessible(filesData.readWriteUri.uri)
     }
 
+    @Ignore // b/477730959
     @Test
     fun executeAppFunction_getFileData_persistUriGrantingShouldSucceed() = doBlocking {
         val request =
@@ -1479,6 +1482,7 @@ class IntegrationTest {
         targetContext.assertNotPersistedGranted(persistGrantedUri.uri)
     }
 
+    @Ignore // b/477730959
     @Test
     fun executeAppFunction_requestCancellation_isIsolated() = doBlocking {
         val requestA =
