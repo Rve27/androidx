@@ -491,7 +491,6 @@ if (startParameter.projectProperties.containsKey("androidx.useMaxDepVersions")) 
 }
 includeProject(":camera:camera-camera2", [BuildType.CAMERA])
 includeProject(":camera:camera-camera2-pipe", [BuildType.CAMERA])
-includeProject(":camera:camera-camera2-pipe-integration", [BuildType.CAMERA])
 includeProject(":camera:camera-camera2-pipe-testing", [BuildType.CAMERA])
 includeProject(":camera:camera-compose", [BuildType.CAMERA])
 includeProject(":camera:camera-compose:camera-compose-samples", "camera/camera-compose/samples", [BuildType.CAMERA])
