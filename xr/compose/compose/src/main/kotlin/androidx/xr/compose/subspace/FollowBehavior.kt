@@ -482,10 +482,10 @@ internal class AnchorTarget(val anchorEntity: AnchorEntity) : FollowTargetFlow {
 
         val updateListener = Runnable { trySend(pose) }
 
-        anchorEntity.setOnSpaceUpdatedListener(updateListener)
+        anchorEntity.setOnOriginChangedListener(updateListener)
 
         // Unregister the listener when the collector cancels or finishes.
-        awaitClose { anchorEntity.setOnSpaceUpdatedListener(null) }
+        awaitClose { anchorEntity.setOnOriginChangedListener(null) }
     }
 
     override fun equals(other: Any?): Boolean {
