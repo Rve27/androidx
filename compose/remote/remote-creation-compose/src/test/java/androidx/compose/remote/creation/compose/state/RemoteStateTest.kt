@@ -17,6 +17,7 @@
 package androidx.compose.remote.creation.compose.state
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -29,5 +30,16 @@ class RemoteStateTest {
     fun domainToString() {
         assertEquals("USER", RemoteState.Domain.User.toString())
         assertEquals("SYSTEM", RemoteState.Domain.System.toString())
+    }
+
+    @Test
+    fun domainEquals() {
+        assertEquals(RemoteState.Domain.User, RemoteState.Domain("USER"))
+        assertNotEquals(RemoteState.Domain.User, RemoteState.Domain.System)
+    }
+
+    @Test
+    fun domainHashcode() {
+        assertEquals(RemoteState.Domain.User.hashCode(), RemoteState.Domain("USER").hashCode())
     }
 }
