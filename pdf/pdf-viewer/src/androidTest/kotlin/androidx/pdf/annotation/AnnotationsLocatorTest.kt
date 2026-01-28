@@ -127,6 +127,26 @@ class AnnotationsLocatorTest {
         assertThat(results).isEmpty()
     }
 
+    @Test
+    fun findAnnotations_samePointDownAndMove_returnsEmptyForMove() {
+        val annotationBounds = RectF(100f, 100f, 200f, 200f)
+        val annotation = createStampAnnotation(annotationBounds)
+        val annotationsData = createAnnotationsData(listOf(annotation))
+
+        // 1. Initial touch down at (150, 150) should return the annotation
+        val downEvent = obtainMotionEvent(MotionEvent.ACTION_DOWN, 150f, 150f)
+        val downResults = annotationsLocator.findAnnotations(annotationsData, downEvent)
+        assertThat(downResults).hasSize(1)
+        assertThat(downResults[0].annotation).isEqualTo(annotation)
+
+        // 2. A move event at the EXACT same point (150, 150)
+        val moveEvent = obtainMotionEvent(MotionEvent.ACTION_MOVE, 150f, 150f)
+        val moveResults = annotationsLocator.findAnnotations(annotationsData, moveEvent)
+
+        // Distance is 0, which is <= touchSlop, so it must return an empty list
+        assertThat(moveResults).isEmpty()
+    }
+
     // --- Helpers ---
 
     private fun createAnnotationsData(
