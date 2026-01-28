@@ -27,7 +27,7 @@ import androidx.xr.compose.subspace.node.SubspaceModifierNodeElement
 import androidx.xr.compose.subspace.node.currentValueOf
 import androidx.xr.compose.subspace.node.invalidatePlacement
 import androidx.xr.compose.unit.VolumeConstraints
-import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Pose
@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
  * A [SubspaceModifier] that continuously rotates content so that it faces the user at all times.
  *
  * A user of this API should configure the activity's Session object with
- * [Config.DeviceTrackingMode.LAST_KNOWN] which requires `android.permission.HEAD_TRACKING` Android
+ * [DeviceTrackingMode.LAST_KNOWN] which requires `android.permission.HEAD_TRACKING` Android
  * permission be granted by the calling application. `session.configure( config =
  * session.config.copy(headTracking = Config.HeadTrackingMode.LAST_KNOWN) )`
  *
@@ -111,7 +111,7 @@ internal class RotateToLookAtUserNode(var upDirection: Vector3) :
                 "LocalSession must be available during onAttach."
             }
 
-        if (session.config.deviceTracking == Config.DeviceTrackingMode.DISABLED) {
+        if (session.config.deviceTracking == DeviceTrackingMode.DISABLED) {
             Log.warn("Head tracking must be enabled in the Session config to use LookAtUser.")
             return
         }

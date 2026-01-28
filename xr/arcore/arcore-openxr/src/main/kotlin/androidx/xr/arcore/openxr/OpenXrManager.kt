@@ -23,6 +23,7 @@ import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
@@ -88,7 +89,7 @@ internal constructor(
             PlaneTrackingMode.DISABLED,
             augmentedObjectCategories = listOf(),
             HandTrackingMode.DISABLED,
-            Config.DeviceTrackingMode.DISABLED,
+            DeviceTrackingMode.DISABLED,
             Config.DepthEstimationMode.DISABLED,
             Config.AnchorPersistenceMode.LOCAL,
         )
@@ -169,7 +170,7 @@ internal constructor(
         }
 
         if (config.deviceTracking != this.config.deviceTracking) {
-            if (config.deviceTracking == Config.DeviceTrackingMode.LAST_KNOWN) {
+            if (config.deviceTracking == DeviceTrackingMode.LAST_KNOWN) {
                 perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.arDevice)
             } else {
                 perceptionManager.xrResources.removeUpdatable(

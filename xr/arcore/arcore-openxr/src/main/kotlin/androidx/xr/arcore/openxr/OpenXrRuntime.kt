@@ -21,6 +21,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.DisplayBlendMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
@@ -82,8 +83,8 @@ internal constructor(
                 PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                 HandTrackingMode.DISABLED,
                 HandTrackingMode.BOTH,
-                Config.DeviceTrackingMode.DISABLED,
-                Config.DeviceTrackingMode.LAST_KNOWN,
+                DeviceTrackingMode.DISABLED,
+                DeviceTrackingMode.LAST_KNOWN,
                 Config.DepthEstimationMode.DISABLED,
                 Config.DepthEstimationMode.RAW_ONLY,
                 Config.DepthEstimationMode.SMOOTH_ONLY,

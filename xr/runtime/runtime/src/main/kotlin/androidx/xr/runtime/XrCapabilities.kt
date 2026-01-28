@@ -85,3 +85,30 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
         @JvmField public val BOTH: HandTrackingMode = HandTrackingMode(1)
     }
 }
+
+/** Feature that allows tracking of the AR device. */
+@SuppressWarnings("HiddenSuperclass")
+public class DeviceTrackingMode
+private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
+    Config.ConfigMode {
+    public companion object {
+        /**
+         * The device pose will not be tracked. In this mode, [androidx.xr.arcore.RenderViewpoint]
+         * will not emit updates to [androidx.xr.arcore.RenderViewpoint.State.pose].
+         */
+        @JvmField public val DISABLED: DeviceTrackingMode = DeviceTrackingMode(0)
+        /**
+         * The device pose will be tracked and the last known pose from the system at the time of
+         * runtime update will be provided. Note that there is generally a delay between the actual
+         * device pose and the pose provided by the system by the time of the update.
+         *
+         * Supported runtimes:
+         * - OpenXR
+         * - Play Services
+         *
+         * Required permissions:
+         * - [CAMERA][android.Manifest.permission.CAMERA] (Play Services runtimes only)
+         */
+        @JvmField public val LAST_KNOWN: DeviceTrackingMode = DeviceTrackingMode(1)
+    }
+}

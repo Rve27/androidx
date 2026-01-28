@@ -26,6 +26,7 @@ import android.content.pm.ResolveInfo
 import android.os.IBinder
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.internal.LifecycleManager
@@ -97,13 +98,13 @@ internal constructor(
     private fun serviceRequired(config: Config): Boolean {
         // The service is required if tracking or geospatial are enabled.
         // I.E. if no features are needed from the service we don't require it.
-        return config.deviceTracking == Config.DeviceTrackingMode.LAST_KNOWN ||
+        return config.deviceTracking == DeviceTrackingMode.LAST_KNOWN ||
             config.geospatial == Config.GeospatialMode.VPS_AND_GPS
     }
 
     override fun configure(config: Config) {
         if (
-            config.deviceTracking == Config.DeviceTrackingMode.DISABLED &&
+            config.deviceTracking == DeviceTrackingMode.DISABLED &&
                 config.geospatial == Config.GeospatialMode.VPS_AND_GPS
         ) {
             throw UnsupportedOperationException(

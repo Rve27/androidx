@@ -29,7 +29,7 @@ import androidx.annotation.RestrictTo
  * @property handTracking Feature that allows tracking of the user's hands and hand joints. See
  *   [androidx.xr.runtime.HandTrackingMode].
  * @property deviceTracking Feature that allows tracking of the AR device. See
- *   [Config.DeviceTrackingMode].
+ *   [androidx.xr.runtime.DeviceTrackingMode].
  * @property depthEstimation Feature that allows more accurate information about scene depth and
  *   meshes. See [Config.DepthEstimationMode].
  * @property anchorPersistence Feature that allows anchors to be persisted through sessions. See
@@ -46,7 +46,8 @@ constructor(
     public val augmentedObjectCategories: List<AugmentedObjectCategory> = listOf(),
     public val handTracking: androidx.xr.runtime.HandTrackingMode =
         androidx.xr.runtime.HandTrackingMode.DISABLED,
-    public val deviceTracking: DeviceTrackingMode = DeviceTrackingMode.DISABLED,
+    public val deviceTracking: androidx.xr.runtime.DeviceTrackingMode =
+        androidx.xr.runtime.DeviceTrackingMode.DISABLED,
     public val depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
     public val anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
     public val faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
@@ -69,7 +70,7 @@ constructor(
      * @param handTracking Feature that allows tracking of the user's hands and hand joints. See
      *   [androidx.xr.runtime.HandTrackingMode].
      * @param deviceTracking Feature that allows tracking of the AR device. See
-     *   [Config.DeviceTrackingMode].
+     *   [androidx.xr.runtime.DeviceTrackingMode].
      * @param depthEstimation Feature that allows more accurate information about scene depth and
      *   meshes. See [Config.DepthEstimationMode].
      * @param anchorPersistence Feature that allows anchors to be persisted through sessions. See
@@ -85,7 +86,8 @@ constructor(
             androidx.xr.runtime.PlaneTrackingMode.DISABLED,
         handTracking: androidx.xr.runtime.HandTrackingMode =
             androidx.xr.runtime.HandTrackingMode.DISABLED,
-        deviceTracking: DeviceTrackingMode = DeviceTrackingMode.DISABLED,
+        deviceTracking: androidx.xr.runtime.DeviceTrackingMode =
+            androidx.xr.runtime.DeviceTrackingMode.DISABLED,
         depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
         anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
         faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
@@ -138,7 +140,7 @@ constructor(
     public fun copy(
         planeTracking: androidx.xr.runtime.PlaneTrackingMode = this.planeTracking,
         handTracking: androidx.xr.runtime.HandTrackingMode = this.handTracking,
-        deviceTracking: DeviceTrackingMode = this.deviceTracking,
+        deviceTracking: androidx.xr.runtime.DeviceTrackingMode = this.deviceTracking,
         depthEstimation: DepthEstimationMode = this.depthEstimation,
         anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
     ): Config {
@@ -161,7 +163,7 @@ constructor(
     public fun copy(
         planeTracking: androidx.xr.runtime.PlaneTrackingMode = this.planeTracking,
         handTracking: androidx.xr.runtime.HandTrackingMode = this.handTracking,
-        deviceTracking: DeviceTrackingMode = this.deviceTracking,
+        deviceTracking: androidx.xr.runtime.DeviceTrackingMode = this.deviceTracking,
         depthEstimation: DepthEstimationMode = this.depthEstimation,
         anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
         faceTracking: FaceTrackingMode = this.faceTracking,
@@ -262,10 +264,15 @@ constructor(
 
     /** Feature that allows tracking of the AR device. */
     @SuppressWarnings("HiddenSuperclass")
+    @Deprecated(
+        "Use androidx.xr.runtime.DeviceTrackingMode instead.",
+        replaceWith = ReplaceWith("androidx.xr.runtime.DeviceTrackingMode"),
+    )
     public class DeviceTrackingMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
     ) : ConfigMode {
+        @Suppress("DEPRECATION")
         public companion object {
             /**
              * The device pose will not be tracked. In this mode,
@@ -286,10 +293,6 @@ constructor(
              * - [CAMERA][android.Manifest.permission.CAMERA] (Play Services runtimes only)
              */
             @JvmField public val LAST_KNOWN: DeviceTrackingMode = DeviceTrackingMode(1)
-        }
-
-        override fun toString(): String {
-            return "DeviceTracking_" + if (mode == 0) "DISABLED" else "LAST_KNOWN"
         }
     }
 

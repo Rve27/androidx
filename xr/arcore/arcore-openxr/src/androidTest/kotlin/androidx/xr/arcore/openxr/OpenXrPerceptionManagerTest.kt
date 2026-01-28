@@ -25,6 +25,7 @@ import androidx.xr.arcore.runtime.AnchorInvalidUuidException
 import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException
 import androidx.xr.arcore.runtime.HandJointType
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.TrackingState
@@ -442,7 +443,7 @@ class OpenXrPerceptionManagerTest {
             openXrManager.resume()
             openXrManager.configure(
                 Config(
-                    deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                    deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                     planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                     //                    handTracking = Config.HandTrackingMode.BOTH,
                 )

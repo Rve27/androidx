@@ -66,7 +66,7 @@ import androidx.xr.compose.testapp.ui.theme.IntegrationTestsAppTheme
 import androidx.xr.compose.testapp.ui.theme.Purple40
 import androidx.xr.compose.testapp.ui.theme.PurpleGrey40
 import androidx.xr.compose.testapp.ui.theme.PurpleGrey80
-import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 
@@ -105,7 +105,7 @@ class RotateToLookAtUserActivity : ComponentActivity() {
     private fun MainContent() {
         val session = checkNotNull(LocalSession.current) { "session must be initialized" }
         session.configure(
-            config = session.config.copy(deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN)
+            config = session.config.copy(deviceTracking = DeviceTrackingMode.LAST_KNOWN)
         )
 
         var isRotateToLookAtUserOn by remember { mutableStateOf(true) }
