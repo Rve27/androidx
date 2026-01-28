@@ -110,7 +110,7 @@ class HelloArPlaneActivity : ComponentActivity() {
         var title = intent.getStringExtra("TITLE")
         if (title == null) title = "Hello AR Plane"
         val blendMode = XrDevice.getCurrentDevice(session).getPreferredDisplayBlendMode()
-        val isGeospatialSupported = GeospatialMode.VPS_AND_GPS.isSupported(session)
+        val isGeospatialSupported = session.runtimes.first().isSupported(GeospatialMode.VPS_AND_GPS)
         Scaffold(
             modifier = Modifier.fillMaxSize().padding(0.dp),
             topBar = {
