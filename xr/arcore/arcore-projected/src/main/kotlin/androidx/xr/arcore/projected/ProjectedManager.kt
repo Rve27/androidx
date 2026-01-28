@@ -25,6 +25,7 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.IBinder
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.runtime.Geospatial
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.GeospatialMode
@@ -145,6 +146,15 @@ internal constructor(
         )
     }
 
+    private fun toGeospatialState(value: Int): Geospatial.State {
+        return when (value) {
+            0 -> Geospatial.State.RUNNING // ProjectedTrackingState.TRACKING
+            1 -> Geospatial.State.PAUSED // ProjectedTrackingState.PAUSED
+            2 -> Geospatial.State.NOT_RUNNING // ProjectedTrackingState.STOPPED
+            else -> Geospatial.State.ERROR_INTERNAL
+        }
+    }
+
     override suspend fun update(): ComparableTimeMark {
         delay(30.milliseconds)
         if (!running.get()) {
@@ -156,6 +166,8 @@ internal constructor(
             toTrackingState(result.deviceTrackingState.toInt()),
             toPose(result.devicePose),
         )
+        perceptionManager.xrResources.geospatial.state =
+            toGeospatialState(result.earthTrackingState.toInt())
         timeSource.update(result.currentTimeNanos)
         return timeSource.markNow()
     }
