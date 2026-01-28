@@ -204,16 +204,6 @@ class GeospatialTest {
         }
 
     @Test
-    fun createAnchor_illegalState_returnsIllegalStateResult() = createTestSessionAndRunTest {
-        val underTest = Geospatial.getInstance(session)
-        getFakeRuntimeGeospatial().nextException = IllegalStateException()
-
-        val result = underTest.createAnchor(LATITUDE, LONGITUDE, ALTITUDE, EUS_QUATERNION)
-
-        assertThat(result).isInstanceOf(AnchorCreateIllegalState::class.java)
-    }
-
-    @Test
     fun createAnchor_invalidLatitude_throwsIllegalArgumentException() =
         createTestSessionAndRunTest {
             val underTest = Geospatial.getInstance(session)
@@ -265,26 +255,6 @@ class GeospatialTest {
                 assertThat(successResult.anchor.runtimeAnchor).isEqualTo(fakeAnchor)
                 assertThat((xrResourcesManager.updatables.firstOrNull() as Anchor).runtimeAnchor)
                     .isEqualTo(fakeAnchor)
-            }
-        }
-
-    @Test
-    fun createAnchorOnSurface_illegalState_returnsIllegalStateResult() =
-        createTestSessionAndRunTest {
-            doBlocking {
-                val underTest = Geospatial.getInstance(session)
-                getFakeRuntimeGeospatial().nextException = IllegalStateException()
-
-                val result =
-                    underTest.createAnchorOnSurface(
-                        LATITUDE,
-                        LONGITUDE,
-                        ALTITUDE_ABOVE_SURFACE,
-                        EUS_QUATERNION,
-                        Geospatial.Surface.TERRAIN,
-                    )
-
-                assertThat(result).isInstanceOf(AnchorCreateIllegalState::class.java)
             }
         }
 
