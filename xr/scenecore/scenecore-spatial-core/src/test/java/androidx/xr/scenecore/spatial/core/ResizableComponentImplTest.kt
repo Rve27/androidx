@@ -22,7 +22,6 @@ import android.view.ViewGroup
 import androidx.xr.runtime.NodeHolder
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
-import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider.Companion.testSpatialApiVersion
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.MoveEventListener
@@ -74,7 +73,6 @@ class ResizableComponentImplTest {
     @Before
     fun setUp() {
         TruthJUnit.assume().that(xrExtensions).isNotNull()
-        testSpatialApiVersion = 1
         val activitySpaceNode = xrExtensions.createNode()
         activitySpaceImpl =
             ActivitySpaceImpl(
@@ -100,7 +98,6 @@ class ResizableComponentImplTest {
     fun tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
         fakeSceneRuntime.destroy()
-        testSpatialApiVersion = null
     }
 
     private fun createTestEntity(): Entity {

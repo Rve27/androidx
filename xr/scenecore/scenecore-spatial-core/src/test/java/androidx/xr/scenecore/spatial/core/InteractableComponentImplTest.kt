@@ -17,7 +17,6 @@ package androidx.xr.scenecore.spatial.core
 
 import android.app.Activity
 import androidx.xr.runtime.math.Pose
-import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider.Companion.testSpatialApiVersion
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.InteractableComponent
@@ -53,7 +52,6 @@ class InteractableComponentImplTest {
 
     @Before
     fun setUp() {
-        testSpatialApiVersion = 1
         fakeRuntime =
             SpatialSceneRuntime.create(
                 activity,
@@ -68,7 +66,6 @@ class InteractableComponentImplTest {
     fun tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
         fakeRuntime.destroy()
-        testSpatialApiVersion = null
     }
 
     private fun createTestEntity(): Entity {

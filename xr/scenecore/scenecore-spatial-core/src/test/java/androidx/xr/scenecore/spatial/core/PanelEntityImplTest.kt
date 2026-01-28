@@ -24,7 +24,6 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector2
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider.Companion.testSpatialApiVersion
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.PerceivedResolutionResult
 import androidx.xr.scenecore.runtime.PixelDimensions
@@ -66,7 +65,6 @@ class PanelEntityImplTest {
         val widthAndHeightConfig =
             "+w" + pixelDimensions.width + "dp-h" + pixelDimensions.height + "dp"
         RuntimeEnvironment.setQualifiers(widthAndHeightConfig)
-        testSpatialApiVersion = 1
         sceneRuntime =
             SpatialSceneRuntime.create(
                 activity,
@@ -90,7 +88,6 @@ class PanelEntityImplTest {
         // Destroy the runtime between test cases to clean up lingering references.
         sceneRuntime.destroy()
         entityManager.clear()
-        testSpatialApiVersion = null
     }
 
     private fun createPanelEntity(surfaceDimensionsPx: Dimensions): PanelEntityImpl {
