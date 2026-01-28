@@ -60,6 +60,7 @@ import androidx.xr.arcore.testapp.common.SessionLifecycleHelper
 import androidx.xr.arcore.testapp.helloar.rendering.PlaneRenderer
 import androidx.xr.arcore.testapp.ui.theme.GoogleYellow
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
@@ -114,7 +115,7 @@ class GeospatialActivity : ComponentActivity() {
             SessionLifecycleHelper(
                 this,
                 Config(
-                    deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                    deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                     planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                 ),
                 onSessionAvailable = { session ->

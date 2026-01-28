@@ -17,6 +17,7 @@ package androidx.xr.arcore.projected
 
 import android.app.Activity
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -108,7 +109,7 @@ class ProjectedManagerTest {
         underTest.create()
         val config =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                 geospatial = Config.GeospatialMode.VPS_AND_GPS,
             )
 
@@ -126,7 +127,7 @@ class ProjectedManagerTest {
             )
         val config =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                 geospatial = Config.GeospatialMode.VPS_AND_GPS,
             )
 
@@ -140,7 +141,7 @@ class ProjectedManagerTest {
 
         val config =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.DISABLED,
+                deviceTracking = DeviceTrackingMode.DISABLED,
                 geospatial = Config.GeospatialMode.DISABLED,
             )
         underTest.configure(config)
@@ -152,7 +153,7 @@ class ProjectedManagerTest {
     fun configure_withIncompatibleSettings_throwsException() {
         val config =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.DISABLED,
+                deviceTracking = DeviceTrackingMode.DISABLED,
                 geospatial = Config.GeospatialMode.VPS_AND_GPS,
             )
         assertThrows(UnsupportedOperationException::class.java) { underTest.configure(config) }
@@ -164,7 +165,7 @@ class ProjectedManagerTest {
         underTest.running.set(true)
         val configWithGeospatial =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                 geospatial = Config.GeospatialMode.VPS_AND_GPS,
             )
 
@@ -178,7 +179,7 @@ class ProjectedManagerTest {
 
         val configWithoutGeospatial =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                 geospatial = Config.GeospatialMode.DISABLED,
             )
 

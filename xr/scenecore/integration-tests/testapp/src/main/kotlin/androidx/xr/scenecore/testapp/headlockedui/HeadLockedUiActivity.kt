@@ -31,6 +31,7 @@ import androidx.core.app.ActivityCompat
 import androidx.xr.arcore.ArDevice
 import androidx.xr.arcore.RenderViewpoint
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.IntSize2d
@@ -85,7 +86,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
         session!!.configure(
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
             )
         )
         session?.scene?.keyEntity = session?.scene?.mainPanelEntity

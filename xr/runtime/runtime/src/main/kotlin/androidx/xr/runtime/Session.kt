@@ -360,7 +360,7 @@ public constructor(
             PlaneTrackingMode.DISABLED,
             augmentedObjectCategories = listOf(),
             HandTrackingMode.DISABLED,
-            Config.DeviceTrackingMode.DISABLED,
+            DeviceTrackingMode.DISABLED,
             Config.DepthEstimationMode.DISABLED,
             Config.AnchorPersistenceMode.DISABLED,
         )
