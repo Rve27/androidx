@@ -21,6 +21,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
@@ -127,9 +128,9 @@ internal constructor(
 
         arConfig.depthMode =
             when (config.depthEstimation) {
-                Config.DepthEstimationMode.SMOOTH_ONLY,
-                Config.DepthEstimationMode.SMOOTH_AND_RAW -> DepthMode.AUTOMATIC
-                Config.DepthEstimationMode.RAW_ONLY -> DepthMode.RAW_DEPTH_ONLY
+                DepthEstimationMode.SMOOTH_ONLY,
+                DepthEstimationMode.SMOOTH_AND_RAW -> DepthMode.AUTOMATIC
+                DepthEstimationMode.RAW_ONLY -> DepthMode.RAW_DEPTH_ONLY
                 else -> DepthMode.DISABLED
             }
 

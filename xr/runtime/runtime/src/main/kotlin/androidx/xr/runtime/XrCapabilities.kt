@@ -112,3 +112,57 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
         @JvmField public val LAST_KNOWN: DeviceTrackingMode = DeviceTrackingMode(1)
     }
 }
+
+/** Feature that allows more accurate information about scene depth and meshes. */
+@SuppressWarnings("HiddenSuperclass")
+public class DepthEstimationMode
+private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
+    Config.ConfigMode {
+    public companion object {
+        /** No information about scene depth will be provided. */
+        @JvmField public val DISABLED: DepthEstimationMode = DepthEstimationMode(0)
+
+        /**
+         * Depth estimation will be enabled with raw depth and confidence.
+         *
+         * Supported runtimes:
+         * - OpenXR
+         * - Play Services (on supported devices)
+         *
+         * Required permissions:
+         * - [SCENE_UNDERSTANDING_FINE][androidx.xr.runtime.manifest.SCENE_UNDERSTANDING_FINE]
+         *   (OpenXR runtimes only)
+         * - [CAMERA][android.Manifest.permission.CAMERA] (Play Services runtimes only)
+         */
+        @JvmField public val RAW_ONLY: DepthEstimationMode = DepthEstimationMode(1)
+
+        /**
+         * Depth estimation will be enabled with smooth depth and confidence.
+         *
+         * Supported runtimes:
+         * - OpenXR
+         * - Play Services (on supported devices)
+         *
+         * Required permissions:
+         * - [SCENE_UNDERSTANDING_FINE][androidx.xr.runtime.manifest.SCENE_UNDERSTANDING_FINE]
+         *   (OpenXR runtimes only)
+         * - [CAMERA][android.Manifest.permission.CAMERA] (Play Services runtimes only)
+         */
+        @JvmField public val SMOOTH_ONLY: DepthEstimationMode = DepthEstimationMode(2)
+
+        /**
+         * Depth estimation will be enabled with both raw and smooth depth and confidence. Note that
+         * setting this mode will consume additional runtime resources.
+         *
+         * Supported runtimes:
+         * - OpenXR
+         * - Play Services (on supported devices)
+         *
+         * Required permissions:
+         * - [SCENE_UNDERSTANDING_FINE][androidx.xr.runtime.manifest.SCENE_UNDERSTANDING_FINE]
+         *   (OpenXR runtimes only)
+         * - [CAMERA][android.Manifest.permission.CAMERA] (Play Services runtimes only)
+         */
+        @JvmField public val SMOOTH_AND_RAW: DepthEstimationMode = DepthEstimationMode(3)
+    }
+}

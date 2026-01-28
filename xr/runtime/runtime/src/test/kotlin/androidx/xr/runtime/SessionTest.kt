@@ -210,7 +210,7 @@ class SessionTest {
                     augmentedObjectCategories = AugmentedObjectCategory.all(),
                     handTracking = HandTrackingMode.BOTH,
                     deviceTracking = DeviceTrackingMode.LAST_KNOWN,
-                    depthEstimation = Config.DepthEstimationMode.SMOOTH_AND_RAW,
+                    depthEstimation = DepthEstimationMode.SMOOTH_AND_RAW,
                     anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
                 )
         )
@@ -220,7 +220,7 @@ class SessionTest {
                 augmentedObjectCategories = listOf<AugmentedObjectCategory>(),
                 handTracking = HandTrackingMode.DISABLED,
                 deviceTracking = DeviceTrackingMode.DISABLED,
-                depthEstimation = Config.DepthEstimationMode.DISABLED,
+                depthEstimation = DepthEstimationMode.DISABLED,
                 anchorPersistence = Config.AnchorPersistenceMode.DISABLED,
             )
 
@@ -237,13 +237,13 @@ class SessionTest {
         val lifecycleManager = getLifecycleManager()
 
         val currentConfig = lifecycleManager.config
-        check(currentConfig.depthEstimation == Config.DepthEstimationMode.SMOOTH_AND_RAW)
+        check(currentConfig.depthEstimation == DepthEstimationMode.SMOOTH_AND_RAW)
         lifecycleManager.hasMissingPermission = true
 
         assertFailsWith<SecurityException> {
             underTest.configure(
                 underTest.config.copy(
-                    depthEstimation = Config.DepthEstimationMode.DISABLED,
+                    depthEstimation = DepthEstimationMode.DISABLED,
                     faceTracking = Config.FaceTrackingMode.DISABLED,
                 )
             )
