@@ -42,8 +42,13 @@ private constructor(
         xrDeviceCapabilityProvider?.lifecycle ?: (session.activity as LifecycleOwner).lifecycle
 
     /** A device capability that determines how virtual content is added to the real world. */
+    @Deprecated(
+        "Use androidx.xr.runtime.DisplayBlendMode instead.",
+        replaceWith = ReplaceWith("androidx.xr.runtime.DisplayBlendMode"),
+    )
     public class DisplayBlendMode private constructor(private val value: Int) {
 
+        @Suppress("DEPRECATION")
         public companion object {
             /** Blending is not supported. */
             @JvmField public val NO_DISPLAY: DisplayBlendMode = DisplayBlendMode(0)
@@ -59,14 +64,6 @@ private constructor(
              */
             @JvmField public val ALPHA_BLEND: DisplayBlendMode = DisplayBlendMode(2)
         }
-
-        public override fun toString(): String =
-            when (this) {
-                NO_DISPLAY -> "NOT_APPLICABLE"
-                ADDITIVE -> "ADDITIVE"
-                ALPHA_BLEND -> "ALPHA_BLEND"
-                else -> "UNKNOWN"
-            }
     }
 
     public companion object {
@@ -124,9 +121,9 @@ private constructor(
      *   available.
      * @throws IllegalStateException if the [Session] has been destroyed.
      */
-    public fun getPreferredDisplayBlendMode(): DisplayBlendMode {
+    public fun getPreferredDisplayBlendMode(): androidx.xr.runtime.DisplayBlendMode {
         return if (session.runtimes.isEmpty()) {
-            DisplayBlendMode.NO_DISPLAY
+            androidx.xr.runtime.DisplayBlendMode.NO_DISPLAY
         } else {
             session.runtimes.firstNotNullOf { it.getPreferredDisplayBlendMode() }
         }

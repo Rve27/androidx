@@ -103,6 +103,7 @@ import androidx.xr.compose.testapp.common.isMvHevcSupported
 import androidx.xr.compose.testapp.ui.components.CommonTestScaffold
 import androidx.xr.compose.unit.Meter
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.FloatSize2d
@@ -170,7 +171,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        session.configure(Config(deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN))
+        session.configure(Config(deviceTracking = DeviceTrackingMode.LAST_KNOWN))
         session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
 
         val file = File(defaultVideoUri)

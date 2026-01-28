@@ -17,6 +17,8 @@ package androidx.xr.arcore.projected
 
 import android.app.Activity
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -108,8 +110,8 @@ class ProjectedManagerTest {
         underTest.create()
         val config =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
-                geospatial = Config.GeospatialMode.VPS_AND_GPS,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
+                geospatial = GeospatialMode.VPS_AND_GPS,
             )
 
         underTest.configure(config)
@@ -126,8 +128,8 @@ class ProjectedManagerTest {
             )
         val config =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
-                geospatial = Config.GeospatialMode.VPS_AND_GPS,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
+                geospatial = GeospatialMode.VPS_AND_GPS,
             )
 
         assertThrows(SecurityException::class.java) { underTest.configure(config) }
@@ -140,8 +142,8 @@ class ProjectedManagerTest {
 
         val config =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.DISABLED,
-                geospatial = Config.GeospatialMode.DISABLED,
+                deviceTracking = DeviceTrackingMode.DISABLED,
+                geospatial = GeospatialMode.DISABLED,
             )
         underTest.configure(config)
 
@@ -152,8 +154,8 @@ class ProjectedManagerTest {
     fun configure_withIncompatibleSettings_throwsException() {
         val config =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.DISABLED,
-                geospatial = Config.GeospatialMode.VPS_AND_GPS,
+                deviceTracking = DeviceTrackingMode.DISABLED,
+                geospatial = GeospatialMode.VPS_AND_GPS,
             )
         assertThrows(UnsupportedOperationException::class.java) { underTest.configure(config) }
     }
@@ -164,8 +166,8 @@ class ProjectedManagerTest {
         underTest.running.set(true)
         val configWithGeospatial =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
-                geospatial = Config.GeospatialMode.VPS_AND_GPS,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
+                geospatial = GeospatialMode.VPS_AND_GPS,
             )
 
         underTest.configure(configWithGeospatial)
@@ -178,8 +180,8 @@ class ProjectedManagerTest {
 
         val configWithoutGeospatial =
             Config(
-                deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
-                geospatial = Config.GeospatialMode.DISABLED,
+                deviceTracking = DeviceTrackingMode.LAST_KNOWN,
+                geospatial = GeospatialMode.DISABLED,
             )
 
         underTest.configure(configWithoutGeospatial)

@@ -33,6 +33,8 @@ import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import androidx.xr.projected.permissions.ProjectedPermissionsRequestParams
 import androidx.xr.projected.permissions.ProjectedPermissionsResultContract
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionConfigureGooglePlayServicesLocationLibraryNotLinked
@@ -67,23 +69,23 @@ class ProjectedTestAppActivity : ComponentActivity() {
         listOf(
             "Geospatial On, 3DoF On" to
                 Config(
-                    geospatial = Config.GeospatialMode.VPS_AND_GPS,
-                    deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                    geospatial = GeospatialMode.VPS_AND_GPS,
+                    deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                 ),
             "Geospatial Off, 3DoF On" to
                 Config(
-                    geospatial = Config.GeospatialMode.DISABLED,
-                    deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                    geospatial = GeospatialMode.DISABLED,
+                    deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                 ),
             "Geospatial Off, 3DoF Off" to
                 Config(
-                    geospatial = Config.GeospatialMode.DISABLED,
-                    deviceTracking = Config.DeviceTrackingMode.DISABLED,
+                    geospatial = GeospatialMode.DISABLED,
+                    deviceTracking = DeviceTrackingMode.DISABLED,
                 ),
             "Geospatial On, 3DoF Off" to
                 Config(
-                    geospatial = Config.GeospatialMode.VPS_AND_GPS,
-                    deviceTracking = Config.DeviceTrackingMode.DISABLED,
+                    geospatial = GeospatialMode.VPS_AND_GPS,
+                    deviceTracking = DeviceTrackingMode.DISABLED,
                 ),
         )
     private var currentConfigIndex = 0
@@ -202,8 +204,8 @@ class ProjectedTestAppActivity : ComponentActivity() {
             return
         }
 
-        val geoOn = currentConfig.geospatial == Config.GeospatialMode.VPS_AND_GPS
-        val trackingOn = currentConfig.deviceTracking == Config.DeviceTrackingMode.LAST_KNOWN
+        val geoOn = currentConfig.geospatial == GeospatialMode.VPS_AND_GPS
+        val trackingOn = currentConfig.deviceTracking == DeviceTrackingMode.LAST_KNOWN
 
         if (geoOn && trackingOn) {
             newText += getDevicePoseText()

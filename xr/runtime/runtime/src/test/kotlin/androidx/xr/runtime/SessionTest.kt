@@ -206,22 +206,22 @@ class SessionTest {
         check(
             lifecycleManager.config ==
                 Config(
-                    planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                    planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                     augmentedObjectCategories = AugmentedObjectCategory.all(),
-                    handTracking = Config.HandTrackingMode.BOTH,
-                    deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
-                    depthEstimation = Config.DepthEstimationMode.SMOOTH_AND_RAW,
-                    anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
+                    handTracking = HandTrackingMode.BOTH,
+                    deviceTracking = DeviceTrackingMode.LAST_KNOWN,
+                    depthEstimation = DepthEstimationMode.SMOOTH_AND_RAW,
+                    anchorPersistence = AnchorPersistenceMode.LOCAL,
                 )
         )
         val newConfig =
             Config(
-                planeTracking = Config.PlaneTrackingMode.DISABLED,
+                planeTracking = PlaneTrackingMode.DISABLED,
                 augmentedObjectCategories = listOf<AugmentedObjectCategory>(),
-                handTracking = Config.HandTrackingMode.DISABLED,
-                deviceTracking = Config.DeviceTrackingMode.DISABLED,
-                depthEstimation = Config.DepthEstimationMode.DISABLED,
-                anchorPersistence = Config.AnchorPersistenceMode.DISABLED,
+                handTracking = HandTrackingMode.DISABLED,
+                deviceTracking = DeviceTrackingMode.DISABLED,
+                depthEstimation = DepthEstimationMode.DISABLED,
+                anchorPersistence = AnchorPersistenceMode.DISABLED,
             )
 
         val result = underTest.configure(newConfig)
@@ -237,14 +237,14 @@ class SessionTest {
         val lifecycleManager = getLifecycleManager()
 
         val currentConfig = lifecycleManager.config
-        check(currentConfig.depthEstimation == Config.DepthEstimationMode.SMOOTH_AND_RAW)
+        check(currentConfig.depthEstimation == DepthEstimationMode.SMOOTH_AND_RAW)
         lifecycleManager.hasMissingPermission = true
 
         assertFailsWith<SecurityException> {
             underTest.configure(
                 underTest.config.copy(
-                    depthEstimation = Config.DepthEstimationMode.DISABLED,
-                    faceTracking = Config.FaceTrackingMode.DISABLED,
+                    depthEstimation = DepthEstimationMode.DISABLED,
+                    faceTracking = FaceTrackingMode.DISABLED,
                 )
             )
         }
@@ -262,7 +262,7 @@ class SessionTest {
 
         assertFailsWith<UnsupportedOperationException> {
             underTest.configure(
-                currentConfig.copy(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
+                currentConfig.copy(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
             )
         }
         assertThat(underTest.config).isEqualTo(currentConfig)
