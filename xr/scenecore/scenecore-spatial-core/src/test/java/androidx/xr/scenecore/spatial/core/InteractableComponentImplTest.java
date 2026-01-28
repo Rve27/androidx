@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import android.app.Activity;
 
 import androidx.xr.runtime.math.Pose;
+import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider;
 import androidx.xr.scenecore.runtime.Entity;
 import androidx.xr.scenecore.runtime.InputEventListener;
 import androidx.xr.scenecore.runtime.InteractableComponent;
@@ -61,6 +62,7 @@ public class InteractableComponentImplTest {
 
     @Before
     public void setUp() {
+        FakeSpatialApiVersionProvider.Companion.setTestSpatialApiVersion(1);
         mFakeRuntime =
                 SpatialSceneRuntime.create(
                         mActivity,
@@ -74,6 +76,7 @@ public class InteractableComponentImplTest {
     public void tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
         mFakeRuntime.destroy();
+        FakeSpatialApiVersionProvider.Companion.setTestSpatialApiVersion(null);
     }
 
     private Entity createTestEntity() {
