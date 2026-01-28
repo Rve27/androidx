@@ -22,6 +22,9 @@ import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
 /** Fake implementation of [Hand][RuntimeHand] for testing purposes. */
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
 public class FakeRuntimeHand(
     override var trackingState: TrackingState = TrackingState.PAUSED,
     override var handJointsBuffer: FloatBuffer = ByteBuffer.allocate(0).asFloatBuffer(),

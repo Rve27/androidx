@@ -32,7 +32,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.xr.arcore.Anchor;
 import androidx.xr.arcore.SessionExtKt;
 import androidx.xr.arcore.XrResourcesManager;
-import androidx.xr.arcore.testing.FakePerceptionManager;
 import androidx.xr.runtime.AnchorPersistenceMode;
 import androidx.xr.runtime.Config;
 import androidx.xr.runtime.DepthEstimationMode;
@@ -66,10 +65,12 @@ public class AnchorGuavaTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void persist_runtimeAnchorIsPersisted() {
         createTestSessionAndRunTest(
                 () -> {
-                    FakePerceptionManager fakePerceptionManager = getFakePerceptionManager();
+                    androidx.xr.arcore.testing.FakePerceptionManager fakePerceptionManager =
+                            getFakePerceptionManager();
                     androidx.xr.arcore.runtime.Anchor runtimeAnchor =
                             fakePerceptionManager.createAnchor(new Pose());
                     Anchor underTest = new Anchor(runtimeAnchor, mXrResourcesManager);
@@ -97,10 +98,12 @@ public class AnchorGuavaTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void persist_anchorPersistenceDisabled_throwsIllegalStateException() {
         createTestSessionAndRunTest(
                 () -> {
-                    FakePerceptionManager fakePerceptionManager = getFakePerceptionManager();
+                    androidx.xr.arcore.testing.FakePerceptionManager fakePerceptionManager =
+                            getFakePerceptionManager();
                     androidx.xr.arcore.runtime.Anchor runtimeAnchor =
                             fakePerceptionManager.createAnchor(new Pose());
                     Anchor underTest = new Anchor(runtimeAnchor, mXrResourcesManager);
@@ -146,8 +149,9 @@ public class AnchorGuavaTest {
         }
     }
 
-    private FakePerceptionManager getFakePerceptionManager() {
-        return (FakePerceptionManager)
+    @SuppressWarnings("deprecation")
+    private androidx.xr.arcore.testing.FakePerceptionManager getFakePerceptionManager() {
+        return (androidx.xr.arcore.testing.FakePerceptionManager)
                 SessionExtKt.getPerceptionRuntime(mSession).getPerceptionManager();
     }
 }

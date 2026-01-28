@@ -32,9 +32,12 @@ import kotlin.time.ComparableTimeMark
  */
 @Suppress("DataClassDefinition")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
 public data class FakePerceptionRuntime(
-    override val lifecycleManager: FakeLifecycleManager,
-    override val perceptionManager: FakePerceptionManager,
+    @Suppress("DEPRECATION") override val lifecycleManager: FakeLifecycleManager,
+    @Suppress("DEPRECATION") override val perceptionManager: FakePerceptionManager,
 ) : PerceptionRuntime {
     override var config: Config = Config()
 

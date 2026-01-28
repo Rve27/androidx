@@ -43,6 +43,9 @@ import kotlinx.coroutines.sync.Semaphore
  * @property config the current [Config] of the session
  */
 @Suppress("NotCloseable")
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
 public class FakeLifecycleManager(
     @get:JvmName("hasCreatePermission") public var hasCreatePermission: Boolean = true
 ) : LifecycleManager {
@@ -79,6 +82,7 @@ public class FakeLifecycleManager(
     @get:JvmName("shouldSupportFaceTracking")
     public var shouldSupportFaceTracking: Boolean = true
 
+    @Suppress("DEPRECATION")
     override fun create() {
         check(state == State.NOT_INITIALIZED)
         if (!hasCreatePermission) throw SecurityException()

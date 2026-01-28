@@ -38,12 +38,12 @@ import androidx.xr.arcore.AnchorCreateUnsupportedLocation;
 import androidx.xr.arcore.Geospatial;
 import androidx.xr.arcore.GeospatialSurface;
 import androidx.xr.arcore.SessionExtKt;
+import androidx.xr.arcore.VpsAvailabilityAvailable;
+import androidx.xr.arcore.VpsAvailabilityResult;
 import androidx.xr.arcore.XrResourcesManager;
 import androidx.xr.arcore.runtime.AnchorNotAuthorizedException;
 import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException;
 import androidx.xr.arcore.runtime.AnchorUnsupportedLocationException;
-import androidx.xr.arcore.testing.FakePerceptionManager;
-import androidx.xr.arcore.testing.FakeRuntimeGeospatial;
 import androidx.xr.runtime.AnchorPersistenceMode;
 import androidx.xr.runtime.CameraFacingDirection;
 import androidx.xr.runtime.Config;
@@ -56,8 +56,6 @@ import androidx.xr.runtime.HandTrackingMode;
 import androidx.xr.runtime.PlaneTrackingMode;
 import androidx.xr.runtime.Session;
 import androidx.xr.runtime.SessionCreateSuccess;
-import androidx.xr.arcore.VpsAvailabilityAvailable;
-import androidx.xr.arcore.VpsAvailabilityResult;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 
@@ -80,21 +78,27 @@ public class GeospatialGuavaTest {
     private Session mSession;
     private TestDispatcher mTestDispatcher;
     private XrResourcesManager mXrResourcesManager;
-    private FakeRuntimeGeospatial mRuntimeGeospatial;
+
+    @SuppressWarnings("deprecation")
+    private androidx.xr.arcore.testing.FakeRuntimeGeospatial mRuntimeGeospatial;
 
     @Before
+    @SuppressWarnings("deprecation")
     public void setUp() {
         mXrResourcesManager = new XrResourcesManager();
         mRuntimeGeospatial =
-                new FakeRuntimeGeospatial(androidx.xr.arcore.runtime.Geospatial.State.NOT_RUNNING);
+                new androidx.xr.arcore.testing.FakeRuntimeGeospatial(
+                        androidx.xr.arcore.runtime.Geospatial.State.NOT_RUNNING);
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void createAnchorOnSurface_success_returnsSuccessResultWithAnchor() {
         createTestSessionAndRunTest(
                 () -> {
                     Geospatial underTest = new Geospatial(mRuntimeGeospatial, mXrResourcesManager);
-                    FakePerceptionManager fakePerceptionManager = getFakePerceptionManager();
+                    androidx.xr.arcore.testing.FakePerceptionManager fakePerceptionManager =
+                            getFakePerceptionManager();
                     androidx.xr.arcore.runtime.Anchor fakeAnchor =
                             fakePerceptionManager.createAnchor(Pose.Identity);
                     mRuntimeGeospatial.setNextAnchor(fakeAnchor);
@@ -300,8 +304,9 @@ public class GeospatialGuavaTest {
         }
     }
 
-    private FakePerceptionManager getFakePerceptionManager() {
-        return (FakePerceptionManager)
+    @SuppressWarnings("deprecation")
+    private androidx.xr.arcore.testing.FakePerceptionManager getFakePerceptionManager() {
+        return (androidx.xr.arcore.testing.FakePerceptionManager)
                 SessionExtKt.getPerceptionRuntime(mSession).getPerceptionManager();
     }
 

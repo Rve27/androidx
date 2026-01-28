@@ -377,7 +377,7 @@ public constructor(
             listOf(
                 "androidx.xr.arcore.PerceptionStateExtender",
                 "androidx.xr.arcore.playservices.CameraStateExtender",
-                "androidx.xr.arcore.testing.FakeStateExtender",
+                "androidx.xr.arcore.testing.internal.FakeStateExtender",
                 "androidx.xr.runtime.StubStateExtender",
             )
         private val SESSION_CONNECTOR_PROVIDERS =
