@@ -27,6 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ParentDataModifier
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.ParentDataModifierNode
+import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.util.trace
@@ -87,6 +90,27 @@ public sealed interface TransformingLazyColumnItemScope {
             ),
         fadeOutSpec: FiniteAnimationSpec<Float>? = spring(stiffness = Spring.StiffnessMediumLow),
     ): Modifier
+
+    /**
+     * Applies responsive vertical padding to the item.
+     *
+     * This modifier allows an item to request specific padding based on the container's height. The
+     * [ResponsiveVerticalPadding] specified here is used to calculate the content padding of the
+     * [TransformingLazyColumn] when this item is at the start (index 0) or end (last index) of the
+     * list.
+     *
+     * When this item is the first item and is visible, the container's top content padding will be
+     * the maximum of the `contentPadding` parameter provided to [TransformingLazyColumn] and the
+     * top padding calculated from [padding]. Similarly, when this item is the last item and is
+     * visible, the container's bottom content padding will be adjusted.
+     *
+     * Implementations of [ResponsiveVerticalPadding] are expected to be provided by design systems,
+     * such as by `ResponsiveVerticalPaddingDefaults` in Material3.
+     *
+     * @sample androidx.wear.compose.foundation.samples.TransformingLazyColumnResponsivePaddingSample
+     * @param padding The [ResponsiveVerticalPadding] configuration to apply.
+     */
+    public fun Modifier.responsiveVerticalPadding(padding: ResponsiveVerticalPadding): Modifier
 }
 
 /** Receiver scope which is used by [TransformingLazyColumn]. */
@@ -234,6 +258,9 @@ internal class TransformingLazyColumnItemScopeImpl(
         } else {
             this then LazyLayoutAnimateItemElement(fadeInSpec, placementSpec, fadeOutSpec)
         }
+
+    override fun Modifier.responsiveVerticalPadding(padding: ResponsiveVerticalPadding): Modifier =
+        this then ResponsiveVerticalPaddingElement(padding)
 }
 
 internal class TransformingLazyColumnCompositeParentDataModifier(
@@ -253,6 +280,7 @@ internal class TransformingLazyColumnCompositeParentDataModifier(
 internal data class TransformingLazyColumnParentData(
     val heightProvider: ((Int, TransformingLazyColumnItemScrollProgress) -> Int)? = null,
     val animationSpecs: LazyLayoutAnimationSpecsNode? = null,
+    val responsiveVerticalPadding: ResponsiveVerticalPadding? = null,
 )
 
 internal class TransformingLazyColumnScopeImpl(
@@ -298,3 +326,28 @@ internal class TransformingLazyColumnInterval(
     override val type: ((index: Int) -> Any?),
     val item: @Composable TransformingLazyColumnItemScope.(index: Int) -> Unit,
 ) : LazyLayoutIntervalContent.Interval
+
+private data class ResponsiveVerticalPaddingElement(val padding: ResponsiveVerticalPadding) :
+    ModifierNodeElement<ResponsiveVerticalPaddingNode>() {
+    override fun create() = ResponsiveVerticalPaddingNode(padding)
+
+    override fun update(node: ResponsiveVerticalPaddingNode) {
+        node.padding = padding
+    }
+
+    override fun InspectorInfo.inspectableProperties() {
+        name = "responsiveVerticalPadding"
+        properties["padding"] = padding
+    }
+}
+
+private class ResponsiveVerticalPaddingNode(var padding: ResponsiveVerticalPadding) :
+    Modifier.Node(), ParentDataModifierNode {
+    override fun Density.modifyParentData(parentData: Any?): Any {
+        return if (parentData is TransformingLazyColumnParentData) {
+            parentData.copy(responsiveVerticalPadding = padding)
+        } else {
+            TransformingLazyColumnParentData(responsiveVerticalPadding = padding)
+        }
+    }
+}
