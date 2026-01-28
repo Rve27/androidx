@@ -27,6 +27,7 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.FaceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
@@ -210,7 +211,7 @@ internal constructor(
         }
 
         if (config.geospatial != this.config.geospatial) {
-            if (config.geospatial == Config.GeospatialMode.VPS_AND_GPS) {
+            if (config.geospatial == GeospatialMode.VPS_AND_GPS) {
                 perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.geospatial)
             } else {
                 perceptionManager.xrResources.removeUpdatable(
