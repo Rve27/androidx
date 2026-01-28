@@ -143,4 +143,12 @@ object ComposeFoundationFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isNestedDraggablesTouchConflictFixEnabled = true
+
+    /**
+     * With this flag on we don't use suspend pointer input as part of Modifier.combinedClickable
+     * implementation as an optimization.
+     */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isNonSuspendingPointerInputInCombinedClickableEnabled = true
 }

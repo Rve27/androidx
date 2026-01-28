@@ -156,6 +156,7 @@ package androidx.compose.foundation {
     property public boolean isDelayPressesUsingGestureConsumptionEnabled;
     property public boolean isNestedDraggablesTouchConflictFixEnabled;
     property public boolean isNewContextMenuEnabled;
+    property public boolean isNonSuspendingPointerInputInCombinedClickableEnabled;
     property public boolean isPausableCompositionInPrefetchEnabled;
     property public boolean isSmartSelectionEnabled;
     property public boolean isTrackpadGestureHandlingEnabled;
@@ -167,6 +168,7 @@ package androidx.compose.foundation {
     field public static boolean isDelayPressesUsingGestureConsumptionEnabled;
     field public static boolean isNestedDraggablesTouchConflictFixEnabled;
     field public static boolean isNewContextMenuEnabled;
+    field public static boolean isNonSuspendingPointerInputInCombinedClickableEnabled;
     field public static boolean isPausableCompositionInPrefetchEnabled;
     field public static boolean isSmartSelectionEnabled;
     field public static boolean isTrackpadGestureHandlingEnabled;
