@@ -22,6 +22,7 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import com.google.ar.core.Config as ArCoreConfig
 import kotlin.time.ComparableTimeMark
@@ -101,8 +102,8 @@ internal constructor(
                 Config.CameraFacingDirection.USER,
                 DeviceTrackingMode.DISABLED,
                 DeviceTrackingMode.LAST_KNOWN,
-                Config.FaceTrackingMode.DISABLED,
-                Config.FaceTrackingMode.MESHES,
+                FaceTrackingMode.DISABLED,
+                FaceTrackingMode.MESHES,
                 PlaneTrackingMode.DISABLED,
                 PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
             )

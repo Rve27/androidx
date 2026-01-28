@@ -24,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
@@ -95,7 +96,7 @@ class SessionLifecycleHelper(
         if (config.handTracking != HandTrackingMode.DISABLED) {
             permissions.add(HAND_TRACKING)
         }
-        if (config.faceTracking != Config.FaceTrackingMode.DISABLED) {
+        if (config.faceTracking != FaceTrackingMode.DISABLED) {
             permissions.add(FACE_TRACKING)
         }
         if (config.deviceTracking != DeviceTrackingMode.DISABLED) {

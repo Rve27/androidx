@@ -22,6 +22,7 @@ import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.LifecycleManager
@@ -110,10 +111,7 @@ public class FakeLifecycleManager(
             throw UnsupportedOperationException()
         }
 
-        if (
-            !shouldSupportFaceTracking &&
-                config.faceTracking == Config.FaceTrackingMode.BLEND_SHAPES
-        ) {
+        if (!shouldSupportFaceTracking && config.faceTracking == FaceTrackingMode.BLEND_SHAPES) {
             throw UnsupportedOperationException()
         }
 

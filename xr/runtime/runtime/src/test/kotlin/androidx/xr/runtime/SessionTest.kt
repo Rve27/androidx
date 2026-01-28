@@ -244,7 +244,7 @@ class SessionTest {
             underTest.configure(
                 underTest.config.copy(
                     depthEstimation = DepthEstimationMode.DISABLED,
-                    faceTracking = Config.FaceTrackingMode.DISABLED,
+                    faceTracking = FaceTrackingMode.DISABLED,
                 )
             )
         }
