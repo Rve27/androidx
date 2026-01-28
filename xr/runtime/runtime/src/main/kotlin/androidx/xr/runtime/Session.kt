@@ -362,7 +362,7 @@ public constructor(
             HandTrackingMode.DISABLED,
             DeviceTrackingMode.DISABLED,
             DepthEstimationMode.DISABLED,
-            Config.AnchorPersistenceMode.DISABLED,
+            AnchorPersistenceMode.DISABLED,
         )
         private set
 

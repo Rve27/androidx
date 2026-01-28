@@ -17,6 +17,7 @@
 package androidx.xr.arcore.testing
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
@@ -95,7 +96,7 @@ public class FakeLifecycleManager(
             HandTrackingMode.BOTH,
             DeviceTrackingMode.LAST_KNOWN,
             DepthEstimationMode.SMOOTH_AND_RAW,
-            Config.AnchorPersistenceMode.LOCAL,
+            AnchorPersistenceMode.LOCAL,
         )
 
     override fun configure(config: Config) {

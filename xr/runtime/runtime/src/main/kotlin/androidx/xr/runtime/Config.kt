@@ -33,7 +33,7 @@ import androidx.annotation.RestrictTo
  * @property depthEstimation Feature that allows more accurate information about scene depth and
  *   meshes. See [androidx.xr.runtime.DepthEstimationMode].
  * @property anchorPersistence Feature that allows anchors to be persisted through sessions. See
- *   [Config.AnchorPersistenceMode].
+ *   [androidx.xr.runtime.AnchorPersistenceMode].
  * @property geospatial Feature that allows geospatial localization and tracking. See
  *   [Config.GeospatialMode].
  */
@@ -50,7 +50,8 @@ constructor(
         androidx.xr.runtime.DeviceTrackingMode.DISABLED,
     public val depthEstimation: androidx.xr.runtime.DepthEstimationMode =
         androidx.xr.runtime.DepthEstimationMode.DISABLED,
-    public val anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
+    public val anchorPersistence: androidx.xr.runtime.AnchorPersistenceMode =
+        androidx.xr.runtime.AnchorPersistenceMode.DISABLED,
     public val faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
     public val geospatial: GeospatialMode = GeospatialMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -75,7 +76,7 @@ constructor(
      * @param depthEstimation Feature that allows more accurate information about scene depth and
      *   meshes. See [androidx.xr.runtime.DepthEstimationMode].
      * @param anchorPersistence Feature that allows anchors to be persisted through sessions. See
-     *   [Config.AnchorPersistenceMode].
+     *   [androidx.xr.runtime.AnchorPersistenceMode].
      * @param faceTracking Feature that allows tracking of human faces. See
      *   [Config.FaceTrackingMode].
      * @param geospatial Feature that allows geospatial localization and tracking. See
@@ -91,7 +92,8 @@ constructor(
             androidx.xr.runtime.DeviceTrackingMode.DISABLED,
         depthEstimation: androidx.xr.runtime.DepthEstimationMode =
             androidx.xr.runtime.DepthEstimationMode.DISABLED,
-        anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
+        anchorPersistence: androidx.xr.runtime.AnchorPersistenceMode =
+            androidx.xr.runtime.AnchorPersistenceMode.DISABLED,
         faceTracking: FaceTrackingMode = FaceTrackingMode.DISABLED,
         geospatial: GeospatialMode = GeospatialMode.DISABLED,
     ) : this(
@@ -144,7 +146,7 @@ constructor(
         handTracking: androidx.xr.runtime.HandTrackingMode = this.handTracking,
         deviceTracking: androidx.xr.runtime.DeviceTrackingMode = this.deviceTracking,
         depthEstimation: androidx.xr.runtime.DepthEstimationMode = this.depthEstimation,
-        anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
+        anchorPersistence: androidx.xr.runtime.AnchorPersistenceMode = this.anchorPersistence,
     ): Config {
         return Config(
             planeTracking = planeTracking,
@@ -167,7 +169,7 @@ constructor(
         handTracking: androidx.xr.runtime.HandTrackingMode = this.handTracking,
         deviceTracking: androidx.xr.runtime.DeviceTrackingMode = this.deviceTracking,
         depthEstimation: androidx.xr.runtime.DepthEstimationMode = this.depthEstimation,
-        anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
+        anchorPersistence: androidx.xr.runtime.AnchorPersistenceMode = this.anchorPersistence,
         faceTracking: FaceTrackingMode = this.faceTracking,
         geospatial: GeospatialMode = this.geospatial,
         augmentedObjectCategories: List<AugmentedObjectCategory> = this.augmentedObjectCategories,
@@ -360,10 +362,15 @@ constructor(
 
     /** Feature that allows anchors to be persisted through sessions. */
     @SuppressWarnings("HiddenSuperclass")
+    @Deprecated(
+        "Use androidx.xr.runtime.AnchorPersistenceMode instead.",
+        replaceWith = ReplaceWith("androidx.xr.runtime.AnchorPersistenceMode"),
+    )
     public class AnchorPersistenceMode
     private constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
     ) : ConfigMode {
+        @Suppress("DEPRECATION")
         public companion object {
             /** Anchors cannot be persisted. */
             @JvmField public val DISABLED: AnchorPersistenceMode = AnchorPersistenceMode(0)
@@ -376,10 +383,6 @@ constructor(
              * Required permissions: None
              */
             @JvmField public val LOCAL: AnchorPersistenceMode = AnchorPersistenceMode(1)
-        }
-
-        override fun toString(): String {
-            return "AnchorPersistence_" + if (mode == 0) "DISABLED" else "LOCAL"
         }
     }
 

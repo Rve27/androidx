@@ -19,6 +19,7 @@ package androidx.xr.arcore.projected
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.xr.arcore.runtime.PerceptionRuntime
+import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
 import androidx.xr.runtime.DepthEstimationMode
@@ -85,7 +86,7 @@ internal constructor(
                 HandTrackingMode.DISABLED,
                 DeviceTrackingMode.DISABLED,
                 DepthEstimationMode.DISABLED,
-                Config.AnchorPersistenceMode.DISABLED,
+                AnchorPersistenceMode.DISABLED,
                 Config.FaceTrackingMode.DISABLED,
                 Config.GeospatialMode.DISABLED,
                 Config.GeospatialMode.VPS_AND_GPS,

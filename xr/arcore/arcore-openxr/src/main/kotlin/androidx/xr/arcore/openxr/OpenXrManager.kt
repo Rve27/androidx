@@ -22,6 +22,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
+import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
@@ -92,7 +93,7 @@ internal constructor(
             HandTrackingMode.DISABLED,
             DeviceTrackingMode.DISABLED,
             DepthEstimationMode.DISABLED,
-            Config.AnchorPersistenceMode.LOCAL,
+            AnchorPersistenceMode.LOCAL,
         )
         private set
 

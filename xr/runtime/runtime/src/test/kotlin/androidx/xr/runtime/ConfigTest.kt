@@ -85,9 +85,9 @@ class ConfigTest {
 
     @Test
     fun equals_differentAnchorPersistence_returnsFalse() {
-        val config1 = Config(anchorPersistence = Config.AnchorPersistenceMode.LOCAL)
+        val config1 = Config(anchorPersistence = AnchorPersistenceMode.LOCAL)
 
-        val config2 = Config(anchorPersistence = Config.AnchorPersistenceMode.DISABLED)
+        val config2 = Config(anchorPersistence = AnchorPersistenceMode.DISABLED)
 
         assertThat(config1).isNotEqualTo(config2)
     }
