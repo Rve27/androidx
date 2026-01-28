@@ -18,6 +18,7 @@ package androidx.xr.arcore.playservices
 
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.PerceptionRuntime
+import androidx.xr.runtime.CameraFacingDirection
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
 import androidx.xr.runtime.DepthEstimationMode
@@ -97,8 +98,8 @@ internal constructor(
     internal companion object {
         internal val SUPPORTED_CONFIG_MODES: Set<ConfigMode> =
             setOf(
-                Config.CameraFacingDirection.WORLD,
-                Config.CameraFacingDirection.USER,
+                CameraFacingDirection.WORLD,
+                CameraFacingDirection.USER,
                 DeviceTrackingMode.DISABLED,
                 DeviceTrackingMode.LAST_KNOWN,
                 FaceTrackingMode.DISABLED,

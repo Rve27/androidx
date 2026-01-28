@@ -44,6 +44,7 @@ import androidx.xr.arcore.runtime.AnchorUnsupportedLocationException;
 import androidx.xr.arcore.testing.FakePerceptionManager;
 import androidx.xr.arcore.testing.FakeRuntimeGeospatial;
 import androidx.xr.runtime.AnchorPersistenceMode;
+import androidx.xr.runtime.CameraFacingDirection;
 import androidx.xr.runtime.Config;
 import androidx.xr.runtime.DepthEstimationMode;
 import androidx.xr.runtime.DeviceTrackingMode;
@@ -287,7 +288,7 @@ public class GeospatialGuavaTest {
                                         FaceTrackingMode.DISABLED,
                                         GeospatialMode.VPS_AND_GPS,
                                         EyeTrackingMode.DISABLED,
-                                        Config.CameraFacingDirection.WORLD));
+                                        CameraFacingDirection.WORLD));
 
                         try {
                             testBody.run();

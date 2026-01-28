@@ -28,7 +28,7 @@ import androidx.xr.arcore.runtime.HitResult
 import androidx.xr.arcore.runtime.PerceptionManager
 import androidx.xr.arcore.runtime.RenderViewpoint
 import androidx.xr.arcore.runtime.Trackable
-import androidx.xr.runtime.Config
+import androidx.xr.runtime.CameraFacingDirection
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.internal.UnsupportedDeviceException
 import androidx.xr.runtime.math.Pose
@@ -331,11 +331,11 @@ internal constructor(private val timeSource: ArCoreTimeSource) : PerceptionManag
         xrResources.depthMap.dispose()
     }
 
-    internal fun setCameraFacingDirection(facingDirection: Config.CameraFacingDirection) {
+    internal fun setCameraFacingDirection(facingDirection: CameraFacingDirection) {
         val arCoreFacingDirection =
             when (facingDirection) {
-                Config.CameraFacingDirection.USER -> CameraConfig.FacingDirection.FRONT
-                Config.CameraFacingDirection.WORLD -> CameraConfig.FacingDirection.BACK
+                CameraFacingDirection.USER -> CameraConfig.FacingDirection.FRONT
+                CameraFacingDirection.WORLD -> CameraConfig.FacingDirection.BACK
                 else ->
                     throw IllegalArgumentException(
                         "Unsupported CameraFacingDirection ${facingDirection}."
