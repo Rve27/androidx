@@ -13,54 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.InputEventListener
+import androidx.xr.scenecore.runtime.InteractableComponent
+import java.util.concurrent.Executor
 
-import android.util.Log;
+internal class InteractableComponentImpl(val executor: Executor, val consumer: InputEventListener) :
+    InteractableComponent {
+    var entity: Entity? = null
 
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.InputEventListener;
-import androidx.xr.scenecore.runtime.InteractableComponent;
-
-import org.jspecify.annotations.NonNull;
-
-import java.util.concurrent.Executor;
-
-class InteractableComponentImpl implements InteractableComponent {
-    final InputEventListener mConsumer;
-    final Executor mExecutor;
-    Entity mEntity;
-
-    InteractableComponentImpl(Executor executor, InputEventListener consumer) {
-        mConsumer = consumer;
-        mExecutor = executor;
-    }
-
-    @Override
-    public boolean onAttach(@NonNull Entity entity) {
-        if (mEntity != null) {
-            Log.e("Runtime", "Already attached to entity " + mEntity);
-            return false;
+    override fun onAttach(entity: Entity): Boolean {
+        if (this.entity != null) {
+            return false
         }
-        mEntity = entity;
-        if (entity instanceof GltfEntityImpl) {
-            ((GltfEntityImpl) entity).setColliderEnabled(true);
-        } else if (entity instanceof SurfaceEntityImpl) {
-            ((SurfaceEntityImpl) entity).setColliderEnabled(true);
+        this.entity = entity
+        when (entity) {
+            is GltfEntityImpl -> entity.setColliderEnabled(true)
+            is SurfaceEntityImpl -> entity.setColliderEnabled(true)
         }
         // InputEvent type translation happens here.
-        entity.addInputEventListener(mExecutor, mConsumer);
-        return true;
+        entity.addInputEventListener(executor, consumer)
+        return true
     }
 
-    @Override
-    public void onDetach(@NonNull Entity entity) {
-        if (entity instanceof GltfEntityImpl) {
-            ((GltfEntityImpl) entity).setColliderEnabled(false);
-        } else if (entity instanceof SurfaceEntityImpl) {
-            ((SurfaceEntityImpl) entity).setColliderEnabled(false);
+    override fun onDetach(entity: Entity) {
+        when (entity) {
+            is GltfEntityImpl -> entity.setColliderEnabled(false)
+            is SurfaceEntityImpl -> entity.setColliderEnabled(false)
         }
-        entity.removeInputEventListener(mConsumer);
-        mEntity = null;
+        entity.removeInputEventListener(consumer)
+        this.entity = null
     }
 }
