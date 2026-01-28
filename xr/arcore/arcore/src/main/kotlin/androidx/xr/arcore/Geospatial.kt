@@ -213,7 +213,6 @@ internal constructor(
     }
 
     /** The type of surface on which to create an anchor. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public class Surface private constructor(private val value: Int) {
         public companion object {
             /** The terrain surface. */
@@ -251,7 +250,6 @@ internal constructor(
      * @param eastUpSouthQuaternion the rotation quaternion of the anchor.
      * @throws [IllegalArgumentException] if the latitude is outside the allowable range.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun createAnchor(
         latitude: Double,
         longitude: Double,
@@ -267,8 +265,6 @@ internal constructor(
             AnchorCreateSuccess(anchor)
         } catch (e: AnchorResourcesExhaustedException) {
             AnchorCreateResourcesExhausted()
-        } catch (e: IllegalStateException) {
-            AnchorCreateIllegalState()
         }
     }
 
@@ -312,9 +308,9 @@ internal constructor(
      * @param longitude the longitude of the anchor.
      * @param altitudeAboveSurface The altitude of the anchor above the given surface.
      * @param eastUpSouthQuaternion the rotation quaternion of the anchor.
+     * @param surface the surface on which to create the anchor.
      * @throws IllegalArgumentException if the latitude is outside the allowable range.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public suspend fun createAnchorOnSurface(
         latitude: Double,
         longitude: Double,
@@ -336,8 +332,6 @@ internal constructor(
             val anchor = Anchor(runtimeAnchor, xrResourcesManager)
             xrResourcesManager.addUpdatable(anchor)
             AnchorCreateSuccess(anchor)
-        } catch (e: IllegalStateException) {
-            AnchorCreateIllegalState()
         } catch (e: AnchorResourcesExhaustedException) {
             AnchorCreateResourcesExhausted()
         } catch (e: AnchorNotAuthorizedException) {
