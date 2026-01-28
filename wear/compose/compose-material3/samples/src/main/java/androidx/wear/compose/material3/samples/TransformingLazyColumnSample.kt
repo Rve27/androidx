@@ -16,6 +16,7 @@
 
 package androidx.wear.compose.material3.samples
 
+import androidx.annotation.Sampled
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +43,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TitleCard
+import androidx.wear.compose.material3.lazy.ResponsiveVerticalPaddingDefaults
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 
@@ -228,6 +230,78 @@ fun TransformingLazyColumnReverseLayoutSample() {
                                 Text("-")
                             }
                             CompactButton(onClick = { addCardAfter(index) }) { Text("+") }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Sampled
+@Preview
+@Composable
+fun TransformingLazyColumnResponsivePaddingSample() {
+    val transformationSpec = rememberTransformationSpec()
+    val state = rememberTransformingLazyColumnState()
+    var elements by remember { mutableStateOf(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) }
+    var nextElement by remember { mutableIntStateOf(10) }
+
+    fun addElementAfter(index: Int) {
+        elements =
+            elements.subList(0, index + 1) +
+                listOf(nextElement++) +
+                elements.subList(index + 1, elements.count())
+    }
+
+    fun removeElementAt(index: Int) {
+        elements = elements.subList(0, index) + elements.subList(index + 1, elements.count())
+    }
+
+    AppScaffold {
+        ScreenScaffold(
+            state,
+            edgeButton = {
+                EdgeButton(onClick = { elements = elements.shuffled() }) { Text("Shuffle") }
+            },
+        ) { contentPadding ->
+            TransformingLazyColumn(state = state, contentPadding = contentPadding) {
+                itemsIndexed(elements, key = { _, key -> key }) { index, key ->
+                    if (key % 2 == 0) {
+                        CompactButton(
+                            onClick = { removeElementAt(index) },
+                            modifier =
+                                Modifier.responsiveVerticalPadding(
+                                        ResponsiveVerticalPaddingDefaults.CompactButton
+                                    )
+                                    .transformedHeight(this, transformationSpec)
+                                    .animateItem(),
+                            transformation = SurfaceTransformation(transformationSpec),
+                        ) {
+                            Text("CompactButton $key")
+                        }
+                    } else {
+                        Card(
+                            onClick = {},
+                            modifier =
+                                Modifier.responsiveVerticalPadding(
+                                        ResponsiveVerticalPaddingDefaults.Card
+                                    )
+                                    .transformedHeight(this, transformationSpec)
+                                    .animateItem(),
+                            transformation = SurfaceTransformation(transformationSpec),
+                        ) {
+                            Text("Card $key")
+                            Row {
+                                Spacer(modifier = Modifier.weight(1f))
+                                CompactButton(
+                                    onClick = { removeElementAt(index) },
+                                    enabled = elements.count() > 1,
+                                ) {
+                                    Text("-")
+                                }
+                                CompactButton(onClick = { addElementAfter(index) }) { Text("+") }
+                            }
                         }
                     }
                 }

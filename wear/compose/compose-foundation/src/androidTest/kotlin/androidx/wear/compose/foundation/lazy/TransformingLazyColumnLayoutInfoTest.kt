@@ -287,6 +287,49 @@ class TransformingLazyColumnLayoutInfoTest {
         rule.runOnIdle { assertThat(state.layoutInfo.reverseLayout).isTrue() }
     }
 
+    @Test
+    fun layoutInfo_reflectsDynamicPadding() {
+        lateinit var state: TransformingLazyColumnState
+        val responsivePaddingPx = 50
+        val responsivePaddingDp = with(rule.density) { responsivePaddingPx.toDp() }
+        val responsiveVerticalPadding =
+            object : ResponsiveVerticalPadding {
+                override fun calculateBottomPadding(containerHeight: Dp): Dp = responsivePaddingDp
+
+                override fun calculateTopPadding(containerHeight: Dp): Dp = responsivePaddingDp
+            }
+        rule.setContent {
+            state = rememberTransformingLazyColumnState()
+            TransformingLazyColumn(
+                state = state,
+                modifier = Modifier.requiredSize(itemSizeDp * 5f),
+            ) {
+                items(100) { index ->
+                    Box(
+                        Modifier.requiredSize(itemSizeDp)
+                            .responsiveVerticalPadding(responsiveVerticalPadding)
+                    )
+                }
+            }
+        }
+        rule.runOnIdle {
+            assertThat(state.layoutInfo.beforeContentPadding).isEqualTo(responsivePaddingPx)
+            assertThat(state.layoutInfo.afterContentPadding).isEqualTo(0)
+        }
+
+        rule.runOnIdle { runBlocking { state.scrollToItem(10) } }
+        rule.runOnIdle {
+            assertThat(state.layoutInfo.beforeContentPadding).isEqualTo(0)
+            assertThat(state.layoutInfo.afterContentPadding).isEqualTo(0)
+        }
+
+        rule.runOnIdle { runBlocking { state.scrollToItem(99) } }
+        rule.runOnIdle {
+            assertThat(state.layoutInfo.beforeContentPadding).isEqualTo(0)
+            assertThat(state.layoutInfo.afterContentPadding).isEqualTo(responsivePaddingPx)
+        }
+    }
+
     private fun TransformingLazyColumnLayoutInfo.assertVisibleItems(
         count: Int,
         startIndex: Int = 0,

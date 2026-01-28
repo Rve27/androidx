@@ -39,8 +39,6 @@ import androidx.wear.compose.material3.samples.LevelIndicatorSample
 import androidx.wear.compose.material3.samples.ListHeaderSample
 import androidx.wear.compose.material3.samples.NonClickableImageCardSample
 import androidx.wear.compose.material3.samples.NonClickableTitleCardWithImageWithTimeAndTitleSample
-import androidx.wear.compose.material3.samples.ResponsiveTransformingLazyColumnWithSnapSample
-import androidx.wear.compose.material3.samples.SimpleResponsiveTransformingLazyColumnSample
 import androidx.wear.compose.material3.samples.SimpleSwipeToDismissBox
 import androidx.wear.compose.material3.samples.StatefulSwipeToDismissBox
 import androidx.wear.compose.material3.samples.SwipeToRevealNoPartialRevealWithScalingLazyColumnSample
@@ -52,6 +50,7 @@ import androidx.wear.compose.material3.samples.TitleCardWithImageWithTimeAndTitl
 import androidx.wear.compose.material3.samples.TransformingLazyColumnAnimationSample
 import androidx.wear.compose.material3.samples.TransformingLazyColumnExpandableCardSample
 import androidx.wear.compose.material3.samples.TransformingLazyColumnReducedMotionSample
+import androidx.wear.compose.material3.samples.TransformingLazyColumnResponsivePaddingSample
 import androidx.wear.compose.material3.samples.TransformingLazyColumnReverseLayoutSample
 
 val WearMaterial3Demos =
@@ -278,25 +277,14 @@ val WearMaterial3Demos =
                         ComposableDemo("Reversed layout") {
                             TransformingLazyColumnReverseLayoutSample()
                         },
+                        ComposableDemo("Responsive Padding") {
+                            TransformingLazyColumnResponsivePaddingSample()
+                        },
                         ComposableDemo("Reduced Motion") {
                             TransformingLazyColumnReducedMotionSample()
                         },
                         ComposableDemo("Custom container CompositingStrategy") {
                             CustomCompositingStrategyTransformationSpecSample()
-                        },
-                    ),
-                ),
-                Material3DemoCategory(
-                    title = "ResponsiveTLC",
-                    listOf(
-                        ComposableDemo("Basic Sample") {
-                            SimpleResponsiveTransformingLazyColumnSample()
-                        },
-                        ComposableDemo("With Snap") {
-                            ResponsiveTransformingLazyColumnWithSnapSample()
-                        },
-                        ComposableDemo("Responsive padding Demo") {
-                            ResponsiveTransformingLazyColumnDemo()
                         },
                     ),
                 ),
