@@ -42,7 +42,7 @@ fun RcFlow(): RemoteComposeContext {
             Header.DOC_PROFILES,
             RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
         ),
-        RemoteComposeWriter.HTag(Header.FEATURE_MEASURE_VERSION, 1),
+        RemoteComposeWriter.HTag(Header.FEATURE_MEASURE_VERSION, 2),
     ) {
         root {
             column(Modifier.fillMaxSize().background(Color.WHITE).padding(60)) {
@@ -51,6 +51,12 @@ fun RcFlow(): RemoteComposeContext {
                     RowLayout.SPACE_EVENLY,
                     RowLayout.CENTER,
                 ) {
+                    box(
+                        Modifier.background(Color.YELLOW)
+                            .height(300)
+                            .horizontalWeight(1f)
+                            .widthIn(0f, 200f)
+                    )
                     box(Modifier.background(Color.RED).size(300))
                     box(Modifier.background(Color.GREEN).size(300))
                     box(Modifier.background(Color.RED).size(200))

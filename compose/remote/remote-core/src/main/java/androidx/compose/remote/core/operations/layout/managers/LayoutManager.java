@@ -36,6 +36,10 @@ public abstract class LayoutManager extends LayoutComponent implements Measurabl
 
     @NonNull Size mCachedWrapSize = new Size(0f, 0f);
 
+    private static final int INSET_WRAP_MEASURE = 2;
+
+    public static final int DEFAULT_MEASURE_TYPE = INSET_WRAP_MEASURE;
+
     public LayoutManager(
             @Nullable Component parent,
             int componentId,
@@ -287,6 +291,8 @@ public abstract class LayoutManager extends LayoutComponent implements Measurabl
             float maxHeight,
             @NonNull MeasurePass measure) {
 
+        int measureVersion = context.getMeasureVersion();
+
         float measuredWidth = Math.min(maxWidth, computeModifierDefinedWidth(context.getContext()));
         float measuredHeight =
                 Math.min(maxHeight, computeModifierDefinedHeight(context.getContext()));
@@ -324,8 +330,10 @@ public abstract class LayoutManager extends LayoutComponent implements Measurabl
             measuredWidth = Math.max(measuredWidth, minWidth);
             measuredWidth = Math.min(measuredWidth, maxWidth);
             hasHorizontalWrap = mWidthModifier.isWrap() || mWidthModifier.isIntrinsicMin();
-            if (!hasHorizontalWrap) {
-                insetMaxWidth = measuredWidth - mPaddingLeft - mPaddingRight;
+            if (measureVersion >= INSET_WRAP_MEASURE) {
+                if (!hasHorizontalWrap) {
+                    insetMaxWidth = measuredWidth - mPaddingLeft - mPaddingRight;
+                }
             }
         }
 
@@ -339,8 +347,10 @@ public abstract class LayoutManager extends LayoutComponent implements Measurabl
             measuredHeight = Math.max(measuredHeight, minHeight);
             measuredHeight = Math.min(measuredHeight, maxHeight);
             hasVerticalWrap = mHeightModifier.isWrap() || mHeightModifier.isIntrinsicMin();
-            if (!hasVerticalWrap) {
-                insetMaxHeight = measuredHeight - mPaddingTop - mPaddingBottom;
+            if (measureVersion >= INSET_WRAP_MEASURE) {
+                if (!hasVerticalWrap) {
+                    insetMaxHeight = measuredHeight - mPaddingTop - mPaddingBottom;
+                }
             }
         }
 
@@ -393,10 +403,17 @@ public abstract class LayoutManager extends LayoutComponent implements Measurabl
             if (hasVerticalScroll()) {
                 mCachedWrapSize.setWidth(0f);
                 mCachedWrapSize.setHeight(0f);
-                computeWrapSize(
-                        context, insetMaxWidth, insetMaxWidth, insetMaxHeight,
-                        Float.MAX_VALUE, false, false, measure,
-                        mCachedWrapSize);
+                if (measureVersion >= INSET_WRAP_MEASURE) {
+                    computeWrapSize(
+                            context, insetMaxWidth, insetMaxWidth, insetMaxHeight,
+                            Float.MAX_VALUE, false, false, measure,
+                            mCachedWrapSize);
+                } else {
+                    computeWrapSize(
+                            context, minWidth, maxWidth, minHeight,
+                            Float.MAX_VALUE, false, false, measure,
+                            mCachedWrapSize);
+                }
                 float h = mCachedWrapSize.getHeight();
                 float internalWidth = Math.min(measuredWidth, insetMaxWidth);
                 float hostHeight = Math.min(measuredHeight, insetMaxHeight);
@@ -407,12 +424,21 @@ public abstract class LayoutManager extends LayoutComponent implements Measurabl
             if (hasHorizontalIntrinsicDimension()) {
                 mCachedWrapSize.setWidth(0f);
                 mCachedWrapSize.setHeight(0f);
-                computeWrapSize(
-                        context, minWidth,
-                        Float.MAX_VALUE, minHeight,
-                        insetMaxHeight,
-                        false,
-                        false, measure, mCachedWrapSize);
+                if (measureVersion >= INSET_WRAP_MEASURE) {
+                    computeWrapSize(
+                            context, minWidth,
+                            Float.MAX_VALUE, minHeight,
+                            insetMaxHeight,
+                            false,
+                            false, measure, mCachedWrapSize);
+                } else {
+                    computeWrapSize(
+                            context, minWidth,
+                            Float.MAX_VALUE, minHeight,
+                            maxHeight,
+                            false,
+                            false, measure, mCachedWrapSize);
+                }
                 float w = mCachedWrapSize.getWidth();
                 if (hasHorizontalScroll()) {
                     float internalHeight = Math.min(measuredHeight, insetMaxHeight);
@@ -431,205 +457,17 @@ public abstract class LayoutManager extends LayoutComponent implements Measurabl
             } else if (hasVerticalIntrinsicDimension()) {
                 mCachedWrapSize.setWidth(0f);
                 mCachedWrapSize.setHeight(0f);
-                // ok so the issue is that we compute the size of the internal at minima -- *but*
-                // flow layout will change its size according to what's available!
-                // so we should fix the width at least to a known size, otherwise the height
-                // reported will be incorrect.
-                computeWrapSize(
-                        context, minWidth, insetMaxWidth, 0f,
-                        Float.MAX_VALUE, false, false, measure,
-                        mCachedWrapSize);
-                float h = mCachedWrapSize.getHeight();
-                if (hasVerticalScroll()) {
-                    float internalWidth = Math.min(measuredWidth, insetMaxWidth);
-                    float hostHeight = Math.min(measuredHeight, insetMaxHeight);
-                    computeSize(context, 0f, internalWidth, 0, h, measure);
-                    mComponentModifiers.setVerticalScrollDimension(hostHeight, h);
+                if (measureVersion >= INSET_WRAP_MEASURE) {
+                    computeWrapSize(
+                            context, minWidth, insetMaxWidth, minHeight,
+                            Float.MAX_VALUE, false, false, measure,
+                            mCachedWrapSize);
                 } else {
-                    computeSize(
-                            context,
-                            0f,
-                            Math.min(measuredWidth, insetMaxWidth),
-                            0f,
-                            Math.min(measuredHeight, insetMaxHeight),
-                            measure);
+                    computeWrapSize(
+                            context, minWidth, maxWidth, minHeight,
+                            Float.MAX_VALUE, false, false, measure,
+                            mCachedWrapSize);
                 }
-            } else {
-                float maxChildWidth = measuredWidth - mPaddingLeft - mPaddingRight;
-                float maxChildHeight = measuredHeight - mPaddingTop - mPaddingBottom;
-                computeSize(context, 0, maxChildWidth, 0, maxChildHeight, measure);
-            }
-        }
-
-        if (mContent != null) {
-            ComponentMeasure cm = measure.get(mContent);
-            cm.setX(0f);
-            cm.setY(0f);
-            cm.setW(measuredWidth);
-            cm.setH(measuredHeight);
-        }
-
-        measuredWidth = Math.max(measuredWidth, minWidth);
-        measuredHeight = Math.max(measuredHeight, minHeight);
-
-        ComponentMeasure m = measure.get(this);
-        m.setW(measuredWidth);
-        m.setH(measuredHeight);
-        m.setVisibility(mScheduledVisibility);
-
-        internalLayoutMeasure(context, measure);
-    }
-
-    private void measure_v0_4_1(
-            @NonNull PaintContext context,
-            float minWidth,
-            float maxWidth,
-            float minHeight,
-            float maxHeight,
-            @NonNull MeasurePass measure) {
-
-        float measuredWidth = Math.min(maxWidth, computeModifierDefinedWidth(context.getContext()));
-        float measuredHeight =
-                Math.min(maxHeight, computeModifierDefinedHeight(context.getContext()));
-
-        if (mWidthModifier.isIntrinsicMin()) {
-            maxWidth = minIntrinsicWidth(context.getContext()) + mPaddingLeft + mPaddingRight;
-        }
-        if (mHeightModifier.isIntrinsicMin()) {
-            maxHeight = minIntrinsicHeight(context.getContext()) + mPaddingTop + mPaddingBottom;
-        }
-        WidthInModifierOperation widthIn = mWidthModifier.getWidthIn();
-        if (widthIn != null) {
-            minWidth = Math.max(minWidth, widthIn.getMin());
-            maxWidth = Math.min(maxWidth, widthIn.getMax());
-        }
-        HeightInModifierOperation heightIn = mHeightModifier.getHeightIn();
-        if (heightIn != null) {
-            minHeight = Math.max(minHeight, heightIn.getMin());
-            maxHeight = Math.min(maxHeight, heightIn.getMax());
-        }
-
-        float insetMaxWidth = maxWidth - mPaddingLeft - mPaddingRight;
-        float insetMaxHeight = maxHeight - mPaddingTop - mPaddingBottom;
-
-        boolean hasHorizontalWrap = false;
-        boolean hasVerticalWrap = false;
-
-        if (isInHorizontalFill()) {
-            measuredWidth = maxWidth;
-            minWidth = insetMaxWidth;
-        } else if (mWidthModifier.hasWeight()) {
-            measuredWidth =
-                    Math.max(measuredWidth, computeModifierDefinedWidth(context.getContext()));
-        } else {
-            measuredWidth = Math.max(measuredWidth, minWidth);
-            measuredWidth = Math.min(measuredWidth, maxWidth);
-            hasHorizontalWrap = mWidthModifier.isWrap() || mWidthModifier.isIntrinsicMin();
-        }
-
-        if (isInVerticalFill()) {
-            measuredHeight = maxHeight;
-            minHeight = insetMaxHeight;
-        } else if (mHeightModifier.hasWeight()) {
-            measuredHeight =
-                    Math.max(measuredHeight, computeModifierDefinedHeight(context.getContext()));
-        } else {
-            measuredHeight = Math.max(measuredHeight, minHeight);
-            measuredHeight = Math.min(measuredHeight, maxHeight);
-            hasVerticalWrap = mHeightModifier.isWrap() || mHeightModifier.isIntrinsicMin();
-        }
-
-        if (minWidth == maxWidth) {
-            measuredWidth = maxWidth;
-        }
-        if (minHeight == maxHeight) {
-            measuredHeight = maxHeight;
-        }
-
-        if (hasHorizontalWrap || hasVerticalWrap) {
-            mCachedWrapSize.setWidth(0f);
-            mCachedWrapSize.setHeight(0f);
-            computeWrapSize(
-                    context, minWidth,
-                    insetMaxWidth, minHeight,
-                    insetMaxHeight,
-                    mWidthModifier.isWrap(),
-                    mHeightModifier.isWrap(), measure, mCachedWrapSize);
-            int selfVisibilityAfterMeasure = measure.get(this).getVisibility();
-            if (Visibility.hasOverride(selfVisibilityAfterMeasure)
-                    && mScheduledVisibility != selfVisibilityAfterMeasure) {
-                mScheduledVisibility = selfVisibilityAfterMeasure;
-            }
-            if (hasHorizontalWrap) {
-                measuredWidth = mCachedWrapSize.getWidth();
-                measuredWidth += mPaddingLeft + mPaddingRight;
-                measuredWidth = Math.max(measuredWidth, minWidth);
-            }
-            if (hasVerticalWrap) {
-                measuredHeight = mCachedWrapSize.getHeight();
-                measuredHeight += mPaddingTop + mPaddingBottom;
-                measuredHeight = Math.max(measuredHeight, minHeight);
-            }
-            if (hasHorizontalScroll()) {
-                mCachedWrapSize.setWidth(0f);
-                mCachedWrapSize.setHeight(0f);
-                computeWrapSize(
-                        context, minWidth,
-                        Float.MAX_VALUE, minHeight,
-                        maxHeight,
-                        false,
-                        false, measure, mCachedWrapSize);
-                float w = mCachedWrapSize.getWidth();
-                float internalHeight = Math.min(measuredHeight, insetMaxHeight);
-                float hostWidth = Math.min(measuredWidth, insetMaxWidth);
-                computeSize(context, 0f, w, 0, internalHeight, measure);
-                mComponentModifiers.setHorizontalScrollDimension(hostWidth, w);
-            }
-            if (hasVerticalScroll()) {
-                mCachedWrapSize.setWidth(0f);
-                mCachedWrapSize.setHeight(0f);
-                computeWrapSize(
-                        context, minWidth, maxWidth, minHeight,
-                        Float.MAX_VALUE, false, false, measure,
-                        mCachedWrapSize);
-                float h = mCachedWrapSize.getHeight();
-                float internalWidth = Math.min(measuredWidth, insetMaxWidth);
-                float hostHeight = Math.min(measuredHeight, insetMaxHeight);
-                computeSize(context, 0f, internalWidth, 0, h, measure);
-                mComponentModifiers.setVerticalScrollDimension(hostHeight, h);
-            }
-        } else {
-            if (hasHorizontalIntrinsicDimension()) {
-                mCachedWrapSize.setWidth(0f);
-                mCachedWrapSize.setHeight(0f);
-                computeWrapSize(
-                        context, minWidth,
-                        Float.MAX_VALUE, minHeight,
-                        maxHeight,
-                        false,
-                        false, measure, mCachedWrapSize);
-                float w = mCachedWrapSize.getWidth();
-                if (hasHorizontalScroll()) {
-                    float internalHeight = Math.min(measuredHeight, insetMaxHeight);
-                    float hostWidth = Math.min(measuredWidth, insetMaxWidth);
-                    computeSize(context, 0f, w, 0, internalHeight, measure);
-                    mComponentModifiers.setHorizontalScrollDimension(hostWidth, w);
-                } else {
-                    computeSize(
-                            context,
-                            0f,
-                            Math.min(measuredWidth, insetMaxWidth),
-                            0f,
-                            Math.min(measuredHeight, insetMaxHeight),
-                            measure);
-                }
-            } else if (hasVerticalIntrinsicDimension()) {
-                mCachedWrapSize.setWidth(0f);
-                mCachedWrapSize.setHeight(0f);
-                computeWrapSize(
-                        context, minWidth, maxWidth, minHeight,
-                        Float.MAX_VALUE, false, false, measure,
-                        mCachedWrapSize);
                 float h = mCachedWrapSize.getHeight();
                 if (hasVerticalScroll()) {
                     float internalWidth = Math.min(measuredWidth, insetMaxWidth);
@@ -681,16 +519,10 @@ public abstract class LayoutManager extends LayoutComponent implements Measurabl
             float maxHeight,
             @NonNull MeasurePass measure) {
         int measureVersion = context.getMeasureVersion();
-        switch (measureVersion) {
-            case 1:
-                measure_v0_4_1(context, minWidth, maxWidth, minHeight, maxHeight, measure);
-                break;
-            case 0:
-                measure_v0_4_0(context, minWidth, maxWidth, minHeight, maxHeight, measure);
-                break;
-            default:
-                measure_v1_1_0(context, minWidth, maxWidth, minHeight, maxHeight, measure);
-                break;
+        if (measureVersion == 0) {
+            measure_v0_4_0(context, minWidth, maxWidth, minHeight, maxHeight, measure);
+        } else { // versions 1 and 2
+            measure_v1_1_0(context, minWidth, maxWidth, minHeight, maxHeight, measure);
         }
     }
 

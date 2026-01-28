@@ -39,6 +39,7 @@ import androidx.compose.remote.core.operations.layout.LayoutComponent;
 import androidx.compose.remote.core.operations.layout.LoopOperation;
 import androidx.compose.remote.core.operations.layout.RootLayoutComponent;
 import androidx.compose.remote.core.operations.layout.TouchOperation;
+import androidx.compose.remote.core.operations.layout.managers.LayoutManager;
 import androidx.compose.remote.core.operations.layout.modifiers.ComponentModifiers;
 import androidx.compose.remote.core.operations.layout.modifiers.ModifierOperation;
 import androidx.compose.remote.core.operations.utilities.IntMap;
@@ -88,7 +89,7 @@ public class CoreDocument implements Serializable {
     ////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final int DEFAULT_FEATURE_PAINT_MEASURE = 1;
-    private static final int DEFAULT_FEATURE_MEASURE_VERSION = 2;
+    private static final int DEFAULT_FEATURE_MEASURE_VERSION = LayoutManager.DEFAULT_MEASURE_TYPE;
 
     ////////////////////////////////////////////////////////////////////////////////////////////
 
