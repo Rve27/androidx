@@ -46,6 +46,14 @@ android {
         applicationId = "androidx.glance.wear.samples"
         minSdk { version = release(29) }
     }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+    }
 }
 
 androidx {
