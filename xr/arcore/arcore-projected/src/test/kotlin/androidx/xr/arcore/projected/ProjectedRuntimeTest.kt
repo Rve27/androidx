@@ -18,9 +18,9 @@ package androidx.xr.arcore.projected
 
 import android.app.Activity
 import androidx.xr.runtime.AnchorPersistenceMode
-import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.EyeTrackingMode
 import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
@@ -74,8 +74,8 @@ class ProjectedRuntimeTest {
                 DepthEstimationMode.SMOOTH_AND_RAW,
                 AnchorPersistenceMode.LOCAL,
                 FaceTrackingMode.BLEND_SHAPES,
-                Config.EyeTrackingMode.COARSE_TRACKING,
-                Config.EyeTrackingMode.FINE_TRACKING,
+                EyeTrackingMode.COARSE_TRACKING,
+                EyeTrackingMode.FINE_TRACKING,
             )
 
         for (mode in unsupportedModes) {

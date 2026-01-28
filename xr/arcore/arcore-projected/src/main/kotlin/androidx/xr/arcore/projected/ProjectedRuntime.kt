@@ -25,6 +25,7 @@ import androidx.xr.runtime.Config.ConfigMode
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.DisplayBlendMode
+import androidx.xr.runtime.EyeTrackingMode
 import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.HandTrackingMode
@@ -92,7 +93,7 @@ internal constructor(
                 FaceTrackingMode.DISABLED,
                 GeospatialMode.DISABLED,
                 GeospatialMode.VPS_AND_GPS,
-                Config.EyeTrackingMode.DISABLED,
+                EyeTrackingMode.DISABLED,
             )
     }
 }
