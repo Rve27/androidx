@@ -36,7 +36,7 @@ import java.util.List;
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class TextLookupInt extends Operation implements VariableSupport, Serializable {
     private static final int OP_CODE = Operations.TEXT_LOOKUP_INT;
-    private static final String CLASS_NAME = "TextFromINT";
+    private static final String CLASS_NAME = "TextLookupInt";
     public int mTextId;
     public int mDataSetId;
     public int mOutIndex;

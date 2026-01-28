@@ -45,7 +45,10 @@ public class DocumentedOperation {
     @NonNull String mDescription = "";
 
     boolean mWIP;
+    boolean mExperimental;
+    int mAddedVersion;
     @Nullable String mTextExamples;
+    @Nullable String mAdditionalDocumentation;
 
     @NonNull ArrayList<StringPair> mExamples = new ArrayList<>();
     @NonNull ArrayList<OperationField> mFields = new ArrayList<>();
@@ -96,6 +99,8 @@ public class DocumentedOperation {
         mId = id;
         mName = name;
         mWIP = wip;
+        mExperimental = false;
+        mAddedVersion = 6;
     }
 
     public DocumentedOperation(@NonNull String category, int id, @NonNull String name) {
@@ -122,6 +127,19 @@ public class DocumentedOperation {
 
     public boolean isWIP() {
         return mWIP;
+    }
+
+    public boolean isExperimental() {
+        return mExperimental;
+    }
+
+    public int getAddedVersion() {
+        return mAddedVersion;
+    }
+
+    @Nullable
+    public String getAdditionalDocumentation() {
+        return mAdditionalDocumentation;
     }
 
     @NonNull
@@ -167,6 +185,42 @@ public class DocumentedOperation {
 
     public int getExamplesHeight() {
         return mExamplesHeight;
+    }
+
+    /**
+     * Set if the operation is experimental
+     *
+     * @param experimental
+     * @return
+     */
+    @NonNull
+    public DocumentedOperation experimental(boolean experimental) {
+        mExperimental = experimental;
+        return this;
+    }
+
+    /**
+     * Set the version when the operation was added
+     *
+     * @param version
+     * @return
+     */
+    @NonNull
+    public DocumentedOperation addedVersion(int version) {
+        mAddedVersion = version;
+        return this;
+    }
+
+    /**
+     * Set the name of the additional documentation file
+     *
+     * @param additionalDocumentation
+     * @return
+     */
+    @NonNull
+    public DocumentedOperation additionalDocumentation(@NonNull String additionalDocumentation) {
+        mAdditionalDocumentation = additionalDocumentation;
+        return this;
     }
 
     /**
