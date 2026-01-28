@@ -21,6 +21,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
+import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
@@ -187,7 +188,7 @@ class OpenXrManagerTest {
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                 deviceTracking = DeviceTrackingMode.DISABLED,
                 depthEstimation = DepthEstimationMode.DISABLED,
-                anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
+                anchorPersistence = AnchorPersistenceMode.LOCAL,
             )
         )
     }
@@ -209,7 +210,7 @@ class OpenXrManagerTest {
                     HandTrackingMode.DISABLED,
                     DeviceTrackingMode.DISABLED,
                     DepthEstimationMode.SMOOTH_AND_RAW,
-                    Config.AnchorPersistenceMode.DISABLED,
+                    AnchorPersistenceMode.DISABLED,
                 )
             )
         }
@@ -226,7 +227,7 @@ class OpenXrManagerTest {
                     HandTrackingMode.DISABLED,
                     DeviceTrackingMode.DISABLED,
                     DepthEstimationMode.DISABLED,
-                    Config.AnchorPersistenceMode.DISABLED,
+                    AnchorPersistenceMode.DISABLED,
                 )
             )
         }

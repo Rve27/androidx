@@ -34,7 +34,7 @@ import androidx.xr.arcore.SessionExtKt;
 import androidx.xr.arcore.XrResourcesManager;
 import androidx.xr.arcore.testing.FakePerceptionManager;
 import androidx.xr.runtime.Config;
-import androidx.xr.runtime.Config.AnchorPersistenceMode;
+import androidx.xr.runtime.AnchorPersistenceMode;
 import androidx.xr.runtime.DepthEstimationMode;
 import androidx.xr.runtime.DeviceTrackingMode;
 import androidx.xr.runtime.HandTrackingMode;
