@@ -18,6 +18,7 @@ package androidx.xr.arcore.projected
 
 import android.app.Activity
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
@@ -66,9 +67,9 @@ class ProjectedRuntimeTest {
                 PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                 HandTrackingMode.BOTH,
                 DeviceTrackingMode.LAST_KNOWN,
-                Config.DepthEstimationMode.RAW_ONLY,
-                Config.DepthEstimationMode.SMOOTH_ONLY,
-                Config.DepthEstimationMode.SMOOTH_AND_RAW,
+                DepthEstimationMode.RAW_ONLY,
+                DepthEstimationMode.SMOOTH_ONLY,
+                DepthEstimationMode.SMOOTH_AND_RAW,
                 Config.AnchorPersistenceMode.LOCAL,
                 Config.FaceTrackingMode.BLEND_SHAPES,
                 Config.EyeTrackingMode.COARSE_TRACKING,

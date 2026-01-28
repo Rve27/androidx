@@ -20,6 +20,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
+import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import com.google.ar.core.Config as ArCoreConfig
@@ -59,7 +60,7 @@ internal constructor(
     }
 
     override fun isSupported(configMode: ConfigMode): Boolean {
-        if (configMode is Config.DepthEstimationMode) {
+        if (configMode is DepthEstimationMode) {
             return isDepthModeSupportedInArCore1x(configMode)
         } else if (configMode is Config.GeospatialMode) {
             return isGeoSpatialModeSupportedInArCore1x(configMode)
@@ -71,14 +72,12 @@ internal constructor(
         lifecycleManager.stop()
     }
 
-    private fun isDepthModeSupportedInArCore1x(
-        depthEstimationMode: Config.DepthEstimationMode
-    ): Boolean {
+    private fun isDepthModeSupportedInArCore1x(depthEstimationMode: DepthEstimationMode): Boolean {
         val arCoreDepthMode =
             when (depthEstimationMode) {
-                Config.DepthEstimationMode.SMOOTH_ONLY,
-                Config.DepthEstimationMode.SMOOTH_AND_RAW -> ArCoreConfig.DepthMode.AUTOMATIC
-                Config.DepthEstimationMode.RAW_ONLY -> ArCoreConfig.DepthMode.RAW_DEPTH_ONLY
+                DepthEstimationMode.SMOOTH_ONLY,
+                DepthEstimationMode.SMOOTH_AND_RAW -> ArCoreConfig.DepthMode.AUTOMATIC
+                DepthEstimationMode.RAW_ONLY -> ArCoreConfig.DepthMode.RAW_DEPTH_ONLY
                 else -> ArCoreConfig.DepthMode.DISABLED
             }
         return lifecycleManager._session.isDepthModeSupported(arCoreDepthMode)

@@ -23,6 +23,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
@@ -185,7 +186,7 @@ class OpenXrManagerTest {
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                 deviceTracking = DeviceTrackingMode.DISABLED,
-                depthEstimation = Config.DepthEstimationMode.DISABLED,
+                depthEstimation = DepthEstimationMode.DISABLED,
                 anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
             )
         )
@@ -207,7 +208,7 @@ class OpenXrManagerTest {
                     PlaneTrackingMode.DISABLED,
                     HandTrackingMode.DISABLED,
                     DeviceTrackingMode.DISABLED,
-                    Config.DepthEstimationMode.SMOOTH_AND_RAW,
+                    DepthEstimationMode.SMOOTH_AND_RAW,
                     Config.AnchorPersistenceMode.DISABLED,
                 )
             )
@@ -224,7 +225,7 @@ class OpenXrManagerTest {
                     PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                     HandTrackingMode.DISABLED,
                     DeviceTrackingMode.DISABLED,
-                    Config.DepthEstimationMode.DISABLED,
+                    DepthEstimationMode.DISABLED,
                     Config.AnchorPersistenceMode.DISABLED,
                 )
             )
@@ -237,9 +238,7 @@ class OpenXrManagerTest {
             underTest.create()
 
             assertFailsWith<UnsupportedOperationException> {
-                underTest.configure(
-                    Config(depthEstimation = Config.DepthEstimationMode.SMOOTH_AND_RAW)
-                )
+                underTest.configure(Config(depthEstimation = DepthEstimationMode.SMOOTH_AND_RAW))
             }
         }
 
@@ -247,24 +246,24 @@ class OpenXrManagerTest {
     fun configure_updatesDepthEstimationForPerceptionManagerAndDepthMaps() =
         initOpenXrManagerAndRunTest {
             underTest.create()
-            check(perceptionManager.depthEstimationMode == Config.DepthEstimationMode.DISABLED)
+            check(perceptionManager.depthEstimationMode == DepthEstimationMode.DISABLED)
             check(
                 perceptionManager.xrResources.leftDepthMap.depthEstimationMode ==
-                    Config.DepthEstimationMode.DISABLED
+                    DepthEstimationMode.DISABLED
             )
             check(
                 perceptionManager.xrResources.rightDepthMap.depthEstimationMode ==
-                    Config.DepthEstimationMode.DISABLED
+                    DepthEstimationMode.DISABLED
             )
 
-            underTest.configure(Config(depthEstimation = Config.DepthEstimationMode.RAW_ONLY))
+            underTest.configure(Config(depthEstimation = DepthEstimationMode.RAW_ONLY))
 
             assertThat(perceptionManager.depthEstimationMode)
-                .isEqualTo(Config.DepthEstimationMode.RAW_ONLY)
+                .isEqualTo(DepthEstimationMode.RAW_ONLY)
             assertThat(perceptionManager.xrResources.leftDepthMap.depthEstimationMode)
-                .isEqualTo(Config.DepthEstimationMode.RAW_ONLY)
+                .isEqualTo(DepthEstimationMode.RAW_ONLY)
             assertThat(perceptionManager.xrResources.rightDepthMap.depthEstimationMode)
-                .isEqualTo(Config.DepthEstimationMode.RAW_ONLY)
+                .isEqualTo(DepthEstimationMode.RAW_ONLY)
         }
 
     // TODO: b/344962771 - Add a more meaningful test once we can use the update() method.
