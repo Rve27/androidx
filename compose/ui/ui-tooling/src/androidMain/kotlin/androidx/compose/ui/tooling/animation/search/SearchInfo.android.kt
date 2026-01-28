@@ -17,6 +17,7 @@
 package androidx.compose.ui.tooling.animation.search
 
 import androidx.compose.animation.tooling.ComposeAnimation
+import androidx.compose.ui.tooling.animation.ClockInfo
 import androidx.compose.ui.tooling.animation.clock.ComposeAnimationClock
 
 /**
@@ -66,8 +67,13 @@ internal interface SearchInfo<
      */
     fun createAnimation(): AnimationType?
 
-    /** Create [ComposeAnimationClock] for target [AnimationType]. */
-    fun createClock(animation: AnimationType): ClockType
+    /**
+     * Create [ComposeAnimationClock] for target [AnimationType].
+     *
+     * @param clockInfo extra information about
+     *   [androidx.compose.ui.tooling.animation.PreviewAnimationClock] required to create a clock.
+     */
+    fun createClock(animation: AnimationType, clockInfo: ClockInfo): ClockType
 
     /** Attach [SearchInfo]'s overrides to allow tooling control animation values. */
     fun attach() {}

@@ -17,6 +17,7 @@
 package androidx.compose.ui.tooling.animation.search
 
 import androidx.compose.animation.core.Transition
+import androidx.compose.ui.tooling.animation.ClockInfo
 import androidx.compose.ui.tooling.animation.TransitionComposeAnimation
 import androidx.compose.ui.tooling.animation.clock.TransitionClock
 import androidx.compose.ui.tooling.animation.parse
@@ -39,7 +40,10 @@ internal class TransitionSearchInfo(transition: Transition<*>) :
         return transition.parse()
     }
 
-    override fun createClock(animation: TransitionComposeAnimation<*>): TransitionClock<*> {
+    override fun createClock(
+        animation: TransitionComposeAnimation<*>,
+        clockInfo: ClockInfo,
+    ): TransitionClock<*> {
         return TransitionClock(animation)
     }
 }

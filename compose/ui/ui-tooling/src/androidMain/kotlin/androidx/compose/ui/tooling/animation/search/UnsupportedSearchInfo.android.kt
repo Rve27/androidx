@@ -16,6 +16,7 @@
 
 package androidx.compose.ui.tooling.animation.search
 
+import androidx.compose.ui.tooling.animation.ClockInfo
 import androidx.compose.ui.tooling.animation.UnsupportedComposeAnimation
 import androidx.compose.ui.tooling.animation.clock.NoopClock
 import androidx.compose.ui.tooling.animation.states.NoopState
@@ -35,7 +36,10 @@ internal class UnsupportedSearchInfo(animation: Any, override val label: String)
         return UnsupportedComposeAnimation.create(label)
     }
 
-    override fun createClock(animation: UnsupportedComposeAnimation): NoopClock {
+    override fun createClock(
+        animation: UnsupportedComposeAnimation,
+        clockInfo: ClockInfo,
+    ): NoopClock {
         return NoopClock(animation)
     }
 }

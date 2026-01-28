@@ -119,10 +119,17 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
             ?: animatedContentClocks[animation]
     }
 
+    private val clockInfo =
+        object : ClockInfo {
+            override fun getMaxDurationPerIterationMillis(): Long {
+                return this@PreviewAnimationClock.getMaxDurationPerIteration()
+            }
+        }
+
     fun trackTransition(searchInfo: TransitionSearchInfo) {
         trackAnimation(searchInfo.animationObject) {
             searchInfo.createAnimation()?.let {
-                transitionClocks[it] = searchInfo.createClock(it)
+                transitionClocks[it] = searchInfo.createClock(it, clockInfo)
                 notifySubscribe(it)
                 return@trackAnimation
             }
@@ -139,7 +146,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
             val composeAnimation = searchInfo.createAnimation()
             onSeek()
             animatedVisibilityClocks[composeAnimation] =
-                searchInfo.createClock(composeAnimation).apply { setClockTime(0L) }
+                searchInfo.createClock(composeAnimation, clockInfo).apply { setClockTime(0L) }
             notifySubscribe(composeAnimation)
         }
     }
@@ -147,7 +154,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     fun trackAnimateXAsState(searchInfo: AnimateXAsStateSearchInfo<*, *>) {
         trackAnimation(searchInfo.animationObject) {
             searchInfo.createAnimation()?.let {
-                animateXAsStateClocks[it] = searchInfo.createClock(it)
+                animateXAsStateClocks[it] = searchInfo.createClock(it, clockInfo)
                 notifySubscribe(it)
                 return@trackAnimation
             }
@@ -164,7 +171,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     fun trackAnimatedContent(searchInfo: AnimatedContentSearchInfo) {
         trackAnimation(searchInfo.animationObject) {
             searchInfo.createAnimation()?.let {
-                animatedContentClocks[it] = searchInfo.createClock(it)
+                animatedContentClocks[it] = searchInfo.createClock(it, clockInfo)
                 notifySubscribe(it)
                 return@trackAnimation
             }
@@ -176,19 +183,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
     fun trackInfiniteTransition(searchInfo: InfiniteTransitionSearchInfo) {
         trackAnimation(searchInfo.animationObject) {
             searchInfo.createAnimation()?.let {
-                infiniteTransitionClocks[it] =
-                    InfiniteTransitionClock(it) {
-                        // Let InfiniteTransitionClock be aware about max duration of other
-                        // animations.
-                        val otherClockMaxDuration =
-                            allClocksExceptInfinite.maxOfOrNull { clock -> clock.getMaxDuration() }
-                                ?: 0
-                        val infiniteMaxDurationPerIteration =
-                            infiniteTransitionClocks.values.maxOfOrNull { clock ->
-                                clock.getMaxDurationPerIteration()
-                            } ?: 0
-                        maxOf(otherClockMaxDuration, infiniteMaxDurationPerIteration)
-                    }
+                infiniteTransitionClocks[it] = searchInfo.createClock(it, clockInfo)
                 notifySubscribe(it)
             }
         }
