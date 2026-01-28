@@ -197,6 +197,11 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
         // 20 is taken from AbsSeekbar.java.
         const val AccessibilitySliderStepsCount = 20
 
+        // TODO(b/479058621): Replace the hardcode number with CONTENT_CHANGE_TYPE_CHECKED after
+        // sdk=36.
+        // The copied variable from AccessibilityEvent#CONTENT_CHANGE_TYPE_CHECKED.
+        const val CONTENT_CHANGE_TYPE_CHECKED = 1 shl 13
+
         /**
          * Timeout to determine whether a text selection changed event and the pending text
          * traversed event could be resulted from the same traverse action.
@@ -2555,12 +2560,26 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
                             )
                         }
                     }
-                    SemanticsProperties.StateDescription,
-                    SemanticsProperties.ToggleableState -> {
+                    SemanticsProperties.StateDescription -> {
                         sendEventForVirtualView(
                             semanticsNodeIdToAccessibilityVirtualNodeId(id),
                             AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED,
                             AccessibilityEventCompat.CONTENT_CHANGE_TYPE_STATE_DESCRIPTION,
+                        )
+                        // Temporary(b/192295060) fix, sending CONTENT_CHANGE_TYPE_UNDEFINED to
+                        // force ViewRootImpl to update its accessibility-focused virtual-node.
+                        // If we have an androidx fix, we can remove this event.
+                        sendEventForVirtualView(
+                            semanticsNodeIdToAccessibilityVirtualNodeId(id),
+                            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED,
+                            AccessibilityEventCompat.CONTENT_CHANGE_TYPE_UNDEFINED,
+                        )
+                    }
+                    SemanticsProperties.ToggleableState -> {
+                        sendEventForVirtualView(
+                            semanticsNodeIdToAccessibilityVirtualNodeId(id),
+                            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED,
+                            CONTENT_CHANGE_TYPE_CHECKED,
                         )
                         // Temporary(b/192295060) fix, sending CONTENT_CHANGE_TYPE_UNDEFINED to
                         // force ViewRootImpl to update its accessibility-focused virtual-node.
