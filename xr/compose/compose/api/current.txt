@@ -239,22 +239,22 @@ package androidx.xr.compose.subspace {
     method public androidx.xr.compose.subspace.FollowTarget ArDevice(androidx.xr.runtime.Session session);
   }
 
-  public final class MovePolicy extends androidx.xr.compose.subspace.DragPolicy {
-    ctor public MovePolicy();
-    ctor @BytecodeOnly public MovePolicy(boolean, boolean, boolean, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    ctor public MovePolicy(optional boolean isEnabled, optional boolean isStickyPose, optional boolean shouldScaleWithDistance, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveStartEvent,kotlin.Unit>? onMoveStart, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEndEvent,kotlin.Unit>? onMoveEnd, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? onMove);
-    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? getOnMove();
-    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEndEvent,kotlin.Unit>? getOnMoveEnd();
-    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveStartEvent,kotlin.Unit>? getOnMoveStart();
-    method @InaccessibleFromKotlin public boolean isEnabled();
-    method @InaccessibleFromKotlin public boolean isStickyPose();
-    method @InaccessibleFromKotlin public boolean shouldScaleWithDistance();
-    property public boolean isEnabled;
-    property public boolean isStickyPose;
-    property public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? onMove;
-    property public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEndEvent,kotlin.Unit>? onMoveEnd;
-    property public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveStartEvent,kotlin.Unit>? onMoveStart;
-    property public boolean shouldScaleWithDistance;
+  @Deprecated public final class MovePolicy extends androidx.xr.compose.subspace.DragPolicy {
+    ctor @Deprecated public MovePolicy();
+    ctor @BytecodeOnly @Deprecated public MovePolicy(boolean, boolean, boolean, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @Deprecated public MovePolicy(optional boolean isEnabled, optional boolean isStickyPose, optional boolean shouldScaleWithDistance, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,kotlin.Unit>? onMoveStart, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,kotlin.Unit>? onMoveEnd, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? onMove);
+    method @InaccessibleFromKotlin @Deprecated public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? getOnMove();
+    method @InaccessibleFromKotlin @Deprecated public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,kotlin.Unit>? getOnMoveEnd();
+    method @InaccessibleFromKotlin @Deprecated public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,kotlin.Unit>? getOnMoveStart();
+    method @InaccessibleFromKotlin @Deprecated public boolean isEnabled();
+    method @InaccessibleFromKotlin @Deprecated public boolean isStickyPose();
+    method @InaccessibleFromKotlin @Deprecated public boolean shouldScaleWithDistance();
+    property @Deprecated public boolean isEnabled;
+    property @Deprecated public boolean isStickyPose;
+    property @Deprecated public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? onMove;
+    property @Deprecated public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,kotlin.Unit>? onMoveEnd;
+    property @Deprecated public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialMoveEvent,kotlin.Unit>? onMoveStart;
+    property @Deprecated public boolean shouldScaleWithDistance;
   }
 
   public final class ResizePolicy {
@@ -580,6 +580,11 @@ package androidx.xr.compose.subspace.layout {
 
   public final class LayoutModifierKt {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier layout(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.layout.SubspaceMeasureScope,? super androidx.xr.compose.subspace.layout.SubspaceMeasurable,? super androidx.xr.compose.unit.VolumeConstraints,? extends androidx.xr.compose.subspace.layout.SubspaceMeasureResult> measure);
+  }
+
+  public final class MovableKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier movable(androidx.xr.compose.subspace.layout.SubspaceModifier, optional boolean enabled, optional boolean stickyPose, optional boolean scaleWithDistance, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,kotlin.Unit>? onMoveStart, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,kotlin.Unit>? onMoveEnd, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialMoveEvent,java.lang.Boolean>? onMove);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier! movable$default(androidx.xr.compose.subspace.layout.SubspaceModifier!, boolean, boolean, boolean, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function1!, kotlin.jvm.functions.Function1!, int, Object!);
   }
 
   public final class OffsetKt {
@@ -984,33 +989,8 @@ package androidx.xr.compose.subspace.layout {
     property public long timestamp;
   }
 
-  public final class SpatialMoveEndEvent {
-    ctor public SpatialMoveEndEvent(androidx.xr.runtime.math.Pose pose, float scale, androidx.xr.compose.unit.IntVolumeSize size);
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
-    method @InaccessibleFromKotlin public float getScale();
-    method @InaccessibleFromKotlin public androidx.xr.compose.unit.IntVolumeSize getSize();
-    property public androidx.xr.runtime.math.Pose pose;
-    property public float scale;
-    property public androidx.xr.compose.unit.IntVolumeSize size;
-  }
-
   public final class SpatialMoveEvent {
-    ctor public SpatialMoveEvent();
-    ctor public SpatialMoveEvent(optional androidx.xr.runtime.math.Pose pose, optional float scale, optional androidx.xr.compose.unit.IntVolumeSize size);
-    ctor @BytecodeOnly public SpatialMoveEvent(androidx.xr.runtime.math.Pose!, float, androidx.xr.compose.unit.IntVolumeSize!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
-    method @InaccessibleFromKotlin public float getScale();
-    method @InaccessibleFromKotlin public androidx.xr.compose.unit.IntVolumeSize getSize();
-    method @InaccessibleFromKotlin public void setPose(androidx.xr.runtime.math.Pose);
-    method @InaccessibleFromKotlin public void setScale(float);
-    method @InaccessibleFromKotlin public void setSize(androidx.xr.compose.unit.IntVolumeSize);
-    property public androidx.xr.runtime.math.Pose pose;
-    property public float scale;
-    property public androidx.xr.compose.unit.IntVolumeSize size;
-  }
-
-  public final class SpatialMoveStartEvent {
-    ctor public SpatialMoveStartEvent(androidx.xr.runtime.math.Pose pose, float scale, androidx.xr.compose.unit.IntVolumeSize size);
+    ctor public SpatialMoveEvent(androidx.xr.runtime.math.Pose pose, float scale, androidx.xr.compose.unit.IntVolumeSize size);
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
     method @InaccessibleFromKotlin public float getScale();
     method @InaccessibleFromKotlin public androidx.xr.compose.unit.IntVolumeSize getSize();
@@ -1123,6 +1103,10 @@ package androidx.xr.compose.subspace.layout {
     property public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? coordinates;
     property protected abstract androidx.compose.ui.unit.LayoutDirection parentLayoutDirection;
   }
+
+  @Deprecated public typealias SpatialMoveEndEvent = androidx.xr.compose.subspace.layout.SpatialMoveEvent;
+
+  @Deprecated public typealias SpatialMoveStartEvent = androidx.xr.compose.subspace.layout.SpatialMoveEvent;
 
 }
 
