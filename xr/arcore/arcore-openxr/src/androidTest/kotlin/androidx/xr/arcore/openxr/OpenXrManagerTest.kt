@@ -23,6 +23,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertFailsWith
@@ -180,7 +181,7 @@ class OpenXrManagerTest {
 
         underTest.configure(
             Config(
-                planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                 deviceTracking = Config.DeviceTrackingMode.DISABLED,
                 depthEstimation = Config.DepthEstimationMode.DISABLED,
                 anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
@@ -201,7 +202,7 @@ class OpenXrManagerTest {
         assertFailsWith<SecurityException> {
             underTest.configure(
                 Config(
-                    Config.PlaneTrackingMode.DISABLED,
+                    PlaneTrackingMode.DISABLED,
                     Config.HandTrackingMode.DISABLED,
                     Config.DeviceTrackingMode.DISABLED,
                     Config.DepthEstimationMode.SMOOTH_AND_RAW,
@@ -218,7 +219,7 @@ class OpenXrManagerTest {
         assertFailsWith<IllegalStateException> {
             underTest.configure(
                 Config(
-                    Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                    PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                     Config.HandTrackingMode.DISABLED,
                     Config.DeviceTrackingMode.DISABLED,
                     Config.DepthEstimationMode.DISABLED,
@@ -289,7 +290,7 @@ class OpenXrManagerTest {
             underTest.create()
             underTest.resume()
             check(perceptionManager.trackables.isEmpty())
-            check(underTest.config.planeTracking == Config.PlaneTrackingMode.DISABLED)
+            check(underTest.config.planeTracking == PlaneTrackingMode.DISABLED)
 
             underTest.update()
 
@@ -303,9 +304,7 @@ class OpenXrManagerTest {
             underTest.create()
             underTest.resume()
             check(perceptionManager.xrResources.updatables.isEmpty())
-            underTest.configure(
-                Config(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
-            )
+            underTest.configure(Config(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
 
             underTest.update()
 

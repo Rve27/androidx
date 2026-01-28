@@ -26,6 +26,7 @@ import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException
 import androidx.xr.arcore.runtime.HandJointType
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -133,7 +134,7 @@ class OpenXrPerceptionManagerTest {
         // TODO: b/345314278 -- Add more meaningful tests once trackables are implemented properly
         // and
         // a fake perception library can be used mock trackables.
-        openXrManager.configure(Config(planeTracking = Config.PlaneTrackingMode.DISABLED))
+        openXrManager.configure(Config(planeTracking = PlaneTrackingMode.DISABLED))
 
         underTest.updatePlanes(XR_TIME)
 
@@ -362,7 +363,7 @@ class OpenXrPerceptionManagerTest {
 
     @Test
     fun hitTest_planeTrackingDisabled_throwsIllegalStateException() = initOpenXrManagerAndRunTest {
-        openXrManager.configure(Config(planeTracking = Config.PlaneTrackingMode.DISABLED))
+        openXrManager.configure(Config(planeTracking = PlaneTrackingMode.DISABLED))
         underTest.updatePlanes(XR_TIME)
         underTest.update(XR_TIME)
 
@@ -442,7 +443,7 @@ class OpenXrPerceptionManagerTest {
             openXrManager.configure(
                 Config(
                     deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
-                    planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                    planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                     //                    handTracking = Config.HandTrackingMode.BOTH,
                 )
             )

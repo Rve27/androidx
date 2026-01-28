@@ -25,6 +25,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Log
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionConfigureGooglePlayServicesLocationLibraryNotLinked
 import androidx.xr.runtime.SessionConfigureSuccess
@@ -74,7 +75,7 @@ class SessionLifecycleHelper(
 
     private fun getRequiredPermissions(config: Config): List<String> {
         val permissions = mutableListOf(CAMERA)
-        if (config.planeTracking != Config.PlaneTrackingMode.DISABLED) {
+        if (config.planeTracking != PlaneTrackingMode.DISABLED) {
             permissions.add(ACCESS_COARSE_LOCATION)
         }
         if (config.geospatial != Config.GeospatialMode.DISABLED) {

@@ -16,6 +16,8 @@
 
 package androidx.xr.runtime
 
+import androidx.annotation.RestrictTo
+
 /** A device capability that determines how virtual content is added to the real world. */
 public class DisplayBlendMode private constructor(private val value: Int) {
 
@@ -32,5 +34,32 @@ public class DisplayBlendMode private constructor(private val value: Int) {
          * the Alpha component.
          */
         @JvmField public val ALPHA_BLEND: DisplayBlendMode = DisplayBlendMode(2)
+    }
+}
+
+/** Feature that allows tracking of and provides information about scene planes. */
+@SuppressWarnings("HiddenSuperclass")
+public class PlaneTrackingMode
+private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
+    Config.ConfigMode {
+    public companion object {
+        /** Planes will not be tracked. */
+        @JvmField public val DISABLED: PlaneTrackingMode = PlaneTrackingMode(0)
+        /**
+         * Horizontal and vertical planes will be tracked. Note that setting this mode will consume
+         * additional runtime resources.
+         *
+         * Supported runtimes:
+         * - OpenXR
+         * - Play Services
+         *
+         * Required permissions:
+         * - [SCENE_UNDERSTANDING_COARSE][androidx.xr.runtime.manifest.SCENE_UNDERSTANDING_COARSE]
+         *   (OpenXR runtimes only)
+         * - [ACCESS_COARSE_LOCATION][android.Manifest.permission.ACCESS_COARSE_LOCATION] (Play
+         *   Services runtimes only)
+         * - [CAMERA][android.Manifest.permission.CAMERA] (Play Services runtimes only)
+         */
+        @JvmField public val HORIZONTAL_AND_VERTICAL: PlaneTrackingMode = PlaneTrackingMode(1)
     }
 }

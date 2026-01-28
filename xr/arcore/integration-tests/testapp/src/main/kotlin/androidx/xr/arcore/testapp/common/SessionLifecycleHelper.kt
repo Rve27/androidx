@@ -23,6 +23,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Log
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.RequiredCalibrationType
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionConfigureCalibrationRequired
@@ -82,7 +83,7 @@ class SessionLifecycleHelper(
 
     private fun getRequiredPermissions(config: Config): List<String> {
         val permissions = mutableListOf<String>()
-        if (config.planeTracking != Config.PlaneTrackingMode.DISABLED) {
+        if (config.planeTracking != PlaneTrackingMode.DISABLED) {
             permissions.add(SCENE_UNDERSTANDING_COARSE)
         }
         if (config.depthEstimation != Config.DepthEstimationMode.DISABLED) {

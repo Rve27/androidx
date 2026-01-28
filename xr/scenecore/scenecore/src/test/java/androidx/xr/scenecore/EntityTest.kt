@@ -23,7 +23,7 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.xr.arcore.RenderViewpoint
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.Config.PlaneTrackingMode
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.internal.LifecycleManager

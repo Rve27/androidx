@@ -206,7 +206,7 @@ class SessionTest {
         check(
             lifecycleManager.config ==
                 Config(
-                    planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                    planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                     augmentedObjectCategories = AugmentedObjectCategory.all(),
                     handTracking = Config.HandTrackingMode.BOTH,
                     deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
@@ -216,7 +216,7 @@ class SessionTest {
         )
         val newConfig =
             Config(
-                planeTracking = Config.PlaneTrackingMode.DISABLED,
+                planeTracking = PlaneTrackingMode.DISABLED,
                 augmentedObjectCategories = listOf<AugmentedObjectCategory>(),
                 handTracking = Config.HandTrackingMode.DISABLED,
                 deviceTracking = Config.DeviceTrackingMode.DISABLED,
@@ -262,7 +262,7 @@ class SessionTest {
 
         assertFailsWith<UnsupportedOperationException> {
             underTest.configure(
-                currentConfig.copy(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
+                currentConfig.copy(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
             )
         }
         assertThat(underTest.config).isEqualTo(currentConfig)
