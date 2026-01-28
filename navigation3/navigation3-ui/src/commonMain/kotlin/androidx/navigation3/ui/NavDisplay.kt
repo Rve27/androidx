@@ -42,8 +42,12 @@ import androidx.compose.ui.util.fastForEachReversed
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.rememberLifecycleOwner
+import androidx.navigation3.runtime.MetadataScope
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
+import androidx.navigation3.runtime.NavMetadataKey
+import androidx.navigation3.runtime.get
+import androidx.navigation3.runtime.metadata
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.LocalEntriesToExcludeFromCurrentScene
@@ -75,6 +79,66 @@ import kotlinx.coroutines.launch
 /** Object that indicates the features that can be handled by the [NavDisplay] */
 public object NavDisplay {
     /**
+     * The key for [NavEntry.metadata] or [Scene.metadata] to notify the [NavDisplay] of how the
+     * content should be animated when adding to the backstack.
+     *
+     * **IMPORTANT** [NavDisplay] only looks at the [Scene.metadata] to determine the final
+     * [ContentTransform]. It is the responsibility of the [Scene.metadata] to decide which
+     * [ContentTransform] to return, whether that be from the [NavEntry.metadata] or something
+     * custom.
+     *
+     * **HOW TO USE** Within the [metadata] DSL, invoke [MetadataScope.put] and pass [TransitionKey]
+     * as the key. The `value: AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform?`
+     * should be the [ContentTransform] to be used when adding to the backstack.
+     *
+     * @sample androidx.navigation3.ui.samples.SceneOverrideEntryTransitionsSample
+     */
+    public object TransitionKey :
+        NavMetadataKey<AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform>
+
+    /**
+     * The key for [NavEntry.metadata] or [Scene.metadata] to notify the [NavDisplay] of how the
+     * content should be animated when popping from backstack.
+     *
+     * **IMPORTANT** [NavDisplay] only looks at the [Scene.metadata] to determine the final
+     * [ContentTransform]. It is the responsibility of the [Scene.metadata] to decide which
+     * [ContentTransform] to return, whether that be from the [NavEntry.metadata] or something
+     * custom.
+     *
+     * **HOW TO USE** Within the [metadata] DSL, invoke [MetadataScope.put] and pass
+     * [PopTransitionKey] as the key. The `value: AnimatedContentTransitionScope<Scene<*>>.() ->
+     * ContentTransform?` should be the [ContentTransform] to be used when popping from the
+     * backstack.
+     *
+     * @sample androidx.navigation3.ui.samples.SceneOverrideEntryTransitionsSample
+     */
+    public object PopTransitionKey :
+        NavMetadataKey<AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform>
+
+    /**
+     * The key for [NavEntry.metadata] or [Scene.metadata] to notify the [NavDisplay] of how the
+     * content should be animated when popping from backstack using a Predictive back gesture.
+     *
+     * **IMPORTANT** [NavDisplay] only looks at the [Scene.metadata] to determine the final
+     * [ContentTransform]. It is the responsibility of the [Scene.metadata] to decide which
+     * [ContentTransform] to return, whether that be from the [NavEntry.metadata] or something
+     * custom.
+     *
+     * **HOW TO USE** Within the [metadata] DSL, invoke [MetadataScope.put] and pass
+     * [PredictivePopTransitionKey] as the key. The `value:
+     * AnimatedContentTransitionScope<Scene<*>>.(Int) -> ContentTransform?` should be the
+     * [ContentTransform] to be used when popping from backstack using a Predictive back gesture.
+     *
+     * @sample androidx.navigation3.ui.samples.SceneOverrideEntryTransitionsSample
+     */
+    public object PredictivePopTransitionKey :
+        NavMetadataKey<
+            AnimatedContentTransitionScope<Scene<*>>.(
+                @NavigationEvent.SwipeEdge Int
+            ) -> ContentTransform?
+        >
+
+    /**
      * Function to be called on the [NavEntry.metadata] or [Scene.metadata] to notify the
      * [NavDisplay] of how the content should be animated using the provided [ContentTransform].
      *
@@ -87,7 +151,7 @@ public object NavDisplay {
      */
     public fun transitionSpec(
         transitionSpec: AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform?
-    ): Map<String, Any> = mapOf(TRANSITION_SPEC to transitionSpec)
+    ): Map<String, Any> = mapOf(TRANSITION_SPEC.toString() to transitionSpec)
 
     /**
      * Function to be called on the [NavEntry.metadata] or [Scene.metadata] to notify the
@@ -104,7 +168,7 @@ public object NavDisplay {
      */
     public fun popTransitionSpec(
         popTransitionSpec: AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform?
-    ): Map<String, Any> = mapOf(POP_TRANSITION_SPEC to popTransitionSpec)
+    ): Map<String, Any> = mapOf(POP_TRANSITION_SPEC.toString() to popTransitionSpec)
 
     /**
      * Function to be called on the [NavEntry.metadata] or [Scene.metadata] to notify the
@@ -125,11 +189,12 @@ public object NavDisplay {
             AnimatedContentTransitionScope<Scene<*>>.(
                 @NavigationEvent.SwipeEdge Int
             ) -> ContentTransform?
-    ): Map<String, Any> = mapOf(PREDICTIVE_POP_TRANSITION_SPEC to predictivePopTransitionSpec)
+    ): Map<String, Any> =
+        mapOf(PREDICTIVE_POP_TRANSITION_SPEC.toString() to predictivePopTransitionSpec)
 
-    internal const val TRANSITION_SPEC = "transitionSpec"
-    internal const val POP_TRANSITION_SPEC = "popTransitionSpec"
-    internal const val PREDICTIVE_POP_TRANSITION_SPEC = "predictivePopTransitionSpec"
+    internal val TRANSITION_SPEC = TransitionKey
+    internal val POP_TRANSITION_SPEC = PopTransitionKey
+    internal val PREDICTIVE_POP_TRANSITION_SPEC = PredictivePopTransitionKey
 }
 
 /**
@@ -723,11 +788,11 @@ public fun <T : Any> NavDisplay(
                     ?: predictivePopTransitionSpec(swipeEdge)
             }
             isPop -> {
-                transitionScene.contentTransform(POP_TRANSITION_SPEC)?.invoke(this)
+                transitionScene.contentTransform(NavDisplay.PopTransitionKey)?.invoke(this)
                     ?: popTransitionSpec(this)
             }
             else -> {
-                transitionScene.contentTransform(TRANSITION_SPEC)?.invoke(this)
+                transitionScene.contentTransform(NavDisplay.TransitionKey)?.invoke(this)
                     ?: transitionSpec(this)
             }
         }
@@ -809,7 +874,7 @@ private fun <T : Any> isPop(oldBackStack: List<T>, newBackStack: List<T>): Boole
 
 @Suppress("UNCHECKED_CAST")
 private fun <T : Any> Scene<T>.contentTransform(
-    key: String
+    key: NavMetadataKey<AnimatedContentTransitionScope<Scene<*>>.() -> ContentTransform>
 ): (AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform)? {
     return metadata[key] as? AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform
 }
@@ -819,7 +884,7 @@ private fun <T : Any> Scene<T>.predictivePopSpec():
     (AnimatedContentTransitionScope<Scene<T>>.(
         @NavigationEvent.SwipeEdge Int
     ) -> ContentTransform)? {
-    return metadata[PREDICTIVE_POP_TRANSITION_SPEC]
+    return metadata[NavDisplay.PredictivePopTransitionKey]
         as?
         AnimatedContentTransitionScope<Scene<T>>.(
             @NavigationEvent.SwipeEdge Int
