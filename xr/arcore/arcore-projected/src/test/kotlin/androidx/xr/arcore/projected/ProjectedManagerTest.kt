@@ -16,6 +16,7 @@
 package androidx.xr.arcore.projected
 
 import android.app.Activity
+import androidx.xr.arcore.runtime.Geospatial
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.GeospatialMode
@@ -98,11 +99,14 @@ class ProjectedManagerTest {
         underTest.running.set(true)
 
         underTest.update()
+
         assertThat(perceptionManager.xrResources.deviceTrackingState)
             .isEqualTo(TrackingState.TRACKING)
         assertThat(perceptionManager.xrResources.geospatialTrackingState)
             .isEqualTo(TrackingState.STOPPED)
         assertThat(perceptionManager.arDevice.devicePose).isEqualTo(expectedPose)
+        assertThat(perceptionManager.xrResources.geospatial.state)
+            .isEqualTo(Geospatial.State.NOT_RUNNING)
     }
 
     @Test
