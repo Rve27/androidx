@@ -226,6 +226,7 @@ class ProjectedTestAppActivity : ComponentActivity() {
 
     private fun getGeospatialPoseText(): String {
         val devicePose = ArDevice.getInstance(session).state.value.devicePose
+        val geospatialState = Geospatial.getInstance(session).state.value
         when (val geospatialPoseResult = geospatial.createGeospatialPoseFromPose(devicePose)) {
             is CreateGeospatialPoseFromPoseSuccess -> {
                 val currentGeospatialPose = geospatialPoseResult.pose
@@ -249,7 +250,8 @@ class ProjectedTestAppActivity : ComponentActivity() {
                 )
                 val comparisonMessage = testGeospatialConversions(currentGeospatialPose)
 
-                var text = "\nGeospatialPose: ${currentGeospatialPose}"
+                var text = "\nGeospatial State: ${getGeospatialStateMessage(geospatialState)}"
+                text += "\nGeospatialPose: ${currentGeospatialPose}"
                 text += "\nVPS availability: $vpsStatusMessage"
                 text += "\nComparison:\n$comparisonMessage"
                 return text
@@ -267,6 +269,18 @@ class ProjectedTestAppActivity : ComponentActivity() {
             val vpsAvailabilityResult = geospatial.checkVpsAvailability(latitude, longitude)
             vpsStatusMessage = getVpsMessage(vpsAvailabilityResult)
             Log.info { "VPS availability: $vpsStatusMessage ($vpsAvailabilityResult)" }
+        }
+    }
+
+    private fun getGeospatialStateMessage(geospatialState: Geospatial.State?): String {
+        return when (geospatialState) {
+            Geospatial.State.RUNNING -> "Running"
+            Geospatial.State.NOT_RUNNING -> "Not Running"
+            Geospatial.State.ERROR_INTERNAL -> "Internal Error"
+            Geospatial.State.ERROR_NOT_AUTHORIZED -> "Not Authorized"
+            Geospatial.State.ERROR_RESOURCE_EXHAUSTED -> "Resource Exhausted"
+            Geospatial.State.PAUSED -> "Paused"
+            else -> "Checking..."
         }
     }
 
