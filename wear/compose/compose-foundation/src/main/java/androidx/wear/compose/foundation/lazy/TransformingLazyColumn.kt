@@ -69,10 +69,13 @@ import androidx.wear.compose.foundation.rotary.rotaryScrollable
  * @sample androidx.wear.compose.foundation.samples.TransformingLazyColumnWithSnapSample
  * @param modifier The modifier to be applied to the layout.
  * @param state The state object to be used to control the list and the applied layout.
- * @param contentPadding a padding around the whole content. This will add padding for the content
- *   after it has been clipped, which is not possible via [modifier] param. You can use it to add a
- *   padding before the first item or after the last one. If you want to add a spacing between each
- *   item use [verticalArrangement].
+ * @param contentPadding The padding around the whole content. This will add padding for the content
+ *   after it has been clipped, which is not possible via [modifier] param. You can use it to add
+ *   padding before the first item or after the last one. Note that if the first or last item uses
+ *   [Modifier.responsiveVerticalPadding], the effective vertical padding at that edge will be the
+ *   maximum of the value provided here and the value calculated by the responsive padding modifier.
+ *   This allows enforcing a minimum padding (e.g. for global screen insets) while still allowing
+ *   specific items to request larger, responsive padding.
  * @param reverseLayout reverse the direction of scrolling and layout, when `true` items will be
  *   composed from the bottom to the top
  * @param verticalArrangement The vertical arrangement of the items, to be used when there is enough
@@ -132,7 +135,7 @@ public fun TransformingLazyColumn(
     // preventing unnecessary work during an active scroll.
     val isScrollingState = remember { derivedStateOf { state.isScrollInProgress } }
     val measurementStrategy =
-        remember(contentPadding, reverseLayout) {
+        remember(contentPadding, reverseLayout, density) {
             TransformingLazyColumnContentPaddingMeasurementStrategy(
                 contentPadding = contentPadding,
                 layoutDirection = layoutDirection,
@@ -238,10 +241,13 @@ public fun TransformingLazyColumn(
  * @sample androidx.wear.compose.foundation.samples.TransformingLazyColumnWithSnapSample
  * @param modifier The modifier to be applied to the layout.
  * @param state The state object to be used to control the list and the applied layout.
- * @param contentPadding a padding around the whole content. This will add padding for the content
- *   after it has been clipped, which is not possible via [modifier] param. You can use it to add a
- *   padding before the first item or after the last one. If you want to add a spacing between each
- *   item use [verticalArrangement].
+ * @param contentPadding The padding around the whole content. This will add padding for the content
+ *   after it has been clipped, which is not possible via [modifier] param. You can use it to add
+ *   padding before the first item or after the last one. Note that if the first or last item uses
+ *   [Modifier.responsiveVerticalPadding], the effective vertical padding at that edge will be the
+ *   maximum of the value provided here and the value calculated by the responsive padding modifier.
+ *   This allows enforcing a minimum padding (e.g. for global screen insets) while still allowing
+ *   specific items to request larger, responsive padding.
  * @param verticalArrangement The vertical arrangement of the items.
  * @param horizontalAlignment The horizontal alignment of the items.
  * @param flingBehavior Logic describing fling behavior for touch scroll. If snapping is required
