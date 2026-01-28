@@ -25,6 +25,7 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.FaceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
@@ -108,7 +109,7 @@ class SessionLifecycleHelper(
         if (config.eyeTracking == Config.EyeTrackingMode.FINE_TRACKING) {
             permissions.add(EYE_TRACKING_FINE)
         }
-        if (config.geospatial == Config.GeospatialMode.VPS_AND_GPS) {
+        if (config.geospatial == GeospatialMode.VPS_AND_GPS) {
             permissions.add(ACCESS_FINE_LOCATION)
         }
         return permissions

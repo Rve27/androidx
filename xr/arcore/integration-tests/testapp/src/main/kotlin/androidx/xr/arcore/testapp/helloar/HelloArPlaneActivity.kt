@@ -54,6 +54,7 @@ import androidx.xr.compose.subspace.layout.size
 import androidx.xr.compose.unit.DpVolumeSize
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.XrDevice
@@ -109,7 +110,7 @@ class HelloArPlaneActivity : ComponentActivity() {
         var title = intent.getStringExtra("TITLE")
         if (title == null) title = "Hello AR Plane"
         val blendMode = XrDevice.getCurrentDevice(session).getPreferredDisplayBlendMode()
-        val isGeospatialSupported = Config.GeospatialMode.VPS_AND_GPS.isSupported(session)
+        val isGeospatialSupported = GeospatialMode.VPS_AND_GPS.isSupported(session)
         Scaffold(
             modifier = Modifier.fillMaxSize().padding(0.dp),
             topBar = {

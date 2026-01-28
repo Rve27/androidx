@@ -24,6 +24,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -145,7 +146,7 @@ class OpenXrGeospatialTest {
             openXrManager = OpenXrManager(it, perceptionManager, timeSource)
             openXrManager.create()
             openXrManager.resume()
-            openXrManager.configure(Config(geospatial = Config.GeospatialMode.VPS_AND_GPS))
+            openXrManager.configure(Config(geospatial = GeospatialMode.VPS_AND_GPS))
 
             testBody()
 
