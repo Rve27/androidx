@@ -23,6 +23,7 @@ import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
@@ -86,7 +87,7 @@ internal constructor(
         Config(
             PlaneTrackingMode.DISABLED,
             augmentedObjectCategories = listOf(),
-            Config.HandTrackingMode.DISABLED,
+            HandTrackingMode.DISABLED,
             Config.DeviceTrackingMode.DISABLED,
             Config.DepthEstimationMode.DISABLED,
             Config.AnchorPersistenceMode.LOCAL,
@@ -104,7 +105,7 @@ internal constructor(
         // XR_ERROR_PERMISSION_INSUFFICIENT when the HAND_TRACKING permission is not
         // granted, so we manually check it here.
         if (
-            config.handTracking != Config.HandTrackingMode.DISABLED &&
+            config.handTracking != HandTrackingMode.DISABLED &&
                 ContextCompat.checkSelfPermission(activity, HAND_TRACKING) !=
                     PackageManager.PERMISSION_GRANTED
         ) {
@@ -154,7 +155,7 @@ internal constructor(
         }
 
         if (config.handTracking != this.config.handTracking) {
-            if (config.handTracking == Config.HandTrackingMode.BOTH) {
+            if (config.handTracking == HandTrackingMode.BOTH) {
                 perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.leftHand)
                 perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.rightHand)
             } else {

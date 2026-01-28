@@ -21,6 +21,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
@@ -120,7 +121,7 @@ internal constructor(
                 PlaneFindingMode.DISABLED
             }
 
-        if (config.handTracking != Config.HandTrackingMode.DISABLED) {
+        if (config.handTracking != HandTrackingMode.DISABLED) {
             throw UnsupportedOperationException()
         }
 

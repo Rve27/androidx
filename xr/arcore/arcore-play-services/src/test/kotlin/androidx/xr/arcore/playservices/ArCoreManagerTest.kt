@@ -24,7 +24,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.AnchorPersistenceMode
 import androidx.xr.runtime.Config.DepthEstimationMode
-import androidx.xr.runtime.Config.HandTrackingMode
+import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
 import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
