@@ -47,6 +47,7 @@ import androidx.xr.runtime.AnchorPersistenceMode;
 import androidx.xr.runtime.Config;
 import androidx.xr.runtime.DepthEstimationMode;
 import androidx.xr.runtime.DeviceTrackingMode;
+import androidx.xr.runtime.EyeTrackingMode;
 import androidx.xr.runtime.FaceTrackingMode;
 import androidx.xr.runtime.GeospatialMode;
 import androidx.xr.runtime.HandTrackingMode;
@@ -285,7 +286,7 @@ public class GeospatialGuavaTest {
                                         AnchorPersistenceMode.DISABLED,
                                         FaceTrackingMode.DISABLED,
                                         GeospatialMode.VPS_AND_GPS,
-                                        Config.EyeTrackingMode.DISABLED,
+                                        EyeTrackingMode.DISABLED,
                                         Config.CameraFacingDirection.WORLD));
 
                         try {
