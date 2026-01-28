@@ -22,6 +22,7 @@ import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
 import androidx.xr.runtime.DisplayBlendMode
+import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import kotlin.time.ComparableTimeMark
 
@@ -79,7 +80,7 @@ internal constructor(
         internal val SUPPORTED_CONFIG_MODES: Set<ConfigMode> =
             setOf(
                 PlaneTrackingMode.DISABLED,
-                Config.HandTrackingMode.DISABLED,
+                HandTrackingMode.DISABLED,
                 Config.DeviceTrackingMode.DISABLED,
                 Config.DepthEstimationMode.DISABLED,
                 Config.AnchorPersistenceMode.DISABLED,

@@ -29,7 +29,7 @@ class ConfigTest {
         val config =
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                handTracking = Config.HandTrackingMode.BOTH,
+                handTracking = HandTrackingMode.BOTH,
             )
 
         assertThat(config).isEqualTo(config)
@@ -40,12 +40,12 @@ class ConfigTest {
         val config1 =
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                handTracking = Config.HandTrackingMode.BOTH,
+                handTracking = HandTrackingMode.BOTH,
             )
         val config2 =
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                handTracking = Config.HandTrackingMode.BOTH,
+                handTracking = HandTrackingMode.BOTH,
             )
 
         assertThat(config1).isEqualTo(config2)
@@ -61,8 +61,8 @@ class ConfigTest {
 
     @Test
     fun equals_differentHandTracking_returnsFalse() {
-        val config1 = Config(handTracking = Config.HandTrackingMode.BOTH)
-        val config2 = Config(handTracking = Config.HandTrackingMode.DISABLED)
+        val config1 = Config(handTracking = HandTrackingMode.BOTH)
+        val config2 = Config(handTracking = HandTrackingMode.DISABLED)
 
         assertThat(config1).isNotEqualTo(config2)
     }
@@ -97,12 +97,12 @@ class ConfigTest {
         val config1 =
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                handTracking = Config.HandTrackingMode.BOTH,
+                handTracking = HandTrackingMode.BOTH,
             )
         val config2 =
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                handTracking = Config.HandTrackingMode.BOTH,
+                handTracking = HandTrackingMode.BOTH,
             )
 
         assertThat(config1.hashCode()).isEqualTo(config2.hashCode())
@@ -113,13 +113,10 @@ class ConfigTest {
         val config1 =
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                handTracking = Config.HandTrackingMode.BOTH,
+                handTracking = HandTrackingMode.BOTH,
             )
         val config2 =
-            Config(
-                planeTracking = PlaneTrackingMode.DISABLED,
-                handTracking = Config.HandTrackingMode.BOTH,
-            )
+            Config(planeTracking = PlaneTrackingMode.DISABLED, handTracking = HandTrackingMode.BOTH)
 
         assertThat(config1.hashCode()).isNotEqualTo(config2.hashCode())
     }
@@ -129,7 +126,7 @@ class ConfigTest {
         val config =
             Config(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                handTracking = Config.HandTrackingMode.BOTH,
+                handTracking = HandTrackingMode.BOTH,
             )
 
         val copy = config.copy()
@@ -143,12 +140,12 @@ class ConfigTest {
         val config =
             Config(
                 planeTracking = PlaneTrackingMode.DISABLED,
-                handTracking = Config.HandTrackingMode.DISABLED,
+                handTracking = HandTrackingMode.DISABLED,
             )
         val copy =
             config.copy(
                 planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                handTracking = Config.HandTrackingMode.BOTH,
+                handTracking = HandTrackingMode.BOTH,
             )
 
         assertThat(copy).isNotEqualTo(config)

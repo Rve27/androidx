@@ -208,7 +208,7 @@ class SessionTest {
                 Config(
                     planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
                     augmentedObjectCategories = AugmentedObjectCategory.all(),
-                    handTracking = Config.HandTrackingMode.BOTH,
+                    handTracking = HandTrackingMode.BOTH,
                     deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
                     depthEstimation = Config.DepthEstimationMode.SMOOTH_AND_RAW,
                     anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
@@ -218,7 +218,7 @@ class SessionTest {
             Config(
                 planeTracking = PlaneTrackingMode.DISABLED,
                 augmentedObjectCategories = listOf<AugmentedObjectCategory>(),
-                handTracking = Config.HandTrackingMode.DISABLED,
+                handTracking = HandTrackingMode.DISABLED,
                 deviceTracking = Config.DeviceTrackingMode.DISABLED,
                 depthEstimation = Config.DepthEstimationMode.DISABLED,
                 anchorPersistence = Config.AnchorPersistenceMode.DISABLED,
