@@ -18,6 +18,7 @@ package androidx.pdf.annotation
 
 import android.content.Context
 import android.graphics.Path
+import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.Region
 import android.util.SparseArray
@@ -29,6 +30,7 @@ import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.StampAnnotation
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.hypot
 
 /**
  * Handles touch events to detect hits on existing annotations.
@@ -41,6 +43,8 @@ internal class AnnotationsLocator(
     private val pageInfoProvider: PageInfoProvider,
 ) {
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    // Track the starting point of the current gesture
+    private var startingPoint: PointF? = null
 
     /** Handles the touch event to perform hit detection. */
     internal fun findAnnotations(
@@ -48,12 +52,26 @@ internal class AnnotationsLocator(
         event: MotionEvent,
     ): List<KeyedPdfAnnotation> {
         return when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN,
-            MotionEvent.ACTION_MOVE -> {
-                val pageInfo = pageInfoProvider.getPageInfoFromViewCoordinates(event.x, event.y)
-                pageInfo?.let { findAnnotationsAtPoint(it, annotations, event) } ?: emptyList()
+            MotionEvent.ACTION_DOWN -> {
+                // Start tracking the gesture
+                startingPoint = PointF(event.x, event.y)
+                findAnnotationsAtPoint(annotations, event)
             }
-
+            MotionEvent.ACTION_MOVE -> {
+                val start = startingPoint
+                // Perform hit detection if the gesture start was missed or if moved beyond slop.
+                if (start == null || hypot(start.x - event.x, start.y - event.y) > touchSlop) {
+                    findAnnotationsAtPoint(annotations, event)
+                } else {
+                    emptyList()
+                }
+            }
+            MotionEvent.ACTION_UP,
+            MotionEvent.ACTION_CANCEL -> {
+                // Reset the state
+                startingPoint = null
+                emptyList()
+            }
             else -> emptyList()
         }
     }
@@ -63,10 +81,12 @@ internal class AnnotationsLocator(
      * using precise path intersection.
      */
     private fun findAnnotationsAtPoint(
-        pageInfo: PageInfoProvider.PageInfo,
         annotations: SparseArray<PageAnnotationsData>,
         event: MotionEvent,
     ): List<KeyedPdfAnnotation> {
+        val pageInfo =
+            pageInfoProvider.getPageInfoFromViewCoordinates(event.x, event.y) ?: return emptyList()
+
         val touchRectView =
             RectF(
                 event.x - touchSlop,
