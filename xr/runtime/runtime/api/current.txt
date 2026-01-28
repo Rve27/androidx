@@ -36,9 +36,9 @@ package androidx.xr.runtime {
     ctor public Config(optional androidx.xr.runtime.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.HandTrackingMode handTracking, optional androidx.xr.runtime.DeviceTrackingMode deviceTracking);
     ctor public Config(optional androidx.xr.runtime.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.HandTrackingMode handTracking, optional androidx.xr.runtime.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.DepthEstimationMode depthEstimation);
     ctor public Config(optional androidx.xr.runtime.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.HandTrackingMode handTracking, optional androidx.xr.runtime.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.AnchorPersistenceMode anchorPersistence);
-    ctor public Config(optional androidx.xr.runtime.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.HandTrackingMode handTracking, optional androidx.xr.runtime.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.Config.FaceTrackingMode faceTracking);
-    ctor public Config(optional androidx.xr.runtime.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.HandTrackingMode handTracking, optional androidx.xr.runtime.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.Config.FaceTrackingMode faceTracking, optional androidx.xr.runtime.Config.GeospatialMode geospatial);
-    ctor @BytecodeOnly public Config(androidx.xr.runtime.PlaneTrackingMode!, androidx.xr.runtime.HandTrackingMode!, androidx.xr.runtime.DeviceTrackingMode!, androidx.xr.runtime.DepthEstimationMode!, androidx.xr.runtime.AnchorPersistenceMode!, androidx.xr.runtime.Config.FaceTrackingMode!, androidx.xr.runtime.Config.GeospatialMode!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor public Config(optional androidx.xr.runtime.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.HandTrackingMode handTracking, optional androidx.xr.runtime.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.FaceTrackingMode faceTracking);
+    ctor public Config(optional androidx.xr.runtime.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.HandTrackingMode handTracking, optional androidx.xr.runtime.DeviceTrackingMode deviceTracking, optional androidx.xr.runtime.DepthEstimationMode depthEstimation, optional androidx.xr.runtime.AnchorPersistenceMode anchorPersistence, optional androidx.xr.runtime.FaceTrackingMode faceTracking, optional androidx.xr.runtime.Config.GeospatialMode geospatial);
+    ctor @BytecodeOnly public Config(androidx.xr.runtime.PlaneTrackingMode!, androidx.xr.runtime.HandTrackingMode!, androidx.xr.runtime.DeviceTrackingMode!, androidx.xr.runtime.DepthEstimationMode!, androidx.xr.runtime.AnchorPersistenceMode!, androidx.xr.runtime.FaceTrackingMode!, androidx.xr.runtime.Config.GeospatialMode!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.xr.runtime.Config copy();
     method public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.PlaneTrackingMode planeTracking);
     method public androidx.xr.runtime.Config copy(optional androidx.xr.runtime.PlaneTrackingMode planeTracking, optional androidx.xr.runtime.HandTrackingMode handTracking);
@@ -49,14 +49,14 @@ package androidx.xr.runtime {
     method @InaccessibleFromKotlin public androidx.xr.runtime.AnchorPersistenceMode getAnchorPersistence();
     method @InaccessibleFromKotlin public androidx.xr.runtime.DepthEstimationMode getDepthEstimation();
     method @InaccessibleFromKotlin public androidx.xr.runtime.DeviceTrackingMode getDeviceTracking();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.Config.FaceTrackingMode getFaceTracking();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.FaceTrackingMode getFaceTracking();
     method @InaccessibleFromKotlin public androidx.xr.runtime.Config.GeospatialMode getGeospatial();
     method @InaccessibleFromKotlin public androidx.xr.runtime.HandTrackingMode getHandTracking();
     method @InaccessibleFromKotlin public androidx.xr.runtime.PlaneTrackingMode getPlaneTracking();
     property public androidx.xr.runtime.AnchorPersistenceMode anchorPersistence;
     property public androidx.xr.runtime.DepthEstimationMode depthEstimation;
     property public androidx.xr.runtime.DeviceTrackingMode deviceTracking;
-    property public androidx.xr.runtime.Config.FaceTrackingMode faceTracking;
+    property public androidx.xr.runtime.FaceTrackingMode faceTracking;
     property public androidx.xr.runtime.Config.GeospatialMode geospatial;
     property public androidx.xr.runtime.HandTrackingMode handTracking;
     property public androidx.xr.runtime.PlaneTrackingMode planeTracking;
@@ -103,15 +103,15 @@ package androidx.xr.runtime {
     property @Deprecated public androidx.xr.runtime.Config.DeviceTrackingMode LAST_KNOWN;
   }
 
-  public static final class Config.FaceTrackingMode implements androidx.xr.runtime.Config.ConfigMode {
-    field public static final androidx.xr.runtime.Config.FaceTrackingMode BLEND_SHAPES;
-    field public static final androidx.xr.runtime.Config.FaceTrackingMode.Companion Companion;
-    field public static final androidx.xr.runtime.Config.FaceTrackingMode DISABLED;
+  @Deprecated public static final class Config.FaceTrackingMode implements androidx.xr.runtime.Config.ConfigMode {
+    field @Deprecated public static final androidx.xr.runtime.Config.FaceTrackingMode BLEND_SHAPES;
+    field @Deprecated public static final androidx.xr.runtime.Config.FaceTrackingMode.Companion Companion;
+    field @Deprecated public static final androidx.xr.runtime.Config.FaceTrackingMode DISABLED;
   }
 
-  public static final class Config.FaceTrackingMode.Companion {
-    property public androidx.xr.runtime.Config.FaceTrackingMode BLEND_SHAPES;
-    property public androidx.xr.runtime.Config.FaceTrackingMode DISABLED;
+  @Deprecated public static final class Config.FaceTrackingMode.Companion {
+    property @Deprecated public androidx.xr.runtime.Config.FaceTrackingMode BLEND_SHAPES;
+    property @Deprecated public androidx.xr.runtime.Config.FaceTrackingMode DISABLED;
   }
 
   public static final class Config.GeospatialMode implements androidx.xr.runtime.Config.ConfigMode {
@@ -194,6 +194,17 @@ package androidx.xr.runtime {
 
   @SuppressCompatibility @kotlin.RequiresOptIn(message="This is an experimental API. It may be changed or removed in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalXrDeviceLifecycleApi {
     ctor @KotlinOnly public ExperimentalXrDeviceLifecycleApi();
+  }
+
+  public final class FaceTrackingMode implements androidx.xr.runtime.Config.ConfigMode {
+    field public static final androidx.xr.runtime.FaceTrackingMode BLEND_SHAPES;
+    field public static final androidx.xr.runtime.FaceTrackingMode.Companion Companion;
+    field public static final androidx.xr.runtime.FaceTrackingMode DISABLED;
+  }
+
+  public static final class FaceTrackingMode.Companion {
+    property public androidx.xr.runtime.FaceTrackingMode BLEND_SHAPES;
+    property public androidx.xr.runtime.FaceTrackingMode DISABLED;
   }
 
   public final class FieldOfView {

@@ -69,8 +69,8 @@ class ConfigTest {
 
     @Test
     fun equals_differentFaceTracking_returnsFalse() {
-        val config1 = Config(faceTracking = Config.FaceTrackingMode.BLEND_SHAPES)
-        val config2 = Config(faceTracking = Config.FaceTrackingMode.DISABLED)
+        val config1 = Config(faceTracking = FaceTrackingMode.BLEND_SHAPES)
+        val config2 = Config(faceTracking = FaceTrackingMode.DISABLED)
 
         assertThat(config1).isNotEqualTo(config2)
     }

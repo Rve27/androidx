@@ -186,3 +186,47 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
         @JvmField public val LOCAL: AnchorPersistenceMode = AnchorPersistenceMode(1)
     }
 }
+
+/**
+ * Feature that allows tracking of human faces.
+ *
+ * Setting this feature to [FaceTrackingMode.BLEND_SHAPES] requires that the `FACE_TRACKING` Android
+ * permission is granted by the calling application.
+ *
+ * Setting this feature to [FaceTrackingMode.MESHES] requires the `CAMERA` Android permission to be
+ * granted and that [Config.CameraFacingDirection] is set to
+ * [Config.CameraFacingDirection.Companion.USER].
+ */
+@SuppressWarnings("HiddenSuperclass")
+public class FaceTrackingMode
+private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
+    Config.ConfigMode {
+    public companion object {
+        /** Faces will not be tracked. */
+        @JvmField public val DISABLED: FaceTrackingMode = FaceTrackingMode(0)
+
+        /**
+         * Blend shapes of the user's face will be tracked.
+         *
+         * Supported runtimes:
+         * - OpenXR
+         *
+         * Required permissions:
+         * - [FACE_TRACKING][androidx.xr.runtime.manifest.FACE_TRACKING]
+         */
+        @JvmField public val BLEND_SHAPES: FaceTrackingMode = FaceTrackingMode(1)
+
+        /**
+         * Face meshes will be tracked using the front-facing camera.
+         *
+         * Supported runtimes:
+         * - Play Services
+         *
+         * Required permissions:
+         * - [CAMERA][android.Manifest.permission.CAMERA]
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        @JvmField
+        public val MESHES: FaceTrackingMode = FaceTrackingMode(2)
+    }
+}
