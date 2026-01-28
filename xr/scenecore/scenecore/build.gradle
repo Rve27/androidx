@@ -68,6 +68,7 @@ android {
     defaultConfig {
         consumerProguardFiles("proguard-rules.pro")
         minSdk { version = release(24) }
+        compileSdk { version = release(36) }
     }
     namespace = "androidx.xr.scenecore"
 }

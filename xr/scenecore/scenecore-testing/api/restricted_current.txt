@@ -760,7 +760,6 @@ package androidx.xr.scenecore.testing {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeScheduledExecutorService extends java.util.concurrent.AbstractExecutorService implements java.lang.AutoCloseable java.util.concurrent.ScheduledExecutorService {
     ctor public FakeScheduledExecutorService();
     method public boolean awaitTermination(long, java.util.concurrent.TimeUnit?);
-    method public void close();
     method public void execute(Runnable?);
     method public boolean hasNext();
     method @com.google.errorprone.annotations.CheckReturnValue public boolean isEmpty();
