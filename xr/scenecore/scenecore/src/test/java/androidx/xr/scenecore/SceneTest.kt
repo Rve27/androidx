@@ -20,6 +20,7 @@ import android.os.Looper
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.FloatSize2d
@@ -60,7 +61,7 @@ class SceneTest {
 
         session = (result as SessionCreateSuccess).session
         sceneRuntime = session.sceneRuntime
-        session.configure(Config(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
+        session.configure(Config(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
     }
 
     @Test

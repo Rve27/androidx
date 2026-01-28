@@ -24,6 +24,7 @@ import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Log
+import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.manifest.HAND_TRACKING
@@ -83,7 +84,7 @@ internal constructor(
     // TODO(b/392660855): Disable all features by default once this API is fully implemented.
     override var config: Config =
         Config(
-            Config.PlaneTrackingMode.DISABLED,
+            PlaneTrackingMode.DISABLED,
             augmentedObjectCategories = listOf(),
             Config.HandTrackingMode.DISABLED,
             Config.DeviceTrackingMode.DISABLED,
@@ -230,7 +231,7 @@ internal constructor(
         val now = timeSource.markNow()
         val xrTime = timeSource.getXrTime(now)
 
-        if (config.planeTracking != Config.PlaneTrackingMode.DISABLED) {
+        if (config.planeTracking != PlaneTrackingMode.DISABLED) {
             perceptionManager.updatePlanes(xrTime)
         }
 

@@ -357,7 +357,7 @@ public constructor(
     @GuardedBy("lock")
     public var config: Config =
         Config(
-            Config.PlaneTrackingMode.DISABLED,
+            PlaneTrackingMode.DISABLED,
             augmentedObjectCategories = listOf(),
             Config.HandTrackingMode.DISABLED,
             Config.DeviceTrackingMode.DISABLED,
