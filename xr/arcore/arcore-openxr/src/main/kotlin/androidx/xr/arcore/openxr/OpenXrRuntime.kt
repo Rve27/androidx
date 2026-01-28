@@ -21,7 +21,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.xr.arcore.runtime.PerceptionRuntime
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.ConfigMode
-import androidx.xr.runtime.XrDevice.DisplayBlendMode
+import androidx.xr.runtime.DisplayBlendMode
 import kotlin.time.ComparableTimeMark
 
 /**

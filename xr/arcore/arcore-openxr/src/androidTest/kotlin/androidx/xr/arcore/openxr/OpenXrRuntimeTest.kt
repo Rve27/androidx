@@ -23,7 +23,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.XrDevice.DisplayBlendMode
+import androidx.xr.runtime.DisplayBlendMode
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
