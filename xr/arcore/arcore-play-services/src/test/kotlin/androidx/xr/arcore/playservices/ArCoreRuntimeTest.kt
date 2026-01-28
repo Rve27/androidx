@@ -124,7 +124,7 @@ class ArCoreRuntimeTest {
         }
     }
 
-    private class FakeConfigMode private constructor() : Config.ConfigMode {
+    private class FakeConfigMode private constructor() : Config.ConfigMode() {
         companion object {
             @JvmField val UNSUPPORTED_BY_ARCORE: FakeConfigMode = FakeConfigMode()
         }

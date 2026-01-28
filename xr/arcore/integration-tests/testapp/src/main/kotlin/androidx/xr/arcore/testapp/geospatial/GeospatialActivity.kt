@@ -122,7 +122,7 @@ class GeospatialActivity : ComponentActivity() {
                 onSessionAvailable = { session ->
                     this.session = session
                     if (session.config.geospatial == GeospatialMode.DISABLED) {
-                        if (GeospatialMode.VPS_AND_GPS.isSupported(session)) {
+                        if (session.runtimes.first().isSupported(GeospatialMode.VPS_AND_GPS)) {
                             val newConfig =
                                 session.config.copy(geospatial = GeospatialMode.VPS_AND_GPS)
                             sessionHelper.tryUpdateConfig(newConfig)

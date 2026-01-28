@@ -38,10 +38,9 @@ public class DisplayBlendMode private constructor(private val value: Int) {
 }
 
 /** Feature that allows tracking of and provides information about scene planes. */
-@SuppressWarnings("HiddenSuperclass")
 public class PlaneTrackingMode
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
-    Config.ConfigMode {
+    Config.ConfigMode() {
     public companion object {
         /** Planes will not be tracked. */
         @JvmField public val DISABLED: PlaneTrackingMode = PlaneTrackingMode(0)
@@ -65,10 +64,9 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
 }
 
 /** Feature that allows tracking of the user's hands and hand joints. */
-@SuppressWarnings("HiddenSuperclass")
 public class HandTrackingMode
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
-    Config.ConfigMode {
+    Config.ConfigMode() {
     public companion object {
         /** Hands will not be tracked. */
         @JvmField public val DISABLED: HandTrackingMode = HandTrackingMode(0)
@@ -87,10 +85,9 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
 }
 
 /** Feature that allows tracking of the AR device. */
-@SuppressWarnings("HiddenSuperclass")
 public class DeviceTrackingMode
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
-    Config.ConfigMode {
+    Config.ConfigMode() {
     public companion object {
         /**
          * The device pose will not be tracked. In this mode, [androidx.xr.arcore.RenderViewpoint]
@@ -114,10 +111,9 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
 }
 
 /** Feature that allows more accurate information about scene depth and meshes. */
-@SuppressWarnings("HiddenSuperclass")
 public class DepthEstimationMode
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
-    Config.ConfigMode {
+    Config.ConfigMode() {
     public companion object {
         /** No information about scene depth will be provided. */
         @JvmField public val DISABLED: DepthEstimationMode = DepthEstimationMode(0)
@@ -168,10 +164,9 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
 }
 
 /** Feature that allows anchors to be persisted through sessions. */
-@SuppressWarnings("HiddenSuperclass")
 public class AnchorPersistenceMode
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
-    Config.ConfigMode {
+    Config.ConfigMode() {
     public companion object {
         /** Anchors cannot be persisted. */
         @JvmField public val DISABLED: AnchorPersistenceMode = AnchorPersistenceMode(0)
@@ -196,10 +191,9 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
  * Setting this feature to [FaceTrackingMode.MESHES] requires the `CAMERA` Android permission to be
  * granted and that [CameraFacingDirection] is set to [CameraFacingDirection.Companion.USER].
  */
-@SuppressWarnings("HiddenSuperclass")
 public class FaceTrackingMode
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
-    Config.ConfigMode {
+    Config.ConfigMode() {
     public companion object {
         /** Faces will not be tracked. */
         @JvmField public val DISABLED: FaceTrackingMode = FaceTrackingMode(0)
@@ -247,10 +241,9 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
  *
  * Note that setting this mode will consume additional runtime resources.
  */
-@SuppressWarnings("HiddenSuperclass")
 public class GeospatialMode
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
-    Config.ConfigMode {
+    Config.ConfigMode() {
     public companion object {
         /**
          * The Geospatial API is disabled. When GeospatialMode is disabled, current `Anchor` objects
@@ -305,8 +298,7 @@ private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) publi
 
 /** Feature that allows tracking of the user's eyes. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-@SuppressWarnings("HiddenSuperclass")
-public class EyeTrackingMode private constructor(public val mode: Int) : Config.ConfigMode {
+public class EyeTrackingMode private constructor(public val mode: Int) : Config.ConfigMode() {
     public companion object {
         /** Eye tracking is disabled. */
         @JvmField public val DISABLED: EyeTrackingMode = EyeTrackingMode(0)
@@ -337,7 +329,7 @@ public class EyeTrackingMode private constructor(public val mode: Int) : Config.
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class CameraFacingDirection
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
-    Config.ConfigMode {
+    Config.ConfigMode() {
     public companion object {
         /**
          * Use the world-facing camera. This is the default behavior across all devices.
