@@ -227,9 +227,14 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
         requestLayout();
         mARContext.loadFloat(RemoteContext.ID_TOUCH_EVENT_TIME, -Float.MAX_VALUE);
         mARContext.loadFloat(RemoteContext.ID_FONT_SIZE, getDefaultTextSize());
-
-        mDocument.applyDataOperations(mARContext);
-
+        try {
+            mDocument.applyDataOperations(mARContext);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mDisable = true;
+            mErrorMessage = e.getMessage();
+            invalidate();
+        }
         invalidate();
         Integer debug = (Integer) mDocument.getDocument().getProperty(Header.DEBUG);
         if (debug != null) {
