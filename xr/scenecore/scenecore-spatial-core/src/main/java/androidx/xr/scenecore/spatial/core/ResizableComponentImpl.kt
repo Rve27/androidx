@@ -14,460 +14,397 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+@file:Suppress("BanConcurrentHashMap")
 
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.PanelEntity;
-import androidx.xr.scenecore.runtime.ResizableComponent;
-import androidx.xr.scenecore.runtime.ResizeEvent;
-import androidx.xr.scenecore.runtime.ResizeEventListener;
-import androidx.xr.scenecore.runtime.SurfaceEntity;
+package androidx.xr.scenecore.spatial.core
 
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.function.Consumer;
-import com.android.extensions.xr.node.NodeTransaction;
-import com.android.extensions.xr.node.ReformEvent;
-import com.android.extensions.xr.node.ReformOptions;
-import com.android.extensions.xr.node.Vec3;
-
-import org.jspecify.annotations.NonNull;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.PanelEntity
+import androidx.xr.scenecore.runtime.ResizableComponent
+import androidx.xr.scenecore.runtime.ResizeEvent
+import androidx.xr.scenecore.runtime.ResizeEventListener
+import androidx.xr.scenecore.runtime.SurfaceEntity
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.function.Consumer
+import com.android.extensions.xr.node.ReformEvent
+import com.android.extensions.xr.node.ReformOptions
+import com.android.extensions.xr.node.Vec3
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.BiConsumer
+import kotlin.math.max
+import kotlin.math.min
 
 /** Implementation of ResizableComponent. */
-@SuppressWarnings({"BanConcurrentHashMap"})
-class ResizableComponentImpl implements ResizableComponent {
-    private static final @NonNull Dimensions DIMS_ZERO = new Dimensions(0f, 0f, 0f);
-    private static final @NonNull Dimensions DIMS_ONE = new Dimensions(1f, 1f, 1f);
-    private static final @NonNull Dimensions DIMS_INF =
-            new Dimensions(
-                    Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-    private final XrExtensions mExtensions;
-    private final ExecutorService mExecutor;
-    private final ConcurrentHashMap<ResizeEventListener, Executor> mResizeEventListenerMap =
-            new ConcurrentHashMap<>();
-    private final AtomicBoolean mIsContentHidden = new AtomicBoolean(false);
+internal class ResizableComponentImpl(
+    private val executor: ExecutorService,
+    private val xrExtensions: XrExtensions,
+    minSize: Dimensions,
+    maxSize: Dimensions,
+) : ResizableComponent {
+    private val resizeEventListenerMap = ConcurrentHashMap<ResizeEventListener, Executor>()
+    private val isContentHidden = AtomicBoolean(false)
     // Visible for testing.
-    Consumer<ReformEvent> mReformEventConsumer;
-    private Entity mEntity = null;
-    private Dimensions mCurrentSize = null;
-    private @NonNull Dimensions mMinSize;
-    private @NonNull Dimensions mMaxSize;
-    private float mFixedAspectRatio = 0.0f;
-    private boolean mAutoHideContent = true;
-    private boolean mAutoUpdateSize = true;
-    private boolean mForceShowResizeOverlay = false;
+    var reformEventConsumer: Consumer<ReformEvent>? = null
+    private var entity: Entity? = null
 
-    /**
-     * The constructor sanitizes the provided minimum and maximum sizes to ensure they are valid.
-     * Any negative values in {@code minSize} and {@code maxSize} are clamped to 0. Any {@code
-     * Float.NaN} values are replaced with 0 for {@code minSize} and {@link Float#POSITIVE_INFINITY}
-     * for {@code maxSize}.
-     *
-     * <p>Furthermore, it ensures that the maximum size is always greater than or equal to the
-     * minimum size for each dimension. If any dimension of the provided {@code maxSize} is smaller
-     * than the corresponding dimension of {@code minSize} after sanitization, that dimension of the
-     * maximum size will be adjusted to be equal to the minimum size's dimension.
-     */
-    ResizableComponentImpl(
-            ExecutorService executor,
-            XrExtensions extensions,
-            @NonNull Dimensions minSize,
-            @NonNull Dimensions maxSize) {
-        mMinSize = dimsClampPositive(minSize, DIMS_ZERO);
-        mMaxSize = dimsClampPositive(maxSize, DIMS_INF);
-        if (dimsAnyLessThen(mMaxSize, mMinSize)) {
-            mMaxSize = dimsMax(mMinSize, mMaxSize);
-        }
-        mExtensions = extensions;
-        mExecutor = executor;
-    }
+    private var currentMinSize = dimsClampPositive(minSize, DIMS_ZERO)
+    override var minimumSize: Dimensions
+        get() = currentMinSize
+        set(value) {
+            val minSize = dimsClampPositive(value, currentMinSize)
+            var updateMin = false
+            if (currentMinSize != minSize) {
+                currentMinSize = minSize
+                updateMin = true
+            }
 
-    private static @NonNull Dimensions dimsClampPositive(
-            @NonNull Dimensions dimValue, @NonNull Dimensions nanFallback) {
-        return new Dimensions(
-                clampPositive(dimValue.width, nanFallback.width),
-                clampPositive(dimValue.height, nanFallback.height),
-                clampPositive(dimValue.depth, nanFallback.depth));
-    }
+            var updateMax = false
+            if (updateMin && dimsAnyLessThen(currentMaxSize, currentMinSize)) {
+                currentMaxSize = dimsMax(currentMaxSize, currentMinSize)
+                updateMax = true
+            }
 
-    private static @NonNull Dimensions dimsClamp(
-            @NonNull Dimensions dimValue,
-            @NonNull Dimensions min,
-            @NonNull Dimensions max,
-            @NonNull Dimensions nanFallback) {
-        return new Dimensions(
-                clamp(dimValue.width, min.width, max.width, nanFallback.width),
-                clamp(dimValue.height, min.height, max.height, nanFallback.height),
-                clamp(dimValue.depth, min.depth, max.depth, nanFallback.depth));
-    }
+            if (entity == null) {
+                return
+            }
 
-    private static @NonNull Dimensions dimsMin(@NonNull Dimensions a, @NonNull Dimensions b) {
-        return new Dimensions(
-                Math.min(a.width, b.width),
-                Math.min(a.height, b.height),
-                Math.min(a.depth, b.depth));
-    }
-
-    private static @NonNull Dimensions dimsMax(@NonNull Dimensions a, @NonNull Dimensions b) {
-        return new Dimensions(
-                Math.max(a.width, b.width),
-                Math.max(a.height, b.height),
-                Math.max(a.depth, b.depth));
-    }
-
-    private static boolean dimsAnyLessThen(@NonNull Dimensions a, @NonNull Dimensions b) {
-        return a.width < b.width || a.height < b.height || a.depth < b.depth;
-    }
-
-    private static @NonNull Vec3 dimsToVec3(@NonNull Dimensions value) {
-        return new Vec3(value.width, value.height, value.depth);
-    }
-
-    private static @NonNull Dimensions vec3ToDims(Vec3 value) {
-        if (value == null) {
-            return new Dimensions(Float.NaN, Float.NaN, Float.NaN);
-        }
-        return new Dimensions(value.x, value.y, value.z);
-    }
-
-    private static float clampPositive(float value, float nanReplace) {
-        return clamp(value, 0f, Float.POSITIVE_INFINITY, nanReplace);
-    }
-
-    private static float clamp(float value, float min, float max, float nanFallback) {
-        if (Float.isNaN(value)) value = nanFallback;
-        if (value < min) return min;
-        return Math.min(value, max);
-    }
-
-    @Override
-    public boolean onAttach(@NonNull Entity entity) {
-        if (mEntity != null) {
-            return false;
-        }
-
-        Dimensions entitySize = null;
-        if (entity instanceof PanelEntity) {
-            entitySize = ((PanelEntity) entity).getSize();
-        } else if (entity instanceof SurfaceEntity) {
-            SurfaceEntity.Shape shape = ((SurfaceEntity) entity).getShape();
-            if (shape instanceof SurfaceEntity.Shape.Quad) {
-                entitySize = shape.getDimensions();
+            if (updateMin) {
+                val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+                reformOptions.minimumSize = dimsToVec3(currentMinSize)
+                if (updateMax) {
+                    reformOptions.maximumSize = dimsToVec3(currentMaxSize)
+                }
+                (entity as AndroidXrEntity).updateReformOptions()
             }
         }
 
-        ReformOptions reformOptions = ((AndroidXrEntity) entity).getReformOptions();
-        reformOptions.setEnabledReform(
-                reformOptions.getEnabledReform() | ReformOptions.ALLOW_RESIZE);
+    var currentMaxSize = dimsClampPositive(maxSize, DIMS_INF)
+    override var maximumSize: Dimensions
+        get() = currentMaxSize
+        set(value) {
+            val maxSize = dimsClampPositive(value, currentMaxSize)
+            var updateMax = false
+            if (currentMaxSize != maxSize) {
+                currentMaxSize = maxSize
+                updateMax = true
+            }
 
-        if (entitySize != null) {
-            updateAndSanitizeCurrentSize(entitySize);
-            reformOptions.setCurrentSize(dimsToVec3(mCurrentSize));
+            var updateMin = false
+            if (updateMax && dimsAnyLessThen(currentMaxSize, currentMinSize)) {
+                currentMinSize = dimsMin(currentMaxSize, currentMinSize)
+                updateMin = true
+            }
+
+            if (entity == null) {
+                return
+            }
+
+            if (updateMax) {
+                val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+                reformOptions.maximumSize = dimsToVec3(currentMaxSize)
+                if (updateMin) {
+                    reformOptions.minimumSize = dimsToVec3(currentMinSize)
+                }
+                (entity as AndroidXrEntity).updateReformOptions()
+            }
         }
 
-        reformOptions
-                .setMinimumSize(dimsToVec3(mMinSize))
-                .setMaximumSize(dimsToVec3(mMaxSize))
-                .setFixedAspectRatio(mFixedAspectRatio)
-                .setForceShowResizeOverlay(mForceShowResizeOverlay);
-        ((AndroidXrEntity) entity).updateReformOptions();
-        if (mReformEventConsumer != null) {
-            ((AndroidXrEntity) entity).addReformEventConsumer(mReformEventConsumer, mExecutor);
+    /**
+     * The initializer sanitizes the provided minimum and maximum sizes to ensure they are valid.
+     * Any negative values in `minSize` and `maxSize` are clamped to 0. Any `Float.NaN` values are
+     * replaced with 0 for `minSize` and [Float.POSITIVE_INFINITY] for `maxSize`.
+     *
+     * Furthermore, it ensures that the maximum size is always greater than or equal to the minimum
+     * size for each dimension. If any dimension of the provided `maxSize` is smaller than the
+     * corresponding dimension of `minSize` after sanitization, that dimension of the maximum size
+     * will be adjusted to be equal to the minimum size's dimension.
+     */
+    init {
+        if (dimsAnyLessThen(currentMinSize, currentMaxSize)) {
+            currentMaxSize = dimsMax(currentMinSize, currentMaxSize)
         }
-
-        mEntity = entity;
-        return true;
     }
 
-    @Override
-    public void onDetach(@NonNull Entity entity) {
-        restoreEntityContent();
-        ReformOptions reformOptions = ((AndroidXrEntity) entity).getReformOptions();
-        reformOptions.setEnabledReform(
-                reformOptions.getEnabledReform() & ~ReformOptions.ALLOW_RESIZE);
-        ((AndroidXrEntity) entity).updateReformOptions();
-        if (mReformEventConsumer != null) {
-            ((AndroidXrEntity) entity).removeReformEventConsumer(mReformEventConsumer);
-        }
-        mEntity = null;
-    }
+    private var currentSize = DIMS_ONE
 
-    @NonNull
-    @Override
-    public Dimensions getSize() {
-        if (mCurrentSize == null) {
-            return DIMS_ONE;
-        }
-        return mCurrentSize;
-    }
+    override var size: Dimensions
+        get() = currentSize
+        set(value) {
+            // TODO: b/350821054 - Implement synchronization policy around Entity/Component updates.
+            val outOfDate = updateAndSanitizeCurrentSize(value)
+            if (!outOfDate || entity == null) {
+                return
+            }
 
-    @Override
-    public void setSize(@NonNull Dimensions size) {
-        // TODO: b/350821054 - Implement synchronization policy around Entity/Component updates.
-        boolean outOfDate = updateAndSanitizeCurrentSize(size);
-        if (!outOfDate || mEntity == null) {
-            return;
+            val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+            reformOptions.currentSize = dimsToVec3(size)
+            if (fixedAspectRatio != 0f) {
+                reformOptions.fixedAspectRatio = fixedAspectRatio
+            }
+            (entity as AndroidXrEntity).updateReformOptions()
         }
 
-        ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
-        reformOptions.setCurrentSize(dimsToVec3(mCurrentSize));
-        if (mFixedAspectRatio != 0) {
-            reformOptions.setFixedAspectRatio(mFixedAspectRatio);
+    private var fixedAspectRatio = 0.0f
+
+    override var isFixedAspectRatioEnabled: Boolean
+        get() = fixedAspectRatio != 0f
+        set(value) {
+            val initialFixedAspectRatio = fixedAspectRatio
+            updateFixedAspectRatio(value)
+            // Return early if there was no update.
+            if (fixedAspectRatio == initialFixedAspectRatio) {
+                return
+            }
+            if (entity == null) {
+                return
+            }
+            val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+            reformOptions.fixedAspectRatio = fixedAspectRatio
+            (entity as AndroidXrEntity).updateReformOptions()
         }
-        ((AndroidXrEntity) mEntity).updateReformOptions();
-    }
+
+    override var autoHideContent = true
+    override var autoUpdateSize = true
+    override var forceShowResizeOverlay = false
+        set(value) {
+            if (entity == null || field == value) {
+                return
+            }
+            val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+            reformOptions.forceShowResizeOverlay = value
+            (entity as AndroidXrEntity).updateReformOptions()
+            field = value
+        }
 
     /**
      * Sanitizes and sets the internal current size.
      *
-     * <p>Any {@code NaN} dimension in the input is replaced with the corresponding value from the
-     * existing component size. Also updates the fixed aspect ratio if enabled.
+     * Any `NaN` dimension in the input is replaced with the corresponding value from the existing
+     * component size. Also updates the fixed aspect ratio if enabled.
      *
-     * @param size The new dimensions to set.
+     * @param newSize The new dimensions to set.
      */
-    private boolean updateAndSanitizeCurrentSize(@NonNull Dimensions size) {
-        size = dimsClampPositive(size, getSize());
+    private fun updateAndSanitizeCurrentSize(newSize: Dimensions): Boolean {
+        val updatedSize = dimsClampPositive(newSize, currentSize)
 
-        if (size.equals(mCurrentSize)) {
-            return false;
+        if (updatedSize == currentSize) {
+            return false
         }
 
-        mCurrentSize = size;
+        currentSize = updatedSize
         // Update the fixed aspect ratio if it is enabled.
-        if (mFixedAspectRatio != 0) {
-            updateFixedAspectRatio(true);
+        if (fixedAspectRatio != 0f) {
+            updateFixedAspectRatio(true)
         }
-        return true;
+        return true
     }
 
-    @Override
-    public @NonNull Dimensions getMinimumSize() {
-        return mMinSize;
-    }
-
-    @Override
-    public void setMinimumSize(@NonNull Dimensions minSize) {
-        minSize = dimsClampPositive(minSize, mMinSize);
-        boolean updateMin = false;
-        if (!mMinSize.equals(minSize)) {
-            mMinSize = minSize;
-            updateMin = true;
-        }
-
-        boolean updateMax = false;
-        if (updateMin && dimsAnyLessThen(mMaxSize, mMinSize)) {
-            mMaxSize = dimsMax(mMaxSize, mMinSize);
-            updateMax = true;
-        }
-
-        if (mEntity == null) {
-            return;
-        }
-
-        if (updateMin) {
-            ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
-            reformOptions.setMinimumSize(dimsToVec3(mMinSize));
-            if (updateMax) {
-                reformOptions.setMaximumSize(dimsToVec3(mMaxSize));
-            }
-            ((AndroidXrEntity) mEntity).updateReformOptions();
-        }
-    }
-
-    @Override
-    public @NonNull Dimensions getMaximumSize() {
-        return mMaxSize;
-    }
-
-    @Override
-    public void setMaximumSize(@NonNull Dimensions maxSize) {
-        maxSize = dimsClampPositive(maxSize, mMaxSize);
-        boolean updateMax = false;
-        if (!mMaxSize.equals(maxSize)) {
-            mMaxSize = maxSize;
-            updateMax = true;
-        }
-
-        boolean updateMin = false;
-        if (updateMax && dimsAnyLessThen(mMaxSize, mMinSize)) {
-            mMinSize = dimsMin(mMaxSize, mMinSize);
-            updateMin = true;
-        }
-
-        if (mEntity == null) {
-            return;
-        }
-
-        if (updateMax) {
-            ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
-            reformOptions.setMaximumSize(dimsToVec3(mMaxSize));
-            if (updateMin) {
-                reformOptions.setMinimumSize(dimsToVec3(mMinSize));
-            }
-            ((AndroidXrEntity) mEntity).updateReformOptions();
-        }
-    }
-
-    @Override
-    public boolean isFixedAspectRatioEnabled() {
-        return mFixedAspectRatio != 0;
-    }
-
-    @Override
-    public void setFixedAspectRatioEnabled(boolean fixedAspectRatioEnabled) {
-        float initialFixedAspectRatio = mFixedAspectRatio;
-        updateFixedAspectRatio(fixedAspectRatioEnabled);
-        // Return early if there was no update.
-        if (mFixedAspectRatio == initialFixedAspectRatio) {
-            return;
-        }
-        if (mEntity == null) {
-            return;
-        }
-        ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
-        reformOptions.setFixedAspectRatio(mFixedAspectRatio);
-        ((AndroidXrEntity) mEntity).updateReformOptions();
-    }
-
-    private void updateFixedAspectRatio(boolean fixedAspectRatioEnabled) {
-        float updatedFixedAspectRatio = 0f;
+    private fun updateFixedAspectRatio(fixedAspectRatioEnabled: Boolean) {
+        var updatedFixedAspectRatio = 0f
         // Update the fixed aspect ratio based on the current size, or the default size if no
         // current size was set.
         if (fixedAspectRatioEnabled) {
-            Dimensions size = getSize();
-            updatedFixedAspectRatio = size.width / size.height;
+            updatedFixedAspectRatio = currentSize.width / currentSize.height
         }
-        mFixedAspectRatio = updatedFixedAspectRatio;
+        fixedAspectRatio = updatedFixedAspectRatio
     }
 
-    @Override
-    public boolean getAutoHideContent() {
-        return mAutoHideContent;
-    }
-
-    @Override
-    public void setAutoHideContent(boolean autoHideContent) {
-        mAutoHideContent = autoHideContent;
-    }
-
-    @Override
-    public boolean getAutoUpdateSize() {
-        return mAutoUpdateSize;
-    }
-
-    @Override
-    public void setAutoUpdateSize(boolean autoUpdateSize) {
-        mAutoUpdateSize = autoUpdateSize;
-    }
-
-    @Override
-    public boolean getForceShowResizeOverlay() {
-        return mForceShowResizeOverlay;
-    }
-
-    @Override
-    public void setForceShowResizeOverlay(boolean show) {
-        mForceShowResizeOverlay = show;
-        if (mEntity == null) {
-            return;
+    override fun onAttach(entity: Entity): Boolean {
+        if (this.entity != null) {
+            return false
         }
-        ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
-        reformOptions.setForceShowResizeOverlay(show);
-        ((AndroidXrEntity) mEntity).updateReformOptions();
-    }
 
-    private void hideEntityContent() {
-        // Return early if the entity content is already hidden.
-        if (mIsContentHidden.get()) {
-            return;
-        }
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            transaction.setAlpha(((AndroidXrEntity) mEntity).getNode(), 0f).apply();
-            mIsContentHidden.set(true);
-        }
-    }
-
-    private void restoreEntityContent() {
-        // Return early if the entity content is already visible.
-        if (!mIsContentHidden.get()) {
-            return;
-        }
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            transaction.setAlpha(((AndroidXrEntity) mEntity).getNode(), mEntity.getAlpha()).apply();
-            mIsContentHidden.set(false);
-        }
-    }
-
-    private void reformEventConsumer(ReformEvent reformEvent) {
-        if (reformEvent.getType() != ReformEvent.REFORM_TYPE_RESIZE) {
-            if (mIsContentHidden.get()) {
-                restoreEntityContent();
+        var entitySize: Dimensions? = null
+        if (entity is PanelEntity) {
+            entitySize = entity.size
+        } else if (entity is SurfaceEntity) {
+            val shape = entity.shape
+            if (shape is SurfaceEntity.Shape.Quad) {
+                entitySize = shape.dimensions
             }
-            return;
         }
-        Dimensions proposedSize =
-                dimsClamp(vec3ToDims(reformEvent.getProposedSize()), mMinSize, mMaxSize, getSize());
-        if (mAutoUpdateSize) {
+
+        val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+        reformOptions.enabledReform = reformOptions.enabledReform or ReformOptions.ALLOW_RESIZE
+
+        if (entitySize != null) {
+            updateAndSanitizeCurrentSize(entitySize)
+            reformOptions.currentSize = dimsToVec3(size)
+        }
+
+        reformOptions
+            .setMinimumSize(dimsToVec3(minimumSize))
+            .setMaximumSize(dimsToVec3(maximumSize))
+            .setFixedAspectRatio(fixedAspectRatio)
+            .forceShowResizeOverlay = forceShowResizeOverlay
+        entity.updateReformOptions()
+        reformEventConsumer?.let { entity.addReformEventConsumer(it, executor) }
+
+        this.entity = entity
+        return true
+    }
+
+    override fun onDetach(entity: Entity) {
+        restoreEntityContent()
+        val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+        reformOptions.enabledReform =
+            reformOptions.enabledReform and ReformOptions.ALLOW_RESIZE.inv()
+        entity.updateReformOptions()
+        reformEventConsumer?.let { entity.removeReformEventConsumer(it) }
+        this.entity = null
+    }
+
+    private fun hideEntityContent() {
+        // Return early if the entity content is already hidden.
+        if (isContentHidden.get()) {
+            return
+        }
+        xrExtensions.createNodeTransaction().use { transaction ->
+            transaction.setAlpha((entity as AndroidXrEntity).getNode(), 0f).apply()
+            isContentHidden.set(true)
+        }
+    }
+
+    private fun restoreEntityContent() {
+        // Return early if the entity content is already visible.
+        if (!isContentHidden.get()) {
+            return
+        }
+        xrExtensions.createNodeTransaction().use { transaction ->
+            transaction.setAlpha((entity as AndroidXrEntity).getNode(), entity!!.getAlpha()).apply()
+            isContentHidden.set(false)
+        }
+    }
+
+    private val localReformEventConsumer: Consumer<ReformEvent> = Consumer { reformEvent ->
+        if (reformEvent.type != ReformEvent.REFORM_TYPE_RESIZE) {
+            if (isContentHidden.get()) {
+                restoreEntityContent()
+            }
+            return@Consumer
+        }
+        val proposedSize: Dimensions =
+            dimsClamp(vec3ToDims(reformEvent.proposedSize), minimumSize, maximumSize, size)
+        if (autoUpdateSize) {
             // Update the resize affordance size.
-            setSize(proposedSize);
+            size = proposedSize
         }
 
-        BiConsumer<ResizeEventListener, Executor> resizeEventListenerAction =
-                (listener, listenerExecutor) ->
-                        listenerExecutor.execute(
-                                () -> {
-                                    int reformState = reformEvent.getState();
-                                    if (mAutoHideContent
-                                            && reformState != ReformEvent.REFORM_STATE_END) {
-                                        // Set the alpha to 0 when the resize is active before any
-                                        // app callbacks, and restore when the resize ends after any
-                                        // app callbacks, to hide the entity content while it's
-                                        // being resized.
-                                        hideEntityContent();
-                                    }
-                                    listener.onResizeEvent(
-                                            new ResizeEvent(
-                                                    RuntimeUtils.getResizeEventState(
-                                                            reformEvent.getState()),
-                                                    proposedSize));
-                                    if (mAutoHideContent
-                                            && reformState == ReformEvent.REFORM_STATE_END) {
-                                        // Restore the entity alpha to its original value after the
-                                        // resize callback. We can't guarantee that the app has
-                                        // finished resizing when this is called, since the panel
-                                        // resize itself is asynchronous, or the app can use this
-                                        // callback to schedule resize call on a different thread.
-                                        restoreEntityContent();
-                                    }
-                                });
-        mResizeEventListenerMap.forEach(resizeEventListenerAction);
+        val resizeEventListenerAction =
+            BiConsumer { listener: ResizeEventListener, listenerExecutor: Executor ->
+                listenerExecutor.execute {
+                    val reformState = reformEvent.state
+                    if (autoHideContent && reformState != ReformEvent.REFORM_STATE_END) {
+                        // Set the alpha to 0 when the resize is active before any
+                        // app callbacks, and restore when the resize ends after any
+                        // app callbacks, to hide the entity content while it's
+                        // being resized.
+                        hideEntityContent()
+                    }
+                    listener.onResizeEvent(
+                        ResizeEvent(
+                            RuntimeUtils.getResizeEventState(reformEvent.state),
+                            proposedSize,
+                        )
+                    )
+                    if (autoHideContent && reformState == ReformEvent.REFORM_STATE_END) {
+                        // Restore the entity alpha to its original value after the
+                        // resize callback. We can't guarantee that the app has
+                        // finished resizing when this is called, since the panel
+                        // resize itself is asynchronous, or the app can use this
+                        // callback to schedule resize call on a different thread.
+                        restoreEntityContent()
+                    }
+                }
+            }
+        resizeEventListenerMap.forEach(resizeEventListenerAction)
     }
 
-    @Override
-    public void addResizeEventListener(
-            @NonNull Executor resizeExecutor, @NonNull ResizeEventListener resizeEventListener) {
-        mResizeEventListenerMap.put(resizeEventListener, resizeExecutor);
-        if (mReformEventConsumer != null) {
-            return;
+    override fun addResizeEventListener(
+        executor: Executor,
+        resizeEventListener: ResizeEventListener,
+    ) {
+        resizeEventListenerMap[resizeEventListener] = executor
+        if (reformEventConsumer != null) {
+            return
         }
-        mReformEventConsumer = this::reformEventConsumer;
-        if (mEntity == null) {
-            return;
+        reformEventConsumer = localReformEventConsumer
+        if (entity == null) {
+            return
         }
-        ((AndroidXrEntity) mEntity).addReformEventConsumer(mReformEventConsumer, mExecutor);
+        (entity as AndroidXrEntity).addReformEventConsumer(reformEventConsumer!!, this.executor)
     }
 
-    @Override
-    public void removeResizeEventListener(@NonNull ResizeEventListener resizeEventListener) {
-        mResizeEventListenerMap.remove(resizeEventListener);
-        if (mResizeEventListenerMap.isEmpty()) {
-            ((AndroidXrEntity) mEntity).removeReformEventConsumer(mReformEventConsumer);
+    override fun removeResizeEventListener(resizeEventListener: ResizeEventListener) {
+        resizeEventListenerMap.remove(resizeEventListener)
+        if (resizeEventListenerMap.isEmpty()) {
+            (entity as AndroidXrEntity).removeReformEventConsumer(reformEventConsumer!!)
+        }
+    }
+
+    companion object {
+        private val DIMS_ZERO = Dimensions(0f, 0f, 0f)
+        private val DIMS_ONE = Dimensions(1f, 1f, 1f)
+        private val DIMS_INF =
+            Dimensions(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+
+        private fun dimsClampPositive(dimValue: Dimensions, nanFallback: Dimensions): Dimensions {
+            return Dimensions(
+                clampPositive(dimValue.width, nanFallback.width),
+                clampPositive(dimValue.height, nanFallback.height),
+                clampPositive(dimValue.depth, nanFallback.depth),
+            )
+        }
+
+        private fun dimsClamp(
+            dimValue: Dimensions,
+            min: Dimensions,
+            max: Dimensions,
+            nanFallback: Dimensions,
+        ): Dimensions {
+            return Dimensions(
+                clamp(dimValue.width, min.width, max.width, nanFallback.width),
+                clamp(dimValue.height, min.height, max.height, nanFallback.height),
+                clamp(dimValue.depth, min.depth, max.depth, nanFallback.depth),
+            )
+        }
+
+        private fun dimsMin(a: Dimensions, b: Dimensions): Dimensions {
+            return Dimensions(min(a.width, b.width), min(a.height, b.height), min(a.depth, b.depth))
+        }
+
+        private fun dimsMax(a: Dimensions, b: Dimensions): Dimensions {
+            return Dimensions(max(a.width, b.width), max(a.height, b.height), max(a.depth, b.depth))
+        }
+
+        private fun dimsAnyLessThen(a: Dimensions, b: Dimensions): Boolean {
+            return a.width < b.width || a.height < b.height || a.depth < b.depth
+        }
+
+        private fun dimsToVec3(value: Dimensions): Vec3 {
+            return Vec3(value.width, value.height, value.depth)
+        }
+
+        private fun vec3ToDims(value: Vec3?): Dimensions {
+            if (value == null) {
+                return Dimensions(Float.NaN, Float.NaN, Float.NaN)
+            }
+            return Dimensions(value.x, value.y, value.z)
+        }
+
+        private fun clampPositive(value: Float, nanReplace: Float): Float {
+            return clamp(value, 0f, Float.POSITIVE_INFINITY, nanReplace)
+        }
+
+        private fun clamp(value: Float, min: Float, max: Float, nanFallback: Float): Float {
+            var value = value
+            if (value.isNaN()) value = nanFallback
+            if (value < min) return min
+            return min(value, max)
         }
     }
 }

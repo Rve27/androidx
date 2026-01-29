@@ -13,1145 +13,1198 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.app.Activity
+import android.hardware.display.DisplayManager
+import android.view.View
+import android.view.ViewGroup
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.runtime.math.FloatSize2d
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider.Companion.testSpatialApiVersion
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.MoveEventListener
+import androidx.xr.scenecore.runtime.PanelEntity
+import androidx.xr.scenecore.runtime.ResizeEvent
+import androidx.xr.scenecore.runtime.ResizeEventListener
+import androidx.xr.scenecore.runtime.SurfaceEntity
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import androidx.xr.scenecore.testing.FakeSurfaceFeature
+import com.android.extensions.xr.node.Node
+import com.android.extensions.xr.node.NodeRepository
+import com.android.extensions.xr.node.ReformEvent
+import com.android.extensions.xr.node.ReformOptions
+import com.android.extensions.xr.node.ShadowReformEvent
+import com.android.extensions.xr.node.Vec3
+import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.TruthJUnit
+import com.google.common.util.concurrent.MoreExecutors
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.android.controller.ActivityController
+import org.robolectric.annotation.Config
 
-import static com.android.extensions.xr.node.ReformEvent.REFORM_STATE_END;
-import static com.android.extensions.xr.node.ReformEvent.REFORM_STATE_START;
-import static com.android.extensions.xr.node.ReformEvent.REFORM_TYPE_MOVE;
-import static com.android.extensions.xr.node.ReformEvent.REFORM_TYPE_RESIZE;
-import static com.android.extensions.xr.node.ReformOptions.ALLOW_MOVE;
-import static com.android.extensions.xr.node.ReformOptions.ALLOW_RESIZE;
-
-import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.TruthJUnit.assume;
-import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import android.app.Activity;
-import android.content.Context;
-import android.hardware.display.DisplayManager;
-import android.view.Display;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.runtime.math.FloatSize2d;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider;
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.MoveEventListener;
-import androidx.xr.scenecore.runtime.PanelEntity;
-import androidx.xr.scenecore.runtime.ResizeEvent;
-import androidx.xr.scenecore.runtime.ResizeEventListener;
-import androidx.xr.scenecore.runtime.SurfaceEntity;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-import androidx.xr.scenecore.testing.FakeSurfaceFeature;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeRepository;
-import com.android.extensions.xr.node.ReformEvent;
-import com.android.extensions.xr.node.ReformOptions;
-import com.android.extensions.xr.node.ShadowReformEvent;
-import com.android.extensions.xr.node.Vec3;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-
-import java.util.List;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public class ResizableComponentImplTest {
-
-    private static final Dimensions MIN_DIMENSIONS = new Dimensions(0f, 0f, 0f);
-    private static final Dimensions MAX_DIMENSIONS = new Dimensions(10f, 10f, 10f);
-    private final ActivityController<Activity> mActivityController =
-            Robolectric.buildActivity(Activity.class);
-    private final Activity mActivity = mActivityController.create().start().get();
-    private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final EntityManager mEntityManager = new EntityManager();
-    private final PanelShadowRenderer mPanelShadowRenderer =
-            Mockito.mock(PanelShadowRenderer.class);
-    private final NodeRepository mNodeRepository = NodeRepository.getInstance();
-    private ActivitySpaceImpl mActivitySpaceImpl;
-    private SpatialSceneRuntime mFakeRuntime;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class ResizableComponentImplTest {
+    private val activityController: ActivityController<Activity> =
+        Robolectric.buildActivity(Activity::class.java)
+    private val activity: Activity = activityController.create().start().get()
+    private val fakeExecutor = FakeScheduledExecutorService()
+    private val xrExtensions = getXrExtensions()!!
+    private val entityManager = EntityManager()
+    private val panelShadowRenderer: PanelShadowRenderer = mock<PanelShadowRenderer>()
+    private val nodeRepository: NodeRepository = NodeRepository.getInstance()
+    private lateinit var activitySpaceImpl: ActivitySpaceImpl
+    private lateinit var fakeSceneRuntime: SpatialSceneRuntime
 
     @Before
-    public void setUp() {
-        assume().that(mXrExtensions).isNotNull();
-        FakeSpatialApiVersionProvider.Companion.setTestSpatialApiVersion(1);
-        Node activitySpaceNode = mXrExtensions.createNode();
-        mActivitySpaceImpl =
-                new ActivitySpaceImpl(
-                        activitySpaceNode,
-                        mActivity,
-                        mXrExtensions,
-                        mEntityManager,
-                        () -> mXrExtensions.getSpatialState(mActivity),
-                        /* unscaledGravityAlignedActivitySpace= */ false,
-                        mFakeExecutor);
-        mFakeRuntime =
-                SpatialSceneRuntime.create(
-                        mActivity,
-                        mFakeExecutor,
-                        mXrExtensions,
-                        mEntityManager,
-                        /* unscaledGravityAlignedActivitySpace= */ false);
+    fun setUp() {
+        TruthJUnit.assume().that(xrExtensions).isNotNull()
+        testSpatialApiVersion = 1
+        val activitySpaceNode = xrExtensions.createNode()
+        activitySpaceImpl =
+            ActivitySpaceImpl(
+                activitySpaceNode,
+                activity,
+                xrExtensions,
+                entityManager,
+                { xrExtensions.getSpatialState(activity) },
+                unscaledGravityAlignedActivitySpace = false,
+                fakeExecutor,
+            )
+        fakeSceneRuntime =
+            SpatialSceneRuntime.create(
+                activity,
+                fakeExecutor,
+                xrExtensions,
+                entityManager,
+                /* unscaledGravityAlignedActivitySpace= */ false,
+            )
     }
 
     @After
-    public void tearDown() {
+    fun tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
-        mFakeRuntime.destroy();
-        FakeSpatialApiVersionProvider.Companion.setTestSpatialApiVersion(null);
+        fakeSceneRuntime.destroy()
+        testSpatialApiVersion = null
     }
 
-    private Entity createTestEntity() {
-        return mFakeRuntime.createGroupEntity(new Pose(), "test", mFakeRuntime.getActivitySpace());
+    private fun createTestEntity(): Entity {
+        return fakeSceneRuntime.createGroupEntity(Pose(), "test", fakeSceneRuntime.activitySpace)
     }
 
     /**
      * Creates a generic panel entity instance for testing by creating a dummy view to insert into
      * the panel, and setting the activity space as parent.
      */
-    private PanelEntity createTestPanelEntity(Pose pose, Dimensions dimensions) {
-        Display display = mActivity.getSystemService(DisplayManager.class).getDisplays()[0];
-        Context displayContext = mActivity.createDisplayContext(display);
-        View view = new View(displayContext);
-        view.setLayoutParams(new ViewGroup.LayoutParams(640, 480));
-        return mFakeRuntime.createPanelEntity(
-                displayContext,
-                pose,
-                view,
-                dimensions,
-                "testPanel",
-                mFakeRuntime.getActivitySpace());
+    private fun createTestPanelEntity(pose: Pose, dimensions: Dimensions): PanelEntity {
+        val display = activity.getSystemService(DisplayManager::class.java).displays[0]
+        val displayContext = activity.createDisplayContext(display!!)
+        val view = View(displayContext)
+        view.setLayoutParams(ViewGroup.LayoutParams(640, 480))
+        return fakeSceneRuntime.createPanelEntity(
+            displayContext,
+            pose,
+            view,
+            dimensions,
+            "testPanel",
+            fakeSceneRuntime.activitySpace,
+        )
     }
 
-    private SurfaceEntity createTestSurfaceEntity(SurfaceEntity.Shape shape) {
-        NodeHolder<?> nodeHolder = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
-        SurfaceEntity surface =
-                mFakeRuntime.createSurfaceEntity(
-                        new FakeSurfaceFeature(nodeHolder),
-                        Pose.Identity,
-                        mFakeRuntime.getActivitySpace());
-        surface.setShape(shape);
-        return surface;
-    }
-
-    @Test
-    public void addResizableComponentToTwoEntity_fails() {
-        Entity entity1 = createTestEntity();
-        Entity entity2 = createTestEntity();
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
-
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity1.addComponent(resizableComponent)).isTrue();
-        assertThat(entity2.addComponent(resizableComponent)).isFalse();
+    private fun createTestSurfaceEntity(shape: SurfaceEntity.Shape): SurfaceEntity {
+        val nodeHolder: NodeHolder<*> =
+            NodeHolder<Node>(xrExtensions.createNode(), Node::class.java)
+        val surface =
+            fakeSceneRuntime.createSurfaceEntity(
+                FakeSurfaceFeature(nodeHolder),
+                Pose.Identity,
+                fakeSceneRuntime.activitySpace,
+            )
+        surface.shape = shape
+        return surface
     }
 
     @Test
-    public void addResizableComponent_addsReformOptionsToNode() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun addResizableComponentToTwoEntity_fails() {
+        val entity1 = createTestEntity()
+        val entity2 = createTestEntity()
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(entity).isNotNull();
-
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
-
-        assertThat(resizableComponent).isNotNull();
-
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
-
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-
-        assertThat(options.getEnabledReform()).isEqualTo(ALLOW_RESIZE);
-        assertThat(options.getMinimumSize().x).isEqualTo(MIN_DIMENSIONS.width);
-        assertThat(options.getMinimumSize().y).isEqualTo(MIN_DIMENSIONS.height);
-        assertThat(options.getMinimumSize().z).isEqualTo(MIN_DIMENSIONS.depth);
-        assertThat(options.getMaximumSize().x).isEqualTo(MAX_DIMENSIONS.width);
-        assertThat(options.getMaximumSize().y).isEqualTo(MAX_DIMENSIONS.height);
-        assertThat(options.getMaximumSize().z).isEqualTo(MAX_DIMENSIONS.depth);
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity1.addComponent(resizableComponent)).isTrue()
+        assertThat(entity2.addComponent(resizableComponent)).isFalse()
     }
 
     @Test
-    public void addResizableComponentToPanel_getsPanelSize() {
-        Dimensions panelSize = new Dimensions(1f, 20f, 0f);
+    fun addResizableComponent_addsReformOptionsToNode() {
+        val entity = createTestEntity() as AndroidXrEntity
+
+        assertThat(entity).isNotNull()
+
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
+
+        assertThat(resizableComponent).isNotNull()
+
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
+
+        val options = nodeRepository.getReformOptions(entity.getNode())
+
+        assertThat(options.enabledReform).isEqualTo(ReformOptions.ALLOW_RESIZE)
+        assertThat(options.minimumSize.x).isEqualTo(MIN_DIMENSIONS.width)
+        assertThat(options.minimumSize.y).isEqualTo(MIN_DIMENSIONS.height)
+        assertThat(options.minimumSize.z).isEqualTo(MIN_DIMENSIONS.depth)
+        assertThat(options.maximumSize.x).isEqualTo(MAX_DIMENSIONS.width)
+        assertThat(options.maximumSize.y).isEqualTo(MAX_DIMENSIONS.height)
+        assertThat(options.maximumSize.z).isEqualTo(MAX_DIMENSIONS.depth)
+    }
+
+    @Test
+    fun addResizableComponentToPanel_getsPanelSize() {
+        val panelSize = Dimensions(1f, 20f, 0f)
 
         // case for attach without set size
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        AndroidXrEntity entity = (AndroidXrEntity) createTestPanelEntity(Pose.Identity, panelSize);
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        val entity = createTestPanelEntity(Pose.Identity, panelSize) as AndroidXrEntity
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
-        assertThat(options.getCurrentSize().x).isEqualTo(panelSize.width);
-        assertThat(options.getCurrentSize().y).isEqualTo(panelSize.height);
-        assertThat(options.getCurrentSize().z).isEqualTo(panelSize.depth);
-        assertThat(resizableComponent.getSize().width).isEqualTo(panelSize.width);
-        assertThat(resizableComponent.getSize().height).isEqualTo(panelSize.height);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(panelSize.depth);
+        assertThat(options.currentSize.x).isEqualTo(panelSize.width)
+        assertThat(options.currentSize.y).isEqualTo(panelSize.height)
+        assertThat(options.currentSize.z).isEqualTo(panelSize.depth)
+        assertThat(resizableComponent.size.width).isEqualTo(panelSize.width)
+        assertThat(resizableComponent.size.height).isEqualTo(panelSize.height)
+        assertThat(resizableComponent.size.depth).isEqualTo(panelSize.depth)
 
-        entity.removeComponent(resizableComponent);
+        entity.removeComponent(resizableComponent)
 
         // case for preset size
-        Dimensions inputSize = new Dimensions(0f, 5f, 40f);
+        val inputSize = Dimensions(0f, 5f, 40f)
 
-        resizableComponent.setSize(inputSize);
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        resizableComponent.size = inputSize
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        assertThat(options.getCurrentSize().x).isEqualTo(panelSize.width);
-        assertThat(options.getCurrentSize().y).isEqualTo(panelSize.height);
-        assertThat(options.getCurrentSize().z).isEqualTo(panelSize.depth);
-        assertThat(resizableComponent.getSize().width).isEqualTo(panelSize.width);
-        assertThat(resizableComponent.getSize().height).isEqualTo(panelSize.height);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(panelSize.depth);
+        assertThat(options.currentSize.x).isEqualTo(panelSize.width)
+        assertThat(options.currentSize.y).isEqualTo(panelSize.height)
+        assertThat(options.currentSize.z).isEqualTo(panelSize.depth)
+        assertThat(resizableComponent.size.width).isEqualTo(panelSize.width)
+        assertThat(resizableComponent.size.height).isEqualTo(panelSize.height)
+        assertThat(resizableComponent.size.depth).isEqualTo(panelSize.depth)
     }
 
     @Test
-    public void addResizableComponentToQuadSurface_getsQuadSize() {
-        Dimensions quadSize = new Dimensions(1f, 2f, 0f);
+    fun addResizableComponentToQuadSurface_getsQuadSize() {
+        val quadSize = Dimensions(1f, 2f, 0f)
 
         // case for attach without set size
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        AndroidXrEntity entity =
-                (AndroidXrEntity)
-                        createTestSurfaceEntity(
-                                new SurfaceEntity.Shape.Quad(
-                                        new FloatSize2d(quadSize.width, quadSize.height)));
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        val entity =
+            createTestSurfaceEntity(
+                SurfaceEntity.Shape.Quad(FloatSize2d(quadSize.width, quadSize.height))
+            )
+                as AndroidXrEntity
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
-        assertThat(options.getCurrentSize().x).isEqualTo(quadSize.width);
-        assertThat(options.getCurrentSize().y).isEqualTo(quadSize.height);
-        assertThat(options.getCurrentSize().z).isEqualTo(quadSize.depth);
-        assertThat(resizableComponent.getSize().width).isEqualTo(quadSize.width);
-        assertThat(resizableComponent.getSize().height).isEqualTo(quadSize.height);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(quadSize.depth);
+        assertThat(options.currentSize.x).isEqualTo(quadSize.width)
+        assertThat(options.currentSize.y).isEqualTo(quadSize.height)
+        assertThat(options.currentSize.z).isEqualTo(quadSize.depth)
+        assertThat(resizableComponent.size.width).isEqualTo(quadSize.width)
+        assertThat(resizableComponent.size.height).isEqualTo(quadSize.height)
+        assertThat(resizableComponent.size.depth).isEqualTo(quadSize.depth)
 
-        entity.removeComponent(resizableComponent);
+        entity.removeComponent(resizableComponent)
 
         // case for preset size
-        Dimensions inputSize = new Dimensions(0f, 5f, 40f);
+        val inputSize = Dimensions(0f, 5f, 40f)
 
-        resizableComponent.setSize(inputSize);
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        resizableComponent.size = inputSize
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        assertThat(options.getCurrentSize().x).isEqualTo(quadSize.width);
-        assertThat(options.getCurrentSize().y).isEqualTo(quadSize.height);
-        assertThat(options.getCurrentSize().z).isEqualTo(quadSize.depth);
-        assertThat(resizableComponent.getSize().width).isEqualTo(quadSize.width);
-        assertThat(resizableComponent.getSize().height).isEqualTo(quadSize.height);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(quadSize.depth);
+        assertThat(options.currentSize.x).isEqualTo(quadSize.width)
+        assertThat(options.currentSize.y).isEqualTo(quadSize.height)
+        assertThat(options.currentSize.z).isEqualTo(quadSize.depth)
+        assertThat(resizableComponent.size.width).isEqualTo(quadSize.width)
+        assertThat(resizableComponent.size.height).isEqualTo(quadSize.height)
+        assertThat(resizableComponent.size.depth).isEqualTo(quadSize.depth)
     }
 
     @Test
-    public void addResizableComponent_setsMinMaxSizeOnNodeReformOptions() {
-        Dimensions inputMin = new Dimensions(Float.NaN, 1f, 2f);
-        Dimensions inputMax = new Dimensions(Float.NaN, -1f, 1f);
-        Dimensions expectMin = new Dimensions(0f, 1f, 2f);
-        Dimensions expectMax = new Dimensions(Float.POSITIVE_INFINITY, 1f, 2f);
+    fun addResizableComponent_setsMinMaxSizeOnNodeReformOptions() {
+        val inputMin = Dimensions(Float.NaN, 1f, 2f)
+        val inputMax = Dimensions(Float.NaN, -1f, 1f)
+        val expectMin = Dimensions(0f, 1f, 2f)
+        val expectMax = Dimensions(Float.POSITIVE_INFINITY, 1f, 2f)
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(mFakeExecutor, mXrExtensions, inputMin, inputMax);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, inputMin, inputMax)
 
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        val entity = createTestEntity() as AndroidXrEntity
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        assertThat(options.getMinimumSize().x).isEqualTo(expectMin.width);
-        assertThat(options.getMinimumSize().y).isEqualTo(expectMin.height);
-        assertThat(options.getMinimumSize().z).isEqualTo(expectMin.depth);
-        assertThat(options.getMaximumSize().x).isEqualTo(expectMax.width);
-        assertThat(options.getMaximumSize().y).isEqualTo(expectMax.height);
-        assertThat(options.getMaximumSize().z).isEqualTo(expectMax.depth);
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        assertThat(options.minimumSize.x).isEqualTo(expectMin.width)
+        assertThat(options.minimumSize.y).isEqualTo(expectMin.height)
+        assertThat(options.minimumSize.z).isEqualTo(expectMin.depth)
+        assertThat(options.maximumSize.x).isEqualTo(expectMax.width)
+        assertThat(options.maximumSize.y).isEqualTo(expectMax.height)
+        assertThat(options.maximumSize.z).isEqualTo(expectMax.depth)
     }
 
     @Test
-    public void setSizeOnResizableComponent_setsSanitizedSizeOnCurrentAndReformOptions() {
+    fun setSizeOnResizableComponent_setsSanitizedSizeOnCurrentAndReformOptions() {
         // case for valid size
-        Dimensions inputSize = new Dimensions(0f, 5f, 40f);
-        Dimensions expectSize = new Dimensions(0f, 5f, 40f);
+        var inputSize = Dimensions(0f, 5f, 40f)
+        var expectSize = Dimensions(0f, 5f, 40f)
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
-        resizableComponent.setSize(inputSize);
+        val entity = createTestEntity() as AndroidXrEntity
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
+        resizableComponent.size = inputSize
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
-        assertThat(options.getCurrentSize().x).isEqualTo(expectSize.width);
-        assertThat(options.getCurrentSize().y).isEqualTo(expectSize.height);
-        assertThat(options.getCurrentSize().z).isEqualTo(expectSize.depth);
-        assertThat(resizableComponent.getSize().width).isEqualTo(expectSize.width);
-        assertThat(resizableComponent.getSize().height).isEqualTo(expectSize.height);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(expectSize.depth);
+        assertThat(options.currentSize.x).isEqualTo(expectSize.width)
+        assertThat(options.currentSize.y).isEqualTo(expectSize.height)
+        assertThat(options.currentSize.z).isEqualTo(expectSize.depth)
+        assertThat(resizableComponent.size.width).isEqualTo(expectSize.width)
+        assertThat(resizableComponent.size.height).isEqualTo(expectSize.height)
+        assertThat(resizableComponent.size.depth).isEqualTo(expectSize.depth)
 
         // case for invalid(NaN) size
-        inputSize = new Dimensions(Float.NaN, Float.NaN, 50f);
-        expectSize = new Dimensions(0f, 5f, 50f);
-        resizableComponent.setSize(inputSize);
+        inputSize = Dimensions(Float.NaN, Float.NaN, 50f)
+        expectSize = Dimensions(0f, 5f, 50f)
+        resizableComponent.size = inputSize
 
-        assertThat(options.getCurrentSize().x).isEqualTo(expectSize.width);
-        assertThat(options.getCurrentSize().y).isEqualTo(expectSize.height);
-        assertThat(options.getCurrentSize().z).isEqualTo(expectSize.depth);
-        assertThat(resizableComponent.getSize().width).isEqualTo(expectSize.width);
-        assertThat(resizableComponent.getSize().height).isEqualTo(expectSize.height);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(expectSize.depth);
+        assertThat(options.currentSize.x).isEqualTo(expectSize.width)
+        assertThat(options.currentSize.y).isEqualTo(expectSize.height)
+        assertThat(options.currentSize.z).isEqualTo(expectSize.depth)
+        assertThat(resizableComponent.size.width).isEqualTo(expectSize.width)
+        assertThat(resizableComponent.size.height).isEqualTo(expectSize.height)
+        assertThat(resizableComponent.size.depth).isEqualTo(expectSize.depth)
     }
 
     @Test
-    public void getMinMaxSizeOnResizableComponent_returnsSanitizedInitialMinMaxSize() {
-        Dimensions initMin = new Dimensions(Float.NaN, -1f, 2f);
-        Dimensions initMax = new Dimensions(Float.NaN, 1f, 1f);
-        Dimensions expectMin = new Dimensions(0f, 0f, 2f);
-        Dimensions expectMax = new Dimensions(Float.POSITIVE_INFINITY, 1f, 2f);
+    fun getMinMaxSizeOnResizableComponent_returnsSanitizedInitialMinMaxSize() {
+        val initMin = Dimensions(Float.NaN, -1f, 2f)
+        val initMax = Dimensions(Float.NaN, 1f, 1f)
+        val expectMin = Dimensions(0f, 0f, 2f)
+        val expectMax = Dimensions(Float.POSITIVE_INFINITY, 1f, 2f)
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(mFakeExecutor, mXrExtensions, initMin, initMax);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, initMin, initMax)
 
-        assertThat(resizableComponent.getMinimumSize().width).isEqualTo(expectMin.width);
-        assertThat(resizableComponent.getMinimumSize().height).isEqualTo(expectMin.height);
-        assertThat(resizableComponent.getMinimumSize().depth).isEqualTo(expectMin.depth);
-        assertThat(resizableComponent.getMaximumSize().width).isEqualTo(expectMax.width);
-        assertThat(resizableComponent.getMaximumSize().height).isEqualTo(expectMax.height);
-        assertThat(resizableComponent.getMaximumSize().depth).isEqualTo(expectMax.depth);
+        assertThat(resizableComponent.minimumSize.width).isEqualTo(expectMin.width)
+        assertThat(resizableComponent.minimumSize.height).isEqualTo(expectMin.height)
+        assertThat(resizableComponent.minimumSize.depth).isEqualTo(expectMin.depth)
+        assertThat(resizableComponent.maximumSize.width).isEqualTo(expectMax.width)
+        assertThat(resizableComponent.maximumSize.height).isEqualTo(expectMax.height)
+        assertThat(resizableComponent.maximumSize.depth).isEqualTo(expectMax.depth)
     }
 
     @Test
-    public void setMinSizeOnResizableComponent_setsSanitizedMinMaxSizeOnNodeReformOptions() {
-        Dimensions initMin = new Dimensions(1f, 1f, 1f);
-        Dimensions initMax = new Dimensions(10f, 10f, 10f);
-        Dimensions inputMin = new Dimensions(20f, Float.NaN, -1f);
-        Dimensions expectMin = new Dimensions(20f, 1f, 0f);
-        Dimensions expectMax = new Dimensions(20f, 10f, 10f);
+    fun setMinSizeOnResizableComponent_setsSanitizedMinMaxSizeOnNodeReformOptions() {
+        val initMin = Dimensions(1f, 1f, 1f)
+        val initMax = Dimensions(10f, 10f, 10f)
+        val inputMin = Dimensions(20f, Float.NaN, -1f)
+        val expectMin = Dimensions(20f, 1f, 0f)
+        val expectMax = Dimensions(20f, 10f, 10f)
 
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(mFakeExecutor, mXrExtensions, initMin, initMax);
-        assertThat(resizableComponent).isNotNull();
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, initMin, initMax)
+        assertThat(resizableComponent).isNotNull()
 
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
-        resizableComponent.setMinimumSize(inputMin);
+        resizableComponent.minimumSize = inputMin
 
-        assertThat(options.getMinimumSize().x).isEqualTo(expectMin.width);
-        assertThat(options.getMinimumSize().y).isEqualTo(expectMin.height);
-        assertThat(options.getMinimumSize().z).isEqualTo(expectMin.depth);
-        assertThat(resizableComponent.getMinimumSize().width).isEqualTo(expectMin.width);
-        assertThat(resizableComponent.getMinimumSize().height).isEqualTo(expectMin.height);
-        assertThat(resizableComponent.getMinimumSize().depth).isEqualTo(expectMin.depth);
-        assertThat(options.getMaximumSize().x).isEqualTo(expectMax.width);
-        assertThat(options.getMaximumSize().y).isEqualTo(expectMax.height);
-        assertThat(options.getMaximumSize().z).isEqualTo(expectMax.depth);
-        assertThat(resizableComponent.getMaximumSize().width).isEqualTo(expectMax.width);
-        assertThat(resizableComponent.getMaximumSize().height).isEqualTo(expectMax.height);
-        assertThat(resizableComponent.getMaximumSize().depth).isEqualTo(expectMax.depth);
+        assertThat(options.minimumSize.x).isEqualTo(expectMin.width)
+        assertThat(options.minimumSize.y).isEqualTo(expectMin.height)
+        assertThat(options.minimumSize.z).isEqualTo(expectMin.depth)
+        assertThat(resizableComponent.minimumSize.width).isEqualTo(expectMin.width)
+        assertThat(resizableComponent.minimumSize.height).isEqualTo(expectMin.height)
+        assertThat(resizableComponent.minimumSize.depth).isEqualTo(expectMin.depth)
+        assertThat(options.maximumSize.x).isEqualTo(expectMax.width)
+        assertThat(options.maximumSize.y).isEqualTo(expectMax.height)
+        assertThat(options.maximumSize.z).isEqualTo(expectMax.depth)
+        assertThat(resizableComponent.maximumSize.width).isEqualTo(expectMax.width)
+        assertThat(resizableComponent.maximumSize.height).isEqualTo(expectMax.height)
+        assertThat(resizableComponent.maximumSize.depth).isEqualTo(expectMax.depth)
     }
 
     @Test
-    public void setMaxSizeOnResizableComponent_setsSanitizedMinMaxSizeOnNodeReformOptions() {
-        Dimensions initMin = new Dimensions(2f, 2f, 2f);
-        Dimensions initMax = new Dimensions(10f, 10f, 10f);
-        Dimensions inputMax = new Dimensions(1f, Float.NaN, -1f);
-        Dimensions expectMin = new Dimensions(1f, 2f, 0f);
-        Dimensions expectMax = new Dimensions(1f, 10f, 0f);
+    fun setMaxSizeOnResizableComponent_setsSanitizedMinMaxSizeOnNodeReformOptions() {
+        val initMin = Dimensions(2f, 2f, 2f)
+        val initMax = Dimensions(10f, 10f, 10f)
+        val inputMax = Dimensions(1f, Float.NaN, -1f)
+        val expectMin = Dimensions(1f, 2f, 0f)
+        val expectMax = Dimensions(1f, 10f, 0f)
 
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(mFakeExecutor, mXrExtensions, initMin, initMax);
-        assertThat(resizableComponent).isNotNull();
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, initMin, initMax)
+        assertThat(resizableComponent).isNotNull()
 
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
-        resizableComponent.setMaximumSize(inputMax);
+        resizableComponent.maximumSize = inputMax
 
-        assertThat(options.getMinimumSize().x).isEqualTo(expectMin.width);
-        assertThat(options.getMinimumSize().y).isEqualTo(expectMin.height);
-        assertThat(options.getMinimumSize().z).isEqualTo(expectMin.depth);
-        assertThat(resizableComponent.getMinimumSize().width).isEqualTo(expectMin.width);
-        assertThat(resizableComponent.getMinimumSize().height).isEqualTo(expectMin.height);
-        assertThat(resizableComponent.getMinimumSize().depth).isEqualTo(expectMin.depth);
-        assertThat(options.getMaximumSize().x).isEqualTo(expectMax.width);
-        assertThat(options.getMaximumSize().y).isEqualTo(expectMax.height);
-        assertThat(options.getMaximumSize().z).isEqualTo(expectMax.depth);
-        assertThat(resizableComponent.getMaximumSize().width).isEqualTo(expectMax.width);
-        assertThat(resizableComponent.getMaximumSize().height).isEqualTo(expectMax.height);
-        assertThat(resizableComponent.getMaximumSize().depth).isEqualTo(expectMax.depth);
+        assertThat(options.minimumSize.x).isEqualTo(expectMin.width)
+        assertThat(options.minimumSize.y).isEqualTo(expectMin.height)
+        assertThat(options.minimumSize.z).isEqualTo(expectMin.depth)
+        assertThat(resizableComponent.minimumSize.width).isEqualTo(expectMin.width)
+        assertThat(resizableComponent.minimumSize.height).isEqualTo(expectMin.height)
+        assertThat(resizableComponent.minimumSize.depth).isEqualTo(expectMin.depth)
+        assertThat(options.maximumSize.x).isEqualTo(expectMax.width)
+        assertThat(options.maximumSize.y).isEqualTo(expectMax.height)
+        assertThat(options.maximumSize.z).isEqualTo(expectMax.depth)
+        assertThat(resizableComponent.maximumSize.width).isEqualTo(expectMax.width)
+        assertThat(resizableComponent.maximumSize.height).isEqualTo(expectMax.height)
+        assertThat(resizableComponent.maximumSize.depth).isEqualTo(expectMax.depth)
     }
 
     @Test
-    public void setFixedAspectRatioOnResizableComponent_setsFixedAspectRatioOnNodeReformOptions() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun setFixedAspectRatioOnResizableComponent_setsFixedAspectRatioOnNodeReformOptions() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
+        assertThat(resizableComponent).isNotNull()
 
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
         // If no size was set the default aspect ratio will be 1.
-        resizableComponent.setFixedAspectRatioEnabled(true);
-        assertThat(options.getFixedAspectRatio()).isEqualTo(1.0f);
+        resizableComponent.isFixedAspectRatioEnabled = true
+        assertThat(options.fixedAspectRatio).isEqualTo(1.0f)
 
         // Updating the size will update the aspect ratio if enabled.
-        resizableComponent.setSize(new Dimensions(1f, 2f, 1f));
-        assertThat(options.getFixedAspectRatio()).isEqualTo(0.5f);
+        resizableComponent.size = Dimensions(1f, 2f, 1f)
+        assertThat(options.fixedAspectRatio).isEqualTo(0.5f)
 
         // Disabling the aspect ratio will set the fixed aspect ratio to 0.
-        resizableComponent.setFixedAspectRatioEnabled(false);
-        assertThat(options.getFixedAspectRatio()).isEqualTo(0.0f);
+        resizableComponent.isFixedAspectRatioEnabled = false
+        assertThat(options.fixedAspectRatio).isEqualTo(0.0f)
 
         // Updating the size will not update the aspect ratio if disabled.
-        resizableComponent.setSize(new Dimensions(3f, 1f, 1f));
-        assertThat(options.getFixedAspectRatio()).isEqualTo(0.0f);
+        resizableComponent.size = Dimensions(3f, 1f, 1f)
+        assertThat(options.fixedAspectRatio).isEqualTo(0.0f)
 
         // Enabling it will update the aspect ratio based on the current size.
-        resizableComponent.setFixedAspectRatioEnabled(true);
-        assertThat(options.getFixedAspectRatio()).isEqualTo(3.0f);
+        resizableComponent.isFixedAspectRatioEnabled = true
+        assertThat(options.fixedAspectRatio).isEqualTo(3.0f)
     }
 
     @Test
-    public void setFixedAspectRatioOnResizableComponent_setsPanelAspectRatio() {
-        Dimensions panelDimensions = new Dimensions(2.0f, 1.0f, 0.0f);
-        PanelEntityImpl entity =
-                (PanelEntityImpl) createTestPanelEntity(new Pose(), panelDimensions);
+    fun setFixedAspectRatioOnResizableComponent_setsPanelAspectRatio() {
+        val panelDimensions = Dimensions(2.0f, 1.0f, 0.0f)
+        val entity = createTestPanelEntity(Pose(), panelDimensions) as PanelEntityImpl
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
+        assertThat(resizableComponent).isNotNull()
 
-        resizableComponent.setFixedAspectRatioEnabled(true);
+        resizableComponent.isFixedAspectRatioEnabled = true
 
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
-        assertThat(options.getFixedAspectRatio())
-                .isEqualTo(panelDimensions.width / panelDimensions.height);
+        assertThat(options.fixedAspectRatio)
+            .isEqualTo(panelDimensions.width / panelDimensions.height)
     }
 
     @Test
-    public void
-            setForceShowResizeOverlayOnResizableComponent_setsForceShowResizeOverlayOnNodeReformOptions() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun setForceShowResizeOverlayOnResizableComponent_setsForceShowResizeOverlayOnNodeReformOptions() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
+        assertThat(resizableComponent).isNotNull()
 
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        resizableComponent.setForceShowResizeOverlay(true);
+        resizableComponent.forceShowResizeOverlay = true
 
-        assertThat(mNodeRepository.getReformOptions(entity.getNode()).getForceShowResizeOverlay())
-                .isTrue();
+        assertThat(nodeRepository.getReformOptions(entity.getNode()).forceShowResizeOverlay)
+            .isTrue()
     }
 
     @Test
-    public void addResizableComponentLater_addsReformOptionsToNode() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun addResizableComponentLater_addsReformOptionsToNode() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
+        assertThat(resizableComponent).isNotNull()
 
-        Dimensions testSize = new Dimensions(1f, 1f, 1f);
-        Dimensions testMinSize = new Dimensions(0.25f, 0.25f, 0.25f);
-        Dimensions testMaxSize = new Dimensions(5f, 5f, 5f);
-        resizableComponent.setSize(testSize);
-        resizableComponent.setMinimumSize(testMinSize);
-        resizableComponent.setMaximumSize(testMaxSize);
+        val testSize = Dimensions(1f, 1f, 1f)
+        val testMinSize = Dimensions(0.25f, 0.25f, 0.25f)
+        val testMaxSize = Dimensions(5f, 5f, 5f)
+        resizableComponent.size = testSize
+        resizableComponent.minimumSize = testMinSize
+        resizableComponent.maximumSize = testMaxSize
 
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
-        assertThat(options.getEnabledReform()).isEqualTo(ALLOW_RESIZE);
-        assertThat(options.getCurrentSize().x).isEqualTo(testSize.width);
-        assertThat(options.getCurrentSize().y).isEqualTo(testSize.height);
-        assertThat(options.getCurrentSize().z).isEqualTo(testSize.depth);
-        assertThat(options.getMinimumSize().x).isEqualTo(testMinSize.width);
-        assertThat(options.getMinimumSize().y).isEqualTo(testMinSize.height);
-        assertThat(options.getMinimumSize().z).isEqualTo(testMinSize.depth);
-        assertThat(options.getMaximumSize().x).isEqualTo(testMaxSize.width);
-        assertThat(options.getMaximumSize().y).isEqualTo(testMaxSize.height);
-        assertThat(options.getMaximumSize().z).isEqualTo(testMaxSize.depth);
+        assertThat(options.enabledReform).isEqualTo(ReformOptions.ALLOW_RESIZE)
+        assertThat(options.currentSize.x).isEqualTo(testSize.width)
+        assertThat(options.currentSize.y).isEqualTo(testSize.height)
+        assertThat(options.currentSize.z).isEqualTo(testSize.depth)
+        assertThat(options.minimumSize.x).isEqualTo(testMinSize.width)
+        assertThat(options.minimumSize.y).isEqualTo(testMinSize.height)
+        assertThat(options.minimumSize.z).isEqualTo(testMinSize.depth)
+        assertThat(options.maximumSize.x).isEqualTo(testMaxSize.width)
+        assertThat(options.maximumSize.y).isEqualTo(testMaxSize.height)
+        assertThat(options.maximumSize.z).isEqualTo(testMaxSize.depth)
     }
 
     @Test
-    public void addResizeEventListener_onlyInvokedOnResizeEvent() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun addResizeEventListener_onlyInvokedOnResizeEvent() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        val mockResizeEventListener = mock<ResizeEventListener>()
 
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
 
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
-        assertThat(entity.getReformEventConsumerMap()).isNotEmpty();
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
+        assertThat(entity.reformEventConsumerMap).isNotEmpty()
 
-        ReformEvent moveReformEvent =
-                ShadowReformEvent.create(/* type= */ REFORM_TYPE_MOVE, /* state= */ 0, /* id= */ 0);
+        val moveReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_MOVE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), moveReformEvent);
+        sendResizeEvent(entity.getNode(), moveReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        verify(mockResizeEventListener, never()).onResizeEvent(any());
+        verify(mockResizeEventListener, never()).onResizeEvent(any())
 
-        ReformEvent resizeReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ 0, /* id= */ 0);
-        sendResizeEvent(entity.getNode(), resizeReformEvent);
+        val resizeReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
+        sendResizeEvent(entity.getNode(), resizeReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        verify(mockResizeEventListener).onResizeEvent(any());
+        verify(mockResizeEventListener).onResizeEvent(any())
     }
 
-    private void sendResizeEvent(Node node, ReformEvent reformEvent) {
-        ReformOptions options = mNodeRepository.getReformOptions(node);
-        options.getEventExecutor().execute(() -> options.getEventCallback().accept(reformEvent));
-    }
-
-    @Test
-    public void addResizeEventListenerWithExecutor_invokesListenerOnGivenExecutor() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
-
-        assertThat(entity).isNotNull();
-
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
-
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
-
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
-        FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
-
-        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener);
-
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
-
-        ReformEvent resizeReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ 0, /* id= */ 0);
-
-        sendResizeEvent(entity.getNode(), resizeReformEvent);
-
-        assertThat(mFakeExecutor.hasNext()).isTrue();
-
-        mFakeExecutor.runAll();
-
-        assertThat(executorService.hasNext()).isTrue();
-
-        executorService.runAll();
-
-        verify(mockResizeEventListener).onResizeEvent(any());
+    private fun sendResizeEvent(node: Node, reformEvent: ReformEvent?) {
+        val options = nodeRepository.getReformOptions(node)
+        options.eventExecutor.execute { options.eventCallback.accept(reformEvent) }
     }
 
     @Test
-    public void addResizeEventListenerMultiple_invokesAllListeners() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun addResizeEventListenerWithExecutor_invokesListenerOnGivenExecutor() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        ResizeEventListener mockResizeEventListener1 = mock(ResizeEventListener.class);
-        ResizeEventListener mockResizeEventListener2 = mock(ResizeEventListener.class);
-        FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        val mockResizeEventListener = mock<ResizeEventListener>()
+        val executorService = FakeScheduledExecutorService()
 
-        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener1);
-        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener2);
+        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener)
 
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
 
-        ReformEvent resizeReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ 0, /* id= */ 0);
+        val resizeReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), resizeReformEvent);
+        sendResizeEvent(entity.getNode(), resizeReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        assertThat(executorService.hasNext()).isTrue();
+        assertThat(executorService.hasNext()).isTrue()
 
-        executorService.runAll();
+        executorService.runAll()
 
-        verify(mockResizeEventListener1).onResizeEvent(any());
-        verify(mockResizeEventListener2).onResizeEvent(any());
+        verify(mockResizeEventListener).onResizeEvent(any())
     }
 
     @Test
-    public void removeResizeEventListenerMultiple_removesGivenListener() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun addResizeEventListenerMultiple_invokesAllListeners() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        ResizeEventListener mockResizeEventListener1 = mock(ResizeEventListener.class);
-        ResizeEventListener mockResizeEventListener2 = mock(ResizeEventListener.class);
-        FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        val mockResizeEventListener1 = mock<ResizeEventListener>()
+        val mockResizeEventListener2 = mock<ResizeEventListener>()
+        val executorService = FakeScheduledExecutorService()
 
-        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener1);
-        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener2);
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
+        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener1)
+        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener2)
 
-        ReformEvent resizeReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ 0, /* id= */ 0);
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
 
-        sendResizeEvent(entity.getNode(), resizeReformEvent);
+        val resizeReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        sendResizeEvent(entity.getNode(), resizeReformEvent)
 
-        mFakeExecutor.runAll();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        assertThat(executorService.hasNext()).isTrue();
+        fakeExecutor.runAll()
 
-        executorService.runAll();
+        assertThat(executorService.hasNext()).isTrue()
 
-        resizableComponent.removeResizeEventListener(mockResizeEventListener1);
-        sendResizeEvent(entity.getNode(), resizeReformEvent);
+        executorService.runAll()
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
-
-        mFakeExecutor.runAll();
-
-        assertThat(executorService.hasNext()).isTrue();
-
-        executorService.runAll();
-
-        verify(mockResizeEventListener1).onResizeEvent(any());
-        verify(mockResizeEventListener2, times(2)).onResizeEvent(any());
+        verify(mockResizeEventListener1).onResizeEvent(any())
+        verify(mockResizeEventListener2).onResizeEvent(any())
     }
 
     @Test
-    public void removeAllResizeEventListeners_removesReformEventConsumer() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun removeResizeEventListenerMultiple_removesGivenListener() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        ResizeEventListener mockResizeEventListener1 = mock(ResizeEventListener.class);
-        ResizeEventListener mockResizeEventListener2 = mock(ResizeEventListener.class);
-        FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        val mockResizeEventListener1 = mock<ResizeEventListener>()
+        val mockResizeEventListener2 = mock<ResizeEventListener>()
+        val executorService = FakeScheduledExecutorService()
 
-        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener1);
-        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener2);
+        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener1)
+        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener2)
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
 
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
+        val resizeReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
 
-        ReformEvent resizeReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ 0, /* id= */ 0);
+        sendResizeEvent(entity.getNode(), resizeReformEvent)
 
-        sendResizeEvent(entity.getNode(), resizeReformEvent);
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        fakeExecutor.runAll()
 
-        mFakeExecutor.runAll();
+        assertThat(executorService.hasNext()).isTrue()
 
-        assertThat(executorService.hasNext()).isTrue();
+        executorService.runAll()
 
-        executorService.runAll();
+        resizableComponent.removeResizeEventListener(mockResizeEventListener1)
+        sendResizeEvent(entity.getNode(), resizeReformEvent)
 
-        verify(mockResizeEventListener1).onResizeEvent(any());
-        verify(mockResizeEventListener2).onResizeEvent(any());
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        resizableComponent.removeResizeEventListener(mockResizeEventListener1);
-        resizableComponent.removeResizeEventListener(mockResizeEventListener2);
+        fakeExecutor.runAll()
 
-        assertThat(entity.getReformEventConsumerMap()).isEmpty();
+        assertThat(executorService.hasNext()).isTrue()
+
+        executorService.runAll()
+
+        verify(mockResizeEventListener1).onResizeEvent(any())
+        verify(mockResizeEventListener2, times(2)).onResizeEvent(any())
     }
 
     @Test
-    public void removeResizableComponent_clearsResizeReformOptionsAndResizeEventListeners() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun removeAllResizeEventListeners_removesReformEventConsumer() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        val mockResizeEventListener1 = mock<ResizeEventListener>()
+        val mockResizeEventListener2 = mock<ResizeEventListener>()
+        val executorService = FakeScheduledExecutorService()
 
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener1)
+        resizableComponent.addResizeEventListener(executorService, mockResizeEventListener2)
 
-        assertThat(resizableComponent.mReformEventConsumer).isNotNull();
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
 
-        entity.removeComponent(resizableComponent);
+        val resizeReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
 
-        assertThat(mNodeRepository.getReformOptions(entity.getNode())).isNull();
-        assertThat(entity.getReformEventConsumerMap()).isEmpty();
+        sendResizeEvent(entity.getNode(), resizeReformEvent)
+
+        assertThat(fakeExecutor.hasNext()).isTrue()
+
+        fakeExecutor.runAll()
+
+        assertThat(executorService.hasNext()).isTrue()
+
+        executorService.runAll()
+
+        verify(mockResizeEventListener1).onResizeEvent(any())
+        verify(mockResizeEventListener2).onResizeEvent(any())
+
+        resizableComponent.removeResizeEventListener(mockResizeEventListener1)
+        resizableComponent.removeResizeEventListener(mockResizeEventListener2)
+
+        assertThat(entity.reformEventConsumerMap).isEmpty()
     }
 
     @Test
-    public void addMoveAndResizeComponents_setsCombinedReformsOptions() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun removeResizableComponent_clearsResizeReformOptionsAndResizeEventListeners() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        MovableComponentImpl movableComponent =
-                new MovableComponentImpl(
-                        true, true, false, mActivitySpaceImpl, mPanelShadowRenderer, mFakeExecutor);
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor,
-                        mXrExtensions,
-                        new Dimensions(0f, 0f, 0f),
-                        new Dimensions(5f, 5f, 5f));
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(entity.addComponent(movableComponent)).isTrue();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
-        assertThat(mNodeRepository.getReformOptions(entity.getNode()).getEnabledReform())
-                .isEqualTo(ALLOW_MOVE | ALLOW_RESIZE);
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
+
+        val mockResizeEventListener = mock<ResizeEventListener>()
+
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
+
+        assertThat(resizableComponent.reformEventConsumer).isNotNull()
+
+        entity.removeComponent(resizableComponent)
+
+        assertThat(nodeRepository.getReformOptions(entity.getNode())).isNull()
+        assertThat(entity.reformEventConsumerMap).isEmpty()
     }
 
     @Test
-    public void addMoveAndResizeComponents_removingMoveKeepsResize() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun addMoveAndResizeComponents_setsCombinedReformsOptions() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        MovableComponentImpl movableComponent =
-                new MovableComponentImpl(
-                        true, true, false, mActivitySpaceImpl, mPanelShadowRenderer, mFakeExecutor);
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor,
-                        mXrExtensions,
-                        new Dimensions(0f, 0f, 0f),
-                        new Dimensions(5f, 5f, 5f));
+        val movableComponent =
+            MovableComponentImpl(
+                true,
+                true,
+                false,
+                activitySpaceImpl,
+                panelShadowRenderer,
+                fakeExecutor,
+            )
+        val resizableComponent =
+            ResizableComponentImpl(
+                fakeExecutor,
+                xrExtensions,
+                Dimensions(0f, 0f, 0f),
+                Dimensions(5f, 5f, 5f),
+            )
 
-        assertThat(entity.addComponent(movableComponent)).isTrue();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
-
-        MoveEventListener moveEventListener = mock(MoveEventListener.class);
-        movableComponent.addMoveEventListener(directExecutor(), moveEventListener);
-        ResizeEventListener resizeEventListener = mock(ResizeEventListener.class);
-        resizableComponent.addResizeEventListener(directExecutor(), resizeEventListener);
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-
-        assertThat(options.getEnabledReform()).isEqualTo(ALLOW_MOVE | ALLOW_RESIZE);
-
-        entity.removeComponent(movableComponent);
-
-        assertThat(options.getEnabledReform()).isEqualTo(ALLOW_RESIZE);
-
-        ReformEvent resizeReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ 0, /* id= */ 0);
-
-        sendResizeEvent(entity.getNode(), resizeReformEvent);
-
-        assertThat(mFakeExecutor.hasNext()).isTrue();
-
-        mFakeExecutor.runAll();
-
-        verify(resizeEventListener).onResizeEvent(any());
-
-        ReformEvent moveReformEvent =
-                ShadowReformEvent.create(/* type= */ REFORM_TYPE_MOVE, /* state= */ 0, /* id= */ 0);
-
-        sendResizeEvent(entity.getNode(), moveReformEvent);
-
-        assertThat(mFakeExecutor.hasNext()).isTrue();
-
-        mFakeExecutor.runAll();
-
-        verify(moveEventListener, never()).onMoveEvent(any());
+        assertThat(entity.addComponent(movableComponent)).isTrue()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
+        assertThat(nodeRepository.getReformOptions(entity.getNode()).enabledReform)
+            .isEqualTo(ReformOptions.ALLOW_MOVE or ReformOptions.ALLOW_RESIZE)
     }
 
     @Test
-    public void addMoveAndResizeComponents_removingResizeKeepsMove() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun addMoveAndResizeComponents_removingMoveKeepsResize() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        MovableComponentImpl movableComponent =
-                new MovableComponentImpl(
-                        true, true, false, mActivitySpaceImpl, mPanelShadowRenderer, mFakeExecutor);
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor,
-                        mXrExtensions,
-                        new Dimensions(0f, 0f, 0f),
-                        new Dimensions(5f, 5f, 5f));
+        val movableComponent =
+            MovableComponentImpl(
+                true,
+                true,
+                false,
+                activitySpaceImpl,
+                panelShadowRenderer,
+                fakeExecutor,
+            )
+        val resizableComponent =
+            ResizableComponentImpl(
+                fakeExecutor,
+                xrExtensions,
+                Dimensions(0f, 0f, 0f),
+                Dimensions(5f, 5f, 5f),
+            )
 
-        assertThat(entity.addComponent(movableComponent)).isTrue();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(entity.addComponent(movableComponent)).isTrue()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        MoveEventListener moveEventListener = mock(MoveEventListener.class);
-        movableComponent.addMoveEventListener(directExecutor(), moveEventListener);
-        ResizeEventListener resizeEventListener = mock(ResizeEventListener.class);
-        resizableComponent.addResizeEventListener(directExecutor(), resizeEventListener);
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val moveEventListener = mock<MoveEventListener>()
+        movableComponent.addMoveEventListener(MoreExecutors.directExecutor(), moveEventListener)
+        val resizeEventListener = mock<ResizeEventListener>()
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            resizeEventListener,
+        )
+        val options = nodeRepository.getReformOptions(entity.getNode())
 
-        assertThat(options.getEnabledReform()).isEqualTo(ALLOW_MOVE | ALLOW_RESIZE);
+        assertThat(options.enabledReform)
+            .isEqualTo(ReformOptions.ALLOW_MOVE or ReformOptions.ALLOW_RESIZE)
 
-        entity.removeComponent(resizableComponent);
+        entity.removeComponent(movableComponent)
 
-        assertThat(options.getEnabledReform()).isEqualTo(ALLOW_MOVE);
+        assertThat(options.enabledReform).isEqualTo(ReformOptions.ALLOW_RESIZE)
+
+        val resizeReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
+
+        sendResizeEvent(entity.getNode(), resizeReformEvent)
+
+        assertThat(fakeExecutor.hasNext()).isTrue()
+
+        fakeExecutor.runAll()
+
+        verify(resizeEventListener).onResizeEvent(any())
+
+        val moveReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_MOVE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
+
+        sendResizeEvent(entity.getNode(), moveReformEvent)
+
+        assertThat(fakeExecutor.hasNext()).isTrue()
+
+        fakeExecutor.runAll()
+
+        verify(moveEventListener, never()).onMoveEvent(any())
+    }
+
+    @Test
+    fun addMoveAndResizeComponents_removingResizeKeepsMove() {
+        val entity = createTestEntity() as AndroidXrEntity
+
+        assertThat(entity).isNotNull()
+
+        val movableComponent =
+            MovableComponentImpl(
+                true,
+                true,
+                false,
+                activitySpaceImpl,
+                panelShadowRenderer,
+                fakeExecutor,
+            )
+        val resizableComponent =
+            ResizableComponentImpl(
+                fakeExecutor,
+                xrExtensions,
+                Dimensions(0f, 0f, 0f),
+                Dimensions(5f, 5f, 5f),
+            )
+
+        assertThat(entity.addComponent(movableComponent)).isTrue()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
+
+        val moveEventListener = mock<MoveEventListener>()
+        movableComponent.addMoveEventListener(MoreExecutors.directExecutor(), moveEventListener)
+        val resizeEventListener = mock<ResizeEventListener>()
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            resizeEventListener,
+        )
+        val options = nodeRepository.getReformOptions(entity.getNode())
+
+        assertThat(options.enabledReform)
+            .isEqualTo(ReformOptions.ALLOW_MOVE or ReformOptions.ALLOW_RESIZE)
+
+        entity.removeComponent(resizableComponent)
+
+        assertThat(options.enabledReform).isEqualTo(ReformOptions.ALLOW_MOVE)
 
         // Start the resize.
-        ReformEvent startReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_MOVE, /* state= */ REFORM_STATE_START, /* id= */ 0);
+        val startReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_MOVE,
+                /* state= */ ReformEvent.REFORM_STATE_START,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), startReformEvent);
+        sendResizeEvent(entity.getNode(), startReformEvent)
 
-        ReformEvent moveReformEvent =
-                ShadowReformEvent.create(/* type= */ REFORM_TYPE_MOVE, /* state= */ 0, /* id= */ 0);
+        val moveReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_MOVE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), moveReformEvent);
+        sendResizeEvent(entity.getNode(), moveReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        verify(moveEventListener, times(2)).onMoveEvent(any());
+        verify(moveEventListener, times(2)).onMoveEvent(any())
 
-        ReformEvent resizeReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ 0, /* id= */ 0);
+        val resizeReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ 0,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), resizeReformEvent);
+        sendResizeEvent(entity.getNode(), resizeReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        verify(resizeEventListener, never()).onResizeEvent(any());
+        verify(resizeEventListener, never()).onResizeEvent(any())
     }
 
     @Test
-    public void resizableComponent_canAttachAgainAfterDetach() {
-        Entity entity = createTestEntity();
+    fun resizableComponent_canAttachAgainAfterDetach() {
+        val entity = createTestEntity()
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        entity.removeComponent(resizableComponent);
+        entity.removeComponent(resizableComponent)
 
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
     }
 
     @Test
-    public void resizableComponent_hidesEntityDuringResize() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun resizableComponent_hidesEntityDuringResize() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        entity.setAlpha(0.9f);
+        entity.setAlpha(0.9f)
 
-        assertThat(entity.getAlpha()).isEqualTo(0.9f);
+        assertThat(entity.getAlpha()).isEqualTo(0.9f)
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        val mockResizeEventListener = mock<ResizeEventListener>()
 
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
 
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
-        assertThat(entity.getReformEventConsumerMap()).isNotEmpty();
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
+        assertThat(entity.reformEventConsumerMap).isNotEmpty()
 
         // Start the resize.
-        ReformEvent startReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE,
-                        /* state= */ REFORM_STATE_START,
-                        /* id= */ 0);
+        val startReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ ReformEvent.REFORM_STATE_START,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), startReformEvent);
+        sendResizeEvent(entity.getNode(), startReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
-        ArgumentCaptor<ResizeEvent> resizeEventCaptor = ArgumentCaptor.forClass(ResizeEvent.class);
+        fakeExecutor.runAll()
+        val resizeEventCaptor = argumentCaptor<ResizeEvent>()
 
-        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture())
 
-        ResizeEvent resizeEvent = resizeEventCaptor.getValue();
+        var resizeEvent = resizeEventCaptor.lastValue
 
-        assertThat(resizeEvent.getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_START);
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f);
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_START)
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f)
 
         // End the resize.
-        ReformEvent endReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ REFORM_STATE_END, /* id= */ 0);
+        val endReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ ReformEvent.REFORM_STATE_END,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), endReformEvent);
+        sendResizeEvent(entity.getNode(), endReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
         // Verify that alpha is not restored until the resize event is processed.
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f);
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f)
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture());
-        resizeEvent = resizeEventCaptor.getAllValues().get(2);
+        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture())
+        resizeEvent = resizeEventCaptor.allValues[2]
 
-        assertThat(resizeEvent.getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_END);
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_END)
         // Verify that alpha is restored after the resize event is processed.
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f);
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f)
     }
 
     @Test
-    public void resizableComponent_withAutoHideContentDisabled_doesNotHideEntityDuringResize() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun resizableComponent_withAutoHideContentDisabled_doesNotHideEntityDuringResize() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        entity.setAlpha(0.9f);
+        entity.setAlpha(0.9f)
 
-        assertThat(entity.getAlpha()).isEqualTo(0.9f);
+        assertThat(entity.getAlpha()).isEqualTo(0.9f)
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        val mockResizeEventListener = mock<ResizeEventListener>()
 
-        resizableComponent.setAutoHideContent(false);
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+        resizableComponent.autoHideContent = false
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
 
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
-        assertThat(entity.getReformEventConsumerMap()).isNotEmpty();
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
+        assertThat(entity.reformEventConsumerMap).isNotEmpty()
 
         // Start the resize.
-        ReformEvent startReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE,
-                        /* state= */ REFORM_STATE_START,
-                        /* id= */ 0);
+        val startReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ ReformEvent.REFORM_STATE_START,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), startReformEvent);
+        sendResizeEvent(entity.getNode(), startReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        ArgumentCaptor<ResizeEvent> resizeEventCaptor = ArgumentCaptor.forClass(ResizeEvent.class);
+        val resizeEventCaptor = argumentCaptor<ResizeEvent>()
 
-        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture());
-        ResizeEvent resizeEvent = resizeEventCaptor.getValue();
+        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture())
+        var resizeEvent = resizeEventCaptor.lastValue
 
-        assertThat(resizeEvent.getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_START);
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f);
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_START)
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f)
 
         // End the resize.
-        ReformEvent endReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ REFORM_STATE_END, /* id= */ 0);
+        val endReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ ReformEvent.REFORM_STATE_END,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), endReformEvent);
+        sendResizeEvent(entity.getNode(), endReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture());
-        resizeEvent = resizeEventCaptor.getAllValues().get(2);
+        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture())
+        resizeEvent = resizeEventCaptor.allValues[2]
 
-        assertThat(resizeEvent.getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_END);
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f);
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_END)
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f)
     }
 
     @Test
-    public void resizableComponent_updatesComponentSizeAfterResize() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun resizableComponent_updatesComponentSizeAfterResize() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        resizableComponent.setSize(new Dimensions(1.0f, 2.0f, 3.0f));
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        resizableComponent.size = Dimensions(1.0f, 2.0f, 3.0f)
 
-        assertThat(options.getCurrentSize().x).isEqualTo(1.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(2.0f);
-        assertThat(options.getCurrentSize().z).isEqualTo(3.0f);
+        assertThat(options.currentSize.x).isEqualTo(1.0f)
+        assertThat(options.currentSize.y).isEqualTo(2.0f)
+        assertThat(options.currentSize.z).isEqualTo(3.0f)
 
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
+        val mockResizeEventListener = mock<ResizeEventListener>()
 
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
 
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
-        assertThat(entity.getReformEventConsumerMap()).isNotEmpty();
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
+        assertThat(entity.reformEventConsumerMap).isNotEmpty()
 
         // Start the resize.
-        ReformEvent startReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE,
-                        /* state= */ REFORM_STATE_START,
-                        /* id= */ 0);
+        val startReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ ReformEvent.REFORM_STATE_START,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), startReformEvent);
+        sendResizeEvent(entity.getNode(), startReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
-        ArgumentCaptor<ResizeEvent> resizeEventCaptor = ArgumentCaptor.forClass(ResizeEvent.class);
+        fakeExecutor.runAll()
+        val resizeEventCaptor = argumentCaptor<ResizeEvent>()
 
-        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture())
 
-        ResizeEvent resizeEvent = resizeEventCaptor.getValue();
+        var resizeEvent = resizeEventCaptor.lastValue
 
-        assertThat(resizeEvent.getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_START);
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_START)
 
         // End the resize.
-        ReformEvent endReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ REFORM_STATE_END, /* id= */ 0);
-        ShadowReformEvent.extract(endReformEvent).setProposedSize(new Vec3(4.0f, 5.0f, 6.0f));
+        val endReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ ReformEvent.REFORM_STATE_END,
+                /* id= */ 0,
+            )
+        ShadowReformEvent.extract(endReformEvent).setProposedSize(Vec3(4.0f, 5.0f, 6.0f))
 
-        sendResizeEvent(entity.getNode(), endReformEvent);
+        sendResizeEvent(entity.getNode(), endReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture())
 
-        resizeEvent = resizeEventCaptor.getAllValues().get(2);
+        resizeEvent = resizeEventCaptor.allValues[2]
 
-        assertThat(resizeEvent.getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_END);
-        assertThat(options.getCurrentSize().x).isEqualTo(4.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(5.0f);
-        assertThat(options.getCurrentSize().z).isEqualTo(6.0f);
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_END)
+        assertThat(options.currentSize.x).isEqualTo(4.0f)
+        assertThat(options.currentSize.y).isEqualTo(5.0f)
+        assertThat(options.currentSize.z).isEqualTo(6.0f)
     }
 
     /**
@@ -1161,260 +1214,301 @@ public class ResizableComponentImplTest {
      * @param node The Node to which the ReformEvent is sent.
      * @param reformEvent The ReformEvent to send.
      */
-    private void sendAndProcessReformEvent(Node node, ReformEvent reformEvent) {
-        ReformOptions options = mNodeRepository.getReformOptions(node);
-        options.getEventExecutor().execute(() -> options.getEventCallback().accept(reformEvent));
-        mFakeExecutor.runAll();
+    private fun sendAndProcessReformEvent(node: Node, reformEvent: ReformEvent?) {
+        val options = nodeRepository.getReformOptions(node)
+        options.eventExecutor.execute { options.eventCallback.accept(reformEvent) }
+        fakeExecutor.runAll()
     }
 
     @Test
-    public void resizableComponent_onResizeEvent_proposeSanitizedAndClampedSize() {
+    fun resizableComponent_onResizeEvent_proposeSanitizedAndClampedSize() {
         // Setup
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor,
-                        mXrExtensions,
-                        new Dimensions(0.5f, 0.5f, 0.5f), // minSize
-                        new Dimensions(10.0f, 10.0f, 10.0f)); // maxSize
+        val entity = createTestEntity() as AndroidXrEntity
+        val resizableComponent =
+            ResizableComponentImpl(
+                fakeExecutor,
+                xrExtensions,
+                Dimensions(0.5f, 0.5f, 0.5f), // minSize
+                Dimensions(10.0f, 10.0f, 10.0f),
+            ) // maxSize
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
+        val options = nodeRepository.getReformOptions(entity.getNode())
         // Set an initial valid size for the component.
-        resizableComponent.setSize(new Dimensions(2.0f, 3.0f, 4.0f));
+        resizableComponent.size = Dimensions(2.0f, 3.0f, 4.0f)
 
         // Verify initial state.
-        assertThat(options.getCurrentSize().x).isEqualTo(2.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(3.0f);
-        assertThat(options.getCurrentSize().z).isEqualTo(4.0f);
+        assertThat(options.currentSize.x).isEqualTo(2.0f)
+        assertThat(options.currentSize.y).isEqualTo(3.0f)
+        assertThat(options.currentSize.z).isEqualTo(4.0f)
 
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+        val mockResizeEventListener = mock<ResizeEventListener>()
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
 
         // 1. Send a START resize event.
-        ReformEvent startReformEvent =
-                ShadowReformEvent.create(REFORM_TYPE_RESIZE, REFORM_STATE_START, 0);
-        ShadowReformEvent.extract(startReformEvent).setProposedSize(new Vec3(3.0f, 4.0f, 5.0f));
-        sendAndProcessReformEvent(entity.getNode(), startReformEvent);
+        val startReformEvent =
+            ShadowReformEvent.create(
+                ReformEvent.REFORM_TYPE_RESIZE,
+                ReformEvent.REFORM_STATE_START,
+                0,
+            )
+        ShadowReformEvent.extract(startReformEvent).setProposedSize(Vec3(3.0f, 4.0f, 5.0f))
+        sendAndProcessReformEvent(entity.getNode(), startReformEvent)
 
         // Capture all ResizeEvent arguments in a single verification.
-        ArgumentCaptor<ResizeEvent> resizeEventCaptor = ArgumentCaptor.forClass(ResizeEvent.class);
+        var resizeEventCaptor = argumentCaptor<ResizeEvent>()
 
-        verify(mockResizeEventListener, times(1)).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture())
 
-        List<ResizeEvent> capturedEvents = resizeEventCaptor.getAllValues();
+        var capturedEvents = resizeEventCaptor.allValues
 
         // Event 1: RESIZE_STATE_START
-        assertThat(capturedEvents.get(0).getResizeState())
-                .isEqualTo(ResizeEvent.RESIZE_STATE_START);
+        assertThat(capturedEvents[0].resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_START)
         // Use the default ReformOptions size when resizing start.
-        assertThat(options.getCurrentSize().x).isEqualTo(3.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(4.0f);
-        assertThat(options.getCurrentSize().z).isEqualTo(5.0f);
-        assertThat(resizableComponent.getSize().width).isEqualTo(3.0f);
-        assertThat(resizableComponent.getSize().height).isEqualTo(4.0f);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(5.0f);
+        assertThat(options.currentSize.x).isEqualTo(3.0f)
+        assertThat(options.currentSize.y).isEqualTo(4.0f)
+        assertThat(options.currentSize.z).isEqualTo(5.0f)
+        assertThat(resizableComponent.size.width).isEqualTo(3.0f)
+        assertThat(resizableComponent.size.height).isEqualTo(4.0f)
+        assertThat(resizableComponent.size.depth).isEqualTo(5.0f)
 
         // 2. Send an END resize event with a NaN width.
-        ReformEvent endEventNanWidth =
-                ShadowReformEvent.create(REFORM_TYPE_RESIZE, REFORM_STATE_END, 0);
-        ShadowReformEvent.extract(endEventNanWidth)
-                .setProposedSize(new Vec3(Float.NaN, 0.0f, 20.0f));
-        sendAndProcessReformEvent(entity.getNode(), endEventNanWidth);
+        val endEventNanWidth =
+            ShadowReformEvent.create(
+                ReformEvent.REFORM_TYPE_RESIZE,
+                ReformEvent.REFORM_STATE_END,
+                0,
+            )
+        ShadowReformEvent.extract(endEventNanWidth).setProposedSize(Vec3(Float.NaN, 0.0f, 20.0f))
+        sendAndProcessReformEvent(entity.getNode(), endEventNanWidth)
 
-        resizeEventCaptor = ArgumentCaptor.forClass(ResizeEvent.class);
+        resizeEventCaptor = argumentCaptor<ResizeEvent>()
 
-        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture())
 
-        capturedEvents = resizeEventCaptor.getAllValues();
+        capturedEvents = resizeEventCaptor.allValues
 
         // Event 2: RESIZE_STATE_END (NaN width proposed)
-        assertThat(capturedEvents.get(1).getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_END);
+        assertThat(capturedEvents[1].resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_END)
         // When received invalid size from event, for NaN, propose a fallback previous value,
         // for value out of min/max, propose clamped value.
-        assertThat(options.getCurrentSize().x).isEqualTo(3.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(0.5f);
-        assertThat(options.getCurrentSize().z).isEqualTo(10.0f);
-        assertThat(resizableComponent.getSize().width).isEqualTo(3.0f);
-        assertThat(resizableComponent.getSize().height).isEqualTo(0.5f);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(10.0f);
+        assertThat(options.currentSize.x).isEqualTo(3.0f)
+        assertThat(options.currentSize.y).isEqualTo(0.5f)
+        assertThat(options.currentSize.z).isEqualTo(10.0f)
+        assertThat(resizableComponent.size.width).isEqualTo(3.0f)
+        assertThat(resizableComponent.size.height).isEqualTo(0.5f)
+        assertThat(resizableComponent.size.depth).isEqualTo(10.0f)
 
         // 3. Send an END resize event with a NaN height.
-        ReformEvent endEventNanHeight =
-                ShadowReformEvent.create(REFORM_TYPE_RESIZE, REFORM_STATE_END, 0);
-        ShadowReformEvent.extract(endEventNanHeight)
-                .setProposedSize(new Vec3(4.0f, Float.NaN, 6.0f));
-        sendAndProcessReformEvent(entity.getNode(), endEventNanHeight);
+        val endEventNanHeight =
+            ShadowReformEvent.create(
+                ReformEvent.REFORM_TYPE_RESIZE,
+                ReformEvent.REFORM_STATE_END,
+                0,
+            )
+        ShadowReformEvent.extract(endEventNanHeight).setProposedSize(Vec3(4.0f, Float.NaN, 6.0f))
+        sendAndProcessReformEvent(entity.getNode(), endEventNanHeight)
 
         // Capture all ResizeEvent arguments in a single verification.
-        resizeEventCaptor = ArgumentCaptor.forClass(ResizeEvent.class);
+        resizeEventCaptor = argumentCaptor<ResizeEvent>()
 
-        verify(mockResizeEventListener, times(3)).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener, times(3)).onResizeEvent(resizeEventCaptor.capture())
 
-        capturedEvents = resizeEventCaptor.getAllValues();
+        capturedEvents = resizeEventCaptor.allValues
 
         // Event 3: RESIZE_STATE_END (NaN height proposed)
-        assertThat(capturedEvents.get(2).getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_END);
+        assertThat(capturedEvents[2].resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_END)
         // Propose sanitized and clamped size
-        assertThat(options.getCurrentSize().x).isEqualTo(4.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(0.5f);
-        assertThat(options.getCurrentSize().z).isEqualTo(6.0f);
-        assertThat(resizableComponent.getSize().width).isEqualTo(4.0f);
-        assertThat(resizableComponent.getSize().height).isEqualTo(0.5f);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(6.0f);
+        assertThat(options.currentSize.x).isEqualTo(4.0f)
+        assertThat(options.currentSize.y).isEqualTo(0.5f)
+        assertThat(options.currentSize.z).isEqualTo(6.0f)
+        assertThat(resizableComponent.size.width).isEqualTo(4.0f)
+        assertThat(resizableComponent.size.height).isEqualTo(0.5f)
+        assertThat(resizableComponent.size.depth).isEqualTo(6.0f)
 
         // 4. Send an END resize event with a NaN depth.
-        ReformEvent endEventNanDepth =
-                ShadowReformEvent.create(REFORM_TYPE_RESIZE, REFORM_STATE_END, 0);
-        ShadowReformEvent.extract(endEventNanDepth)
-                .setProposedSize(new Vec3(4.0f, 5.0f, Float.NaN));
-        sendAndProcessReformEvent(entity.getNode(), endEventNanDepth);
+        val endEventNanDepth =
+            ShadowReformEvent.create(
+                ReformEvent.REFORM_TYPE_RESIZE,
+                ReformEvent.REFORM_STATE_END,
+                0,
+            )
+        ShadowReformEvent.extract(endEventNanDepth).setProposedSize(Vec3(4.0f, 5.0f, Float.NaN))
+        sendAndProcessReformEvent(entity.getNode(), endEventNanDepth)
 
         // Capture all ResizeEvent arguments in a single verification.
-        resizeEventCaptor = ArgumentCaptor.forClass(ResizeEvent.class);
+        resizeEventCaptor = argumentCaptor<ResizeEvent>()
 
-        verify(mockResizeEventListener, times(4)).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener, times(4)).onResizeEvent(resizeEventCaptor.capture())
 
-        capturedEvents = resizeEventCaptor.getAllValues();
+        capturedEvents = resizeEventCaptor.allValues
 
         // Event 4: RESIZE_STATE_END (NaN depth proposed)
-        assertThat(capturedEvents.get(3).getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_END);
+        assertThat(capturedEvents[3].resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_END)
         // Propose sanitized and clamped size
-        assertThat(options.getCurrentSize().x).isEqualTo(4.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(5.0f);
-        assertThat(options.getCurrentSize().z).isEqualTo(6.0f);
-        assertThat(resizableComponent.getSize().width).isEqualTo(4.0f);
-        assertThat(resizableComponent.getSize().height).isEqualTo(5.0f);
-        assertThat(resizableComponent.getSize().depth).isEqualTo(6.0f);
+        assertThat(options.currentSize.x).isEqualTo(4.0f)
+        assertThat(options.currentSize.y).isEqualTo(5.0f)
+        assertThat(options.currentSize.z).isEqualTo(6.0f)
+        assertThat(resizableComponent.size.width).isEqualTo(4.0f)
+        assertThat(resizableComponent.size.height).isEqualTo(5.0f)
+        assertThat(resizableComponent.size.depth).isEqualTo(6.0f)
     }
 
     @Test
-    public void
-            resizableComponent_withAutoUpdateSizeDisabled_doesNotUpdateComponentSizeAfterResize() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
+    fun resizableComponent_withAutoUpdateSizeDisabled_doesNotUpdateComponentSizeAfterResize() {
+        val entity = createTestEntity() as AndroidXrEntity
 
-        assertThat(entity).isNotNull();
+        assertThat(entity).isNotNull()
 
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
 
-        assertThat(resizableComponent).isNotNull();
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
+        assertThat(resizableComponent).isNotNull()
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
 
-        ReformOptions options = mNodeRepository.getReformOptions(entity.getNode());
-        resizableComponent.setAutoUpdateSize(false);
-        resizableComponent.setSize(new Dimensions(1.0f, 2.0f, 3.0f));
+        val options = nodeRepository.getReformOptions(entity.getNode())
+        resizableComponent.autoUpdateSize = false
+        resizableComponent.size = Dimensions(1.0f, 2.0f, 3.0f)
 
-        assertThat(options.getCurrentSize().x).isEqualTo(1.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(2.0f);
-        assertThat(options.getCurrentSize().z).isEqualTo(3.0f);
+        assertThat(options.currentSize.x).isEqualTo(1.0f)
+        assertThat(options.currentSize.y).isEqualTo(2.0f)
+        assertThat(options.currentSize.z).isEqualTo(3.0f)
 
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
+        val mockResizeEventListener = mock<ResizeEventListener>()
 
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
 
-        assertThat(options.getEventCallback()).isNotNull();
-        assertThat(options.getEventExecutor()).isNotNull();
-        assertThat(entity.getReformEventConsumerMap()).isNotEmpty();
+        assertThat(options.eventCallback).isNotNull()
+        assertThat(options.eventExecutor).isNotNull()
+        assertThat(entity.reformEventConsumerMap).isNotEmpty()
 
         // Start the resize.
-        ReformEvent startReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE,
-                        /* state= */ REFORM_STATE_START,
-                        /* id= */ 0);
+        val startReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ ReformEvent.REFORM_STATE_START,
+                /* id= */ 0,
+            )
 
-        sendResizeEvent(entity.getNode(), startReformEvent);
+        sendResizeEvent(entity.getNode(), startReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
-        ArgumentCaptor<ResizeEvent> resizeEventCaptor = ArgumentCaptor.forClass(ResizeEvent.class);
+        fakeExecutor.runAll()
+        val resizeEventCaptor = argumentCaptor<ResizeEvent>()
 
-        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener).onResizeEvent(resizeEventCaptor.capture())
 
-        ResizeEvent resizeEvent = resizeEventCaptor.getValue();
+        var resizeEvent = resizeEventCaptor.lastValue
 
-        assertThat(resizeEvent.getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_START);
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_START)
 
         // End the resize.
-        ReformEvent endReformEvent =
-                ShadowReformEvent.create(
-                        /* type= */ REFORM_TYPE_RESIZE, /* state= */ REFORM_STATE_END, /* id= */ 0);
-        ShadowReformEvent.extract(endReformEvent).setProposedSize(new Vec3(4.0f, 5.0f, 6.0f));
+        val endReformEvent =
+            ShadowReformEvent.create(
+                /* type= */ ReformEvent.REFORM_TYPE_RESIZE,
+                /* state= */ ReformEvent.REFORM_STATE_END,
+                /* id= */ 0,
+            )
+        ShadowReformEvent.extract(endReformEvent).setProposedSize(Vec3(4.0f, 5.0f, 6.0f))
 
-        sendResizeEvent(entity.getNode(), endReformEvent);
+        sendResizeEvent(entity.getNode(), endReformEvent)
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
+        assertThat(fakeExecutor.hasNext()).isTrue()
 
-        mFakeExecutor.runAll();
+        fakeExecutor.runAll()
 
-        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture());
+        verify(mockResizeEventListener, times(2)).onResizeEvent(resizeEventCaptor.capture())
 
-        resizeEvent = resizeEventCaptor.getAllValues().get(2);
+        resizeEvent = resizeEventCaptor.allValues[2]
 
-        assertThat(resizeEvent.getResizeState()).isEqualTo(ResizeEvent.RESIZE_STATE_END);
+        assertThat(resizeEvent.resizeState).isEqualTo(ResizeEvent.RESIZE_STATE_END)
         // Reform size should be unchanged.
-        assertThat(options.getCurrentSize().x).isEqualTo(1.0f);
-        assertThat(options.getCurrentSize().y).isEqualTo(2.0f);
-        assertThat(options.getCurrentSize().z).isEqualTo(3.0f);
+        assertThat(options.currentSize.x).isEqualTo(1.0f)
+        assertThat(options.currentSize.y).isEqualTo(2.0f)
+        assertThat(options.currentSize.z).isEqualTo(3.0f)
     }
 
     @Test
-    public void resizableComponent_restoresAlphaOnNonResizeEventWhenHidden() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
-        entity.setAlpha(0.9f);
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+    fun resizableComponent_restoresAlphaOnNonResizeEventWhenHidden() {
+        val entity = createTestEntity() as AndroidXrEntity
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
+        entity.setAlpha(0.9f)
+        val mockResizeEventListener = mock<ResizeEventListener>()
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
 
         // Start a resize event to hide the content.
         sendAndProcessReformEvent(
-                entity.getNode(),
-                ShadowReformEvent.create(REFORM_TYPE_RESIZE, REFORM_STATE_START, 0));
+            entity.getNode(),
+            ShadowReformEvent.create(
+                ReformEvent.REFORM_TYPE_RESIZE,
+                ReformEvent.REFORM_STATE_START,
+                0,
+            ),
+        )
 
         // Verify content is hidden.
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f);
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f)
 
         // Send a non-resize event (e.g., move).
         sendAndProcessReformEvent(
-                entity.getNode(), ShadowReformEvent.create(REFORM_TYPE_MOVE, 0, 0));
+            entity.getNode(),
+            ShadowReformEvent.create(ReformEvent.REFORM_TYPE_MOVE, 0, 0),
+        )
 
         // Verify alpha is restored because a non-resize event was received.
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f);
-        // The resize event listener should not be called again for a move event.
-        verify(mockResizeEventListener, times(1)).onResizeEvent(any());
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f)
+        verify(mockResizeEventListener, times(1)).onResizeEvent(any())
     }
 
     @Test
-    public void resizableComponent_restoresAlphaOnDetachWhenHidden() {
-        AndroidXrEntity entity = (AndroidXrEntity) createTestEntity();
-        ResizableComponentImpl resizableComponent =
-                new ResizableComponentImpl(
-                        mFakeExecutor, mXrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS);
-        assertThat(entity.addComponent(resizableComponent)).isTrue();
-        entity.setAlpha(0.9f);
-        ResizeEventListener mockResizeEventListener = mock(ResizeEventListener.class);
-        resizableComponent.addResizeEventListener(directExecutor(), mockResizeEventListener);
+    fun resizableComponent_restoresAlphaOnDetachWhenHidden() {
+        val entity = createTestEntity() as AndroidXrEntity
+        val resizableComponent =
+            ResizableComponentImpl(fakeExecutor, xrExtensions, MIN_DIMENSIONS, MAX_DIMENSIONS)
+        assertThat(entity.addComponent(resizableComponent)).isTrue()
+        entity.setAlpha(0.9f)
+        val mockResizeEventListener = mock<ResizeEventListener>()
+        resizableComponent.addResizeEventListener(
+            MoreExecutors.directExecutor(),
+            mockResizeEventListener,
+        )
 
         // Start a resize event to hide the content.
         sendAndProcessReformEvent(
-                entity.getNode(),
-                ShadowReformEvent.create(REFORM_TYPE_RESIZE, REFORM_STATE_START, 0));
+            entity.getNode(),
+            ShadowReformEvent.create(
+                ReformEvent.REFORM_TYPE_RESIZE,
+                ReformEvent.REFORM_STATE_START,
+                0,
+            ),
+        )
 
         // Verify content is hidden.
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f);
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.0f)
 
         // Detach the component.
-        entity.removeComponent(resizableComponent);
+        entity.removeComponent(resizableComponent)
 
         // Verify alpha is restored.
-        assertThat(mNodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f);
+        assertThat(nodeRepository.getAlpha(entity.getNode())).isEqualTo(0.9f)
+    }
+
+    companion object {
+        private val MIN_DIMENSIONS = Dimensions(0f, 0f, 0f)
+        private val MAX_DIMENSIONS = Dimensions(10f, 10f, 10f)
     }
 }
