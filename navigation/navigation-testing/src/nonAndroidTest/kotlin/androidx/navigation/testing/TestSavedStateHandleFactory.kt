@@ -25,12 +25,9 @@ import androidx.savedstate.SavedState
 import androidx.savedstate.read
 import androidx.savedstate.write
 import kotlin.reflect.typeOf
+import kotlin.test.Test
 import kotlinx.serialization.Serializable
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
 class TestSavedStateHandleBuilder {
 
     @Test
@@ -199,6 +196,28 @@ class TestSavedStateHandleBuilder {
         assertThat(handle.contains("arg")).isFalse()
         val route = handle.toRoute<TestClass>()
         assertThat(route.arg).isNull()
+    }
+
+    @Test
+    fun stringListArgument() {
+        @Serializable class TestClass(val arg: List<String>)
+
+        val list = listOf("/a/", "/b/", "/c/")
+        val handle = SavedStateHandle(TestClass(list))
+        assertThat(handle.contains("arg")).isTrue()
+        val route = handle.toRoute<TestClass>()
+        assertThat(route.arg).containsExactlyElementsIn(list).inOrder()
+    }
+
+    @Test
+    fun intListArgument() {
+        @Serializable class TestClass(val arg: List<Int>)
+
+        val list = listOf(1, 2, 3)
+        val handle = SavedStateHandle(TestClass(list))
+        assertThat(handle.contains("arg")).isTrue()
+        val route = handle.toRoute<TestClass>()
+        assertThat(route.arg).containsExactlyElementsIn(list).inOrder()
     }
 
     @Test

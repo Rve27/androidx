@@ -23,6 +23,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.testing.TestLifecycleOwner
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.FloatingWindow
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
@@ -30,18 +32,13 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.SupportingPane
 import androidx.navigation.navOptions
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SmallTest
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@SmallTest
-@RunWith(AndroidJUnit4::class)
 class TestNavigatorStateTest {
     private lateinit var state: TestNavigatorState
 
-    @Before
+    @BeforeTest
     fun setUp() {
         state = TestNavigatorState()
     }
@@ -262,7 +259,12 @@ class TestNavigatorStateTest {
             null,
         )
 
-        val viewModel = ViewModelProvider(secondEntry).get(TestViewModel::class.java)
+        val viewModel =
+            ViewModelProvider.create(
+                    owner = secondEntry,
+                    factory = viewModelFactory { initializer { TestViewModel() } },
+                )
+                .get(TestViewModel::class)
 
         navigator.popBackStack(secondEntry, true)
         val restoredSecondEntry = state.restoreBackStackEntry(secondEntry)
