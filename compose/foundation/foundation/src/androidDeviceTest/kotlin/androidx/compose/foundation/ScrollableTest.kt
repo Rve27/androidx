@@ -113,6 +113,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.pan
+import androidx.compose.ui.test.panWithVelocity
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performMouseInput
 import androidx.compose.ui.test.performSemanticsAction
@@ -2941,6 +2942,41 @@ class ScrollableTest {
         }
         assertThat(flingCalled).isEqualTo(1)
         assertThat(flingVelocity).isWithin(5f).of(1000f)
+    }
+
+    @Test
+    fun scrollable_flingBehaviourCalled_withTrackpad() {
+        var total = 0f
+        val scrollableState =
+            ScrollableState(
+                consumeScrollDelta = {
+                    total += it
+                    it
+                }
+            )
+        var flingCalled = 0
+        var flingVelocity: Float = Float.MAX_VALUE
+        val flingBehaviour =
+            object : FlingBehavior {
+                override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
+                    flingCalled++
+                    flingVelocity = initialVelocity
+                    return 0f
+                }
+            }
+        setScrollableContent {
+            Modifier.scrollable(
+                state = scrollableState,
+                flingBehavior = flingBehaviour,
+                orientation = Orientation.Horizontal,
+            )
+        }
+        rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
+            moveTo(center)
+            panWithVelocity(offset = Offset(115f, 0f), endVelocity = 500f)
+        }
+        assertThat(flingCalled).isEqualTo(1)
+        assertThat(flingVelocity).isWithin(10f).of(500f)
     }
 
     @Test
