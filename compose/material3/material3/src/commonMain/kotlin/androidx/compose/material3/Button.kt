@@ -782,6 +782,7 @@ fun OutlinedButton(
  *   still happen internally.
  * @param content The content displayed on the button, expected to be text.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextButton(
     onClick: () -> Unit,
@@ -791,7 +792,12 @@ fun TextButton(
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
+    contentPadding: PaddingValues =
+        if (ComposeMaterial3Flags.isTextButtonContentPaddingFixEnabled) {
+            ButtonDefaults.ContentPadding
+        } else {
+            ButtonDefaults.TextButtonContentPadding
+        },
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) =
@@ -859,6 +865,7 @@ fun TextButton(
  *   still happen internally.
  * @param content The content displayed on the button, expected to be text.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalMaterial3ExpressiveApi
 @Composable
 fun TextButton(
@@ -869,7 +876,12 @@ fun TextButton(
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
+    contentPadding: PaddingValues =
+        if (ComposeMaterial3Flags.isTextButtonContentPaddingFixEnabled) {
+            ButtonDefaults.contentPaddingFor(ButtonDefaults.MinHeight)
+        } else {
+            ButtonDefaults.TextButtonContentPadding
+        },
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) =
