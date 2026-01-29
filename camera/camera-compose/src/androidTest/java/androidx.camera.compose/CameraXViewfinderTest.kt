@@ -39,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -47,7 +48,10 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.pinch
 import androidx.concurrent.futures.await
+import androidx.lifecycle.Observer
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -72,6 +76,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
+import org.junit.Assume
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -242,6 +247,252 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
 
         // A new surface request should have been created since the old one was invalidated
         assertThat(newSurfaceRequest).isNotNull()
+    }
+
+    @Test
+    fun pinchToZoom_whenEnabled_invokesSetZoomRatioAndCallback() = runViewfinderTest {
+        // Arrange
+        val camera = startCamera()
+        Assume.assumeTrue(
+            camera.cameraInfo.zoomState.value!!.maxZoomRatio >
+                camera.cameraInfo.zoomState.value!!.minZoomRatio
+        )
+        val initialZoomRatio = camera.cameraInfo.zoomState.value!!.zoomRatio
+        var receivedZoomRatio = -1f
+
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            currentSurfaceRequest?.let { surfaceRequest ->
+                val state = rememberCameraXViewfinderState()
+                state.isPinchToZoomEnabled = true
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    state = state,
+                    onZoomRatioChanged = { receivedZoomRatio = it },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+
+        // Act
+        composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).performTouchInput {
+            pinch(
+                start0 = center,
+                end0 = center + Offset(-100f, 0f),
+                start1 = center,
+                end1 = center + Offset(100f, 0f),
+            )
+        }
+
+        // Assert
+        val finalZoomRatio = camera.cameraInfo.zoomState.value!!.zoomRatio
+        assertThat(finalZoomRatio).isGreaterThan(initialZoomRatio)
+        assertThat(receivedZoomRatio).isEqualTo(finalZoomRatio)
+    }
+
+    @Test
+    fun pinchToZoom_whenDisabled_doesNotChangeZoomRatio() = runViewfinderTest {
+        // Arrange
+        val camera = startCamera()
+        Assume.assumeTrue(
+            camera.cameraInfo.zoomState.value!!.maxZoomRatio >
+                camera.cameraInfo.zoomState.value!!.minZoomRatio
+        )
+        val initialZoomRatio = camera.cameraInfo.zoomState.value!!.zoomRatio
+        var callbackInvoked = false
+
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            currentSurfaceRequest?.let { surfaceRequest ->
+                val state = rememberCameraXViewfinderState()
+                state.isPinchToZoomEnabled = false
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    state = state,
+                    onZoomRatioChanged = { callbackInvoked = true },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+
+        // Act
+        composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).performTouchInput {
+            pinch(
+                start0 = center,
+                end0 = center + Offset(-100f, 0f),
+                start1 = center,
+                end1 = center + Offset(100f, 0f),
+            )
+        }
+        composeTest.awaitIdle()
+
+        // Assert
+        val finalZoomRatio = camera.cameraInfo.zoomState.value!!.zoomRatio
+        assertThat(finalZoomRatio).isEqualTo(initialZoomRatio)
+        assertThat(callbackInvoked).isFalse()
+    }
+
+    @Test
+    fun pinchToZoom_whenEnabled_zoomOutInvokesCallback() = runViewfinderTest {
+        // Arrange
+        val camera = startCamera()
+        Assume.assumeTrue(
+            camera.cameraInfo.zoomState.value!!.maxZoomRatio >
+                camera.cameraInfo.zoomState.value!!.minZoomRatio
+        )
+        val maxZoomRatio = camera.cameraInfo.zoomState.value!!.maxZoomRatio
+        var receivedZoomRatio = -1f
+
+        withContext(Dispatchers.Main) {
+            val observer =
+                object : Observer<androidx.camera.core.ZoomState> {
+                    override fun onChanged(value: androidx.camera.core.ZoomState) {
+                        if (value.zoomRatio == maxZoomRatio) {
+                            camera.cameraInfo.zoomState.removeObserver(this)
+                        }
+                    }
+                }
+            camera.cameraInfo.zoomState.observeForever(observer)
+            camera.cameraControl.setZoomRatio(maxZoomRatio)
+        }
+
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            currentSurfaceRequest?.let { surfaceRequest ->
+                val state = rememberCameraXViewfinderState()
+                state.isPinchToZoomEnabled = true
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    state = state,
+                    onZoomRatioChanged = { receivedZoomRatio = it },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+        val initialZoomRatio = camera.cameraInfo.zoomState.value!!.zoomRatio
+
+        // Act
+        composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).performTouchInput {
+            pinch(
+                start0 = center + Offset(-100f, 0f),
+                end0 = center,
+                start1 = center + Offset(100f, 0f),
+                end1 = center,
+            )
+        }
+
+        // Assert
+        val finalZoomRatio = camera.cameraInfo.zoomState.value!!.zoomRatio
+        assertThat(finalZoomRatio).isLessThan(initialZoomRatio)
+        assertThat(receivedZoomRatio).isEqualTo(finalZoomRatio)
+    }
+
+    @Test
+    fun pinchToZoom_clampsAtMaxZoomRatio() = runViewfinderTest {
+        // Arrange
+        val camera = startCamera()
+        Assume.assumeTrue(
+            camera.cameraInfo.zoomState.value!!.maxZoomRatio >
+                camera.cameraInfo.zoomState.value!!.minZoomRatio
+        )
+        val maxZoomRatio = camera.cameraInfo.zoomState.value!!.maxZoomRatio
+        var receivedZoomRatio = -1f
+
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            currentSurfaceRequest?.let { surfaceRequest ->
+                val state = rememberCameraXViewfinderState()
+                state.isPinchToZoomEnabled = true
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    state = state,
+                    onZoomRatioChanged = { receivedZoomRatio = it },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+
+        // Act
+        composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).performTouchInput {
+            repeat(3) {
+                pinch(
+                    start0 = center,
+                    end0 = center + Offset(-500f, 0f),
+                    start1 = center,
+                    end1 = center + Offset(500f, 0f),
+                )
+            }
+        }
+
+        // Assert
+        val finalZoomRatio = camera.cameraInfo.zoomState.value!!.zoomRatio
+        assertThat(finalZoomRatio).isEqualTo(maxZoomRatio)
+        assertThat(receivedZoomRatio).isEqualTo(maxZoomRatio)
+    }
+
+    @Test
+    fun pinchToZoom_clampsAtMinZoomRatio() = runViewfinderTest {
+        // Arrange
+        val camera = startCamera()
+        Assume.assumeTrue(
+            camera.cameraInfo.zoomState.value!!.maxZoomRatio >
+                camera.cameraInfo.zoomState.value!!.minZoomRatio
+        )
+        val minZoomRatio = camera.cameraInfo.zoomState.value!!.minZoomRatio
+        val maxZoomRatio = camera.cameraInfo.zoomState.value!!.maxZoomRatio
+        var receivedZoomRatio = -1f
+
+        withContext(Dispatchers.Main) {
+            val observer =
+                object : Observer<androidx.camera.core.ZoomState> {
+                    override fun onChanged(value: androidx.camera.core.ZoomState) {
+                        if (value.zoomRatio == maxZoomRatio) {
+                            camera.cameraInfo.zoomState.removeObserver(this)
+                        }
+                    }
+                }
+            camera.cameraInfo.zoomState.observeForever(observer)
+            camera.cameraControl.setZoomRatio(maxZoomRatio)
+        }
+
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            currentSurfaceRequest?.let { surfaceRequest ->
+                val state = rememberCameraXViewfinderState()
+                state.isPinchToZoomEnabled = true
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    state = state,
+                    onZoomRatioChanged = { receivedZoomRatio = it },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+
+        // Act
+        composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).performTouchInput {
+            pinch(
+                start0 = center + Offset(-500f, 0f),
+                end0 = center,
+                start1 = center + Offset(500f, 0f),
+                end1 = center,
+            )
+        }
+
+        // Assert
+        val finalZoomRatio = camera.cameraInfo.zoomState.value!!.zoomRatio
+        assertThat(finalZoomRatio).isEqualTo(minZoomRatio)
+        assertThat(receivedZoomRatio).isEqualTo(minZoomRatio)
     }
 
     @SdkSuppress(minSdkVersion = 24) // b/441562610
