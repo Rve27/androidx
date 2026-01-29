@@ -23,7 +23,6 @@ import androidx.test.shell.Shell
 import androidx.test.shell.internal.TAG
 import androidx.test.shell.internal.waitFor
 import java.io.File
-import kotlin.math.max
 
 /** Allows running the screen record android utility to record the screen. */
 public class RecorderCommands internal constructor(private val shell: Shell) {
@@ -35,8 +34,7 @@ public class RecorderCommands internal constructor(private val shell: Shell) {
      *
      * @param outputFile the output file where to write the recording.
      * @param screenSizeInPixel the size of the screen in pixel.
-     * @param bitRateMb the bitrate of the recording in Mb.
-     * @param timeLimitSeconds the number of seconds to record.
+     * @param bitRateMb the bitrate of the recording in Mb/s.
      * @return a running [Recording].
      */
     @JvmOverloads
@@ -45,13 +43,11 @@ public class RecorderCommands internal constructor(private val shell: Shell) {
         outputFile: File,
         screenSizeInPixel: Point? = null,
         @IntRange(from = 0) bitRateMb: Int = 0,
-        @IntRange(from = 0) timeLimitSeconds: Long = 0,
     ): Recording {
         val cmd =
             listOfNotNull(
                     screenSizeInPixel?.let { "--size ${it.x}x${it.y}." },
                     if (bitRateMb > 0) "--bit-rate ${bitRateMb}M" else null,
-                    if (timeLimitSeconds > 0) "--time-limit $timeLimitSeconds" else null,
                 )
                 .let { "screenrecord ${it.joinToString(" ")} ${outputFile.absolutePath}" }
 
@@ -67,12 +63,7 @@ public class RecorderCommands internal constructor(private val shell: Shell) {
             // Ensure recording has started
             waitFor(onError = { throwWithCommandOutput() }) { process.isProcessAlive(processPid) }
 
-            return Recording(
-                pid = processPid,
-                timeLimitSeconds = timeLimitSeconds,
-                process = process,
-                commandOutput = this,
-            )
+            return Recording(pid = processPid, process = process, commandOutput = this)
         }
     }
 }
@@ -81,51 +72,40 @@ public class RecorderCommands internal constructor(private val shell: Shell) {
  * A recording started with [RecorderCommands.start]. This interface allows awaits for completion,
  * if a time limit was specified or force stop the recording.
  */
-public class Recording(
+public class Recording
+internal constructor(
     private val process: ProcessCommands,
     private val commandOutput: Shell.CommandOutput,
-    private val timeLimitSeconds: Long,
     /** The process id of the recording. */
-    public val pid: Int,
+    private val pid: Int,
 ) : AutoCloseable {
 
-    /** Stops the current recording. */
-    public override fun close(): Unit = process.killPid(pid, "TERM")
-
     /**
-     * Blocks until the recording is complete or up to the [timeoutSeconds]. If a time limit was not
-     * given this method throws an [IllegalStateException].
+     * Stops the current recording.
      *
-     * @param timeoutSeconds the timeout in number of seconds.
-     * @return whether the recording completed in the given [timeoutSeconds].
+     * Waits for up to `10 seconds` for the `recorder` process to stop.
      */
-    @JvmOverloads
-    public fun await(timeoutSeconds: Long = max(timeLimitSeconds * 2, 10)): Boolean {
-        if (timeLimitSeconds == 0L) {
-            throw IllegalArgumentException(
-                "Cannot await for screen record when no time limit is given."
-            )
+    public override fun close() {
+        if (!isRunning()) {
+            process.killPid(pid, "TERM")
+            await()
         }
-        var complete = true
+    }
+
+    /** Blocks until the process that does the [androidx.test.shell.command.Recording] is dead. */
+    private fun await() {
         waitFor(
             onError = {
                 val cmdOutput = commandOutput.stdOutStdErrCommandOutput()
                 cmdOutput.lines().forEach { Log.e(TAG, it) }
-                Log.e(
-                    TAG,
-                    "Recorder did not end in the given timeout of $timeoutSeconds seconds." +
-                        "\n$cmdOutput",
-                )
-                complete = false
-            },
-            timeoutMs = timeoutSeconds * 1_000L,
+                Log.e(TAG, "Recorder did not end: \n$commandOutput")
+            }
         ) {
             !isRunning()
         }
         if (commandOutput.stdErr.isNotBlank()) {
             commandOutput.throwWithCommandOutput()
         }
-        return complete
     }
 
     /** Returns whether the recording is still running. */
