@@ -16,6 +16,29 @@
 
 package androidx.navigation.internal
 
-import androidx.navigation.implementedInJetBrainsFork
+private var nextHash = 1
 
-internal actual fun identityHashCode(instance: Any?): Int = implementedInJetBrainsFork()
+private external interface WeakMap {
+    fun set(key: Any, value: Int)
+
+    fun get(key: Any): Int?
+}
+
+private val weakMap: WeakMap = js("new WeakMap()")
+
+private fun memoizeIdentityHashCode(instance: Any): Int {
+    val value = nextHash++
+
+    weakMap.set(instance, value)
+
+    return value
+}
+
+// For the reference check the identityHashCode in compose:runtime
+internal actual fun identityHashCode(instance: Any?): Int {
+    if (instance == null) {
+        return 0
+    }
+
+    return weakMap.get(instance) ?: memoizeIdentityHashCode(instance)
+}

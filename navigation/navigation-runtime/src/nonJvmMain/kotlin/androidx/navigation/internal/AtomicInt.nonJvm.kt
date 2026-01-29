@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.navigation.testing
+package androidx.navigation.internal
 
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
+import kotlinx.atomicfu.atomic
 
-public actual class TestNavHostController : NavHostController() {
-    public actual val backStack: List<NavBackStackEntry>
-        get() = implementedInJetBrainsFork()
+internal actual class AtomicInt actual constructor(initial: Int) {
+    private val delegate = atomic(initial)
+
+    actual fun incrementAndGet(): Int = delegate.incrementAndGet()
+
+    actual fun decrementAndGet(): Int = delegate.decrementAndGet()
+
+    actual fun get(): Int = delegate.value
 }

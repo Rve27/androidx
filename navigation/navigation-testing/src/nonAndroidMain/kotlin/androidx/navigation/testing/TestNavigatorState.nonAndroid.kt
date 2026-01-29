@@ -19,7 +19,6 @@ package androidx.navigation.testing
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination
 import androidx.navigation.NavigatorState
-import androidx.navigation.implementedInJetBrainsFork
 import androidx.savedstate.SavedState
 import kotlinx.coroutines.CoroutineDispatcher
 
@@ -38,3 +37,7 @@ actual constructor(coroutineDispatcher: CoroutineDispatcher) : NavigatorState() 
         implementedInJetBrainsFork()
     }
 }
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun implementedInJetBrainsFork(): Nothing =
+    throw NotImplementedError("Implemented only in JetBrains fork.")

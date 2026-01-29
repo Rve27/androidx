@@ -16,12 +16,30 @@
 
 package androidx.navigation.internal
 
-import androidx.navigation.implementedInJetBrainsFork
+private var nextHash = 1
 
-internal actual class AtomicInt actual constructor(initial: Int) {
-    actual fun incrementAndGet(): Int = implementedInJetBrainsFork()
+private external interface WeakMap {
+    fun set(key: JsAny, value: Int)
 
-    actual fun decrementAndGet(): Int = implementedInJetBrainsFork()
+    fun get(key: JsAny): Int?
+}
 
-    actual fun get(): Int = implementedInJetBrainsFork()
+private val weakMap: WeakMap = js("new WeakMap()")
+
+private fun memoizeIdentityHashCode(instance: JsAny): Int {
+    val value = nextHash++
+
+    weakMap.set(instance.toJsReference(), value)
+
+    return value
+}
+
+// For the reference check the identityHashCode in compose:runtime
+internal actual fun identityHashCode(instance: Any?): Int {
+    if (instance == null) {
+        return 0
+    }
+
+    val jsRef = instance.toJsReference()
+    return weakMap.get(jsRef) ?: memoizeIdentityHashCode(jsRef)
 }
