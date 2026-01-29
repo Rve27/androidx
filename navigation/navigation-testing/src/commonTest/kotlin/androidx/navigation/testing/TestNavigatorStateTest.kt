@@ -34,13 +34,16 @@ import androidx.navigation.SupportingPane
 import androidx.navigation.navOptions
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 class TestNavigatorStateTest {
     private lateinit var state: TestNavigatorState
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeTest
     fun setUp() {
-        state = TestNavigatorState()
+        state = TestNavigatorState(UnconfinedTestDispatcher())
     }
 
     @Test
