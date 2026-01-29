@@ -16,13 +16,11 @@
 
 package androidx.navigation
 
-import android.net.Uri
-import androidx.test.filters.SmallTest
-import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth.assertWithMessage
-import org.junit.Test
+import androidx.kruth.assertThat
+import androidx.kruth.assertWithMessage
+import kotlin.test.Test
 
-@SmallTest
+@IgnoreAndroidHostTestTarget
 class NavDeepLinkActionTest {
 
     companion object {
@@ -36,7 +34,9 @@ class NavDeepLinkActionTest {
 
         assertWithMessage("The actions should not have matched")
             .that(
-                deepLink.matches(NavDeepLinkRequest(Uri.parse(DEEP_LINK_EXACT_HTTPS), null, null))
+                deepLink.matches(
+                    NavDeepLinkRequest(NavUriUtils.parse(DEEP_LINK_EXACT_HTTPS), null, null)
+                )
             )
             .isFalse()
     }
@@ -48,7 +48,11 @@ class NavDeepLinkActionTest {
         assertWithMessage("The actions should have matched")
             .that(
                 deepLink.matches(
-                    NavDeepLinkRequest(Uri.parse(DEEP_LINK_EXACT_HTTPS), DEEP_LINK_ACTION, null)
+                    NavDeepLinkRequest(
+                        NavUriUtils.parse(DEEP_LINK_EXACT_HTTPS),
+                        DEEP_LINK_ACTION,
+                        null,
+                    )
                 )
             )
             .isTrue()
