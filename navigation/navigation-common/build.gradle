@@ -67,8 +67,7 @@ androidXMultiplatform {
             implementation("androidx.collection:collection:1.5.0")
             implementation(libs.kotlinSerializationCore)
         }
-        //temporary while navigation-testing doesn't have all targets
-        androidTest.dependencies {
+        commonTest.dependencies {
             implementation(libs.kotlinTest)
             implementation(project(":kruth:kruth"))
             implementation(project(":navigation:navigation-testing"))
@@ -110,6 +109,11 @@ androidXMultiplatform {
         desktopMain.dependsOn(nonAndroidMain)
         nativeMain.dependsOn(nonAndroidMain)
         webMain.dependsOn(nonAndroidMain)
+
+        nonAndroidTest.dependsOn(commonTest)
+        desktopTest.dependsOn(nonAndroidTest)
+        nativeTest.dependsOn(nonAndroidTest)
+        webTest.dependsOn(nonAndroidTest)
     }
 }
 
