@@ -61,12 +61,11 @@ fun AmbientModeBasicSample() {
             modifier = Modifier.fillMaxSize(),
         ) {
             val ambientModeName =
-                ambientMode?.let {
-                    when (it) {
-                        is AmbientMode.Interactive -> "Interactive"
-                        is AmbientMode.Ambient -> "Ambient"
-                    }
-                } ?: "Unknown"
+                when (ambientMode) {
+                    is AmbientMode.Interactive -> "Interactive"
+                    is AmbientMode.Ambient -> "Ambient"
+                    else -> "Unknown"
+                }
 
             val color = if (ambientMode is AmbientMode.Ambient) Color.Gray else Color.Yellow
             Text(text = "$ambientModeName Mode", color = color)
@@ -111,12 +110,11 @@ fun AmbientModeWithAmbientTickSample() {
             modifier = Modifier.fillMaxSize(),
         ) {
             val ambientModeName =
-                ambientMode?.let {
-                    when (it) {
-                        is AmbientMode.Interactive -> "Interactive"
-                        is AmbientMode.Ambient -> "Ambient"
-                    }
-                } ?: "Unknown"
+                when (ambientMode) {
+                    is AmbientMode.Interactive -> "Interactive"
+                    is AmbientMode.Ambient -> "Ambient"
+                    else -> "Unknown"
+                }
 
             val updateInterval = if (ambientMode is AmbientMode.Ambient) "minute" else "second"
             val color = if (ambientMode is AmbientMode.Ambient) Color.Gray else Color.Yellow
