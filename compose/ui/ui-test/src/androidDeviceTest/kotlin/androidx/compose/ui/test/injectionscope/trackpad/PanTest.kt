@@ -39,6 +39,7 @@ import androidx.compose.ui.test.injectionscope.trackpad.Common.PrimaryButton
 import androidx.compose.ui.test.injectionscope.trackpad.Common.verifyTrackpadEvent
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.pan
 import androidx.compose.ui.test.performTrackpadInput
 import androidx.compose.ui.test.util.ClickableTestBox
 import androidx.compose.ui.test.util.SinglePointerInputRecorder
@@ -54,10 +55,10 @@ import org.junit.runner.RunWith
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalTestApi::class)
-class ScrollTest {
+class PanTest {
     companion object {
         private val T = InputDispatcher.eventPeriodMillis
-        private const val TAG = "SCROLL"
+        private const val TAG = "PAN"
     }
 
     @get:Rule val rule = createComposeRule(StandardTestDispatcher())
@@ -75,7 +76,7 @@ class ScrollTest {
         rule.onNodeWithTag(TAG).performTrackpadInput {
             enter()
             // scroll vertically
-            scroll(Offset(0f, 10f))
+            pan(Offset(0f, 10f))
         }
 
         rule.runOnIdle {
@@ -215,7 +216,7 @@ class ScrollTest {
         rule.onNodeWithTag(TAG).performTrackpadInput {
             enter()
             // scroll horizontally
-            scroll(Offset(10f, 0f))
+            pan(Offset(10f, 0f))
         }
 
         rule.runOnIdle {
@@ -357,7 +358,7 @@ class ScrollTest {
             // press primary button
             press(MouseButton.Primary)
             // scroll
-            scroll(Offset(10f, 0f))
+            pan(Offset(10f, 0f))
         }
 
         rule.runOnIdle {

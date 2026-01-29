@@ -112,6 +112,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.pan
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performMouseInput
 import androidx.compose.ui.test.performSemanticsAction
@@ -470,7 +471,7 @@ class ScrollableTest {
             Modifier.scrollable(state = controller, orientation = Orientation.Horizontal)
         }
         rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
-            this.scroll(Offset(100f, 0f)) // only moved horizontally
+            this.pan(Offset(100f, 0f)) // only moved horizontally
         }
 
         var lastTotal =
@@ -480,12 +481,12 @@ class ScrollableTest {
             }
 
         rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
-            this.scroll(Offset(0f, 100f)) // only moved vertically
+            this.pan(Offset(0f, 100f)) // only moved vertically
         }
 
         rule.runOnIdle { assertThat(total).isEqualTo(lastTotal) }
         rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
-            this.scroll(Offset(-100f, 0f)) // only moved horizontally
+            this.pan(Offset(-100f, 0f)) // only moved horizontally
         }
         rule.runOnIdle { assertThat(total).isLessThan(0.01f) }
     }
@@ -1016,7 +1017,7 @@ class ScrollableTest {
             Modifier.scrollable(state = scrollableState, orientation = Orientation.Vertical)
         }
         rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
-            this.scroll(Offset(0f, 100f)) // only moved vertically
+            this.pan(Offset(0f, 100f)) // only moved vertically
         }
 
         var lastTotal =
@@ -1026,12 +1027,12 @@ class ScrollableTest {
             }
 
         rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
-            this.scroll(Offset(100f, 0f)) // only moved horizontally
+            this.pan(Offset(100f, 0f)) // only moved horizontally
         }
 
         rule.runOnIdle { assertThat(total).isEqualTo(lastTotal) }
         rule.onNodeWithTag(scrollableBoxTag).performTrackpadInput {
-            this.scroll(Offset(0f, -100f)) // only moved vertically
+            this.pan(Offset(0f, -100f)) // only moved vertically
         }
         rule.runOnIdle { assertThat(total).isLessThan(0.01f) }
     }

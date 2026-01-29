@@ -38,6 +38,7 @@ import androidx.compose.ui.test.injectionscope.trackpad.Common.verifyTrackpadEve
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTrackpadInput
+import androidx.compose.ui.test.scale
 import androidx.compose.ui.test.util.ClickableTestBox
 import androidx.compose.ui.test.util.MultiPointerInputRecorder
 import androidx.compose.ui.test.util.assertTimestampsAreIncreasing
@@ -52,10 +53,10 @@ import org.junit.runner.RunWith
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalTestApi::class, ExperimentalComposeUiApi::class)
-class PinchTest {
+class ScaleTest {
     companion object {
         private val T = InputDispatcher.eventPeriodMillis
-        private const val TAG = "PINCH"
+        private const val TAG = "SCALE"
     }
 
     @get:Rule val rule = createComposeRule(StandardTestDispatcher())
@@ -72,7 +73,7 @@ class PinchTest {
 
         rule.onNodeWithTag(TAG).performTrackpadInput {
             moveTo(center)
-            pinch(0.9f)
+            scale(0.9f)
         }
 
         rule.runOnIdle {
@@ -293,7 +294,7 @@ class PinchTest {
 
         rule.onNodeWithTag(TAG).performTrackpadInput {
             moveTo(center)
-            pinch(1.1f)
+            scale(1.1f)
         }
 
         rule.runOnIdle {
