@@ -17,7 +17,6 @@
 package androidx.camera.camera2.pipe.compat
 
 import android.annotation.SuppressLint
-import android.hardware.camera2.MultiResolutionImageReader
 import android.hardware.camera2.params.InputConfiguration
 import android.hardware.camera2.params.OutputConfiguration
 import android.os.Build
@@ -33,6 +32,7 @@ import androidx.camera.camera2.pipe.core.Log
 import androidx.camera.camera2.pipe.core.Threads
 import androidx.camera.camera2.pipe.graph.StreamGraphImpl
 import androidx.camera.camera2.pipe.graph.StreamGraphImpl.OutputConfig
+import androidx.camera.camera2.pipe.media.AndroidMultiResolutionImageReader
 import dagger.Module
 import dagger.Provides
 import javax.inject.Inject
@@ -412,10 +412,8 @@ internal fun buildOutputConfigurations(
             // used to create the MultiResolutionImageReader. As such, we can line up our
             // OutputStreams with the returned OutputConfigurations one-by-one.
             val multiResImageReader =
-                checkNotNull(imageSource.unwrapAs(MultiResolutionImageReader::class))
-            val outputConfigurations =
-                OutputConfiguration.createInstancesForMultiResolutionOutput(multiResImageReader)
-                    .toList()
+                checkNotNull(imageSource.unwrapAs(AndroidMultiResolutionImageReader::class))
+            val outputConfigurations = multiResImageReader.outputConfigurations
             check(outputConfigurations.size == outputs.size)
 
             for (outputIdx in outputs.indices) {
