@@ -110,18 +110,6 @@ object ComposeUiFlags {
     var isInitialFocusOnFocusableAvailable: Boolean = false
 
     /**
-     * With this flag on, requesting focus on a non-focusable focus target will request focus for
-     * one of its children, which makes
-     * [FocusTargetModifierNode.requestFocus][androidx.compose.ui.focus.FocusTargetModifierNode.requestFocus]
-     * consistent with
-     * [FocusRequester.requestFocus][androidx.compose.ui.focus.FocusRequester.requestFocus] and
-     * [FocusRequesterModifierNode.requestFocus][androidx.compose.ui.focus.requestFocus]
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isRequestFocusOnNonFocusableFocusTargetEnabled: Boolean = true
-
-    /**
      * With this flag on, the adaptive refresh rate (ARR) feature will be enabled. A preferred frame
      * rate can be set on a Composable through frame rate modifier: [Modifier.preferredFrameRate]
      */
