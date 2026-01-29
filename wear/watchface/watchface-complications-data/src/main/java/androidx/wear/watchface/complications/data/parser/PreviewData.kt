@@ -16,6 +16,7 @@
 
 package androidx.wear.watchface.complications.data.parser
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.res.Resources
 import android.content.res.XmlResourceParser
@@ -148,12 +149,19 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
             // This preserves the old (slightly broken) behavior for external callers.
             // TODO(471212833): Amend the parsing API (inflate) to take both provider and parser
             // contexts, so that we can access resources using the parser ID space
-            return inflate(providerContext, providerContext, parser)
+            return inflateInternal(
+                providerComponent = null,
+                providerContext,
+                providerContext,
+                parser,
+            )
         }
 
         /**
          * Inflates a [PreviewData] object from an XML resource.
          *
+         * @param providerComponent The component name of the complication provider. If not passed,
+         *   datasource field of the generated complication data will be null.
          * @param parserContext The context of the parsing application.
          * @param providerContext The context of the complication provider application.
          * @param parser The [XmlResourceParser] for the preview data XML.
@@ -164,6 +172,30 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         @Throws(XmlPullParserException::class, IOException::class)
         @RequiresPermission("com.google.wear.permission.SET_COMPLICATION_EXTRAS")
         internal fun inflate(
+            providerComponent: ComponentName,
+            parserContext: Context,
+            providerContext: Context,
+            parser: XmlResourceParser,
+        ): PreviewData {
+            return inflateInternal(providerComponent, parserContext, providerContext, parser)
+        }
+
+        /**
+         * Inflates a [PreviewData] object from an XML resource.
+         *
+         * @param providerComponent The component name of the complication provider application. if
+         *   not set, datasource field of the generated complication data will be empty.
+         * @param parserContext The context of the parsing application.
+         * @param providerContext The context of the complication provider application.
+         * @param parser The [XmlResourceParser] for the preview data XML.
+         * @return A [PreviewData] object containing the parsed complication data.
+         */
+        @JvmStatic
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+        @Throws(XmlPullParserException::class, IOException::class)
+        @RequiresPermission("com.google.wear.permission.SET_COMPLICATION_EXTRAS")
+        private fun inflateInternal(
+            providerComponent: ComponentName?,
             parserContext: Context,
             providerContext: Context,
             parser: XmlResourceParser,
@@ -178,6 +210,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                         parseComplicationTag(
                             parser,
                             type,
+                            providerComponent,
                             parserContext,
                             providerContext,
                             textUtils,
@@ -197,29 +230,56 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         private fun parseComplicationTag(
             parser: XmlResourceParser,
             type: ComplicationType,
+            providerComponent: ComponentName?,
             parserContext: Context,
             providerContext: Context,
             textUtils: ComplicationTextFormatting,
         ): ComplicationData? {
             return when (type) {
                 ComplicationType.SHORT_TEXT ->
-                    parseShortTextComplication(parser, parserContext, providerContext, textUtils)
+                    parseShortTextComplication(
+                        parser,
+                        providerComponent,
+                        parserContext,
+                        providerContext,
+                        textUtils,
+                    )
                 ComplicationType.LONG_TEXT ->
-                    parseLongTextComplication(parser, parserContext, providerContext, textUtils)
+                    parseLongTextComplication(
+                        parser,
+                        providerComponent,
+                        parserContext,
+                        providerContext,
+                        textUtils,
+                    )
                 ComplicationType.RANGED_VALUE ->
-                    parseRangedValueComplication(parser, parserContext, providerContext, textUtils)
+                    parseRangedValueComplication(
+                        parser,
+                        providerComponent,
+                        parserContext,
+                        providerContext,
+                        textUtils,
+                    )
                 ComplicationType.GOAL_PROGRESS ->
-                    parseGoalProgressComplication(parser, parserContext, providerContext, textUtils)
+                    parseGoalProgressComplication(
+                        parser,
+                        providerComponent,
+                        parserContext,
+                        providerContext,
+                        textUtils,
+                    )
                 ComplicationType.WEIGHTED_ELEMENTS ->
                     parseWeightedElementsComplication(
                         parser,
+                        providerComponent,
                         parserContext,
                         providerContext,
                         textUtils,
                     )
                 ComplicationType.MONOCHROMATIC_IMAGE ->
-                    parseMonochromaticImageComplication(parser, providerContext)
-                ComplicationType.SMALL_IMAGE -> parseSmallImageComplication(parser, providerContext)
+                    parseMonochromaticImageComplication(parser, providerComponent, providerContext)
+                ComplicationType.SMALL_IMAGE ->
+                    parseSmallImageComplication(parser, providerComponent, providerContext)
                 else -> {
                     skip(parser)
                     null
@@ -232,6 +292,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         @RequiresPermission("com.google.wear.permission.SET_COMPLICATION_EXTRAS")
         private fun parseShortTextComplication(
             parser: XmlResourceParser,
+            providerComponent: ComponentName?,
             parserContext: Context,
             providerContext: Context,
             textUtils: ComplicationTextFormatting,
@@ -260,6 +321,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                 .setMonochromaticImage(monochromaticImage)
                 .setSmallImage(smallImage)
                 .setExtras(extras)
+                .setDataSource(providerComponent)
                 .build()
         }
 
@@ -268,6 +330,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         @RequiresPermission("com.google.wear.permission.SET_COMPLICATION_EXTRAS")
         private fun parseLongTextComplication(
             parser: XmlResourceParser,
+            providerComponent: ComponentName?,
             parserContext: Context,
             providerContext: Context,
             textUtils: ComplicationTextFormatting,
@@ -296,6 +359,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                 .setMonochromaticImage(monochromaticImage)
                 .setSmallImage(smallImage)
                 .setExtras(extras)
+                .setDataSource(providerComponent)
                 .build()
         }
 
@@ -304,6 +368,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         @RequiresPermission("com.google.wear.permission.SET_COMPLICATION_EXTRAS")
         private fun parseRangedValueComplication(
             parser: XmlResourceParser,
+            providerComponent: ComponentName?,
             parserContext: Context,
             providerContext: Context,
             textUtils: ComplicationTextFormatting,
@@ -351,6 +416,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                 .setSmallImage(smallImage)
                 .setColorRamp(colorRamp)
                 .setExtras(extras)
+                .setDataSource(providerComponent)
                 .build()
         }
 
@@ -359,6 +425,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         @RequiresPermission("com.google.wear.permission.SET_COMPLICATION_EXTRAS")
         private fun parseGoalProgressComplication(
             parser: XmlResourceParser,
+            providerComponent: ComponentName?,
             parserContext: Context,
             providerContext: Context,
             textUtils: ComplicationTextFormatting,
@@ -399,6 +466,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                 .setSmallImage(smallImage)
                 .setColorRamp(colorRamp)
                 .setExtras(extras)
+                .setDataSource(providerComponent)
                 .build()
         }
 
@@ -407,6 +475,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         @RequiresPermission("com.google.wear.permission.SET_COMPLICATION_EXTRAS")
         private fun parseWeightedElementsComplication(
             parser: XmlResourceParser,
+            providerComponent: ComponentName?,
             parserContext: Context,
             providerContext: Context,
             textUtils: ComplicationTextFormatting,
@@ -465,6 +534,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                 .setMonochromaticImage(monochromaticImage)
                 .setSmallImage(smallImage)
                 .setExtras(extras)
+                .setDataSource(providerComponent)
                 .build()
         }
 
@@ -472,6 +542,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         @Throws(IOException::class, XmlPullParserException::class)
         private fun parseMonochromaticImageComplication(
             parser: XmlResourceParser,
+            providerComponent: ComponentName?,
             providerContext: Context,
         ): MonochromaticImageComplicationData {
             val monochromaticImage =
@@ -483,6 +554,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                     monochromaticImage,
                     contentDescription = ComplicationText.EMPTY,
                 )
+                .setDataSource(providerComponent)
                 .build()
         }
 
@@ -490,6 +562,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         @Throws(IOException::class, XmlPullParserException::class)
         private fun parseSmallImageComplication(
             parser: XmlResourceParser,
+            providerComponent: ComponentName?,
             providerContext: Context,
         ): SmallImageComplicationData {
             val smallImage =
@@ -501,6 +574,7 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
                     smallImage,
                     contentDescription = ComplicationText.EMPTY,
                 )
+                .setDataSource(providerComponent)
                 .build()
         }
 
