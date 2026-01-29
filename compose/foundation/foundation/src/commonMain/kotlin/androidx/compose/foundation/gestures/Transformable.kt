@@ -359,7 +359,10 @@ private fun AwaitPointerEventScope.consumePointerEventAsMouseWheelScrollOrNull(
 ): Offset? {
     if (
         !pointer.keyboardModifiers.isCtrlPressed ||
-            (pointer.type != PointerEventType.Scroll && pointer.type != PointerEventType.Pan)
+            (pointer.type != PointerEventType.Scroll &&
+                pointer.type != PointerEventType.PanStart &&
+                pointer.type != PointerEventType.PanMove &&
+                pointer.type != PointerEventType.PanEnd)
     ) {
         return null
     }
@@ -377,7 +380,11 @@ private fun AwaitPointerEventScope.consumePointerEventAsPanOrNull(
     pointer: PointerEvent,
     scrollConfig: ScrollConfig,
 ): Offset? {
-    if (pointer.type != PointerEventType.Pan) {
+    if (
+        pointer.type != PointerEventType.PanStart &&
+            pointer.type != PointerEventType.PanMove &&
+            pointer.type != PointerEventType.PanEnd
+    ) {
         return null
     }
     val scrollDelta = with(scrollConfig) { calculateMouseWheelScroll(pointer, size) }
@@ -391,7 +398,11 @@ private fun AwaitPointerEventScope.consumePointerEventAsPanOrNull(
 }
 
 private fun AwaitPointerEventScope.consumePointerEventAsScaleOrNull(pointer: PointerEvent): Float? {
-    if (pointer.type != PointerEventType.Scale) {
+    if (
+        pointer.type != PointerEventType.ScaleStart &&
+            pointer.type != PointerEventType.ScaleChange &&
+            pointer.type != PointerEventType.ScaleEnd
+    ) {
         return null
     }
     var scaleDelta = 1f
@@ -426,7 +437,12 @@ private suspend fun AwaitPointerEventScope.detectZoom(
         val canceled =
             event.changes.fastAny { it.isConsumed } ||
                 (ComposeFoundationFlags.isTrackpadGestureHandlingEnabled &&
-                    (event.type == PointerEventType.Pan || event.type == PointerEventType.Scale))
+                    (event.type == PointerEventType.PanStart ||
+                        event.type == PointerEventType.PanMove ||
+                        event.type == PointerEventType.PanEnd ||
+                        event.type == PointerEventType.ScaleStart ||
+                        event.type == PointerEventType.ScaleChange ||
+                        event.type == PointerEventType.ScaleEnd))
         if (!canceled) {
             val zoomChange = event.calculateZoom()
             val rotationChange = event.calculateRotation()

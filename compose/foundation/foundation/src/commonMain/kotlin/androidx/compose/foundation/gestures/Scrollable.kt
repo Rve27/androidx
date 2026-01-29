@@ -555,7 +555,9 @@ internal class ScrollableNode(
             if (
                 pass == PointerEventPass.Initial &&
                     (pointerEvent.type == PointerEventType.Scroll ||
-                        pointerEvent.type == PointerEventType.Pan)
+                        pointerEvent.type == PointerEventType.PanStart ||
+                        pointerEvent.type == PointerEventType.PanMove ||
+                        pointerEvent.type == PointerEventType.PanEnd)
             ) {
                 ensureMouseWheelScrollNodeInitialized()
             }

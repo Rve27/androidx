@@ -127,9 +127,9 @@ object ComposeUiFlags {
      * Enables support of trackpad gesture events.
      *
      * If enabled, [androidx.compose.ui.input.pointer.PointerEvent]s can have type of
-     * [androidx.compose.ui.input.pointer.PointerEventType.Pan] and
-     * [androidx.compose.ui.input.pointer.PointerEventType.Scale], corresponding to gestures on a
-     * trackpad.
+     * [androidx.compose.ui.input.pointer.PointerEventType.PanMove] and
+     * [androidx.compose.ui.input.pointer.PointerEventType.ScaleChange], corresponding to
+     * system-recognized gestures on a trackpad.
      *
      * These trackpad gestures will also generally be treated as mouse, with the exact behavior
      * depending on platform specifics.

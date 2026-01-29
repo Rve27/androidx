@@ -26,7 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType.Companion.Enter
 import androidx.compose.ui.input.pointer.PointerEventType.Companion.Move
-import androidx.compose.ui.input.pointer.PointerEventType.Companion.Pan
+import androidx.compose.ui.input.pointer.PointerEventType.Companion.PanEnd
+import androidx.compose.ui.input.pointer.PointerEventType.Companion.PanMove
+import androidx.compose.ui.input.pointer.PointerEventType.Companion.PanStart
 import androidx.compose.ui.input.pointer.PointerEventType.Companion.Press
 import androidx.compose.ui.input.pointer.PointerEventType.Companion.Release
 import androidx.compose.ui.input.pointer.PointerType
@@ -101,7 +103,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T, PanStart, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(0f)
@@ -132,7 +134,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T * 2, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T * 2, PanMove, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(0f)
@@ -163,7 +165,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T * 3, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T * 3, PanEnd, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(0f)
@@ -241,7 +243,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T, PanStart, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(0f)
@@ -272,7 +274,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T * 2, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T * 2, PanMove, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(-10f)
@@ -303,7 +305,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T * 3, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T * 3, PanEnd, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(0f)
@@ -385,7 +387,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T, PanStart, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(0f)
@@ -416,7 +418,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T * 2, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T * 2, PanMove, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(-10f)
@@ -447,7 +449,7 @@ class ScrollTest {
                         ComposeUiFlags.isTrackpadGestureHandlingEnabled &&
                             Build.VERSION.SDK_INT >= 34
                     ) {
-                        event.verifyTrackpadEvent(T * 3, Pan, false, Offset.Zero)
+                        event.verifyTrackpadEvent(T * 3, PanEnd, false, Offset.Zero)
                         assertThat(event.classification)
                             .isEqualTo(MotionEvent.CLASSIFICATION_TWO_FINGER_SWIPE)
                         assertThat(event.axisGestureScrollXDistance).isEqualTo(0f)

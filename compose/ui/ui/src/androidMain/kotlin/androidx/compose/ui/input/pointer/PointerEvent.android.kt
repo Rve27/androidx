@@ -121,22 +121,38 @@ internal actual constructor(
             val isPinch =
                 Build.VERSION.SDK_INT >= 29 && motionEvent.classification == CLASSIFICATION_PINCH
             return when (motionEvent.actionMasked) {
-                MotionEvent.ACTION_DOWN,
-                MotionEvent.ACTION_POINTER_DOWN -> {
+                MotionEvent.ACTION_DOWN -> {
                     if (isTwoFingerSwipe && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
-                        PointerEventType.Pan
+                        PointerEventType.PanStart
                     } else if (isPinch && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
-                        PointerEventType.Scale
+                        PointerEventType.ScaleStart
                     } else {
                         PointerEventType.Press
                     }
                 }
-                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    if (isTwoFingerSwipe && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
+                        PointerEventType.PanStart
+                    } else if (isPinch && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
+                        PointerEventType.ScaleChange
+                    } else {
+                        PointerEventType.Press
+                    }
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (isTwoFingerSwipe && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
+                        PointerEventType.PanEnd
+                    } else if (isPinch && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
+                        PointerEventType.ScaleEnd
+                    } else {
+                        PointerEventType.Release
+                    }
+                }
                 MotionEvent.ACTION_POINTER_UP -> {
                     if (isTwoFingerSwipe && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
-                        PointerEventType.Pan
+                        PointerEventType.PanEnd
                     } else if (isPinch && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
-                        PointerEventType.Scale
+                        PointerEventType.ScaleChange
                     } else {
                         PointerEventType.Release
                     }
@@ -144,9 +160,9 @@ internal actual constructor(
                 MotionEvent.ACTION_HOVER_MOVE,
                 MotionEvent.ACTION_MOVE -> {
                     if (isTwoFingerSwipe && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
-                        PointerEventType.Pan
+                        PointerEventType.PanMove
                     } else if (isPinch && ComposeUiFlags.isTrackpadGestureHandlingEnabled) {
-                        PointerEventType.Scale
+                        PointerEventType.ScaleChange
                     } else {
                         PointerEventType.Move
                     }

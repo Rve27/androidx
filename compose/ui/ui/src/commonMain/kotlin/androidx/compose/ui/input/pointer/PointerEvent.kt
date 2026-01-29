@@ -299,17 +299,41 @@ value class PointerEventType private constructor(internal val value: Int) {
         val Scroll = PointerEventType(6)
 
         /**
-         * A scale event was sent. This can happen, for example, due to a trackpad gesture. This
-         * event indicates that the [PointerInputChange.scaleGestureFactor]'s [Offset] is different
-         * from 1.
+         * A scale started. This can happen, for example, due to a trackpad gesture recognized by
+         * the platform. Such a gesture will start with an event of [ScaleStart], followed by some
+         * number of [ScaleChange]s, and finally a [ScaleEnd].
          */
-        val Scale = PointerEventType(7)
+        val ScaleStart = PointerEventType(7)
 
         /**
-         * A pan event was sent. This can happen, for example, due to a trackpad gesture. This event
-         * indicates that the [PointerInputChange.panGestureOffset]'s [Offset].
+         * An intermediate scale move. This can happen, for example, due to a trackpad gesture
+         * recognized by the platform. This event indicates that the
+         * [PointerInputChange.scaleGestureFactor]'s [Offset] may be different from 1.
          */
-        val Pan = PointerEventType(8)
+        val ScaleChange = PointerEventType(8)
+
+        /**
+         * A scale ended. This can happen, for example, due to a trackpad gesture recognized by the
+         * platform.
+         */
+        val ScaleEnd = PointerEventType(9)
+
+        /**
+         * A pan started. This can happen, for example, due to a trackpad gesture recognized by the
+         * platform. Such a gesture will start with an event type of [PanStart], followed by some
+         * number of [PanMove]s, and finally a [PanEnd]
+         */
+        val PanStart = PointerEventType(10)
+
+        /**
+         * An intermediate pan move. This can happen, for example, due to a trackpad gesture
+         * recognized by the platform. This event indicates that the
+         * [PointerInputChange.panGestureOffset]'s [Offset] may be non-zero.
+         */
+        val PanMove = PointerEventType(11)
+
+        /** A pan ended. This can happen, for example, due to a trackpad gesture. */
+        val PanEnd = PointerEventType(12)
     }
 
     override fun toString(): String =
@@ -320,8 +344,12 @@ value class PointerEventType private constructor(internal val value: Int) {
             Enter -> "Enter"
             Exit -> "Exit"
             Scroll -> "Scroll"
-            Scale -> "Scale"
-            Pan -> "Pan"
+            ScaleStart -> "ScaleStart"
+            ScaleChange -> "ScaleChange"
+            ScaleEnd -> "ScaleFinish"
+            PanStart -> "PanStart"
+            PanMove -> "Pan"
+            PanEnd -> "PanEnd"
             else -> "Unknown"
         }
 }

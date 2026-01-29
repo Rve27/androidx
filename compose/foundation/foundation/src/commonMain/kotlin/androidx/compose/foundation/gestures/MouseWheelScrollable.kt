@@ -65,7 +65,9 @@ internal class MouseWheelScrollingLogic(
         if (
             pointerEvent.type != PointerEventType.Scroll &&
                 (!ComposeFoundationFlags.isTrackpadGestureHandlingEnabled ||
-                    pointerEvent.type != PointerEventType.Pan)
+                    (pointerEvent.type != PointerEventType.PanStart &&
+                        pointerEvent.type != PointerEventType.PanMove &&
+                        pointerEvent.type != PointerEventType.PanEnd))
         )
             return
         if (pointerEvent.isConsumed) return
