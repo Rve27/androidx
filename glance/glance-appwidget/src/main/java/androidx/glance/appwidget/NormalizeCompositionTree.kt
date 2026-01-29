@@ -70,10 +70,12 @@ import androidx.glance.unit.Dimension
 /** @return what backend to emit: RemoteViews vs RemoteCompose */
 internal fun normalizeCompositionTree(
     root: RemoteViewsRoot,
-    isRemoteComposeAvailable: Boolean,
+    backendOverrideRequest: Backend?,
     isPreviewComposition: Boolean = false,
 ): Backend {
-    val isRemoteCompose: Boolean = root.requiresRemoteCompose() && isRemoteComposeAvailable
+    val isRemoteCompose: Boolean =
+        (root.requiresRemoteCompose() || backendOverrideRequest == Backend.RemoteCompose) &&
+            backendOverrideRequest != Backend.RemoteView
     coerceToOneChild(root)
     root.normalizeSizes()
 
