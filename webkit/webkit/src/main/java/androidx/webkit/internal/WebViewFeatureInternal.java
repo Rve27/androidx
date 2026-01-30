@@ -812,10 +812,29 @@ public class WebViewFeatureInternal {
      * {@link NavigationListener#onLargestContentfulPaintMillis(Page, long)},
      * {@link NavigationListener#onPerformanceMarkMillis(Page, String, long)}
      */
-    public static final ApiFeature.NoFramework WEB_VIEW_NAVIGATION_LISTENER_V2 =
+    public static final ApiFeature.NoFramework NAVIGATION_LISTENER_V2 = new ApiFeature.NoFramework(
+            WebViewFeature.NAVIGATION_LISTENER_V2, Features.WEB_VIEW_NAVIGATION_LISTENER_V2);
+
+    /**
+     * Feature for {@link WebSettingsFeature#isFeatureSupported(String)}.
+     * This feature covers a behavior change in {@link androidx.webkit.NavigationListener},
+     * see WebViewFeature javadoc for more info.
+     */
+    public static final ApiFeature.NoFramework
+            NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED =
             new ApiFeature.NoFramework(
-                    WebViewFeature.WEB_VIEW_NAVIGATION_LISTENER_EXPERIMENTAL_V2,
-                    Features.WEB_VIEW_NAVIGATION_LISTENER_V2);
+                    WebViewFeature.NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED,
+                    Features.ON_NAVIGATION_COMPLETED_NON_COMMITTED);
+
+    /**
+     * Feature for {@link WebSettingsFeature#isFeatureSupported(String)}.
+     * See {@link WebViewFeature#NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATIONS}.
+     */
+    public static final ApiFeature.NoFramework
+            NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATION =
+            new ApiFeature.NoFramework(
+                    WebViewFeature.NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATIONS,
+                    Features.COMMITTED_NAVIGATION_GET_PAGE_NON_NULL);
 
     /**
      * This is an internal only feature that indicate whether it is safe to cache WebView Provider
@@ -965,27 +984,6 @@ public class WebViewFeatureInternal {
     public static final ApiFeature.NoFramework HYPERLINK_CONTEXT_MENU_ITEMS =
             new ApiFeature.NoFramework(WebViewFeature.HYPERLINK_CONTEXT_MENU_ITEMS,
                     Features.HYPERLINK_CONTEXT_MENU_ITEMS);
-
-    /**
-     * Feature for {@link WebSettingsFeature#isFeatureSupported(String)}.
-     * This feature covers a behavior change in {@link androidx.webkit.NavigationListener},
-     * see WebViewFeature javadoc for more info.
-     */
-    public static final ApiFeature.NoFramework
-            NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED =
-            new ApiFeature.NoFramework(
-                    WebViewFeature.NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED,
-                    Features.ON_NAVIGATION_COMPLETED_NON_COMMITTED);
-
-    /**
-     * Feature for {@link WebSettingsFeature#isFeatureSupported(String)}.
-     * See {@link WebViewFeature#NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATIONS}.
-     */
-    public static final ApiFeature.NoFramework
-            NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATION =
-            new ApiFeature.NoFramework(
-                    WebViewFeature.NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATIONS,
-                    Features.COMMITTED_NAVIGATION_GET_PAGE_NON_NULL);
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
