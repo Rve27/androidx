@@ -24,6 +24,7 @@ import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +40,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.TruthJUnit.assume
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -71,6 +73,107 @@ class ComposeViewTest {
         val view = ComposeView(activity.applicationContext)
         rule.runOnIdle { activity.setContentView(view) }
         rule.waitForIdle()
+    }
+
+    @Test
+    fun composeWithComposeViewContext() {
+        @OptIn(ExperimentalComposeUiApi::class)
+        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        rule.runOnUiThread { rule.activity.setContentView(FrameLayout(rule.activity)) }
+        rule.waitForIdle()
+        val contentView = rule.activity.findViewById<View>(android.R.id.content)
+        val composeViewContext = rule.runOnUiThread { ComposeViewContext(contentView) }
+        val composeView = ComposeView(rule.activity)
+        var text by mutableStateOf("Hello")
+        lateinit var view: View
+        lateinit var readText: String
+        rule.runOnUiThread {
+            composeView.setContent {
+                view = LocalView.current
+                readText = text
+            }
+            composeView.createComposition(composeViewContext)
+        }
+        rule.waitForIdle()
+        assertThat(view.parent).isEqualTo(composeView)
+        assertThat(readText).isEqualTo("Hello")
+        text = "World"
+        rule.waitForIdle()
+        assertThat(readText).isEqualTo("World")
+    }
+
+    @Test
+    fun setComposeViewContextToNullStopsObserving() {
+        @OptIn(ExperimentalComposeUiApi::class)
+        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        lateinit var composeViewContext: ComposeViewContext
+        rule.setContent {
+            val view = LocalView.current
+            composeViewContext = remember { ComposeViewContext(view) }
+        }
+
+        lateinit var composeView: ComposeView
+        var isComposed = false
+        rule.runOnIdle {
+            composeView = ComposeView(rule.activity)
+            composeView.setContent { isComposed = true }
+            composeView.createComposition(composeViewContext)
+        }
+
+        rule.waitForIdle()
+        assertThat(isComposed).isTrue()
+        assertThat(composeViewContext.viewCount).isEqualTo(1)
+        rule.runOnUiThread {
+            composeView.disposeComposition()
+            assertThat(composeViewContext.viewCount).isEqualTo(0)
+
+            // Doing it a second time does nothing
+            composeView.disposeComposition()
+            assertThat(composeViewContext.viewCount).isEqualTo(0)
+        }
+    }
+
+    @Test
+    fun detachingComposeViewWithComposeViewContextStopsObserving() {
+        @OptIn(ExperimentalComposeUiApi::class)
+        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        lateinit var composeViewContext: ComposeViewContext
+        var addView by mutableStateOf(false)
+        lateinit var composeView: ComposeView
+
+        rule.setContent {
+            val view = LocalView.current
+            composeViewContext = remember { ComposeViewContext(view) }
+            if (addView) {
+                AndroidView(factory = { composeView })
+            }
+        }
+
+        var isComposed = false
+        rule.runOnIdle {
+            composeView = ComposeView(rule.activity)
+            composeView.setContent { isComposed = true }
+            composeView.createComposition(composeViewContext)
+        }
+
+        rule.waitForIdle()
+        assertThat(isComposed).isTrue()
+        assertThat(composeViewContext.viewCount).isEqualTo(1)
+
+        // Add the View
+        addView = true
+        rule.waitForIdle()
+
+        // Removing the View should stop the ComposeViewContext from observing
+        addView = false
+        rule.waitForIdle()
+        assertThat(composeViewContext.viewCount).isEqualTo(0)
+
+        // Disposing the composition doesn't need do anything to the ComposeViewContext
+        rule.runOnIdle {
+            composeView.disposeComposition()
+            assertThat(composeViewContext.viewCount).isEqualTo(0)
+        }
     }
 
     @Test
@@ -192,6 +295,118 @@ class ComposeViewTest {
         addView = true
         rule.waitForIdle()
         assertThat(isComposed).isTrue()
+    }
+
+    @Test
+    fun detachedComposition() {
+        @OptIn(ExperimentalComposeUiApi::class)
+        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        lateinit var view: View
+        rule.setContent { view = LocalView.current }
+        rule.waitForIdle()
+        val composeView = rule.runOnUiThread { ComposeView(view.context) }
+        var isComposed by mutableStateOf(false)
+        rule.runOnUiThread {
+            composeView.setContent { Box { isComposed = true } }
+            composeView.createComposition(ComposeViewContext(view))
+        }
+        rule.waitForIdle()
+        assertThat(isComposed).isTrue()
+    }
+
+    @Test
+    fun setContentAfterCreateComposition() {
+        @OptIn(ExperimentalComposeUiApi::class)
+        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        lateinit var view: View
+        rule.setContent { view = LocalView.current }
+        rule.waitForIdle()
+        val composeViewContext = rule.runOnUiThread { ComposeViewContext(view) }
+        val composeView =
+            rule.runOnUiThread {
+                ComposeView(view.context).also { it.createComposition(composeViewContext) }
+            }
+        var isComposed by mutableStateOf(false)
+        rule.runOnUiThread { composeView.setContent { Box { isComposed = true } } }
+        rule.waitForIdle()
+        assertThat(isComposed).isTrue()
+    }
+
+    @Test
+    fun reuseAutomaticComposeViewContext() {
+        @OptIn(ExperimentalComposeUiApi::class)
+        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        lateinit var view: View
+        var addComposeView by mutableStateOf(false)
+        lateinit var composeView: ComposeView
+        rule.setContent {
+            view = LocalView.current
+            if (addComposeView) {
+                AndroidView(factory = { composeView })
+            }
+        }
+        rule.waitForIdle()
+        val composeViewContext = rule.runOnUiThread { view.findViewTreeComposeViewContext()!! }
+        var isComposed by mutableStateOf(false)
+        composeView =
+            rule.runOnUiThread {
+                ComposeView(view.context).also {
+                    it.createComposition(composeViewContext)
+                    it.setContent { isComposed = true }
+                }
+            }
+        rule.waitForIdle()
+        assertThat(isComposed).isTrue()
+        assertThat(composeViewContext.viewCount).isEqualTo(2)
+
+        // Adding the ComposeView to the hierarchy shouldn't add to the view count
+        addComposeView = true
+        rule.waitForIdle()
+        assertThat(composeViewContext.viewCount).isEqualTo(2)
+
+        // clear the hierarchy
+        rule.runOnUiThread { rule.activity.setContentView(View(rule.activity)) }
+        rule.waitForIdle()
+        assertThat(composeViewContext.viewCount).isEqualTo(0)
+    }
+
+    @Test
+    fun disposedComposeViewContextCanRecompose() {
+        @OptIn(ExperimentalComposeUiApi::class)
+        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        lateinit var view: View
+        var addComposeView by mutableStateOf(false)
+        lateinit var composeView: ComposeView
+        var recomposeInt by mutableIntStateOf(1)
+        rule.setContent {
+            view = LocalView.current
+            if (recomposeInt > 0 && addComposeView) {
+                AndroidView(factory = { composeView })
+            }
+        }
+        rule.waitForIdle()
+        val composeViewContext = rule.runOnUiThread { view.findViewTreeComposeViewContext()!! }
+        var isComposed by mutableStateOf(false)
+        composeView =
+            rule.runOnUiThread {
+                ComposeView(view.context).also {
+                    it.createComposition(composeViewContext)
+                    it.setContent { isComposed = true }
+                }
+            }
+        rule.waitForIdle()
+        // Adding the ComposeView to the hierarchy shouldn't add to the view count
+        addComposeView = true
+        rule.runOnUiThread {
+            isComposed = false
+            composeView.disposeComposition()
+            // now force recomposition
+            recomposeInt++
+        }
+
+        rule.waitForIdle()
+        assertThat(isComposed).isTrue()
+        assertThat(composeViewContext.viewCount).isEqualTo(2)
     }
 
     @Test
