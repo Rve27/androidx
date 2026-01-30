@@ -70,6 +70,12 @@ package androidx.compose.ui {
     method public default operator androidx.compose.ui.Alignment plus(androidx.compose.ui.Alignment.Horizontal other);
   }
 
+  @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class AndroidComposeUiFlags {
+    property public boolean isSharedComposeViewContextEnabled;
+    field public static final androidx.compose.ui.AndroidComposeUiFlags INSTANCE;
+    field public static boolean isSharedComposeViewContextEnabled;
+  }
+
   @androidx.compose.runtime.Immutable public final class BiasAbsoluteAlignment implements androidx.compose.ui.Alignment {
     ctor public BiasAbsoluteAlignment(float horizontalBias, float verticalBias);
     method @KotlinOnly public androidx.compose.ui.unit.IntOffset align(androidx.compose.ui.unit.IntSize size, androidx.compose.ui.unit.IntSize space, androidx.compose.ui.unit.LayoutDirection layoutDirection);
