@@ -16,30 +16,31 @@
 
 package androidx.navigation
 
-import androidx.kruth.assertThat
-import androidx.savedstate.read
-import androidx.savedstate.savedState
-import kotlin.test.Test
+import android.os.Bundle
+import androidx.test.filters.SmallTest
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
 
-@IgnoreAndroidHostTestTarget
+@SmallTest
 class NavArgumentTest {
     @Test
     @Suppress("DEPRECATION")
     fun putDefaultValue() {
-        val bundle = savedState()
+        val bundle = Bundle()
         val argument =
             NavArgument.Builder().setDefaultValue("abc").setType(NavType.StringType).build()
         argument.putDefaultValue("name", bundle)
-        assertThat(bundle.read { getString("name") }).isEqualTo("abc")
+        assertThat(bundle.get("name")).isEqualTo("abc")
     }
 
     @Test
     fun verify() {
-        val bundle = savedState {
-            putString("stringArg", "abc")
-            putInt("intArg", 123)
-            putNull("intArrayArg")
-        }
+        val bundle =
+            Bundle().apply {
+                putString("stringArg", "abc")
+                putInt("intArg", 123)
+                putIntArray("intArrayArg", null)
+            }
 
         val stringArgument = NavArgument.Builder().setType(NavType.StringType).build()
         val intArgument = NavArgument.Builder().setType(NavType.IntType).build()
