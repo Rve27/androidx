@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,54 +14,58 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.subspace.layout
+package androidx.xr.compose.subspace.draw
 
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SpatialSmoothFeatheringSizeTest {
-    private val pixelHeight = 100f
-    private val pixelWidth = 200f
+    private val pixelHeight = 200f
+    private val pixelWidth = 400f
     private val density = Density(density = 2.0f)
 
     @Test
     fun percent() {
         val size = spatialSmoothFeatheringSize(25, 25)
 
-        assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.25f)
-        assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.25f)
+        Truth.assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.25f)
+        Truth.assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.25f)
     }
 
+    @Test
     fun dp() {
         val size = spatialSmoothFeatheringSize(25.dp, 25.dp)
 
-        assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.5f)
-        assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.25f)
+        Truth.assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.5f)
+        Truth.assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.25f)
     }
 
+    @Test
     fun dp_coerced() {
         val size = spatialSmoothFeatheringSize(1000.dp, 1000.dp)
 
-        assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.5f)
-        assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.5f)
+        Truth.assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.5f)
+        Truth.assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.5f)
     }
 
+    @Test
     fun pixel() {
         val size = spatialSmoothFeatheringSize(25f, 25f)
 
-        assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.25f)
-        assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.125f)
+        Truth.assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.25f)
+        Truth.assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.125f)
     }
 
+    @Test
     fun pixel_coerced() {
         val size = spatialSmoothFeatheringSize(1000f, 1000f)
 
-        assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.5f)
-        assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.5f)
+        Truth.assertThat(size.toHeightPercent(pixelHeight, density)).isEqualTo(0.5f)
+        Truth.assertThat(size.toWidthPercent(pixelWidth, density)).isEqualTo(0.5f)
     }
 }

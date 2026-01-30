@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.compose.subspace.layout
+package androidx.xr.compose.subspace.draw
 
 import androidx.annotation.IntRange
 import androidx.compose.ui.unit.Density
