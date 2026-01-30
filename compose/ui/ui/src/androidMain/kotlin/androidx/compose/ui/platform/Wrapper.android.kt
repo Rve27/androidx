@@ -102,14 +102,14 @@ private class WrappedComposition(val owner: AndroidComposeView, val original: Co
     private var lastContent: @Composable () -> Unit = {}
 
     override fun setContent(content: @Composable () -> Unit) {
-        owner.setOnViewTreeOwnersAvailable {
+        owner.setOnReadyForComposition { composeViewContext ->
             if (!disposed) {
-                val lifecycle = it.lifecycleOwner.lifecycle
+                val lifecycle = composeViewContext.lifecycleOwner.lifecycle
                 lastContent = content
                 if (addedToLifecycle == null) {
                     // this will call ON_CREATE synchronously if we already created
-                    if (Looper.myLooper() != owner.composeViewContext.view.handler.looper) {
-                        owner.composeViewContext.view.post {
+                    if (Looper.myLooper() != composeViewContext.view.handler.looper) {
+                        composeViewContext.view.post {
                             if (!disposed) {
                                 addedToLifecycle = lifecycle
                                 lifecycle.addObserver(this)
@@ -125,7 +125,7 @@ private class WrappedComposition(val owner: AndroidComposeView, val original: Co
                         LaunchedEffect(owner) { owner.boundsUpdatesAccessibilityEventLoop() }
                         LaunchedEffect(owner) { owner.boundsUpdatesContentCaptureEventLoop() }
 
-                        owner.composeViewContext.ProvideCompositionLocals(owner, content)
+                        composeViewContext.ProvideCompositionLocals(owner, content)
                     }
                 }
             }

@@ -113,6 +113,9 @@ internal class ComposeViewContext(
     /** [UriHandler] provided by [LocalUriHandler] */
     internal val uriHandler = AndroidUriHandler(view.context)
 
+    /** [WindowInfo] provide by [LocalWindowInfo]. */
+    internal val windowInfo: LazyWindowInfo = LazyWindowInfo()
+
     /**
      * The number of Views that are currently attached to the view hierarchy that are using this
      * ComposeViewContext.
@@ -146,7 +149,9 @@ internal class ComposeViewContext(
                 resourceIdCache.clear()
             }
 
-            override fun onWindowFocusChanged(hasFocus: Boolean) {}
+            override fun onWindowFocusChanged(hasFocus: Boolean) {
+                windowInfo.isWindowFocused = hasFocus
+            }
         }
 
     /**
@@ -184,12 +189,16 @@ internal class ComposeViewContext(
     private fun startObserving() {
         view.context.registerComponentCallbacks(callback)
         onConfigurationChanged(view.resources.configuration)
+        windowInfo.isWindowFocused = view.hasWindowFocus()
+        windowInfo.setOnInitializeContainerSize(calculateWindowSizeLambda)
+        windowInfo.updateContainerSizeIfObserved(calculateWindowSizeLambda)
         view.viewTreeObserver.addOnWindowFocusChangeListener(callback)
     }
 
     /** Stop observing configuration changes and window changes. */
     private fun stopObserving() {
         view.context.unregisterComponentCallbacks(callback)
+        windowInfo.setOnInitializeContainerSize(null)
         view.viewTreeObserver.removeOnWindowFocusChangeListener(callback)
     }
 
@@ -204,6 +213,9 @@ internal class ComposeViewContext(
             imageVectorCache.prune(changedFlags)
             this@ComposeViewContext.configuration.value = Configuration(configuration)
             resourceIdCache.clear()
+            if (changedFlags and MaskForNonWindowMetricsChanges.inv() != 0) {
+                windowInfo.updateContainerSizeIfObserved(calculateWindowSizeLambda)
+            }
         }
     }
 
