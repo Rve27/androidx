@@ -142,7 +142,6 @@ package androidx.compose.ui {
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class ComposeUiFlags {
     property public boolean areWindowInsetsRulersEnabled;
     property public boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
-    property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isBypassUnfocusableComposeViewEnabled;
     property public boolean isGraphicsLayerShapeSemanticsEnabled;
     property public boolean isIgnoreInvalidPrevFocusRectEnabled;
@@ -159,7 +158,6 @@ package androidx.compose.ui {
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
     field public static boolean areWindowInsetsRulersEnabled;
     field public static boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
-    field public static boolean isAdaptiveRefreshRateEnabled;
     field public static boolean isBypassUnfocusableComposeViewEnabled;
     field public static boolean isGraphicsLayerShapeSemanticsEnabled;
     field public static boolean isIgnoreInvalidPrevFocusRectEnabled;
