@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 The Android Open Source Project
+ * Copyright 2020 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.navigation.test
+package androidx.navigation
 
-import androidx.navigation.NavArgument
-import androidx.navigation.NavType.Companion.ReferenceType
+import android.net.Uri
 
-// region FloatType
-fun referenceArgument() = NavArgument.Builder().setType(ReferenceType).build()
-
-fun referenceArgument(defaultValue: Int) =
-    NavArgument.Builder().setType(ReferenceType).setDefaultValue(defaultValue).build()
-
-// endregion
+internal fun NavDestination.matchDeepLink(uri: Uri) =
+    matchDeepLink(NavDeepLinkRequest(uri, null, null))
