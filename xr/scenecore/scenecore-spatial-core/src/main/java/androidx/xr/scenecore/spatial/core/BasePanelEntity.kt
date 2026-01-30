@@ -13,187 +13,156 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import static androidx.xr.scenecore.spatial.core.PerceivedResolutionUtils.getDisplayResolutionInPixels;
-
-import static java.lang.Math.min;
-
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.TypedValue;
-
-import androidx.core.util.TypedValueCompat;
-import androidx.xr.runtime.FieldOfView;
-import androidx.xr.runtime.SpatialApiVersionHelper;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector2;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.PanelEntity;
-import androidx.xr.scenecore.runtime.PerceivedResolutionResult;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-import androidx.xr.scenecore.runtime.ScenePose;
-import androidx.xr.scenecore.runtime.Space;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeTransaction;
-
-import org.jspecify.annotations.NonNull;
-
-import java.util.Objects;
-import java.util.concurrent.ScheduledExecutorService;
+import android.content.Context
+import android.content.res.Resources
+import android.util.TypedValue
+import androidx.core.util.TypedValueCompat
+import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.SpatialApiVersionHelper.spatialApiVersion
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector2
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.runtime.math.Vector3.Companion.distance
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.PanelEntity
+import androidx.xr.scenecore.runtime.PerceivedResolutionResult
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.ScenePose
+import androidx.xr.scenecore.runtime.Space
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.node.Node
+import java.util.concurrent.ScheduledExecutorService
+import kotlin.math.min
 
 /** BasePanelEntity provides implementations of capabilities common to PanelEntities. */
-abstract class BasePanelEntity extends AndroidXrEntity implements PanelEntity {
-    private static final float DEFAULT_CORNER_RADIUS_DP = 32.0f;
-    protected PixelDimensions mPixelDimensions;
-    private float mCornerRadius;
-
-    BasePanelEntity(
-            Context context,
-            Node node,
-            XrExtensions extensions,
-            EntityManager entityManager,
-            ScheduledExecutorService executor) {
-        super(context, node, extensions, entityManager, executor);
-    }
-
-    protected float getDefaultPixelDensity() {
-        // Spatial api versions 1 and 2+, have different density behaviors. In 2+, pixels per
-        // meter should remain a constant value even when system density changes.
-        if (SpatialApiVersionHelper.getSpatialApiVersion() >= 2) {
-            return mExtensions.getUnderlyingObject().getConfig().defaultPixelsPerMeter();
-        } else {
-            return mExtensions
-                    .getConfig()
-                    .defaultPixelsPerMeter(Resources.getSystem().getDisplayMetrics().density);
-        }
-    }
-
-    protected float getDefaultCornerRadiusInMeters() {
-        // Get the width and height of the panel in DP.
-        float widthDp =
-                TypedValueCompat.deriveDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        mPixelDimensions.width,
-                        Resources.getSystem().getDisplayMetrics());
-        float heightDp =
-                TypedValueCompat.deriveDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        mPixelDimensions.height,
-                        Resources.getSystem().getDisplayMetrics());
-        float radiusDp = DEFAULT_CORNER_RADIUS_DP;
-
-        // If the pixel dimensions are smaller than the default corner radius, use the smaller of
-        // the two dimensions as the corner radius.
-        if (mPixelDimensions != null
-                && (widthDp < DEFAULT_CORNER_RADIUS_DP * 2
-                        || heightDp < DEFAULT_CORNER_RADIUS_DP * 2)) {
-            radiusDp = min(widthDp / 2, heightDp / 2);
+internal abstract class BasePanelEntity(
+    context: Context,
+    node: Node,
+    extensions: XrExtensions,
+    entityManager: EntityManager,
+    executor: ScheduledExecutorService,
+) : AndroidXrEntity(context, node, extensions, entityManager, executor), PanelEntity {
+    protected val defaultPixelDensity: Float
+        get() {
+            // Spatial api versions 1 and 2+, have different density behaviors. In 2+, pixels per
+            // meter should remain a constant value even when system density changes.
+            return if (spatialApiVersion >= 2) {
+                mExtensions.underlyingObject.config.defaultPixelsPerMeter()
+            } else {
+                mExtensions.config.defaultPixelsPerMeter(
+                    Resources.getSystem().displayMetrics.density
+                )
+            }
         }
 
-        // Convert the updated corner radius to pixels.
-        float radiusPixels =
-                TypedValueCompat.dpToPx(radiusDp, Resources.getSystem().getDisplayMetrics());
+    protected val defaultCornerRadiusInMeters: Float
+        get() {
+            // Get the width and height of the panel in DP.
+            val widthDp =
+                TypedValueCompat.deriveDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    sizeInPixels.width.toFloat(),
+                    Resources.getSystem().displayMetrics,
+                )
+            val heightDp =
+                TypedValueCompat.deriveDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    sizeInPixels.height.toFloat(),
+                    Resources.getSystem().displayMetrics,
+                )
+            var radiusDp: Float = DEFAULT_CORNER_RADIUS_DP
 
-        // Convert the pixel radius to meters.
-        return radiusPixels / getDefaultPixelDensity();
-    }
+            // If the pixel dimensions are smaller than the default corner radius, use the smaller
+            // of the two dimensions as the corner radius.
+            if (widthDp < DEFAULT_CORNER_RADIUS_DP * 2 || heightDp < DEFAULT_CORNER_RADIUS_DP * 2) {
+                radiusDp = min(widthDp / 2, heightDp / 2)
+            }
 
-    @Override
-    public @NonNull Dimensions getSize() {
-        float pixelDensity = getDefaultPixelDensity();
-        return new Dimensions(
-                mPixelDimensions.width / pixelDensity, mPixelDimensions.height / pixelDensity, 0);
-    }
+            // Convert the updated corner radius to pixels.
+            val radiusPixels =
+                TypedValueCompat.dpToPx(radiusDp, Resources.getSystem().displayMetrics)
 
-    @Override
-    public void setSize(@NonNull Dimensions dimensions) {
-        float pixelDensity = getDefaultPixelDensity();
-        setSizeInPixels(
-                new PixelDimensions(
-                        (int) (dimensions.width * pixelDensity),
-                        (int) (dimensions.height * pixelDensity)));
-    }
+            // Convert the pixel radius to meters.
+            return radiusPixels / this.defaultPixelDensity
+        }
 
-    @Override
-    public @NonNull PixelDimensions getSizeInPixels() {
-        return mPixelDimensions;
-    }
+    override var size: Dimensions
+        get() {
+            return Dimensions(
+                sizeInPixels.width / defaultPixelDensity,
+                sizeInPixels.height / defaultPixelDensity,
+                0f,
+            )
+        }
+        set(dimensions) {
+            sizeInPixels =
+                PixelDimensions(
+                    (dimensions.width * defaultPixelDensity).toInt(),
+                    (dimensions.height * defaultPixelDensity).toInt(),
+                )
+        }
 
-    @Override
-    public void setSizeInPixels(@NonNull PixelDimensions dimensions) {
-        mPixelDimensions = dimensions;
-    }
+    override var sizeInPixels: PixelDimensions = PixelDimensions(0, 0)
 
-    @Override
-    public @NonNull PerceivedResolutionResult getPerceivedResolution(
-            @NonNull ScenePose renderViewScenePose, @NonNull FieldOfView renderViewFov) {
+    override fun getPerceivedResolution(
+        renderViewScenePose: ScenePose,
+        renderViewFov: FieldOfView,
+    ): PerceivedResolutionResult {
         // Compute the width, height, and distance to camera, of the panel in activity space units
-        float panelWidthInActivitySpace = getSize().width * getScale(Space.ACTIVITY).getX();
-        float panelHeightInActivitySpace = getSize().height * getScale(Space.ACTIVITY).getY();
-        Vector3 cameraPositionInActivitySpace =
-                renderViewScenePose.getActivitySpacePose().getTranslation();
-        float PanelDistanceToCameraInActivitySpace =
-                Vector3.distance(
-                        cameraPositionInActivitySpace, getPose(Space.ACTIVITY).getTranslation());
+        val panelWidthInActivitySpace = size.width * getScale(Space.ACTIVITY).x
+        val panelHeightInActivitySpace = size.height * getScale(Space.ACTIVITY).y
+        val cameraPositionInActivitySpace = renderViewScenePose.activitySpacePose.translation
+        val panelDistanceToCameraInActivitySpace =
+            distance(cameraPositionInActivitySpace, getPose(Space.ACTIVITY).translation)
 
-        return PerceivedResolutionUtils.getPerceivedResolutionOfPanel(
-                renderViewFov,
-                getDisplayResolutionInPixels(Objects.requireNonNull(getContext())),
-                panelWidthInActivitySpace,
-                panelHeightInActivitySpace,
-                PanelDistanceToCameraInActivitySpace);
+        return getPerceivedResolutionOfPanel(
+            renderViewFov,
+            getDisplayResolutionInPixels(context!!),
+            panelWidthInActivitySpace,
+            panelHeightInActivitySpace,
+            panelDistanceToCameraInActivitySpace,
+        )
     }
 
-    // Sets just the value of the corner radius, without updating the node. This should be only be
-    // used when constructing the entity so that the stored value is consistent with the value set
-    // in the node transaction.
-    public void setCornerRadiusValue(float value) {
-        mCornerRadius = value;
-    }
+    protected var cornerRadiusValue = defaultCornerRadiusInMeters
 
-    @Override
-    public float getCornerRadius() {
-        return mCornerRadius;
-    }
-
-    @Override
-    public void setCornerRadius(float value) {
-        if (value < 0.0f) {
-            throw new IllegalArgumentException("Corner radius can't be negative: " + value);
+    override var cornerRadius: Float
+        get() = cornerRadiusValue
+        set(value) {
+            require(!(value < 0.0f)) { "Corner radius can't be negative: $value" }
+            cornerRadiusValue = value
+            mExtensions.createNodeTransaction().use { transaction ->
+                transaction.setCornerRadius(mNode, value).apply()
+            }
         }
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            transaction.setCornerRadius(mNode, value).apply();
-            mCornerRadius = value;
-        }
-    }
 
-    @Override
-    public @NonNull Pose transformPixelCoordinatesToPose(@NonNull Vector2 coordinates) {
+    override fun transformPixelCoordinatesToPose(coordinates: Vector2): Pose {
         // Convert Pixel units to a normalized [0, 1] (x) and [1, 0] (y) range
-        float normalizedPixelWidth = coordinates.getX() / mPixelDimensions.width;
-        float normalizedPixelHeight = coordinates.getY() / mPixelDimensions.height;
+        val normalizedPixelWidth = coordinates.x / sizeInPixels.width
+        val normalizedPixelHeight = coordinates.y / sizeInPixels.height
 
         // Subtract the vertical range from one to turn [1,0] into [0,1] since the vertical axis for
         // pixel coordinates is flipped with respect to the extents coordinate space.
-        float normalizedPixelHeightFlipped = 1 - normalizedPixelHeight;
+        val normalizedPixelHeightFlipped = 1 - normalizedPixelHeight
 
         // Multiply by 2 to get [0,2] and subtract one to get [-1,1] to match the extents range
         return transformNormalizedCoordinatesToPose(
-                new Vector2(normalizedPixelWidth * 2 - 1, normalizedPixelHeightFlipped * 2 - 1));
+            Vector2(normalizedPixelWidth * 2 - 1, normalizedPixelHeightFlipped * 2 - 1)
+        )
     }
 
-    @Override
-    public @NonNull Pose transformNormalizedCoordinatesToPose(@NonNull Vector2 coordinates) {
+    override fun transformNormalizedCoordinatesToPose(coordinates: Vector2): Pose {
         // One input unit covers the extent from the center to the edge so we have to multiply by
         // the half-width or half-height to get the appropriate position in 3D space.
-        Dimensions size = getSize();
-        float xInLocal3DSpace = coordinates.getX() * (size.width / 2f);
-        float yInLocal3DSpace = coordinates.getY() * (size.height / 2f);
-        return new Pose(new Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f));
+        val size = size
+        val xInLocal3DSpace = coordinates.x * (size.width / 2f)
+        val yInLocal3DSpace = coordinates.y * (size.height / 2f)
+        return Pose(Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f))
+    }
+
+    companion object {
+        private const val DEFAULT_CORNER_RADIUS_DP = 32.0f
     }
 }

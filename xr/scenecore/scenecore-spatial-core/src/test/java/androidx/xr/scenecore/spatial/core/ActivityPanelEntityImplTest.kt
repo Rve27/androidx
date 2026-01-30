@@ -13,276 +13,294 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.app.Activity
+import android.graphics.Rect
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector2
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider.Companion.testSpatialApiVersion
+import androidx.xr.scenecore.runtime.ActivityPanelEntity
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.SceneRuntime
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.android.extensions.xr.ShadowXrExtensions
+import com.android.extensions.xr.node.NodeRepository
+import com.android.extensions.xr.space.ShadowActivityPanel
+import com.google.common.truth.Truth
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.android.controller.ActivityController
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static org.junit.Assert.assertThrows;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Rect;
-
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector2;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider;
-import androidx.xr.scenecore.runtime.ActivityPanelEntity;
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-import androidx.xr.scenecore.runtime.SceneRuntime;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-
-import com.android.extensions.xr.ShadowXrExtensions;
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.NodeRepository;
-import com.android.extensions.xr.space.ActivityPanel;
-import com.android.extensions.xr.space.ShadowActivityPanel;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public class ActivityPanelEntityImplTest {
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final ActivityController<Activity> mActivityController =
-            Robolectric.buildActivity(Activity.class);
-    private final Activity mHostActivity = mActivityController.create().start().get();
-    private final PixelDimensions mWindowBoundsPx = new PixelDimensions(640, 480);
-    private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
-    private final NodeRepository mNodeRepository = NodeRepository.getInstance();
-    private SceneRuntime mFakeRuntime;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class ActivityPanelEntityImplTest {
+    private val xrExtensions = getXrExtensions()
+    private val activityController: ActivityController<Activity> =
+        Robolectric.buildActivity(Activity::class.java)
+    private val hostActivity: Activity = activityController.create().start().get()
+    private val windowBoundsPx = PixelDimensions(640, 480)
+    private val fakeExecutor = FakeScheduledExecutorService()
+    private val nodeRepository: NodeRepository = NodeRepository.getInstance()
+    private lateinit var fakeRuntime: SceneRuntime
 
     @Before
-    public void setUp() {
-        FakeSpatialApiVersionProvider.Companion.setTestSpatialApiVersion(1);
-        mFakeRuntime =
-                SpatialSceneRuntime.create(
-                        mHostActivity,
-                        mFakeExecutor,
-                        mXrExtensions,
-                        new EntityManager(),
-                        /* unscaledGravityAlignedActivitySpace= */ false);
+    fun setUp() {
+        testSpatialApiVersion = 1
+        fakeRuntime =
+            SpatialSceneRuntime.create(
+                hostActivity,
+                fakeExecutor,
+                xrExtensions!!,
+                EntityManager(),
+                /* unscaledGravityAlignedActivitySpace= */ false,
+            )
     }
 
     @After
-    public void tearDown() {
+    fun tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
-        mFakeRuntime.destroy();
-        FakeSpatialApiVersionProvider.Companion.setTestSpatialApiVersion(null);
+        fakeRuntime.destroy()
+        testSpatialApiVersion = null
     }
 
-    private ActivityPanelEntity createActivityPanelEntity() {
-        return createActivityPanelEntity(mWindowBoundsPx);
-    }
+    private fun createActivityPanelEntity(
+        windowBoundsPx: PixelDimensions = this.windowBoundsPx
+    ): ActivityPanelEntity {
+        val mPose = Pose()
 
-    private ActivityPanelEntity createActivityPanelEntity(PixelDimensions windowBoundsPx) {
-        Pose mPose = new Pose();
-
-        return mFakeRuntime.createActivityPanelEntity(
-                mPose, windowBoundsPx, "test", mHostActivity, mFakeRuntime.getActivitySpace());
-    }
-
-    @Test
-    public void createActivityPanelEntity_returnsActivityPanelEntity() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-
-        assertThat(activityPanelEntity).isNotNull();
+        return fakeRuntime.createActivityPanelEntity(
+            mPose,
+            windowBoundsPx,
+            "test",
+            hostActivity,
+            fakeRuntime.activitySpace,
+        )
     }
 
     @Test
-    public void createActivityPanelEntity_setsCornersTo32dp() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
+    fun createActivityPanelEntity_returnsActivityPanelEntity() {
+        val activityPanelEntity = createActivityPanelEntity()
+
+        Truth.assertThat(activityPanelEntity).isNotNull()
+    }
+
+    @Test
+    fun createActivityPanelEntity_setsCornersTo32dp() {
+        val activityPanelEntity = createActivityPanelEntity()
 
         // The (FakeXrExtensions) test default pixel density is 1 pixel per meter. Validate that the
         // corner radius is set to 32dp.
-        assertThat(activityPanelEntity.getCornerRadius()).isEqualTo(32.0f);
-        assertThat(
-                        mNodeRepository.getCornerRadius(
-                                ((ActivityPanelEntityImpl) activityPanelEntity).getNode()))
-                .isEqualTo(32.0f);
+        Truth.assertThat(activityPanelEntity.cornerRadius).isEqualTo(32.0f)
+        Truth.assertThat(
+                nodeRepository.getCornerRadius(
+                    (activityPanelEntity as ActivityPanelEntityImpl).getNode()
+                )
+            )
+            .isEqualTo(32.0f)
     }
 
     @Test
-    public void createPanel_smallPanelWidth_setsCornerRadiusToPanelSize() {
-        ActivityPanelEntity activityPanelEntity =
-                createActivityPanelEntity(new PixelDimensions(40, 1000));
+    fun createPanel_smallPanelWidth_setsCornerRadiusToPanelSize() {
+        val activityPanelEntity = createActivityPanelEntity(PixelDimensions(40, 1000))
 
         // The (FakeXrExtensions) test default pixel density is 1 pixel per meter.
         // Validate that the corner radius is set to half the width.
-        assertThat(activityPanelEntity.getCornerRadius()).isEqualTo(20f);
-        assertThat(
-                        mNodeRepository.getCornerRadius(
-                                ((ActivityPanelEntityImpl) activityPanelEntity).getNode()))
-                .isEqualTo(20f);
+        Truth.assertThat(activityPanelEntity.cornerRadius).isEqualTo(20f)
+        Truth.assertThat(
+                nodeRepository.getCornerRadius(
+                    (activityPanelEntity as ActivityPanelEntityImpl).getNode()
+                )
+            )
+            .isEqualTo(20f)
     }
 
     @Test
-    public void createPanel_smallPanelHeight_setsCornerRadiusToPanelSize() {
-        ActivityPanelEntity activityPanelEntity =
-                createActivityPanelEntity(new PixelDimensions(1000, 40));
+    fun createPanel_smallPanelHeight_setsCornerRadiusToPanelSize() {
+        val activityPanelEntity = createActivityPanelEntity(PixelDimensions(1000, 40))
 
         // The (FakeXrExtensions) test default pixel density is 1 pixel per meter.
         // Validate that the corner radius is set to half the height.
-        assertThat(activityPanelEntity.getCornerRadius()).isEqualTo(20f);
-        assertThat(
-                        mNodeRepository.getCornerRadius(
-                                ((ActivityPanelEntityImpl) activityPanelEntity).getNode()))
-                .isEqualTo(20f);
+        Truth.assertThat(activityPanelEntity.cornerRadius).isEqualTo(20f)
+        Truth.assertThat(
+                nodeRepository.getCornerRadius(
+                    (activityPanelEntity as ActivityPanelEntityImpl).getNode()
+                )
+            )
+            .isEqualTo(20f)
     }
 
     @Test
-    public void activityPanelEntityStartActivity_callsActivityPanel() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-        Intent launchIntent = mActivityController.getIntent();
-        activityPanelEntity.launchActivity(launchIntent, null);
+    fun activityPanelEntityStartActivity_callsActivityPanel() {
+        val activityPanelEntity = createActivityPanelEntity()
+        val launchIntent = activityController.getIntent()
+        activityPanelEntity.launchActivity(launchIntent, null)
 
-        ShadowActivityPanel panel =
-                ShadowActivityPanel.extract(
-                        ShadowXrExtensions.extract(mXrExtensions)
-                                .getActivityPanelForHost(mHostActivity));
+        val panel =
+            ShadowActivityPanel.extract(
+                ShadowXrExtensions.extract(xrExtensions).getActivityPanelForHost(hostActivity)
+            )
 
-        assertThat(panel.getLaunchIntent()).isEqualTo(launchIntent);
-        assertThat(panel.getBundle()).isNull();
-        assertThat(panel.getBounds())
-                .isEqualTo(new Rect(0, 0, mWindowBoundsPx.width, mWindowBoundsPx.height));
+        Truth.assertThat(panel.launchIntent).isEqualTo(launchIntent)
+        Truth.assertThat(panel.bundle).isNull()
+        Truth.assertThat(panel.bounds)
+            .isEqualTo(Rect(0, 0, windowBoundsPx.width, windowBoundsPx.height))
     }
 
     @Test
-    public void activityPanelEntityMoveActivity_callActivityPanel() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-        activityPanelEntity.moveActivity(mHostActivity);
+    fun activityPanelEntityMoveActivity_callActivityPanel() {
+        val activityPanelEntity = createActivityPanelEntity()
+        activityPanelEntity.moveActivity(hostActivity)
 
-        ShadowActivityPanel panel =
-                ShadowActivityPanel.extract(
-                        ShadowXrExtensions.extract(mXrExtensions)
-                                .getActivityPanelForHost(mHostActivity));
+        val panel =
+            ShadowActivityPanel.extract(
+                ShadowXrExtensions.extract(xrExtensions).getActivityPanelForHost(hostActivity)
+            )
 
-        assertThat(panel.getActivity()).isEqualTo(mHostActivity);
+        Truth.assertThat(panel.activity).isEqualTo(hostActivity)
 
-        assertThat(panel.getBounds())
-                .isEqualTo(new Rect(0, 0, mWindowBoundsPx.width, mWindowBoundsPx.height));
+        Truth.assertThat(panel.bounds)
+            .isEqualTo(Rect(0, 0, windowBoundsPx.width, windowBoundsPx.height))
     }
 
     @Test
-    public void activityPanelEntitySetSize_callsSetSizeInPixels() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-        Dimensions dimensions = new Dimensions(400f, 300f, 0f);
-        activityPanelEntity.setSize(dimensions);
+    fun activityPanelEntitySetSize_callsSetSizeInPixels() {
+        val activityPanelEntity = createActivityPanelEntity()
+        val dimensions = Dimensions(400f, 300f, 0f)
+        activityPanelEntity.size = dimensions
 
-        ActivityPanel panel =
-                ShadowXrExtensions.extract(mXrExtensions).getActivityPanelForHost(mHostActivity);
+        val panel = ShadowXrExtensions.extract(xrExtensions).getActivityPanelForHost(hostActivity)
 
-        assertThat(ShadowActivityPanel.extract(panel).getBounds())
-                .isEqualTo(new Rect(0, 0, (int) dimensions.width, (int) dimensions.height));
+        Truth.assertThat(ShadowActivityPanel.extract(panel).bounds)
+            .isEqualTo(Rect(0, 0, dimensions.width.toInt(), dimensions.height.toInt()))
 
         // SetSize redirects to setSizeInPixels, so we check the same thing here.
-        PixelDimensions viewDimensions = activityPanelEntity.getSizeInPixels();
+        val viewDimensions = activityPanelEntity.sizeInPixels
 
-        assertThat(viewDimensions.width).isEqualTo((int) dimensions.width);
-        assertThat(viewDimensions.height).isEqualTo((int) dimensions.height);
+        Truth.assertThat(viewDimensions.width).isEqualTo(dimensions.width.toInt())
+        Truth.assertThat(viewDimensions.height).isEqualTo(dimensions.height.toInt())
     }
 
     @Test
-    public void activityPanelEntitysetSizeInPixels_callActivityPanel() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-        PixelDimensions dimensions = new PixelDimensions(400, 300);
-        activityPanelEntity.setSizeInPixels(dimensions);
+    fun activityPanelEntity_setSizeInPixels_callActivityPanel() {
+        val activityPanelEntity = createActivityPanelEntity()
+        val dimensions = PixelDimensions(400, 300)
+        activityPanelEntity.sizeInPixels = dimensions
 
-        ActivityPanel panel =
-                ShadowXrExtensions.extract(mXrExtensions).getActivityPanelForHost(mHostActivity);
+        val panel = ShadowXrExtensions.extract(xrExtensions).getActivityPanelForHost(hostActivity)
 
-        assertThat(ShadowActivityPanel.extract(panel).getBounds())
-                .isEqualTo(new Rect(0, 0, dimensions.width, dimensions.height));
+        Truth.assertThat(ShadowActivityPanel.extract(panel).bounds)
+            .isEqualTo(Rect(0, 0, dimensions.width, dimensions.height))
 
-        PixelDimensions viewDimensions = activityPanelEntity.getSizeInPixels();
+        val viewDimensions = activityPanelEntity.sizeInPixels
 
-        assertThat(viewDimensions.width).isEqualTo(dimensions.width);
-        assertThat(viewDimensions.height).isEqualTo(dimensions.height);
+        Truth.assertThat(viewDimensions.width).isEqualTo(dimensions.width)
+        Truth.assertThat(viewDimensions.height).isEqualTo(dimensions.height)
     }
 
     @Test
-    public void activityPanelEntityDispose_callsActivityPanelDelete() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-        activityPanelEntity.dispose();
+    fun activityPanelEntityDispose_callsActivityPanelDelete() {
+        val activityPanelEntity = createActivityPanelEntity()
+        activityPanelEntity.dispose()
 
-        ActivityPanel panel =
-                ShadowXrExtensions.extract(mXrExtensions).getActivityPanelForHost(mHostActivity);
+        val panel = ShadowXrExtensions.extract(xrExtensions).getActivityPanelForHost(hostActivity)
 
-        assertThat(ShadowActivityPanel.extract(panel).isDeleted()).isTrue();
+        Truth.assertThat(ShadowActivityPanel.extract(panel).isDeleted).isTrue()
     }
 
     @Test
-    public void transformPixelCoordinatesToPose_topLeft_returnsCorrectPose() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-        activityPanelEntity.setSize(new Dimensions(1f, 1f, 0f));
-        Pose pose = activityPanelEntity.transformPixelCoordinatesToPose(new Vector2(0f, 0f));
-        Vector3 expected = new Vector3(-0.5f, 0.5f, 0.0f);
-        assertThat(pose.getTranslation()).isEqualTo(expected);
+    fun transformPixelCoordinatesToPose_topLeft_returnsCorrectPose() {
+        val activityPanelEntity = createActivityPanelEntity()
+        activityPanelEntity.size = Dimensions(1f, 1f, 0f)
+        val pose = activityPanelEntity.transformPixelCoordinatesToPose(Vector2(0f, 0f))
+        val expected = Vector3(-0.5f, 0.5f, 0.0f)
+        Truth.assertThat(pose.translation).isEqualTo(expected)
     }
 
     @Test
-    public void transformNormalizedCoordinatesToPose_center_returnsIdentity() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-        Pose pose = activityPanelEntity.transformNormalizedCoordinatesToPose(new Vector2(0f, 0f));
-        assertThat(pose).isEqualTo(Pose.Identity);
+    fun transformNormalizedCoordinatesToPose_center_returnsIdentity() {
+        val activityPanelEntity = createActivityPanelEntity()
+        val pose = activityPanelEntity.transformNormalizedCoordinatesToPose(Vector2(0f, 0f))
+        Truth.assertThat(pose).isEqualTo(Pose.Identity)
     }
 
     @Test
-    public void transformNormalizedCoordinatesToPose_topLeft_returnsCorrectPose() {
-        ActivityPanelEntity activityPanelEntity = createActivityPanelEntity();
-        activityPanelEntity.setSize(new Dimensions(1f, 1f, 0f));
-        Pose pose = activityPanelEntity.transformNormalizedCoordinatesToPose(new Vector2(-1f, 1f));
-        Vector3 expected = new Vector3(-0.5f, 0.5f, 0.0f);
-        assertThat(pose.getTranslation()).isEqualTo(expected);
+    fun transformNormalizedCoordinatesToPose_topLeft_returnsCorrectPose() {
+        val activityPanelEntity = createActivityPanelEntity()
+        activityPanelEntity.size = Dimensions(1f, 1f, 0f)
+        val pose = activityPanelEntity.transformNormalizedCoordinatesToPose(Vector2(-1f, 1f))
+        val expected = Vector3(-0.5f, 0.5f, 0.0f)
+        Truth.assertThat(pose.translation).isEqualTo(expected)
     }
 
     @Test
-    public void getParent_nullParent_returnsNull() {
-        ActivityPanelEntity activityPanelEntity =
-                mFakeRuntime.createActivityPanelEntity(
-                        new Pose(), mWindowBoundsPx, "test", mHostActivity, /* parent= */ null);
+    fun getParent_nullParent_returnsNull() {
+        val activityPanelEntity =
+            fakeRuntime.createActivityPanelEntity(
+                Pose(),
+                windowBoundsPx,
+                "test",
+                hostActivity,
+                /* parent= */ null,
+            )
 
-        assertThat(activityPanelEntity.getParent()).isEqualTo(null);
+        Truth.assertThat(activityPanelEntity.parent).isEqualTo(null)
     }
 
     @Test
-    public void getPoseInParentSpace_nullParent_returnsIdentity() {
-        ActivityPanelEntity activityPanelEntity =
-                mFakeRuntime.createActivityPanelEntity(
-                        new Pose(), mWindowBoundsPx, "test", mHostActivity, /* parent= */ null);
+    fun getPoseInParentSpace_nullParent_returnsIdentity() {
+        val activityPanelEntity =
+            fakeRuntime.createActivityPanelEntity(
+                Pose(),
+                windowBoundsPx,
+                "test",
+                hostActivity,
+                /* parent= */ null,
+            )
 
-        activityPanelEntity.setPose(Pose.Identity);
-        assertThat(activityPanelEntity.getPose(Space.PARENT)).isEqualTo(Pose.Identity);
+        activityPanelEntity.setPose(Pose.Identity)
+        Truth.assertThat(activityPanelEntity.getPose(Space.PARENT)).isEqualTo(Pose.Identity)
     }
 
     @Test
-    public void getPoseInActivitySpace_nullParent_throwsException() {
-        ActivityPanelEntity activityPanelEntity =
-                mFakeRuntime.createActivityPanelEntity(
-                        new Pose(), mWindowBoundsPx, "test", mHostActivity, /* parent= */ null);
+    fun getPoseInActivitySpace_nullParent_throwsException() {
+        val activityPanelEntity =
+            fakeRuntime.createActivityPanelEntity(
+                Pose(),
+                windowBoundsPx,
+                "test",
+                hostActivity,
+                /* parent= */ null,
+            )
 
-        assertThrows(
-                IllegalStateException.class, () -> activityPanelEntity.getPose(Space.ACTIVITY));
+        Assert.assertThrows(IllegalStateException::class.java) {
+            activityPanelEntity.getPose(Space.ACTIVITY)
+        }
     }
 
     @Test
-    public void getPoseInRealWorldSpace_nullParent_throwsException() {
-        ActivityPanelEntity activityPanelEntity =
-                mFakeRuntime.createActivityPanelEntity(
-                        new Pose(), mWindowBoundsPx, "test", mHostActivity, /* parent= */ null);
+    fun getPoseInRealWorldSpace_nullParent_throwsException() {
+        val activityPanelEntity =
+            fakeRuntime.createActivityPanelEntity(
+                Pose(),
+                windowBoundsPx,
+                "test",
+                hostActivity,
+                /* parent= */ null,
+            )
 
-        assertThrows(
-                IllegalStateException.class, () -> activityPanelEntity.getPose(Space.REAL_WORLD));
+        Assert.assertThrows(IllegalStateException::class.java) {
+            activityPanelEntity.getPose(Space.REAL_WORLD)
+        }
     }
 }

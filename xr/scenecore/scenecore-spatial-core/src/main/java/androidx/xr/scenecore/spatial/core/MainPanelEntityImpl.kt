@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.graphics.Rect;
-
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.PanelEntity;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeTransaction;
-
-import org.jspecify.annotations.NonNull;
-
-import java.util.concurrent.ScheduledExecutorService;
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.graphics.Rect
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.PanelEntity
+import androidx.xr.scenecore.runtime.PixelDimensions
+import com.android.extensions.xr.XrExtensionResult
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.node.Node
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * MainPanelEntity is a special instance of a PanelEntity that is backed by the WindowLeash CPM
@@ -38,58 +32,65 @@ import java.util.concurrent.ScheduledExecutorService;
  * with the Window Leash Node.
  */
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
-final class MainPanelEntityImpl extends BasePanelEntity implements PanelEntity {
-
+internal class MainPanelEntityImpl(
+    activity: Activity,
+    node: Node,
+    extensions: XrExtensions,
+    entityManager: EntityManager,
+    executor: ScheduledExecutorService,
+) : BasePanelEntity(activity, node, extensions, entityManager, executor), PanelEntity {
     // Note that we expect the Node supplied here to be the WindowLeash node.
-    MainPanelEntityImpl(
-            Activity activity,
-            Node node,
-            XrExtensions extensions,
-            EntityManager entityManager,
-            ScheduledExecutorService executor) {
-        super(activity, node, extensions, entityManager, executor);
-
-        // Read the Pixel dimensions for the primary panel off the Activity's WindowManager.
-        //   Note that this requires MinAPI 30.
+    init {
+        // Read the Pixel dimensions for the primary panel off the Activity's WindowManager. Note
+        // that this requires MinAPI 30.
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        Rect bounds = getBoundsFromWindowManager();
-        super.setSizeInPixels(new PixelDimensions(bounds.width(), bounds.height()));
-        float cornerRadius = getDefaultCornerRadiusInMeters();
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            transaction.setCornerRadius(node, cornerRadius).apply();
+        super.sizeInPixels =
+            PixelDimensions(boundsFromWindowManager.width(), boundsFromWindowManager.height())
+        val cornerRadius = defaultCornerRadiusInMeters
+        mExtensions.createNodeTransaction().use { transaction ->
+            transaction.setCornerRadius(node, cornerRadius).apply()
         }
-        setCornerRadiusValue(cornerRadius);
+        super.cornerRadiusValue = cornerRadius
     }
 
-    private Rect getBoundsFromWindowManager() {
-        return getActivity().getWindowManager().getCurrentWindowMetrics().getBounds();
-    }
+    private val boundsFromWindowManager: Rect
+        get() = activity!!.windowManager.currentWindowMetrics.bounds
 
-    @Override
-    public @NonNull Dimensions getSize() {
-        // The main panel bounds can change in HSM without JXRCore. Always read the bounds from the
-        // WindowManager.
-        Rect bounds = getBoundsFromWindowManager();
-        float pixelDensity = getDefaultPixelDensity();
-        return new Dimensions(bounds.width() / pixelDensity, bounds.height() / pixelDensity, 0);
-    }
+    override var size: Dimensions
+        get() {
+            // The main panel bounds can change in HSM without JXRCore. Always read the bounds from
+            // the WindowManager.
+            return Dimensions(
+                boundsFromWindowManager.width() / defaultPixelDensity,
+                boundsFromWindowManager.height() / defaultPixelDensity,
+                0f,
+            )
+        }
+        set(value) {
+            super.size = value
+        }
 
-    @Override
-    public @NonNull PixelDimensions getSizeInPixels() {
-        // The main panel bounds can change in HSM without JXRCore. Always read the bounds from the
-        // WindowManager.
-        Rect bounds = getBoundsFromWindowManager();
-        return new PixelDimensions(bounds.width(), bounds.height());
-    }
-
-    @Override
-    public void setSizeInPixels(@NonNull PixelDimensions dimensions) {
-        // TODO: b/376126162 - Consider calling setPixelDimensions() either when setMainWindowSize's
-        // callback is called, or when the next spatial state callback with the expected size is
-        // called.
-        super.setSizeInPixels(dimensions);
-        // TODO: b/376934871 - Check async results.
-        mExtensions.setMainWindowSize(
-                getActivity(), dimensions.width, dimensions.height, Runnable::run, (result) -> {});
-    }
+    override var sizeInPixels: PixelDimensions
+        get() {
+            // The main panel bounds can change in HSM without JXRCore. Always read the bounds from
+            // the WindowManager.
+            return PixelDimensions(
+                boundsFromWindowManager.width(),
+                boundsFromWindowManager.height(),
+            )
+        }
+        set(value) {
+            // TODO: b/376126162 - Consider calling setPixelDimensions() either when
+            // setMainWindowSize's callback is called, or when the next spatial state callback with
+            // the expected size is called.
+            super.sizeInPixels = value
+            // TODO: b/376934871 - Check async results.
+            mExtensions.setMainWindowSize(
+                activity,
+                value.width,
+                value.height,
+                { obj: Runnable -> obj.run() },
+                { _: XrExtensionResult? -> },
+            )
+        }
 }
