@@ -24,6 +24,7 @@ import android.os.Build
 import android.os.Handler
 import android.view.Surface
 import androidx.annotation.RequiresApi
+import androidx.camera.camera2.pipe.CameraOnActiveOutputSurfacesListener
 import androidx.camera.camera2.pipe.CameraStream
 import androidx.camera.camera2.pipe.OutputId
 import androidx.camera.camera2.pipe.OutputStream
@@ -46,23 +47,27 @@ private constructor(
     private val streamId: StreamId,
     private val outputId: OutputId,
 ) : ImageReaderWrapper, ImageReader.OnImageAvailableListener {
-    private val onImageListener = atomic<ImageReaderWrapper.OnImageListener?>(null)
+    private val outputIdSet = setOf(outputId)
 
     override val surface: Surface = imageReader.surface
 
-    override fun setOnImageListener(onImageListener: ImageReaderWrapper.OnImageListener) {
-        this.onImageListener.value = onImageListener
-    }
+    override var onImageListener: ImageReaderWrapper.OnImageListener? by atomic(null)
+
+    override var onExpectedOutputsListener: ImageReaderWrapper.OnExpectedOutputsListener? by
+        atomic(null)
 
     override fun onImageAvailable(reader: ImageReader?) {
         val image = reader?.acquireNextImage()
         if (image != null) {
-            val listener = onImageListener.value
-            if (listener == null) {
+            val imageListener = onImageListener
+            if (imageListener == null) {
                 image.close()
                 return
             }
-            listener.onImage(streamId, outputId, AndroidImage(image))
+
+            onExpectedOutputsListener?.onExpectedOutputs(image.timestamp, outputIdSet)
+
+            imageListener.onImage(streamId, outputId, AndroidImage(image))
         }
     }
 
@@ -209,21 +214,23 @@ public class AndroidMultiResolutionImageReader(
     internal val outputConfigurations: List<OutputConfiguration>,
     private val streamInfoToOutputIdMap: Map<MultiResolutionStreamInfo, OutputId>,
     private val surfaceToOutputIdMap: Map<Surface, OutputId>,
-) : ImageReaderWrapper, ImageReader.OnImageAvailableListener {
-    private val onImageListener = atomic<ImageReaderWrapper.OnImageListener?>(null)
+    private val concurrentOutputsEnabled: Boolean,
+) : ImageReaderWrapper, ImageReader.OnImageAvailableListener, CameraOnActiveOutputSurfacesListener {
+    private val singleOutputIdSets = surfaceToOutputIdMap.mapValues { setOf(it.value) }
 
     override val surface: Surface
         get() = multiResolutionImageReader.surface
 
-    override fun setOnImageListener(onImageListener: ImageReaderWrapper.OnImageListener) {
-        this.onImageListener.value = onImageListener
-    }
+    override var onImageListener: ImageReaderWrapper.OnImageListener? by atomic(null)
+
+    override var onExpectedOutputsListener: ImageReaderWrapper.OnExpectedOutputsListener? by
+        atomic(null)
 
     override fun onImageAvailable(reader: ImageReader?) {
         val image = reader?.acquireNextImage()
         if (image != null) {
-            val listener = onImageListener.value
-            if (listener == null) {
+            val imageListener = onImageListener
+            if (imageListener == null) {
                 image.close()
                 return
             }
@@ -238,12 +245,43 @@ public class AndroidMultiResolutionImageReader(
                     "$this: Failed to find OutputId for $reader based on streamInfo $streamInfo!"
                 }
 
+            if (!concurrentOutputsEnabled) {
+                // For non-concurrent streams, we cannot rely on onActiveOutputSurfaces. Hence, we
+                // fire the expected outputs listener here.
+                onExpectedOutputsListener?.onExpectedOutputs(image.timestamp, setOf(outputId))
+            }
+
             // Note: During camera switches, MultiResolutionImageReaders does not guarantee that
             // images will always be in monotonically increasing order. The primary reason for this
             // is when a camera switches from one lens to another, which can cause the camera
             // to produce overlapping images from each sensor and can be delivered out of order.
-            listener.onImage(streamId, outputId, AndroidImage(image))
+            imageListener.onImage(streamId, outputId, AndroidImage(image))
         }
+    }
+
+    override fun onActiveOutputSurfaces(
+        activeOutputSurfaces: List<Surface>,
+        timestamp: Long,
+        frameNumber: Long,
+    ) {
+        val expectedOutputs =
+            if (activeOutputSurfaces.size == 1) {
+                // Optimization: Since most calls on this listener are expected to have just one
+                // Surface. Use the precomputed sets to avoid creating a new one each time.
+                val surface = activeOutputSurfaces[0]
+                checkNotNull(singleOutputIdSets[surface]) {
+                    "Unrecognized active surface in $streamId: $surface"
+                }
+            } else {
+                activeOutputSurfaces
+                    .map { surface ->
+                        checkNotNull(surfaceToOutputIdMap[surface]) {
+                            "Unrecognized active surface in $streamId: $surface"
+                        }
+                    }
+                    .toSet()
+            }
+        onExpectedOutputsListener?.onExpectedOutputs(timestamp, expectedOutputs)
     }
 
     override fun close(): Unit = multiResolutionImageReader.close()
@@ -351,7 +389,18 @@ public class AndroidMultiResolutionImageReader(
                     outputConfigurations,
                     streamInfoToOutputIdMap,
                     surfaceToOutputIdMap,
+                    enableConcurrentOutputs,
                 )
+            if (
+                plaformApiCompat?.isMultiResolutionConcurrentReadersEnabled() == true &&
+                    enableConcurrentOutputs
+            ) {
+                plaformApiCompat.setOnActiveOutputSurfacesListener(
+                    multiResolutionImageReader,
+                    executor,
+                    androidMultiResolutionImageReader,
+                )
+            }
 
             multiResolutionImageReader.setOnImageAvailableListener(
                 androidMultiResolutionImageReader,
