@@ -42,6 +42,8 @@ dependencies {
     docs(project(":biometric:biometric-compose"))
     docs(project(":browser:browser"))
     docs(project(":camera:camera-camera2"))
+    docs(project(":camera:camera-common"))
+    docs(project(":camera:camera-common-testing"))
     docs(project(":camera:camera-compose"))
     docs(project(":camera:camera-core"))
     docs(project(":camera:camera-effects"))
