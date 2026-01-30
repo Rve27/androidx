@@ -169,6 +169,34 @@ internal class FrameBufferImpl(
             references
         }
 
+    override fun removeFirstFrameReferenceAndAcquire(
+        predicate: (FrameReference) -> Boolean
+    ): Frame? = removeAndAcquire(frameQueue.iterator(), predicate)
+
+    override fun removeLastFrameReferenceAndAcquire(
+        predicate: (FrameReference) -> Boolean
+    ): Frame? = removeAndAcquire(frameQueue.asReversed().iterator(), predicate)
+
+    override fun removeAllFrameReferencesAndAcquire(
+        predicate: (FrameReference) -> Boolean
+    ): List<Frame> =
+        synchronized(lock) {
+            if (closed) return emptyList()
+
+            val iterator = frameQueue.iterator()
+
+            val removedFrames = mutableListOf<Frame>()
+            while (iterator.hasNext()) {
+                val bufferEntry = iterator.next()
+                if (predicate(bufferEntry.frameReference)) {
+                    iterator.remove()
+                    (bufferEntry as? BufferEntry.WithFrame)?.let { removedFrames.add(it.frame) }
+                }
+            }
+            _size.value = frameQueue.size
+            return removedFrames
+        }
+
     override fun peekFirstReference(): FrameReference? =
         synchronized(lock) {
             if (closed) return null
@@ -204,6 +232,22 @@ internal class FrameBufferImpl(
             frame.close()
         }
         frameGraphBuffers.detach(this)
+    }
+
+    @GuardedBy("lock")
+    private fun removeAndAcquire(
+        iterator: MutableIterator<BufferEntry>,
+        predicate: (FrameReference) -> Boolean,
+    ): Frame? {
+        while (iterator.hasNext()) {
+            val bufferEntry = iterator.next()
+            if (predicate(bufferEntry.frameReference)) {
+                iterator.remove()
+                _size.value = frameQueue.size
+                return (bufferEntry as? BufferEntry.WithFrame)?.let { it.frame }
+            }
+        }
+        return null
     }
 
     private companion object {
