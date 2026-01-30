@@ -131,7 +131,7 @@ class EditableDocumentViewModelTest {
 
         val initialDocUri = Uri.parse("content://test/test1.pdf")
         savedStateHandle[EditableDocumentViewModel.LOADED_DOCUMENT_URI_KEY] = initialDocUri
-
+        annotationsViewModel.onBitmapFetched(0)
         assertThat(
                 annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
                     .pageAnnotations
@@ -159,6 +159,7 @@ class EditableDocumentViewModelTest {
         val annotation = createAnnotation(pageNum = 0)
 
         annotationsViewModel.addDraftAnnotation(annotation)
+        annotationsViewModel.onBitmapFetched(0)
 
         val firstPageEdits =
             annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
@@ -176,6 +177,7 @@ class EditableDocumentViewModelTest {
 
         annotationsViewModel.addDraftAnnotation(annotation1)
         annotationsViewModel.addDraftAnnotation(annotation2)
+        annotationsViewModel.onBitmapFetched(0)
 
         val firstPageEdits =
             annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
@@ -211,6 +213,7 @@ class EditableDocumentViewModelTest {
         annotationsViewModel.addDraftAnnotation(annotation)
         annotationsViewModel.undo()
         annotationsViewModel.redo()
+        annotationsViewModel.onBitmapFetched(0)
 
         val firstPageEdits =
             annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
@@ -225,6 +228,7 @@ class EditableDocumentViewModelTest {
         val annotation = createAnnotation(pageNum = 0)
         annotationsViewModel.addDraftAnnotation(annotation)
         annotationsViewModel.addDraftAnnotation(annotation)
+        annotationsViewModel.onBitmapFetched(0)
 
         // The annotations should be added and pageAnnotations List size should be 2.
         var firstPageEdits =
@@ -234,6 +238,7 @@ class EditableDocumentViewModelTest {
         assertThat(firstPageEdits).hasSize(2)
 
         annotationsViewModel.removeAnnotation(firstPageEdits!!.first().key)
+        annotationsViewModel.onBitmapFetched(0)
 
         // The annotation should be removed and pageAnnotations List size should now be 1.
         firstPageEdits =
@@ -256,6 +261,7 @@ class EditableDocumentViewModelTest {
         annotationsViewModel.maybeInitialiseForDocument(documentWithAnnotation)
 
         annotationsViewModel.fetchAnnotationsForPageRange(0, 0)
+        annotationsViewModel.onBitmapFetched(0)
 
         // The annotations should be present and pageAnnotations List size should be 2.
         var firstPageEdits =
@@ -286,6 +292,7 @@ class EditableDocumentViewModelTest {
         annotationsViewModel.maybeInitialiseForDocument(documentWithAnnotation)
 
         annotationsViewModel.fetchAnnotationsForPageRange(0, 0)
+        annotationsViewModel.onBitmapFetched(0)
 
         val firstPageEdits =
             annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
@@ -301,6 +308,7 @@ class EditableDocumentViewModelTest {
         val annotationPage1 = createAnnotation(pageNum = 1)
         annotationsViewModel.visiblePageRange = 1..1
         annotationsViewModel.addDraftAnnotation(annotationPage1)
+        annotationsViewModel.onBitmapFetched(1)
 
         assertThat(
                 annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
@@ -362,6 +370,41 @@ class EditableDocumentViewModelTest {
         // Re-enable interaction by deactivating gesture
         annotationsViewModel.isPdfViewGestureActive = false
         assertThat(annotationsViewModel.isAnnotationInteractionEnabled.value).isTrue()
+    }
+
+    @Test
+    fun updateDisplayState_onBitmapUpdated() = runTest {
+        val annotationPage1 = createAnnotation(pageNum = 1)
+        val annotationPage2 = createAnnotation(pageNum = 2)
+        annotationsViewModel.visiblePageRange = 1..2
+        annotationsViewModel.addDraftAnnotation(annotationPage1)
+        annotationsViewModel.addDraftAnnotation(annotationPage2)
+        annotationsViewModel.onBitmapFetched(1)
+
+        assertThat(
+                annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
+                    .pageAnnotations[1]
+            )
+            .hasSize(1)
+        annotationsViewModel.onBitmapFetched(2)
+        assertThat(
+                annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
+                    .pageAnnotations
+                    .size
+            )
+            .isEqualTo(2)
+
+        annotationsViewModel.onBitmapCleared(1)
+        assertThat(
+                annotationsViewModel.annotationsDisplayStateFlow.value.visiblePageAnnotations
+                    .pageAnnotations
+                    .size
+            )
+            .isEqualTo(1)
+
+        annotationsViewModel.onBitmapCleared(2)
+        val state = annotationsViewModel.annotationsDisplayStateFlow.value
+        assertThat(state.visiblePageAnnotations.pageAnnotations[1]).isNull()
     }
 
     // --- Apply Edits Tests ---

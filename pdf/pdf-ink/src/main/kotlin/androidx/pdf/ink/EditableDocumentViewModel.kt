@@ -47,6 +47,7 @@ import androidx.pdf.ink.view.tool.Highlighter
 import androidx.pdf.ink.view.tool.Pen
 import androidx.pdf.viewer.fragment.PdfDocumentViewModel
 import androidx.pdf.viewer.fragment.model.PdfFragmentUiState
+import java.util.BitSet
 import java.util.concurrent.Executors
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -66,6 +67,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     private var annotationsEditor: PdfAnnotationsEditor? = null
     private var annotationsManager: PdfAnnotationsManager? = null
     private var historyCollectionJob: Job? = null
+    private val bitmapAvailabilityMap = BitSet()
 
     private val _annotationDisplayStateFlow = MutableStateFlow(AnnotationsDisplayState.EMPTY)
 
@@ -166,6 +168,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         editablePdfDocument = null
         _annotationDisplayStateFlow.value = AnnotationsDisplayState.EMPTY
         didApplyEdits = false
+        bitmapAvailabilityMap.clear()
     }
 
     internal fun maybeInitialiseForDocument(document: PdfDocument) {
@@ -290,7 +293,14 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
 
         val pageAnnotations =
             range
-                .associateWith { pageNum -> manager.getAnnotations(pageNum) }
+                .associateWith { pageNum ->
+                    // Display Annotation only for pages whose bitmap is available
+                    if (bitmapAvailabilityMap.get(pageNum)) {
+                        manager.getAnnotations(pageNum)
+                    } else {
+                        listOf()
+                    }
+                }
                 .filterValues { it.isNotEmpty() }
 
         // This check ensures that the flow is not updated with stale data
@@ -382,6 +392,20 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
                 )
             }
             annotationsEditor?.let { block(it) }
+        }
+    }
+
+    internal fun onBitmapFetched(pageNum: Int) {
+        bitmapAvailabilityMap.set(pageNum)
+        if (pageNum in visiblePageRange) {
+            viewModelScope.launch { refreshVisibleAnnotations(visiblePageRange) }
+        }
+    }
+
+    internal fun onBitmapCleared(pageNum: Int) {
+        bitmapAvailabilityMap.clear(pageNum)
+        if (pageNum in visiblePageRange) {
+            viewModelScope.launch { refreshVisibleAnnotations(visiblePageRange) }
         }
     }
 
