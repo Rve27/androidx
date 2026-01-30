@@ -412,6 +412,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         super.onDestroyView()
         pdfView.removeOnViewportChangedListener(onViewportChangedListener)
         pdfView.removeOnGestureStateChangedListener(gestureStateChangedListener)
+        pdfView.setOnBitmapUpdatedListener(null)
         annotationView.removeInProgressTextHighlightsListener(inProgressTextHighlightsListener)
         wetStrokesView.removeFinishedStrokesListener(wetStrokesOnFinishedListener)
         annotationToolbar.setAnnotationToolbarListener(null)
@@ -548,6 +549,18 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
             }
         pdfView.addOnGestureStateChangedListener(gestureStateChangedListener)
         pdfView.addOnViewportChangedListener(onViewportChangedListener)
+
+        pdfView.setOnBitmapUpdatedListener(
+            object : PdfView.OnBitmapUpdatedListener {
+                override fun onBitmapFetched(pageNum: Int) {
+                    documentViewModel.onBitmapFetched(pageNum)
+                }
+
+                override fun onBitmapCleared(pageNum: Int) {
+                    documentViewModel.onBitmapCleared(pageNum)
+                }
+            }
+        )
     }
 
     private fun updateAnnotationDisplayState(
