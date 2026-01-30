@@ -59,4 +59,8 @@ object AndroidComposeUiFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isSharedComposeViewContextEnabled: Boolean = true
+
+    /** This moves WindowInfo into the shared ComposeViewContext. */
+    // To be removed b/479837249
+    @field:Suppress("MutableBareField") @JvmField var isSharedWindowInfoEnabled: Boolean = true
 }
