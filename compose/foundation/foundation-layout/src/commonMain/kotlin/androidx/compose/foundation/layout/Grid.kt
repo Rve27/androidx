@@ -73,6 +73,9 @@ import kotlin.math.roundToInt
  * * **Auto-placement:** Items without a specific [GridScope.gridItem] modifier flow automatically
  *   into the next available cell based on the configured [GridFlow]. .
  *
+ * Example usage:
+ *
+ * @sample androidx.compose.foundation.layout.samples.SimpleGrid
  * @param config A block that defines the columns, rows, and gaps of the grid. This block runs
  *   during the measure pass, enabling efficient updates based on state.
  * @param modifier The modifier to be applied to the layout.
