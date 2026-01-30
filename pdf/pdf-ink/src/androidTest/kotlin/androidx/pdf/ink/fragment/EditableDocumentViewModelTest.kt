@@ -31,6 +31,9 @@ import androidx.pdf.coroutines.collectTill
 import androidx.pdf.ink.EditableDocumentViewModel
 import androidx.pdf.ink.model.ApplyEditsState
 import androidx.pdf.ink.state.AnnotationDrawingMode
+import androidx.pdf.ink.state.PdfEditMode
+import androidx.pdf.ink.state.PdfEditMode.Companion.EDITING_JOURNEY_ANNOTATIONS
+import androidx.pdf.ink.state.PdfEditMode.Companion.EDITING_JOURNEY_FORM_FILLING
 import androidx.pdf.ink.view.tool.Eraser
 import androidx.pdf.ink.view.tool.Highlighter
 import androidx.pdf.ink.view.tool.Pen
@@ -90,13 +93,27 @@ class EditableDocumentViewModelTest {
 
     @Test
     fun statePersistence_restoresEditMode_afterRecreation() = runTest {
-        annotationsViewModel.isEditModeEnabled = true
+        annotationsViewModel.pdfEditMode = PdfEditMode.Enabled()
 
         val newViewModel =
             EditableDocumentViewModel(savedStateHandle, SandboxedPdfLoader(appContext, dispatcher))
 
-        assertThat(newViewModel.isEditModeEnabled).isTrue()
-        assertThat(newViewModel.isEditModeEnabledFlow.first()).isTrue()
+        assertThat(newViewModel.pdfEditMode is PdfEditMode.Enabled).isTrue()
+        assertThat(newViewModel.pdfEditModeFlow.first() is PdfEditMode.Enabled).isTrue()
+        assertThat((newViewModel.pdfEditModeFlow.first() as PdfEditMode.Enabled).journey)
+            .isEqualTo(EDITING_JOURNEY_ANNOTATIONS)
+    }
+
+    @Test
+    fun editMode_setJourneyFormFilling() = runTest {
+        assertThat(annotationsViewModel.pdfEditMode is PdfEditMode.Disabled).isTrue()
+        annotationsViewModel.pdfEditMode =
+            PdfEditMode.Enabled(journey = EDITING_JOURNEY_ANNOTATIONS)
+
+        assertThat(annotationsViewModel.pdfEditMode is PdfEditMode.Enabled).isTrue()
+        assertThat(annotationsViewModel.pdfEditModeFlow.first() is PdfEditMode.Enabled).isTrue()
+        assertThat((annotationsViewModel.pdfEditModeFlow.first() as PdfEditMode.Enabled).journey)
+            .isEqualTo(EDITING_JOURNEY_ANNOTATIONS)
     }
 
     @Test
@@ -114,11 +131,11 @@ class EditableDocumentViewModelTest {
     fun resetState_clearsAnnotationStateAndDisablesEditMode() = runTest {
         val annotation = createAnnotation(pageNum = 0)
         annotationsViewModel.addDraftAnnotation(annotation)
-        annotationsViewModel.isEditModeEnabled = true
+        annotationsViewModel.pdfEditMode = PdfEditMode.Enabled()
 
         annotationsViewModel.resetState()
 
-        assertThat(annotationsViewModel.isEditModeEnabledFlow.first()).isFalse()
+        assertThat(annotationsViewModel.pdfEditModeFlow.first() is PdfEditMode.Enabled).isFalse()
         val annotationsDisplayState = annotationsViewModel.annotationsDisplayStateFlow.first()
         assertThat(annotationsDisplayState).isEqualTo(AnnotationsDisplayState.EMPTY)
         assertThat(annotationsViewModel.applyEditsStatus.value).isEqualTo(ApplyEditsState.Ready)
@@ -150,6 +167,35 @@ class EditableDocumentViewModelTest {
             .isEmpty()
         assertThat(savedStateHandle.get<Uri>(EditableDocumentViewModel.LOADED_DOCUMENT_URI_KEY))
             .isEqualTo(newDocUri)
+    }
+
+    @Test
+    fun cannotSwitchEditingJourney_withoutDisablingEditModeFirst() = runTest {
+        // Check Editing Journey is disabled
+        assertThat(annotationsViewModel.pdfEditMode is PdfEditMode.Disabled).isTrue()
+
+        // Switch editing journey to annotations
+        annotationsViewModel.pdfEditMode = PdfEditMode.Enabled(EDITING_JOURNEY_ANNOTATIONS)
+        assertThat(annotationsViewModel.pdfEditMode is PdfEditMode.Enabled).isTrue()
+        var editMode = annotationsViewModel.pdfEditMode as PdfEditMode.Enabled
+        assertThat(editMode.journey).isEqualTo(EDITING_JOURNEY_ANNOTATIONS)
+
+        // Try switching to form-filling
+        annotationsViewModel.pdfEditMode = PdfEditMode.Enabled(EDITING_JOURNEY_FORM_FILLING)
+        assertThat(annotationsViewModel.pdfEditMode is PdfEditMode.Enabled).isTrue()
+        editMode = annotationsViewModel.pdfEditMode as PdfEditMode.Enabled
+        // editMode should not change
+        assertThat(editMode.journey).isEqualTo(EDITING_JOURNEY_ANNOTATIONS)
+
+        // Disable and then try switching
+        annotationsViewModel.pdfEditMode = PdfEditMode.Disabled
+        assertThat(annotationsViewModel.pdfEditMode is PdfEditMode.Disabled).isTrue()
+        // Switch to form-filling now
+        annotationsViewModel.pdfEditMode = PdfEditMode.Enabled(EDITING_JOURNEY_FORM_FILLING)
+        assertThat(annotationsViewModel.pdfEditMode is PdfEditMode.Enabled).isTrue()
+        editMode = annotationsViewModel.pdfEditMode as PdfEditMode.Enabled
+        // editMode should successfully change to form-filling
+        assertThat(editMode.journey).isEqualTo(EDITING_JOURNEY_FORM_FILLING)
     }
 
     // --- Annotation Editing Tests ---
@@ -343,13 +389,15 @@ class EditableDocumentViewModelTest {
     @Test
     fun initialAreAnnotationsEnabled_isTrue() = runTest {
         assertThat(annotationsViewModel.isAnnotationInteractionEnabled.first()).isFalse()
-        annotationsViewModel.isEditModeEnabled = true
+        annotationsViewModel.pdfEditMode = PdfEditMode.Enabled()
+
         assertThat(annotationsViewModel.isAnnotationInteractionEnabled.first()).isTrue()
     }
 
     @Test
     fun setAnnotationVisibility_updatesIsAnnotationInteractionEnabled() = runTest {
-        annotationsViewModel.isEditModeEnabled = true
+        annotationsViewModel.pdfEditMode = PdfEditMode.Enabled()
+
         annotationsViewModel.areAnnotationsVisible = false
         assertThat(annotationsViewModel.isAnnotationInteractionEnabled.first()).isFalse()
 
@@ -359,7 +407,8 @@ class EditableDocumentViewModelTest {
 
     @Test
     fun isPdfViewGestureActive_updatesIsAnnotationInteractionEnabled() = runTest {
-        annotationsViewModel.isEditModeEnabled = true
+        annotationsViewModel.pdfEditMode = PdfEditMode.Enabled()
+
         annotationsViewModel.areAnnotationsVisible = true
         assertThat(annotationsViewModel.isAnnotationInteractionEnabled.value).isTrue()
 
