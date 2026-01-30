@@ -405,3 +405,7 @@ class AndroidNavArgumentGeneratorTest {
         }
     }
 }
+
+enum class TestTopLevelEnum {
+    TEST
+}
