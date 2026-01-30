@@ -86,11 +86,11 @@ import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SpatialSpacer
 import androidx.xr.compose.subspace.StereoMode
 import androidx.xr.compose.subspace.SurfaceProtection
+import androidx.xr.compose.subspace.draw.SpatialFeatheringEffect
 import androidx.xr.compose.subspace.draw.alpha
+import androidx.xr.compose.subspace.draw.spatialSmoothFeatheringEffect
 import androidx.xr.compose.subspace.layout.InteractionPolicy
 import androidx.xr.compose.subspace.layout.SpatialAlignment
-import androidx.xr.compose.subspace.layout.SpatialFeatheringEffect
-import androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringEffect
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.height
@@ -688,14 +688,14 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
     fun getFeatheringEffect(value: Float, featheringType: FeatheringType): SpatialFeatheringEffect {
         return when (featheringType) {
             FeatheringType.PERCENT ->
-                SpatialSmoothFeatheringEffect(
-                    percentHorizontal = value.roundToInt().coerceAtMost(50),
-                    percentVertical = value.roundToInt().coerceAtMost(50),
+                spatialSmoothFeatheringEffect(
+                    horizontalPercent = value.roundToInt().coerceAtMost(50),
+                    verticalPercent = value.roundToInt().coerceAtMost(50),
                 )
             FeatheringType.PIXEL ->
-                SpatialSmoothFeatheringEffect(horizontal = value, vertical = value)
+                spatialSmoothFeatheringEffect(horizontal = value, vertical = value)
             FeatheringType.DP ->
-                SpatialSmoothFeatheringEffect(horizontal = value.dp, vertical = value.dp)
+                spatialSmoothFeatheringEffect(horizontal = value.dp, vertical = value.dp)
         }
     }
 
