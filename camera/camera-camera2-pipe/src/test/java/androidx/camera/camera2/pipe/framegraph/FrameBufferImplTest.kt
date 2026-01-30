@@ -21,6 +21,7 @@ import android.hardware.camera2.CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LE
 import android.hardware.camera2.CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL
 import android.util.Size
 import androidx.camera.camera2.pipe.CameraGraph
+import androidx.camera.camera2.pipe.CameraId
 import androidx.camera.camera2.pipe.CameraStream
 import androidx.camera.camera2.pipe.CameraTimestamp
 import androidx.camera.camera2.pipe.Frame
@@ -37,6 +38,7 @@ import androidx.camera.camera2.pipe.OutputStatus
 import androidx.camera.camera2.pipe.Request
 import androidx.camera.camera2.pipe.StreamFormat
 import androidx.camera.camera2.pipe.StreamId
+import androidx.camera.camera2.pipe.graph.StreamGraphImpl
 import androidx.camera.camera2.pipe.internal.FrameImpl
 import androidx.camera.camera2.pipe.internal.FrameState
 import androidx.camera.camera2.pipe.internal.OutputResult
@@ -105,6 +107,23 @@ class FrameBufferImplTest {
     private fun createTestFrame(frameNumberValue: Long): Frame {
         val frameNumber = FrameNumber(frameNumberValue)
         val frameTimestamp = CameraTimestamp(101L)
+        val cameraId = CameraId("0")
+        val output1 =
+            StreamGraphImpl.OutputStreamImpl(
+                OutputId(1),
+                Size(200, 100),
+                StreamFormat.YUV_420_888,
+                cameraId,
+            )
+        val output2 =
+            StreamGraphImpl.OutputStreamImpl(
+                OutputId(1),
+                Size(200, 100),
+                StreamFormat.YUV_420_888,
+                cameraId,
+            )
+        val stream1 = CameraStream(stream1Id, listOf(output1)).apply { output1.stream = this }
+        val stream2 = CameraStream(stream2Id, listOf(output2)).apply { output2.stream = this }
         val frameState =
             FrameState(
                 requestMetadata =
@@ -118,7 +137,7 @@ class FrameBufferImplTest {
                     ),
                 frameNumber = frameNumber,
                 frameTimestamp = frameTimestamp,
-                imageStreams = setOf(stream1Id, stream2Id),
+                imageStreams = setOf(stream1, stream2),
             )
 
         val frame = FrameImpl(frameState)
