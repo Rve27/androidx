@@ -412,8 +412,8 @@ package androidx.wear.compose.foundation {
     method @KotlinOnly @androidx.compose.runtime.Composable public static void AmbientTickEffect(androidx.wear.compose.foundation.AmbientModeManager, kotlin.jvm.functions.Function0<kotlin.Unit> block);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static void AmbientTickEffect(androidx.wear.compose.foundation.AmbientModeManager, kotlin.jvm.functions.Function0<kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
     method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.foundation.AmbientModeManager?> getLocalAmbientModeManager();
-    method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.wear.compose.foundation.AmbientModeManager rememberAmbientModeManager(android.app.Activity activity);
-    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.wear.compose.foundation.AmbientModeManager rememberAmbientModeManager(android.app.Activity, androidx.compose.runtime.Composer?, int);
+    method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.wear.compose.foundation.AmbientModeManager rememberAmbientModeManager();
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.wear.compose.foundation.AmbientModeManager rememberAmbientModeManager(androidx.compose.runtime.Composer?, int);
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.foundation.AmbientModeManager?> LocalAmbientModeManager;
   }
 
