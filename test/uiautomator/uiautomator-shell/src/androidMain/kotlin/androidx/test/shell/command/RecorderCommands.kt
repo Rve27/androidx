@@ -16,7 +16,6 @@
 
 package androidx.test.shell.command
 
-import android.graphics.Point
 import android.util.Log
 import androidx.annotation.IntRange
 import androidx.test.shell.Shell
@@ -33,23 +32,35 @@ public class RecorderCommands internal constructor(private val shell: Shell) {
      * Starts the recording.
      *
      * @param outputFile the output file where to write the recording.
-     * @param screenSizeInPixel the size of the screen in pixel.
+     * @param width the width of the screen in pixels.
+     * @param height the height of the screen in pixels.
      * @param bitRateMb the bitrate of the recording in Mb/s.
      * @return a running [Recording].
+     *
+     * When [width], and [height] are unspecified, the recorder uses the display's native resolution
+     * (if supported) and 1280x720` when not. For more information, you can read the documentation
+     * [here](https://d.android.com/tools/adb#screenrecord).
      */
-    @JvmOverloads
     @SuppressWarnings("StreamFiles")
+    // We are suppressing this because, when specifying a stream size the developer has to specify
+    // both the width and the height otherwise, the parameter ends up getting ignored entirely.
+    @Suppress("MissingJvmstatic")
     public fun start(
         outputFile: File,
-        screenSizeInPixel: Point? = null,
+        width: Int = 0,
+        height: Int = 0,
         @IntRange(from = 0) bitRateMb: Int = 0,
     ): Recording {
+        val size =
+            if (width > 0 && height > 0) {
+                "--size ${width}x$height"
+            } else {
+                null
+            }
         val cmd =
-            listOfNotNull(
-                    screenSizeInPixel?.let { "--size ${it.x}x${it.y}." },
-                    if (bitRateMb > 0) "--bit-rate ${bitRateMb}M" else null,
-                )
-                .let { "screenrecord ${it.joinToString(" ")} ${outputFile.absolutePath}" }
+            listOfNotNull(size, if (bitRateMb > 0) "--bit-rate ${bitRateMb}M" else null).let {
+                "screenrecord ${it.joinToString(" ")} ${outputFile.absolutePath}"
+            }
 
         with(shell.command("echo pid:$$ ; exec $cmd")) {
             val processPid =
