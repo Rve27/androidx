@@ -46,6 +46,12 @@ object ComposeMaterial3Flags {
     @field:Suppress("MutableBareField") @JvmField var isCheckboxStylingFixEnabled: Boolean = false
 
     /**
+     * When this flag is `true`, the [Snackbar] component will use an updated layout implementation
+     * that correctly handles vertical alignment for multi-line text.
+     */
+    @field:Suppress("MutableBareField") @JvmField var isSnackbarStylingFixEnabled: Boolean = false
+
+    /**
      * When this flag is true and a precision pointer is present, components are resized accordingly
      */
     @field:Suppress("MutableBareField")
