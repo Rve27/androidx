@@ -158,7 +158,6 @@ package androidx.compose.ui {
     property public boolean isIndirectPointerNavigationGestureDetectorEnabled;
     property public boolean isInitialFocusOnFocusableAvailable;
     property public boolean isOptimizedFocusEventDispatchEnabled;
-    property public boolean isRectManagerOffsetUsageFromLayoutCoordinatesEnabled;
     property public boolean isScrollCaptureCenteringEnabled;
     property public boolean isTrackpadGestureHandlingEnabled;
     property public boolean isTraversableDelegatesFixEnabled;
@@ -172,7 +171,6 @@ package androidx.compose.ui {
     field public static boolean isIndirectPointerNavigationGestureDetectorEnabled;
     field public static boolean isInitialFocusOnFocusableAvailable;
     field public static boolean isOptimizedFocusEventDispatchEnabled;
-    field public static boolean isRectManagerOffsetUsageFromLayoutCoordinatesEnabled;
     field public static boolean isScrollCaptureCenteringEnabled;
     field public static boolean isTrackpadGestureHandlingEnabled;
     field public static boolean isTraversableDelegatesFixEnabled;

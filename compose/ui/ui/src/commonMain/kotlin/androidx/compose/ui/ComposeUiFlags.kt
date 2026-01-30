@@ -129,15 +129,6 @@ object ComposeUiFlags {
     var isScrollCaptureCenteringEnabled: Boolean = true
 
     /**
-     * Enable performance optimization where coordinates calculations like
-     * [androidx.compose.ui.layout.LayoutCoordinates.localToRoot] are using the cached offsets we
-     * already have in RectManager, instead of traversing the whole tree on each call.
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isRectManagerOffsetUsageFromLayoutCoordinatesEnabled: Boolean = true
-
-    /**
      * Enables a fix where [TraversableNode] traversal method [findNearestAncestor] will take into
      * consideration any delegates that might also be traversable.
      */
