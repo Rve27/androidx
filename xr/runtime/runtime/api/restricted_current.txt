@@ -649,21 +649,6 @@ package androidx.xr.runtime.internal {
     ctor public FaceTrackingNotCalibratedException();
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Feature {
-    field public static final androidx.xr.runtime.internal.Feature.Companion Companion;
-    field public static final androidx.xr.runtime.internal.Feature FULLSTACK;
-    field public static final androidx.xr.runtime.internal.Feature OPEN_XR;
-    field public static final androidx.xr.runtime.internal.Feature PROJECTED;
-    field public static final androidx.xr.runtime.internal.Feature SPATIAL;
-  }
-
-  public static final class Feature.Companion {
-    property public androidx.xr.runtime.internal.Feature FULLSTACK;
-    property public androidx.xr.runtime.internal.Feature OPEN_XR;
-    property public androidx.xr.runtime.internal.Feature PROJECTED;
-    property public androidx.xr.runtime.internal.Feature SPATIAL;
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class GooglePlayServicesLocationLibraryNotLinkedException extends androidx.xr.runtime.internal.LifecycleException {
     ctor public GooglePlayServicesLocationLibraryNotLinkedException();
     ctor public GooglePlayServicesLocationLibraryNotLinkedException(optional Throwable? cause);
@@ -701,35 +686,21 @@ package androidx.xr.runtime.internal {
     property public default Long? sessionPointer;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface PerceptionRuntimeFactory extends androidx.xr.runtime.internal.Service {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface PerceptionRuntimeFactory extends androidx.xr.runtime.interfaces.Service {
     method public androidx.xr.runtime.internal.JxrRuntime createRuntime(android.content.Context context, kotlin.coroutines.CoroutineContext coroutineContext);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingRuntimeFactory extends androidx.xr.runtime.internal.Service {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingRuntimeFactory extends androidx.xr.runtime.interfaces.Service {
     method public androidx.xr.runtime.internal.JxrRuntime create(java.util.List<? extends androidx.xr.runtime.internal.JxrRuntime> runtimes, android.app.Activity activity);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SceneRuntimeFactory extends androidx.xr.runtime.internal.Service {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SceneRuntimeFactory extends androidx.xr.runtime.interfaces.Service {
     method public androidx.xr.runtime.internal.JxrRuntime create(android.app.Activity activity, optional boolean unscaledGravityAlignedActivitySpace);
     method @BytecodeOnly public static androidx.xr.runtime.internal.JxrRuntime! create$default(androidx.xr.runtime.internal.SceneRuntimeFactory!, android.app.Activity!, boolean, int, Object!);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Service {
-    method @InaccessibleFromKotlin public java.util.Set<androidx.xr.runtime.internal.Feature> getRequirements();
-    property public abstract java.util.Set<androidx.xr.runtime.internal.Feature> requirements;
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class UnsupportedDeviceException extends androidx.xr.runtime.internal.LifecycleException {
     ctor public UnsupportedDeviceException();
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface XrDeviceCapabilityProvider extends androidx.lifecycle.LifecycleOwner {
-    method @InaccessibleFromKotlin public android.content.Context getContext();
-    property public abstract android.content.Context context;
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface XrDeviceCapabilityProviderFactory extends androidx.xr.runtime.internal.Service {
-    method public androidx.xr.runtime.internal.XrDeviceCapabilityProvider create(android.content.Context context, kotlin.coroutines.CoroutineContext coroutineContext);
   }
 
 }
