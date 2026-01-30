@@ -50,6 +50,7 @@ import androidx.navigation3.runtime.get
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.LocalCurrentScene
 import androidx.navigation3.scene.LocalEntriesToExcludeFromCurrentScene
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneInfo
@@ -823,6 +824,7 @@ public fun <T : Any> NavDisplay(
         CompositionLocalProvider(
             LocalLifecycleOwner provides sceneLifecycleOwner,
             LocalNavAnimatedContentScope provides this,
+            LocalCurrentScene provides targetScene,
             LocalEntriesToExcludeFromCurrentScene provides
                 sceneToExcludedEntryMap.getValue(AnimatedSceneKey(targetScene)),
         ) {
@@ -852,7 +854,8 @@ public fun <T : Any> NavDisplay(
     overlayScenes.fastForEachReversed { overlayScene ->
         CompositionLocalProvider(
             LocalEntriesToExcludeFromCurrentScene provides
-                sceneToExcludedEntryMap.getValue(AnimatedSceneKey(overlayScene))
+                sceneToExcludedEntryMap.getValue(AnimatedSceneKey(overlayScene)),
+            LocalCurrentScene provides overlayScene,
         ) {
             overlayScene.content.invoke()
         }
