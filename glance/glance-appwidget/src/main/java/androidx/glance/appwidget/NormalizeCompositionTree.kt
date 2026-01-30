@@ -35,7 +35,6 @@ import androidx.glance.ImageProvider
 import androidx.glance.action.ActionModifier
 import androidx.glance.action.LambdaAction
 import androidx.glance.action.NoRippleOverride
-import androidx.glance.action.clickable
 import androidx.glance.addChild
 import androidx.glance.addChildIfNotNull
 import androidx.glance.appwidget.action.CompoundButtonAction
@@ -493,12 +492,6 @@ private fun EmittableM3TextButton.normalizeForRemoteViews(): Emittable {
                         colorFilter = ColorFilter.tint(backgroundTint),
                     )
                     .enabled(enabled)
-                    .clickable(
-                        onClick = onClick!!, // onclick is required
-                        rippleOverride =
-                            if (isAtLeastApi31) NoRippleOverride
-                            else R.drawable.glance_component_m3_button_ripple,
-                    )
                     .then(maybeRoundCorners(R.dimen.glance_component_button_corners))
             mainBox.contentAlignment = Alignment.Center
         }
@@ -554,7 +547,6 @@ private fun EmittableM3TextButton.normalizeForRemoteViews(): Emittable {
  */
 private fun EmittableM3IconButton.normalizeForRemoteViews(): Emittable {
     val contentColor = contentColor!! // mandatory
-    val onClick = onClick!! // mandatory
     val backgroundColor = backgroundColor
     val theContentDescription = contentDescription
 
@@ -575,7 +567,6 @@ private fun EmittableM3IconButton.normalizeForRemoteViews(): Emittable {
                     ) // acts as a default if not overridden by [modifier]
                     .then(modifier)
                     .then(backgroundModifier)
-                    .clickable(onClick = onClick, rippleOverride = shape.ripple)
                     .enabled(enabled)
                     .then(maybeRoundCorners(shape.cornerRadius))
 
