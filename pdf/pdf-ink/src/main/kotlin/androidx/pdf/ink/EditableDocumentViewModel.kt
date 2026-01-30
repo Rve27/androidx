@@ -40,6 +40,8 @@ import androidx.pdf.annotation.models.PdfEdits
 import androidx.pdf.annotation.models.VisiblePdfAnnotations
 import androidx.pdf.ink.model.ApplyEditsState
 import androidx.pdf.ink.state.AnnotationDrawingMode
+import androidx.pdf.ink.state.PdfEditMode
+import androidx.pdf.ink.state.PdfEditMode.Companion.EDITING_JOURNEY_ANNOTATIONS
 import androidx.pdf.ink.util.InkDefaults
 import androidx.pdf.ink.view.tool.AnnotationToolInfo
 import androidx.pdf.ink.view.tool.Eraser
@@ -80,16 +82,18 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     private val _canRedo = MutableStateFlow(false)
     internal val canRedo: StateFlow<Boolean> = _canRedo.asStateFlow()
 
-    internal val isEditModeEnabledFlow: StateFlow<Boolean> =
-        state.getStateFlow(EDIT_MODE_ENABLED_KEY, false)
+    internal val pdfEditModeFlow: StateFlow<PdfEditMode> =
+        state.getStateFlow(EDIT_MODE_ENABLED_KEY, PdfEditMode.Disabled)
 
-    internal var isEditModeEnabled: Boolean
-        get() = state[EDIT_MODE_ENABLED_KEY] ?: false
+    internal var pdfEditMode: PdfEditMode
+        get() = state[EDIT_MODE_ENABLED_KEY] ?: PdfEditMode.Disabled
         set(value) {
-            if (isEditModeEnabled == value) return
+            if (pdfEditMode == value) return
+            // Cannot switch journeys in the same session
+            if (pdfEditMode is PdfEditMode.Enabled && value is PdfEditMode.Enabled) return
 
             state[EDIT_MODE_ENABLED_KEY] = value
-            if (!value) {
+            if (value !is PdfEditMode.Enabled) {
                 // Discard any draft changes when exiting edit mode
                 discardUnsavedChanges()
                 forceLoadDocument()
@@ -133,12 +137,16 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     /** Reactive state that combines multiple flows to determine if interaction is enabled. */
     internal val isAnnotationInteractionEnabled: StateFlow<Boolean> =
         combine(
-                isEditModeEnabledFlow,
+                pdfEditModeFlow,
                 areAnnotationsVisibleFlow,
                 _applyEditsStatus,
                 _isPdfViewGestureActive,
-            ) { isEditMode, isVisible, status, isGestureActive ->
-                isEditMode && isVisible && status != ApplyEditsState.InProgress && !isGestureActive
+            ) { pdfEditMode, isVisible, status, isGestureActive ->
+                (pdfEditMode is PdfEditMode.Enabled &&
+                    pdfEditMode.journey == EDITING_JOURNEY_ANNOTATIONS) &&
+                    isVisible &&
+                    status != ApplyEditsState.InProgress &&
+                    !isGestureActive
             }
             .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
@@ -155,7 +163,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     }
 
     public override fun forceLoadDocument() {
-        if (didApplyEdits) {
+        if (didApplyEdits || formEditInfos.isNotEmpty()) {
             resetState()
             super.forceLoadDocument()
         }
@@ -164,7 +172,7 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
     @VisibleForTesting
     public override fun resetState() {
         super.resetState()
-        isEditModeEnabled = false
+        pdfEditMode = PdfEditMode.Disabled
         editablePdfDocument = null
         _annotationDisplayStateFlow.value = AnnotationsDisplayState.EMPTY
         didApplyEdits = false
@@ -271,7 +279,8 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
      *   no changes.
      */
     internal fun hasUnsavedChanges(): Boolean =
-        editablePdfDocument != null && (recordsHistoryManager?.canUndo?.value ?: false)
+        editablePdfDocument != null &&
+            ((recordsHistoryManager?.canUndo?.value ?: false) || formEditInfos.isNotEmpty())
 
     /** Discards all uncommitted edits, reverting the document to its last saved state. */
     private fun discardUnsavedChanges() {
@@ -383,6 +392,12 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         }
     }
 
+    internal var initialFormFillingEnabledState: Boolean?
+        get() = state[INITIAL_FORM_FILLING_STATE_KEY]
+        set(value) {
+            state[INITIAL_FORM_FILLING_STATE_KEY] = value
+        }
+
     private fun withEditor(block: suspend (PdfAnnotationsEditor) -> Unit) {
         viewModelScope.launch {
             if (annotationsEditor == null) {
@@ -415,6 +430,8 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
         private const val EDIT_MODE_ENABLED_KEY = "isEditModeEnabled"
 
         private const val ANNOTATION_VISIBLE_KEY = "isAnnotationVisible"
+        private const val INITIAL_FORM_FILLING_STATE_KEY = "initialFormFillingState"
+
         val Factory: ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(
