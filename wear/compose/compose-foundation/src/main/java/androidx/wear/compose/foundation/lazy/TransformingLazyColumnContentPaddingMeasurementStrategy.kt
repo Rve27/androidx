@@ -332,41 +332,37 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
             addVisibleItemsAfter(measuredItemProvider)
             addVisibleItemsBefore(measuredItemProvider)
 
-            val containerHeightDp = with(density) { containerConstraints.maxHeight.toDp() }
-            val responsiveBeforeContentPadding =
+            val minimumBeforeContentPadding =
                 visibleItems
                     .firstOrNull()
                     ?.takeIf { it.index == 0 }
-                    ?.responsiveVerticalPadding
-                    ?.run {
+                    ?.let {
                         with(density) {
                             if (!reverseLayout) {
-                                calculateTopPadding(containerHeightDp).roundToPx()
+                                it.minimumTopContentPadding?.roundToPx() ?: 0
                             } else {
-                                calculateBottomPadding(containerHeightDp).roundToPx()
+                                it.minimumBottomContentPadding?.roundToPx() ?: 0
                             }
                         }
                     } ?: 0
 
-            val responsiveAfterContentPadding =
+            val minimumAfterContentPadding =
                 visibleItems
                     .lastOrNull()
                     ?.takeIf { it.index == itemsCount - 1 }
-                    ?.responsiveVerticalPadding
-                    ?.run {
+                    ?.let {
                         with(density) {
                             if (!reverseLayout) {
-                                calculateBottomPadding(containerHeightDp).roundToPx()
+                                it.minimumBottomContentPadding?.roundToPx() ?: 0
                             } else {
-                                calculateTopPadding(containerHeightDp).roundToPx()
+                                it.minimumTopContentPadding?.roundToPx() ?: 0
                             }
                         }
                     } ?: 0
 
             this.beforeContentPadding =
-                max(initialBeforeContentPadding, responsiveBeforeContentPadding)
-            this.afterContentPadding =
-                max(initialAfterContentPadding, responsiveAfterContentPadding)
+                max(initialBeforeContentPadding, minimumBeforeContentPadding)
+            this.afterContentPadding = max(initialAfterContentPadding, minimumAfterContentPadding)
 
             fun restoreLayoutIfNeeded() {
                 if (fitsScreen()) {

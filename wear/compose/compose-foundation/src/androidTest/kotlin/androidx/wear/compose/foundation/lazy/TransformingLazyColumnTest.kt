@@ -1318,7 +1318,7 @@ class TransformingLazyColumnTest {
     }
 
     @Test
-    fun responsivePadding_pinnedToStart_appliedToTopPadding() {
+    fun minimumVerticalContentPadding_pinnedToStart_appliedToTopPadding() {
         val padding = 30.dp
         val state = TransformingLazyColumnState()
 
@@ -1327,7 +1327,7 @@ class TransformingLazyColumnTest {
                 item {
                     Box(
                         Modifier.size(50.dp)
-                            .responsiveVerticalPadding(responsivePadding(top = padding))
+                            .minimumVerticalContentPadding(top = padding, bottom = 0.dp)
                             .testTag(firstItemTag)
                     )
                 }
@@ -1339,7 +1339,7 @@ class TransformingLazyColumnTest {
     }
 
     @Test
-    fun responsivePadding_pinnedToEnd_appliedToBottomPadding() {
+    fun minimumVerticalContentPadding_pinnedToEnd_appliedToBottomPadding() {
         val padding = 30.dp
         val containerHeight = 200.dp
         val itemCount = 10
@@ -1352,7 +1352,7 @@ class TransformingLazyColumnTest {
                 item {
                     Box(
                         Modifier.size(itemSize)
-                            .responsiveVerticalPadding(responsivePadding(bottom = padding))
+                            .minimumVerticalContentPadding(top = 0.dp, bottom = padding)
                             .testTag(lastItemTag)
                     )
                 }
@@ -1420,13 +1420,6 @@ class TransformingLazyColumnTest {
 
         assertThat(state.anchorItemIndex).isEqualTo(scrollTarget)
     }
-
-    private fun responsivePadding(top: Dp = 0.dp, bottom: Dp = 0.dp): ResponsiveVerticalPadding =
-        object : ResponsiveVerticalPadding {
-            override fun calculateTopPadding(containerHeight: Dp): Dp = top
-
-            override fun calculateBottomPadding(containerHeight: Dp): Dp = bottom
-        }
 }
 
 /**

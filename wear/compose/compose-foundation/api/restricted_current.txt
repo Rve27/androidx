@@ -585,13 +585,6 @@ package androidx.wear.compose.foundation.lazy {
     ctor @BytecodeOnly public AutoCenteringParams(int, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
   }
 
-  public interface ResponsiveVerticalPadding {
-    method @KotlinOnly public default androidx.compose.ui.unit.Dp calculateBottomPadding(androidx.compose.ui.unit.Dp containerHeight);
-    method @BytecodeOnly public default float calculateBottomPadding-5rwHm24(float);
-    method @KotlinOnly public default androidx.compose.ui.unit.Dp calculateTopPadding(androidx.compose.ui.unit.Dp containerHeight);
-    method @BytecodeOnly public default float calculateTopPadding-5rwHm24(float);
-  }
-
   public final class ScalingLazyColumnDefaults {
     method public androidx.wear.compose.foundation.lazy.ScalingParams scalingParams(optional float edgeScale, optional float edgeAlpha, optional float minElementHeight, optional float maxElementHeight, optional float minTransitionArea, optional float maxTransitionArea, optional androidx.compose.animation.core.Easing scaleInterpolator, optional kotlin.jvm.functions.Function1<? super androidx.compose.ui.unit.Constraints,java.lang.Integer> viewportVerticalOffsetResolver);
     method @BytecodeOnly public static androidx.wear.compose.foundation.lazy.ScalingParams! scalingParams$default(androidx.wear.compose.foundation.lazy.ScalingLazyColumnDefaults!, float, float, float, float, float, float, androidx.compose.animation.core.Easing!, kotlin.jvm.functions.Function1!, int, Object!);
@@ -773,7 +766,10 @@ package androidx.wear.compose.foundation.lazy {
     method @BytecodeOnly public static androidx.compose.ui.Modifier! animateItem$default(androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope!, androidx.compose.ui.Modifier!, androidx.compose.animation.core.FiniteAnimationSpec!, androidx.compose.animation.core.FiniteAnimationSpec!, androidx.compose.animation.core.FiniteAnimationSpec!, int, Object!);
     method @BytecodeOnly public long getScrollProgress-CyslRjo(androidx.compose.ui.graphics.drawscope.DrawScope);
     method @BytecodeOnly public long getScrollProgress-CyslRjo(androidx.compose.ui.graphics.GraphicsLayerScope);
-    method public androidx.compose.ui.Modifier responsiveVerticalPadding(androidx.compose.ui.Modifier, androidx.wear.compose.foundation.lazy.ResponsiveVerticalPadding padding);
+    method @KotlinOnly public androidx.compose.ui.Modifier minimumVerticalContentPadding(androidx.compose.ui.Modifier, androidx.compose.ui.unit.Dp padding);
+    method @KotlinOnly public androidx.compose.ui.Modifier minimumVerticalContentPadding(androidx.compose.ui.Modifier, androidx.compose.ui.unit.Dp top, androidx.compose.ui.unit.Dp bottom);
+    method @BytecodeOnly public androidx.compose.ui.Modifier minimumVerticalContentPadding-3ABfNKs(androidx.compose.ui.Modifier, float);
+    method @BytecodeOnly public androidx.compose.ui.Modifier minimumVerticalContentPadding-VpY3zN4(androidx.compose.ui.Modifier, float, float);
     method public androidx.compose.ui.Modifier transformedHeight(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function2<? super java.lang.Integer,? super androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress,java.lang.Integer> heightProvider);
     property public abstract androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress androidx.compose.ui.graphics.drawscope.DrawScope.scrollProgress;
     property public abstract androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress androidx.compose.ui.graphics.GraphicsLayerScope.scrollProgress;
