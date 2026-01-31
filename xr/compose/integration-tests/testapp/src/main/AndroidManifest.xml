@@ -15,9 +15,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.IntegrationTestsApp">
-        <meta-data android:name="com.android.extensions.xr.uses_experimental_openxr_feature"
-            android:value="true"
-            tools:ignore="MetadataTagInsideApplicationTag" />
+
         <activity
             android:name=".common.AnotherActivity"
             android:exported="false"
