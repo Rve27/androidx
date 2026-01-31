@@ -140,13 +140,43 @@ package androidx.xr.scenecore.testing {
     property public long mToken;
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeGltfAnimationFeature implements androidx.xr.scenecore.runtime.GltfAnimationFeature {
+    ctor public FakeGltfAnimationFeature();
+    ctor public FakeGltfAnimationFeature(optional String? animationName, optional int animationIndex, optional float animationDuration);
+    ctor @BytecodeOnly public FakeGltfAnimationFeature(String!, int, float, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public void addAnimationStateListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Integer> listener);
+    method @InaccessibleFromKotlin public float getAnimationDuration();
+    method @InaccessibleFromKotlin public int getAnimationIndex();
+    method @InaccessibleFromKotlin public String? getAnimationName();
+    method @InaccessibleFromKotlin public int getAnimationState();
+    method @InaccessibleFromKotlin public float getSeekStartTimeSeconds();
+    method @InaccessibleFromKotlin public float getSpeed();
+    method @InaccessibleFromKotlin public boolean isLooping();
+    method public void pauseAnimation();
+    method public void removeAnimationStateListener(java.util.function.Consumer<java.lang.Integer> listener);
+    method public void resumeAnimation();
+    method public void seekAnimation(float startTime);
+    method public void setAnimationSpeed(float speed);
+    method public void startAnimation(boolean loop, Float? speed, Float? seekStartTimeSeconds);
+    method public void stopAnimation();
+    property public float animationDuration;
+    property public int animationIndex;
+    property public String? animationName;
+    property public int animationState;
+    property public boolean isLooping;
+    property public float seekStartTimeSeconds;
+    property public float speed;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeGltfEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.runtime.GltfEntity {
     ctor public FakeGltfEntity();
     ctor public FakeGltfEntity(optional androidx.xr.scenecore.runtime.GltfFeature? feature, optional java.util.concurrent.Executor? executor);
     ctor @BytecodeOnly public FakeGltfEntity(androidx.xr.scenecore.runtime.GltfFeature!, java.util.concurrent.Executor!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public final void addAnimation(androidx.xr.scenecore.runtime.GltfAnimationFeature animation);
     method public void addAnimationStateListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Integer> listener);
     method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method @InaccessibleFromKotlin public int getAnimationState();
+    method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.runtime.GltfAnimationFeature> getAnimations();
     method @InaccessibleFromKotlin public final String? getCurrentAnimationName();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.BoundingBox getGltfModelBoundingBox();
     method @InaccessibleFromKotlin public final androidx.xr.scenecore.testing.FakeGltfEntity.Node getNode();
@@ -161,6 +191,7 @@ package androidx.xr.scenecore.testing {
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
     property @androidx.xr.scenecore.runtime.GltfEntity.AnimationStateValue public int animationState;
+    property public java.util.List<androidx.xr.scenecore.runtime.GltfAnimationFeature> animations;
     property public final String? currentAnimationName;
     property public androidx.xr.runtime.math.BoundingBox gltfModelBoundingBox;
     property public final boolean isLooping;
@@ -182,6 +213,7 @@ package androidx.xr.scenecore.testing {
     method public void addOnBoundsUpdateListener(java.util.function.Consumer<androidx.xr.runtime.math.BoundingBox> listener);
     method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method @InaccessibleFromKotlin public int getAnimationState();
+    method public java.util.List<androidx.xr.scenecore.runtime.GltfAnimationFeature> getAnimations(java.util.concurrent.Executor executor);
     method public androidx.xr.runtime.math.BoundingBox getGltfModelBoundingBox();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.FloatSize3d getSize();
     method public void pauseAnimation();

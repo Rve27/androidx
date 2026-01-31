@@ -36,6 +36,9 @@ public interface GltfFeature : RenderingFeature {
      */
     @get:MainThread public val size: FloatSize3d
 
+    /** Returns the animations of the glTF model. */
+    @MainThread public fun getAnimations(executor: Executor): List<GltfAnimationFeature>
+
     /** Returns the current animation state of the glTF entity. */
     public val animationState: Int
 
