@@ -26,6 +26,7 @@ import androidx.glance.Button
 import androidx.glance.ButtonColors
 import androidx.glance.ButtonDefaults
 import androidx.glance.Emittable
+import androidx.glance.EmittableWithText
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceNode
 import androidx.glance.GlanceTheme
@@ -424,7 +425,7 @@ private fun M3TextButtonElement(
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class EmittableM3TextButton
 private constructor(
-    public var text: String,
+    public override var text: String,
     public var onClick: Action?,
     public override var modifier: GlanceModifier,
     public var enabled: Boolean = true,
@@ -432,9 +433,9 @@ private constructor(
     public var contentColor: ColorProvider,
     public @DrawableRes var backgroundResource: Int,
     public var backgroundTint: ColorProvider,
-    public var maxLines: Int,
+    public override var maxLines: Int,
     public var isOutlineButton: Boolean,
-) : Emittable {
+) : EmittableWithText() {
 
     /** No-arg constructor for when its constructed as a [GlanceNode] */
     public constructor() :

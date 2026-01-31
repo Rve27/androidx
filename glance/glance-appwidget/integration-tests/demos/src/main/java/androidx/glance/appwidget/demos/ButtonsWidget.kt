@@ -46,11 +46,9 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
-import androidx.glance.layout.width
 
 class ButtonsWidgetBroadcastReceiver() : GlanceAppWidgetReceiver() {
 
@@ -147,15 +145,7 @@ class ButtonsWidget() : GlanceAppWidget() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        //        provideContent {
-        //            val buttonList = buttons
-        //            Column(columnModifiers) {
-        //                //                buttonList.forEach { button -> paddedItem { button() } }
-        //                buttonList.forEach { Button -> Button() }
-        //            } // end lazy column
-        //        }
-
-        provideContent { FeedbackButtons() }
+        provideContent { Column(columnModifiers) { buttons.forEach { Button -> Button() } } }
     }
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
@@ -255,24 +245,3 @@ private fun IconButtons() {
 }
 
 @Composable private fun Space() = Spacer(GlanceModifier.size(8.dp))
-
-/** TODO: delete after reproing bug */
-@Composable
-private fun FeedbackButtons() =
-    Row(GlanceModifier.fillMaxWidth().padding(8.dp).background(GlanceTheme.colors.surfaceVariant)) {
-        OutlineButton(
-            text = "",
-            icon = ImageProvider(R.drawable.baseline_local_phone_24),
-            contentColor = GlanceTheme.colors.onSurface,
-            onClick = {},
-            modifier = GlanceModifier.defaultWeight().height(48.dp),
-        )
-        Spacer(GlanceModifier.width(8.dp))
-        OutlineButton(
-            text = "",
-            icon = ImageProvider(R.drawable.baseline_add_24),
-            contentColor = GlanceTheme.colors.onSurface,
-            onClick = {},
-            modifier = GlanceModifier.defaultWeight().height(48.dp),
-        )
-    }
