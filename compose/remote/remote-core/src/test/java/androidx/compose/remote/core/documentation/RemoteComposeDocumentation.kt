@@ -731,9 +731,9 @@ class RemoteComposeDocumentation(val title: String, val intro: String) : Documen
                     title += " [EXPERIMENTAL]"
                 }
                 if (op.addedVersion > 6) {
-                    buffer.append("$title (added in v${op.addedVersion})\n")
+                    buffer.append("\n$title (added in v${op.addedVersion})\n")
                 } else {
-                    buffer.append("$title\n")
+                    buffer.append("\n$title\n")
                 }
                 if (op.isExperimental) {
                     buffer.append("!!! WARNING\n    Experimental operation\n\n")
@@ -747,21 +747,22 @@ class RemoteComposeDocumentation(val title: String, val intro: String) : Documen
                 val sizeFields = op.sizeFields + 1
                 val varSet = op.varSize
                 buffer.append("$numFields Fields, total size $sizeFields$varSet bytes\n")
-                buffer.append("    | Type | Name | Description |\n")
-                buffer.append("    | ---- | ---- | ---- |\n")
+
+                buffer.append("<br>")
+                buffer.append("<table>")
+                buffer.append("<tr><th>Type</th><th>Name</th><th>Description</th></tr>\n")
                 buffer.append(
-                    "    | ${
-                        DocumentedOperation.getType(
-                            DocumentedOperation.BYTE) } | ${op.name} | Value: ${op.id} \n"
+                    "<tr><td>${DocumentedOperation.getType(
+                    DocumentedOperation.BYTE)}</td><td>${op.name}</td><td>Value: ${op.id}</td></tr>\n"
                 )
-                for (field in op.fields) {
-                    buffer.append(
-                        "    | ${DocumentedOperation.getType(field.type)} | ${field.name} | ${field.description} \n"
-                    )
-                }
 
                 for (field in op.fields) {
-                    if (field.hasEnumeratedValues()) {
+                    buffer.append(field.toDoc())
+                }
+                buffer.append("</table>\n\n")
+
+                for (field in op.fields) {
+                    if (field is OperationField && field.hasEnumeratedValues()) {
                         buffer.append("### ${field.name}\n")
                         buffer.append("    | Name | Value |\n")
                         buffer.append("    | ---- | ---- |\n")

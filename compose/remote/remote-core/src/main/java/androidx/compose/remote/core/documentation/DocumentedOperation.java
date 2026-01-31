@@ -38,10 +38,15 @@ public class DocumentedOperation {
     public static final int FLOAT_ARRAY = 10;
     public static final int INT_ARRAY = 11;
     public static final int BYTE_ARRAY = 12;
+    public static final int REPEATED_FLOAT = 13;
+    public static final int REPEATED_INT = 14;
+    public static final int REPEATED_BYTE = 15;
 
-    @NonNull final String mCategory;
+    @NonNull
+    final String mCategory;
     int mId;
-    @NonNull final String mName;
+    @NonNull
+    final String mName;
     @NonNull String mDescription = "";
 
     boolean mWIP;
@@ -51,16 +56,70 @@ public class DocumentedOperation {
     @Nullable String mAdditionalDocumentation;
 
     @NonNull ArrayList<StringPair> mExamples = new ArrayList<>();
-    @NonNull ArrayList<OperationField> mFields = new ArrayList<>();
+    @NonNull RepeatedField mFields = new RepeatedField("", null);
     @NonNull String mVarSize = "";
     int mExamplesWidth = 100;
     int mExamplesHeight = 100;
 
+    static class RepeatedField implements DocumentedField {
+        @NonNull ArrayList<DocumentedField> mFields = new ArrayList<>();
+        @Nullable RepeatedField mParentFields;
+
+        private String mName;
+
+        RepeatedField(String name, @Nullable RepeatedField fields) {
+            mName = name;
+            mParentFields = fields;
+        }
+
+        public @NonNull ArrayList<DocumentedField> getFields() {
+            return mFields;
+        }
+
+        public @Nullable RepeatedField getParent() {
+            return mParentFields;
+        }
+
+        public void add(DocumentedField field) {
+            mFields.add(field);
+        }
+
+        @Override
+        public int getSize() {
+            return 0;
+        }
+
+        @Nullable
+        @Override
+        public String getVarSize() {
+            return "";
+        }
+
+        @NonNull
+        @Override
+        public String toDoc() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("<tr><td>" + mName + "</td><td colspan=\"2\">");
+//            builder.append("    | ");
+//            builder.append("REPEATED");
+//            builder.append(" | ");
+//            builder.append("REPEATED");
+//            builder.append(" | ");
+//            builder.append("REPEATED");
+//            builder.append("\n");
+            builder.append("<table>");
+            builder.append("<tr><th>Type</th><th>Name</th><th>Description</th></tr>\n");
+            for (DocumentedField field : mFields) {
+                builder.append(field.toDoc());
+            }
+            builder.append("</table>");
+            builder.append("</td></tr>");
+            return builder.toString();
+        }
+    }
+
     /**
      * Returns the string representation of a field type
-     *
-     * @param type
-     * @return
      */
     @NonNull
     public static String getType(int type) {
@@ -88,7 +147,13 @@ public class DocumentedOperation {
             case INT_ARRAY:
                 return "INT[]";
             case BYTE_ARRAY:
-                return "byte[]";
+                return "BYTE[]";
+            case REPEATED_FLOAT:
+                return "REPEATED FLOAT";
+            case REPEATED_INT:
+                return "REPEATED INT";
+            case REPEATED_BYTE:
+                return "REPEATED BYTE";
         }
         return "UNKNOWN";
     }
@@ -108,8 +173,8 @@ public class DocumentedOperation {
     }
 
     @NonNull
-    public ArrayList<OperationField> getFields() {
-        return mFields;
+    public ArrayList<DocumentedField> getFields() {
+        return mFields.getFields();
     }
 
     public @NonNull String getCategory() {
@@ -155,7 +220,7 @@ public class DocumentedOperation {
     public int getSizeFields() {
         int size = 0;
         mVarSize = "";
-        for (OperationField field : mFields) {
+        for (DocumentedField field : mFields.getFields()) {
             size += Math.max(0, field.getSize());
             if (field.getSize() < 0) {
                 mVarSize += " + " + field.getVarSize() + " x 4";
@@ -189,9 +254,6 @@ public class DocumentedOperation {
 
     /**
      * Set if the operation is experimental
-     *
-     * @param experimental
-     * @return
      */
     @NonNull
     public DocumentedOperation experimental(boolean experimental) {
@@ -201,9 +263,6 @@ public class DocumentedOperation {
 
     /**
      * Set the version when the operation was added
-     *
-     * @param version
-     * @return
      */
     @NonNull
     public DocumentedOperation addedVersion(int version) {
@@ -213,9 +272,6 @@ public class DocumentedOperation {
 
     /**
      * Set the name of the additional documentation file
-     *
-     * @param additionalDocumentation
-     * @return
      */
     @NonNull
     public DocumentedOperation additionalDocumentation(@NonNull String additionalDocumentation) {
@@ -225,11 +281,6 @@ public class DocumentedOperation {
 
     /**
      * Document a field of the operation
-     *
-     * @param type
-     * @param name
-     * @param description
-     * @return
      */
     @NonNull
     public DocumentedOperation field(int type, @NonNull String name, @NonNull String description) {
@@ -239,12 +290,6 @@ public class DocumentedOperation {
 
     /**
      * Document a field of the operation
-     *
-     * @param type
-     * @param name
-     * @param varSize
-     * @param description
-     * @return
      */
     @NonNull
     public DocumentedOperation field(
@@ -255,24 +300,21 @@ public class DocumentedOperation {
 
     /**
      * Add possible values for the operation field
-     *
-     * @param name
-     * @param value
-     * @return
      */
     @NonNull
     public DocumentedOperation possibleValues(@NonNull String name, int value) {
-        if (!mFields.isEmpty()) {
-            mFields.get(mFields.size() - 1).possibleValue(name, "" + value);
+        ArrayList<DocumentedField> fields = mFields.getFields();
+        if (!fields.isEmpty()) {
+            DocumentedField field = fields.get(fields.size() - 1);
+            if (field instanceof OperationField) {
+                ((OperationField) field).possibleValue(name, "" + value);
+            }
         }
         return this;
     }
 
     /**
      * Add a description
-     *
-     * @param description
-     * @return
      */
     @NonNull
     public DocumentedOperation description(@NonNull String description) {
@@ -282,9 +324,6 @@ public class DocumentedOperation {
 
     /**
      * Add arbitrary text as examples
-     *
-     * @param examples
-     * @return
      */
     @NonNull
     public DocumentedOperation examples(@NonNull String examples) {
@@ -295,9 +334,8 @@ public class DocumentedOperation {
     /**
      * Add an example image
      *
-     * @param name the title of the image
+     * @param name      the title of the image
      * @param imagePath the path of the image
-     * @return
      */
     @NonNull
     public DocumentedOperation exampleImage(@NonNull String name, @NonNull String imagePath) {
@@ -307,15 +345,33 @@ public class DocumentedOperation {
 
     /**
      * Add examples with a given size
-     *
-     * @param width
-     * @param height
-     * @return
      */
     @NonNull
     public DocumentedOperation examplesDimension(int width, int height) {
         mExamplesWidth = width;
         mExamplesHeight = height;
+        return this;
+    }
+
+    /**
+     * Start a subsection
+     */
+    @NonNull
+    public DocumentedOperation startSubsection(@NonNull String name) {
+        RepeatedField repeatedField = new RepeatedField(name, mFields);
+        mFields.add(repeatedField);
+        mFields = repeatedField;
+        return this;
+    }
+
+    /**
+     * End a subsection
+     */
+    @NonNull
+    public DocumentedOperation endSubsection() {
+        if (mFields.getParent() != null) {
+            mFields = mFields.getParent();
+        }
         return this;
     }
 }
