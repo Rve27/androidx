@@ -531,6 +531,52 @@ class EditablePdfViewerFragmentTestSuite {
         }
     }
 
+    @Test
+    fun testEditablePdfViewerFragment_multipleCallsToApplyEdits() = runTest {
+        if (!isRequiredSdkExtensionAvailable()) return@runTest
+
+        lateinit var fragment: TestEditablePdfViewerFragment
+        scenario.onFragment { fragment = it }
+        loadDocumentAndSetupFragment()
+        enterEditMode()
+
+        // First annotation: A horizontal stroke drawn by swiping left.
+        onView(withId(PdfR.id.pdfContentLayout)).perform(swipeLeft())
+        // Apply this annotation to the document
+        fragment.syncApplyEdits()
+
+        // Second annotation: A vertical stroke drawn by swiping down.
+        onView(withId(PdfR.id.pdfContentLayout)).perform(swipeDown())
+        // Again, apply the annotation to the document
+        fragment.syncApplyEdits()
+
+        // Select the Eraser tool and erase 2nd annotation
+        onView(withId(PdfInkR.id.eraser_button)).perform(click())
+        onView(withId(PdfR.id.pdfContentLayout)).perform(click())
+
+        // Apply the removed annotation to document
+        fragment.syncApplyEdits()
+
+        // Save the document with annotations to a new file.
+        val destinationUri = TestUtils.createFile(DESTINATION_FILE_NAME)
+        fragment.writeTo(destinationUri.toPfd())
+
+        // Load the newly saved document.
+        fragment.pdfLoadingIdlingResource.increment()
+        fragment.documentUri = destinationUri
+        onIdle()
+
+        // Verify the annotations, only 1 annotation should be persisted to the destination file
+        val savedAnnotations = fragment.fetchAnnotations(0)
+        assertThat(savedAnnotations).hasSize(1)
+    }
+
+    private fun TestEditablePdfViewerFragment.syncApplyEdits() {
+        pdfApplyEditsIdlingResource.increment()
+        applyDraftEdits()
+        onIdle()
+    }
+
     private fun enterEditMode() {
         onView(withId(R.id.edit_fab)).apply {
             check(matches(isDisplayed()))
