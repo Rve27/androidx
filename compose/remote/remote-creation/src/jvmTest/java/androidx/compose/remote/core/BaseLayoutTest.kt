@@ -32,24 +32,6 @@ open class BaseLayoutTest : LayoutTestPlayer() {
 
     @Rule @JvmField var name = TestName()
 
-    class TestClock(val time: Long) : RemoteClock() {
-        override fun nanoTime(): Long {
-            return time
-        }
-
-        override fun getZone(): ZoneId? {
-            return ZoneId.of("UTC")
-        }
-
-        override fun withZone(zone: ZoneId?): Clock? {
-            return null
-        }
-
-        override fun instant(): Instant? {
-            return Instant.ofEpochMilli(time)
-        }
-    }
-
     fun checkLayout(
         w: Int,
         h: Int,
@@ -91,5 +73,9 @@ open class BaseLayoutTest : LayoutTestPlayer() {
             // Nothing here
             return false
         }
+    }
+
+    internal fun TestClock(time: Int): RemoteClock {
+        return SystemClock(Clock.fixed(Instant.ofEpochMilli(time.toLong()), ZoneId.of("UTC")))
     }
 }

@@ -65,6 +65,7 @@ androidXMultiplatform {
         jvmTest.dependencies {
             implementation(libs.junit)
             implementation(libs.mockitoCore4)
+            implementation(project(":compose:remote:remote-core"))
             implementation project(':compose:remote:remote-creation-core')
             implementation(project(":compose:remote:remote-core-testutils"))
             implementation("org.yaml:snakeyaml:2.4")
