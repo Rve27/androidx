@@ -28,6 +28,7 @@ import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.RcProfiles
 import androidx.compose.remote.core.RecordingRemoteComposeBuffer
 import androidx.compose.remote.core.RemoteComposeBuffer
+import androidx.compose.remote.core.SystemClock
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
@@ -188,7 +189,7 @@ class RemoteBitmapFontTest {
     }
 
     private fun constructDocument() =
-        CoreDocument(clock).apply {
+        CoreDocument(SystemClock(clock)).apply {
             recordingBuffer.writeToBuffer()
             val buffer = creationState.document.buffer
             buffer.buffer.index = 0
