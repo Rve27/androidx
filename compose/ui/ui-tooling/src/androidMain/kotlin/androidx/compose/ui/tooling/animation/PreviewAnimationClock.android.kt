@@ -24,9 +24,6 @@ import androidx.compose.animation.core.Transition
 import androidx.compose.animation.tooling.ComposeAnimatedProperty
 import androidx.compose.animation.tooling.ComposeAnimation
 import androidx.compose.animation.tooling.TransitionInfo
-import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation.Companion.parse
-import androidx.compose.ui.tooling.animation.AnimatedContentComposeAnimation.Companion.parseAnimatedContent
-import androidx.compose.ui.tooling.animation.InfiniteTransitionComposeAnimation.Companion.parse
 import androidx.compose.ui.tooling.animation.clock.AnimateXAsStateClock
 import androidx.compose.ui.tooling.animation.clock.AnimatedVisibilityClock
 import androidx.compose.ui.tooling.animation.clock.ComposeAnimationClock
@@ -125,8 +122,8 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
 
     fun trackTransition(searchInfo: TransitionSearchInfo) {
         trackAnimation(searchInfo.transition) {
-            searchInfo.transition.parse()?.let {
-                transitionClocks[it] = TransitionClock(it)
+            searchInfo.createAnimation()?.let {
+                transitionClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
                 return@trackAnimation
             }
@@ -138,23 +135,20 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
 
     @Suppress("UNCHECKED_CAST")
     fun trackAnimatedVisibility(searchInfo: AnimatedVisibilitySearchInfo, onSeek: () -> Unit = {}) {
-        // All AnimatedVisibility animations should be Transition<Boolean>.
-        // If it's not the case - ignore it.
-        if (searchInfo.transition.currentState !is Boolean) return
         trackAnimation(searchInfo.transition) {
             searchInfo.transition as Transition<Boolean>
-            val composeAnimation = searchInfo.transition.parseAnimatedVisibility()
+            val composeAnimation = searchInfo.createAnimation()
             onSeek()
             animatedVisibilityClocks[composeAnimation] =
-                AnimatedVisibilityClock(composeAnimation).apply { setClockTime(0L) }
+                searchInfo.createClock(composeAnimation).apply { setClockTime(0L) }
             notifySubscribe(composeAnimation)
         }
     }
 
     fun trackAnimateXAsState(searchInfo: AnimateXAsStateSearchInfo<*, *>) {
         trackAnimation(searchInfo.animatable) {
-            searchInfo.parse()?.let {
-                animateXAsStateClocks[it] = AnimateXAsStateClock(it)
+            searchInfo.createAnimation()?.let {
+                animateXAsStateClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
                 return@trackAnimation
             }
@@ -178,8 +172,8 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
 
     fun trackAnimatedContent(searchInfo: AnimatedContentSearchInfo) {
         trackAnimation(searchInfo.transition) {
-            searchInfo.transition.parseAnimatedContent()?.let {
-                animatedContentClocks[it] = TransitionClock(it)
+            searchInfo.createAnimation()?.let {
+                animatedContentClocks[it] = searchInfo.createClock(it)
                 notifySubscribe(it)
                 return@trackAnimation
             }
@@ -190,7 +184,7 @@ internal open class PreviewAnimationClock(private val setAnimationsTimeCallback:
 
     fun trackInfiniteTransition(searchInfo: InfiniteTransitionSearchInfo) {
         trackAnimation(searchInfo.infiniteTransition) {
-            searchInfo.parse()?.let {
+            searchInfo.createAnimation()?.let {
                 infiniteTransitionClocks[it] =
                     InfiniteTransitionClock(it) {
                         // Let InfiniteTransitionClock be aware about max duration of other

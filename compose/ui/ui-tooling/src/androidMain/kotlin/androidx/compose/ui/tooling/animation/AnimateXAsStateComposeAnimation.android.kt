@@ -56,7 +56,7 @@ private constructor(
             private set
 
         internal fun <T, V : AnimationVector> AnimateXAsStateSearchInfo<T, V>.parse():
-            AnimateXAsStateComposeAnimation<*, *>? {
+            AnimateXAsStateComposeAnimation<T, V>? {
             if (!apiAvailable) return null
             // Tooling can't control nullable Animatable with value set to null.
             if (animatable.value == null) return null
