@@ -17,6 +17,7 @@
 package androidx.compose.ui
 
 import androidx.annotation.FloatRange
+import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.node.DrawModifierNode
@@ -50,7 +51,11 @@ import androidx.compose.ui.util.fastForEach
  * @see graphicsLayer
  */
 fun Modifier.preferredFrameRate(@FloatRange(from = 0.0, to = 360.0) frameRate: Float) =
-    this.graphicsLayer().frameRate(frameRate)
+    if (@OptIn(ExperimentalComposeUiApi::class) isAdaptiveRefreshRateEnabled) {
+        this.graphicsLayer().frameRate(frameRate)
+    } else {
+        this
+    }
 
 /**
  * Set a requested frame rate on Composable
@@ -69,7 +74,11 @@ fun Modifier.preferredFrameRate(@FloatRange(from = 0.0, to = 360.0) frameRate: F
  * @see graphicsLayer
  */
 fun Modifier.preferredFrameRate(frameRateCategory: FrameRateCategory) =
-    this.graphicsLayer().frameRate(frameRateCategory.value)
+    if (@OptIn(ExperimentalComposeUiApi::class) isAdaptiveRefreshRateEnabled) {
+        this.graphicsLayer().frameRate(frameRateCategory.value)
+    } else {
+        this
+    }
 
 private fun Modifier.frameRate(frameRate: Float) = this then FrameRateElement(frameRate)
 
