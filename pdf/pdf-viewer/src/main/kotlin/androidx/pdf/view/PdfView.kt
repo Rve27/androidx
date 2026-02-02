@@ -2268,7 +2268,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         ViewCompat.setAccessibilityDelegate(this, pdfViewAccessibilityManager)
     }
 
-    private fun commitFormFillingEditText() {
+    internal fun commitFormFillingEditText() {
         formFillingEditText?.let { formWidgetInteractionHandler?.commitEditTextValue(it) }
     }
 
