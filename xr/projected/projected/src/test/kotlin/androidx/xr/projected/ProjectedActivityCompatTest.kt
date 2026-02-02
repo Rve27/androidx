@@ -16,8 +16,12 @@
 
 package androidx.xr.projected
 
+import android.app.Activity
 import android.app.Application
+import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Build
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SdkSuppress
 import androidx.xr.projected.ProjectedInputEvent.ProjectedInputAction
@@ -35,8 +39,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalProjectedApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Config.TARGET_SDK])
@@ -47,20 +53,48 @@ class ProjectedActivityCompatTest {
     private val context: Application = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun create_returnsProjectedActivityCompatInstance() = runBlocking {
+    fun create_withContext_returnsProjectedActivityCompatInstance() = runBlocking {
         val projectedActivityCompat = ProjectedActivityCompat.create(context)
 
         assertThat(projectedActivityCompat).isNotNull()
     }
 
     @Test
-    fun create_throwsIllegalStateException() {
+    fun create_withContext_throwsIllegalStateException() {
         projectedTestRule.throwIllegalStateExceptionWhenCreatingControllers = true
 
         assertFailsWith<IllegalStateException> {
             runBlocking { ProjectedActivityCompat.create(context) }
         }
     }
+
+    @Test
+    fun create_withProjectedActivity_returnsProjectedActivityCompatInstance() =
+        projectedTestRule.launchTestProjectedDeviceActivity { activity ->
+            runBlocking {
+                val projectedActivityCompat = ProjectedActivityCompat.create(activity)
+
+                assertThat(projectedActivityCompat).isNotNull()
+            }
+        }
+
+    @Test
+    fun create_withNonProjectedActivity_throwsIllegalArgumentException() =
+        launchTestActivity { activity ->
+            assertFailsWith<IllegalArgumentException> {
+                runBlocking { ProjectedActivityCompat.create(activity) }
+            }
+        }
+
+    @Test
+    fun create_withProjectedActivity_throwsIllegalStateException() =
+        projectedTestRule.launchTestProjectedDeviceActivity { activity ->
+            projectedTestRule.throwIllegalStateExceptionWhenCreatingControllers = true
+
+            assertFailsWith<IllegalStateException> {
+                runBlocking { ProjectedActivityCompat.create(activity) }
+            }
+        }
 
     @Test
     fun projectedInputEvents_emitsProjectedInputEvent() =
@@ -110,7 +144,22 @@ class ProjectedActivityCompatTest {
         }
     }
 
+    private fun launchTestActivity(block: (Activity) -> Unit) {
+        shadowOf(context.packageManager)
+            .addOrUpdateActivity(
+                ActivityInfo().apply {
+                    name = TestActivity::class.java.name
+                    packageName = context.packageName
+                }
+            )
+        val activityScenario: ActivityScenario<TestActivity> =
+            ActivityScenario.launch(Intent(context, TestActivity::class.java))
+        activityScenario.onActivity { activity -> block(activity) }
+    }
+
     companion object {
         private const val INVALID_PROJECTED_ACTION_CODE = -50
     }
+
+    private class TestActivity : Activity()
 }
