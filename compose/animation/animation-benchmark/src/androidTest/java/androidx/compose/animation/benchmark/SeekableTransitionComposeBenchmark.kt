@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
 
 package androidx.compose.animation.benchmark
 
+import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.rememberTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.testutils.LayeredComposeTestCase
 import androidx.compose.testutils.ToggleableTestCase
@@ -40,38 +43,46 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class TransitionBenchmark {
+class SeekableTransitionComposeBenchmark {
 
     @get:Rule val rule = ComposeBenchmarkRule()
 
     /**
-     * Measures the cost of creating a new [androidx.compose.animation.core.Transition] instance.
+     * Measures the cost of initializing the state and transition for a [SeekableTransitionState].
      */
     @Test
-    fun createTransitionThroughUpdateTransition() {
-        rule.benchmarkFirstCompose(::TransitionInstantiationTestCase)
+    fun createSeekableTransition() {
+        rule.benchmarkFirstCompose(::SeekableTransitionInstantiationTestCase)
     }
 
-    /** Measures the cost of running a [androidx.compose.animation.core.Transition]. */
+    /** Measures the cost of running a transition with [SeekableTransitionState]. */
     @Test
-    fun recomposeTransition() {
-        rule.toggleStateBenchmarkRecompose(::TransitionTestCase, assertOneRecomposition = false)
+    fun recomposeSeekableTransition() {
+        rule.toggleStateBenchmarkRecompose(
+            ::SeekableTransitionTestCase,
+            assertOneRecomposition = false,
+        )
     }
 }
 
-private class TransitionInstantiationTestCase : LayeredComposeTestCase() {
+private class SeekableTransitionInstantiationTestCase : LayeredComposeTestCase() {
     @Composable
     override fun MeasuredContent() {
-        updateTransition(targetState = Unit, label = null)
+        val seekableState = remember { SeekableTransitionState(Unit) }
+        rememberTransition(seekableState, label = null)
     }
 }
 
-private class TransitionTestCase : LayeredComposeTestCase(), ToggleableTestCase {
+private class SeekableTransitionTestCase : LayeredComposeTestCase(), ToggleableTestCase {
     private var state by mutableStateOf(false)
 
     @Composable
     override fun MeasuredContent() {
-        val transition = updateTransition(state, label = "Benchmark")
+        val seekableState = remember { SeekableTransitionState(false) }
+
+        LaunchedEffect(state) { seekableState.snapTo(state) }
+
+        val transition = rememberTransition(seekableState, label = "Benchmark")
 
         val alpha by transition.animateFloat(label = "Alpha") { if (it) 1f else 0f }
         val size by transition.animateDp(label = "Size") { if (it) 100.dp else 50.dp }
@@ -79,8 +90,7 @@ private class TransitionTestCase : LayeredComposeTestCase(), ToggleableTestCase 
         Box(
             Modifier.layout { measurable, constraints ->
                 val currentSize = size.roundToPx()
-                val currentAlpha = alpha // Just reading to simulate usage
-
+                val currentAlpha = alpha // Just to read the value
                 val placeable = measurable.measure(constraints)
                 layout(currentSize, currentSize) { placeable.place(0, 0) }
             }
