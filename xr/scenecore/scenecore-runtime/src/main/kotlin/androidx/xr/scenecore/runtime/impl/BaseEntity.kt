@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core
+package androidx.xr.scenecore.runtime.impl
 
 import android.app.Activity
 import android.content.Context
@@ -35,7 +35,7 @@ import kotlin.math.min
 /** Implementation of a subset of core Entity functionality. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 // TODO(b/452961674): Review RestrictTo annotations in SceneCore.
-public abstract class BaseEntity internal constructor(private var _context: Context?) :
+public abstract class BaseEntity public constructor(private var _context: Context?) :
     BaseScenePose(), Entity {
 
     private val _children = ArrayList<Entity>()
