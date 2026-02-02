@@ -22,6 +22,7 @@ import static androidx.compose.remote.integration.view.demos.examples.RcTickerKt
 
 import android.app.Activity;
 
+import androidx.compose.remote.integration.view.demos.examples.BadExamples.MemoryKt;
 import androidx.compose.remote.integration.view.demos.examples.ColorCheckKt;
 import androidx.compose.remote.integration.view.demos.examples.ColorThemeCheckKt;
 import androidx.compose.remote.integration.view.demos.examples.CountdownKt;
@@ -42,6 +43,7 @@ import androidx.compose.remote.integration.view.demos.examples.ExampleTimerKt;
 import androidx.compose.remote.integration.view.demos.examples.FontCheckKt;
 import androidx.compose.remote.integration.view.demos.examples.HostileActor;
 import androidx.compose.remote.integration.view.demos.examples.MClockKt;
+import androidx.compose.remote.integration.view.demos.examples.PieChartKt;
 import androidx.compose.remote.integration.view.demos.examples.PlotWaveKt;
 import androidx.compose.remote.integration.view.demos.examples.ServerSideKt;
 import androidx.compose.remote.integration.view.demos.examples.ShaderCalendarKt;
@@ -65,6 +67,8 @@ public abstract class DemosCreation {
                 getp("0/og/serverClock", ServerSideKt::serverClock),
                 getp("0/A/demoGraphs1", DemoGraphsKt::demoGraphs),
                 getp("0/A/demoGraphs0", DemoGraphsKt::demoGraphs2),
+                getpc("0/A/pieChart", PieChartKt::demoPieChart),
+                getp("0/v/badMemory", MemoryKt::fillMemory),
 
 
                 getp("5/Server/serverClock", ServerSideKt::serverClock),
