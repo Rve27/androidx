@@ -693,6 +693,11 @@ public final class SetSchemaRequest {
                 @AppSearchSupportedPermission @NonNull Set<Integer> permissions) {
             Preconditions.checkNotNull(schemaType);
             Preconditions.checkNotNull(permissions);
+            if (AppSearchEnvironmentFactory.getEnvironmentInstance().getEnvironment()
+                    != AppSearchEnvironment.FRAMEWORK_ENVIRONMENT) {
+                Preconditions.checkArgument(!permissions.isEmpty(),
+                        "The set of required permissions cannot be empty");
+            }
             for (int permission : permissions) {
                 Preconditions.checkArgumentInRange(permission, READ_SMS,
                         PRIVATE_COMPUTE_CORE_UID_ACCESS, "permission");
