@@ -6,6 +6,7 @@
  */
 plugins {
     id("AndroidXPlugin")
+    id("AndroidXComposePlugin")
     id("com.android.application")
 }
 
@@ -16,7 +17,9 @@ dependencies {
     implementation(project(":recyclerview:recyclerview"))
     implementation(project(":concurrent:concurrent-futures"))
     implementation(project(":swiperefreshlayout:swiperefreshlayout"))
+    implementation(project(":compose:material3:material3"))
 
+    implementation(libs.androidx.activity.compose)
     implementation(libs.material)
     implementation(libs.guava)
 }
