@@ -17,6 +17,7 @@
 package androidx.security.state
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.RestrictTo
@@ -36,6 +37,10 @@ public class SerializableUpdateInfo(
 }
 
 /** Represents information about an available update for a component. */
+// BanParcelableUsage is suppressed because this class manually delegates to Bundle in
+// writeToParcel and createFromParcel. This approach ensures robust forward compatibility
+// (as Bundle ignores unknown keys) and avoids the versioning fragility that standard
+// Parcelable implementations suffer from, allowing safe evolution of the API.
 @SuppressLint("BanParcelableUsage")
 public class UpdateInfo(
     /**
@@ -74,30 +79,45 @@ public class UpdateInfo(
             lastCheckTimeMillis,
         )
 
-    internal constructor(
-        parcel: Parcel
-    ) : this(
-        component = parcel.readString() ?: "",
-        securityPatchLevel = parcel.readString() ?: "",
-        publishedDateMillis = parcel.readLong(),
-        lastCheckTimeMillis = parcel.readLong(),
-    )
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(component)
-        parcel.writeString(securityPatchLevel)
-        parcel.writeLong(publishedDateMillis)
-        parcel.writeLong(lastCheckTimeMillis)
+        // Delegate to Bundle for robust forward-compatibility.
+        // This ensures that if we add fields in the future, older clients can still
+        // read the parcel without crashing (they will just ignore the new keys).
+        val bundle =
+            Bundle().apply {
+                putString(KEY_COMPONENT, component)
+                putString(KEY_SECURITY_PATCH_LEVEL, securityPatchLevel)
+                putLong(KEY_PUBLISHED_DATE_MILLIS, publishedDateMillis)
+                putLong(KEY_LAST_CHECK_TIME_MILLIS, lastCheckTimeMillis)
+            }
+        parcel.writeBundle(bundle)
     }
 
     override fun describeContents(): Int = 0
 
     public companion object {
+        // Keys for Bundle delegation
+        private const val KEY_COMPONENT = "component"
+        private const val KEY_SECURITY_PATCH_LEVEL = "securityPatchLevel"
+        private const val KEY_PUBLISHED_DATE_MILLIS = "publishedDateMillis"
+        private const val KEY_LAST_CHECK_TIME_MILLIS = "lastCheckTimeMillis"
+
         @JvmField
         public val CREATOR: Parcelable.Creator<UpdateInfo> =
             object : Parcelable.Creator<UpdateInfo> {
-                override fun createFromParcel(parcel: Parcel): UpdateInfo {
-                    return UpdateInfo(parcel)
+                override fun createFromParcel(source: Parcel): UpdateInfo {
+                    // Read as a Bundle to handle version skew
+                    val bundle = source.readBundle(UpdateInfo::class.java.classLoader)
+                    // Set the class loader to ensure we can unparcel any custom types if added
+                    // later
+                    bundle?.classLoader = UpdateInfo::class.java.classLoader
+
+                    return UpdateInfo(
+                        component = bundle?.getString(KEY_COMPONENT) ?: "",
+                        securityPatchLevel = bundle?.getString(KEY_SECURITY_PATCH_LEVEL) ?: "",
+                        publishedDateMillis = bundle?.getLong(KEY_PUBLISHED_DATE_MILLIS) ?: 0L,
+                        lastCheckTimeMillis = bundle?.getLong(KEY_LAST_CHECK_TIME_MILLIS) ?: 0L,
+                    )
                 }
 
                 override fun newArray(size: Int): Array<UpdateInfo?> {

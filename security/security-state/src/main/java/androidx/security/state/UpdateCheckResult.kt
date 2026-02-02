@@ -17,8 +17,10 @@
 package androidx.security.state
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.core.os.BundleCompat
 import java.util.Objects
 
 /**
@@ -27,6 +29,10 @@ import java.util.Objects
  * This class encapsulates the list of available updates along with metadata about the source and
  * freshness of the data. It is returned by the [IUpdateInfoService.listAvailableUpdates] method.
  */
+// BanParcelableUsage is suppressed because this class manually delegates to Bundle in
+// writeToParcel and createFromParcel. This approach ensures robust forward compatibility
+// (as Bundle ignores unknown keys) and avoids the versioning fragility that standard
+// Parcelable implementations suffer from, allowing safe evolution of the API.
 @SuppressLint("BanParcelableUsage")
 public class UpdateCheckResult(
     /**
@@ -59,24 +65,62 @@ public class UpdateCheckResult(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(providerPackageName)
-        parcel.writeTypedList(updates)
-        parcel.writeLong(lastCheckTimeMillis)
+        // Delegate to Bundle for robust forward compatibility.
+        // By wrapping the data in a Bundle, we ensure that if we add new fields in future
+        // versions of this library, older clients can still read the Parcel without crashing,
+        // as Bundle automatically ignores unknown keys.
+        val bundle =
+            Bundle().apply {
+                putString(KEY_PROVIDER_PACKAGE_NAME, providerPackageName)
+                putLong(KEY_LAST_CHECK_TIME_MILLIS, lastCheckTimeMillis)
+                // Bundle requires ArrayList implementation for Parcelable lists
+                putParcelableArrayList(KEY_UPDATES, ArrayList(updates))
+            }
+        parcel.writeBundle(bundle)
     }
 
     override fun describeContents(): Int = 0
 
     public companion object {
+        // Keys for Bundle delegation
+        private const val KEY_PROVIDER_PACKAGE_NAME = "providerPackageName"
+        private const val KEY_UPDATES = "updates"
+        private const val KEY_LAST_CHECK_TIME_MILLIS = "lastCheckTimeMillis"
+
         @JvmField
         public val CREATOR: Parcelable.Creator<UpdateCheckResult> =
             object : Parcelable.Creator<UpdateCheckResult> {
-                override fun createFromParcel(parcel: Parcel): UpdateCheckResult {
-                    return UpdateCheckResult(parcel)
+                override fun createFromParcel(source: Parcel): UpdateCheckResult {
+                    // Read the data as a Bundle to safely handle version skew.
+                    // If the source is an older library version, some keys might be missing;
+                    // we default them to safe values (empty strings/lists) to prevent runtime
+                    // crashes.
+                    val bundle = source.readBundle(UpdateCheckResult::class.java.classLoader)
+
+                    // Explicitly set the ClassLoader to ensure the inner Parcelable ArrayList
+                    // (updates) can be unparceled correctly.
+                    bundle?.classLoader = UpdateCheckResult::class.java.classLoader
+
+                    // Safe reading of the list using BundleCompat.
+                    // This handles the type-safe API on Android U+ (API 33) and falls back
+                    // to the legacy API on older versions.
+                    val updatesList =
+                        bundle?.let {
+                            BundleCompat.getParcelableArrayList(
+                                it,
+                                KEY_UPDATES,
+                                UpdateInfo::class.java,
+                            )
+                        } ?: emptyList()
+
+                    return UpdateCheckResult(
+                        providerPackageName = bundle?.getString(KEY_PROVIDER_PACKAGE_NAME) ?: "",
+                        updates = updatesList,
+                        lastCheckTimeMillis = bundle?.getLong(KEY_LAST_CHECK_TIME_MILLIS) ?: 0L,
+                    )
                 }
 
-                override fun newArray(size: Int): Array<UpdateCheckResult?> {
-                    return arrayOfNulls(size)
-                }
+                override fun newArray(size: Int): Array<UpdateCheckResult?> = arrayOfNulls(size)
             }
     }
 
