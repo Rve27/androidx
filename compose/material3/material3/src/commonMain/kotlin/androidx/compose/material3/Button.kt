@@ -1879,6 +1879,10 @@ internal val ButtonShapes.hasRoundedCornerShapes: Boolean
     get() = shape is RoundedCornerShape && pressedShape is RoundedCornerShape
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+internal val ButtonShapes.hasCornerBasedShapes: Boolean
+    get() = shape is CornerBasedShape && pressedShape is CornerBasedShape
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun shapeByInteraction(
     shapes: ButtonShapes,
@@ -1891,9 +1895,10 @@ private fun shapeByInteraction(
         } else {
             shapes.shape
         }
-
     if (shapes.hasRoundedCornerShapes)
         return key(shapes) { rememberAnimatedShape(shape as RoundedCornerShape, animationSpec) }
+    else if (shapes.hasCornerBasedShapes)
+        return key(shapes) { rememberAnimatedShape(shape as CornerBasedShape, animationSpec) }
 
     return shape
 }
