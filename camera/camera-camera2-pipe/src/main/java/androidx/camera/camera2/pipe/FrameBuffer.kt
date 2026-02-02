@@ -43,8 +43,15 @@ public interface FrameBuffer : AutoCloseable {
      */
     public val parameters: Map<Any, Any?>
 
-    /** The maximum number of frame references this buffer can hold. */
-    public val capacity: Int
+    /**
+     * The maximum number of frame references this buffer can hold.
+     *
+     * If set a new capacity and the new capacity is less than the current number of buffered
+     * frames, the oldest [FrameReference]s will be evicted until the buffer size matches new
+     * capacity. Any [Frame] instances associated with the evicted [FrameReference]s will be closed.
+     * Increasing the capacity does not cause any frames to be evicted.
+     */
+    public var capacity: Int
 
     /** The current number of frame references held by the buffer. */
     public val size: StateFlow<Int>
