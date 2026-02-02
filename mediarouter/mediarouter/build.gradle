@@ -35,7 +35,7 @@ dependencies {
     // See b/283315121 for context, However we cannot depend on tip of the tree dependency because
     // it prevents our library releases, so we should update this dependency manually whenever
     // there is a new stable release of it.
-    implementation(project(":core:core"))
+    implementation("androidx.core:core:1.17.0")
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.palette:palette:1.0.0")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
