@@ -50,26 +50,35 @@ androidXMultiplatform {
         commonMain.dependencies {
             api(project(":navigation:navigation-common"))
         }
-        androidHostTest.dependencies {
-            implementation(project(":navigation:navigation-testing"))
-            implementation("androidx.arch.core:core-testing:2.1.0")
-            implementation(libs.junit)
-            implementation(libs.mockitoCore4)
-            implementation(libs.truth)
+        commonTest.dependencies {
+            implementation(libs.kotlinTest)
             implementation(libs.kotlinCoroutinesTest)
+            implementation(project(":navigation:navigation-testing"))
+            implementation(project(":kruth:kruth"))
+        }
+        androidTest.dependencies {
+            implementation("androidx.arch.core:core-testing:2.1.0")
         }
         androidDeviceTest.dependencies {
             implementation(libs.testExtJunit)
             implementation(libs.testCore)
             implementation(libs.testRunner)
             implementation(libs.espressoCore)
-            implementation(libs.truth)
         }
+
+        androidTest.dependsOn(commonTest)
+        androidHostTest.dependsOn(androidTest)
+        androidDeviceTest.dependsOn(androidTest)
 
         nonAndroidMain.dependsOn(commonMain)
         desktopMain.dependsOn(nonAndroidMain)
         nativeMain.dependsOn(nonAndroidMain)
         webMain.dependsOn(nonAndroidMain)
+
+        nonAndroidTest.dependsOn(commonTest)
+        desktopTest.dependsOn(nonAndroidTest)
+        nativeTest.dependsOn(nonAndroidTest)
+        webTest.dependsOn(nonAndroidTest)
     }
 }
 
