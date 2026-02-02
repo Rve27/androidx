@@ -152,13 +152,6 @@ internal class NetworkStateTracker24(context: Context, taskExecutor: TaskExecuto
     @Volatile private var isBlocked: Boolean = false
 
     override fun readSystemState(): NetworkState {
-        if (Build.VERSION.SDK_INT >= 28) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                return getActiveNetworkState(capabilities, isBlocked)
-            }
-        }
         return getActiveNetworkState(connectivityManager, isBlocked)
     }
 
