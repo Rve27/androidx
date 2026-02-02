@@ -96,7 +96,7 @@ androidXMultiplatform {
         linuxTest.dependsOn(hostNativeTest)
 
         // iOS, watchOS and tvOS families, but not Mac OS
-        appleOsNativeTest.dependsOn(nativeTest)
+        appleOsNativeTest {}.dependsOn(nativeTest)
         tvosTest.dependsOn(appleOsNativeTest)
         watchosTest.dependsOn(appleOsNativeTest)
 
@@ -124,8 +124,10 @@ dependencies {
         add("kspWatchosArm64Test", roomCompilerDependency)
         add("kspWatchosSimulatorArm64Test", roomCompilerDependency)
     }
-    add("kspJsTest", roomCompilerDependency)
-    add("kspWasmJsTest", roomCompilerDependency)
+    if (!androidx.isIsolatedProjectsEnabled()) {
+        add("kspJsTest", roomCompilerDependency)
+        add("kspWasmJsTest", roomCompilerDependency)
+    }
 }
 
 // Copy schema files to the iOS / watchOS / tvOS binary output test directory that will be part of

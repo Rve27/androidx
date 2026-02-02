@@ -46,7 +46,7 @@ configurations {
             )
         }
     }
-    compileOnly.extendsFrom(friends)
+    compileOnly {}.extendsFrom(friends)
 
 }
 

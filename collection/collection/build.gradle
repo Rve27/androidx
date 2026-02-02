@@ -61,7 +61,7 @@ androidXMultiplatform {
             api(libs.jspecify)
         }
 
-        nonJsTest.dependsOn(commonTest)
+        nonJsTest {}.dependsOn(commonTest)
         jvmTest {
             dependsOn(nonJsTest)
             dependencies {
@@ -71,12 +71,12 @@ androidXMultiplatform {
             }
         }
 
-        unixMain.dependsOn(nativeMain)
-        appleMain.dependsOn(unixMain)
+        unixMain {}.dependsOn(nativeMain)
+        appleMain {}.dependsOn(unixMain)
         linuxMain.dependsOn(unixMain)
 
         nativeTest.dependsOn(nonJsTest)
-        wasmJsTest.dependsOn(nonJsTest)
+        wasmJsTest {}.dependsOn(nonJsTest)
     }
 }
 
