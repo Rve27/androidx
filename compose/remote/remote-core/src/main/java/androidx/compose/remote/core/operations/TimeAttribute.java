@@ -24,6 +24,7 @@ import androidx.compose.remote.core.Operation;
 import androidx.compose.remote.core.Operations;
 import androidx.compose.remote.core.PaintContext;
 import androidx.compose.remote.core.PaintOperation;
+import androidx.compose.remote.core.RemoteClock;
 import androidx.compose.remote.core.RemoteContext;
 import androidx.compose.remote.core.WireBuffer;
 import androidx.compose.remote.core.documentation.DocumentationBuilder;
@@ -33,9 +34,6 @@ import androidx.compose.remote.core.types.LongConstant;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -240,41 +238,28 @@ public class TimeAttribute extends PaintOperation {
         RemoteContext ctx = context.getContext();
         long load_time = ctx.getDocLoadTime();
         LongConstant longConstant = (LongConstant) ctx.getObject(mTimeId);
-        long value = 0;
+        RemoteClock.TimeSnapshot now = context.getClock().snapshot(null);
+        RemoteClock.TimeSnapshot value;
         if (longConstant == null) {
-            value = context.getClock().millis();
+            value = now;
         } else {
-            value = longConstant.getValue();
+            value = context.getClock().snapshot(longConstant.getValue());
         }
         long delta = 0;
-        LocalDateTime time = null;
 
         switch (val) {
             case TIME_FROM_NOW_SEC:
             case TIME_FROM_NOW_MIN:
             case TIME_FROM_NOW_HR:
-                delta = (value - context.getClock().millis());
+                delta = (value.getMillis() - now.getMillis());
                 break;
             case TIME_FROM_ARG_SEC:
             case TIME_FROM_ARG_MIN:
             case TIME_FROM_ARG_HR:
                 LongConstant lc2 = (LongConstant) ctx.getObject(mArgs[0]);
-                delta = (value - lc2.getValue());
+                delta = (value.getMillis() - lc2.getValue());
                 break;
-            case TIME_IN_SEC:
-            case TIME_IN_MIN:
-            case TIME_IN_HR:
-            case TIME_DAY_OF_MONTH:
-            case TIME_MONTH_VALUE:
-            case TIME_DAY_OF_WEEK:
-            case TIME_DAY_OF_YEAR:
-            case TIME_YEAR:
-                time =
-                        (LocalDateTime)
-                                Instant.ofEpochMilli(value)
-                                        .atZone(ZoneOffset.systemDefault())
-                                        .toLocalDateTime();
-
+            default:
                 break;
         }
         switch (val) {
@@ -293,31 +278,31 @@ public class TimeAttribute extends PaintOperation {
                 ctx.loadFloat(mId, (float) (delta * 1E-3 / 3600));
                 break;
             case TIME_IN_SEC:
-                ctx.loadFloat(mId, time.getSecond());
+                ctx.loadFloat(mId, value.getSecond());
                 break;
             case TIME_IN_MIN:
-                ctx.loadFloat(mId, time.getMinute());
+                ctx.loadFloat(mId, value.getMinute());
                 break;
             case TIME_IN_HR:
-                ctx.loadFloat(mId, time.getHour());
+                ctx.loadFloat(mId, value.getHour());
                 break;
             case TIME_DAY_OF_MONTH:
-                ctx.loadFloat(mId, time.getDayOfMonth());
+                ctx.loadFloat(mId, value.getDayOfMonth());
                 break;
             case TIME_DAY_OF_YEAR:
-                ctx.loadFloat(mId, time.getDayOfYear());
+                ctx.loadFloat(mId, value.getDayOfYear());
                 break;
             case TIME_MONTH_VALUE:
-                ctx.loadFloat(mId, time.getMonthValue() - 1);
+                ctx.loadFloat(mId, value.getMonth() - 1);
                 break;
             case TIME_DAY_OF_WEEK:
-                ctx.loadFloat(mId, time.getDayOfWeek().ordinal());
+                ctx.loadFloat(mId, value.getDayOfWeek() - 1);
                 break;
             case TIME_YEAR:
-                ctx.loadFloat(mId, time.getYear());
+                ctx.loadFloat(mId, value.getYear());
                 break;
             case TIME_FROM_LOAD_SEC:
-                ctx.loadFloat(mId, (value - load_time) * 1E-3f);
+                ctx.loadFloat(mId, (value.getMillis() - load_time) * 1E-3f);
                 ctx.needsRepaint();
                 break;
         }

@@ -21,7 +21,6 @@ import androidx.compose.remote.core.operations.paint.PaintBundle;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.time.Clock;
 import java.util.HashMap;
 
 /** Specify an abstract paint context used by RemoteCompose commands to draw */
@@ -79,7 +78,7 @@ public abstract class PaintContext {
         matrixSave();
     }
 
-    public @NonNull Clock getClock() {
+    public @NonNull RemoteClock getClock() {
         return mContext.getClock();
     }
 

@@ -52,7 +52,6 @@ import androidx.compose.remote.core.types.LongConstant;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -109,9 +108,10 @@ public class CoreDocument implements Serializable {
 
     @NonNull
     RemoteComposeState mRemoteComposeState = new RemoteComposeState();
+
     @VisibleForTesting
     @NonNull
-    public TimeVariables mTimeVariables = new TimeVariables();
+    public TimeVariables mTimeVariables;
 
     // Semantic version of the document
     @NonNull
@@ -139,7 +139,7 @@ public class CoreDocument implements Serializable {
 
     private @Nullable ArrayList<ColorTheme> mThemeColors = null;
 
-    private final @NonNull Clock mClock;
+    private final @NonNull RemoteClock mClock;
 
     private final HashSet<Component> mAppliedTouchOperations = new HashSet<>();
 
@@ -163,15 +163,15 @@ public class CoreDocument implements Serializable {
     }
 
     public CoreDocument() {
-        this(new SystemClock());
+        this(RemoteClock.SYSTEM);
     }
 
-    public CoreDocument(@NonNull Clock clock) {
+    public CoreDocument(@NonNull RemoteClock clock) {
         this.mClock = clock;
         mTimeVariables = new TimeVariables(clock);
     }
 
-    public @NonNull Clock getClock() {
+    public @NonNull RemoteClock getClock() {
         return mClock;
     }
 
@@ -1154,7 +1154,7 @@ public class CoreDocument implements Serializable {
      * @param bitmapMap bitmap map
      */
     public void initializeContext(@NonNull RemoteContext context,
-                                  @Nullable Map<Integer, Object> bitmapMap) {
+            @Nullable Map<Integer, Object> bitmapMap) {
         mRemoteComposeState.reset();
         mRemoteComposeState.setContext(context);
         mClickAreas.clear();
