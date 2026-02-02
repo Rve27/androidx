@@ -20,6 +20,8 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.inspection.rules.ComposeInspectionRule
 import androidx.compose.ui.inspection.rules.sendCommand
 import androidx.compose.ui.inspection.testdata.AndroidViewTestActivity
@@ -36,7 +38,9 @@ import org.junit.Test
 class AndroidViewTest {
     @get:Rule val rule = ComposeInspectionRule(AndroidViewTestActivity::class)
 
-    val isArrEnabled = SDK_INT >= VANILLA_ICE_CREAM
+    val isArrEnabled =
+        @OptIn(ExperimentalComposeUiApi::class) isAdaptiveRefreshRateEnabled &&
+            SDK_INT >= VANILLA_ICE_CREAM
 
     @Test
     fun androidView(): Unit = runBlocking {
