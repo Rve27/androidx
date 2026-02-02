@@ -16,6 +16,7 @@
 
 package androidx.compose.remote.integration.view.demos.examples
 
+import androidx.compose.remote.core.RcProfiles
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.core.operations.layout.managers.BoxLayout
 import androidx.compose.remote.creation.RFloat
@@ -42,8 +43,7 @@ fun demoGraphs(): RemoteComposeWriter {
             RemoteComposeWriter.hTag(Header.DOC_WIDTH, 500),
             RemoteComposeWriter.hTag(Header.DOC_HEIGHT, 500),
             RemoteComposeWriter.hTag(Header.DOC_CONTENT_DESCRIPTION, "Simple Timer"),
-            RemoteComposeWriter.hTag(Header.DOC_PROFILES, 0),
-            RemoteComposeWriter.hTag(Header.DEBUG, 1),
+            RemoteComposeWriter.hTag(Header.DOC_PROFILES, RcProfiles.PROFILE_ANDROIDX),
         ) {
             root {
                 box(RecordingModifier().fillMaxSize(), BoxLayout.START, BoxLayout.START) {
@@ -68,12 +68,11 @@ fun demoGraphs2(): RemoteComposeWriter {
     val rc =
         RemoteComposeContextAndroid(
             platform = AndroidxRcPlatformServices(),
-            apiLevel = 6,
+            apiLevel = 7,
             RemoteComposeWriter.hTag(Header.DOC_WIDTH, 500),
             RemoteComposeWriter.hTag(Header.DOC_HEIGHT, 500),
             RemoteComposeWriter.hTag(Header.DOC_CONTENT_DESCRIPTION, "Simple Timer"),
-            RemoteComposeWriter.hTag(Header.DOC_PROFILES, 0),
-            RemoteComposeWriter.hTag(Header.DEBUG, 1),
+            RemoteComposeWriter.hTag(Header.DOC_PROFILES, RcProfiles.PROFILE_ANDROIDX),
         ) {
             root {
                 box(RecordingModifier().fillMaxSize(), BoxLayout.START, BoxLayout.START) {
