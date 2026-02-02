@@ -2161,6 +2161,14 @@ public final class Recorder implements VideoOutput {
     @SuppressWarnings("WeakerAccess") /* synthetic accessor */
     void writeVideoData(@NonNull EncodedData encodedData,
             @NonNull RecordingRecord recording) {
+        // If the video encoder has been released, we should stop writing data to the muxer.
+        // This prevents MuxerExceptions and prevents triggering stopInternal() which would
+        // incorrectly stop a persistent recording. See b/480772922.
+        if (mVideoEncoder == null) {
+            Logger.d(TAG, "Ignore the video data since the video encoder has been released.");
+            return;
+        }
+
         if (mVideoTrackIndex == null) {
             // Throw an exception if the data comes before the track is added.
             throw new AssertionError("Video data comes before the track is added to Muxer.");
@@ -2212,6 +2220,7 @@ public final class Recorder implements VideoOutput {
             mMuxer.writeSampleData(mVideoTrackIndex, encodedData.getByteBuffer(),
                     encodedData.getBufferInfo());
         } catch (MuxerException e) {
+            Logger.w(TAG, "writeVideoData failed", e);
             int error = hasInsufficientStorageOrException(e) ? ERROR_INSUFFICIENT_STORAGE
                     : ERROR_UNKNOWN;
             onInProgressRecordingInternalError(recording, error, e);
@@ -2242,6 +2251,14 @@ public final class Recorder implements VideoOutput {
     @SuppressWarnings("WeakerAccess") /* synthetic accessor */
     void writeAudioData(@NonNull EncodedData encodedData,
             @NonNull RecordingRecord recording) {
+        // If the audio encoder has been released, we should stop writing data to the muxer.
+        // This prevents MuxerExceptions and prevents triggering stopInternal() which would
+        // incorrectly stop a persistent recording. See b/480772922.
+        if (mAudioEncoder == null) {
+            Logger.d(TAG, "Ignore the audio data since the audio encoder has been released.");
+            return;
+        }
+
         // Ensure audio starts after the first video frame. This aligns with the logic in
         // #getAudioDataToWriteAndClearCache() and prevents negative duration values when writing
         // to the muxer.
@@ -2296,6 +2313,7 @@ public final class Recorder implements VideoOutput {
                     encodedData.getByteBuffer(),
                     encodedData.getBufferInfo());
         } catch (MuxerException e) {
+            Logger.w(TAG, "writeAudioData failed", e);
             int error = hasInsufficientStorageOrException(e) ? ERROR_INSUFFICIENT_STORAGE
                     : ERROR_UNKNOWN;
             onInProgressRecordingInternalError(recording, error, e);
