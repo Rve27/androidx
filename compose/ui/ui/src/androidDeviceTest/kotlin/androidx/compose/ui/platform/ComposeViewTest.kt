@@ -28,7 +28,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.AndroidComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.TestActivity
@@ -78,7 +78,7 @@ class ComposeViewTest {
     @Test
     fun composeWithComposeViewContext() {
         @OptIn(ExperimentalComposeUiApi::class)
-        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        assume().that(AndroidComposeUiFlags.isSharedWindowInfoEnabled).isTrue()
         rule.runOnUiThread { rule.activity.setContentView(FrameLayout(rule.activity)) }
         rule.waitForIdle()
         val contentView = rule.activity.findViewById<View>(android.R.id.content)
@@ -105,7 +105,7 @@ class ComposeViewTest {
     @Test
     fun setComposeViewContextToNullStopsObserving() {
         @OptIn(ExperimentalComposeUiApi::class)
-        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        assume().that(AndroidComposeUiFlags.isSharedWindowInfoEnabled).isTrue()
         lateinit var composeViewContext: ComposeViewContext
         rule.setContent {
             val view = LocalView.current
@@ -136,7 +136,7 @@ class ComposeViewTest {
     @Test
     fun detachingComposeViewWithComposeViewContextStopsObserving() {
         @OptIn(ExperimentalComposeUiApi::class)
-        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        assume().that(AndroidComposeUiFlags.isSharedWindowInfoEnabled).isTrue()
         lateinit var composeViewContext: ComposeViewContext
         var addView by mutableStateOf(false)
         lateinit var composeView: ComposeView
@@ -300,7 +300,7 @@ class ComposeViewTest {
     @Test
     fun detachedComposition() {
         @OptIn(ExperimentalComposeUiApi::class)
-        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        assume().that(AndroidComposeUiFlags.isSharedWindowInfoEnabled).isTrue()
         lateinit var view: View
         rule.setContent { view = LocalView.current }
         rule.waitForIdle()
@@ -317,7 +317,7 @@ class ComposeViewTest {
     @Test
     fun setContentAfterCreateComposition() {
         @OptIn(ExperimentalComposeUiApi::class)
-        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        assume().that(AndroidComposeUiFlags.isSharedWindowInfoEnabled).isTrue()
         lateinit var view: View
         rule.setContent { view = LocalView.current }
         rule.waitForIdle()
@@ -335,7 +335,7 @@ class ComposeViewTest {
     @Test
     fun reuseAutomaticComposeViewContext() {
         @OptIn(ExperimentalComposeUiApi::class)
-        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        assume().that(AndroidComposeUiFlags.isSharedWindowInfoEnabled).isTrue()
         lateinit var view: View
         var addComposeView by mutableStateOf(false)
         lateinit var composeView: ComposeView
@@ -373,7 +373,7 @@ class ComposeViewTest {
     @Test
     fun disposedComposeViewContextCanRecompose() {
         @OptIn(ExperimentalComposeUiApi::class)
-        assume().that(ComposeUiFlags.isAdaptiveRefreshRateEnabled).isTrue()
+        assume().that(AndroidComposeUiFlags.isSharedWindowInfoEnabled).isTrue()
         lateinit var view: View
         var addComposeView by mutableStateOf(false)
         lateinit var composeView: ComposeView
@@ -546,30 +546,5 @@ class ComposeViewTest {
         childView.setContent { isComposed = true }
         rule.waitForIdle()
         assertThat(isComposed).isTrue()
-    }
-
-    @Test
-    @OptIn(ExperimentalComposeUiApi::class)
-    fun frameRateCategoryViewProtection() {
-        ComposeUiFlags.isAdaptiveRefreshRateEnabled = false
-
-        var addComposeView by mutableStateOf(true)
-        var isAdded by mutableStateOf(false)
-        rule.setContent {
-            if (addComposeView) {
-                AndroidView(
-                    factory = {
-                        ComposeView(it).apply { setContent { Box(Modifier.fillMaxSize()) } }
-                    }
-                )
-            }
-            isAdded = addComposeView
-        }
-
-        rule.waitForIdle()
-        ComposeUiFlags.isAdaptiveRefreshRateEnabled = true
-        addComposeView = false
-        rule.waitForIdle()
-        assertThat(isAdded).isFalse()
     }
 }
