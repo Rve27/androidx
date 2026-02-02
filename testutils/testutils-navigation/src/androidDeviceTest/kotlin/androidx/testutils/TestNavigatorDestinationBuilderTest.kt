@@ -16,12 +16,12 @@
 
 package androidx.testutils
 
+import androidx.kruth.assertWithMessage
 import androidx.navigation.contains
 import androidx.navigation.get
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Test
 import org.junit.runner.RunWith
 
