@@ -26,6 +26,7 @@ import androidx.benchmark.macro.BaselineProfileMode
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.ExperimentalMetricApi
 import androidx.benchmark.macro.FrameTimingMetric
+import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.benchmark.macro.MemoryUsageMetric
 import androidx.benchmark.macro.Metric
 import androidx.benchmark.macro.StartupMode
@@ -93,6 +94,7 @@ fun MacrobenchmarkRule.measureStartup(
     packageName: String,
     iterations: Int = 10,
     metrics: List<Metric> = getStartupMetrics(),
+    waitForContent: MacrobenchmarkScope.() -> Unit = {},
     setupIntent: Intent.() -> Unit = {},
 ) {
     measureRepeated(
@@ -109,6 +111,8 @@ fun MacrobenchmarkRule.measureStartup(
         intent.setPackage(packageName)
         setupIntent(intent)
         startActivityAndWait(intent)
+
+        waitForContent()
     }
 }
 
