@@ -411,7 +411,7 @@ internal class AnimationSearch(
             animations.addAll(
                 groups
                     .mapNotNull { toAnimationGroup(it) }
-                    .findRememberedData<Transition<*>>()
+                    .findRememberedData<Transition<Boolean>>()
                     .map { AnimatedVisibilitySearchInfo(it) }
             )
         }
