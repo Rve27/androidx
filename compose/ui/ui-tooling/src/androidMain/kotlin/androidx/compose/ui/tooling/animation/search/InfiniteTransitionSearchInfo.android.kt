@@ -19,18 +19,18 @@ package androidx.compose.ui.tooling.animation.search
 import androidx.compose.animation.core.InfiniteTransition
 import androidx.compose.ui.tooling.animation.InfiniteTransitionComposeAnimation
 import androidx.compose.ui.tooling.animation.InfiniteTransitionComposeAnimation.Companion.parse
-import androidx.compose.ui.tooling.animation.ToolingState
+import androidx.compose.ui.tooling.animation.ToolingOverride
 import androidx.compose.ui.tooling.animation.clock.InfiniteTransitionClock
 
 /**
  * [SearchInfo] for [androidx.compose.animation.core.rememberInfiniteTransition] animation.
  *
  * @param infiniteTransition used by [androidx.compose.animation.core.rememberInfiniteTransition]
- * @param toolingState allows to override the animation value in Animation Preview
+ * @param toolingOverride allows to override behavior of the animation
  */
 internal data class InfiniteTransitionSearchInfo(
     val infiniteTransition: InfiniteTransition,
-    val toolingState: ToolingState<Long>,
+    val toolingOverride: ToolingOverride<Long>,
 ) : SearchInfo<InfiniteTransitionComposeAnimation, InfiniteTransitionClock> {
     override fun createAnimation(): InfiniteTransitionComposeAnimation? {
         return this.parse()
@@ -40,5 +40,13 @@ internal data class InfiniteTransitionSearchInfo(
         animation: InfiniteTransitionComposeAnimation
     ): InfiniteTransitionClock {
         return InfiniteTransitionClock(animation)
+    }
+
+    override fun attach() {
+        toolingOverride.overrideState()
+    }
+
+    override fun detach() {
+        toolingOverride.clearOverride()
     }
 }

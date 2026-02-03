@@ -26,6 +26,7 @@ import androidx.test.filters.MediumTest
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,6 +49,30 @@ class InfiniteTransitionSearchInfoTest {
             animation!!
             val clock = searchInfo.createClock(animation)
             assertNotNull(clock)
+        }
+    }
+
+    @Test
+    fun attachAndDetachOverride() {
+        val search = AnimationSearch.InfiniteTransitionSearch {}
+        rule.addAnimations(search) { rememberInfiniteTransition() }
+        assertEquals(1, search.animations.size)
+
+        search.animations.first().let { searchInfo ->
+            // Default attached values
+            assertNotNull(searchInfo.toolingOverride.override.value)
+            assertEquals(0L, searchInfo.toolingOverride.state.value)
+            assertEquals(0L, searchInfo.toolingOverride.override.value?.value)
+
+            // Detach
+            searchInfo.detach()
+            assertNull(searchInfo.toolingOverride.override.value)
+
+            // Attach and jump to the end of the animation
+            searchInfo.attach()
+            searchInfo.toolingOverride.state.value = 300L
+            assertNotNull(searchInfo.toolingOverride.override.value)
+            assertEquals(300L, searchInfo.toolingOverride.override.value?.value)
         }
     }
 }

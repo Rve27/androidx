@@ -21,7 +21,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector
 import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation
 import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation.Companion.parse
-import androidx.compose.ui.tooling.animation.ToolingState
+import androidx.compose.ui.tooling.animation.ToolingOverride
 import androidx.compose.ui.tooling.animation.clock.AnimateXAsStateClock
 
 /**
@@ -29,12 +29,12 @@ import androidx.compose.ui.tooling.animation.clock.AnimateXAsStateClock
  *
  * @param animatable used by [androidx.compose.animation.core.animateValueAsState]
  * @param animationSpec used by [androidx.compose.animation.core.animateValueAsState]
- * @param toolingState allows to override the animation value in Animation Preview
+ * @param toolingOverride allows to override behavior of the animation
  */
 internal data class AnimateXAsStateSearchInfo<T, V : AnimationVector>(
     val animatable: Animatable<T, V>,
     val animationSpec: AnimationSpec<T>,
-    val toolingState: ToolingState<T>,
+    val toolingOverride: ToolingOverride<T>,
 ) : SearchInfo<AnimateXAsStateComposeAnimation<*, *>, AnimateXAsStateClock<*, *>> {
     override fun createAnimation(): AnimateXAsStateComposeAnimation<*, *>? {
         return this.parse()
@@ -44,5 +44,13 @@ internal data class AnimateXAsStateSearchInfo<T, V : AnimationVector>(
         animation: AnimateXAsStateComposeAnimation<*, *>
     ): AnimateXAsStateClock<*, *> {
         return AnimateXAsStateClock(animation)
+    }
+
+    override fun attach() {
+        toolingOverride.overrideState()
+    }
+
+    override fun detach() {
+        toolingOverride.clearOverride()
     }
 }

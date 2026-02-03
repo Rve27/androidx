@@ -60,7 +60,7 @@ private constructor(
             if (!apiAvailable) return null
             // Tooling can't control nullable Animatable with value set to null.
             if (animatable.value == null) return null
-            return AnimateXAsStateComposeAnimation(toolingState, animationSpec, animatable)
+            return AnimateXAsStateComposeAnimation(toolingOverride.state, animationSpec, animatable)
         }
 
         /** This method is for testing only. */
