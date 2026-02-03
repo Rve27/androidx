@@ -26,7 +26,7 @@ import java.io.File
 /** Allows running the screen record android utility to record the screen. */
 public class RecorderCommands internal constructor(private val shell: Shell) {
 
-    private val process by lazy { shell.process() }
+    private val process by lazy { shell.process }
 
     /**
      * Starts the recording.
