@@ -77,8 +77,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.annotation.RequiresFlag;
-import androidx.core.flagging.Flags;
 import androidx.mediarouter.media.MediaRouter.RouteInfo;
 
 import java.util.ArrayList;
@@ -153,10 +151,8 @@ class MediaRouter2Utils {
             Api34Impl.setDeviceType(
                     builder, androidXDeviceTypeToFwkDeviceType(descriptor.getDeviceType()));
         }
-        if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1
-                && Flags.getBooleanFlagValue(MediaRouterFlags.NAMESPACE,
-                MediaRouterFlags.ENABLE_ROUTE_VISIBILITY_CONTROL_API)) {
-            FlagEnableRouteVisibilityControlApiImpl.copyRequiredPermissionsToBuilder(builder,
+        if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1) {
+            Api36Impl.copyRequiredPermissionsToBuilder(builder,
                     descriptor);
         }
 
@@ -220,10 +216,8 @@ class MediaRouter2Utils {
             deviceTypeInRouteInfo =
                     fwkDeviceTypeToAndroidXDeviceType(Api34Impl.getType(fwkMediaRoute2Info));
         }
-        if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1
-                && Flags.getBooleanFlagValue(MediaRouterFlags.NAMESPACE,
-                MediaRouterFlags.ENABLE_ROUTE_VISIBILITY_CONTROL_API)) {
-            FlagEnableRouteVisibilityControlApiImpl.copyFwkRequiredPermissionsToBuilder(builder,
+        if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1) {
+            Api36Impl.copyFwkRequiredPermissionsToBuilder(builder,
                     fwkMediaRoute2Info);
         }
 
@@ -532,22 +526,6 @@ class MediaRouter2Utils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES_FULL.BAKLAVA_1)
-    @RequiresFlag("com.android.media.flags.enable_route_visibility_control_api")
-    private static final class FlagEnableRouteVisibilityControlApiImpl {
-        private FlagEnableRouteVisibilityControlApiImpl() {}
-
-        static void copyRequiredPermissionsToBuilder(MediaRoute2Info.Builder builder,
-                MediaRouteDescriptor descriptor) {
-            builder.setRequiredPermissions(descriptor.getRequiredPermissions());
-        }
-
-        static void copyFwkRequiredPermissionsToBuilder(MediaRouteDescriptor.Builder builder,
-                MediaRoute2Info info) {
-            builder.setRequiredPermissions(info.getRequiredPermissions());
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES_FULL.BAKLAVA_1)
     static final class Api36Impl {
         private Api36Impl() {}
 
@@ -571,6 +549,16 @@ class MediaRouter2Utils {
                             fwkDeviceTypeToAndroidXDeviceType(suggestedDeviceInfo.getType()))
                     .setExtras(suggestedDeviceInfo.getExtras())
                     .build();
+        }
+
+        static void copyRequiredPermissionsToBuilder(MediaRoute2Info.Builder builder,
+                MediaRouteDescriptor descriptor) {
+            builder.setRequiredPermissions(descriptor.getRequiredPermissions());
+        }
+
+        static void copyFwkRequiredPermissionsToBuilder(MediaRouteDescriptor.Builder builder,
+                MediaRoute2Info info) {
+            builder.setRequiredPermissions(info.getRequiredPermissions());
         }
     }
 }
