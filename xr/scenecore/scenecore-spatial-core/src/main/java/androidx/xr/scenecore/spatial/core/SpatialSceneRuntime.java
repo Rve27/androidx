@@ -731,7 +731,7 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                 scaleInZ,
                 userAnchorable,
                 mActivitySpace,
-                new PanelShadowRenderer(
+                new PanelShadowRendererImpl(
                         mActivitySpace, mPerceptionSpaceScenePose, mActivity, mExtensions),
                 mExecutor);
     }
