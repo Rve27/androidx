@@ -163,6 +163,7 @@ import androidx.compose.ui.input.pointer.ProcessResult
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.input.rotary.RotaryInputModifierNode
 import androidx.compose.ui.input.rotary.RotaryScrollEvent
+import androidx.compose.ui.internal.checkPrecondition
 import androidx.compose.ui.internal.checkPreconditionNotNull
 import androidx.compose.ui.layout.InsetsListener
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -650,6 +651,12 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     override val localeList: LocaleList by derivedStateOf {
         val platformLocaleListCompat = ConfigurationCompat.getLocales(configuration)
+        checkPrecondition(!platformLocaleListCompat.isEmpty) {
+            "LocaleList from Configuration was empty - this indicates that Compose is being used " +
+                "in an environment with no available locale, which is not supported. If you " +
+                "are seeing this error and you believe the use case should work, please report a " +
+                "bug to the issue tracker."
+        }
         LocaleList(List(platformLocaleListCompat.size()) { Locale(platformLocaleListCompat[it]!!) })
     }
 
