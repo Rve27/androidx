@@ -78,16 +78,6 @@ object ComposeUiFlags {
     var isIgnoreInvalidPrevFocusRectEnabled: Boolean = true
 
     /**
-     * When an embedded view that is focused is removed from the hierarchy, it triggers a
-     * requestFocus() which tries to re-assign focus before the previous composition is complete.
-     * This flag enables a fix for this issue.
-     */
-    @Deprecated("This flag is no longer needed.")
-    @field:Suppress("MutableBareField", "unused")
-    @JvmField
-    var isRemoveFocusedViewFixEnabled: Boolean = false
-
-    /**
      * Enable WindowInsets rulers:
      * * `SystemBarsRulers`
      * * `ImeRulers`
