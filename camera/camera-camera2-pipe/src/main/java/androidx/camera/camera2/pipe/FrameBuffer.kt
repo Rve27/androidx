@@ -48,8 +48,9 @@ public interface FrameBuffer : AutoCloseable {
      *
      * If set a new capacity and the new capacity is less than the current number of buffered
      * frames, the oldest [FrameReference]s will be evicted until the buffer size matches new
-     * capacity. Any [Frame] instances associated with the evicted [FrameReference]s will be closed.
-     * Increasing the capacity does not cause any frames to be evicted.
+     * capacity. Any [Frame] instances associated with the evicted [FrameReference]s will be closed
+     * if the [FrameReference] is not hold by another [FrameBuffer]. Increasing the capacity does
+     * not cause any frames to be evicted.
      */
     public var capacity: Int
 
