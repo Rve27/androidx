@@ -27,17 +27,17 @@ import org.junit.runner.RunWith
 /** Integration test for {@link AssetLoaderInternalStorageActivity}. */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-public final class AssetLoaderInternalStorageActivityTestAppTest {
+class AssetLoaderInternalStorageActivityTestAppTest {
 
     @get:Rule val rule = ActivityScenarioRule(AssetLoaderInternalStorageActivity::class.java)
 
     @Before
-    public fun setUp() {
+    fun setUp() {
         WebkitTestHelpers.enableJavaScript(R.id.webview_asset_loader_webview)
     }
 
     @Test
-    public fun testAssetLoaderInternalStorageActivity() {
+    fun testAssetLoaderInternalStorageActivity() {
         WebkitTestHelpers.assertHtmlElementContainsText(
             R.id.webview_asset_loader_webview,
             "data_success_msg",
