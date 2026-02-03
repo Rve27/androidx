@@ -19,7 +19,6 @@ package androidx.compose.ui.platform
 import android.view.View
 import androidx.compose.runtime.HostDefaultKey
 import androidx.compose.runtime.HostDefaultProvider
-import androidx.compose.runtime.InternalComposeApi
 import androidx.core.viewtree.getParentOrViewTreeDisjointParent
 
 /**
@@ -31,7 +30,6 @@ import androidx.core.viewtree.getParentOrViewTreeDisjointParent
  * This mimics the behavior of `ViewTreeViewModelStoreOwner.get(view)` and similar APIs but allows
  * access from within the Composition without direct references to those APIs.
  */
-@OptIn(InternalComposeApi::class)
 internal class AndroidHostDefaultProvider(private val view: View) : HostDefaultProvider {
 
     override fun <T> getHostDefault(key: HostDefaultKey<T>): T {

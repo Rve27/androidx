@@ -426,13 +426,13 @@ package androidx.compose.runtime {
     property @IdRes public int id;
   }
 
-  @SuppressCompatibility @androidx.compose.runtime.InternalComposeApi public interface HostDefaultProvider {
+  public interface HostDefaultProvider {
     method public <T> T getHostDefault(androidx.compose.runtime.HostDefaultKey<T> key);
   }
 
-  @SuppressCompatibility public final class HostDefaultProviderKt {
-    method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.runtime.InternalComposeApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.runtime.HostDefaultProvider> getLocalHostDefaultProvider();
-    property @SuppressCompatibility @androidx.compose.runtime.InternalComposeApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.runtime.HostDefaultProvider> LocalHostDefaultProvider;
+  public final class HostDefaultProviderKt {
+    method @InaccessibleFromKotlin public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.runtime.HostDefaultProvider> getLocalHostDefaultProvider();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.runtime.HostDefaultProvider> LocalHostDefaultProvider;
   }
 
   public final class HotReloaderKt {
