@@ -172,7 +172,8 @@ import java.util.concurrent.Executor;
         mPlatformMediaRouter1RouteProvider =
                 PlatformMediaRouter1RouteProvider.obtain(mApplicationContext, this);
 
-        if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA
+                && Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1
                 && Flags.getBooleanFlagValue(
                         MediaRouterFlags.NAMESPACE, MediaRouterFlags.ENABLE_SUGGESTED_DEVICE_API)
                 && mMr2Provider != null) {
