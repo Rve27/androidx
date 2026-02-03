@@ -23,6 +23,7 @@ import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiObject2
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,7 +39,8 @@ class SeekableTransitionInterruptMacrobenchmark {
 
     @OptIn(ExperimentalMetricApi::class)
     @Test
-    fun clickInterrupt() =
+    fun clickInterrupt() {
+        lateinit var button: UiObject2
         benchmarkRule.measureRepeated(
             packageName = "androidx.compose.animation.benchmark.target",
             metrics = listOf(FrameTimingMetric(), MemoryUsageMetric(MemoryUsageMetric.Mode.Max)),
@@ -48,13 +50,13 @@ class SeekableTransitionInterruptMacrobenchmark {
             setupBlock = {
                 pressHome()
                 startActivityAndWait()
+                val buttonText = "interrupt animation w/ seekTo"
+                button = device.findObject(By.text(buttonText))
             },
         ) {
-            val buttonText = "interrupt animation w/ seekTo"
-            val button = device.findObject(By.text(buttonText))
-
             button.click()
 
             device.waitForIdle()
         }
+    }
 }

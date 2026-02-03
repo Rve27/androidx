@@ -88,7 +88,7 @@ fun SeekableTransitionInterruptDemo() {
 
                     delay(500)
 
-                    seekableState.seekTo(fraction = 0.5f, targetState = isToggled)
+                    seekableState.seekTo(fraction = 0.3f, targetState = isToggled)
 
                     animationJob.cancel()
                 }
