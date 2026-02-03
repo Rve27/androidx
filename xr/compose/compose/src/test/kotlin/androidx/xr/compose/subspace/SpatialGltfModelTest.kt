@@ -40,6 +40,7 @@ import androidx.xr.compose.subspace.semantics.testTag
 import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.assertDepthIsEqualTo
 import androidx.xr.compose.testing.assertHeightIsEqualTo
+import androidx.xr.compose.testing.assertPositionInRootIsEqualTo
 import androidx.xr.compose.testing.assertPositionIsEqualTo
 import androidx.xr.compose.testing.assertWidthIsEqualTo
 import androidx.xr.compose.testing.configureFakeSession
@@ -57,6 +58,7 @@ import androidx.xr.scenecore.runtime.GltfModelResource
 import androidx.xr.scenecore.runtime.RenderingRuntime
 import androidx.xr.scenecore.scene
 import androidx.xr.scenecore.testing.FakeGltfEntity
+import androidx.xr.scenecore.testing.FakeGltfModelNodeFeature
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.SettableFuture
 import java.nio.file.Paths
@@ -1240,5 +1242,93 @@ class SpatialGltfModelTest {
                     ?.getAlpha()
             )
             .isEqualTo(0.5f)
+    }
+
+    @Test
+    fun spatialModel_withContent_composesContent() {
+        composeTestRule.setContent {
+            Subspace {
+                SpatialGltfModel(
+                    state =
+                        rememberSpatialGltfModelState(
+                            source = SpatialGltfModelSource.fromPath(Paths.get("asset.glb"))
+                        ),
+                    modifier = SubspaceModifier.testTag("model"),
+                ) {
+                    SpatialPanel(modifier = SubspaceModifier.testTag("child")) {}
+                }
+            }
+        }
+
+        composeTestRule.onSubspaceNodeWithTag("model").assertExists()
+        composeTestRule.onSubspaceNodeWithTag("child").assertExists()
+    }
+
+    @Test
+    fun state_nodes_arePopulatedAfterLoad() {
+        val settableFuture = SettableFuture.create<GltfModelResource>()
+        val state =
+            SpatialGltfModelState(source = SpatialGltfModelSource.fromPath(Paths.get("asset.glb")))
+
+        val fakeRtNode = FakeGltfModelNodeFeature(name = "TestNode")
+
+        composeTestRule.configureFakeSession(
+            renderingRuntime = { runtime ->
+                object : RenderingRuntime by runtime {
+                    override suspend fun loadGltfByAssetName(assetName: String): GltfModelResource =
+                        settableFuture.await()
+
+                    override fun createGltfEntity(
+                        pose: Pose,
+                        loadedGltf: GltfModelResource,
+                        parentEntity: Entity?,
+                    ): GltfEntity {
+                        return object : FakeGltfEntity() {
+                            override val nodes = listOf(fakeRtNode)
+                        }
+                    }
+                }
+            }
+        )
+
+        composeTestRule.setContent {
+            Subspace {
+                SpatialGltfModel(state = state, modifier = SubspaceModifier.testTag("model"))
+            }
+        }
+
+        assertThat(state.nodes).isEmpty()
+
+        settableFuture.set(object : GltfModelResource {})
+        composeTestRule.waitForIdle()
+
+        assertThat(state.nodes).hasSize(1)
+        assertThat(state.nodes.first().name).isEqualTo("TestNode")
+    }
+
+    @Test
+    fun spatialModel_withContent_centersContentByDefault() {
+
+        composeTestRule.setContent {
+            Subspace {
+                // Create a model with a fixed size of 200.dp
+                SpatialGltfModel(
+                    state =
+                        rememberSpatialGltfModelState(
+                            source = SpatialGltfModelSource.fromPath(Paths.get("asset.glb"))
+                        ),
+                    modifier = SubspaceModifier.testTag("model").size(200.dp),
+                ) {
+                    // Place a smaller child (50.dp) inside it
+                    SpatialPanel(modifier = SubspaceModifier.testTag("child").size(50.dp)) {}
+                }
+            }
+        }
+
+        // Since the parent (model) is at the root (0,0,0) and the child is centered
+        // by default, the child's center should also be at (0,0,0).
+        composeTestRule
+            .onSubspaceNodeWithTag("child")
+            .assertPositionInRootIsEqualTo(0.dp, 0.dp, 0.dp)
     }
 }
