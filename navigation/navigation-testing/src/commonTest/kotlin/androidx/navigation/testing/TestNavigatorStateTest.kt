@@ -32,16 +32,13 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.SupportingPane
 import androidx.navigation.navOptions
-import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class TestNavigatorStateTest {
-    private lateinit var state: TestNavigatorState
+@IgnoreAndroidHostTest // Runs on all targets EXCEPT AndroidHost; still runs on AndroidDevice.
+internal class TestNavigatorStateTest {
 
-    @BeforeTest
-    fun setUp() {
-        state = TestNavigatorState()
-    }
+    @OptIn(ExperimentalCoroutinesApi::class) private val state = TestNavigatorState()
 
     @Test
     fun testLifecycle() {
