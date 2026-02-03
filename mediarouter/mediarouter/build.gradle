@@ -41,7 +41,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.1.0")
     implementation("androidx.appcompat:appcompat-resources:1.2.0")
 
-    implementation(project(":annotation:annotation"))
+    implementation("androidx.annotation:annotation:1.9.1")
 
     testImplementation(libs.junit)
     testImplementation(libs.testCore)
