@@ -297,6 +297,10 @@ abstract interface androidx.compose.runtime/FloatState : androidx.compose.runtim
         open fun <get-value>(): kotlin/Float // androidx.compose.runtime/FloatState.value.<get-value>|<get-value>(){}[0]
 }
 
+abstract interface androidx.compose.runtime/HostDefaultProvider { // androidx.compose.runtime/HostDefaultProvider|null[0]
+    abstract fun <#A1: kotlin/Any?> getHostDefault(androidx.compose.runtime/HostDefaultKey<#A1>): #A1 // androidx.compose.runtime/HostDefaultProvider.getHostDefault|getHostDefault(androidx.compose.runtime.HostDefaultKey<0:0>){0§<kotlin.Any?>}[0]
+}
+
 abstract interface androidx.compose.runtime/IntState : androidx.compose.runtime/State<kotlin/Int> { // androidx.compose.runtime/IntState|null[0]
     abstract val intValue // androidx.compose.runtime/IntState.intValue|{}intValue[0]
         abstract fun <get-intValue>(): kotlin/Int // androidx.compose.runtime/IntState.intValue.<get-intValue>|<get-intValue>(){}[0]
@@ -1179,6 +1183,8 @@ final val androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_Para
 final val androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_SourceInformation$stableprop // androidx.compose.runtime.tooling/androidx_compose_runtime_tooling_SourceInformation$stableprop|#static{}androidx_compose_runtime_tooling_SourceInformation$stableprop[0]
 final val androidx.compose.runtime/DefaultMonotonicFrameClock // androidx.compose.runtime/DefaultMonotonicFrameClock|{}DefaultMonotonicFrameClock[0]
     final fun <get-DefaultMonotonicFrameClock>(): androidx.compose.runtime/MonotonicFrameClock // androidx.compose.runtime/DefaultMonotonicFrameClock.<get-DefaultMonotonicFrameClock>|<get-DefaultMonotonicFrameClock>(){}[0]
+final val androidx.compose.runtime/LocalHostDefaultProvider // androidx.compose.runtime/LocalHostDefaultProvider|{}LocalHostDefaultProvider[0]
+    final fun <get-LocalHostDefaultProvider>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.runtime/HostDefaultProvider> // androidx.compose.runtime/LocalHostDefaultProvider.<get-LocalHostDefaultProvider>|<get-LocalHostDefaultProvider>(){}[0]
 final val androidx.compose.runtime/androidx_compose_runtime_AbstractApplier$stableprop // androidx.compose.runtime/androidx_compose_runtime_AbstractApplier$stableprop|#static{}androidx_compose_runtime_AbstractApplier$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_BroadcastFrameClock$stableprop // androidx.compose.runtime/androidx_compose_runtime_BroadcastFrameClock$stableprop|#static{}androidx_compose_runtime_BroadcastFrameClock$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_ComposeRuntimeFlags$stableprop // androidx.compose.runtime/androidx_compose_runtime_ComposeRuntimeFlags$stableprop|#static{}androidx_compose_runtime_ComposeRuntimeFlags$stableprop[0]

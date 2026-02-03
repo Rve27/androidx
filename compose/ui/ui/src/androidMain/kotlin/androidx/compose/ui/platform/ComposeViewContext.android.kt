@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LocalHostDefaultProvider
 import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.mutableStateOf
@@ -220,7 +219,7 @@ internal class ComposeViewContext(
     }
 
     /** Provide common CompositionLocals. */
-    @OptIn(InternalComposeApi::class, ExperimentalComposeUiApi::class)
+    @OptIn(ExperimentalComposeUiApi::class)
     @Suppress("DEPRECATION")
     @Composable
     internal fun ProvideCompositionLocals(

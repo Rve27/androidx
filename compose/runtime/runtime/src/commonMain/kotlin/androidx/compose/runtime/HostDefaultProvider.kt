@@ -22,7 +22,6 @@ package androidx.compose.runtime
  * This is intended for internal usage by [compositionLocalWithHostDefaultOf] to resolve values from
  * the hosting environment (e.g., `android.view.View`).
  */
-@InternalComposeApi
 public val LocalHostDefaultProvider: ProvidableCompositionLocal<HostDefaultProvider> =
     compositionLocalOf {
         error("CompositionLocal LocalHostDefaultProvider not present")
@@ -36,7 +35,6 @@ public val LocalHostDefaultProvider: ProvidableCompositionLocal<HostDefaultProvi
  * platform-specific components (like `LifecycleOwner` or `ViewModelStoreOwner`) without depending
  * directly on platform artifacts (e.g., `android.view.View`).
  */
-@InternalComposeApi
 public interface HostDefaultProvider {
 
     /**
