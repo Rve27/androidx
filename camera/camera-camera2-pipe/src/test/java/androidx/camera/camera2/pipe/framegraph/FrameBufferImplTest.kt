@@ -878,6 +878,88 @@ class FrameBufferImplTest {
             assertThat(acquiredFrame.isClosed()).isFalse()
         }
 
+    @Test
+    fun setCapacity_increaseCapacity_doesNotEvictFrames() =
+        testScope.runTest {
+            val frame1 = createTestFrame(1)
+            val frame2 = createTestFrame(2)
+            val frame3 = createTestFrame(3)
+            frameBuffer.onFrameStarted(frame1)
+            frameBuffer.onFrameStarted(frame2)
+            frameBuffer.onFrameStarted(frame3)
+            val newCapacity = 4
+
+            frameBuffer.capacity = newCapacity
+
+            assertThat(frameBuffer.size.value).isEqualTo(defaultCapacity)
+            assertThat(frameBuffer.capacity).isEqualTo(newCapacity)
+            assertThat(frameBuffer.peekFirstReference()?.frameNumber?.value).isEqualTo(1L)
+
+            frame1.close()
+            frame2.close()
+            frame3.close()
+        }
+
+    @Test
+    fun setCapacity_sameCapacity_doesNothing() =
+        testScope.runTest {
+            val frame1 = createTestFrame(1)
+            val frame2 = createTestFrame(2)
+            val frame3 = createTestFrame(3)
+            frameBuffer.onFrameStarted(frame1)
+            frameBuffer.onFrameStarted(frame2)
+            frameBuffer.onFrameStarted(frame3)
+
+            frameBuffer.capacity = defaultCapacity
+
+            assertThat(frameBuffer.size.value).isEqualTo(defaultCapacity)
+            assertThat(frameBuffer.capacity).isEqualTo(defaultCapacity)
+
+            frame1.close()
+            frame2.close()
+            frame3.close()
+        }
+
+    @Test
+    fun setCapacity_decreaseCapacity_evictsOldestFrames() =
+        testScope.runTest {
+            val frame1 = createTestFrame(1)
+            val frame2 = createTestFrame(2)
+            val frame3 = createTestFrame(3)
+            frameBuffer.onFrameStarted(frame1)
+            frameBuffer.onFrameStarted(frame2)
+            frameBuffer.onFrameStarted(frame3)
+            advanceUntilIdle()
+            val newCapacity = 2
+
+            frameBuffer.capacity = newCapacity
+            advanceUntilIdle()
+
+            assertThat(frameBuffer.size.value).isEqualTo(newCapacity)
+            assertThat(frameBuffer.capacity).isEqualTo(newCapacity)
+            assertThat(frameBuffer.peekFirstReference()?.frameNumber?.value).isEqualTo(2L)
+
+            frame1.close()
+            frame2.close()
+            frame3.close()
+        }
+
+    @Test
+    fun setCapacity_afterClose_doesNothing() =
+        testScope.runTest {
+            val frame1 = createTestFrame(1)
+            frameBuffer.onFrameStarted(frame1)
+            frameBuffer.close()
+            advanceUntilIdle()
+            val newCapacity = 5
+
+            frameBuffer.capacity = newCapacity
+
+            assertThat(frameBuffer.capacity).isEqualTo(defaultCapacity)
+
+            frame1.close()
+        }
+
     @After
     fun cleanup() {
         fakeSurfaces.close()

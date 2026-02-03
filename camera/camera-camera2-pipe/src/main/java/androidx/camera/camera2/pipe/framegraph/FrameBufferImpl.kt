@@ -34,7 +34,7 @@ internal class FrameBufferImpl(
     private val frameGraphBuffers: FrameGraphBuffers,
     override val streams: Set<StreamId>,
     override val parameters: Map<Any, Any?>,
-    override val capacity: Int,
+    capacity: Int,
 ) : FrameBuffer, FrameDistributor.FrameStartedListener {
     // This sealed class is used to model the two possible outcomes of a frame acquisition attempt.
     // If a frame was successfully acquired, we should close it at an appropriate time.
@@ -47,7 +47,7 @@ internal class FrameBufferImpl(
 
     private val lock = Any()
 
-    @GuardedBy("lock") private val frameQueue: ArrayDeque<BufferEntry> = ArrayDeque(capacity)
+    @GuardedBy("lock") private var frameQueue: ArrayDeque<BufferEntry> = ArrayDeque(capacity)
 
     @GuardedBy("lock") private var closed = false
 
@@ -65,6 +65,39 @@ internal class FrameBufferImpl(
 
     private val _size = MutableStateFlow(0)
     override val size: StateFlow<Int> = _size.asStateFlow()
+
+    override var capacity: Int = capacity
+        set(newCapacity) {
+            require(newCapacity >= 0) { "Capacity cannot be negative" }
+
+            val framesToClose: MutableList<Frame> = mutableListOf()
+            synchronized(lock) {
+                if (closed) {
+                    return
+                }
+
+                val previousCapacity = field
+
+                if (newCapacity == previousCapacity) return
+
+                field = newCapacity
+
+                val currentSize = frameQueue.size
+                if (newCapacity < currentSize) {
+                    val numToTrim = currentSize - newCapacity
+                    repeat(numToTrim) {
+                        val evictedItem = frameQueue.removeFirst()
+                        (evictedItem as? BufferEntry.WithFrame)?.let { framesToClose.add(it.frame) }
+                    }
+                    // Trim the memory of the ArrayDeque to fit the new smaller capacity
+                    val newFrameQueue: ArrayDeque<BufferEntry> = ArrayDeque(frameQueue)
+                    frameQueue = newFrameQueue
+                }
+                _size.value = frameQueue.size
+            }
+
+            framesToClose.forEach { it.close() }
+        }
 
     override fun onFrameStarted(frameReference: FrameReference) {
         // If capacity is 0, emit the reference and exit early.
