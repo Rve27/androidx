@@ -207,8 +207,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
     }
 
-    // Required to disable any animation while performing screenshot tests
-    @VisibleForTesting internal var areAnimationsEnabled: Boolean = true
+    // Required to disable any animation while performing espresso/screenshot tests
+    @VisibleForTesting
+    internal var areAnimationsEnabled: Boolean = true
+        set(value) {
+            field = value
+            toolbarTouchHandler.areAnimationsEnabled = value
+        }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.annotation_toolbar, this, true)

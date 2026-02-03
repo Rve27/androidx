@@ -34,6 +34,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
+import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.ink.authoring.InProgressStrokeId
@@ -211,7 +212,8 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private lateinit var wetStrokesViewTouchHandler: WetStrokesViewTouchHandler
     private lateinit var pdfContentLayoutTouchListener: PdfContentLayoutTouchListener
-    private lateinit var annotationToolbar: AnnotationToolbar
+
+    @VisibleForTesting internal lateinit var annotationToolbar: AnnotationToolbar
 
     private lateinit var toolbarCoordinator: ToolbarCoordinator
     private lateinit var pdfLoaderHandle: PdfSandboxHandle
