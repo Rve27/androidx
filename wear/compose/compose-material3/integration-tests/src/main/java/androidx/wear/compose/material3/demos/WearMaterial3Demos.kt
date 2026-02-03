@@ -286,6 +286,7 @@ val WearMaterial3Demos =
                         ComposableDemo("Custom container CompositingStrategy") {
                             CustomCompositingStrategyTransformationSpecSample()
                         },
+                        ComposableDemo("Snapping behavior") { TransformingLazyColumnSnappingDemo() },
                     ),
                 ),
                 ComposableDemo("Text Block") { TextBlockDemo() },
