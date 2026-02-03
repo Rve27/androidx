@@ -76,6 +76,10 @@ androidx {
     description = "Leverage graphics facilities across multiple Android platform releases"
     legacyDisableKotlinStrictApiMode = true
     samples(project(":graphics:graphics-core:graphics-core-samples"))
+    deviceTests {
+        enableAlsoRunningOnPhysicalDevices = true
+    }
+    additionalDeviceTestTags.add("graphics_core")
 }
 
 //TODO(b/407725443): Remove this block when CanvasBufferedRendererTests and CanvasFrontBufferedRendererTest pass on API Level 21
