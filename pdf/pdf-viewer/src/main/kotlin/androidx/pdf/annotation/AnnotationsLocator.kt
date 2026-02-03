@@ -26,6 +26,7 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.pdf.annotation.AnnotationsView.PageAnnotationsData
 import androidx.pdf.annotation.models.PathPdfObject
+import androidx.pdf.annotation.models.PathPdfObject.PathInput
 import androidx.pdf.annotation.models.PdfAnnotation
 import androidx.pdf.annotation.models.StampAnnotation
 import kotlin.math.ceil
@@ -125,9 +126,12 @@ internal class AnnotationsLocator(
                         if (pdfObject is PathPdfObject) {
                             val path =
                                 Path().apply {
-                                    pdfObject.inputs.forEachIndexed { index, input ->
-                                        if (index == 0) moveTo(input.x, input.y)
-                                        else lineTo(input.x, input.y)
+                                    pdfObject.inputs.forEach { pathInput ->
+                                        if (pathInput.command == PathInput.MOVE_TO) {
+                                            moveTo(pathInput.x, pathInput.y)
+                                        } else if (pathInput.command == PathInput.LINE_TO) {
+                                            lineTo(pathInput.x, pathInput.y)
+                                        }
                                     }
                                 }
 
