@@ -98,27 +98,15 @@ androidXMultiplatform {
         nonJvmMain.dependencies {
             implementation(libs.atomicFu)
         }
-        webTest.dependencies {
-            implementation(libs.kotlinCoroutinesTest)
-            implementation(project(":kruth:kruth"))
-            implementation(project(":internal-testutils-navigation"))
-        }
+
         wasmJsMain.dependencies {
             implementation(libs.kotlinXw3c)
-        }
-        wasmJsTest {
-            kotlin.srcDirs("src/jsTest/kotlin")
         }
 
         nonAndroidMain.dependsOn(commonMain)
         desktopMain.dependsOn(nonAndroidMain)
         nativeMain.dependsOn(nonAndroidMain)
         webMain.dependsOn(nonAndroidMain)
-
-        nonAndroidTest.dependsOn(commonTest)
-        desktopTest.dependsOn(nonAndroidTest)
-        nativeTest.dependsOn(nonAndroidTest)
-        webTest.dependsOn(nonAndroidTest)
     }
 }
 
