@@ -26,6 +26,7 @@ import androidx.camera.camera2.pipe.FrameInfo
 import androidx.camera.camera2.pipe.FrameNumber
 import androidx.camera.camera2.pipe.FrameReference
 import androidx.camera.camera2.pipe.ImageSourceConfig
+import androidx.camera.camera2.pipe.OutputId
 import androidx.camera.camera2.pipe.OutputStatus
 import androidx.camera.camera2.pipe.OutputStream
 import androidx.camera.camera2.pipe.Request
@@ -210,12 +211,13 @@ internal class FrameDistributor(
     override fun onBufferLost(
         requestMetadata: RequestMetadata,
         frameNumber: FrameNumber,
-        stream: StreamId,
+        streamId: StreamId,
+        outputId: OutputId,
     ) {
         // Tell the specific image distributor for this stream that the output has failed and will
         // not arrive for this frame. When onBufferLost occurs, other images and metadata may still
         // complete successfully.
-        imageDistributors[stream]?.onOutputFailure(frameNumber)
+        imageDistributors[streamId]?.onOutputFailure(frameNumber)
     }
 
     override fun onFailed(
