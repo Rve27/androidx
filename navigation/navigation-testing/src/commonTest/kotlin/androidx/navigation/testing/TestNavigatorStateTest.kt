@@ -47,6 +47,46 @@ class TestNavigatorStateTest {
     }
 
     @Test
+    fun testLifecycle() {
+        val navigator = TestNavigator()
+        navigator.onAttach(state)
+        val firstEntry = state.createBackStackEntry(navigator.createDestination(), null)
+        assertThat(firstEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.INITIALIZED)
+
+        navigator.navigate(listOf(firstEntry), null, null)
+        assertThat(firstEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
+
+        val secondEntry = state.createBackStackEntry(navigator.createDestination(), null)
+        navigator.navigate(listOf(secondEntry), null, null)
+        assertThat(firstEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.CREATED)
+        assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
+
+        navigator.popBackStack(secondEntry, false)
+        assertThat(firstEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
+        assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.DESTROYED)
+    }
+
+    @Test
+    fun testFloatingWindowLifecycle() {
+        val navigator = FloatingWindowTestNavigator()
+        navigator.onAttach(state)
+        val firstEntry = state.createBackStackEntry(navigator.createDestination(), null)
+        assertThat(firstEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.INITIALIZED)
+
+        navigator.navigate(listOf(firstEntry), null, null)
+        assertThat(firstEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
+
+        val secondEntry = state.createBackStackEntry(navigator.createDestination(), null)
+        navigator.navigate(listOf(secondEntry), null, null)
+        assertThat(firstEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.STARTED)
+        assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
+
+        navigator.popBackStack(secondEntry, false)
+        assertThat(firstEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
+        assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.DESTROYED)
+    }
+
+    @Test
     fun testSupportingPaneLifecycle() {
         val navigator = SupportingPaneTestNavigator()
         navigator.onAttach(state)
