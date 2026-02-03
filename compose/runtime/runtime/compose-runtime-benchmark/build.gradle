@@ -28,7 +28,12 @@ android {
     namespace = "androidx.compose.runtime.benchmark"
 
     buildTypes.release {
-        androidTest.enableMinification = true
+        androidTest {
+            testProguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
+            enableMinification = true
+        }
     }
 }
 
