@@ -2,14 +2,19 @@
 package androidx.test.shell {
 
   public final class Shell {
-    method public androidx.test.shell.command.ApplicationCommands application();
     method public androidx.test.shell.Shell.CommandOutput command(String command);
+    method @InaccessibleFromKotlin public androidx.test.shell.command.ApplicationCommands getApplication();
+    method @InaccessibleFromKotlin public androidx.test.shell.command.ProcessCommands getProcess();
+    method @InaccessibleFromKotlin public androidx.test.shell.command.RecorderCommands getRecorder();
+    method @InaccessibleFromKotlin public androidx.test.shell.command.ScreenCommands getScreen();
+    method @InaccessibleFromKotlin public androidx.test.shell.command.WifiCommands getWifi();
     method public androidx.test.shell.command.PermissionCommands permission(String packageName);
-    method public androidx.test.shell.command.ProcessCommands process();
-    method public androidx.test.shell.command.RecorderCommands recorder();
-    method public androidx.test.shell.command.ScreenCommands screen();
     method public void setShellServer(androidx.test.shell.ShellServer shellServer);
-    method public androidx.test.shell.command.WifiCommands wifi();
+    property public androidx.test.shell.command.ApplicationCommands application;
+    property public androidx.test.shell.command.ProcessCommands process;
+    property public androidx.test.shell.command.RecorderCommands recorder;
+    property public androidx.test.shell.command.ScreenCommands screen;
+    property public androidx.test.shell.command.WifiCommands wifi;
     field public static final androidx.test.shell.Shell INSTANCE;
   }
 
