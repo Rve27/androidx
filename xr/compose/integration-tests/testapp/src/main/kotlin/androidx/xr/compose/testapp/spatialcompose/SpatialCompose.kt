@@ -212,6 +212,7 @@ class SpatialCompose : ComponentActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @Composable
     @SubspaceComposable
     fun PanelGrid() {
@@ -289,6 +290,7 @@ class SpatialCompose : ComponentActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @SubspaceComposable
     @Composable
     fun AppPanel(modifier: SubspaceModifier = SubspaceModifier, text: String = "") {
@@ -348,6 +350,7 @@ class SpatialCompose : ComponentActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @Composable
     fun PanelContent(content: @Composable () -> Unit) {
         var showArrows by remember { mutableStateOf(false) }

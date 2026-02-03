@@ -180,6 +180,7 @@ class SpatialComposeStateTest : ComponentActivity() {
     }
 }
 
+@Suppress("DEPRECATION")
 @Composable
 fun CounterOrbiter() {
     Orbiter(

@@ -180,6 +180,7 @@ class DepthMapActivity : ComponentActivity(), GLSurfaceView.Renderer {
         }
     }
 
+    @Suppress("DEPRECATION")
     @Composable
     fun DepthMapPanel(view: View) {
         Subspace {
