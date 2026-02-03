@@ -52,7 +52,7 @@ private constructor(
 
         internal fun InfiniteTransitionSearchInfo.parse(): InfiniteTransitionComposeAnimation? {
             if (!apiAvailable) return null
-            return InfiniteTransitionComposeAnimation(toolingState, infiniteTransition)
+            return InfiniteTransitionComposeAnimation(toolingOverride.state, infiniteTransition)
         }
 
         /** This method is for testing only. */

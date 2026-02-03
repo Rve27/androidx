@@ -244,13 +244,15 @@ internal class AnimationSearch(
                     val infiniteTransition = it.findData<InfiniteTransition>()
                     val toolingOverride = findToolingOverride(it)
                     if (infiniteTransition != null && toolingOverride != null) {
-                        if (toolingOverride.value == null) {
-                            toolingOverride.value = ToolingState(0L)
-                        }
+
+                        val toolingState =
+                            toolingOverride.value as? ToolingState<Long> ?: ToolingState(0L)
+
                         InfiniteTransitionSearchInfo(
-                            infiniteTransition,
-                            (toolingOverride.value as? ToolingState<Long>) ?: ToolingState(0L),
-                        )
+                                infiniteTransition,
+                                ToolingOverride(override = toolingOverride, state = toolingState),
+                            )
+                            .apply { this.attach() }
                     } else null
                 }
         }
@@ -307,16 +309,19 @@ internal class AnimationSearch(
                     val animatable = findAnimatable<T>(it)
                     val spec = findAnimationSpec<T>(it)
                     val toolingOverride = findToolingOverride<T>(it)
+
                     if (animatable != null && spec != null && toolingOverride != null) {
-                        if (toolingOverride.value == null) {
-                            toolingOverride.value = ToolingState(animatable.value)
-                        }
-                        AnimateXAsStateSearchInfo(
-                            animatable,
-                            spec,
+
+                        val toolingState =
                             (toolingOverride.value as? ToolingState<T>)
-                                ?: ToolingState(animatable.value),
-                        )
+                                ?: ToolingState(animatable.value)
+
+                        AnimateXAsStateSearchInfo(
+                                animatable,
+                                spec,
+                                ToolingOverride(override = toolingOverride, state = toolingState),
+                            )
+                            .apply { this.attach() }
                     } else null
                 }
         }

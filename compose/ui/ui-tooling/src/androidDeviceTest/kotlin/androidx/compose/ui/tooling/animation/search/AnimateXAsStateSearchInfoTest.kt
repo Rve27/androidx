@@ -18,14 +18,17 @@ package androidx.compose.ui.tooling.animation.search
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.runtime.State
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.tooling.animation.AnimationSearch
+import androidx.compose.ui.tooling.animation.ToolingState
 import androidx.compose.ui.tooling.animation.Utils.addAnimations
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,6 +51,36 @@ class AnimateXAsStateSearchInfoTest {
             animation!!
             val clock = searchInfo.createClock(animation)
             assertNotNull(clock)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Test
+    fun attachAndDetachOverride() {
+        val search = AnimationSearch.AnimateXAsStateSearch {}
+        lateinit var animatedValue: State<Int>
+        rule.addAnimations(search) { animatedValue = animateIntAsState(1) }
+        assertEquals(1, search.animations.size)
+
+        search.animations.first().let { searchInfo ->
+            // Default attached values
+            assertNotNull(searchInfo.toolingOverride.override.value)
+            assertEquals(1, searchInfo.toolingOverride.state.value)
+            assertEquals(1, searchInfo.toolingOverride.override.value?.value)
+            assertEquals(1, animatedValue.value)
+
+            // Detach
+            searchInfo.detach()
+            assertNull(searchInfo.toolingOverride.override.value)
+
+            // Attach and change value
+            searchInfo.attach()
+            (searchInfo.toolingOverride.state as ToolingState<Int>).value = 10
+            rule.waitForIdle()
+            assertNotNull(searchInfo.toolingOverride.override.value)
+            assertEquals(10, searchInfo.toolingOverride.state.value)
+            assertEquals(10, searchInfo.toolingOverride.override.value?.value)
+            assertEquals(10, animatedValue.value)
         }
     }
 }

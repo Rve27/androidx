@@ -44,4 +44,13 @@ internal interface SearchInfo<
 
     /** Create [ComposeAnimationClock] for target [AnimationType]. */
     fun createClock(animation: AnimationType): ClockType
+
+    /** Attach [SearchInfo]'s overrides to allow tooling control animation values. */
+    fun attach() {}
+
+    /**
+     * Detach [SearchInfo]'s overrides previously attached in [attach] and let animation play
+     * without intervention from tooling.
+     */
+    fun detach() {}
 }
