@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.OutputId
 import androidx.camera.camera2.pipe.StreamId
+import androidx.camera.camera2.pipe.StrictMode
 import androidx.camera.camera2.pipe.compat.OutputConfigurationWrapper.Companion.SURFACE_GROUP_ID_NONE
 import androidx.camera.camera2.pipe.config.Camera2ControllerScope
 import androidx.camera.camera2.pipe.core.HandlerExecutor
@@ -300,6 +301,7 @@ constructor(
     private val graphConfig: CameraGraph.Config,
     private val streamGraph: StreamGraphImpl,
     private val camera2MetadataProvider: Camera2MetadataProvider,
+    private val strictMode: StrictMode,
 ) : CaptureSessionFactory {
     override fun create(
         cameraDevice: CameraDeviceWrapper,
@@ -324,18 +326,18 @@ constructor(
 
         check(graphConfig.input == null) { "Reprocessing is not supported for Extensions" }
 
+        // On certain platforms, supported extensions may return an empty list, but said
+        // extension mode may actually be supported. See b/477805428 for an example.
         val cameraMetadata = camera2MetadataProvider.awaitCameraMetadata(cameraDevice.cameraId)
-
         val supportedExtensions = cameraMetadata.supportedExtensions
-
-        check(extensionMode in supportedExtensions) {
+        strictMode.check(extensionMode in supportedExtensions) {
             "$cameraDevice does not support extension mode $extensionMode. Supported " +
-                "extensions are ${supportedExtensions.stream()}"
+                "extensions are $supportedExtensions"
         }
 
         if (graphConfig.postviewStream != null) {
             val cameraExtensionMetadata = cameraMetadata.awaitExtensionMetadata(extensionMode)
-            check(cameraExtensionMetadata.isPostviewSupported) {
+            strictMode.check(cameraExtensionMetadata.isPostviewSupported) {
                 "$cameraDevice does not support Postview streams"
             }
             check(graphConfig.postviewStream.outputs.size == 1) {
