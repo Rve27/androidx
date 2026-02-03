@@ -39,6 +39,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.R
 import androidx.compose.ui.res.ImageVectorCache
 import androidx.compose.ui.res.ResourceIdCache
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -123,8 +125,21 @@ internal class ComposeViewContext(
     internal var viewCount = 0
         private set
 
+    /**
+     * Used only for testing to set the window size. The window size is calculated based on platform
+     * values that can't be directly modified, so a test value must be set to allow testing window
+     * size configuration changes.
+     */
+    @get:VisibleForTesting internal var testWindowSize: IntSize = IntSize.Zero
+
     /** Used for recalculating the window size whenever there is a change to the Window. */
-    private val calculateWindowSizeLambda = { calculateWindowSize(view) }
+    private val calculateWindowSizeLambda = {
+        if (testWindowSize == IntSize.Zero) {
+            calculateWindowSize(view)
+        } else {
+            DerivedSize.fromPxSize(testWindowSize, Density(view.context))
+        }
+    }
 
     /**
      * A single callback that handles observing configuration changes, memory calls, window focus
