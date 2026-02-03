@@ -18,6 +18,7 @@ package androidx.camera.camera2.pipe.media
 
 import android.hardware.camera2.MultiResolutionImageReader
 import android.hardware.camera2.params.MultiResolutionStreamInfo
+import android.hardware.camera2.params.OutputConfiguration
 import android.media.ImageReader
 import android.os.Build
 import android.os.Handler
@@ -25,6 +26,7 @@ import android.view.Surface
 import androidx.annotation.RequiresApi
 import androidx.camera.camera2.pipe.CameraStream
 import androidx.camera.camera2.pipe.OutputId
+import androidx.camera.camera2.pipe.OutputStream
 import androidx.camera.camera2.pipe.PlatformApiCompat
 import androidx.camera.camera2.pipe.StreamFormat
 import androidx.camera.camera2.pipe.StreamId
@@ -204,7 +206,9 @@ public class AndroidMultiResolutionImageReader(
     private val streamFormat: StreamFormat,
     override val capacity: Int,
     private val streamId: StreamId,
-    private val outputIdMap: Map<MultiResolutionStreamInfo, OutputId>,
+    internal val outputConfigurations: List<OutputConfiguration>,
+    private val streamInfoToOutputIdMap: Map<MultiResolutionStreamInfo, OutputId>,
+    private val surfaceToOutputIdMap: Map<Surface, OutputId>,
 ) : ImageReaderWrapper, ImageReader.OnImageAvailableListener {
     private val onImageListener = atomic<ImageReaderWrapper.OnImageListener?>(null)
 
@@ -230,7 +234,7 @@ public class AndroidMultiResolutionImageReader(
             // up in the outputMap that was used to create the MultiResolutionImageReader.
             val streamInfo = multiResolutionImageReader.getStreamInfoForImageReader(reader)
             val outputId =
-                checkNotNull(outputIdMap[streamInfo]) {
+                checkNotNull(streamInfoToOutputIdMap[streamInfo]) {
                     "$this: Failed to find OutputId for $reader based on streamInfo $streamInfo!"
                 }
 
@@ -254,13 +258,14 @@ public class AndroidMultiResolutionImageReader(
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> unwrapAs(type: KClass<T>): T? =
         when (type) {
+            AndroidMultiResolutionImageReader::class -> this as T?
             MultiResolutionImageReader::class -> multiResolutionImageReader as T?
             else -> null
         }
 
     override fun toString(): String {
         val sizeString =
-            outputIdMap.keys.joinToString(prefix = "[", postfix = "]") {
+            streamInfoToOutputIdMap.keys.joinToString(prefix = "[", postfix = "]") {
                 "${it.physicalCameraId}:w${it.width}h${it.height}"
             }
         return "MultiResolutionImageReader@${super.hashCode().toString(16)}" +
@@ -273,7 +278,7 @@ public class AndroidMultiResolutionImageReader(
         public fun create(
             outputFormat: Int,
             streamId: StreamId,
-            outputIdMap: Map<MultiResolutionStreamInfo, OutputId>,
+            outputs: List<OutputStream>,
             capacity: Int,
             executor: Executor,
             usageFlags: Long?,
@@ -300,10 +305,17 @@ public class AndroidMultiResolutionImageReader(
                 }
             }
 
+            val streamInfoToOutputIdMap =
+                outputs.associate {
+                    MultiResolutionStreamInfo(it.size.width, it.size.height, it.camera.value) to
+                        it.id
+                }
+            val streamInfos = streamInfoToOutputIdMap.keys
+
             val multiResolutionImageReader =
                 if (plaformApiCompat?.isMultiResolutionConcurrentReadersEnabled() == true) {
                     plaformApiCompat.buildMultiResolutionImageReader(
-                        outputIdMap.keys,
+                        streamInfos,
                         outputFormat,
                         capacity,
                         usageFlags,
@@ -312,10 +324,23 @@ public class AndroidMultiResolutionImageReader(
                 } else if (
                     usageFlags != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA
                 ) {
-                    MultiResolutionImageReader(outputIdMap.keys, outputFormat, capacity, usageFlags)
+                    MultiResolutionImageReader(streamInfos, outputFormat, capacity, usageFlags)
                 } else {
-                    MultiResolutionImageReader(outputIdMap.keys, outputFormat, capacity)
+                    MultiResolutionImageReader(streamInfos, outputFormat, capacity)
                 }
+
+            val outputConfigurations =
+                OutputConfiguration.createInstancesForMultiResolutionOutput(
+                        multiResolutionImageReader
+                    )
+                    .toList()
+            check(outputConfigurations.size == outputs.size)
+
+            val surfaceToOutputIdMap = buildMap {
+                for ((outputConfiguration, output) in outputConfigurations.zip(outputs)) {
+                    put(checkNotNull(outputConfiguration.surface), output.id)
+                }
+            }
 
             val androidMultiResolutionImageReader =
                 AndroidMultiResolutionImageReader(
@@ -323,7 +348,9 @@ public class AndroidMultiResolutionImageReader(
                     StreamFormat(outputFormat),
                     capacity,
                     streamId,
-                    outputIdMap,
+                    outputConfigurations,
+                    streamInfoToOutputIdMap,
+                    surfaceToOutputIdMap,
                 )
 
             multiResolutionImageReader.setOnImageAvailableListener(
@@ -343,17 +370,13 @@ public class AndroidMultiResolutionImageReader(
             enableConcurrentOutputs: Boolean,
             platformApiCompat: PlatformApiCompat?,
         ): ImageReaderWrapper {
-            require(cameraStream.outputs.isNotEmpty()) { "$cameraStream outputs cannot be empty!" }
-            val format = cameraStream.outputs.first().format
-            val outputMap =
-                cameraStream.outputs.associate {
-                    MultiResolutionStreamInfo(it.size.width, it.size.height, it.camera.value) to
-                        it.id
-                }
+            val outputs = cameraStream.outputs
+            require(outputs.isNotEmpty()) { "$cameraStream outputs cannot be empty!" }
+            val format = outputs.first().format
             return create(
                 format.value,
                 cameraStream.id,
-                outputMap,
+                outputs,
                 capacity,
                 executor,
                 usageFlags,
