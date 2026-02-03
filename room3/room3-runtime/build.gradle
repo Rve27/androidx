@@ -66,13 +66,6 @@ androidXMultiplatform {
         compilations.withType(KotlinMultiplatformAndroidHostTestCompilation) {
             it.returnDefaultValues = true
         }
-
-        // Needed for api tasks and docs generation
-        sourceSets {
-            androidMain {
-                kotlin.srcDirs += 'src/androidMain/java'
-            }
-        }
     }
     ios() {
         // Link to sqlite3 available in iOS
@@ -132,6 +125,7 @@ androidXMultiplatform {
             dependsOn(nonWebTest)
         }
         androidMain {
+            kotlin.srcDirs += "src/androidMain/java"
             dependencies {
                 api(libs.jspecify)
                 api(project(":sqlite:sqlite-framework"))
