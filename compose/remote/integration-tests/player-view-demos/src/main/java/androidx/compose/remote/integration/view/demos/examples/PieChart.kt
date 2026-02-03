@@ -16,17 +16,27 @@
 
 package androidx.compose.remote.integration.view.demos.examples
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.core.operations.layout.managers.BoxLayout
+import androidx.compose.remote.creation.RFloat
 import androidx.compose.remote.creation.RemoteComposeContextAndroid
 import androidx.compose.remote.creation.RemoteComposeWriter
+import androidx.compose.remote.creation.arrayLength
+import androidx.compose.remote.creation.arraySum
+import androidx.compose.remote.creation.component6
 import androidx.compose.remote.creation.min
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
 import androidx.compose.remote.creation.plus
 import androidx.compose.remote.creation.times
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.component3
+import kotlin.collections.component4
+import kotlin.collections.component5
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -143,4 +153,96 @@ fun demoPieChart(): RemoteComposeContextAndroid {
             }
         }
     return rc
+}
+
+/** A demo that draws a Pie Chart using procedural creation APIs. */
+@Suppress("RestrictedApiAndroidX")
+fun demoPieChart_good(): RemoteComposeContextAndroid {
+    val data = floatArrayOf(30f, 20f, 15f, 25f, 10f)
+    val names = arrayOf("Android", "iOS", "Web", "Desktop", "Other")
+    val rc =
+        RemoteComposeContextAndroid(
+            platform = AndroidxRcPlatformServices(),
+            apiLevel = 7,
+            RemoteComposeWriter.hTag(Header.DOC_WIDTH, 500),
+            RemoteComposeWriter.hTag(Header.DOC_HEIGHT, 500),
+            RemoteComposeWriter.hTag(Header.DOC_CONTENT_DESCRIPTION, "Pie Chart Demo"),
+        ) {
+            root {
+                box(
+                    RecordingModifier().fillMaxSize().background(0xFFF0F0F0.toInt()),
+                    BoxLayout.START,
+                    BoxLayout.START,
+                ) {
+                    canvas(RecordingModifier().fillMaxSize()) {
+                        val w = ComponentWidth()
+                        val h = ComponentHeight()
+                        val cx = w / 2f
+                        val cy = h / 2f
+                        val radius = min(w, h) * 0.4f
+
+                        val values = rf(addFloatArray(data))
+                        val names = addStringList(*names)
+                        val len = arrayLength(values)
+                        val total = arraySum(values)
+
+                        save {
+                            rotate(-90, cx, cy)
+                            loop(0, 1, len) { i ->
+                                val value = values.get(i)
+
+                                val name = textLookup(names, i.toFloat())
+                                val sweepAngle = (value / total) * 360f
+
+                                val colorId =
+                                    getDistributedColor(i, 0xff, 56.6 / 100f, 80 / 100f).toInt()
+
+                                painter.setColorId(colorId).setStyle(Paint.Style.FILL).commit()
+
+                                drawSector(
+                                    cx - radius,
+                                    cy - radius,
+                                    cx + radius,
+                                    cy + radius,
+                                    0,
+                                    sweepAngle,
+                                )
+
+                                // Draw border
+                                painter
+                                    .setColor(Color.WHITE)
+                                    .setStyle(Paint.Style.STROKE)
+                                    .setStrokeWidth(2f)
+                                    .commit()
+
+                                drawSector(
+                                    cx - radius,
+                                    cy - radius,
+                                    cx + radius,
+                                    cy + radius,
+                                    0,
+                                    sweepAngle,
+                                )
+                                rotate(sweepAngle, cx, cy)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    return rc
+}
+
+@SuppressLint("RestrictedApiAndroidX")
+fun RemoteComposeContextAndroid.getDistributedColor(
+    i: RFloat,
+    alpha: Int,
+    sat: Number,
+    value: Number,
+): Short {
+    // The Golden Ratio Conjugate: (1 + sqrt(5)) / 2 - 1 ≈ 0.61803398875
+    // This represents a ~137.5 degree turn on the color wheel.
+    val golden_ratio_conjugate = 0.618033988749895f
+    val hue = (i * golden_ratio_conjugate) % 1.0f
+    return addColorExpression(alpha, hue.toFloat(), sat.toFloat(), value.toFloat())
 }
