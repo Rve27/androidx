@@ -34,12 +34,6 @@ androidXMultiplatform {
     androidLibrary {
         namespace = "androidx.navigation"
         androidResources.enable = true
-        // Needed for api tasks and docs generation
-        sourceSets {
-            androidMain {
-                kotlin.srcDirs += 'src/androidMain/java'
-            }
-        }
     }
     desktop()
     linux()
@@ -65,12 +59,15 @@ androidXMultiplatform {
             implementation(libs.kotlinTest)
         }
 
-        androidMain.dependencies {
-            api("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
-            api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
-            api("androidx.activity:activity-ktx:1.7.1")
-            api("androidx.core:core-ktx:1.8.0")
-            api("androidx.annotation:annotation-experimental:1.4.1")
+        androidMain {
+            kotlin.srcDirs += "src/androidMain/java"
+            dependencies {
+                api("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
+                api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
+                api("androidx.activity:activity-ktx:1.7.1")
+                api("androidx.core:core-ktx:1.8.0")
+                api("androidx.annotation:annotation-experimental:1.4.1")
+            }
         }
         androidDeviceTest.dependencies {
             implementation("androidx.annotation:annotation:1.9.1")

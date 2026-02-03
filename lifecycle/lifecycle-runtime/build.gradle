@@ -22,12 +22,6 @@ androidXMultiplatform {
             it.consumerKeepRules.files.add(new File("proguard-rules.pro"))
         }
         androidResources.enable = true
-        // Needed for api tasks and docs generation
-        sourceSets {
-            androidMain {
-                kotlin.srcDirs += 'src/androidMain/java'
-            }
-        }
     }
     desktop()
     mac()
@@ -67,12 +61,15 @@ androidXMultiplatform {
             implementation(libs.kotlinCoroutinesSwing)
         }
 
-        androidMain.dependencies {
-            api(libs.kotlinCoroutinesAndroid)
-            api(libs.jspecify)
-            implementation("androidx.core:core-viewtree:1.0.0")
-            implementation("androidx.arch.core:core-runtime:2.2.0")
-            implementation("androidx.profileinstaller:profileinstaller:1.4.0")
+        androidMain {
+            kotlin.srcDirs += "src/androidMain/java"
+            dependencies {
+                api(libs.kotlinCoroutinesAndroid)
+                api(libs.jspecify)
+                implementation("androidx.core:core-viewtree:1.0.0")
+                implementation("androidx.arch.core:core-runtime:2.2.0")
+                implementation("androidx.profileinstaller:profileinstaller:1.4.0")
+            }
         }
 
         androidHostTest.dependencies {
