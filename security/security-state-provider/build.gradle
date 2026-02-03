@@ -37,6 +37,7 @@ dependencies {
 
     androidTestImplementation(libs.testExtJunit)
     androidTestImplementation(libs.testRules)
+    androidTestImplementation(libs.robolectric)
 }
 
 android {
