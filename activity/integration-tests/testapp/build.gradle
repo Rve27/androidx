@@ -21,7 +21,9 @@ plugins {
 }
 
 android {
-    compileSdk { version = release(36) }
+    compileSdk {
+        version = preview("Baklava")
+    }
     defaultConfig {
         applicationId = "androidx.activity.integration.testapp"
     }
@@ -30,7 +32,7 @@ android {
 
 dependencies {
     implementation(libs.kotlinCoroutinesCore)
-    implementation("androidx.activity:activity:1.12.1")
+    implementation(project(":activity:activity"))
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.appcompat:appcompat:1.6.0")
     implementation("androidx.core:core-splashscreen:1.0.0")
@@ -40,6 +42,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.1")
 
     // Manually align dependencies across debugRuntime and debugAndroidTestRuntime.
+    androidTestImplementation(project(":annotation:annotation"))
     androidTestImplementation("androidx.annotation:annotation:1.8.1")
 
     androidTestRuntimeOnly(libs.testCore)
