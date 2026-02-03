@@ -14,337 +14,288 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+@file:Suppress("BanConcurrentHashMap")
 
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Ray;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.InputEvent;
-import androidx.xr.scenecore.runtime.InputEventListener;
-import androidx.xr.scenecore.runtime.MovableComponent;
-import androidx.xr.scenecore.runtime.MoveEvent;
-import androidx.xr.scenecore.runtime.MoveEventListener;
-import androidx.xr.scenecore.runtime.Space;
+package androidx.xr.scenecore.spatial.core
 
-import com.android.extensions.xr.function.Consumer;
-import com.android.extensions.xr.node.ReformEvent;
-import com.android.extensions.xr.node.ReformOptions;
-import com.android.extensions.xr.node.Vec3;
-
-import org.jspecify.annotations.NonNull;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Ray
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.InputEvent
+import androidx.xr.scenecore.runtime.InputEventListener
+import androidx.xr.scenecore.runtime.MovableComponent
+import androidx.xr.scenecore.runtime.MoveEvent
+import androidx.xr.scenecore.runtime.MoveEventListener
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.spatial.core.RuntimeUtils.getPose
+import androidx.xr.scenecore.spatial.core.RuntimeUtils.getVector3
+import com.android.extensions.xr.function.Consumer
+import com.android.extensions.xr.node.ReformEvent
+import com.android.extensions.xr.node.ReformOptions
+import com.android.extensions.xr.node.Vec3
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executor
+import java.util.concurrent.ScheduledExecutorService
 
 /** Implementation of MovableComponent. */
-@SuppressWarnings("BanConcurrentHashMap")
-class MovableComponentImpl implements MovableComponent {
-    private final boolean mSystemMovable;
-    private final boolean mScaleInZ;
-    private final ActivitySpaceImpl mActivitySpaceImpl;
-    private final PanelShadowRenderer mPanelShadowRenderer;
-    private final ScheduledExecutorService mRuntimeExecutor;
-    private final ConcurrentHashMap<MoveEventListener, Executor> mMoveEventListenersMap =
-            new ConcurrentHashMap<>();
-    private final boolean mUserAnchorable;
+internal class MovableComponentImpl(
+    private val systemMovable: Boolean,
+    private val scaleInZ: Boolean,
+    private val userAnchorable: Boolean,
+    private val activitySpaceImpl: ActivitySpaceImpl,
+    private val panelShadowRenderer: PanelShadowRenderer,
+    private val runtimeExecutor: ScheduledExecutorService,
+) : MovableComponent {
+    private val moveEventListenersMap = ConcurrentHashMap<MoveEventListener, Executor>()
+    private var entity: Entity? = null
+    private var initialParent: Entity? = null
+    private var lastPose = Pose()
+    private var lastScale = Vector3(1f, 1f, 1f)
+    private var initialRay: Ray? = null
+    private var isMoving = false
+    override var size: Dimensions = Dimensions(0f, 0f, 0f)
+        set(value) {
+            field = value
+            if (entity == null) {
+                return
+            }
+            val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+            reformOptions.currentSize = Vec3(value.width, value.height, value.depth)
+            (entity as AndroidXrEntity).updateReformOptions()
+        }
+
+    @MovableComponent.ScaleWithDistanceMode
+    override var scaleWithDistanceMode = MovableComponent.ScaleWithDistanceMode.DEFAULT
+        set(value) {
+            field = value
+            if (entity == null) {
+                return
+            }
+            val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+            reformOptions.scaleWithDistanceMode = translateScaleWithDistanceMode(value)
+            (entity as AndroidXrEntity).updateReformOptions()
+        }
+
+    private var hitPointToOriginDistance = 0f
+    private var grabPointToCenterOffset = Vector3.Zero
+    private val inputEventListener = InputEventListener { inputEvent: InputEvent ->
+        moveEventListenersMap.forEach { (listener: MoveEventListener, executor: Executor) ->
+            executor.execute { listener.onMoveEvent(getMoveEvent(inputEvent)) }
+        }
+    }
+
     // Visible for testing.
-    Consumer<ReformEvent> mReformEventConsumer;
-    private final InputEventListener mInputEventListener;
-    private volatile Entity mEntity;
-    private Entity mInitialParent;
-    private Pose mLastPose = new Pose();
-    private Vector3 mLastScale = new Vector3(1f, 1f, 1f);
-    private Ray mInitialRay;
-    private Dimensions mCurrentSize;
-    private boolean mIsMoving = false;
-    @ScaleWithDistanceMode private int mScaleWithDistanceMode = ScaleWithDistanceMode.DEFAULT;
-    private float mHitPointToOriginDistance = 0f;
-    private Vector3 mGrabPointToCenterOffset = Vector3.Zero;
-
-    MovableComponentImpl(
-            boolean systemMovable,
-            boolean scaleInZ,
-            boolean userAnchorable,
-            ActivitySpaceImpl activitySpaceImpl,
-            PanelShadowRenderer panelShadowRenderer,
-            ScheduledExecutorService runtimeExecutor) {
-        mSystemMovable = systemMovable;
-        mScaleInZ = scaleInZ;
-        mActivitySpaceImpl = activitySpaceImpl;
-        mPanelShadowRenderer = panelShadowRenderer;
-        mRuntimeExecutor = runtimeExecutor;
-        mUserAnchorable = userAnchorable;
-        mReformEventConsumer =
-                reformEvent -> {
-                    if (reformEvent.getType() != ReformEvent.REFORM_TYPE_MOVE) {
-                        return;
-                    }
-                    if (reformEvent.getState() == ReformEvent.REFORM_STATE_START) {
-                        final Entity entity = mEntity;
-                        mInitialParent =
-                                (entity != null && entity.getParent() != null)
-                                        ? mEntity.getParent()
-                                        : mActivitySpaceImpl;
-                        mIsMoving = true;
-                    } else if (reformEvent.getState() == ReformEvent.REFORM_STATE_END) {
-                        mIsMoving = false;
-                        mPanelShadowRenderer.destroy();
-                    }
-
-                    Pose newPose =
-                            RuntimeUtils.getPose(
-                                    reformEvent.getProposedPosition(),
-                                    reformEvent.getProposedOrientation());
-                    Vector3 newScale =
-                            mScaleInZ
-                                    ? RuntimeUtils.getVector3(reformEvent.getProposedScale())
-                                    : mLastScale;
-
-                    mMoveEventListenersMap.forEach(
-                            (listener, listenerExecutor) ->
-                                    listenerExecutor.execute(
-                                            () ->
-                                                    listener.onMoveEvent(
-                                                            getMoveEvent(
-                                                                    reformEvent,
-                                                                    newPose,
-                                                                    newScale))));
-                    mLastPose = newPose;
-                    mLastScale = newScale;
-                };
-
-        mInputEventListener =
-                inputEvent ->
-                        mMoveEventListenersMap.forEach(
-                                (listener, executor) ->
-                                        executor.execute(
-                                                () -> {
-                                                    listener.onMoveEvent(getMoveEvent(inputEvent));
-                                                }));
-    }
-
-    private static int translateScaleWithDistanceMode(@ScaleWithDistanceMode int scale) {
-        if (scale == ScaleWithDistanceMode.DMM) {
-            return ReformOptions.SCALE_WITH_DISTANCE_MODE_DMM;
+    internal var reformEventConsumer = Consumer { reformEvent: ReformEvent ->
+        if (reformEvent.type != ReformEvent.REFORM_TYPE_MOVE) {
+            return@Consumer
         }
-        return ReformOptions.SCALE_WITH_DISTANCE_MODE_DEFAULT;
+        if (reformEvent.state == ReformEvent.REFORM_STATE_START) {
+            val entity = entity
+            initialParent =
+                if (entity != null && entity.parent != null) entity.parent else activitySpaceImpl
+            isMoving = true
+        } else if (reformEvent.state == ReformEvent.REFORM_STATE_END) {
+            isMoving = false
+            panelShadowRenderer.destroy()
+        }
+
+        val newPose = getPose(reformEvent.proposedPosition, reformEvent.proposedOrientation)
+        val newScale = if (scaleInZ) getVector3(reformEvent.proposedScale) else lastScale
+
+        moveEventListenersMap.forEach { (listener: MoveEventListener, listenerExecutor: Executor) ->
+            listenerExecutor.execute {
+                listener.onMoveEvent(getMoveEvent(reformEvent, newPose, newScale))
+            }
+        }
+        lastPose = newPose
+        lastScale = newScale
     }
 
-    private MoveEvent getMoveEvent(ReformEvent reformEvent, Pose newPose, Vector3 newScale) {
-        return new MoveEvent(
-                reformEvent.getState(),
-                new Ray(
-                        RuntimeUtils.getVector3(reformEvent.getInitialRayOrigin()),
-                        RuntimeUtils.getVector3(reformEvent.getInitialRayDirection())),
-                new Ray(
-                        RuntimeUtils.getVector3(reformEvent.getCurrentRayOrigin()),
-                        RuntimeUtils.getVector3(reformEvent.getCurrentRayDirection())),
-                mLastPose,
-                newPose,
-                mLastScale,
-                newScale,
-                mInitialParent,
-                null,
-                null);
+    private fun getMoveEvent(
+        reformEvent: ReformEvent,
+        newPose: Pose,
+        newScale: Vector3,
+    ): MoveEvent {
+        return MoveEvent(
+            reformEvent.state,
+            Ray(
+                getVector3(reformEvent.initialRayOrigin),
+                getVector3(reformEvent.initialRayDirection),
+            ),
+            Ray(
+                getVector3(reformEvent.currentRayOrigin),
+                getVector3(reformEvent.currentRayDirection),
+            ),
+            lastPose,
+            newPose,
+            lastScale,
+            newScale,
+            initialParent!!,
+            null,
+            null,
+        )
     }
 
-    private MoveEvent getMoveEvent(InputEvent inputEvent) {
-        int moveState = -1;
+    private fun getMoveEvent(inputEvent: InputEvent): MoveEvent {
+        var moveState = -1
 
-        Entity parent =
-                (mEntity != null && mEntity.getParent() != null)
-                        ? mEntity.getParent()
-                        : mActivitySpaceImpl;
+        val parent =
+            if (entity != null && entity!!.parent != null) entity!!.parent else activitySpaceImpl
 
-        Vector3 originInParentSpace =
-                mActivitySpaceImpl.transformPositionTo(inputEvent.getOrigin(), parent);
-        Vector3 directionInParentSpace =
-                mActivitySpaceImpl.transformDirectionTo(inputEvent.getDirection(), parent);
-        Ray currentRay = new Ray(originInParentSpace, directionInParentSpace);
+        val originInParentSpace = activitySpaceImpl.transformPositionTo(inputEvent.origin, parent!!)
+        val directionInParentSpace =
+            activitySpaceImpl.transformDirectionTo(inputEvent.direction, parent)
+        val currentRay = Ray(originInParentSpace, directionInParentSpace)
 
-        switch (inputEvent.getAction()) {
-            case InputEvent.Action.DOWN:
-                moveState = MoveEvent.MoveState.MOVE_STATE_START;
-                mInitialRay = new Ray(inputEvent.getOrigin(), inputEvent.getDirection());
-                mInitialParent = parent;
-                if (!inputEvent.getHitInfoList().isEmpty()) {
-                    Vector3 hitPosition = inputEvent.getHitInfoList().get(0).getHitPosition();
-                    mHitPointToOriginDistance = hitPosition.minus(originInParentSpace).getLength();
-                    mGrabPointToCenterOffset =
-                            mEntity.getPose().getTranslation().minus(hitPosition);
+        when (inputEvent.action) {
+            InputEvent.Action.DOWN -> {
+                moveState = MoveEvent.MoveState.MOVE_STATE_START
+                initialRay = Ray(inputEvent.origin, inputEvent.direction)
+                initialParent = parent
+                if (!inputEvent.hitInfoList.isEmpty()) {
+                    val hitPosition = inputEvent.hitInfoList[0].hitPosition
+                    hitPointToOriginDistance = hitPosition!!.minus(originInParentSpace).length
+                    grabPointToCenterOffset = entity!!.getPose().translation.minus(hitPosition)
                 }
-                break;
-            case InputEvent.Action.MOVE:
-                moveState = MoveEvent.MoveState.MOVE_STATE_ONGOING;
-                break;
-            case InputEvent.Action.UP:
-                moveState = MoveEvent.MoveState.MOVE_STATE_END;
-                break;
+            }
+            InputEvent.Action.MOVE -> moveState = MoveEvent.MoveState.MOVE_STATE_ONGOING
+            InputEvent.Action.UP -> moveState = MoveEvent.MoveState.MOVE_STATE_END
         }
 
-        Vector3 grabPoint =
-                originInParentSpace.plus(
-                        directionInParentSpace.toNormalized().times(mHitPointToOriginDistance));
-        Vector3 proposedTranslation = grabPoint.plus(mGrabPointToCenterOffset);
-        Pose proposedPose = new Pose(proposedTranslation, mEntity.getPose().getRotation());
+        val grabPoint =
+            originInParentSpace.plus(
+                directionInParentSpace.toNormalized().times(hitPointToOriginDistance)
+            )
+        val proposedTranslation = grabPoint.plus(grabPointToCenterOffset)
+        val proposedPose = Pose(proposedTranslation, entity!!.getPose().rotation)
 
-        MoveEvent moveEvent =
-                new MoveEvent(
-                        moveState,
-                        mInitialRay,
-                        currentRay,
-                        mLastPose,
-                        proposedPose,
-                        mLastScale,
-                        mEntity.getScale(),
-                        mInitialParent,
-                        null,
-                        null);
-        mLastPose = mEntity.getPose();
-        mLastScale = mEntity.getScale();
-        return moveEvent;
+        val moveEvent =
+            MoveEvent(
+                moveState,
+                initialRay!!,
+                currentRay,
+                lastPose,
+                proposedPose,
+                lastScale,
+                entity!!.getScale(),
+                initialParent!!,
+                null,
+                null,
+            )
+        lastPose = entity!!.getPose()
+        lastScale = entity!!.getScale()
+        return moveEvent
     }
 
-    @Override
-    public boolean onAttach(@NonNull Entity entity) {
-        if (mEntity != null) {
-            return false;
+    override fun onAttach(entity: Entity): Boolean {
+        if (this.entity != null) {
+            return false
         }
-        mEntity = entity;
-        mLastPose = entity.getPose(Space.PARENT);
-        mLastScale = entity.getScale(Space.PARENT);
+        this.entity = entity
+        lastPose = entity.getPose(Space.PARENT)
+        lastScale = entity.getScale(Space.PARENT)
 
-        if (entity instanceof GltfEntityImpl) {
-            ((GltfEntityImpl) entity)
-                    .setReformAffordanceEnabled(
-                            /* enabled */ true, mSystemMovable && !mUserAnchorable);
-            entity.addInputEventListener(mRuntimeExecutor, mInputEventListener);
-            return true;
+        if (entity is GltfEntityImpl) {
+            entity.setReformAffordanceEnabled(
+                /* enabled */
+                true,
+                systemMovable && !userAnchorable,
+            )
+            entity.addInputEventListener(runtimeExecutor, inputEventListener)
+            return true
         }
-        ReformOptions reformOptions = ((AndroidXrEntity) entity).getReformOptions();
-        int reformFlags = ReformOptions.FLAG_POSE_RELATIVE_TO_PARENT;
+        val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+        var reformFlags = ReformOptions.FLAG_POSE_RELATIVE_TO_PARENT
         reformFlags =
-                (mSystemMovable && !mUserAnchorable)
-                        ? reformFlags | ReformOptions.FLAG_ALLOW_SYSTEM_MOVEMENT
-                        : reformFlags;
+            if (systemMovable && !userAnchorable)
+                reformFlags or ReformOptions.FLAG_ALLOW_SYSTEM_MOVEMENT
+            else reformFlags
         reformFlags =
-                mScaleInZ ? reformFlags | ReformOptions.FLAG_SCALE_WITH_DISTANCE : reformFlags;
-        reformOptions.setFlags(reformFlags);
+            if (scaleInZ) reformFlags or ReformOptions.FLAG_SCALE_WITH_DISTANCE else reformFlags
+        reformOptions.flags = reformFlags
         reformOptions
-                .setEnabledReform(reformOptions.getEnabledReform() | ReformOptions.ALLOW_MOVE)
-                .setScaleWithDistanceMode(translateScaleWithDistanceMode(mScaleWithDistanceMode));
+            .setEnabledReform(reformOptions.enabledReform or ReformOptions.ALLOW_MOVE)
+            .scaleWithDistanceMode = translateScaleWithDistanceMode(scaleWithDistanceMode)
 
         // TODO: b/348037292 - Remove this special case for PanelEntityImpl.
-        if (entity instanceof PanelEntityImpl && mCurrentSize == null) {
-            mCurrentSize = ((PanelEntityImpl) entity).getSize();
+        if (entity is PanelEntityImpl) {
+            size = entity.size
         }
-        if (mCurrentSize != null) {
-            reformOptions.setCurrentSize(
-                    new Vec3(mCurrentSize.width, mCurrentSize.height, mCurrentSize.depth));
-        }
-        ((AndroidXrEntity) entity).updateReformOptions();
-        ((AndroidXrEntity) mEntity).addReformEventConsumer(mReformEventConsumer, mRuntimeExecutor);
-        return true;
+
+        reformOptions.currentSize = Vec3(size.width, size.height, size.depth)
+        entity.updateReformOptions()
+        entity.addReformEventConsumer(reformEventConsumer, runtimeExecutor)
+        return true
     }
 
-    @Override
-    public void onDetach(@NonNull Entity entity) {
-        if (entity instanceof GltfEntityImpl) {
-            ((GltfEntityImpl) entity)
-                    .setReformAffordanceEnabled(
-                            /* enabled */ false, mSystemMovable && !mUserAnchorable);
-            entity.removeInputEventListener(mInputEventListener);
-            mEntity = null;
-            return;
+    override fun onDetach(entity: Entity) {
+        if (entity is GltfEntityImpl) {
+            entity.setReformAffordanceEnabled(
+                /* enabled */
+                false,
+                systemMovable && !userAnchorable,
+            )
+            entity.removeInputEventListener(inputEventListener)
+            this.entity = null
+            return
         }
-        ReformOptions reformOptions = ((AndroidXrEntity) entity).getReformOptions();
-        reformOptions.setEnabledReform(
-                reformOptions.getEnabledReform() & ~ReformOptions.ALLOW_MOVE);
+        val reformOptions = (entity as AndroidXrEntity).getReformOptions()
+        reformOptions.enabledReform = reformOptions.enabledReform and ReformOptions.ALLOW_MOVE.inv()
         // Clear any flags that were set by this component.
-        int reformFlags = reformOptions.getFlags();
+        var reformFlags = reformOptions.flags
         reformFlags =
-                mSystemMovable
-                        ? reformFlags & ~ReformOptions.FLAG_ALLOW_SYSTEM_MOVEMENT
-                        : reformFlags;
+            if (systemMovable) reformFlags and ReformOptions.FLAG_ALLOW_SYSTEM_MOVEMENT.inv()
+            else reformFlags
         reformFlags =
-                mScaleInZ ? reformFlags & ~ReformOptions.FLAG_SCALE_WITH_DISTANCE : reformFlags;
-        reformOptions.setFlags(reformFlags);
-        ((AndroidXrEntity) entity).updateReformOptions();
-        ((AndroidXrEntity) entity).removeReformEventConsumer(mReformEventConsumer);
-        mEntity = null;
+            if (scaleInZ) reformFlags and ReformOptions.FLAG_SCALE_WITH_DISTANCE.inv()
+            else reformFlags
+        reformOptions.flags = reformFlags
+        entity.updateReformOptions()
+        entity.removeReformEventConsumer(reformEventConsumer)
+        this.entity = null
     }
 
-    @Override
-    public @NonNull Dimensions getSize() {
-        return mCurrentSize;
+    override fun addMoveEventListener(moveEventListener: MoveEventListener) {
+        moveEventListenersMap[moveEventListener] = runtimeExecutor
     }
 
-    @Override
-    public void setSize(@NonNull Dimensions dimensions) {
-        mCurrentSize = dimensions;
-        if (mEntity == null) {
-            return;
-        }
-        ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
-        reformOptions.setCurrentSize(
-                new Vec3(dimensions.width, dimensions.height, dimensions.depth));
-        ((AndroidXrEntity) mEntity).updateReformOptions();
+    override fun addMoveEventListener(executor: Executor, moveEventListener: MoveEventListener) {
+        moveEventListenersMap[moveEventListener] = executor
     }
 
-    @Override
-    @ScaleWithDistanceMode
-    public int getScaleWithDistanceMode() {
-        return mScaleWithDistanceMode;
+    override fun removeMoveEventListener(moveEventListener: MoveEventListener) {
+        moveEventListenersMap.remove(moveEventListener)
     }
 
-    @Override
-    public void setScaleWithDistanceMode(@ScaleWithDistanceMode int scaleWithDistanceMode) {
-        mScaleWithDistanceMode = scaleWithDistanceMode;
-        if (mEntity == null) {
-            return;
-        }
-        ReformOptions reformOptions = ((AndroidXrEntity) mEntity).getReformOptions();
-        reformOptions.setScaleWithDistanceMode(
-                translateScaleWithDistanceMode(scaleWithDistanceMode));
-        ((AndroidXrEntity) mEntity).updateReformOptions();
-    }
-
-    @Override
-    public void addMoveEventListener(@NonNull MoveEventListener moveEventListener) {
-        mMoveEventListenersMap.put(moveEventListener, mRuntimeExecutor);
-    }
-
-    @Override
-    public void addMoveEventListener(
-            @NonNull Executor executor, @NonNull MoveEventListener moveEventListener) {
-        mMoveEventListenersMap.put(moveEventListener, executor);
-    }
-
-    @Override
-    public void removeMoveEventListener(@NonNull MoveEventListener moveEventListener) {
-        mMoveEventListenersMap.remove(moveEventListener);
-    }
-
-    private void tryRenderPlaneShadow(Pose proposedPose, Pose planePose) {
+    private fun tryRenderPlaneShadow(proposedPose: Pose, planePose: Pose) {
         if (!shouldRenderPlaneShadow()) {
-            return;
+            return
         }
-        mPanelShadowRenderer.updatePanelPose(proposedPose, planePose, (BasePanelEntity) mEntity);
+        panelShadowRenderer.updatePanelPose(proposedPose, planePose, entity as BasePanelEntity)
     }
 
-    private boolean shouldRenderPlaneShadow() {
-        return mEntity instanceof BasePanelEntity && mUserAnchorable && mIsMoving;
+    private fun shouldRenderPlaneShadow(): Boolean {
+        return entity is BasePanelEntity && userAnchorable && isMoving
     }
 
-    @Override
-    public void setPlanePoseForMoveUpdatePose(Pose planePose, @NonNull Pose moveUpdatePose) {
+    override fun setPlanePoseForMoveUpdatePose(planePose: Pose?, moveUpdatePose: Pose) {
         if (planePose == null) {
-            mPanelShadowRenderer.hidePlane();
+            panelShadowRenderer.hidePlane()
         } else {
-            tryRenderPlaneShadow(moveUpdatePose, planePose);
+            tryRenderPlaneShadow(moveUpdatePose, planePose)
+        }
+    }
+
+    companion object {
+        private fun translateScaleWithDistanceMode(
+            @MovableComponent.ScaleWithDistanceMode scale: Int
+        ): Int {
+            if (scale == MovableComponent.ScaleWithDistanceMode.DMM) {
+                return ReformOptions.SCALE_WITH_DISTANCE_MODE_DMM
+            }
+            return ReformOptions.SCALE_WITH_DISTANCE_MODE_DEFAULT
         }
     }
 }

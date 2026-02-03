@@ -13,146 +13,142 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.app.Activity
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.runtime.math.Matrix4.Companion.fromScale
+import androidx.xr.runtime.math.Matrix4.Companion.fromTrs
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion.Companion.fromEulerAngles
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.runtime.testing.math.assertPose
+import androidx.xr.runtime.testing.math.assertVector3
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeGltfFeature
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.android.extensions.xr.node.Mat4f
+import com.android.extensions.xr.node.Node
+import com.android.extensions.xr.node.NodeTransform
+import com.android.extensions.xr.node.ShadowNode
+import com.android.extensions.xr.node.ShadowNodeTransform
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
-import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class PerceptionSpaceScenePoseImplTest {
+    private val xrExtensions = getXrExtensions()!!
+    private val fakeScheduledExecutor = FakeScheduledExecutorService()
+    private val entityManager = EntityManager()
+    private val activity: Activity =
+        Robolectric.buildActivity(Activity::class.java).create().start().get()
+    private val activitySpace =
+        ActivitySpaceImpl(
+            xrExtensions.createNode(),
+            activity,
+            xrExtensions,
+            entityManager,
+            { xrExtensions.getSpatialState(activity) },
+            /* unscaledGravityAlignedActivitySpace= */ false,
+            fakeScheduledExecutor,
+        )
 
-import android.app.Activity;
+    private var mPerceptionSpaceScenePose: PerceptionSpaceScenePoseImpl? = null
 
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.runtime.math.Matrix4;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeGltfFeature;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Mat4f;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeTransform;
-import com.android.extensions.xr.node.ShadowNode;
-import com.android.extensions.xr.node.ShadowNodeTransform;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public final class PerceptionSpaceScenePoseImplTest {
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
-    private final EntityManager mEntityManager = new EntityManager();
-    private final Activity mActivity =
-            Robolectric.buildActivity(Activity.class).create().start().get();
-    private final ActivitySpaceImpl mActivitySpace =
-            new ActivitySpaceImpl(
-                    mXrExtensions.createNode(),
-                    mActivity,
-                    mXrExtensions,
-                    mEntityManager,
-                    () -> mXrExtensions.getSpatialState(mActivity),
-                    /* unscaledGravityAlignedActivitySpace= */ false,
-                    mExecutor);
-
-    private PerceptionSpaceScenePoseImpl mPerceptionSpaceScenePose;
-
-    private void sendTransformEvent(NodeTransform nodeTransform) {
-        ShadowNode shadowNode = ShadowNode.extract(mActivitySpace.getNode());
-        shadowNode
-                .getTransformExecutor()
-                .execute(() -> shadowNode.getTransformListener().accept(nodeTransform));
+    private fun sendTransformEvent(nodeTransform: NodeTransform?) {
+        val shadowNode = ShadowNode.extract(activitySpace.getNode())
+        shadowNode.transformExecutor.execute { shadowNode.transformListener.accept(nodeTransform) }
     }
 
     /** Creates a generic glTF entity. */
-    private GltfEntityImpl createGltfEntity() {
-        NodeHolder<?> node = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
-        return new GltfEntityImpl(
-                mActivity,
-                new FakeGltfFeature(node),
-                mActivitySpace,
-                mXrExtensions,
-                mEntityManager,
-                mExecutor);
+    private fun createGltfEntity(): GltfEntityImpl {
+        val node: NodeHolder<*> = NodeHolder<Node?>(xrExtensions.createNode(), Node::class.java)
+        return GltfEntityImpl(
+            activity,
+            FakeGltfFeature(node),
+            activitySpace,
+            xrExtensions,
+            entityManager,
+            fakeScheduledExecutor,
+        )
     }
 
     @Before
-    public void setUp() {
-        mPerceptionSpaceScenePose = new PerceptionSpaceScenePoseImpl(mActivitySpace);
+    fun setUp() {
+        mPerceptionSpaceScenePose = PerceptionSpaceScenePoseImpl(activitySpace)
     }
 
     @Test
-    public void getPoseInActivitySpace_returnsInverseOfActivitySpacePose() {
-        Matrix4 activitySpaceMatrix =
-                Matrix4.fromTrs(
-                        new Vector3(1.0f, 2.0f, 3.0f),
-                        Quaternion.fromEulerAngles(new Vector3(0f, 0f, 90f)),
-                        new Vector3(1.0f, 1.0f, 1.0f));
-        sendTransformEvent(ShadowNodeTransform.create(new Mat4f(activitySpaceMatrix.getData())));
-        mExecutor.runAll();
+    fun getPoseInActivitySpace_returnsInverseOfActivitySpacePose() {
+        val activitySpaceMatrix =
+            fromTrs(
+                Vector3(1.0f, 2.0f, 3.0f),
+                fromEulerAngles(Vector3(0f, 0f, 90f)),
+                Vector3(1.0f, 1.0f, 1.0f),
+            )
+        sendTransformEvent(ShadowNodeTransform.create(Mat4f(activitySpaceMatrix.data)))
+        fakeScheduledExecutor.runAll()
 
-        Pose poseInActivitySpace = mPerceptionSpaceScenePose.getPoseInActivitySpace();
+        val poseInActivitySpace = mPerceptionSpaceScenePose!!.poseInActivitySpace
 
-        Pose expectedPose = activitySpaceMatrix.getInverse().getPose();
+        val expectedPose = activitySpaceMatrix.inverse.pose
 
-        assertPose(poseInActivitySpace, expectedPose);
+        assertPose(poseInActivitySpace, expectedPose)
     }
 
     @Test
-    public void transformPoseTo_returnsCorrectPose() {
-        Matrix4 activitySpaceMatrix =
-                Matrix4.fromTrs(
-                        new Vector3(4.0f, 5.0f, 6.0f),
-                        Quaternion.fromEulerAngles(new Vector3(90f, 0f, 0f)),
-                        new Vector3(1.0f, 1.0f, 1.0f));
-        sendTransformEvent(ShadowNodeTransform.create(new Mat4f(activitySpaceMatrix.getData())));
-        mExecutor.runAll();
+    fun transformPoseTo_returnsCorrectPose() {
+        val activitySpaceMatrix =
+            fromTrs(
+                Vector3(4.0f, 5.0f, 6.0f),
+                fromEulerAngles(Vector3(90f, 0f, 0f)),
+                Vector3(1.0f, 1.0f, 1.0f),
+            )
+        sendTransformEvent(ShadowNodeTransform.create(Mat4f(activitySpaceMatrix.data)))
+        fakeScheduledExecutor.runAll()
 
-        Pose transformedPose =
-                mPerceptionSpaceScenePose.transformPoseTo(new Pose(), mActivitySpace);
+        val transformedPose = mPerceptionSpaceScenePose!!.transformPoseTo(Pose(), activitySpace)
 
-        Pose expectedPose = activitySpaceMatrix.getInverse().getPose();
+        val expectedPose = activitySpaceMatrix.inverse.pose
 
-        assertPose(transformedPose, expectedPose);
+        assertPose(transformedPose, expectedPose)
     }
 
     @Test
-    public void transformPoseTo_toScaledEntity_returnsCorrectPose() {
-        Matrix4 activitySpaceMatrix =
-                Matrix4.fromTrs(
-                        new Vector3(4.0f, 5.0f, 6.0f),
-                        Quaternion.fromEulerAngles(new Vector3(90f, 0f, 0f)),
-                        new Vector3(1.0f, 1.0f, 1.0f));
-        sendTransformEvent(ShadowNodeTransform.create(new Mat4f(activitySpaceMatrix.getData())));
-        mExecutor.runAll();
-        GltfEntityImpl gltfEntity = createGltfEntity();
-        gltfEntity.setScale(new Vector3(2.0f, 2.0f, 2.0f));
+    fun transformPoseTo_toScaledEntity_returnsCorrectPose() {
+        val activitySpaceMatrix =
+            fromTrs(
+                Vector3(4.0f, 5.0f, 6.0f),
+                fromEulerAngles(Vector3(90f, 0f, 0f)),
+                Vector3(1.0f, 1.0f, 1.0f),
+            )
+        sendTransformEvent(ShadowNodeTransform.create(Mat4f(activitySpaceMatrix.data)))
+        fakeScheduledExecutor.runAll()
+        val gltfEntity = createGltfEntity()
+        gltfEntity.setScale(Vector3(2.0f, 2.0f, 2.0f))
 
-        Pose transformedPose = mPerceptionSpaceScenePose.transformPoseTo(new Pose(), gltfEntity);
+        val transformedPose = mPerceptionSpaceScenePose!!.transformPoseTo(Pose(), gltfEntity)
 
-        Pose unscaledPose = activitySpaceMatrix.getInverse().getPose();
-        Pose expectedPose =
-                new Pose(
-                        unscaledPose.getTranslation().scale(new Vector3(0.5f, 0.5f, 0.5f)),
-                        unscaledPose.getRotation());
+        val unscaledPose = activitySpaceMatrix.inverse.pose
+        val expectedPose =
+            Pose(unscaledPose.translation.scale(Vector3(0.5f, 0.5f, 0.5f)), unscaledPose.rotation)
 
-        assertPose(transformedPose, expectedPose);
+        assertPose(transformedPose, expectedPose)
     }
 
     @Test
-    public void getActivitySpaceScale_returnsInverseOfActivitySpaceWorldScale() {
-        float activitySpaceScale = 5f;
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.fromScale(activitySpaceScale));
+    fun getActivitySpaceScale_returnsInverseOfActivitySpaceWorldScale() {
+        val activitySpaceScale = 5f
+        activitySpace.setOpenXrReferenceSpaceTransform(fromScale(activitySpaceScale))
 
         assertVector3(
-                mPerceptionSpaceScenePose.getActivitySpaceScale(),
-                new Vector3(1f, 1f, 1f).div(activitySpaceScale));
+            mPerceptionSpaceScenePose!!.activitySpaceScale,
+            Vector3(1f, 1f, 1f).div(activitySpaceScale),
+        )
     }
 }

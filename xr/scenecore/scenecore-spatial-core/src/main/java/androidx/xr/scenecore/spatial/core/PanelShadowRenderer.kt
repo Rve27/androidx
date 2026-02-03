@@ -13,225 +13,217 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.os.Binder
+import android.os.Handler
+import android.os.Looper
+import android.view.SurfaceControlViewHost
+import android.view.View
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.node.Node
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.os.Binder;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.SurfaceControlViewHost;
-import android.view.SurfaceControlViewHost.SurfacePackage;
-import android.view.View;
+/** Interface for rendering the border of a panel onto a perception plane. */
+internal interface PanelShadowRenderer {
+    fun updatePanelPose(
+        openXrToProposedPanel: Pose,
+        openXrtoPlane: Pose,
+        panelEntity: BasePanelEntity,
+    )
 
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector3;
+    fun hidePlane()
 
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeTransaction;
+    fun destroy()
+}
 
-import org.jspecify.annotations.NonNull;
-
-import java.util.Objects;
-
-/** Class for rendering the border of a panel onto a perception plane. */
 // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
 // For SurfaceControlViewHost and getDisplay
 @SuppressLint("NewApi")
-class PanelShadowRenderer {
-    private static final float STROKE_WIDTH = 20f;
-    private static final float HALF_STROKE_WIDTH = STROKE_WIDTH / 2;
-    private static final float CORNER_RADIUS = 20f;
-    private static final float PANEL_BORDER_ADDED_MARGIN = 50f;
-    private final ActivitySpaceImpl mActivitySpaceImpl;
-    private final PerceptionSpaceScenePoseImpl mPerceptionSpaceScenePose;
-    private final XrExtensions mExtensions;
-    private final Handler mHandler;
-    private final Activity mActivity;
-    Node mPanelShadowNode;
-    private SurfaceControlViewHost mSurfaceControlViewHost;
-    private boolean mIsVisible;
+internal class PanelShadowRendererImpl(
+    private val activitySpaceImpl: ActivitySpaceImpl,
+    private val perceptionSpaceScenePose: PerceptionSpaceScenePoseImpl,
+    private val activity: Activity,
+    private val xrExtensions: XrExtensions,
+) : PanelShadowRenderer {
+    private val handler: Handler = Handler(Looper.getMainLooper())
+    private var panelShadowNode: Node? = null
+    private var surfaceControlViewHost: SurfaceControlViewHost? = null
+    private var isVisible = false
 
-    PanelShadowRenderer(
-            ActivitySpaceImpl activitySpaceImpl,
-            PerceptionSpaceScenePoseImpl perceptionSpaceScenePose,
-            Activity activity,
-            XrExtensions extensions) {
-        mActivitySpaceImpl = activitySpaceImpl;
-        mPerceptionSpaceScenePose = perceptionSpaceScenePose;
-        mExtensions = extensions;
-        mActivity = activity;
-        mHandler = new Handler(Looper.getMainLooper());
-    }
-
-    void updatePanelPose(
-            Pose openXrToProposedPanel, Pose openXrtoPlane, BasePanelEntity panelEntity) {
+    override fun updatePanelPose(
+        openXrToProposedPanel: Pose,
+        openXrtoPlane: Pose,
+        panelEntity: BasePanelEntity,
+    ) {
         // If there is no panel shadow node, create it.
-        if (mPanelShadowNode == null) {
-            createPanelShadow(openXrToProposedPanel, openXrtoPlane, panelEntity);
-            return;
+        if (panelShadowNode == null) {
+            createPanelShadow(openXrToProposedPanel, openXrtoPlane, panelEntity)
+            return
         }
 
-        Pose panelPoseInActivitySpace =
-                getUpdatedPanelPoseInActivitySpace(openXrToProposedPanel, openXrtoPlane);
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            if (!mIsVisible) {
-                transaction.setVisibility(mPanelShadowNode, true);
-                mIsVisible = true;
+        val panelPoseInActivitySpace =
+            getUpdatedPanelPoseInActivitySpace(openXrToProposedPanel, openXrtoPlane)
+        xrExtensions.createNodeTransaction().use { transaction ->
+            if (!isVisible) {
+                transaction.setVisibility(panelShadowNode, true)
+                isVisible = true
             }
             transaction
-                    .setPosition(
-                            mPanelShadowNode,
-                            panelPoseInActivitySpace.getTranslation().getX(),
-                            panelPoseInActivitySpace.getTranslation().getY(),
-                            panelPoseInActivitySpace.getTranslation().getZ())
-                    .setOrientation(
-                            mPanelShadowNode,
-                            panelPoseInActivitySpace.getRotation().getX(),
-                            panelPoseInActivitySpace.getRotation().getY(),
-                            panelPoseInActivitySpace.getRotation().getZ(),
-                            panelPoseInActivitySpace.getRotation().getW())
-                    .apply();
+                .setPosition(
+                    panelShadowNode,
+                    panelPoseInActivitySpace.translation.x,
+                    panelPoseInActivitySpace.translation.y,
+                    panelPoseInActivitySpace.translation.z,
+                )
+                .setOrientation(
+                    panelShadowNode,
+                    panelPoseInActivitySpace.rotation.x,
+                    panelPoseInActivitySpace.rotation.y,
+                    panelPoseInActivitySpace.rotation.z,
+                    panelPoseInActivitySpace.rotation.w,
+                )
+                .apply()
         }
     }
 
-    void hidePlane() {
-        if (!mIsVisible || mPanelShadowNode == null) {
-            return;
+    override fun hidePlane() {
+        if (!isVisible || panelShadowNode == null) {
+            return
         }
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            transaction.setVisibility(mPanelShadowNode, false).apply();
+        xrExtensions.createNodeTransaction().use { transaction ->
+            transaction.setVisibility(panelShadowNode, false).apply()
         }
-        mIsVisible = false;
+        isVisible = false
     }
 
-    void destroy() {
-        synchronized (this) {
-            mHandler.removeCallbacksAndMessages(null);
-            if (mSurfaceControlViewHost != null) {
-                mHandler.post(() -> mSurfaceControlViewHost.release());
-            }
-            if (mPanelShadowNode != null) {
-                try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-                    transaction.setParent(mPanelShadowNode, null).apply();
+    override fun destroy() {
+        synchronized(this) {
+            handler.removeCallbacksAndMessages(null)
+            surfaceControlViewHost?.let { handler.post { it.release() } }
+            panelShadowNode?.let {
+                xrExtensions.createNodeTransaction().use { transaction ->
+                    transaction.setParent(it, null).apply()
                 }
             }
-            mPanelShadowNode = null;
+            surfaceControlViewHost = null
+            panelShadowNode = null
         }
     }
 
-    private void createPanelShadow(
-            Pose openXrToProposedPanel, Pose openXrtoPlane, BasePanelEntity panelEntity) {
-        View view = new PanelShadowView(mActivity);
+    private fun createPanelShadow(
+        openXrToProposedPanel: Pose,
+        openXrtoPlane: Pose,
+        panelEntity: BasePanelEntity,
+    ) {
+        val view: View = PanelShadowView(activity)
 
         // Scale the panel shadow to the size of the PanelEntity in the activity space.
-        Vector3 entityScale = panelEntity.getWorldSpaceScale();
-        float sizeX =
-                panelEntity.getSizeInPixels().width
-                                * entityScale.getX()
-                                / mActivitySpaceImpl.getWorldSpaceScale().getX()
-                        + PANEL_BORDER_ADDED_MARGIN;
-        float sizeZ =
-                panelEntity.getSizeInPixels().height
-                                * entityScale.getZ()
-                                / mActivitySpaceImpl.getWorldSpaceScale().getX()
-                        + PANEL_BORDER_ADDED_MARGIN;
+        val entityScale = panelEntity.worldSpaceScale
+        val sizeX: Float =
+            (panelEntity.sizeInPixels.width * entityScale.x / activitySpaceImpl.worldSpaceScale.x +
+                PANEL_BORDER_ADDED_MARGIN)
+        val sizeZ: Float =
+            (panelEntity.sizeInPixels.height * entityScale.z / activitySpaceImpl.worldSpaceScale.x +
+                PANEL_BORDER_ADDED_MARGIN)
 
-        Pose panelPoseInActivitySpace =
-                getUpdatedPanelPoseInActivitySpace(openXrToProposedPanel, openXrtoPlane);
+        val panelPoseInActivitySpace =
+            getUpdatedPanelPoseInActivitySpace(openXrToProposedPanel, openXrtoPlane)
 
-        mPanelShadowNode = mExtensions.createNode();
+        panelShadowNode = xrExtensions.createNode()
 
         // The surfaceControlViewHost needs to be created on the main thread.
         // TODO(b/352827267): Enforce minSDK API strategy - go/androidx-api-guidelines#compat-newapi
-        mHandler.post(
-                () -> {
-                    synchronized (this) {
-                        if (mPanelShadowNode == null) return;
-                        mSurfaceControlViewHost =
-                                new SurfaceControlViewHost(
-                                        mActivity,
-                                        Objects.requireNonNull(mActivity.getDisplay()),
-                                        new Binder());
-                        mSurfaceControlViewHost.setView(view, (int) sizeX, (int) sizeZ);
-                        SurfacePackage surfacePackage =
-                                Objects.requireNonNull(mSurfaceControlViewHost.getSurfacePackage());
-                        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
+        handler.post {
+            synchronized(this) {
+                if (panelShadowNode == null) return@post
+                activity.display?.let {
+                    surfaceControlViewHost = SurfaceControlViewHost(activity, it, Binder())
+                    surfaceControlViewHost?.setView(view, sizeX.toInt(), sizeZ.toInt())
+                    surfaceControlViewHost?.surfacePackage?.let { surfacePackage ->
+                        xrExtensions.createNodeTransaction().use { transaction ->
                             transaction
-                                    .setName(mPanelShadowNode, "PanelRenderer")
-                                    .setSurfacePackage(mPanelShadowNode, surfacePackage)
-                                    .setWindowBounds(surfacePackage, (int) sizeX, (int) sizeZ)
-                                    .setVisibility(mPanelShadowNode, true)
-                                    .setPosition(
-                                            mPanelShadowNode,
-                                            panelPoseInActivitySpace.getTranslation().getX(),
-                                            panelPoseInActivitySpace.getTranslation().getY(),
-                                            panelPoseInActivitySpace.getTranslation().getZ())
-                                    .setOrientation(
-                                            mPanelShadowNode,
-                                            panelPoseInActivitySpace.getRotation().getX(),
-                                            panelPoseInActivitySpace.getRotation().getY(),
-                                            panelPoseInActivitySpace.getRotation().getZ(),
-                                            panelPoseInActivitySpace.getRotation().getW())
-                                    .setParent(mPanelShadowNode, mActivitySpaceImpl.getNode())
-                                    .apply();
+                                .setName(panelShadowNode, "PanelRenderer")
+                                .setSurfacePackage(panelShadowNode, surfacePackage)
+                                .setWindowBounds(surfacePackage, sizeX.toInt(), sizeZ.toInt())
+                                .setVisibility(panelShadowNode, true)
+                                .setPosition(
+                                    panelShadowNode,
+                                    panelPoseInActivitySpace.translation.x,
+                                    panelPoseInActivitySpace.translation.y,
+                                    panelPoseInActivitySpace.translation.z,
+                                )
+                                .setOrientation(
+                                    panelShadowNode,
+                                    panelPoseInActivitySpace.rotation.x,
+                                    panelPoseInActivitySpace.rotation.y,
+                                    panelPoseInActivitySpace.rotation.z,
+                                    panelPoseInActivitySpace.rotation.w,
+                                )
+                                .setParent(panelShadowNode, activitySpaceImpl.getNode())
+                                .apply()
                         }
-                        surfacePackage.release();
+                        surfacePackage.release()
                     }
-                });
-        mIsVisible = true;
+                }
+            }
+        }
+        isVisible = true
     }
 
-    private Pose getUpdatedPanelPoseInActivitySpace(
-            Pose openXrToProposedPanel, Pose openXrtoPlane) {
-        Pose planeToOpenXr = openXrtoPlane.getInverse();
-        Pose planeToPanel = planeToOpenXr.compose(openXrToProposedPanel);
-        Pose planeToProjectedPanel =
-                new Pose(
-                        new Vector3(
-                                planeToPanel.getTranslation().getX(),
-                                0f,
-                                planeToPanel.getTranslation().getZ()),
-                        planeToOpenXr
-                                .getRotation()
-                                .times(
-                                        PlaneUtils.rotateEntityToPlane(
-                                                openXrToProposedPanel.getRotation(),
-                                                openXrtoPlane.getRotation())));
-        Pose panelInOxr = openXrtoPlane.compose(planeToProjectedPanel);
-        return mPerceptionSpaceScenePose.transformPoseTo(panelInOxr, mActivitySpaceImpl);
+    private fun getUpdatedPanelPoseInActivitySpace(
+        openXrToProposedPanel: Pose,
+        openXrtoPlane: Pose,
+    ): Pose {
+        val planeToOpenXr = openXrtoPlane.inverse
+        val planeToPanel = planeToOpenXr.compose(openXrToProposedPanel)
+        val planeToProjectedPanel =
+            Pose(
+                Vector3(planeToPanel.translation.x, 0f, planeToPanel.translation.z),
+                planeToOpenXr.rotation.times(
+                    PlaneUtils.rotateEntityToPlane(
+                        openXrToProposedPanel.rotation,
+                        openXrtoPlane.rotation,
+                    )
+                ),
+            )
+        val panelInOxr = openXrtoPlane.compose(planeToProjectedPanel)
+        return perceptionSpaceScenePose.transformPoseTo(panelInOxr, activitySpaceImpl)
     }
 
     /** PanelShadowView is a view with a blue border to enable the shadow effect. */
-    private static class PanelShadowView extends View {
-
-        PanelShadowView(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void onDrawForeground(@NonNull Canvas canvas) {
-            super.onDrawForeground(canvas);
-            Path border = new Path();
+    private class PanelShadowView(context: Context) : View(context) {
+        override fun onDrawForeground(canvas: Canvas) {
+            super.onDrawForeground(canvas)
+            val border = Path()
             border.addRoundRect(
-                    HALF_STROKE_WIDTH,
-                    HALF_STROKE_WIDTH,
-                    canvas.getWidth() - HALF_STROKE_WIDTH,
-                    canvas.getHeight() - HALF_STROKE_WIDTH,
-                    CORNER_RADIUS,
-                    CORNER_RADIUS,
-                    Path.Direction.CW);
-            Paint paint = new Paint();
-            paint.setColor(0xFF54639F);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(STROKE_WIDTH);
-            canvas.drawPath(border, paint);
+                HALF_STROKE_WIDTH,
+                HALF_STROKE_WIDTH,
+                canvas.width - HALF_STROKE_WIDTH,
+                canvas.height - HALF_STROKE_WIDTH,
+                CORNER_RADIUS,
+                CORNER_RADIUS,
+                Path.Direction.CW,
+            )
+            val paint = Paint()
+            paint.setColor(-0xab9c61)
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = STROKE_WIDTH
+            canvas.drawPath(border, paint)
         }
+    }
+
+    companion object {
+        private const val STROKE_WIDTH = 20f
+        private const val HALF_STROKE_WIDTH = STROKE_WIDTH / 2
+        private const val CORNER_RADIUS = 20f
+        private const val PANEL_BORDER_ADDED_MARGIN = 50f
     }
 }
