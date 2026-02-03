@@ -1196,18 +1196,13 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                     .trimIndent()
             }
 
-        kmpExtension.targets.configureEach { kotlinTarget ->
-            kotlinTarget.compilations.configureEach { compilation ->
-                // Configure all KMP targets to allow expect/actual classes that are not stable.
-                // (see https://youtrack.jetbrains.com/issue/KT-61573)
-                compilation.compileTaskProvider.configure { task ->
-                    task.compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
-                    androidXConfiguration.kotlinApiVersion.let {
-                        task.compilerOptions.apiVersion.set(it)
-                        task.compilerOptions.languageVersion.set(it)
-                    }
-                }
-            }
+        kmpExtension.compilerOptions {
+            // Configure all KMP targets to allow expect/actual classes that are not stable.
+            // (see https://youtrack.jetbrains.com/issue/KT-61573)
+            freeCompilerArgs.add("-Xexpect-actual-classes")
+
+            apiVersion.set(androidXConfiguration.kotlinApiVersion)
+            languageVersion.set(androidXConfiguration.kotlinApiVersion)
         }
     }
 
