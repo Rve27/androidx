@@ -19,6 +19,7 @@ package androidx.xr.scenecore.spatial.core;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose;
+import androidx.xr.scenecore.runtime.impl.BaseScenePose;
 
 import org.jspecify.annotations.NonNull;
 

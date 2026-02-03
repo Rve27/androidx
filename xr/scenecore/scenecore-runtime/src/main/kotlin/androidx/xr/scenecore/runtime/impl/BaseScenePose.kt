@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core
+package androidx.xr.scenecore.runtime.impl
 
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
