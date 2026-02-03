@@ -33,7 +33,7 @@ class ShellTest {
 
     @Test
     fun wifi(): Unit =
-        with(Shell.wifi()) {
+        with(Shell.wifi) {
             turnOff()
             assertThat(isEnabled()).isFalse()
             turnOn()
@@ -44,25 +44,25 @@ class ShellTest {
 
     @Test
     fun startStopApplication(): Unit =
-        with(Shell.application()) {
+        with(Shell.application) {
             startApp(PKG_SETTINGS)
-            assertThat(Shell.screen().resumedActivityName()).startsWith(PKG_SETTINGS)
+            assertThat(Shell.screen.resumedActivityName()).startsWith(PKG_SETTINGS)
             stopApp(PKG_SETTINGS)
-            assertThat(Shell.screen().resumedActivityName()).doesNotContain(PKG_SETTINGS)
+            assertThat(Shell.screen.resumedActivityName()).doesNotContain(PKG_SETTINGS)
         }
 
     @Test
     fun clearApplicationData(): Unit =
-        with(Shell.application()) {
+        with(Shell.application) {
             startApp(PKG_SETTINGS)
-            assertThat(Shell.screen().resumedActivityName()).startsWith(PKG_SETTINGS)
+            assertThat(Shell.screen.resumedActivityName()).startsWith(PKG_SETTINGS)
             clearAppData(PKG_SETTINGS)
-            assertThat(Shell.screen().resumedActivityName()).doesNotContain(PKG_SETTINGS)
+            assertThat(Shell.screen.resumedActivityName()).doesNotContain(PKG_SETTINGS)
         }
 
     @Test
     fun killPid(): Unit =
-        with(Shell.process()) {
+        with(Shell.process) {
             val pid =
                 with(Shell.command("echo pid:$$ ; exec sleep 10")) {
                     stdOutStream
@@ -81,7 +81,7 @@ class ShellTest {
     @SuppressLint("BanThreadSleep")
     @Test
     fun recording() {
-        val recorder = Shell.recorder()
+        val recorder = Shell.recorder
         val outputFile = File(instrumentationPackageMediaDir, "recording.mp4")
         recorder.start(outputFile = outputFile, bitRateMb = 1).use {
             // Wait for the recorder to record something
@@ -102,8 +102,7 @@ class ShellTest {
         var i = min
         commandOutput.stdOutStream.bufferedReader().use {
             while (true) {
-                val line = it.readLine()
-                if (line == null) break
+                val line = it.readLine() ?: break
                 assertThat(line.trim().toInt()).isEqualTo(i)
                 i++
             }
