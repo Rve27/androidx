@@ -34,6 +34,7 @@ import androidx.xr.scenecore.runtime.PointerCaptureComponent
 import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.runtime.Space
 import androidx.xr.scenecore.runtime.SpaceValue
+import androidx.xr.scenecore.runtime.impl.BaseEntity
 import com.android.extensions.xr.XrExtensions
 import com.android.extensions.xr.function.Consumer
 import com.android.extensions.xr.node.InputEvent
