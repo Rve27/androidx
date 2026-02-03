@@ -88,10 +88,6 @@ android {
         minSdk { version = release(29) }
     }
 
-    sourceSets {
-        main.resources.srcDirs += "src/main/proto"
-    }
-
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
@@ -99,6 +95,12 @@ android {
         }
     }
     namespace = "androidx.compose.ui.inspection"
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.resources.addStaticSourceDirectory("src/main/proto")
+    }
 }
 
 inspection {

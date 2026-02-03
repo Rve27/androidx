@@ -40,14 +40,16 @@ dependencies {
 
 android {
     compileSdk { version = release(35) }
-    sourceSets {
-        main.java.srcDirs += [
-                "common",
-                "kitkat",
-                "api21",
-        ]
-    }
     namespace = "androidx.leanback"
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        def extraDirs = ["common", "kitkat", "api21"]
+        extraDirs.each { dir ->
+            variant.sources.java.addStaticSourceDirectory(dir)
+        }
+    }
 }
 
 androidx {

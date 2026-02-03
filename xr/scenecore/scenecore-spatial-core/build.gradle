@@ -23,6 +23,7 @@
 
 import androidx.build.AndroidXConfig
 import androidx.build.SoftwareType
+import com.android.build.api.variant.HasAndroidTest
 
 plugins {
     id("AndroidXPlugin")
@@ -73,12 +74,16 @@ android {
         consumerProguardFiles("proguard-rules.pro")
         minSdk { version = release(24) }
     }
-    sourceSets {
-        androidTest {
-            jniLibs.srcDirs += new File(AndroidXConfig.getPrebuiltsRoot(project), "androidx/xr/native/androidTest")
-        }
-    }
     namespace = "androidx.xr.scenecore.spatial.core"
+}
+
+androidComponents {
+    def nativeTestPath = new File(AndroidXConfig.getPrebuiltsRoot(project), "androidx/xr/native/androidTest")
+            .absolutePath
+
+    onVariants(selector().all()) { variant ->
+        (variant as HasAndroidTest).androidTest.sources.jniLibs.addStaticSourceDirectory(nativeTestPath)
+    }
 }
 
 androidx {

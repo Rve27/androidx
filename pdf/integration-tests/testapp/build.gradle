@@ -13,10 +13,6 @@ android {
         minSdk { version = release(31) }
     }
 
-    sourceSets {
-        androidTest.assets.srcDirs += files("src/androidTest/assets/".toString())
-    }
-
     viewBinding {
         enabled = true
     }

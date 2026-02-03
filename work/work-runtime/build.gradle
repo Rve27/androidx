@@ -23,6 +23,7 @@
 import androidx.build.KotlinTarget
 import androidx.build.ProjectLayoutType
 import androidx.build.SoftwareType
+import com.android.build.api.variant.HasAndroidTest
 
 import static androidx.inspection.gradle.InspectionPluginKt.packageInspector
 
@@ -55,10 +56,13 @@ android {
         }
     }
     compileSdk { version = release(35) }
-    sourceSets {
-        androidTest.assets.srcDirs += files("$projectDir/src/schemas".toString())
-    }
     namespace = "androidx.work"
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        (variant as HasAndroidTest).androidTest.sources.assets.addStaticSourceDirectory("src/schemas")
+    }
 }
 
 dependencies {
