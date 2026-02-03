@@ -151,7 +151,8 @@ class MediaRouter2Utils {
             Api34Impl.setDeviceType(
                     builder, androidXDeviceTypeToFwkDeviceType(descriptor.getDeviceType()));
         }
-        if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA
+                && Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1) {
             Api36Impl.copyRequiredPermissionsToBuilder(builder,
                     descriptor);
         }
@@ -216,7 +217,8 @@ class MediaRouter2Utils {
             deviceTypeInRouteInfo =
                     fwkDeviceTypeToAndroidXDeviceType(Api34Impl.getType(fwkMediaRoute2Info));
         }
-        if (Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA
+                && Build.VERSION.SDK_INT_FULL >= Build.VERSION_CODES_FULL.BAKLAVA_1) {
             Api36Impl.copyFwkRequiredPermissionsToBuilder(builder,
                     fwkMediaRoute2Info);
         }
