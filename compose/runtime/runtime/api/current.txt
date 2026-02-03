@@ -669,12 +669,12 @@ package androidx.compose.runtime {
 
   public interface RecomposerInfo {
     method @InaccessibleFromKotlin public long getChangeCount();
-    method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.runtime.tooling.ComposeToolingApi public kotlinx.coroutines.flow.StateFlow<androidx.compose.runtime.RecomposerErrorInformation?> getErrorState();
+    method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.runtime.tooling.ComposeToolingApi public default kotlinx.coroutines.flow.StateFlow<androidx.compose.runtime.RecomposerErrorInformation?> getErrorState();
     method @InaccessibleFromKotlin public boolean getHasPendingWork();
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.Flow<androidx.compose.runtime.Recomposer.State> getState();
     method @SuppressCompatibility @androidx.compose.runtime.ExperimentalComposeRuntimeApi public default androidx.compose.runtime.tooling.CompositionObserverHandle? observe(androidx.compose.runtime.tooling.CompositionRegistrationObserver observer);
     property public abstract long changeCount;
-    property @SuppressCompatibility @androidx.compose.runtime.tooling.ComposeToolingApi public abstract kotlinx.coroutines.flow.StateFlow<androidx.compose.runtime.RecomposerErrorInformation?> errorState;
+    property @SuppressCompatibility @androidx.compose.runtime.tooling.ComposeToolingApi public default kotlinx.coroutines.flow.StateFlow<androidx.compose.runtime.RecomposerErrorInformation?> errorState;
     property public abstract boolean hasPendingWork;
     property public abstract kotlinx.coroutines.flow.Flow<androidx.compose.runtime.Recomposer.State> state;
   }

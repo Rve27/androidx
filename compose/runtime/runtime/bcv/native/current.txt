@@ -370,12 +370,12 @@ abstract interface androidx.compose.runtime/RecomposerErrorInformation { // andr
 abstract interface androidx.compose.runtime/RecomposerInfo { // androidx.compose.runtime/RecomposerInfo|null[0]
     abstract val changeCount // androidx.compose.runtime/RecomposerInfo.changeCount|{}changeCount[0]
         abstract fun <get-changeCount>(): kotlin/Long // androidx.compose.runtime/RecomposerInfo.changeCount.<get-changeCount>|<get-changeCount>(){}[0]
-    abstract val errorState // androidx.compose.runtime/RecomposerInfo.errorState|{}errorState[0]
-        abstract fun <get-errorState>(): kotlinx.coroutines.flow/StateFlow<androidx.compose.runtime/RecomposerErrorInformation?> // androidx.compose.runtime/RecomposerInfo.errorState.<get-errorState>|<get-errorState>(){}[0]
     abstract val hasPendingWork // androidx.compose.runtime/RecomposerInfo.hasPendingWork|{}hasPendingWork[0]
         abstract fun <get-hasPendingWork>(): kotlin/Boolean // androidx.compose.runtime/RecomposerInfo.hasPendingWork.<get-hasPendingWork>|<get-hasPendingWork>(){}[0]
     abstract val state // androidx.compose.runtime/RecomposerInfo.state|{}state[0]
         abstract fun <get-state>(): kotlinx.coroutines.flow/Flow<androidx.compose.runtime/Recomposer.State> // androidx.compose.runtime/RecomposerInfo.state.<get-state>|<get-state>(){}[0]
+    open val errorState // androidx.compose.runtime/RecomposerInfo.errorState|{}errorState[0]
+        open fun <get-errorState>(): kotlinx.coroutines.flow/StateFlow<androidx.compose.runtime/RecomposerErrorInformation?> // androidx.compose.runtime/RecomposerInfo.errorState.<get-errorState>|<get-errorState>(){}[0]
 }
 
 abstract interface androidx.compose.runtime/RememberObserver { // androidx.compose.runtime/RememberObserver|null[0]
