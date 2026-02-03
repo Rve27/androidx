@@ -58,7 +58,7 @@ import java.util.concurrent.ScheduledExecutorService
 public abstract class AndroidXrEntity(
     context: Context?,
     // Returns the underlying extension Node for the Entity.
-    @JvmField protected val mNode: Node,
+    @JvmField internal val mNode: Node,
     @JvmField protected val mExtensions: XrExtensions,
     @JvmField protected val mEntityManager: EntityManager,
     @JvmField protected val mExecutor: ScheduledExecutorService,
