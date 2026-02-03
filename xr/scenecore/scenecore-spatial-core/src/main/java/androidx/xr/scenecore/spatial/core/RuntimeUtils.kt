@@ -13,373 +13,345 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import androidx.annotation.VisibleForTesting
+import androidx.xr.runtime.math.Matrix4
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.HitTestResult as RuntimeHitTestResult
+import androidx.xr.scenecore.runtime.InputEvent
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.ResizeEvent
+import androidx.xr.scenecore.runtime.ScenePose
+import androidx.xr.scenecore.runtime.SpatialCapabilities
+import androidx.xr.scenecore.runtime.SpatialPointerIcon
+import androidx.xr.scenecore.runtime.SpatialPointerIconType
+import androidx.xr.scenecore.runtime.SpatialVisibility
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.environment.EnvironmentVisibilityState
+import com.android.extensions.xr.environment.PassthroughVisibilityState
+import com.android.extensions.xr.node.InputEvent as ExtensionsInputEvent
+import com.android.extensions.xr.node.Mat4f
+import com.android.extensions.xr.node.NodeTransaction
+import com.android.extensions.xr.node.Quatf
+import com.android.extensions.xr.node.ReformEvent
+import com.android.extensions.xr.node.Vec3
+import com.android.extensions.xr.space.HitTestResult
+import com.android.extensions.xr.space.PerceivedResolution
+import com.android.extensions.xr.space.SpatialCapabilities as ExtensionsSpatialCapabilities
+import com.android.extensions.xr.space.VisibilityState
 
-import androidx.annotation.VisibleForTesting;
-import androidx.xr.runtime.math.Matrix4;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.HitTestResult;
-import androidx.xr.scenecore.runtime.InputEvent;
-import androidx.xr.scenecore.runtime.InputEvent.HitInfo;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-import androidx.xr.scenecore.runtime.ResizeEvent;
-import androidx.xr.scenecore.runtime.ScenePose.HitTestFilter;
-import androidx.xr.scenecore.runtime.ScenePose.HitTestFilterValue;
-import androidx.xr.scenecore.runtime.SpatialCapabilities;
-import androidx.xr.scenecore.runtime.SpatialPointerIcon;
-import androidx.xr.scenecore.runtime.SpatialPointerIconType;
-import androidx.xr.scenecore.runtime.SpatialVisibility;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.environment.EnvironmentVisibilityState;
-import com.android.extensions.xr.environment.PassthroughVisibilityState;
-import com.android.extensions.xr.node.Mat4f;
-import com.android.extensions.xr.node.NodeTransaction;
-import com.android.extensions.xr.node.Quatf;
-import com.android.extensions.xr.node.ReformEvent;
-import com.android.extensions.xr.node.Vec3;
-import com.android.extensions.xr.space.VisibilityState;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-final class RuntimeUtils {
-    private RuntimeUtils() {}
-
+internal object RuntimeUtils {
     @VisibleForTesting
-    static @Nullable HitInfo getHitInfo(
-            com.android.extensions.xr.node.InputEvent.HitInfo xrHitInfo,
-            EntityManager entityManager) {
-        if (xrHitInfo == null
-                || xrHitInfo.getInputNode() == null
-                || xrHitInfo.getTransform() == null) {
-            return null;
+    fun getHitInfo(
+        xrHitInfo: ExtensionsInputEvent.HitInfo?,
+        entityManager: EntityManager,
+    ): InputEvent.HitInfo? {
+        if (xrHitInfo == null || xrHitInfo.inputNode == null || xrHitInfo.transform == null) {
+            return null
         }
         // TODO: b/377541143 - Replace instance equality check in EntityManager.
-        Entity hitEntity = entityManager.getEntityForNode(xrHitInfo.getInputNode());
-        if (hitEntity == null) {
-            return null;
-        }
-        return new HitInfo(
-                hitEntity,
-                (xrHitInfo.getHitPosition() == null)
-                        ? null
-                        : getVector3(xrHitInfo.getHitPosition()),
-                getMatrix(xrHitInfo.getTransform()));
+        val hitEntity = entityManager.getEntityForNode(xrHitInfo.inputNode) ?: return null
+        return InputEvent.HitInfo(
+            hitEntity,
+            if (xrHitInfo.hitPosition == null) null else getVector3(xrHitInfo.hitPosition),
+            getMatrix(xrHitInfo.transform),
+        )
     }
 
     /**
      * Converts an XR InputEvent to a SceneCore InputEvent.
      *
-     * @param xrInputEvent an {@link com.android.extensions.xr.node.InputEvent} instance to be
-     *     converted.
-     * @param entityManager an {@link EntityManager} instance to look up entities.
-     * @return a {@link InputEvent} instance representing the input event.
+     * @param xrInputEvent an [ExtensionsInputEvent] instance to be converted.
+     * @param entityManager an [EntityManager] instance to look up entities.
+     * @return a [InputEvent] instance representing the input event.
      */
-    static InputEvent getInputEvent(
-            com.android.extensions.xr.node.@NonNull InputEvent xrInputEvent,
-            @NonNull EntityManager entityManager) {
-        Vector3 origin = getVector3(xrInputEvent.getOrigin());
-        Vector3 direction = getVector3(xrInputEvent.getDirection());
+    fun getInputEvent(
+        xrInputEvent: ExtensionsInputEvent,
+        entityManager: EntityManager,
+    ): InputEvent {
+        val origin = getVector3(xrInputEvent.origin)
+        val direction = getVector3(xrInputEvent.direction)
         // TODO: b/431250469 - Handle unregistered hitInfo nodes.
-        HitInfo hitInfo = getHitInfo(xrInputEvent.getHitInfo(), entityManager);
-        HitInfo secondaryHitInfo = getHitInfo(xrInputEvent.getSecondaryHitInfo(), entityManager);
-        List<HitInfo> hitInfos = new ArrayList<>();
+        val hitInfo = getHitInfo(xrInputEvent.hitInfo, entityManager)
+        val secondaryHitInfo = getHitInfo(xrInputEvent.secondaryHitInfo, entityManager)
+        val hitInfos = mutableListOf<InputEvent.HitInfo>()
         if (hitInfo != null) {
-            hitInfos.add(hitInfo);
+            hitInfos.add(hitInfo)
         }
         if (secondaryHitInfo != null) {
-            hitInfos.add(secondaryHitInfo);
+            hitInfos.add(secondaryHitInfo)
         }
 
-        return new InputEvent(
-                getInputEventSource(xrInputEvent.getSource()),
-                getInputEventPointerType(xrInputEvent.getPointerType()),
-                xrInputEvent.getTimestamp(),
-                origin,
-                direction,
-                getInputEventAction(xrInputEvent.getAction()),
-                hitInfos);
+        return InputEvent(
+            getInputEventSource(xrInputEvent.source),
+            getInputEventPointerType(xrInputEvent.pointerType),
+            xrInputEvent.timestamp,
+            origin,
+            direction,
+            getInputEventAction(xrInputEvent.action),
+            hitInfos,
+        )
     }
 
     @InputEvent.SourceValue
-    static int getInputEventSource(int xrInputEventSource) {
-        switch (xrInputEventSource) {
-            case com.android.extensions.xr.node.InputEvent.SOURCE_UNKNOWN:
-                return InputEvent.Source.UNKNOWN;
-            case com.android.extensions.xr.node.InputEvent.SOURCE_HEAD:
-                return InputEvent.Source.HEAD;
-            case com.android.extensions.xr.node.InputEvent.SOURCE_CONTROLLER:
-                return InputEvent.Source.CONTROLLER;
-            case com.android.extensions.xr.node.InputEvent.SOURCE_HANDS:
-                return InputEvent.Source.HANDS;
-            case com.android.extensions.xr.node.InputEvent.SOURCE_MOUSE:
-                return InputEvent.Source.MOUSE;
-            case com.android.extensions.xr.node.InputEvent.SOURCE_GAZE_AND_GESTURE:
-                return InputEvent.Source.GAZE_AND_GESTURE;
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown Input Event Source: " + xrInputEventSource);
+    fun getInputEventSource(xrInputEventSource: Int): Int {
+        return when (xrInputEventSource) {
+            ExtensionsInputEvent.SOURCE_UNKNOWN -> InputEvent.Source.UNKNOWN
+
+            ExtensionsInputEvent.SOURCE_HEAD -> InputEvent.Source.HEAD
+            ExtensionsInputEvent.SOURCE_CONTROLLER -> InputEvent.Source.CONTROLLER
+
+            ExtensionsInputEvent.SOURCE_HANDS -> InputEvent.Source.HANDS
+            ExtensionsInputEvent.SOURCE_MOUSE -> InputEvent.Source.MOUSE
+            ExtensionsInputEvent.SOURCE_GAZE_AND_GESTURE -> InputEvent.Source.GAZE_AND_GESTURE
+
+            else ->
+                throw IllegalArgumentException("Unknown Input Event Source: $xrInputEventSource")
         }
     }
 
     @InputEvent.PointerType
-    static int getInputEventPointerType(int xrInputEventPointerType) {
-        switch (xrInputEventPointerType) {
-            case com.android.extensions.xr.node.InputEvent.POINTER_TYPE_DEFAULT:
-                return InputEvent.Pointer.DEFAULT;
-            case com.android.extensions.xr.node.InputEvent.POINTER_TYPE_LEFT:
-                return InputEvent.Pointer.LEFT;
-            case com.android.extensions.xr.node.InputEvent.POINTER_TYPE_RIGHT:
-                return InputEvent.Pointer.RIGHT;
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown Input Event Pointer Type: " + xrInputEventPointerType);
+    fun getInputEventPointerType(xrInputEventPointerType: Int): Int {
+        return when (xrInputEventPointerType) {
+            ExtensionsInputEvent.POINTER_TYPE_DEFAULT -> InputEvent.Pointer.DEFAULT
+
+            ExtensionsInputEvent.POINTER_TYPE_LEFT -> InputEvent.Pointer.LEFT
+
+            ExtensionsInputEvent.POINTER_TYPE_RIGHT -> InputEvent.Pointer.RIGHT
+
+            else ->
+                throw IllegalArgumentException(
+                    "Unknown Input Event Pointer Type: $xrInputEventPointerType"
+                )
         }
     }
 
     @InputEvent.ActionValue
-    static int getInputEventAction(int xrInputEventAction) {
-        switch (xrInputEventAction) {
-            case com.android.extensions.xr.node.InputEvent.ACTION_DOWN:
-                return InputEvent.Action.DOWN;
-            case com.android.extensions.xr.node.InputEvent.ACTION_UP:
-                return InputEvent.Action.UP;
-            case com.android.extensions.xr.node.InputEvent.ACTION_MOVE:
-                return InputEvent.Action.MOVE;
-            case com.android.extensions.xr.node.InputEvent.ACTION_CANCEL:
-                return InputEvent.Action.CANCEL;
-            case com.android.extensions.xr.node.InputEvent.ACTION_HOVER_MOVE:
-                return InputEvent.Action.HOVER_MOVE;
-            case com.android.extensions.xr.node.InputEvent.ACTION_HOVER_ENTER:
-                return InputEvent.Action.HOVER_ENTER;
-            case com.android.extensions.xr.node.InputEvent.ACTION_HOVER_EXIT:
-                return InputEvent.Action.HOVER_EXIT;
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown Input Event Action: " + xrInputEventAction);
+    fun getInputEventAction(xrInputEventAction: Int): Int {
+        return when (xrInputEventAction) {
+            ExtensionsInputEvent.ACTION_DOWN -> InputEvent.Action.DOWN
+            ExtensionsInputEvent.ACTION_UP -> InputEvent.Action.UP
+            ExtensionsInputEvent.ACTION_MOVE -> InputEvent.Action.MOVE
+            ExtensionsInputEvent.ACTION_CANCEL -> InputEvent.Action.CANCEL
+
+            ExtensionsInputEvent.ACTION_HOVER_MOVE -> InputEvent.Action.HOVER_MOVE
+
+            ExtensionsInputEvent.ACTION_HOVER_ENTER -> InputEvent.Action.HOVER_ENTER
+
+            ExtensionsInputEvent.ACTION_HOVER_EXIT -> InputEvent.Action.HOVER_EXIT
+
+            else ->
+                throw IllegalArgumentException("Unknown Input Event Action: $xrInputEventAction")
         }
     }
 
     @ResizeEvent.ResizeState
-    static int getResizeEventState(int resizeState) {
-        switch (resizeState) {
-            case ReformEvent.REFORM_STATE_UNKNOWN:
-                return ResizeEvent.RESIZE_STATE_UNKNOWN;
-            case ReformEvent.REFORM_STATE_START:
-                return ResizeEvent.RESIZE_STATE_START;
-            case ReformEvent.REFORM_STATE_ONGOING:
-                return ResizeEvent.RESIZE_STATE_ONGOING;
-            case ReformEvent.REFORM_STATE_END:
-                return ResizeEvent.RESIZE_STATE_END;
-            default:
-                throw new IllegalArgumentException("Unknown Resize State: " + resizeState);
+    fun getResizeEventState(resizeState: Int): Int {
+        return when (resizeState) {
+            ReformEvent.REFORM_STATE_UNKNOWN -> ResizeEvent.RESIZE_STATE_UNKNOWN
+            ReformEvent.REFORM_STATE_START -> ResizeEvent.RESIZE_STATE_START
+            ReformEvent.REFORM_STATE_ONGOING -> ResizeEvent.RESIZE_STATE_ONGOING
+            ReformEvent.REFORM_STATE_END -> ResizeEvent.RESIZE_STATE_END
+            else -> throw IllegalArgumentException("Unknown Resize State: $resizeState")
         }
     }
 
-    static Matrix4 getMatrix(Mat4f xrMatrix) {
-        float[] matrixData = xrMatrix.getFlattenedMatrix();
-        return new Matrix4(matrixData);
+    @JvmStatic
+    fun getMatrix(xrMatrix: Mat4f): Matrix4 {
+        val matrixData = xrMatrix.flattenedMatrix
+        return Matrix4(matrixData)
     }
 
-    static Pose getPose(Vec3 position, Quatf quatf) {
-        return new Pose(
-                new Vector3(position.x, position.y, position.z),
-                new Quaternion(quatf.x, quatf.y, quatf.z, quatf.w));
+    @JvmStatic
+    fun getPose(position: Vec3, quatf: Quatf): Pose {
+        return Pose(
+            Vector3(position.x, position.y, position.z),
+            Quaternion(quatf.x, quatf.y, quatf.z, quatf.w),
+        )
     }
 
-    static Vector3 getVector3(Vec3 vec3) {
-        return new Vector3(vec3.x, vec3.y, vec3.z);
+    @JvmStatic
+    fun getVector3(vec3: Vec3): Vector3 {
+        return Vector3(vec3.x, vec3.y, vec3.z)
     }
 
-    static Quaternion getQuaternion(Quatf quatf) {
-        return new Quaternion(quatf.x, quatf.y, quatf.z, quatf.w);
+    fun getQuaternion(quatf: Quatf): Quaternion {
+        return Quaternion(quatf.x, quatf.y, quatf.z, quatf.w)
     }
 
     /**
      * Converts from the Extensions spatial capabilities to the runtime spatial capabilities.
      *
-     * @param extCapabilities a {@link com.android.extensions.xr.space.SpatialCapabilities} instance
-     *     to be converted.
+     * @param extCapabilities a [ExtensionsSpatialCapabilities] instance to be converted.
      */
-    static SpatialCapabilities convertSpatialCapabilities(
-            com.android.extensions.xr.space.SpatialCapabilities extCapabilities) {
-        int capabilities = 0;
-        if (extCapabilities.get(
-                com.android.extensions.xr.space.SpatialCapabilities.SPATIAL_UI_CAPABLE)) {
-            capabilities |= SpatialCapabilities.SPATIAL_CAPABILITY_UI;
+    @JvmStatic
+    fun convertSpatialCapabilities(
+        extCapabilities: ExtensionsSpatialCapabilities
+    ): SpatialCapabilities {
+        var capabilities = 0
+        if (extCapabilities.get(ExtensionsSpatialCapabilities.SPATIAL_UI_CAPABLE)) {
+            capabilities = capabilities or SpatialCapabilities.SPATIAL_CAPABILITY_UI
         }
-        if (extCapabilities.get(
-                com.android.extensions.xr.space.SpatialCapabilities.SPATIAL_3D_CONTENTS_CAPABLE)) {
-            capabilities |= SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT;
+        if (extCapabilities.get(ExtensionsSpatialCapabilities.SPATIAL_3D_CONTENTS_CAPABLE)) {
+            capabilities = capabilities or SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
         }
-        if (extCapabilities.get(
-                com.android.extensions.xr.space.SpatialCapabilities.PASSTHROUGH_CONTROL_CAPABLE)) {
-            capabilities |= SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL;
+        if (extCapabilities.get(ExtensionsSpatialCapabilities.PASSTHROUGH_CONTROL_CAPABLE)) {
+            capabilities =
+                capabilities or SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
         }
-        if (extCapabilities.get(
-                com.android.extensions.xr.space.SpatialCapabilities.APP_ENVIRONMENTS_CAPABLE)) {
-            capabilities |= SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT;
+        if (extCapabilities.get(ExtensionsSpatialCapabilities.APP_ENVIRONMENTS_CAPABLE)) {
+            capabilities = capabilities or SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT
         }
-        if (extCapabilities.get(
-                com.android.extensions.xr.space.SpatialCapabilities.SPATIAL_AUDIO_CAPABLE)) {
-            capabilities |= SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO;
+        if (extCapabilities.get(ExtensionsSpatialCapabilities.SPATIAL_AUDIO_CAPABLE)) {
+            capabilities = capabilities or SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO
         }
-        if (extCapabilities.get(
-                com.android.extensions.xr.space.SpatialCapabilities
-                        .SPATIAL_ACTIVITY_EMBEDDING_CAPABLE)) {
-            capabilities |= SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY;
+        if (extCapabilities.get(ExtensionsSpatialCapabilities.SPATIAL_ACTIVITY_EMBEDDING_CAPABLE)) {
+            capabilities = capabilities or SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY
         }
 
-        return new SpatialCapabilities(capabilities);
+        return SpatialCapabilities(capabilities)
     }
 
     /**
      * Converts from the Extensions perceived resolution to the runtime perceived resolution.
      *
-     * @param extResolution a {@link com.android.extensions.xr.space.PerceivedResolution} instance
-     *     to be converted.
+     * @param extResolution a [PerceivedResolution] instance to be converted.
      */
-    static PixelDimensions convertPerceivedResolution(
-            com.android.extensions.xr.space.PerceivedResolution extResolution) {
-        return new PixelDimensions(extResolution.getWidth(), extResolution.getHeight());
+    @JvmStatic
+    fun convertPerceivedResolution(extResolution: PerceivedResolution): PixelDimensions {
+        return PixelDimensions(extResolution.width, extResolution.height)
     }
 
     /**
      * Converts from the Extensions spatial visibility to the runtime spatial visibility.
      *
-     * @param extVisibility a {@link com.android.extensions.xr.space.VisibilityState.S} instance to
-     *     be converted.
+     * @param extVisibility a [VisibilityState] instance to be converted.
      */
-    static SpatialVisibility convertSpatialVisibility(int extVisibility) {
-        int visibility;
-        switch (extVisibility) {
-            case VisibilityState.UNKNOWN:
-                visibility = SpatialVisibility.UNKNOWN;
-                break;
-            case VisibilityState.NOT_VISIBLE:
-                visibility = SpatialVisibility.OUTSIDE_FOV;
-                break;
-            case VisibilityState.PARTIALLY_VISIBLE:
-                visibility = SpatialVisibility.PARTIALLY_WITHIN_FOV;
-                break;
-            case VisibilityState.FULLY_VISIBLE:
-                visibility = SpatialVisibility.WITHIN_FOV;
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown Spatial Visibility: " + extVisibility);
-        }
-        return new SpatialVisibility(visibility);
+    @JvmStatic
+    fun convertSpatialVisibility(extVisibility: Int): SpatialVisibility {
+        val visibility: Int =
+            when (extVisibility) {
+                VisibilityState.UNKNOWN -> SpatialVisibility.UNKNOWN
+                VisibilityState.NOT_VISIBLE -> SpatialVisibility.OUTSIDE_FOV
+                VisibilityState.PARTIALLY_VISIBLE -> SpatialVisibility.PARTIALLY_WITHIN_FOV
+                VisibilityState.FULLY_VISIBLE -> SpatialVisibility.WITHIN_FOV
+                else -> throw IllegalArgumentException("Unknown Spatial Visibility: $extVisibility")
+            }
+        return SpatialVisibility(visibility)
     }
 
     /**
      * Converts from the Extensions environment visibility state to the runtime environment
      * visibility state.
      *
-     * @param environmentState a {@link
-     *     com.android.extensions.xr.environment.EnvironmentVisibilityState} instance to be
-     *     converted.
+     * @param environmentState a [ ] instance to be converted.
      */
-    static boolean getIsPreferredSpatialEnvironmentActive(int environmentState) {
-        return environmentState == EnvironmentVisibilityState.APP_VISIBLE;
+    @JvmStatic
+    fun getIsPreferredSpatialEnvironmentActive(environmentState: Int): Boolean {
+        return environmentState == EnvironmentVisibilityState.APP_VISIBLE
     }
 
-    static float getPassthroughOpacity(PassthroughVisibilityState passthroughVisibilityState) {
-        int passthroughState = passthroughVisibilityState.getCurrentState();
-        if (passthroughState == PassthroughVisibilityState.DISABLED) {
-            return 0.0f;
+    @JvmStatic
+    fun getPassthroughOpacity(passthroughVisibilityState: PassthroughVisibilityState): Float {
+        val passthroughState = passthroughVisibilityState.currentState
+        return if (passthroughState == PassthroughVisibilityState.DISABLED) {
+            0.0f
         } else {
-            float opacity = passthroughVisibilityState.getOpacity();
+            val opacity = passthroughVisibilityState.opacity
             if (opacity > 0.0f) {
-                return opacity;
+                opacity
             } else {
                 // When passthrough is enabled, the opacity should be greater than zero.
-                return 1.0f;
+                1.0f
             }
         }
     }
 
-    private static int getHitTestSurfaceType(int extSurfaceType) {
-        switch (extSurfaceType) {
-            case com.android.extensions.xr.space.HitTestResult.SURFACE_PANEL:
-                return HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_PLANE;
-            case com.android.extensions.xr.space.HitTestResult.SURFACE_3D_OBJECT:
-                return HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_OBJECT;
-            default:
-                return HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_UNKNOWN;
+    private fun getHitTestSurfaceType(extSurfaceType: Int): Int {
+        return when (extSurfaceType) {
+            HitTestResult.SURFACE_PANEL ->
+                RuntimeHitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_PLANE
+
+            HitTestResult.SURFACE_3D_OBJECT ->
+                RuntimeHitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_OBJECT
+
+            else -> RuntimeHitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_UNKNOWN
         }
     }
 
     /**
      * Converts from the Extensions hit test result to the runtime hit test result.
      *
-     * @param hitTestResultExt a {@link com.android.extensions.xr.space.HitTestResult} instance to
-     *     be converted.
+     * @param hitTestResultExt a [HitTestResult] instance to be converted.
      */
-    static HitTestResult getHitTestResult(
-            com.android.extensions.xr.space.HitTestResult hitTestResultExt) {
-        Vector3 hitPosition =
-                hitTestResultExt.getHitPosition() == null
-                        ? null
-                        : new Vector3(
-                                hitTestResultExt.getHitPosition().x,
-                                hitTestResultExt.getHitPosition().y,
-                                hitTestResultExt.getHitPosition().z);
-        Vector3 surfaceNormal =
-                hitTestResultExt.getSurfaceNormal() == null
-                        ? null
-                        : new Vector3(
-                                hitTestResultExt.getSurfaceNormal().x,
-                                hitTestResultExt.getSurfaceNormal().y,
-                                hitTestResultExt.getSurfaceNormal().z);
-        int surfaceType = getHitTestSurfaceType(hitTestResultExt.getSurfaceType());
-        return new HitTestResult(
-                hitPosition, surfaceNormal, surfaceType, hitTestResultExt.getDistance());
+    fun getHitTestResult(hitTestResultExt: HitTestResult): RuntimeHitTestResult {
+        val hitPosition =
+            if (hitTestResultExt.hitPosition == null) null
+            else
+                Vector3(
+                    hitTestResultExt.hitPosition.x,
+                    hitTestResultExt.hitPosition.y,
+                    hitTestResultExt.hitPosition.z,
+                )
+        val surfaceNormal =
+            if (hitTestResultExt.surfaceNormal == null) null
+            else
+                Vector3(
+                    hitTestResultExt.surfaceNormal.x,
+                    hitTestResultExt.surfaceNormal.y,
+                    hitTestResultExt.surfaceNormal.z,
+                )
+        val surfaceType = getHitTestSurfaceType(hitTestResultExt.surfaceType)
+        return RuntimeHitTestResult(
+            hitPosition,
+            surfaceNormal,
+            surfaceType,
+            hitTestResultExt.distance,
+        )
     }
 
-    static int getHitTestFilter(@HitTestFilterValue int hitTestFilter) {
-        int hitTestFilterResult = 0;
-        if ((hitTestFilter & HitTestFilter.SELF_SCENE) != 0) {
-            hitTestFilterResult |= XrExtensions.HIT_TEST_FILTER_INCLUDE_INSIDE_ACTIVITY;
+    fun getHitTestFilter(@ScenePose.HitTestFilterValue hitTestFilter: Int): Int {
+        var hitTestFilterResult = 0
+        if ((hitTestFilter and ScenePose.HitTestFilter.SELF_SCENE) != 0) {
+            hitTestFilterResult =
+                hitTestFilterResult or XrExtensions.HIT_TEST_FILTER_INCLUDE_INSIDE_ACTIVITY
         }
-        if ((hitTestFilter & HitTestFilter.OTHER_SCENES) != 0) {
-            hitTestFilterResult |= XrExtensions.HIT_TEST_FILTER_INCLUDE_OUTSIDE_ACTIVITY;
+        if ((hitTestFilter and ScenePose.HitTestFilter.OTHER_SCENES) != 0) {
+            hitTestFilterResult =
+                hitTestFilterResult or XrExtensions.HIT_TEST_FILTER_INCLUDE_OUTSIDE_ACTIVITY
         }
-        return hitTestFilterResult;
+        return hitTestFilterResult
     }
 
-    static int convertSpatialPointerIconType(@SpatialPointerIconType int rtIconType) {
-        switch (rtIconType) {
-            case SpatialPointerIcon.TYPE_NONE:
-                return NodeTransaction.POINTER_ICON_TYPE_NONE;
-            case SpatialPointerIcon.TYPE_DEFAULT:
-                return NodeTransaction.POINTER_ICON_TYPE_DEFAULT;
-            case SpatialPointerIcon.TYPE_CIRCLE:
-                return NodeTransaction.POINTER_ICON_TYPE_CIRCLE;
-            default:
-                return NodeTransaction.POINTER_ICON_TYPE_DEFAULT;
+    @JvmStatic
+    fun convertSpatialPointerIconType(@SpatialPointerIconType rtIconType: Int): Int {
+        return when (rtIconType) {
+            SpatialPointerIcon.TYPE_NONE -> NodeTransaction.POINTER_ICON_TYPE_NONE
+            SpatialPointerIcon.TYPE_DEFAULT -> NodeTransaction.POINTER_ICON_TYPE_DEFAULT
+            SpatialPointerIcon.TYPE_CIRCLE -> NodeTransaction.POINTER_ICON_TYPE_CIRCLE
+            else -> NodeTransaction.POINTER_ICON_TYPE_DEFAULT
         }
     }
 
-    static android.extensions.xr.node.Vec3 getPositionFromTransform(Matrix4 transform) {
-        return new android.extensions.xr.node.Vec3(
-                transform.getTranslation().getX(),
-                transform.getTranslation().getY(),
-                transform.getTranslation().getZ());
+    @JvmStatic
+    fun getPositionFromTransform(transform: Matrix4): android.extensions.xr.node.Vec3 {
+        return android.extensions.xr.node.Vec3(
+            transform.translation.x,
+            transform.translation.y,
+            transform.translation.z,
+        )
     }
 
-    static android.extensions.xr.node.Quatf getRotationFromTransform(Matrix4 transform) {
-        return new android.extensions.xr.node.Quatf(
-                transform.getRotation().getX(),
-                transform.getRotation().getY(),
-                transform.getRotation().getZ(),
-                transform.getRotation().getW());
+    @JvmStatic
+    fun getRotationFromTransform(transform: Matrix4): android.extensions.xr.node.Quatf {
+        return android.extensions.xr.node.Quatf(
+            transform.rotation.x,
+            transform.rotation.y,
+            transform.rotation.z,
+            transform.rotation.w,
+        )
     }
 }
