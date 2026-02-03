@@ -24,7 +24,6 @@ import android.graphics.RectF
 import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -480,19 +479,12 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
                 strokeIdToPageNumMap = strokeIdToPageNumMap,
                 annotationsViewModel = documentViewModel,
             )
-        val touchTolerancePx =
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                TOUCH_TOLERANCE_IN_DP,
-                resources.displayMetrics,
-            )
         wetStrokesView.apply {
             addFinishedStrokesListener(wetStrokesOnFinishedListener)
             wetStrokesViewTouchHandler =
-                WetStrokesViewTouchHandler(
-                    pageInfoProvider::getPageInfoFromViewCoordinates,
-                    touchTolerancePx,
-                ) { strokeId, pageNum ->
+                WetStrokesViewTouchHandler(pageInfoProvider::getPageInfoFromViewCoordinates) {
+                    strokeId,
+                    pageNum ->
                     strokeIdToPageNumMap[strokeId] = pageNum
                 }
             setOnTouchListener(wetStrokesViewTouchHandler)
