@@ -20,6 +20,7 @@ import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.testutils.WithTouchSlop
 import androidx.compose.testutils.assertPixels
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
@@ -75,6 +77,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.runner.RunWith
 
@@ -1206,6 +1209,46 @@ class TransformingLazyColumnTest {
 
         assertThat(state.anchorItemIndex).isEqualTo(initialIndex + 1)
         assertThat(state.anchorItemScrollOffset).isEqualTo(snapOffsetPx)
+    }
+
+    @Test
+    fun scrollItemToEdge_ableToFlingOverEdge() {
+        lateinit var state: TransformingLazyColumnState
+
+        val itemHeight = 50.dp
+        val itemHeightPx = with(rule.density) { itemHeight.toPx() }
+        val itemIndexToCheck = 2
+
+        rule.setContent {
+            state = rememberTransformingLazyColumnState()
+            TransformingLazyColumn(
+                state = state,
+                verticalArrangement = Arrangement.spacedBy(space = 0.dp, alignment = Alignment.Top),
+            ) {
+                items(100) {
+                    Box(
+                        Modifier.fillMaxWidth()
+                            .height(itemHeight)
+                            .testTag(if (it == itemIndexToCheck) TEST_TAG else "")
+                    )
+                }
+            }
+        }
+
+        // Distance from top of test item to top edge of TLC.
+        val topDistance = itemIndexToCheck * itemHeightPx
+
+        rule.onNodeWithTag(TEST_TAG).performTouchInput {
+            // swipeUp's default startY value is bottom,
+            // so scroll distance  = itemHeight + topDistance.
+            // After scrolling, the item's bottom edge must reach at least the top of the TLC.
+            swipeUp(endY = -topDistance)
+        }
+        rule.waitForIdle()
+
+        // With fling, we expect that current item will be scrolled more and disappear. So, first
+        // visible item should be updated to one of next items.
+        assertTrue(state.layoutInfo.visibleItems.first().index > itemIndexToCheck)
     }
 
     @Test
