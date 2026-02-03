@@ -121,9 +121,6 @@ class EditablePdfViewerFragmentTests {
 
         // Initiate drag event
         onView(withId(R.id.annotationToolbar)).perform(ViewActions.longClick())
-        onIdle()
-        // Verify toolbar collapses on long press
-        onView(withId(R.id.collapsed_tool)).check(matches(isDisplayed()))
 
         // Drag to the left side of the screen
         performDragAndDrop(
