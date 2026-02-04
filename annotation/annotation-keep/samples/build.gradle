@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The Android Open Source Project
+ * Copyright (C) 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,34 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * This file was created using the `createProject` gradle task (./gradlew createProject)
+ *
+ * Please use the task when creating a new project, rather than copying an existing project and
+ * modifying its settings.
+ */
 import androidx.build.SoftwareType
-import androidx.build.PlatformIdentifier
-import androidx.build.KotlinTarget
 
 plugins {
     id("AndroidXPlugin")
+    id("com.android.library")
 }
 
-androidXMultiplatform {
-    androidLibrary {
-        namespace = "androidx.annotation.keep"
-    }
-    ios()
-    jvm()
-    linux()
-    mac()
-    mingwX64()
-    tvos()
-    watchos()
+android {
+    namespace = "androidx.annotation.keep.samples"
+}
 
-    defaultPlatform(PlatformIdentifier.JVM)
+dependencies {
+    api(libs.jspecify)
+    compileOnly(project(":annotation:annotation-sampled"))
+    implementation(project(":annotation:annotation-keep"))
 }
 
 androidx {
-    name = "Keep Annotation"
-    type = SoftwareType.SNAPSHOT_ONLY_LIBRARY_WITH_API_TASKS
+    name = "Annotation Samples"
+    type = SoftwareType.SAMPLES
     mavenVersion = LibraryVersions.ANNOTATION_KEEP_QUARANTINE
-    inceptionYear = "2025"
-    description = "Provides annotations to guide optimizers / code shrinkers."
-    samples(project(":annotation:annotation-keep:annotation-keep-samples"))
+    inceptionYear = "2026"
+    description = "Contains the sample code for the Androidx Annotation Keep library"
 }
