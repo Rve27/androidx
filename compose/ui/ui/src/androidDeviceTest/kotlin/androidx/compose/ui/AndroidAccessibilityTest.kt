@@ -240,6 +240,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.After
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -4176,6 +4177,40 @@ class AndroidAccessibilityTest {
         val parentNodeId = rule.onNodeWithTag(parentTag).semanticsId()
         val overlappedChildOneNodeId = rule.onNodeWithTag(childOneTag).semanticsId()
         val overlappedChildTwoNodeId = rule.onNodeWithTag(childTwoTag).semanticsId()
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(createAccessibilityNodeInfo(parentNodeId).childCount).isEqualTo(1)
+            assertThat(createAccessibilityNodeInfo(overlappedChildOneNodeId).text.toString())
+                .isEqualTo("Child One")
+            assertThat(provider.createAccessibilityNodeInfo(overlappedChildTwoNodeId)).isNull()
+        }
+    }
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    @Test
+    fun testAccessibilityNodeInfoTreePruned_completelyCovered_whenInMergingContainer() {
+        Assume.assumeTrue(ComposeUiFlags.isAccessibilityShouldIncludeOffscreenChildrenEnabled)
+        // Arrange.
+        val parentTag = "ParentForOverlappedChildren"
+        val childOneTag = "OverlappedChildOne"
+        val childTwoTag = "OverlappedChildTwo"
+        setContent {
+            Box(Modifier.testTag(parentTag).semantics(true) {}) {
+                with(LocalDensity.current) {
+                    BasicText(
+                        "Child One",
+                        Modifier.zIndex(1f).testTag(childOneTag).requiredSize(50.toDp()),
+                    )
+                    BasicText("Child Two", Modifier.testTag(childTwoTag).requiredSize(50.toDp()))
+                }
+            }
+        }
+        val parentNodeId = rule.onNodeWithTag(parentTag, useUnmergedTree = true).semanticsId()
+        val overlappedChildOneNodeId =
+            rule.onNodeWithTag(childOneTag, useUnmergedTree = true).semanticsId()
+        val overlappedChildTwoNodeId =
+            rule.onNodeWithTag(childTwoTag, useUnmergedTree = true).semanticsId()
 
         // Assert.
         rule.runOnIdle {

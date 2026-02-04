@@ -145,6 +145,17 @@ object ComposeUiFlags {
     var isAccessibilityShowOnScreenNestedScrollingEnabled: Boolean = true
 
     /**
+     * Enables a change where off-screen children of the partially visible merging nodes (e.g. a
+     * Text node of a Button) inside scrollable container are now also reported in the semantics
+     * tree for Accessibility needs.
+     *
+     * Enabled is correct, and it should be enabled in all apps.
+     */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isAccessibilityShouldIncludeOffscreenChildrenEnabled: Boolean = true
+
+    /**
      * Enables support of trackpad gesture events.
      *
      * If enabled, [androidx.compose.ui.input.pointer.PointerEvent]s can have type of
