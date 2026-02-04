@@ -132,7 +132,9 @@ public interface RecomposerInfo {
      *
      * @return a flow of error states captured during composition
      */
-    @ComposeToolingApi public val errorState: StateFlow<RecomposerErrorInformation?>
+    @ComposeToolingApi
+    public val errorState: StateFlow<RecomposerErrorInformation?>
+        get() = DefaultErrorStateFlow
 
     /**
      * Register an observer to be notified when a composition is added to or removed from the given
@@ -142,6 +144,12 @@ public interface RecomposerInfo {
      */
     @ExperimentalComposeRuntimeApi
     public fun observe(observer: CompositionRegistrationObserver): CompositionObserverHandle? = null
+
+    private companion object {
+        @ComposeToolingApi
+        private val DefaultErrorStateFlow: StateFlow<RecomposerErrorInformation?> =
+            MutableStateFlow(null)
+    }
 }
 
 /** Read only information about [Recomposer] error state. */
