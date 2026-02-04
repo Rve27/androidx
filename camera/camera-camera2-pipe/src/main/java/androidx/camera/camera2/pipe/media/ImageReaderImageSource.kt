@@ -174,7 +174,10 @@ public class ImageReaderImageSource(
     override val surface: Surface = imageReader.surface
 
     init {
-        imageReader.setOnImageListener(::onImage)
+        imageReader.onImageListener =
+            ImageReaderWrapper.OnImageListener { streamId, outputId, image ->
+                onImage(streamId, outputId, image)
+            }
     }
 
     override fun setListener(listener: ImageSourceListener) {
