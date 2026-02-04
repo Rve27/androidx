@@ -27,6 +27,7 @@ import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.AndroidComposeUiFlags
+import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.R
@@ -603,6 +604,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             createComposition()
         }
     }
+
+    /** Here to allow extension functions */
+    companion object
+}
+
+/**
+ * Used to disable [androidx.compose.ui.layout.WindowInsetsRulers]. This can be used when UI never
+ * reads WindowInsets across the process and having WindowInsets callbacks cause frame generation
+ * when no content is updated. Applications typically would not use this method, but it may be
+ * necessary for system UI. This should be called before the first [ComposeView] is created to avoid
+ * insets calls.
+ */
+@ExperimentalComposeUiApi
+fun ComposeView.Companion.disableWindowInsetsRulers() {
+    @Suppress("DEPRECATION")
+    ComposeUiFlags.areWindowInsetsRulersEnabled = false
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
