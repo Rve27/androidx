@@ -22,21 +22,18 @@ import android.graphics.Paint
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.core.operations.layout.managers.BoxLayout
 import androidx.compose.remote.creation.RFloat
+import androidx.compose.remote.creation.Rc
 import androidx.compose.remote.creation.RemoteComposeContextAndroid
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.arrayLength
 import androidx.compose.remote.creation.arraySum
-import androidx.compose.remote.creation.component6
+import androidx.compose.remote.creation.cos
 import androidx.compose.remote.creation.min
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
-import androidx.compose.remote.creation.plus
+import androidx.compose.remote.creation.sin
 import androidx.compose.remote.creation.times
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.component3
-import kotlin.collections.component4
-import kotlin.collections.component5
+import androidx.compose.remote.creation.toRad
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -225,6 +222,95 @@ fun demoPieChart_good(): RemoteComposeContextAndroid {
                                 )
                                 rotate(sweepAngle, cx, cy)
                             }
+                        }
+                    }
+                }
+            }
+        }
+    return rc
+}
+
+/** A demo that draws a Pie Chart using procedural creation APIs. */
+@Suppress("RestrictedApiAndroidX")
+fun demoPieChart2(): RemoteComposeContextAndroid {
+    val data = floatArrayOf(30f, 20f, 15f, 25f, 10f)
+    val names = arrayOf("Android", "iOS", "Web", "Desktop", "Other")
+
+    val rc =
+        RemoteComposeContextAndroid(
+            platform = AndroidxRcPlatformServices(),
+            apiLevel = 7,
+            RemoteComposeWriter.hTag(Header.DOC_WIDTH, 500),
+            RemoteComposeWriter.hTag(Header.DOC_HEIGHT, 500),
+            RemoteComposeWriter.hTag(Header.DOC_CONTENT_DESCRIPTION, "Pie Chart Demo"),
+        ) {
+            root {
+                box(
+                    RecordingModifier().fillMaxSize().background(0xFFF0F0F0.toInt()),
+                    BoxLayout.START,
+                    BoxLayout.START,
+                ) {
+                    canvas(RecordingModifier().fillMaxSize()) {
+                        val w = ComponentWidth()
+                        val h = ComponentHeight()
+                        val density = rf(Rc.System.DENSITY)
+
+                        val cx = w / 2f
+                        val cy = h / 2f
+                        val radius = min(w, h) * 0.4f
+
+                        val values = rf(addFloatArray(data))
+                        val names = addStringList(*names)
+                        val len = arrayLength(values)
+                        val total = arraySum(values)
+
+                        // rotate(-90, cx, cy)
+                        loop(0, 1, len) { i ->
+                            val value = values.get(i)
+                            val sum = arraySum(values, i - 1f).flush()
+                            addDebugMessage("sum ", sum)
+                            addDebugMessage("value ", value)
+                            val name = textLookup(names, i.toFloat())
+                            val sweepAngle = (value / total) * 360f
+                            val sumAngle = (sum / total) * 360f
+
+                            val colorId =
+                                getDistributedColor(i, 0xff, 56.6 / 100f, 80 / 100f).toInt()
+
+                            painter.setColorId(colorId).setStyle(Paint.Style.FILL).commit()
+
+                            drawSector(
+                                cx - radius,
+                                cy - radius,
+                                cx + radius,
+                                cy + radius,
+                                sumAngle,
+                                sweepAngle,
+                            )
+
+                            // Draw border
+                            painter
+                                .setColor(Color.WHITE)
+                                .setStyle(Paint.Style.STROKE)
+                                .setStrokeWidth(2f)
+                                .commit()
+
+                            drawSector(
+                                cx - radius,
+                                cy - radius,
+                                cx + radius,
+                                cy + radius,
+                                sumAngle,
+                                sweepAngle,
+                            )
+                            painter
+                                .setTextSize((16f * density).toFloat())
+                                .setStyle(Paint.Style.FILL)
+                                .commit()
+                            val angleRad = toRad((sumAngle + sweepAngle * 0.5f))
+                            val pieCenterX = cx + radius * cos(angleRad) * 0.66f
+                            val pieCenterY = cy + radius * sin(angleRad) * 0.66f
+                            drawTextAnchored(name, pieCenterX, pieCenterY, 0, 0, 0)
                         }
                     }
                 }
