@@ -134,6 +134,7 @@ class SubspaceTest {
     @OptIn(ExperimentalFollowingSubspaceApi::class)
     fun setUp() {
         FollowBehavior.dispatcherOverride = testDispatcher
+        FakeRuntimeAnchor.anchorsCreatedCount = 0
     }
 
     @OptIn(ExperimentalFollowingSubspaceApi::class)
