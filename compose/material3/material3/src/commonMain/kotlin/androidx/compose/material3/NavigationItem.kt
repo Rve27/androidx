@@ -1039,7 +1039,10 @@ private fun MeasureScope.placeAnimatedLabelAndIcon(
             labelPlaceable.width) / 2
 
     val labelYTopIcon =
-        indicatorRipplePlaceable.height + topIconIndicatorToLabelVerticalPadding.roundToPx()
+        iconY +
+            iconPlaceable.height +
+            (indicatorPadding.calculateBottomPadding() + topIconIndicatorToLabelVerticalPadding)
+                .roundToPx()
 
     val labelXStartIconHorizontalOffset =
         if (isIconPositionTop && iconPositionProgress > 0f) {
