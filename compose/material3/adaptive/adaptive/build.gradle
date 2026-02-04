@@ -53,7 +53,7 @@ androidXMultiplatform {
             api("androidx.window:window:1.5.0")
         }
 
-        commonStubsMain.dependsOn(commonMain)
+        commonStubsMain {}.dependsOn(commonMain)
         jvmStubsMain.dependsOn(commonStubsMain)
         linuxx64StubsMain.dependsOn(commonStubsMain)
 

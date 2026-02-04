@@ -66,7 +66,7 @@ androidXMultiplatform {
             implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.1")
         }
 
-        commonStubsMain.dependsOn(commonMain)
+        commonStubsMain {}.dependsOn(commonMain)
         jvmStubsMain.dependsOn(commonStubsMain)
         linuxx64StubsMain.dependsOn(commonStubsMain)
 

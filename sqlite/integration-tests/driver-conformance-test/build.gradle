@@ -118,7 +118,7 @@ androidXMultiplatform {
                 // see GenerateLoadableExtensionSource.groovy impl
                 if (extensionCompilation.canCompileOnCurrentHost(target.konanTarget)) {
                     extensionCompilation.configureTarget(target.konanTarget)
-                    configureLoadableExtensionTask(project, target, extensionCompilation.sharedObjectOutputFor(target.konanTarget))
+                    project.ext.configureLoadableExtensionTask(project, target, extensionCompilation.sharedObjectOutputFor(target.konanTarget))
                 }
             }
         }

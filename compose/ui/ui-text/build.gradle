@@ -70,7 +70,7 @@ androidXMultiplatform {
             implementation("androidx.emoji2:emoji2:1.4.0")
         }
 
-        commonStubsMain.dependsOn(commonMain)
+        commonStubsMain {}.dependsOn(commonMain)
         jvmStubsMain.dependsOn(commonStubsMain)
         linuxx64StubsMain.dependsOn(commonStubsMain)
 
