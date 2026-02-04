@@ -612,7 +612,14 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     /**
      * Provide accessibility manager to the user. Use the Android version of accessibility manager.
      */
-    override val accessibilityManager = AndroidAccessibilityManager(context)
+    override val accessibilityManager =
+        // TODO: when removing the flag, change this to a get() block
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isSharedAccessibilityManagerEnabled) {
+            composeViewContext.accessibilityManager
+        } else {
+            AndroidAccessibilityManager(context)
+        }
 
     /**
      * Provide access to a GraphicsContext instance used to create GraphicsLayers for providing

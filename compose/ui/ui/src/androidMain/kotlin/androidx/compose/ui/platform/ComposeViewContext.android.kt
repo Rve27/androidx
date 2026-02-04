@@ -111,6 +111,9 @@ internal class ComposeViewContext(
     /** [Configuration] provided by [LocalConfiguration] */
     internal val configuration = mutableStateOf(Configuration(currentConfiguration))
 
+    /** [AccessibilityManager] provided by [LocalAccessibilityManager] */
+    internal val accessibilityManager = AndroidAccessibilityManager(view.context)
+
     /** [UriHandler] provided by [LocalUriHandler] */
     internal val uriHandler = AndroidUriHandler(view.context)
 
