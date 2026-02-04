@@ -1891,6 +1891,16 @@ public class RemoteComposeWriter {
     }
 
     /**
+     * Set the name of the float associated with the id
+     *
+     * @param id   of the float
+     * @param name name of the float
+     */
+    public void setFloatName(int id, @NonNull String name) {
+        mBuffer.setNamedVariable(id, name, NamedVariable.FLOAT_TYPE);
+    }
+
+    /**
      * @param name         The String representing the name of the Bitmap.
      * @param initialValue the initial Bitmap
      * @return the id of the Bitmap
