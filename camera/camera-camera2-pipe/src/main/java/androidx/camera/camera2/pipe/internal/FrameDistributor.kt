@@ -36,6 +36,7 @@ import androidx.camera.camera2.pipe.StreamId
 import androidx.camera.camera2.pipe.core.Log
 import androidx.camera.camera2.pipe.graph.StreamGraphImpl
 import androidx.camera.camera2.pipe.media.ClosingFinalizer
+import androidx.camera.camera2.pipe.media.ImageListener
 import androidx.camera.camera2.pipe.media.ImageSource
 import androidx.camera.camera2.pipe.media.NoOpFinalizer
 import androidx.camera.camera2.pipe.media.OutputImage
@@ -116,19 +117,20 @@ internal class FrameDistributor(
 
             // Bind the listener on the ImageSource to the imageDistributor. This listener
             // and the imageDistributor may be invoked on a different thread.
-            imageSource.setListener { imageStreamId, imageOutputId, outputTimestamp, image ->
-                if (image != null) {
-                    imageDistributor.onOutputResult(
-                        outputTimestamp,
-                        OutputResult.from(OutputImage.from(imageStreamId, imageOutputId, image)),
-                    )
-                } else {
-                    imageDistributor.onOutputResult(
-                        outputTimestamp,
-                        OutputResult.failure(OutputStatus.ERROR_OUTPUT_DROPPED),
-                    )
+            imageSource.imageListener =
+                ImageListener { imageStreamId, imageOutputId, outputTimestamp, image ->
+                    if (image != null) {
+                        imageDistributor.onOutputResult(
+                            outputTimestamp,
+                            OutputResult.from(OutputImage.from(imageStreamId, imageOutputId, image)),
+                        )
+                    } else {
+                        imageDistributor.onOutputResult(
+                            outputTimestamp,
+                            OutputResult.failure(OutputStatus.ERROR_OUTPUT_DROPPED),
+                        )
+                    }
                 }
-            }
 
             imageDistributor
         }

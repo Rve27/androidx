@@ -81,6 +81,10 @@ private constructor(
         onImageListener?.onImage(streamId, outputId, image)
     }
 
+    public fun simulateExpectedOutputs(timestamp: Long, outputIds: Set<OutputId>) {
+        onExpectedOutputsListener?.onExpectedOutputs(timestamp, outputIds)
+    }
+
     override var onImageListener: ImageReaderWrapper.OnImageListener? by atomic(null)
 
     override var onExpectedOutputsListener: ImageReaderWrapper.OnExpectedOutputsListener? by
