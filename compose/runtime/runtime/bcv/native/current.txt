@@ -177,6 +177,8 @@ abstract interface <#A: kotlin/Any?> androidx.compose.runtime/Applier { // andro
 
 abstract interface <#A: kotlin/Any?> androidx.compose.runtime/CompositionServiceKey // androidx.compose.runtime/CompositionServiceKey|null[0]
 
+abstract interface <#A: kotlin/Any?> androidx.compose.runtime/HostDefaultKey // androidx.compose.runtime/HostDefaultKey|null[0]
+
 abstract interface <#A: kotlin/Any?> androidx.compose.runtime/MutableState : androidx.compose.runtime/State<#A> { // androidx.compose.runtime/MutableState|null[0]
     abstract var value // androidx.compose.runtime/MutableState.value|{}value[0]
         abstract fun <get-value>(): #A // androidx.compose.runtime/MutableState.value.<get-value>|<get-value>(){}[0]
@@ -731,10 +733,6 @@ final class <#A: kotlin/Any?> androidx.compose.runtime.snapshots/SnapshotStateSe
     final fun toString(): kotlin/String // androidx.compose.runtime.snapshots/SnapshotStateSet.toString|toString(){}[0]
 }
 
-final class <#A: kotlin/Any?> androidx.compose.runtime/HostDefaultKey { // androidx.compose.runtime/HostDefaultKey|null[0]
-    constructor <init>() // androidx.compose.runtime/HostDefaultKey.<init>|<init>(){}[0]
-}
-
 final class <#A: kotlin/Any?> androidx.compose.runtime/ProvidedValue { // androidx.compose.runtime/ProvidedValue|null[0]
     final val compositionLocal // androidx.compose.runtime/ProvidedValue.compositionLocal|{}compositionLocal[0]
         final fun <get-compositionLocal>(): androidx.compose.runtime/CompositionLocal<#A> // androidx.compose.runtime/ProvidedValue.compositionLocal.<get-compositionLocal>|<get-compositionLocal>(){}[0]
@@ -1193,7 +1191,6 @@ final val androidx.compose.runtime/androidx_compose_runtime_CompositionLocal$sta
 final val androidx.compose.runtime/androidx_compose_runtime_CompositionLocalContext$stableprop // androidx.compose.runtime/androidx_compose_runtime_CompositionLocalContext$stableprop|#static{}androidx_compose_runtime_CompositionLocalContext$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_DerivedSnapshotState_ResultRecord$stableprop // androidx.compose.runtime/androidx_compose_runtime_DerivedSnapshotState_ResultRecord$stableprop|#static{}androidx_compose_runtime_DerivedSnapshotState_ResultRecord$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_DisposableEffectScope$stableprop // androidx.compose.runtime/androidx_compose_runtime_DisposableEffectScope$stableprop|#static{}androidx_compose_runtime_DisposableEffectScope$stableprop[0]
-final val androidx.compose.runtime/androidx_compose_runtime_HostDefaultKey$stableprop // androidx.compose.runtime/androidx_compose_runtime_HostDefaultKey$stableprop|#static{}androidx_compose_runtime_HostDefaultKey$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_MovableContent$stableprop // androidx.compose.runtime/androidx_compose_runtime_MovableContent$stableprop|#static{}androidx_compose_runtime_MovableContent$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_MovableContentState$stableprop // androidx.compose.runtime/androidx_compose_runtime_MovableContentState$stableprop|#static{}androidx_compose_runtime_MovableContentState$stableprop[0]
 final val androidx.compose.runtime/androidx_compose_runtime_MovableContentStateReference$stableprop // androidx.compose.runtime/androidx_compose_runtime_MovableContentStateReference$stableprop|#static{}androidx_compose_runtime_MovableContentStateReference$stableprop[0]
@@ -1403,7 +1400,6 @@ final fun androidx.compose.runtime/androidx_compose_runtime_CompositionLocal$sta
 final fun androidx.compose.runtime/androidx_compose_runtime_CompositionLocalContext$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_CompositionLocalContext$stableprop_getter|androidx_compose_runtime_CompositionLocalContext$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_DerivedSnapshotState_ResultRecord$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_DerivedSnapshotState_ResultRecord$stableprop_getter|androidx_compose_runtime_DerivedSnapshotState_ResultRecord$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_DisposableEffectScope$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_DisposableEffectScope$stableprop_getter|androidx_compose_runtime_DisposableEffectScope$stableprop_getter(){}[0]
-final fun androidx.compose.runtime/androidx_compose_runtime_HostDefaultKey$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_HostDefaultKey$stableprop_getter|androidx_compose_runtime_HostDefaultKey$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_MovableContent$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_MovableContent$stableprop_getter|androidx_compose_runtime_MovableContent$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_MovableContentState$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_MovableContentState$stableprop_getter|androidx_compose_runtime_MovableContentState$stableprop_getter(){}[0]
 final fun androidx.compose.runtime/androidx_compose_runtime_MovableContentStateReference$stableprop_getter(): kotlin/Int // androidx.compose.runtime/androidx_compose_runtime_MovableContentStateReference$stableprop_getter|androidx_compose_runtime_MovableContentStateReference$stableprop_getter(){}[0]

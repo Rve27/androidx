@@ -16,4 +16,16 @@
 
 package androidx.compose.runtime
 
-public actual class HostDefaultKey<T> actual constructor()
+/**
+ * A type-safe identifier used to define a key for retrieving default values from the hosting
+ * environment.
+ *
+ * This key is strictly required by [compositionLocalWithHostDefaultOf] to establish a mapping
+ * between a [CompositionLocal] and a value provided by the host (via the internal
+ * [HostDefaultProvider]).
+ *
+ * @param T The type of the value associated with this key.
+ * @see compositionLocalWithHostDefaultOf
+ * @see HostDefaultProvider
+ */
+public interface HostDefaultKey<T>

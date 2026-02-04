@@ -257,7 +257,7 @@ internal class ComposeViewContext(
 
         val scrollCaptureInProgress =
             LocalScrollCaptureInProgress.current or owner.scrollCaptureInProgress
-        val hostDefaultProvider = remember(owner.view) { AndroidHostDefaultProvider(owner.view) }
+        val hostDefaultProvider = remember(owner.view) { ViewTreeHostDefaultProvider(owner.view) }
         @Suppress("UNCHECKED_CAST")
         CompositionLocalProvider(
             LocalLifecycleOwner provides lifecycleOwner,
