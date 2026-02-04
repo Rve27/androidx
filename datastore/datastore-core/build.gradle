@@ -119,7 +119,7 @@ androidXMultiplatform {
             }
         }
 
-        nonWebCommonTest.dependsOn(commonTest)
+        nonWebCommonTest {}.dependsOn(commonTest)
 
         jvmAndAndroidTest {
             dependsOn(nonWebCommonTest)
@@ -134,7 +134,7 @@ androidXMultiplatform {
         }
         // tests that are run on AndroidUnit and instrumented targets.
         // similar to jvmAndAndroidTest, except, they don't run on JVM outside Robolectric.
-        androidUnitAndInstrumentedTest.dependsOn(jvmAndAndroidTest)
+        androidUnitAndInstrumentedTest {}.dependsOn(jvmAndAndroidTest)
 
         androidHostTest {
             dependsOn(androidUnitAndInstrumentedTest)

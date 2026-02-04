@@ -69,7 +69,7 @@ androidXMultiplatform {
             api("androidx.annotation:annotation-experimental:1.4.1")
         }
 
-        commonStubsMain.dependsOn(commonMain)
+        commonStubsMain {}.dependsOn(commonMain)
         jvmStubsMain.dependsOn(commonStubsMain)
         linuxx64StubsMain.dependsOn(commonStubsMain)
 

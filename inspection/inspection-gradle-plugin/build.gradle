@@ -31,7 +31,7 @@ plugins {
 apply from: "../../buildSrc/kotlin-dsl-dependency.gradle"
 
 dependencies {
-    compileOnly(findGradleKotlinDsl())
+    compileOnly(project.ext.findGradleKotlinDsl())
     implementation(gradleApi())
     implementation(libs.androidGradlePluginApi)
     implementation(libs.protobufGradlePlugin)
