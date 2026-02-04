@@ -20,10 +20,10 @@ import androidx.compose.remote.core.RcProfiles
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.core.operations.layout.managers.BoxLayout
 import androidx.compose.remote.creation.RFloat
+import androidx.compose.remote.creation.Rc
 import androidx.compose.remote.creation.RemoteComposeContextAndroid
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.abs
-import androidx.compose.remote.creation.cos
 import androidx.compose.remote.creation.min
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.remote.creation.platform.AndroidxRcPlatformServices
@@ -45,17 +45,30 @@ fun demoGraphs(): RemoteComposeWriter {
             RemoteComposeWriter.hTag(Header.DOC_CONTENT_DESCRIPTION, "Simple Timer"),
             RemoteComposeWriter.hTag(Header.DOC_PROFILES, RcProfiles.PROFILE_ANDROIDX),
         ) {
+            val density = rf(Rc.System.DENSITY)
             root {
-                box(RecordingModifier().fillMaxSize(), BoxLayout.START, BoxLayout.START) {
-                    canvas(RecordingModifier().fillMaxSize().background(0xFF112244.toInt())) {
-                        val w = ComponentWidth() // component.width()
-                        val h = ComponentHeight()
-                        val cx = w / 2f
-                        val cy = h / 2f
-                        val data: FloatArray = FloatArray(32) { x -> sin(x / 3.14f) + 0.5f }
+                column {
+                    text(createTextFromFloat(Rc.System.WINDOW_WIDTH, 4, 2, 0))
+                    text(createTextFromFloat(Rc.System.WINDOW_HEIGHT, 4, 2, 0))
+                    text(createTextFromFloat(Rc.System.DENSITY, 4, 2, 0))
+                    text(createTextFromFloat(Rc.System.FONT_SIZE, 4, 2, 0))
+                    box(RecordingModifier().fillMaxSize(), BoxLayout.START, BoxLayout.START) {
+                        canvas(RecordingModifier().fillMaxSize().background(0xFF112244.toInt())) {
+                            val w = ComponentWidth() // component.width()
+                            val h = ComponentHeight()
+                            val cx = w / 2f
+                            val cy = h / 2f
+                            val data: FloatArray = FloatArray(32) { x -> sin(x / 3.14f) + 0.5f }
 
-                        val values = RFloat(writer, addFloatArray(data))
-                        rcPlotXY(100f + 40f * cos(ContinuousSec() * 2f), 100, w, h, plot = values)
+                            val values = RFloat(writer, addFloatArray(data))
+                            rcPlotXY(
+                                10f * density,
+                                10f * density,
+                                w - 10f * density,
+                                h - 10f * density,
+                                plot = values,
+                            )
+                        }
                     }
                 }
             }
@@ -74,6 +87,7 @@ fun demoGraphs2(): RemoteComposeWriter {
             RemoteComposeWriter.hTag(Header.DOC_CONTENT_DESCRIPTION, "Simple Timer"),
             RemoteComposeWriter.hTag(Header.DOC_PROFILES, RcProfiles.PROFILE_ANDROIDX),
         ) {
+            val density = rf(Rc.System.DENSITY)
             root {
                 box(RecordingModifier().fillMaxSize(), BoxLayout.START, BoxLayout.START) {
                     canvas(RecordingModifier().fillMaxSize().background(0xFF112244.toInt())) {
@@ -82,10 +96,12 @@ fun demoGraphs2(): RemoteComposeWriter {
                         val cx = w / 2f
                         val cy = h / 2f
                         val scale = abs((sin(ContinuousSec()) + 1.5) * 10f).flush()
-                        val equ = rFun { x -> min(scale, 15f) * sin(x + ContinuousSec() * 3f) }
+                        val equ = rFun { x ->
+                            min(scale, 15f) * sin(x * 0.3f + ContinuousSec()) * sin(x * 7f)
+                        }
 
                         val function = FunctionPlot(equ, rf(-10f), rf(10f), -1f * scale, scale)
-                        rcPlotXY(100f + 40f * cos(ContinuousSec() * 2f), 100, w, h, plot = function)
+                        rcPlotXY(10f * density, 10f * density, w, h, plot = function)
                     }
                 }
             }
