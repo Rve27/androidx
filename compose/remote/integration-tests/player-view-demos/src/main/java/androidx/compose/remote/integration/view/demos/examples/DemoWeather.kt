@@ -43,6 +43,7 @@ import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.modifier.widthIn
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rdp
+import androidx.compose.remote.creation.compose.state.rsp
 import androidx.compose.remote.integration.view.demos.R
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
@@ -54,7 +55,6 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @RemoteComposable
 @Composable
@@ -105,9 +105,9 @@ fun WeatherDemo() {
                         horizontalAlignment = RemoteAlignment.CenterHorizontally,
                     ) {
                         RemoteText("Rio de Janeiro")
-                        RemoteText("100º", fontSize = 26.sp, fontWeight = FontWeight.Medium)
+                        RemoteText("100º", fontSize = 26.rsp, fontWeight = FontWeight.Medium)
                         RemoteImage(image, RemoteString(""), modifier = RemoteModifier.size(48.rdp))
-                        RemoteText("H: 62º - L: 54º", fontSize = 10.sp)
+                        RemoteText("H: 62º - L: 54º", fontSize = 10.rsp)
                     }
                 }
             }
@@ -153,8 +153,8 @@ fun WeatherBox() {
         verticalArrangement = RemoteArrangement.Center,
     ) {
         RemoteText("Rio de Janeiro")
-        RemoteText("100º", fontSize = 38.sp, fontWeight = FontWeight.Medium)
-        RemoteText("High: 62º - Low: 54º", fontSize = 10.sp)
+        RemoteText("100º", fontSize = 38.rsp, fontWeight = FontWeight.Medium)
+        RemoteText("High: 62º - Low: 54º", fontSize = 10.rsp)
     }
 }
 
@@ -179,7 +179,7 @@ fun WeatherBox2() {
     ) {
         RemoteImage(refresh, RemoteString(""), modifier = RemoteModifier.size(20.rdp))
         RemoteImage(image, RemoteString(""), modifier = RemoteModifier.size(48.rdp))
-        RemoteText("Mostly cloudy", fontSize = 10.sp)
+        RemoteText("Mostly cloudy", fontSize = 10.rsp)
     }
 }
 

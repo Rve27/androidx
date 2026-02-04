@@ -44,6 +44,7 @@ import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.abs
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rf
+import androidx.compose.remote.creation.compose.state.rsp
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -53,7 +54,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Suppress("RestrictedApiAndroidX")
 @Composable
@@ -105,7 +105,7 @@ fun CanvasCalendarMonth(modifier: RemoteModifier = RemoteModifier, month: Int = 
             monthNames[month],
             fontFamily = FontFamily.Serif,
             fontWeight = FontWeight.Bold,
-            fontSize = 32.sp,
+            fontSize = 32.rsp,
             modifier = RemoteModifier.padding(bottom = 24.dp),
         )
         //        CaptureAsDraw {
@@ -254,10 +254,10 @@ fun ScrollViewDemo() {
                 val blue = RemoteColor(Color.Blue.toArgb())
                 RemoteText(
                     scrollState.positionState.toRemoteString(5),
-                    fontSize = 34.sp,
+                    fontSize = 34.rsp,
                     color = blue,
                 )
-                RemoteText(height.toRemoteString(5), fontSize = 34.sp, color = blue)
+                RemoteText(height.toRemoteString(5), fontSize = 34.rsp, color = blue)
             }
         }
         //            val value = rememberRemoteString(RemoteFloat(scrollState.position))

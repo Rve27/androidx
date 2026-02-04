@@ -70,6 +70,7 @@ import androidx.compose.remote.creation.compose.state.rememberMutableRemoteInt
 import androidx.compose.remote.creation.compose.state.rememberNamedRemoteString
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.rs
+import androidx.compose.remote.creation.compose.state.rsp
 import androidx.compose.remote.creation.compose.vector.painterRemoteVector
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.remote.player.view.RemoteComposePlayer
@@ -101,7 +102,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
@@ -618,7 +618,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                                 .padding(4.dp)
                                 .background(Color.Red)
                                 .padding(4.dp),
-                        fontSize = 32.sp,
+                        fontSize = 32.rsp,
                         color = white,
                     )
                 }
@@ -629,7 +629,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                             .padding(4.dp)
                             .background(Color.Black)
                             .padding(4.dp),
-                    fontSize = 18.sp,
+                    fontSize = 18.rsp,
                     color = white,
                 )
             }
@@ -709,7 +709,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         .background(Color.Red)
                         .padding(4.dp),
                     white,
-                    18.sp,
+                    18.rsp,
                 )
                 RemoteText(
                     text,
@@ -718,7 +718,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         .background(Color.Red)
                         .padding(4.dp),
                     white,
-                    18.sp,
+                    18.rsp,
                     FontStyle.Italic,
                 )
                 RemoteText(
@@ -728,7 +728,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         .background(Color.Red)
                         .padding(4.dp),
                     white,
-                    18.sp,
+                    18.rsp,
                     fontWeight = FontWeight.ExtraLight,
                 )
                 RemoteText(
@@ -738,7 +738,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         .background(Color.Red)
                         .padding(4.dp),
                     white,
-                    18.sp,
+                    18.rsp,
                     fontWeight = FontWeight.Black,
                 )
                 RemoteText(
@@ -748,7 +748,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         .background(Color.Red)
                         .padding(4.dp),
                     white,
-                    18.sp,
+                    18.rsp,
                     fontFamily = FontFamily.Serif,
                 )
                 RemoteText(
@@ -758,7 +758,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         .background(Color.Red)
                         .padding(4.dp),
                     white,
-                    18.sp,
+                    18.rsp,
                     fontFamily = FontFamily.SansSerif,
                 )
             }
@@ -1127,7 +1127,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
             ) {
                 val green = RemoteColor(Color.Green)
-                RemoteText("Green", color = green, fontSize = 30.sp)
+                RemoteText("Green", color = green, fontSize = 30.rsp)
             }
         }
     }

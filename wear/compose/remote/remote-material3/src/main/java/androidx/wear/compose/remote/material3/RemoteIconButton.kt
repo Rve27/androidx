@@ -92,7 +92,7 @@ public fun RemoteIconButton(
         content =
             provideScopeContent(
                 colors.contentColor(enabled = enabled),
-                LocalRemoteTypography.current.typography.labelMedium,
+                LocalRemoteTypography.current.labelMedium,
                 content,
             ),
     )
