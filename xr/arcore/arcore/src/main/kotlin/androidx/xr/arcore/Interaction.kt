@@ -46,10 +46,10 @@ public fun hitTest(session: Session, ray: Ray): List<HitResult> {
     }
     val trackableMap = perceptionStateExtender.xrResourcesManager.trackablesMap
     return perceptionManager.hitTest(ray).map {
-        val trackable =
-            requireNotNull(trackableMap[it.trackable]) {
-                "No Active Trackable found for the given hit result."
+        val anchorable =
+            requireNotNull(trackableMap[it.trackable] as? Anchorable<Trackable.State>) {
+                "No Active Anchorable found for the given hit result."
             }
-        HitResult(it.distance, it.hitPose, trackable)
+        HitResult(it.distance, it.hitPose, anchorable)
     }
 }

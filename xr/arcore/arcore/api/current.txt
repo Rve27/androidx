@@ -56,8 +56,16 @@ package androidx.xr.arcore {
     ctor public AnchorCreateUnsupportedLocation();
   }
 
+  public final class AnchorCreateUnsupportedObject extends androidx.xr.arcore.AnchorCreateResult {
+    ctor public AnchorCreateUnsupportedObject();
+  }
+
   public final class AnchorLoadInvalidUuid extends androidx.xr.arcore.AnchorCreateResult {
     ctor public AnchorLoadInvalidUuid();
+  }
+
+  public interface Anchorable<T> extends androidx.xr.arcore.Trackable<T> {
+    method public androidx.xr.arcore.AnchorCreateResult createAnchor(androidx.xr.runtime.math.Pose pose);
   }
 
   public final class ArDevice {
@@ -77,7 +85,6 @@ package androidx.xr.arcore {
   }
 
   public final class AugmentedObject implements androidx.xr.arcore.Trackable<androidx.xr.arcore.AugmentedObject.State> {
-    method public androidx.xr.arcore.AnchorCreateResult createAnchor(androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.AugmentedObject.State> getState();
     method public static kotlinx.coroutines.flow.StateFlow<java.util.Collection<androidx.xr.arcore.AugmentedObject>> subscribe(androidx.xr.runtime.Session session);
     property public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.AugmentedObject.State> state;
@@ -186,7 +193,7 @@ package androidx.xr.arcore {
     property public androidx.xr.runtime.TrackingState trackingState;
   }
 
-  public final class Face implements androidx.xr.arcore.Trackable<androidx.xr.arcore.Face.State> {
+  public final class Face implements androidx.xr.arcore.Anchorable<androidx.xr.arcore.Face.State> {
     method public androidx.xr.arcore.AnchorCreateResult createAnchor(androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Face.State> getState();
     method public static androidx.xr.arcore.Face? getUserFace(androidx.xr.runtime.Session session);
@@ -540,7 +547,7 @@ package androidx.xr.arcore {
     property public androidx.xr.arcore.Face? userFace;
   }
 
-  public final class Plane implements androidx.xr.arcore.Trackable<androidx.xr.arcore.Plane.State> {
+  public final class Plane implements androidx.xr.arcore.Anchorable<androidx.xr.arcore.Plane.State> {
     method public androidx.xr.arcore.AnchorCreateResult createAnchor(androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Plane.State> getState();
     method @InaccessibleFromKotlin public androidx.xr.arcore.Plane.Type getType();
@@ -650,7 +657,6 @@ package androidx.xr.arcore {
   }
 
   public interface Trackable<State> {
-    method public androidx.xr.arcore.AnchorCreateResult createAnchor(androidx.xr.runtime.math.Pose pose);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Trackable.State> getState();
     property public abstract kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Trackable.State> state;
   }

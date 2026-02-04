@@ -38,7 +38,7 @@ public class Plane
 internal constructor(
     internal val runtimePlane: RuntimePlane,
     private val xrResourceManager: XrResourcesManager,
-) : Trackable<Plane.State>, Updatable {
+) : Anchorable<Plane.State>, Updatable {
 
     public companion object {
         /**
