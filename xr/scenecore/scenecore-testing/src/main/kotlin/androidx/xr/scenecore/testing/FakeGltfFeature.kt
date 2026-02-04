@@ -21,6 +21,7 @@ import androidx.xr.runtime.NodeHolder
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.GltfAnimationFeature
 import androidx.xr.scenecore.runtime.GltfEntity
 import androidx.xr.scenecore.runtime.GltfFeature
 import androidx.xr.scenecore.runtime.MaterialResource
@@ -34,6 +35,10 @@ public class FakeGltfFeature(nodeHolder: NodeHolder<*>) :
     private var mockGltfFeature: GltfFeature? = null
 
     override val size: FloatSize3d = mockGltfFeature?.size ?: FloatSize3d(1f, 1f, 1f)
+
+    override fun getAnimations(executor: Executor): List<GltfAnimationFeature> {
+        return mockGltfFeature?.getAnimations(executor) ?: emptyList()
+    }
 
     override val animationState: Int = mockGltfFeature?.animationState ?: 0
 
