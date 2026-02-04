@@ -46,7 +46,6 @@ package androidx.xr.runtime {
 
   public final class Config {
     ctor public Config();
-    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public Config();
     ctor @Deprecated public Config(androidx.xr.runtime.Config.PlaneTrackingMode planeTracking);
     ctor @Deprecated public Config(androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, androidx.xr.runtime.Config.HandTrackingMode handTracking);
     ctor @Deprecated public Config(androidx.xr.runtime.Config.PlaneTrackingMode planeTracking, androidx.xr.runtime.Config.HandTrackingMode handTracking, androidx.xr.runtime.Config.DeviceTrackingMode deviceTracking);

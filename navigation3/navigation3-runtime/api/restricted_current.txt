@@ -63,7 +63,7 @@ package androidx.navigation3.runtime {
     method public operator boolean contains(T element);
     method public boolean containsAll(java.util.Collection<T> elements);
     method public operator T get(int index);
-    method @BytecodeOnly public androidx.compose.runtime.snapshots.StateRecord getFirstStateRecord();
+    method public androidx.compose.runtime.snapshots.StateRecord getFirstStateRecord();
     method @BytecodeOnly public int getSize();
     method @BytecodeOnly public int indexOf(Object!);
     method public int indexOf(T element);

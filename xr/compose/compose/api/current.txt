@@ -134,7 +134,6 @@ package androidx.xr.compose.spatial {
   }
 
   public final class SpatialDialogProperties {
-    ctor public SpatialDialogProperties();
     ctor @BytecodeOnly public SpatialDialogProperties(boolean, boolean, boolean, androidx.compose.animation.core.FiniteAnimationSpec!, float, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public SpatialDialogProperties(boolean, boolean, boolean, androidx.compose.animation.core.FiniteAnimationSpec!, float, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @KotlinOnly public SpatialDialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> backgroundContentAnimationSpec, optional androidx.compose.ui.unit.Dp elevation);
