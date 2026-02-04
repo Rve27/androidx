@@ -46,8 +46,8 @@ androidXMultiplatform {
             api(project(":lifecycle:lifecycle-viewmodel"))
             api(project(":lifecycle:lifecycle-viewmodel-savedstate"))
             api("androidx.annotation:annotation:1.9.1")
-            api("androidx.compose.runtime:runtime:1.9.0")
-            api("androidx.compose.runtime:runtime-saveable:1.9.0")
+            api(project(":compose:runtime:runtime"))
+            api(project(":compose:runtime:runtime-saveable"))
             api(libs.kotlinSerializationCore)
         }
 
@@ -57,7 +57,10 @@ androidXMultiplatform {
         }
 
         androidMain.dependencies {
-            api("androidx.compose.ui:ui:1.9.0")
+            // TODO(mgalhardo): Change this to constraint once Compose 1.11 prebuilds are released.
+            implementation(project(":compose:ui:ui")) {
+                because("Ensure we are using the Compose-UI 1.11 or above")
+            }
             // Converting `lifecycle-viewmodel-compose` to KMP and including a transitive
             // dependency on `lifecycle-livedata-core` triggered a Gradle bug. Adding the
             // `livedata` dependency directly works around the issue.
