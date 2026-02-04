@@ -357,9 +357,11 @@ internal constructor(
          * Simulate buffer loss on single-output streams. Use on multi-output streams would throw.
          */
         @Deprecated("Use simulateBufferLoss with OutputId instead")
+        @Suppress("deprecation")
         public fun simulateBufferLoss(streamId: StreamId) {
             val outputId = checkNotNull(streams[streamId]).outputs.single().id
             requestSequence.invokeOnRequest(requestMetadata) {
+                it.onBufferLost(requestMetadata, frameNumber, streamId)
                 it.onBufferLost(requestMetadata, frameNumber, streamId, outputId)
             }
         }
