@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import androidx.xr.runtime.math.Matrix4;
-import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.math.Vector3;
+import androidx.xr.runtime.math.Matrix4
+import androidx.xr.runtime.math.Matrix4.Companion.fromQuaternion
+import androidx.xr.runtime.math.Quaternion
+import androidx.xr.runtime.math.Vector3
+import kotlin.jvm.JvmStatic
 
 /** Utility functions for working with planes Poses. */
-final class PlaneUtils {
-    private PlaneUtils() {}
-
+internal object PlaneUtils {
     /**
      * Gets the rotation relative to the plane to rotate the entity to be parallel to the plane.
      *
@@ -31,56 +30,58 @@ final class PlaneUtils {
      * @param planeRotation the rotation of the plane.
      * @return the rotation of the panel rotated to be parallel to the plane relative to the plane.
      */
-    static Quaternion rotateEntityToPlane(Quaternion proposedRotation, Quaternion planeRotation) {
+    @JvmStatic
+    fun rotateEntityToPlane(proposedRotation: Quaternion, planeRotation: Quaternion): Quaternion {
         // The y-vector of the plane is the normal of the plane. We need to rotate the panel so that
         // the y-vector of the panel points along the plane and the z-vector is normal to the plane.
-        // Otherwise the panel will be sticking out of the plane.
+        // Otherwise, the panel will be sticking out of the plane.
 
         // Create a rotation matrix from the quaternion of the plane to extract the normal.
-        Matrix4 planeMatrix = Matrix4.fromQuaternion(planeRotation);
+
+        val planeMatrix = fromQuaternion(planeRotation)
         // Create a rotation matrix from the quaternion for the proposed pose.
-        Matrix4 proposedRotationMatrix = Matrix4.fromQuaternion(proposedRotation);
+        val proposedRotationMatrix = fromQuaternion(proposedRotation)
 
         // The z-vector of the panel should be the normal of the plane (which is the y-vector of the
         // plane) so that the panel will be facing out of the plane.
-        float[] planeMatrixData = planeMatrix.getData();
-        Vector3 zRotation =
-                new Vector3(planeMatrixData[4], planeMatrixData[5], planeMatrixData[6])
-                        .toNormalized();
+        val planeMatrixData = planeMatrix.data
+        val zRotation =
+            Vector3(planeMatrixData[4], planeMatrixData[5], planeMatrixData[6]).toNormalized()
         // Get the x-vector of the panel so that we can use it to create the y-vector that is in the
         // direction of the panel.
-        float[] poseMatrixData = proposedRotationMatrix.getData();
-        Vector3 poseVectorX =
-                new Vector3(poseMatrixData[0], poseMatrixData[1], poseMatrixData[2]).toNormalized();
+        val poseMatrixData = proposedRotationMatrix.data
+        val poseVectorX =
+            Vector3(poseMatrixData[0], poseMatrixData[1], poseMatrixData[2]).toNormalized()
         // The y-vector is the cross product of the panel x-vector and the z-vector.
-        Vector3 yRotation = zRotation.cross(poseVectorX).toNormalized();
+        val yRotation = zRotation.cross(poseVectorX).toNormalized()
         // The x-vector is the cross product of the y-vector and the z-vector so that they will all
         // be orthogonal.
-        Vector3 xRotation = yRotation.cross(zRotation).toNormalized();
+        val xRotation = yRotation.cross(zRotation).toNormalized()
         // Create a new rotation matrix from the x, y, and z vectors.
-        Matrix4 rotationMatrix = getRotationMatrixFromAxes(xRotation, yRotation, zRotation);
-        return rotationMatrix.getRotation();
+        val rotationMatrix = getRotationMatrixFromAxes(xRotation, yRotation, zRotation)
+        return rotationMatrix.rotation
     }
 
-    private static Matrix4 getRotationMatrixFromAxes(Vector3 xAxis, Vector3 yAxis, Vector3 zAxis) {
-        return new Matrix4(
-                new float[] {
-                    xAxis.getX(),
-                    xAxis.getY(),
-                    xAxis.getZ(),
-                    0f,
-                    yAxis.getX(),
-                    yAxis.getY(),
-                    yAxis.getZ(),
-                    0f,
-                    zAxis.getX(),
-                    zAxis.getY(),
-                    zAxis.getZ(),
-                    0f,
-                    0f,
-                    0f,
-                    0f,
-                    1f
-                });
+    private fun getRotationMatrixFromAxes(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4 {
+        return Matrix4(
+            floatArrayOf(
+                xAxis.x,
+                xAxis.y,
+                xAxis.z,
+                0f,
+                yAxis.x,
+                yAxis.y,
+                yAxis.z,
+                0f,
+                zAxis.x,
+                zAxis.y,
+                zAxis.z,
+                0f,
+                0f,
+                0f,
+                0f,
+                1f,
+            )
+        )
     }
 }
