@@ -70,14 +70,6 @@ object ComposeUiFlags {
     var isBypassUnfocusableComposeViewEnabled: Boolean = true
 
     /**
-     * This flag enables a fix for b/388590015. The view system ignores an invalid prevFocusRect
-     * when requestFocus is called, so we support this behavior in Compose too.
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isIgnoreInvalidPrevFocusRectEnabled: Boolean = true
-
-    /**
      * Enable WindowInsets rulers:
      * * `SystemBarsRulers`
      * * `ImeRulers`

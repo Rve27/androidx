@@ -1290,14 +1290,11 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             }
         if (requestFocusWithPrevRect == true) return true
 
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (ComposeUiFlags.isIgnoreInvalidPrevFocusRectEnabled) {
-            val requestFocusWithoutPrevRect =
-                focusOwner.focusSearch(focusDirection = focusDirection, focusedRect = null) {
-                    it.requestFocus(focusDirection)
-                }
-            if (requestFocusWithoutPrevRect == true) return true
-        }
+        val requestFocusWithoutPrevRect =
+            focusOwner.focusSearch(focusDirection = focusDirection, focusedRect = null) {
+                it.requestFocus(focusDirection)
+            }
+        if (requestFocusWithoutPrevRect == true) return true
 
         // If we landed on this view and a sub-view already has focus, it means that FocusFinder
         // could not find something else to focus on, and rolled over and returned back to this
