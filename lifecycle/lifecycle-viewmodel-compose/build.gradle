@@ -35,8 +35,15 @@ androidXMultiplatform {
         compileSdk { version = release(35) }
         namespace = "androidx.lifecycle.viewmodel.compose"
     }
-    jvmStubs()
-    linuxX64Stubs()
+    desktop()
+    mac()
+    linux()
+    ios()
+    watchos()
+    tvos()
+    mingwX64()
+    js()
+    wasmJs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -85,11 +92,13 @@ androidXMultiplatform {
             implementation(project(":lifecycle:lifecycle-common-java8"))
             implementation("androidx.activity:activity-compose:1.10.1")
         }
-
-        commonStubsMain {}.dependsOn(commonMain)
-        jvmStubsMain.dependsOn(commonStubsMain)
-        linuxx64StubsMain.dependsOn(commonStubsMain)
     }
+}
+
+dependencies.constraints {
+    // TODO(mgalhardo): Add constraints to properly migrate from the JetBrains fork.
+    //  We need to prevent symbol duplication with old versions of the fork.
+    //  Once the fork publishes a version that redirects to this artifact.
 }
 
 dependencies {

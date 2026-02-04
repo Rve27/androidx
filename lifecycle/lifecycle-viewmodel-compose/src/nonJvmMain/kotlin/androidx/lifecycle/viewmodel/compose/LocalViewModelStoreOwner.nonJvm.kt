@@ -16,12 +16,8 @@
 
 package androidx.lifecycle.viewmodel.compose
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun implementedInJetBrainsFork(): Nothing =
-    throw NotImplementedError(
-        """
-        Implemented only in JetBrains fork.
-        Please use `org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose` package instead.
-        """
-            .trimIndent()
-    )
+import androidx.compose.runtime.HostDefaultKey
+import androidx.lifecycle.ViewModelStoreOwner
+
+public actual val ViewModelStoreOwnerHostDefaultKey: HostDefaultKey<ViewModelStoreOwner?> =
+    object : HostDefaultKey<ViewModelStoreOwner?> {}
