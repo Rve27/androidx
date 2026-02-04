@@ -73,6 +73,11 @@ import java.util.concurrent.TimeUnit;
  * locked and continuous auto-focus will be disabled. Continuous autofocus will be re-enabled
  * when {@link CameraControl#cancelFocusAndMetering()} is called or the auto-cancel duration is
  * reached.
+ *
+ * <p>AE (Auto Exposure) and AWB (Auto White Balance) can also be locked if they are enabled
+ * in {@link Builder#setLockingMode(int)}. Locking mode is a combination of flags consisting
+ * of {@link #FLAG_AF}, {@link #FLAG_AE}, and {@link #FLAG_AWB}. For example, to lock both AF and
+ * AE, use {@code FLAG_AF | FLAG_AE}.
  */
 public final class FocusMeteringAction {
 
@@ -95,6 +100,9 @@ public final class FocusMeteringAction {
     @MeteringMode
     static final int DEFAULT_METERING_MODE = FLAG_AF | FLAG_AE | FLAG_AWB;
 
+    @MeteringMode
+    static final int DEFAULT_LOCKING_MODE = FLAG_AF;
+
     /** The default duration for auto-cancelling a focus-metering action. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public static final long DEFAULT_AUTO_CANCEL_DURATION_MILLIS = 5000;
@@ -104,12 +112,16 @@ public final class FocusMeteringAction {
     private final List<MeteringPoint> mMeteringPointsAwb;
     private final long mAutoCancelDurationInMillis;
 
+    @MeteringMode
+    private final int mLockingMode;
+
     @SuppressWarnings("WeakerAccess") /* synthetic accessor */
     FocusMeteringAction(Builder builder) {
         mMeteringPointsAf = Collections.unmodifiableList(builder.mMeteringPointsAf);
         mMeteringPointsAe = Collections.unmodifiableList(builder.mMeteringPointsAe);
         mMeteringPointsAwb = Collections.unmodifiableList(builder.mMeteringPointsAwb);
         mAutoCancelDurationInMillis = builder.mAutoCancelDurationInMillis;
+        mLockingMode = builder.mLockingMode;
     }
 
     /**
@@ -148,6 +160,21 @@ public final class FocusMeteringAction {
     }
 
     /**
+     * Returns the locking mode.
+     *
+     * <p>Locking mode is a combination of flags consisting of {@link #FLAG_AF},
+     * {@link #FLAG_AE}, and {@link #FLAG_AWB}. This combination indicates whether the
+     * AF (Auto Focus), AE (Auto Exposure) or AWB (Auto White Balance) should be locked after
+     * focus and metering action is completed.
+     */
+    // TODO: b/477810106 - Make this public in the next alpha version.
+    @MeteringMode
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public int getLockingMode() {
+        return mLockingMode;
+    }
+
+    /**
      * Focus/Metering mode used to specify which 3A regions is activated for corresponding
      * {@link MeteringPoint}.
      */
@@ -169,10 +196,16 @@ public final class FocusMeteringAction {
         final List<MeteringPoint> mMeteringPointsAwb = new ArrayList<>();
         @SuppressWarnings("WeakerAccess") /* synthetic accessor */
                 long mAutoCancelDurationInMillis = DEFAULT_AUTO_CANCEL_DURATION_MILLIS;
+        @SuppressWarnings("WeakerAccess") /* synthetic accessor */
+        @MeteringMode
+        int mLockingMode = DEFAULT_LOCKING_MODE;
 
         /**
          * Creates a Builder from a {@link MeteringPoint} with default mode {@link #FLAG_AF} |
          * {@link #FLAG_AE} | {@link #FLAG_AWB}.
+         *
+         * <p>The default locking mode is {@link #FLAG_AF}. Use {@link #setLockingMode(int)} to lock
+         * AE or AWB as well.
          */
         public Builder(@NonNull MeteringPoint point) {
             this(point, DEFAULT_METERING_MODE);
@@ -185,6 +218,9 @@ public final class FocusMeteringAction {
          * {@link #FLAG_AE}, and {@link #FLAG_AWB}. This combination indicates whether the
          * {@link MeteringPoint} is used to set AF(Auto Focus) region, AE(Auto
          * Exposure) region or AWB(Auto White Balance) region.
+         *
+         * <p>The default locking mode is {@link #FLAG_AF}. Use {@link #setLockingMode(int)} to lock
+         * AE or AWB as well.
          */
         public Builder(@NonNull MeteringPoint point, @MeteringMode int meteringMode) {
             addPoint(point, meteringMode);
@@ -199,6 +235,7 @@ public final class FocusMeteringAction {
             mMeteringPointsAe.addAll(focusMeteringAction.getMeteringPointsAe());
             mMeteringPointsAwb.addAll(focusMeteringAction.getMeteringPointsAwb());
             mAutoCancelDurationInMillis = focusMeteringAction.getAutoCancelDurationInMillis();
+            mLockingMode = focusMeteringAction.getLockingMode();
         }
 
         /**
@@ -259,6 +296,37 @@ public final class FocusMeteringAction {
             if ((meteringMode & FLAG_AWB) != 0) {
                 mMeteringPointsAwb.add(point);
             }
+            return this;
+        }
+
+        /**
+         * Sets the locking mode.
+         *
+         * <p>Locking mode is a combination of flags consisting of {@link #FLAG_AF},
+         * {@link #FLAG_AE}, and {@link #FLAG_AWB}. This combination indicates whether the
+         * AF (Auto Focus), AE (Auto Exposure) or AWB (Auto White Balance) should be locked after
+         * focus and metering action is completed. For example, to lock both AF and AE, use
+         * {@code FLAG_AF | FLAG_AE}.
+         *
+         * <p>Locking will only occur if the corresponding 3A component has at least one
+         * {@link MeteringPoint} specified in this action and the camera device supports locking
+         * for that component.
+         *
+         * <p>By default, only {@link #FLAG_AF} is set. Apps can also use {@code 0} to disable
+         * any 3A locking while still updating the 3A regions.
+         *
+         * @param lockingMode a combination of flags consisting of {@link #FLAG_AF},
+         *                    {@link #FLAG_AE}, and {@link #FLAG_AWB}.
+         * @return the current {@link Builder}.
+         * @throws IllegalArgumentException if the locking mode is invalid.
+         */
+        // TODO: b/477810106 - Make this public in the next alpha version.
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public @NonNull Builder setLockingMode(@MeteringMode int lockingMode) {
+            Preconditions.checkArgument(
+                    (lockingMode >= 0) && (lockingMode <= (FLAG_AF | FLAG_AE | FLAG_AWB)),
+                    "Invalid locking mode " + lockingMode);
+            mLockingMode = lockingMode;
             return this;
         }
 
