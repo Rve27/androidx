@@ -17,7 +17,7 @@
 package androidx.xr.arcore.testing
 
 import androidx.xr.arcore.runtime.Hand as RuntimeHand
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 

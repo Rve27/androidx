@@ -21,7 +21,7 @@ import androidx.annotation.GuardedBy
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.runtime.ExportableAnchor
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import java.nio.ByteBuffer
 import java.util.UUID

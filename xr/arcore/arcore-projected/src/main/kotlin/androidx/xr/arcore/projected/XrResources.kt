@@ -16,8 +16,8 @@
 
 package androidx.xr.arcore.projected
 
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.TrackingState
 
 /** Object that holds resources that are used in the XR session. */
 internal class XrResources {

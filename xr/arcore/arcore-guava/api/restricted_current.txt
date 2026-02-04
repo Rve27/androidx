@@ -6,7 +6,7 @@ package androidx.xr.arcore.guava {
   }
 
   public final class GuavaGeospatial {
-    method public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.VpsAvailabilityResult> checkVpsAvailabilityAsync(androidx.xr.arcore.Geospatial, androidx.xr.runtime.Session session, double latitude, double longitude);
+    method public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.arcore.VpsAvailabilityResult> checkVpsAvailabilityAsync(androidx.xr.arcore.Geospatial, androidx.xr.runtime.Session session, double latitude, double longitude);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.arcore.AnchorCreateResult> createAnchorOnSurfaceAsync(androidx.xr.arcore.Geospatial, androidx.xr.runtime.Session session, double latitude, double longitude, double altitudeAboveSurface, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion, androidx.xr.arcore.GeospatialSurface surface);
   }
 

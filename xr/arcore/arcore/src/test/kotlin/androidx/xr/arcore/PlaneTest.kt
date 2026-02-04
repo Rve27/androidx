@@ -28,7 +28,6 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -200,12 +199,12 @@ class PlaneTest {
     @Test
     fun update_trackingStateMatchesRuntime() = runBlocking {
         val runtimePlane = FakeRuntimePlane()
-        runtimePlane.trackingState = TrackingState.STOPPED
+        runtimePlane.trackingState = TrackingState.STOPPED.toRuntimeTrackingState()
         xrResourcesManager.syncTrackables(listOf(runtimePlane))
         val underTest = xrResourcesManager.trackablesMap[runtimePlane] as Plane
         check(underTest.state.value.trackingState == TrackingState.STOPPED)
 
-        runtimePlane.trackingState = TrackingState.TRACKING
+        runtimePlane.trackingState = TrackingState.TRACKING.toRuntimeTrackingState()
         underTest.update()
 
         assertThat(underTest.state.value.trackingState).isEqualTo(TrackingState.TRACKING)
