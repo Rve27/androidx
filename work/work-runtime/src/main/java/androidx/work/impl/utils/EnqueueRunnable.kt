@@ -17,9 +17,11 @@ package androidx.work.impl.utils
 
 import android.text.TextUtils
 import androidx.annotation.RestrictTo
-import androidx.annotation.VisibleForTesting
+import androidx.room.withTransaction
 import androidx.work.ExistingWorkPolicy
 import androidx.work.Logger
+import androidx.work.Operation
+import androidx.work.Tracer
 import androidx.work.WorkInfo
 import androidx.work.WorkRequest
 import androidx.work.impl.Schedulers
@@ -28,15 +30,17 @@ import androidx.work.impl.WorkManagerImpl
 import androidx.work.impl.model.Dependency
 import androidx.work.impl.model.WorkName
 import androidx.work.impl.model.WorkSpec
+import androidx.work.impl.model.getWorkInfos
+import androidx.work.launchOperation
+import java.util.concurrent.Executor
 
 /** Manages the enqueuing of a [WorkContinuationImpl]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object EnqueueRunnable {
     private val TAG = Logger.tagWithPrefix("EnqueueRunnable")
 
-    /** Enqueues the given workContinuation. */
-    @JvmStatic
-    public fun enqueue(workContinuation: WorkContinuationImpl) {
+    /** Enqueues the given work continuation and schedules if necessary. */
+    public suspend fun enqueue(workContinuation: WorkContinuationImpl) {
         check(!workContinuation.hasCycles()) { "WorkContinuation has cycles ($workContinuation)" }
         val needsScheduling = addToDatabase(workContinuation)
         if (needsScheduling) {
@@ -45,32 +49,26 @@ public object EnqueueRunnable {
     }
 
     /**
-     * Adds the [WorkSpec]'s to the datastore, parent first. Schedules work on the background
-     * scheduler, if transaction is successful.
+     * Adds the [WorkSpec]'s to the datastore, parent first.
+     *
+     * @return the list of all work that was successfully persisted to the database
      */
-    @VisibleForTesting
     @Suppress("deprecation")
-    public fun addToDatabase(workContinuation: WorkContinuationImpl): Boolean {
+    private suspend fun addToDatabase(workContinuation: WorkContinuationImpl): Boolean {
         val workManagerImpl = workContinuation.workManagerImpl
         val workDatabase = workManagerImpl.workDatabase
-        workDatabase.beginTransaction()
-        try {
+        return workDatabase.withTransaction {
             checkContentUriTriggerWorkerLimits(
                 workDatabase,
                 workManagerImpl.configuration,
                 workContinuation,
             )
-            val needsScheduling = processContinuation(workContinuation)
-            workDatabase.setTransactionSuccessful()
-            return needsScheduling
-        } finally {
-            workDatabase.endTransaction()
+            processContinuation(workContinuation)
         }
     }
 
     /** Schedules work on the background scheduler. */
-    @VisibleForTesting
-    public fun scheduleWorkInBackground(workContinuation: WorkContinuationImpl) {
+    private fun scheduleWorkInBackground(workContinuation: WorkContinuationImpl) {
         val workManager = workContinuation.workManagerImpl
         Schedulers.schedule(
             workManager.configuration,
@@ -79,7 +77,7 @@ public object EnqueueRunnable {
         )
     }
 
-    private fun processContinuation(workContinuation: WorkContinuationImpl): Boolean {
+    private suspend fun processContinuation(workContinuation: WorkContinuationImpl): Boolean {
         var needsScheduling = false
         val parents = workContinuation.parents
         if (parents != null) {
@@ -101,7 +99,7 @@ public object EnqueueRunnable {
         return needsScheduling
     }
 
-    private fun enqueueContinuation(workContinuation: WorkContinuationImpl): Boolean {
+    private suspend fun enqueueContinuation(workContinuation: WorkContinuationImpl): Boolean {
         val prerequisiteIds = WorkContinuationImpl.prerequisitesFor(workContinuation)
 
         val needsScheduling =
@@ -122,13 +120,14 @@ public object EnqueueRunnable {
      *
      * @return `true` If there is any scheduling to be done.
      */
-    private fun enqueueWorkWithPrerequisites(
+    private suspend fun enqueueWorkWithPrerequisites(
         workManagerImpl: WorkManagerImpl,
         workList: List<WorkRequest>,
         prerequisiteIds: Array<String>,
         name: String?,
         existingWorkPolicy: ExistingWorkPolicy,
     ): Boolean {
+        val scheduleListener = workManagerImpl.configuration.getScheduleEventListener()
         var prerequisiteIds = prerequisiteIds
         var needsScheduling = false
 
@@ -199,6 +198,14 @@ public object EnqueueRunnable {
                             val workSpecDao = workDatabase.workSpecDao()
                             val idAndStates: List<WorkSpec.IdAndState> =
                                 workSpecDao.getWorkSpecIdAndStatesForName(name)
+                            val ids = idAndStates.map { (id, _) -> id }
+                            // Modify the snapshot to have the cancelled state since we're avoiding
+                            // the unnecessary database cancel.
+                            scheduleListener?.dispatchScheduleEvents(
+                                workSpecDao.getWorkStatusPojoForIds(ids).map {
+                                    it.copy(state = WorkInfo.State.CANCELLED).toWorkInfo()
+                                }
+                            )
                             for (idAndState in idAndStates) {
                                 workSpecDao.delete(idAndState.id)
                             }
@@ -283,6 +290,24 @@ public object EnqueueRunnable {
                 workDatabase.workNameDao().insert(WorkName(name!!, work.stringId))
             }
         }
+        scheduleListener?.dispatchScheduleEvents(
+            workDatabase.workSpecDao().getWorkInfos(workList.map { it.stringId }),
+            isEnqueue = true,
+        )
         return needsScheduling
     }
+}
+
+internal fun launchEnqueue(
+    tracer: Tracer,
+    label: String,
+    executor: Executor,
+    continuation: WorkContinuationImpl,
+): Operation {
+    return launchOperation(
+        tracer,
+        label,
+        executor,
+        suspend { EnqueueRunnable.enqueue(continuation) },
+    )
 }
