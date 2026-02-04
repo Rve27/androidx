@@ -202,6 +202,7 @@ constructor(
          * @return A fully constructed URL pointing to the specific vulnerability report for this
          *   device.
          */
+        @Suppress("MissingJvmstatic")
         @JvmStatic
         @RequiresApi(26)
         public fun getVulnerabilityReportUrl(
