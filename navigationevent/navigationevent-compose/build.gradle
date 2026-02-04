@@ -36,8 +36,15 @@ androidXMultiplatform {
         compileSdk { version = release(36) }
         namespace = "androidx.navigationevent.compose"
     }
-    jvmStubs()
-    linuxX64Stubs()
+    desktop()
+    mac()
+    linux()
+    ios()
+    watchos()
+    tvos()
+    mingwX64()
+    js()
+    wasmJs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -73,10 +80,16 @@ androidXMultiplatform {
             implementation(libs.espressoCore)
         }
 
-        commonStubsMain {}.dependsOn(commonMain)
-        jvmStubsMain.dependsOn(commonStubsMain)
-        linuxx64StubsMain.dependsOn(commonStubsMain)
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinXw3c)
+        }
     }
+}
+
+dependencies.constraints {
+    // TODO(mgalhardo): Add constraints to properly migrate from the JetBrains fork.
+    //  We need to prevent symbol duplication with old versions of the fork.
+    //  Once the fork publishes a version that redirects to this artifact.
 }
 
 androidx {
