@@ -2662,8 +2662,10 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 """
                 import com.google.common.util.concurrent.ListenableFuture
                 import androidx.room3.*
+                import androidx.room3.guava.GuavaDaoReturnTypeConverter
 
                 @Dao
+                @DaoReturnTypeConverters(GuavaDaoReturnTypeConverter::class)
                 interface MyDao {
                     @Query("SELECT * FROM MyEntity WHERE pk IN (:arg)")
                     fun getListenableFuture(vararg arg: String?): ListenableFuture<MyEntity>
@@ -2713,8 +2715,10 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 """
                 import com.google.common.util.concurrent.ListenableFuture;
                 import androidx.room3.*;
+                import androidx.room3.guava.GuavaDaoReturnTypeConverter;
 
                 @Dao
+                @DaoReturnTypeConverters(GuavaDaoReturnTypeConverter.class)
                 public interface MyDao {
                     @Query("SELECT * FROM MyEntity WHERE pk IN (:arg)")
                     ListenableFuture<MyEntity> getListenableFuture(String... arg);

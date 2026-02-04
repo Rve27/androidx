@@ -102,14 +102,12 @@ public class Rx3DaoReturnTypeConverters {
      * result to the return type of this function.
      *
      * @param database RoomDatabase instance
-     * @param tableNames List of names of the tables of the RoomDatabase
      * @param executeAndConvert A suspend lambda function that invokes the part of the generated
      *   code that executes the query.
      */
     @DaoReturnTypeConverter
     public fun <T : Any> convertMaybe(
         database: RoomDatabase,
-        tableNames: Array<String>,
         executeAndConvert: suspend () -> T?,
     ): Maybe<T> {
         return rxMaybe(database.getQueryContext().minusKey(Job)) { executeAndConvert.invoke() }
@@ -120,14 +118,12 @@ public class Rx3DaoReturnTypeConverters {
      * result to the return type of this function.
      *
      * @param database RoomDatabase instance
-     * @param tableNames List of names of the tables of the RoomDatabase
      * @param executeAndConvert A suspend lambda function that invokes the part of the generated
      *   code that executes the query.
      */
     @DaoReturnTypeConverter
     public fun convertCompletable(
         database: RoomDatabase,
-        tableNames: Array<String>,
         executeAndConvert: suspend () -> Unit?,
     ): Completable {
         return rxCompletable(database.getQueryContext().minusKey(Job)) {
@@ -140,14 +136,12 @@ public class Rx3DaoReturnTypeConverters {
      * result to the return type of this function.
      *
      * @param database RoomDatabase instance
-     * @param tableNames List of names of the tables of the RoomDatabase
      * @param executeAndConvert A suspend lambda function that invokes the part of the generated
      *   code that executes the query.
      */
     @DaoReturnTypeConverter
     public fun <T : Any> convertSingle(
         database: RoomDatabase,
-        tableNames: Array<String>,
         executeAndConvert: suspend () -> T?,
     ): Single<T> {
         return rxSingle(database.getQueryContext().minusKey(Job)) {
