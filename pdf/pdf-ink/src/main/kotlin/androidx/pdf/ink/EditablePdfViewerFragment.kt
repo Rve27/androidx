@@ -462,6 +462,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         annotationToolbar.visibility = if (isEnabled) VISIBLE else GONE
 
         if (isEnabled) {
+            pdfView.clearCurrentSelection()
             // Wait for the toolbar to be laid out, as we need to utilize its width and height
             annotationToolbar.post { wetStrokesView.maskPath = createToolbarMaskPath() }
         } else {
@@ -774,22 +775,6 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
             return pdfView.dispatchTouchEvent(event)
         }
     }
-
-    /**
-     * A data holder for capturing the current viewport state of the PDF view.
-     *
-     * @property firstVisiblePage The index of the first page currently visible in the viewport.
-     * @property visiblePagesCount The total number of pages currently partially or fully visible.
-     * @property pageLocations A mapping of page indexes to their screen-relative bounds (in
-     *   pixels).
-     * @property zoomLevel The current zoom factor of the document.
-     */
-    private data class ViewportUpdate(
-        val firstVisiblePage: Int,
-        val visiblePagesCount: Int,
-        val pageLocations: SparseArray<RectF>,
-        val zoomLevel: Float,
-    )
 
     private companion object {
         private const val TOUCH_TOLERANCE_IN_DP = 2f
