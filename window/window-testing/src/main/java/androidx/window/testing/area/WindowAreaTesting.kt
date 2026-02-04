@@ -37,7 +37,7 @@ import androidx.window.testing.layout.TestWindowMetrics
 @Suppress("FunctionName")
 @JvmName("createTestWindowArea")
 @JvmOverloads
-public fun TestWindowArea(
+public fun WindowArea(
     metrics: WindowMetrics = TestWindowMetrics(bounds = Rect()),
     type: WindowArea.Type = WindowArea.Type.TYPE_REAR_FACING,
     token: IBinder = Binder(),
