@@ -387,7 +387,7 @@ private fun WideNavigationRailLayout(
                         val itemsPlaceables =
                             if (itemsCount > 0) mutableListOf<Placeable>() else null
                         val itemExpandedMaxWidth =
-                            looseConstraints.maxWidth - ItemHorizontalPadding.roundToPx()
+                            looseConstraints.maxWidth - WNRItemHorizontalPadding.roundToPx()
                         val itemMaxWidthConstraint =
                             (if (expanded) itemExpandedMaxWidth else actualMinWidth).coerceAtLeast(
                                 minimumA11ySize.roundToPx()
@@ -413,7 +413,7 @@ private fun WideNavigationRailLayout(
                                 val maxItemWidth = measuredItem.measuredWidth
                                 if (expanded && expandedItemMaxWidth < maxItemWidth) {
                                     expandedItemMaxWidth =
-                                        maxItemWidth + ItemHorizontalPadding.roundToPx()
+                                        maxItemWidth + WNRItemHorizontalPadding.roundToPx()
                                 }
                                 constraintsOffset = measuredItem.height
                                 itemsPlaceables.add(measuredItem)
@@ -832,6 +832,9 @@ object DefaultModalWideNavigationRailOverride : ModalWideNavigationRailOverride 
  *   emitting [Interaction]s for this item. You can use this to change the item's appearance or
  *   preview the item in different states. Note that if `null` is provided, interactions will still
  *   happen internally.
+ * @param indicatorPadding the spacing values to apply internally between the indicator and the
+ *   indicator's content, if you need different paddings during expanded and collapsed states, use
+ *   [WideNavigationRailItemDefaults.indicatorPadding] to correctly handle animations.
  */
 @Composable
 fun WideNavigationRailItem(
@@ -846,6 +849,8 @@ fun WideNavigationRailItem(
         WideNavigationRailItemDefaults.iconPositionFor(railExpanded),
     colors: NavigationItemColors = WideNavigationRailItemDefaults.colors(),
     interactionSource: MutableInteractionSource? = null,
+    indicatorPadding: PaddingValues =
+        WideNavigationRailItemDefaults.indicatorPadding(railExpanded = railExpanded),
 ) {
     @Suppress("NAME_SHADOWING")
     val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
@@ -858,15 +863,11 @@ fun WideNavigationRailItem(
         topIconIndicatorWidth = NavigationRailVerticalItemTokens.ActiveIndicatorWidth,
         topIconLabelTextStyle = NavigationRailVerticalItemTokens.LabelTextFont.value,
         startIconLabelTextStyle = NavigationRailHorizontalItemTokens.LabelTextFont.value,
-        topIconIndicatorHorizontalPadding = ItemTopIconIndicatorHorizontalPadding,
-        topIconIndicatorVerticalPadding = ItemTopIconIndicatorVerticalPadding,
+        indicatorPadding = indicatorPadding,
         topIconIndicatorToLabelVerticalPadding = NavigationRailVerticalItemTokens.IconLabelSpace,
-        startIconIndicatorHorizontalPadding =
-            NavigationRailHorizontalItemTokens.FullWidthLeadingSpace,
-        startIconIndicatorVerticalPadding = ItemStartIconIndicatorVerticalPadding,
         noLabelIndicatorPadding = WNRItemNoLabelIndicatorPadding,
         startIconToLabelHorizontalPadding = NavigationRailHorizontalItemTokens.IconLabelSpace,
-        itemHorizontalPadding = ItemHorizontalPadding,
+        itemHorizontalPadding = WNRItemHorizontalPadding,
         colors = colors,
         modifier = modifier,
         enabled = enabled,
@@ -875,6 +876,72 @@ fun WideNavigationRailItem(
         interactionSource = interactionSource,
     )
 }
+
+/**
+ * Material Design wide navigation rail item.
+ *
+ * It's recommend for navigation items to always have a text label. A [WideNavigationRailItem]
+ * always displays labels (if they exist) when selected and unselected.
+ *
+ * The [WideNavigationRailItem] supports two different icon positions, top and start, which is
+ * controlled by the [iconPosition] param:
+ * - If the icon position is [NavigationItemIconPosition.Top] the icon will be displayed above the
+ *   label. This configuration should be used with collapsed wide navigation rails.
+ * - If the icon position is [NavigationItemIconPosition.Start] the icon will be displayed to the
+ *   start of the label. This configuration should be used with expanded wide navigation rails.
+ *
+ * However, if an animated item is desired, the [iconPosition] can be controlled via the expanded
+ * value of the associated [WideNavigationRail] or [ModalWideNavigationRail]. By default, it'll use
+ * the [railExpanded] to follow the configuration described above.
+ *
+ * @param selected whether this item is selected
+ * @param onClick called when this item is clicked
+ * @param icon icon for this item, typically an [Icon]
+ * @param label text label for this item
+ * @param railExpanded whether the associated [WideNavigationRail] is expanded or collapsed
+ * @param modifier the [Modifier] to be applied to this item
+ * @param enabled controls the enabled state of this item. When `false`, this component will not
+ *   respond to user input, and it will appear visually disabled and disabled to accessibility
+ *   services.
+ * @param iconPosition the [NavigationItemIconPosition] for the icon
+ * @param colors [NavigationItemColors] that will be used to resolve the colors used for this item
+ *   in different states. See [WideNavigationRailItemDefaults.colors]
+ * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
+ *   emitting [Interaction]s for this item. You can use this to change the item's appearance or
+ *   preview the item in different states. Note that if `null` is provided, interactions will still
+ *   happen internally.
+ */
+@Deprecated(
+    message = "Deprecated in favor of function with indicatorPadding parameter",
+    level = DeprecationLevel.HIDDEN,
+)
+@Composable
+fun WideNavigationRailItem(
+    selected: Boolean,
+    onClick: () -> Unit,
+    icon: @Composable () -> Unit,
+    label: @Composable (() -> Unit)?,
+    railExpanded: Boolean,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    iconPosition: NavigationItemIconPosition =
+        WideNavigationRailItemDefaults.iconPositionFor(railExpanded),
+    colors: NavigationItemColors = WideNavigationRailItemDefaults.colors(),
+    interactionSource: MutableInteractionSource? = null,
+) =
+    WideNavigationRailItem(
+        selected,
+        onClick,
+        icon,
+        label,
+        railExpanded,
+        modifier,
+        enabled,
+        iconPosition,
+        colors,
+        interactionSource,
+        WideNavigationRailItemDefaults.indicatorPadding(railExpanded = railExpanded),
+    )
 
 /**
  * Material Design wide navigation rail item.
@@ -911,7 +978,8 @@ fun WideNavigationRailItem(
  *   happen internally.
  */
 @Deprecated(
-    message = "Deprecated in favor of function with required railExpanded parameter",
+    message =
+        "Deprecated in favor of function with indicatorPadding required railExpanded parameters",
     level = DeprecationLevel.HIDDEN,
 )
 @ExperimentalMaterial3ExpressiveApi
@@ -940,6 +1008,7 @@ fun WideNavigationRailItem(
         iconPosition,
         colors,
         interactionSource,
+        WideNavigationRailItemDefaults.indicatorPadding(railExpanded = railExpanded),
     )
 
 /**
@@ -1203,6 +1272,26 @@ object WideNavigationRailDefaults {
 
 /** Defaults used in [WideNavigationRailItem]. */
 object WideNavigationRailItemDefaults {
+
+    /**
+     * The default indicator padding of a [WideNavigationRailItem].
+     *
+     * @param collapsedPadding the padding to be applied when the associated [WideNavigationRail] is
+     *   collapsed
+     * @param expandedPadding the padding to be applied when the associated [WideNavigationRail] is
+     *   expanded
+     * @param railExpanded whether the associated [WideNavigationRail] is expanded or collapsed
+     */
+    @Composable
+    fun indicatorPadding(
+        railExpanded: Boolean,
+        collapsedPadding: PaddingValues = IndicatorCollapsedPadding,
+        expandedPadding: PaddingValues = IndicatorExpandedPadding,
+    ): PaddingValues =
+        remember(collapsedPadding, expandedPadding, railExpanded) {
+            DynamicPaddingValues(collapsedPadding, expandedPadding, railExpanded)
+        }
+
     /**
      * The default icon position of a [WideNavigationRailItem] given whether the associated
      * [WideNavigationRail] is collapsed or expanded.
@@ -1247,6 +1336,24 @@ object WideNavigationRailItemDefaults {
             unselectedTextColor = unselectedTextColor,
             disabledIconColor = disabledIconColor,
             disabledTextColor = disabledTextColor,
+        )
+
+    /**
+     * The default padding to be applied when the associated [WideNavigationRailItem] is collapsed.
+     */
+    val IndicatorCollapsedPadding =
+        PaddingValues(
+            horizontal = ItemTopIconIndicatorHorizontalPadding,
+            vertical = ItemTopIconIndicatorVerticalPadding,
+        )
+
+    /**
+     * The default padding to be applied when the associated [WideNavigationRailItem] is expanded.
+     */
+    val IndicatorExpandedPadding =
+        PaddingValues(
+            horizontal = NavigationRailHorizontalItemTokens.FullWidthLeadingSpace,
+            vertical = ItemStartIconIndicatorVerticalPadding,
         )
 
     private val ColorScheme.defaultWideNavigationRailItemColors: NavigationItemColors
@@ -1507,8 +1614,9 @@ private fun Scrim(color: Color, onDismissRequest: suspend () -> Unit, visible: B
 internal val WNRItemNoLabelIndicatorPadding =
     (NavigationRailVerticalItemTokens.ActiveIndicatorWidth -
         NavigationRailBaselineItemTokens.IconSize) / 2
+/*@VisibleForTesting*/
+internal val WNRItemHorizontalPadding = 20.dp
 
-private val ItemHorizontalPadding = 20.dp
 // Vertical padding between the contents of the wide navigation rail and its top/bottom.
 private val WNRVerticalPadding = NavigationRailCollapsedTokens.TopSpace
 // Padding at the bottom of the rail's header. This padding will only be added when the header is
