@@ -25,6 +25,7 @@ import androidx.xr.scenecore.impl.impress.GltfModel
 import androidx.xr.scenecore.impl.impress.ImpressApi
 import androidx.xr.scenecore.impl.impress.ImpressNode
 import androidx.xr.scenecore.impl.impress.Material
+import androidx.xr.scenecore.runtime.GltfAnimationFeature
 import androidx.xr.scenecore.runtime.GltfEntity
 import androidx.xr.scenecore.runtime.GltfFeature
 import androidx.xr.scenecore.runtime.MaterialResource
@@ -62,6 +63,30 @@ internal class GltfFeatureImpl(
     private var currentAnimationJob: Job? = null
 
     private val meshOverrides = mutableMapOf<String, Int>()
+
+    private var animationFeatureList: List<GltfAnimationFeature>? = null
+
+    @MainThread
+    override fun getAnimations(executor: Executor): List<GltfAnimationFeature> {
+        if (animationFeatureList == null) {
+            val list = mutableListOf<GltfAnimationFeature>()
+            for (i in 0 until impressApi.getGltfModelAnimationCount(modelImpressNode)) {
+                list.add(
+                    GltfAnimationFeatureImpl(
+                        impressApi = impressApi,
+                        modelImpressNode = modelImpressNode,
+                        index = i,
+                        name = impressApi.getGltfModelAnimationName(modelImpressNode, i),
+                        duration =
+                            impressApi.getGltfModelAnimationDurationSeconds(modelImpressNode, i),
+                        executor = executor,
+                    )
+                )
+            }
+            animationFeatureList = Collections.unmodifiableList(list)
+        }
+        return animationFeatureList!!
+    }
 
     private val animationStateListeners: MutableMap<Consumer<Int>, Executor> =
         Collections.synchronizedMap(mutableMapOf())
