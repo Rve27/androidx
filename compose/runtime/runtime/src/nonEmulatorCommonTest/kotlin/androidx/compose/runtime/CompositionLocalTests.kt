@@ -890,7 +890,7 @@ class CompositionLocalTests {
 
     @Test
     fun hostDefault_resolvesValueFromProvider() = compositionTest {
-        val key = HostDefaultKey<String>()
+        val key = TestHostDefaultKey<String>()
         val local = compositionLocalWithHostDefaultOf(key)
         val provider = TestHostDefaultProvider(mapOf(key to "HostValue"))
 
@@ -903,7 +903,7 @@ class CompositionLocalTests {
 
     @Test
     fun hostDefault_explicitValueOverridesHost() = compositionTest {
-        val key = HostDefaultKey<String>()
+        val key = TestHostDefaultKey<String>()
         val local = compositionLocalWithHostDefaultOf(key)
         val provider = TestHostDefaultProvider(mapOf(key to "HostValue"))
 
@@ -919,7 +919,7 @@ class CompositionLocalTests {
     @Test
     fun hostDefault_returnsNullForMissingNullableKey() = compositionTest {
         // Key expects a nullable String
-        val key = HostDefaultKey<String?>()
+        val key = TestHostDefaultKey<String?>()
         val local = compositionLocalWithHostDefaultOf(key)
         // Provider is empty
         val provider = TestHostDefaultProvider(emptyMap())
@@ -934,7 +934,7 @@ class CompositionLocalTests {
     @Test
     fun hostDefault_throwsForMissingNonNullableKey() = compositionTest {
         // Key expects a non-null String
-        val key = HostDefaultKey<Int>()
+        val key = TestHostDefaultKey<Int>()
         val local = compositionLocalWithHostDefaultOf(key)
         val provider = TestHostDefaultProvider(emptyMap())
 
@@ -966,7 +966,7 @@ class CompositionLocalTests {
 
     @Test
     fun hostDefault_dynamicUpdatesFromProvider() = compositionTest {
-        val key = HostDefaultKey<String>()
+        val key = TestHostDefaultKey<String>()
         val local = compositionLocalWithHostDefaultOf(key)
 
         // We use mutable state to swap providers to simulate the host environment changing
@@ -1019,6 +1019,8 @@ fun MockViewValidator.CacheInvalidate(state: State<Int>) {
 data class SomeData(val value: String = "default")
 
 @Stable class StableRef<T>(var value: T)
+
+private class TestHostDefaultKey<T> : HostDefaultKey<T>
 
 private class TestHostDefaultProvider(val values: Map<HostDefaultKey<*>, Any?>) :
     HostDefaultProvider {
