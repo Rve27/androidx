@@ -33,6 +33,7 @@ import androidx.compose.material3.tokens.NavigationRailBaselineItemTokens
 import androidx.compose.material3.tokens.NavigationRailCollapsedTokens
 import androidx.compose.material3.tokens.NavigationRailColorTokens
 import androidx.compose.material3.tokens.NavigationRailExpandedTokens
+import androidx.compose.material3.tokens.NavigationRailHorizontalItemTokens
 import androidx.compose.material3.tokens.NavigationRailVerticalItemTokens
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -503,6 +504,88 @@ class WideNavigationRailTest {
             .onNodeWithTag("icon", useUnmergedTree = true)
             .assertLeftPositionInRootIsEqualTo((itemBounds.width - iconBounds.width) / 2)
             .assertTopPositionInRootIsEqualTo((itemBounds.height - iconBounds.height) / 2)
+    }
+
+    @Test
+    fun item_topIconPosition_sizeAndPosition() {
+        rule.setMaterialContent(lightColorScheme()) {
+            WideNavigationRailItem(
+                modifier = Modifier.testTag("item"),
+                railExpanded = false,
+                icon = { Icon(Icons.Filled.Favorite, null, Modifier.testTag("icon")) },
+                label = { Text("Label", modifier = Modifier.testTag("label")) },
+                selected = true,
+                onClick = {},
+            )
+        }
+
+        val itemBounds = rule.onNodeWithTag("item").getUnclippedBoundsInRoot()
+        val iconBounds =
+            rule.onNodeWithTag("icon", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val labelBounds =
+            rule.onNodeWithTag("label", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val indicatorHorizontalPadding =
+            WNRItemHorizontalPadding +
+                (NavigationRailVerticalItemTokens.ActiveIndicatorWidth -
+                    NavigationRailBaselineItemTokens.IconSize) / 2
+        val indicatorVerticalPadding =
+            (NavigationRailVerticalItemTokens.ActiveIndicatorHeight -
+                NavigationRailBaselineItemTokens.IconSize) / 2
+        val iconToLabelPadding =
+            NavigationRailVerticalItemTokens.IconLabelSpace + indicatorVerticalPadding
+
+        (iconBounds.left - itemBounds.left).assertIsEqualTo(
+            indicatorHorizontalPadding,
+            "indicator start paadding",
+        )
+        (iconBounds.top - itemBounds.top).assertIsEqualTo(
+            indicatorVerticalPadding,
+            "indicator top padding",
+        )
+        (itemBounds.right - iconBounds.right).assertIsEqualTo(
+            indicatorHorizontalPadding,
+            "indicator end padding",
+        )
+        (labelBounds.top - iconBounds.bottom).assertIsEqualTo(
+            iconToLabelPadding,
+            "indicator to label padding",
+        )
+    }
+
+    @Test
+    fun item_startIconPosition_sizeAndPosition() {
+        rule.setMaterialContent(lightColorScheme()) {
+            WideNavigationRailItem(
+                modifier = Modifier.testTag("item"),
+                railExpanded = true,
+                icon = { Icon(Icons.Filled.Favorite, null, Modifier.testTag("icon")) },
+                label = { Text("Label", modifier = Modifier.testTag("label")) },
+                selected = true,
+                onClick = {},
+            )
+        }
+
+        val itemBounds = rule.onNodeWithTag("item").getUnclippedBoundsInRoot()
+        val iconBounds =
+            rule.onNodeWithTag("icon", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val labelBounds =
+            rule.onNodeWithTag("label", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val verticalPadding =
+            (NavigationRailHorizontalItemTokens.ActiveIndicatorHeight -
+                NavigationRailBaselineItemTokens.IconSize) / 2
+        val horizontalPadding = NavigationRailHorizontalItemTokens.FullWidthLeadingSpace
+
+        (iconBounds.left - itemBounds.left).assertIsEqualTo(
+            WNRItemHorizontalPadding + horizontalPadding,
+            "start padding",
+        )
+        (iconBounds.top - itemBounds.top).assertIsEqualTo(verticalPadding, "top padding")
+        (itemBounds.right - labelBounds.right).assertIsEqualTo(horizontalPadding, "end padding")
+        (itemBounds.bottom - iconBounds.bottom).assertIsEqualTo(verticalPadding, "bottom padding")
+        (labelBounds.left - iconBounds.right).assertIsEqualTo(
+            NavigationRailHorizontalItemTokens.IconLabelSpace,
+            "icon to label space",
+        )
     }
 
     @Test
