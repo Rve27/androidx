@@ -439,7 +439,7 @@ public fun FollowingSubspace(
     if (!validateFollowingSubspaceConfiguration(target, behavior, session.config)) return
 
     // If we're following an anchor and want the content to follow it as tightly as possible,
-    // its best to link them together in the scene graph rather than implement custom logic.
+    // it's best to link them together in the scene graph rather than implement custom logic.
     if (target is AnchorTarget && behavior == FollowBehavior.Tight) {
         Subspace(
             modifier = modifier,
