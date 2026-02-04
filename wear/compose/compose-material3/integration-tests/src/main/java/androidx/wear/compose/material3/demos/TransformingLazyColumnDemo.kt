@@ -16,20 +16,38 @@
 
 package androidx.wear.compose.material3.demos
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.wear.compose.foundation.LocalReduceMotion
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope
 import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.itemsIndexed
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.CardDefaults
+import androidx.wear.compose.material3.CompactButton
+import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
@@ -294,5 +312,186 @@ data class NotificationItem(val title: String, val body: String) {
                 NotificationItem("🐾 Pet Appreciation", "Give your furry friend some extra love."),
                 NotificationItem("📝 Journal Time", "Take 5 minutes to jot down your thoughts."),
             )
+    }
+}
+
+@Composable
+internal fun TransformingLazyColumnReducedMotionSample() {
+    // This simulates how TransformingLazyColumn looks like when reduce motion is enabled.
+    CompositionLocalProvider(LocalReduceMotion provides true) {
+        val transformationSpec = rememberTransformationSpec()
+        val state = rememberTransformingLazyColumnState()
+        AppScaffold {
+            ScreenScaffold(state) { contentPadding ->
+                TransformingLazyColumn(state = state, contentPadding = contentPadding) {
+                    items(count = 10) {
+                        Button(
+                            onClick = {},
+                            modifier =
+                                Modifier.minimumVerticalContentPadding(
+                                        ButtonDefaults.minimumListVerticalContentPadding
+                                    )
+                                    .fillMaxWidth()
+                                    .transformedHeight(this, transformationSpec)
+                                    .animateItem(),
+                            transformation = SurfaceTransformation(transformationSpec),
+                        ) {
+                            Text("Item $it")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@SuppressLint("PrimitiveInCollection")
+@Composable
+fun TransformingLazyColumnAnimationSample() {
+    val transformationSpec = rememberTransformationSpec()
+    val state = rememberTransformingLazyColumnState()
+    var elements by remember { mutableStateOf(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) }
+    var nextElement by remember { mutableIntStateOf(10) }
+
+    fun addCardAfter(index: Int) {
+        elements =
+            elements.subList(0, index + 1) +
+                listOf(nextElement++) +
+                elements.subList(index + 1, elements.count())
+    }
+
+    fun removeCardAt(index: Int) {
+        elements = elements.subList(0, index) + elements.subList(index + 1, elements.count())
+    }
+
+    AppScaffold {
+        ScreenScaffold(
+            state,
+            edgeButton = {
+                EdgeButton(onClick = { elements = elements.shuffled() }) { Text("Shuffle") }
+            },
+        ) { contentPadding ->
+            TransformingLazyColumn(state = state, contentPadding = contentPadding) {
+                itemsIndexed(elements, key = { _, key -> key }) { index, cardKey ->
+                    Card(
+                        onClick = {},
+                        modifier =
+                            Modifier.minimumVerticalContentPadding(
+                                    CardDefaults.minimumListVerticalContentPadding
+                                )
+                                .transformedHeight(this, transformationSpec)
+                                .animateItem(),
+                        transformation = SurfaceTransformation(transformationSpec),
+                    ) {
+                        Text("Card $cardKey")
+                        Row {
+                            Spacer(modifier = Modifier.weight(1f))
+                            CompactButton(
+                                onClick = { removeCardAt(index) },
+                                enabled = elements.count() > 1,
+                            ) {
+                                Text("-")
+                            }
+                            CompactButton(onClick = { addCardAfter(index) }) { Text("+") }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@SuppressLint("PrimitiveInCollection")
+@Composable
+fun TransformingLazyColumnReverseLayoutSample() {
+    var reverseLayout by remember { mutableStateOf(true) }
+    val transformationSpec = rememberTransformationSpec()
+    val state = rememberTransformingLazyColumnState()
+    var elements by remember { mutableStateOf(listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)) }
+    var nextElement by remember { mutableIntStateOf(10) }
+
+    fun addCardAfter(index: Int) {
+        elements =
+            elements.subList(0, index + 1) +
+                listOf(nextElement++) +
+                elements.subList(index + 1, elements.count())
+    }
+
+    fun removeCardAt(index: Int) {
+        elements = elements.subList(0, index) + elements.subList(index + 1, elements.count())
+    }
+
+    AppScaffold {
+        ScreenScaffold(
+            state,
+            edgeButton = {
+                EdgeButton(onClick = { reverseLayout = !reverseLayout }) { Text("Reverse") }
+            },
+        ) { contentPadding ->
+            TransformingLazyColumn(
+                state = state,
+                contentPadding = contentPadding,
+                reverseLayout = reverseLayout,
+            ) {
+                itemsIndexed(elements, key = { _, key -> key }) { index, cardKey ->
+                    Card(
+                        onClick = {},
+                        modifier =
+                            Modifier.minimumVerticalContentPadding(
+                                    CardDefaults.minimumListVerticalContentPadding
+                                )
+                                .transformedHeight(this, transformationSpec)
+                                .animateItem(),
+                        transformation = SurfaceTransformation(transformationSpec),
+                    ) {
+                        Text("Card $cardKey")
+                        Row {
+                            Spacer(modifier = Modifier.weight(1f))
+                            CompactButton(
+                                onClick = { removeCardAt(index) },
+                                enabled = elements.count() > 1,
+                            ) {
+                                Text("-")
+                            }
+                            CompactButton(onClick = { addCardAfter(index) }) { Text("+") }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TransformingLazyColumnExpandableCardSample() {
+    val state = rememberTransformingLazyColumnState()
+    val transformationSpec = rememberTransformationSpec()
+    var expandedIndex by remember { mutableIntStateOf(-1) }
+    AppScaffold {
+        ScreenScaffold(state) { contentPadding ->
+            TransformingLazyColumn(state = state, contentPadding = contentPadding) {
+                items(count = 50) { cardIndex ->
+                    TitleCard(
+                        onClick = {
+                            expandedIndex = if (expandedIndex == cardIndex) -1 else cardIndex
+                        },
+                        modifier =
+                            Modifier.minimumVerticalContentPadding(
+                                    CardDefaults.minimumListVerticalContentPadding
+                                )
+                                .fillMaxWidth()
+                                .transformedHeight(this, transformationSpec),
+                        transformation = SurfaceTransformation(transformationSpec),
+                        title = { Text("Card $cardIndex") },
+                        subtitle = {
+                            AnimatedVisibility(expandedIndex == cardIndex) {
+                                Text("Expanded content is available here")
+                            }
+                        },
+                        content = { Text("Tap on Card to expand") },
+                    )
+                }
+            }
+        }
     }
 }

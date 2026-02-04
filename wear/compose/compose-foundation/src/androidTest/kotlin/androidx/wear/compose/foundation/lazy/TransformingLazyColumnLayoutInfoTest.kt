@@ -290,14 +290,9 @@ class TransformingLazyColumnLayoutInfoTest {
     @Test
     fun layoutInfo_reflectsDynamicPadding() {
         lateinit var state: TransformingLazyColumnState
-        val responsivePaddingPx = 50
-        val responsivePaddingDp = with(rule.density) { responsivePaddingPx.toDp() }
-        val responsiveVerticalPadding =
-            object : ResponsiveVerticalPadding {
-                override fun calculateBottomPadding(containerHeight: Dp): Dp = responsivePaddingDp
-
-                override fun calculateTopPadding(containerHeight: Dp): Dp = responsivePaddingDp
-            }
+        val minimumVerticalContentPaddingPx = 50
+        val minimumVerticalContentPaddingDp =
+            with(rule.density) { minimumVerticalContentPaddingPx.toDp() }
         rule.setContent {
             state = rememberTransformingLazyColumnState()
             TransformingLazyColumn(
@@ -307,13 +302,14 @@ class TransformingLazyColumnLayoutInfoTest {
                 items(100) { index ->
                     Box(
                         Modifier.requiredSize(itemSizeDp)
-                            .responsiveVerticalPadding(responsiveVerticalPadding)
+                            .minimumVerticalContentPadding(minimumVerticalContentPaddingDp)
                     )
                 }
             }
         }
         rule.runOnIdle {
-            assertThat(state.layoutInfo.beforeContentPadding).isEqualTo(responsivePaddingPx)
+            assertThat(state.layoutInfo.beforeContentPadding)
+                .isEqualTo(minimumVerticalContentPaddingPx)
             assertThat(state.layoutInfo.afterContentPadding).isEqualTo(0)
         }
 
@@ -326,7 +322,8 @@ class TransformingLazyColumnLayoutInfoTest {
         rule.runOnIdle { runBlocking { state.scrollToItem(99) } }
         rule.runOnIdle {
             assertThat(state.layoutInfo.beforeContentPadding).isEqualTo(0)
-            assertThat(state.layoutInfo.afterContentPadding).isEqualTo(responsivePaddingPx)
+            assertThat(state.layoutInfo.afterContentPadding)
+                .isEqualTo(minimumVerticalContentPaddingPx)
         }
     }
 

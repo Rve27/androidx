@@ -47,11 +47,7 @@ import androidx.wear.compose.material3.samples.SwipeToRevealSingleActionCardSamp
 import androidx.wear.compose.material3.samples.SwipeToRevealWithScalingLazyColumnSample
 import androidx.wear.compose.material3.samples.SwipeToRevealWithTransformingLazyColumnSample
 import androidx.wear.compose.material3.samples.TitleCardWithImageWithTimeAndTitleSample
-import androidx.wear.compose.material3.samples.TransformingLazyColumnAnimationSample
-import androidx.wear.compose.material3.samples.TransformingLazyColumnExpandableCardSample
-import androidx.wear.compose.material3.samples.TransformingLazyColumnReducedMotionSample
-import androidx.wear.compose.material3.samples.TransformingLazyColumnResponsivePaddingSample
-import androidx.wear.compose.material3.samples.TransformingLazyColumnReverseLayoutSample
+import androidx.wear.compose.material3.samples.TransformingLazyColumnMinimumVerticalContentPaddingSample
 
 val WearMaterial3Demos =
     Material3DemoCategory(
@@ -254,7 +250,7 @@ val WearMaterial3Demos =
                 ),
                 ComposableDemo("Settings Demo") { SettingsDemo() },
                 Material3DemoCategory(
-                    title = "TransformingLazyColumn",
+                    title = "Transforming Lazy Column",
                     listOf(
                         ComposableDemo("Notifications") {
                             TransformingLazyColumnNotificationsDemo()
@@ -277,8 +273,8 @@ val WearMaterial3Demos =
                         ComposableDemo("Reversed layout") {
                             TransformingLazyColumnReverseLayoutSample()
                         },
-                        ComposableDemo("Responsive Padding") {
-                            TransformingLazyColumnResponsivePaddingSample()
+                        ComposableDemo("Content Padding") {
+                            TransformingLazyColumnMinimumVerticalContentPaddingSample()
                         },
                         ComposableDemo("Reduced Motion") {
                             TransformingLazyColumnReducedMotionSample()
