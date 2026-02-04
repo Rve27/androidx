@@ -122,7 +122,7 @@ androidXMultiplatform {
             compileOnly("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.2")
         }
 
-        commonStubsMain.dependsOn(commonMain)
+        commonStubsMain {}.dependsOn(commonMain)
         jvmStubsMain.dependsOn(commonStubsMain)
         linuxx64StubsMain.dependsOn(commonStubsMain)
 

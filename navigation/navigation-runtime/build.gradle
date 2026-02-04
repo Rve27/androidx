@@ -96,14 +96,14 @@ androidXMultiplatform {
             implementation(libs.atomicFu)
         }
 
-        wasmJsMain.dependencies {
+        wasmJsMain {}.dependencies {
             implementation(libs.kotlinXw3c)
         }
 
-        nonAndroidMain.dependsOn(commonMain)
+        nonAndroidMain {}.dependsOn(commonMain)
         desktopMain.dependsOn(nonAndroidMain)
         nativeMain.dependsOn(nonAndroidMain)
-        webMain.dependsOn(nonAndroidMain)
+        webMain {}.dependsOn(nonAndroidMain)
     }
 }
 

@@ -83,7 +83,7 @@ androidXMultiplatform {
             implementation("androidx.activity:activity-compose:1.10.1")
         }
 
-        commonStubsMain.dependsOn(commonMain)
+        commonStubsMain {}.dependsOn(commonMain)
         jvmStubsMain.dependsOn(commonStubsMain)
         linuxx64StubsMain.dependsOn(commonStubsMain)
     }
