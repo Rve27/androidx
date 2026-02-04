@@ -86,7 +86,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.AndroidComposeUiFlags
 import androidx.compose.ui.ComposeUiFlags
-import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
 import androidx.compose.ui.ComposeUiFlags.isIndirectPointerNavigationGestureDetectorEnabled
 import androidx.compose.ui.ComposeUiFlags.isOptimizedFocusEventDispatchEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -373,9 +372,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     private var frameRateCategoryView: View? = null
 
-    internal val isArrEnabled =
-        @OptIn(ExperimentalComposeUiApi::class) isAdaptiveRefreshRateEnabled &&
-            SDK_INT >= VANILLA_ICE_CREAM
+    internal val isArrEnabled = SDK_INT >= VANILLA_ICE_CREAM
 
     private val rootSemanticsNode = EmptySemanticsModifier()
 
