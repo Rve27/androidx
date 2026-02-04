@@ -56,6 +56,7 @@ import androidx.navigation3.scene.LocalCurrentScene
 import androidx.navigation3.scene.LocalEntriesToExcludeFromCurrentScene
 import androidx.navigation3.scene.OverlayScene
 import androidx.navigation3.scene.Scene
+import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneInfo
 import androidx.navigation3.scene.SceneState
 import androidx.navigation3.scene.SceneStrategy
@@ -317,6 +318,7 @@ public fun <T : Any> NavDisplay(
  *   of the given back stack if it is a [MutableList], otherwise you should provide this parameter.
  * @param entryDecorators list of [NavEntryDecorator] to add information to the entry content
  * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
+ * @param sceneDecoratorStrategies list of [SceneDecoratorStrategy] to add content to the scene.
  * @param sharedTransitionScope the [SharedTransitionScope] to allow transitions between scenes.
  * @param sizeTransform the [SizeTransform] for the [AnimatedContent].
  * @param transitionSpec Default [ContentTransform] when navigating to [NavEntry]s.
@@ -341,6 +343,7 @@ public fun <T : Any> NavDisplay(
     entryDecorators: List<NavEntryDecorator<T>> =
         listOf(rememberSaveableStateHolderNavEntryDecorator()),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
+    sceneDecoratorStrategies: List<SceneDecoratorStrategy<T>> = emptyList(),
     sharedTransitionScope: SharedTransitionScope? = null,
     sizeTransform: SizeTransform? = null,
     transitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
@@ -366,6 +369,7 @@ public fun <T : Any> NavDisplay(
     NavDisplay(
         entries = entries,
         sceneStrategy = sceneStrategy,
+        sceneDecoratorStrategies = sceneDecoratorStrategies,
         sharedTransitionScope = sharedTransitionScope,
         modifier = modifier,
         contentAlignment = contentAlignment,
@@ -495,6 +499,7 @@ public fun <T : Any> NavDisplay(
  * @param modifier the modifier to be applied to the layout.
  * @param contentAlignment The [Alignment] of the [AnimatedContent]
  * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
+ * @param sceneDecoratorStrategies list of [SceneDecoratorStrategy] to add content to the scene.
  * @param sharedTransitionScope the [SharedTransitionScope] to allow transitions between scenes.
  * @param sizeTransform the [SizeTransform] for the [AnimatedContent].
  * @param transitionSpec Default [ContentTransform] when navigating to [NavEntry]s.
@@ -513,6 +518,7 @@ public fun <T : Any> NavDisplay(
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.TopStart,
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
+    sceneDecoratorStrategies: List<SceneDecoratorStrategy<T>> = emptyList(),
     sharedTransitionScope: SharedTransitionScope? = null,
     sizeTransform: SizeTransform? = null,
     transitionSpec: AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
@@ -528,7 +534,14 @@ public fun <T : Any> NavDisplay(
 ) {
     require(entries.isNotEmpty()) { "NavDisplay entries cannot be empty" }
 
-    val sceneState = rememberSceneState(entries, sceneStrategy, sharedTransitionScope, onBack)
+    val sceneState =
+        rememberSceneState(
+            entries,
+            sceneStrategy,
+            sceneDecoratorStrategies,
+            sharedTransitionScope,
+            onBack,
+        )
     val scene = sceneState.currentScene
 
     // Predictive Back Handling
