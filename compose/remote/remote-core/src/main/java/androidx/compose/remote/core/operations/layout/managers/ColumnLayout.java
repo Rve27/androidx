@@ -473,13 +473,15 @@ public class ColumnLayout extends LayoutManager {
     }
 
     @Override
-    public void getLocationInWindow(float @NonNull [] value, boolean forSelf) {
-        super.getLocationInWindow(value, forSelf);
+    public void getLocationInWindow(@NonNull RemoteContext context, float @NonNull [] value,
+            boolean forSelf) {
+        super.getLocationInWindow(context, value, forSelf);
+        if (context.getTouchVersion() != LayoutManager.FIX_TOUCH_EVENT) {
+            if (!forSelf && mVerticalScrollDelegate instanceof ScrollModifierOperation) {
+                ScrollModifierOperation smo = (ScrollModifierOperation) mVerticalScrollDelegate;
 
-        if (!forSelf && mVerticalScrollDelegate instanceof ScrollModifierOperation) {
-            ScrollModifierOperation smo = (ScrollModifierOperation) mVerticalScrollDelegate;
-
-            value[1] += smo.getScrollY();
+                value[1] += smo.getScrollY();
+            }
         }
     }
 

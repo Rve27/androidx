@@ -527,13 +527,15 @@ public class RowLayout extends LayoutManager {
     }
 
     @Override
-    public void getLocationInWindow(float @NonNull [] value, boolean forSelf) {
-        super.getLocationInWindow(value, forSelf);
+    public void getLocationInWindow(@NonNull RemoteContext context, float @NonNull [] value,
+            boolean forSelf) {
+        super.getLocationInWindow(context, value, forSelf);
+        if (context.getTouchVersion() != LayoutManager.FIX_TOUCH_EVENT) {
+            if (!forSelf && mHorizontalScrollDelegate instanceof ScrollModifierOperation) {
+                ScrollModifierOperation smo = (ScrollModifierOperation) mHorizontalScrollDelegate;
 
-        if (!forSelf && mHorizontalScrollDelegate instanceof ScrollModifierOperation) {
-            ScrollModifierOperation smo = (ScrollModifierOperation) mHorizontalScrollDelegate;
-
-            value[0] += smo.getScrollX();
+                value[0] += smo.getScrollX();
+            }
         }
     }
 

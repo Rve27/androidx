@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,38 +26,25 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ApplyTouchDrag extends TestOperation {
-
+public class ApplyClick extends TestOperation {
     private final float mX;
     private final float mY;
-    private final long mTimeMillis;
-
-    public ApplyTouchDrag(float x, float y) {
-        this(x, y, 0);
-    }
-
-    public ApplyTouchDrag(float x, float y, long timeMillis) {
+    public ApplyClick(float x, float y) {
         mX = x;
         mY = y;
-        mTimeMillis = timeMillis;
     }
 
     @Override
     public boolean apply(@NonNull RemoteContext context, @NonNull CoreDocument document,
             @NonNull TestParameters testParameters, @Nullable List<Map<String, Object>> commands) {
         if (commands != null) {
-            Map<String, Object> applyTouchDrag = new LinkedHashMap<>();
-            applyTouchDrag.put("x", mX);
-            applyTouchDrag.put("y", mY);
-            if (mTimeMillis != 0) {
-                applyTouchDrag.put("timeMillis", mTimeMillis);
-            }
+            Map<String, Object> applyClick = new LinkedHashMap<>();
+            applyClick.put("x", mX);
+            applyClick.put("y", mY);
             Map<String, Object> testResult = new LinkedHashMap<>();
-            commands.add(command("Apply TouchDrag", applyTouchDrag, testResult));
+            commands.add(command("Apply Click", applyClick, testResult));
         }
-        context.currentTime += mTimeMillis;
-        context.setAnimationTime(context.currentTime / 1000f);
-        document.touchDrag(context, mX, mY);
-        return false;
+        document.onClick(context, mX, mY);
+        return true;
     }
 }
