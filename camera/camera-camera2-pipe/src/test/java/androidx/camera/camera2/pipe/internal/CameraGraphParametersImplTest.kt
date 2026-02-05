@@ -27,7 +27,6 @@ import androidx.camera.camera2.pipe.compat.Camera2Quirks
 import androidx.camera.camera2.pipe.graph.GraphProcessorImpl
 import androidx.camera.camera2.pipe.graph.GraphRequestProcessor
 import androidx.camera.camera2.pipe.graph.Listener3A
-import androidx.camera.camera2.pipe.graph.SessionLock
 import androidx.camera.camera2.pipe.testing.FakeCamera2MetadataProvider
 import androidx.camera.camera2.pipe.testing.FakeCameraMetadata
 import androidx.camera.camera2.pipe.testing.FakeCaptureSequenceProcessor
@@ -58,7 +57,7 @@ class CameraGraphParametersImplTest {
     private val testScope = TestScope()
 
     private var parameters =
-        CameraGraphParametersImpl(SessionLock(), FakeGraphProcessor(), testScope)
+        CameraGraphParametersImpl(GraphSessionLock(), FakeGraphProcessor(), testScope)
 
     private val graphProcessor =
         GraphProcessorImpl(
@@ -128,7 +127,8 @@ class CameraGraphParametersImplTest {
             graphProcessor.onGraphStarted(grp1)
             graphProcessor.repeatingRequest = request1
 
-            val parameters = CameraGraphParametersImpl(SessionLock(), graphProcessor, testScope)
+            val parameters =
+                CameraGraphParametersImpl(GraphSessionLock(), graphProcessor, testScope)
             parameters[TEST_KEY] = 42
             advanceUntilIdle()
 
