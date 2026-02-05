@@ -52,11 +52,24 @@ actual value class Key(val keyCode: Long) {
         actual val SoftRight = Key(KeyEvent.KEYCODE_SOFT_RIGHT)
 
         /**
-         * Home key.
+         * System Home key.
          *
          * This key is handled by the framework and is never delivered to applications.
          */
+        @Deprecated(
+            "`Key.Home` is never delivered to applications. For the keyboard \"Home\" key " +
+                "use `Key.MoveHome`. For the system \"Home\" key (unlikely to be needed), use " +
+                "`Key.SystemHome`",
+            level = DeprecationLevel.ERROR,
+        )
         actual val Home = Key(KeyEvent.KEYCODE_HOME)
+
+        /**
+         * System Home key.
+         *
+         * This key is handled by the framework and is never delivered to applications.
+         */
+        actual val SystemHome = Key(KeyEvent.KEYCODE_HOME)
 
         /** Back key. */
         actual val Back = Key(KeyEvent.KEYCODE_BACK)

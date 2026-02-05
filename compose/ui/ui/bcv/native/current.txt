@@ -3011,6 +3011,8 @@ final value class androidx.compose.ui.input.key/Key { // androidx.compose.ui.inp
             final fun <get-SwitchCharset>(): androidx.compose.ui.input.key/Key // androidx.compose.ui.input.key/Key.Companion.SwitchCharset.<get-SwitchCharset>|<get-SwitchCharset>(){}[0]
         final val Symbol // androidx.compose.ui.input.key/Key.Companion.Symbol|{}Symbol[0]
             final fun <get-Symbol>(): androidx.compose.ui.input.key/Key // androidx.compose.ui.input.key/Key.Companion.Symbol.<get-Symbol>|<get-Symbol>(){}[0]
+        final val SystemHome // androidx.compose.ui.input.key/Key.Companion.SystemHome|{}SystemHome[0]
+            final fun <get-SystemHome>(): androidx.compose.ui.input.key/Key // androidx.compose.ui.input.key/Key.Companion.SystemHome.<get-SystemHome>|<get-SystemHome>(){}[0]
         final val SystemNavigationDown // androidx.compose.ui.input.key/Key.Companion.SystemNavigationDown|{}SystemNavigationDown[0]
             final fun <get-SystemNavigationDown>(): androidx.compose.ui.input.key/Key // androidx.compose.ui.input.key/Key.Companion.SystemNavigationDown.<get-SystemNavigationDown>|<get-SystemNavigationDown>(){}[0]
         final val SystemNavigationLeft // androidx.compose.ui.input.key/Key.Companion.SystemNavigationLeft|{}SystemNavigationLeft[0]
