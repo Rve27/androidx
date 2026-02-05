@@ -856,7 +856,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
 
         project.configureVersionFileWriter(libraryAndroidComponentsExtension, androidXExtension)
 
-        val prebuiltLibraries = listOf("libtracing_perfetto.so", "libc++_shared.so")
         libraryAndroidComponentsExtension.onVariants { variant ->
             if (variant.buildType == DEFAULT_PUBLISH_CONFIG) {
                 // Standard docs, resource API, and Metalava configuration for AndroidX projects.
@@ -881,13 +880,8 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                     variant.name + "VerifyELFRegionAlignment",
                     VerifyELFRegionAlignmentTask::class.java,
                 ) { task ->
-                    task.files.from(
-                        variant.artifacts.get(SingleArtifact.MERGED_NATIVE_LIBS).map { dir ->
-                            dir.asFileTree.files
-                                .filter { it.extension == "so" }
-                                .filter { it.path.contains("arm64-v8a") }
-                                .filterNot { prebuiltLibraries.contains(it.name) }
-                        }
+                    task.mergedNativeLibs.set(
+                        variant.artifacts.get(SingleArtifact.MERGED_NATIVE_LIBS)
                     )
                     task.cacheEvenIfNoOutputs()
                 }
