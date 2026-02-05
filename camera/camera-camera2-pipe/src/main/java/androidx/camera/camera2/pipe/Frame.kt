@@ -213,6 +213,9 @@ public interface Frame : FrameReference, AutoCloseable {
         public fun FrameReference.isImageAvailable(streamId: StreamId): Boolean =
             this.imageStatus(streamId) == OutputStatus.AVAILABLE
 
+        public fun FrameReference.isImageAvailable(outputId: OutputId): Boolean =
+            this.imageStatus(outputId) == OutputStatus.AVAILABLE
+
         /** Utility for safely using and closing each [Frame] in a list. */
         public inline fun List<Frame>.useEach(action: (Frame) -> Unit) {
             AutoCloseables.useEach(this, action)

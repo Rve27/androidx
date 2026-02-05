@@ -21,6 +21,7 @@ import androidx.camera.camera2.pipe.Frame
 import androidx.camera.camera2.pipe.FrameId
 import androidx.camera.camera2.pipe.FrameInfo
 import androidx.camera.camera2.pipe.FrameNumber
+import androidx.camera.camera2.pipe.OutputId
 import androidx.camera.camera2.pipe.OutputStatus
 import androidx.camera.camera2.pipe.RequestMetadata
 import androidx.camera.camera2.pipe.StreamId
@@ -35,11 +36,12 @@ import kotlinx.atomicfu.atomic
  * and all of the underlying placeholder objects for each expected output.
  */
 internal class FrameImpl
-private constructor(private val frameState: FrameState, override val imageStreams: Set<StreamId>) :
-    Frame {
-    internal constructor(
-        frameState: FrameState
-    ) : this(frameState, frameState.imageOutputs.map { it.streamId }.toSet())
+internal constructor(
+    private val frameState: FrameState,
+    override val imageStreams: Set<StreamId> = frameState.imageOutputs.map { it.streamId }.toSet(),
+) : Frame {
+
+    private val outputStreams = frameState.imageOutputs.map { it.outputId }.toSet()
 
     private val closed = atomic(false)
 
@@ -168,9 +170,43 @@ private constructor(private val frameState: FrameState, override val imageStream
         return null
     }
 
+    override suspend fun awaitImage(outputId: OutputId): OutputImage? {
+        if (closed.value) return null
+        if (!outputStreams.contains(outputId)) return null
+        val output = frameState.imageOutputs.firstOrNull { it.outputId == outputId }
+        return output?.await()
+    }
+
+    override fun getImage(outputId: OutputId): OutputImage? {
+        if (closed.value) return null
+        if (!outputStreams.contains(outputId)) return null
+        val output = frameState.imageOutputs.firstOrNull { it.outputId == outputId }
+        return output?.outputOrNull()
+    }
+
+    override suspend fun awaitImages(streamId: StreamId): List<OutputImage> {
+        if (closed.value) return emptyList()
+        if (!imageStreams.contains(streamId)) return emptyList()
+        return frameState.imageOutputs.filter { it.streamId == streamId }.mapNotNull { it.await() }
+    }
+
+    override fun getImages(streamId: StreamId): List<OutputImage> {
+        if (closed.value) return emptyList()
+        if (!imageStreams.contains(streamId)) return emptyList()
+        return frameState.imageOutputs
+            .filter { it.streamId == streamId }
+            .mapNotNull { it.outputOrNull() }
+    }
+
     override fun imageStatus(streamId: StreamId): OutputStatus {
         if (closed.value || !imageStreams.contains(streamId)) return OutputStatus.UNAVAILABLE
         return frameState.imageOutputs.firstOrNull { it.streamId == streamId }?.status
+            ?: OutputStatus.UNAVAILABLE
+    }
+
+    override fun imageStatus(outputId: OutputId): OutputStatus {
+        if (closed.value || !outputStreams.contains(outputId)) return OutputStatus.UNAVAILABLE
+        return frameState.imageOutputs.firstOrNull { it.outputId == outputId }?.status
             ?: OutputStatus.UNAVAILABLE
     }
 
