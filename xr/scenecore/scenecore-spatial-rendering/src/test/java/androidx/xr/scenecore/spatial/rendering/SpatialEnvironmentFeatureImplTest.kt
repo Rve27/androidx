@@ -456,7 +456,7 @@ class SpatialEnvironmentFeatureImplTest {
         val expectedParentHandle = subspaceHandleCaptor.value
         val geometryNodes = fakeImpressApi.getImpressNodesForToken((gltf as GltfModel).nativeHandle)
         val gltfNode = ImpressNode(geometryNodes!![0])
-        val actualParentHandle = fakeImpressApi.getImpressNodeParent(gltfNode)
+        val actualParentHandle = fakeImpressApi.getImpressNodeParent(gltfNode).handle
 
         assertThat(actualParentHandle).isNotEqualTo(-1)
         assertThat(actualParentHandle).isNotEqualTo(gltfNode.handle)
