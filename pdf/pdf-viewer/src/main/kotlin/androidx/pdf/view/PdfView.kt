@@ -1638,7 +1638,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     layoutStrategy = requireNotNull(localStateToRestore.layoutStrategy),
                     pdfFormFillingState = requireNotNull(localStateToRestore.pdfFormFillingState),
                     errorFlow = errorFlow,
-                    isFormFillingEnabled = isFormFillingEnabled,
+                    isFormFillingEnabled = { isFormFillingEnabled },
                 )
                 .apply { onViewportChanged() }
         selectionStateManager =
@@ -1930,7 +1930,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                         horizontalPageSpacingPx = horizontalPageSpacing.toFloat(),
                         verticalPageSpacingPx = verticalPageSpacing.toFloat(),
                         errorFlow = errorFlow,
-                        isFormFillingEnabled = isFormFillingEnabled,
+                        isFormFillingEnabled = { isFormFillingEnabled },
                     )
                     .apply { onViewportChanged() }
             selectionStateManager =
