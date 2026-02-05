@@ -82,6 +82,41 @@ public interface FrameBuffer : AutoCloseable {
     public fun removeAllReferences(): List<FrameReference>
 
     /**
+     * Removes the first entry in [FrameBuffer] that matches the [FrameReference] filter. If a match
+     * is found, the entry is removed from the buffer. The frame will be returned if the entry has a
+     * valid [Frame]. Otherwise, null is returned.
+     *
+     * @param predicate The filter function to apply.
+     * @return The [Frame] of the first buffer entry that matches the filter, or null if a match is
+     *   not found or the matching entry does not have a frame.
+     */
+    public fun removeFirstFrameReferenceAndAcquire(predicate: (FrameReference) -> Boolean): Frame?
+
+    /**
+     * Removes the last entry in [FrameBuffer] that matches the [FrameReference] filter. If a match
+     * is found, the entry is removed from the buffer. The frame will be returned if the entry has a
+     * valid [Frame]. Otherwise, null is returned.
+     *
+     * @param predicate The filter function to apply.
+     * @return The [Frame] of the last buffer entry that matches the filter, or null if a match is
+     *   not found or the matching entry does not have a frame.
+     */
+    public fun removeLastFrameReferenceAndAcquire(predicate: (FrameReference) -> Boolean): Frame?
+
+    /**
+     * Removes the last entry in [FrameBuffer] that matches the [FrameReference] filter. If a match
+     * is found, the entry is removed from the buffer. The frame will be returned if the entry has a
+     * valid [Frame]. Otherwise, null is returned.
+     *
+     * @param predicate The filter function to apply.
+     * @return The [Frame] of the last buffer entry that matches the filter, or null if a match is
+     *   not found or the matching entry does not have a frame.
+     */
+    public fun removeAllFrameReferencesAndAcquire(
+        predicate: (FrameReference) -> Boolean
+    ): List<Frame>
+
+    /**
      * The first FrameReference in the buffer, or null if the buffer is empty. No frames or
      * references are removed by this call.
      */
