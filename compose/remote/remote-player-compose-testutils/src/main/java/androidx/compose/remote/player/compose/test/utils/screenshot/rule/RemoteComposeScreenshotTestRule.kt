@@ -17,6 +17,7 @@
 package androidx.compose.remote.player.compose.test.utils.screenshot.rule
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -54,6 +55,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
 import androidx.test.screenshot.matchers.BitmapMatcher
 import java.io.ByteArrayInputStream
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.withContext
@@ -62,6 +64,8 @@ import org.junit.rules.RuleChain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
+
+private const val TAG = "RemoteComposeScreenshotTestRule"
 
 /**
  * A [org.junit.rules.TestRule] that takes screenshots of remote composable functions using devices
@@ -220,7 +224,10 @@ class RemoteComposeScreenshotTestRule(
                                 creationDisplayInfo = creationDisplayInfo,
                                 profile = profile ?: this@RemoteComposeScreenshotTestRule.profile,
                             )
-                        document?.let { RemoteDocumentPlayer(it, creationDisplayInfo) }
+                        document?.let {
+                            saveDocument(it.buffer, testDescription.goldenIdentifier() + ".rc")
+                            RemoteDocumentPlayer(it, creationDisplayInfo)
+                        }
                     }
                 }
             }
@@ -253,6 +260,17 @@ class RemoteComposeScreenshotTestRule(
             bitmapLoader = bitmapLoader,
             onNamedAction = { name, value, _ -> clickEvents.add(Pair(name, value)) },
         )
+    }
+
+    private fun saveDocument(buffer: RemoteComposeBuffer, name: String) {
+        try {
+            val filePath = screenshotRule.deviceOutputDirectory
+            val myFile = File(filePath, name)
+            buffer.write(buffer, myFile)
+            Log.i(TAG, "Wrote RC doc " + myFile.absolutePath)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to write RC document", e)
+        }
     }
 
     fun ComposeContentTestRule.verifyScreenshot(
