@@ -654,6 +654,11 @@ public open class ComponentActivity() :
      *
      * This dispatcher acts as the central point for back navigation events. When a navigation event
      * occurs (e.g., a back gesture), it safely invokes [ComponentActivity.onBackPressed].
+     *
+     * ### Not stable for override
+     *
+     * **This property is not intended for override.** It is technically `open` for binary
+     * compatibility with previous versions, but overriding this property is unsupported.
      */
     override val navigationEventDispatcher: NavigationEventDispatcher
         get() = onBackPressedDispatcher.eventDispatcher
