@@ -1687,7 +1687,7 @@ package androidx.compose.ui.input.key {
     method @BytecodeOnly public long getHeadsetHook-EK5gGoQ();
     method @BytecodeOnly public long getHelp-EK5gGoQ();
     method @BytecodeOnly public long getHenkan-EK5gGoQ();
-    method @BytecodeOnly public long getHome-EK5gGoQ();
+    method @BytecodeOnly @Deprecated public long getHome-EK5gGoQ();
     method @BytecodeOnly public long getI-EK5gGoQ();
     method @BytecodeOnly public long getInfo-EK5gGoQ();
     method @BytecodeOnly public long getInsert-EK5gGoQ();
@@ -1812,6 +1812,7 @@ package androidx.compose.ui.input.key {
     method @BytecodeOnly public long getStemPrimary-EK5gGoQ();
     method @BytecodeOnly public long getSwitchCharset-EK5gGoQ();
     method @BytecodeOnly public long getSymbol-EK5gGoQ();
+    method @BytecodeOnly public long getSystemHome-EK5gGoQ();
     method @BytecodeOnly public long getSystemNavigationDown-EK5gGoQ();
     method @BytecodeOnly public long getSystemNavigationLeft-EK5gGoQ();
     method @BytecodeOnly public long getSystemNavigationRight-EK5gGoQ();
@@ -1983,7 +1984,7 @@ package androidx.compose.ui.input.key {
     property public androidx.compose.ui.input.key.Key HeadsetHook;
     property public androidx.compose.ui.input.key.Key Help;
     property public androidx.compose.ui.input.key.Key Henkan;
-    property public androidx.compose.ui.input.key.Key Home;
+    property @Deprecated public androidx.compose.ui.input.key.Key Home;
     property public androidx.compose.ui.input.key.Key I;
     property public androidx.compose.ui.input.key.Key Info;
     property public androidx.compose.ui.input.key.Key Insert;
@@ -2108,6 +2109,7 @@ package androidx.compose.ui.input.key {
     property public androidx.compose.ui.input.key.Key StemPrimary;
     property public androidx.compose.ui.input.key.Key SwitchCharset;
     property public androidx.compose.ui.input.key.Key Symbol;
+    property public androidx.compose.ui.input.key.Key SystemHome;
     property public androidx.compose.ui.input.key.Key SystemNavigationDown;
     property public androidx.compose.ui.input.key.Key SystemNavigationLeft;
     property public androidx.compose.ui.input.key.Key SystemNavigationRight;
