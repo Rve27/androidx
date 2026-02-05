@@ -19,8 +19,8 @@ class FakeFreeFormFunctions {
      * @return a string.
      * @throws IllegalArgumentException if the parameters have an incorrect format.
      */
-    @AppFunction(isDescribedByKdoc = true)
-    fun fakeFreeFormFunction_isDescribedByKdoc_true(
+    @AppFunction(isDescribedByKDoc = true)
+    fun fakeFreeFormFunction_isDescribedByKDoc_true(
         appFunctionContext: AppFunctionContext,
         intParam: Int,
         stringListParam: List<String>,
@@ -31,7 +31,7 @@ class FakeFreeFormFunctions {
     /**
      * A fake free-form AppFunction to test descriptions in parameter metadata.
      *
-     * This kdoc will not be used in any of the metadata descriptions since `isDescribedByKdoc` is
+     * This kdoc will not be used in any of the metadata descriptions since `isDescribedByKDoc` is
      * set to false.
      *
      * @param appFunctionContext the AppFunction's context.
@@ -39,8 +39,8 @@ class FakeFreeFormFunctions {
      * @return a string.
      * @throws IllegalArgumentException if the inputString is in an incorrect format.
      */
-    @AppFunction(isDescribedByKdoc = false)
-    fun fakeFreeFormFunction_isDescribedByKdoc_false(
+    @AppFunction(isDescribedByKDoc = false)
+    fun fakeFreeFormFunction_isDescribedByKDoc_false(
         appFunctionContext: AppFunctionContext,
         intParam: Int,
     ): String {
@@ -55,7 +55,7 @@ class FakeFreeFormFunctions {
      * @return a string.
      * @throws IllegalArgumentException if the parameters have an incorrect format.
      */
-    @AppFunction(isDescribedByKdoc = true)
+    @AppFunction(isDescribedByKDoc = true)
     fun fakeFreeFormFunction_invalidParam_ignored(
         appFunctionContext: AppFunctionContext,
         intParam: Int,
@@ -72,7 +72,7 @@ class FakeFreeFormFunctions {
      * @return a string.
      * @throws IllegalArgumentException if the parameters have an incorrect format.
      */
-    @AppFunction(isDescribedByKdoc = true)
+    @AppFunction(isDescribedByKDoc = true)
     fun fakeFreeFormFunction_emptyDescription_ignored(
         appFunctionContext: AppFunctionContext,
         paramWithEmptyDescription: Int,
@@ -89,7 +89,7 @@ class FakeFreeFormFunctions {
      * @return a string.
      * @throws IllegalArgumentException if the parameters have an incorrect format.
      */
-    @AppFunction(isDescribedByKdoc = true)
+    @AppFunction(isDescribedByKDoc = true)
     fun fakeFreeFormFunction_onlyKnownTagsSkipped(
         appFunctionContext: AppFunctionContext,
         intParam: Int,

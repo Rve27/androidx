@@ -20,8 +20,8 @@ class FakeFreeFormFunctions {
      * @return The result string.
      * @throws IllegalArgumentException if the parameters have an incorrect format.
      */
-    @AppFunction(isDescribedByKdoc = true)
-    fun fakeFreeFormFunction_isDescribedByKdoc_true(
+    @AppFunction(isDescribedByKDoc = true)
+    fun fakeFreeFormFunction_isDescribedByKDoc_true(
         appFunctionContext: AppFunctionContext,
         serializableParam: InputToFakeFreeFormFunction,
     ): String {
@@ -40,8 +40,8 @@ class FakeFreeFormFunctions {
      * @return The result string.
      * @throws IllegalArgumentException if the inputString is in an incorrect format.
      */
-    @AppFunction(isDescribedByKdoc = true)
-    fun fakeFreeFormFunction_isDescribedByKdoc_withDerivedSerializable_true(
+    @AppFunction(isDescribedByKDoc = true)
+    fun fakeFreeFormFunction_isDescribedByKDoc_withDerivedSerializable_true(
         appFunctionContext: AppFunctionContext,
         input: DerivedInputToFakeFreeFormFunction,
     ): String {
@@ -52,15 +52,15 @@ class FakeFreeFormFunctions {
      * A fake free-form AppFunction to test the description element in the function's generated
      * metadata xml.
      *
-     * This kdoc will not be used as the description since `isDescribedByKdoc` is set to false.
+     * This kdoc will not be used as the description since `isDescribedByKDoc` is set to false.
      *
      * @param appFunctionContext the AppFunction's context.
      * @param input an input AppFunctionSerializable.
      * @return The result string.
      * @throws IllegalArgumentException if the inputString is in an incorrect format.
      */
-    @AppFunction(isDescribedByKdoc = false)
-    fun fakeFreeFormFunction_isDescribedByKdoc_false(
+    @AppFunction(isDescribedByKDoc = false)
+    fun fakeFreeFormFunction_isDescribedByKDoc_false(
         appFunctionContext: AppFunctionContext,
         input: InputToFakeFreeFormFunction,
     ): String {
@@ -68,21 +68,21 @@ class FakeFreeFormFunctions {
     }
 
     /** Tests the description elements for serializable's parametrized properties. */
-    @AppFunction(isDescribedByKdoc = true)
+    @AppFunction(isDescribedByKDoc = true)
     fun fakeFreeFormFunction_withParametrizedTypes(
         appFunctionContext: AppFunctionContext,
         parametrizedTypesInput: InputWithParametrizedTypes,
     ) {}
 
     /** Tests the description elements for serializable's repeated properties. */
-    @AppFunction(isDescribedByKdoc = true)
+    @AppFunction(isDescribedByKDoc = true)
     fun fakeFreeFormFunction_withRepeatedTypes(
         appFunctionContext: AppFunctionContext,
         parametrizedTypesInput: InputWithRepeatedTypes,
     ) {}
 
-    /** Tests that the input class description is empty when class's isDescribedByKdoc = false. */
-    @AppFunction(isDescribedByKdoc = true)
+    /** Tests that the input class description is empty when class's isDescribedByKDoc = false. */
+    @AppFunction(isDescribedByKDoc = true)
     fun fakeFreeFormFunction_inputClassDescribedByKdoc_false(
         appFunctionContext: AppFunctionContext,
         notDescribedByKdoc: NotDescribedByKdoc,
@@ -90,14 +90,14 @@ class FakeFreeFormFunctions {
 }
 
 /** A test input class to the free-form function. */
-@AppFunctionSerializable(isDescribedByKdoc = true)
+@AppFunctionSerializable(isDescribedByKDoc = true)
 open class InputToFakeFreeFormFunction(
     /** A string param. */
     open val data: String
 )
 
 /** A child class of [InputToFakeFreeFormFunction]. */
-@AppFunctionSerializable(isDescribedByKdoc = true)
+@AppFunctionSerializable(isDescribedByKDoc = true)
 class DerivedInputToFakeFreeFormFunction(
     /** A derived string param. */
     override val data: String,
@@ -106,7 +106,7 @@ class DerivedInputToFakeFreeFormFunction(
 ) : InputToFakeFreeFormFunction(data)
 
 /** An input class with parametrized types */
-@AppFunctionSerializable(isDescribedByKdoc = true)
+@AppFunctionSerializable(isDescribedByKDoc = true)
 class InputWithParametrizedTypes(
     /** Parametrized primitive param. */
     val parametrizedInt: Optional<Int>,
@@ -119,7 +119,7 @@ class InputWithParametrizedTypes(
 )
 
 /** An input class with repeated params. */
-@AppFunctionSerializable(isDescribedByKdoc = true)
+@AppFunctionSerializable(isDescribedByKDoc = true)
 class InputWithRepeatedTypes(
     /** Primitive array param. */
     val intArray: IntArray,
@@ -130,14 +130,14 @@ class InputWithRepeatedTypes(
 )
 
 /** A generic serializable class. */
-@AppFunctionSerializable(isDescribedByKdoc = true)
+@AppFunctionSerializable(isDescribedByKDoc = true)
 data class Optional<T>(
     /** The value. */
     val value: T
 )
 
 /** Class description. Should be ignored. */
-@AppFunctionSerializable(isDescribedByKdoc = false)
+@AppFunctionSerializable(isDescribedByKDoc = false)
 class NotDescribedByKdoc(
     /** Property description. Should be ignored. */
     val param: Int

@@ -51,7 +51,7 @@
         <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_invalidParam_ignored</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_false</id>
+        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_false</id>
         <enabledByDefault>true</enabledByDefault>
         <parameters>
             <dataTypeMetadata>
@@ -71,10 +71,10 @@
                 <type>8</type>
             </valueType>
         </response>
-        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_false</functionId>
+        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_false</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_true</id>
+        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_true</id>
         <enabledByDefault>true</enabledByDefault>
         <description>A fake free-form AppFunction to test descriptions in parameter metadata.</description>
         <parameters>
@@ -113,7 +113,7 @@
             </valueType>
             <description>a string.</description>
         </response>
-        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_true</functionId>
+        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_true</functionId>
     </appfunction>
     <appfunction>
         <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_onlyKnownTagsSkipped</id>
