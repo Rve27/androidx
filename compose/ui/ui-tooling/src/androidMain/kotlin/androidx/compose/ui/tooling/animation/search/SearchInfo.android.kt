@@ -27,14 +27,10 @@ import androidx.compose.ui.tooling.animation.clock.ComposeAnimationClock
  * example [androidx.compose.animation.core.Transition],
  * [androidx.compose.ui.tooling.animation.ToolingState].
  *
- * @param AnimationType type of [ComposeAnimation] associated with this [SearchInfo].
- * @param ClockType type of [ComposeAnimationClock] to be created using information from this
- *   [SearchInfo].
+ * @param Animation [ComposeAnimation] associated with this [SearchInfo].
+ * @param Clock [ComposeAnimationClock] to be created using information from this [SearchInfo].
  */
-internal interface SearchInfo<
-    AnimationType : ComposeAnimation,
-    ClockType : ComposeAnimationClock<*, *>,
-> {
+internal interface SearchInfo<Animation : ComposeAnimation, Clock : ComposeAnimationClock<*, *>> {
     /** Animation object found in slotTree for which this [SearchInfo] is created. */
     val animationObject: Any
 
@@ -65,15 +61,15 @@ internal interface SearchInfo<
      * @return created [ComposeAnimation]. Can return null if corresponding API is not available or
      *   animation could not be parsed or invalid.
      */
-    fun createAnimation(): AnimationType?
+    fun createAnimation(): Animation?
 
     /**
-     * Create [ComposeAnimationClock] for target [AnimationType].
+     * Create [ComposeAnimationClock] for target [Animation].
      *
      * @param clockInfo extra information about
      *   [androidx.compose.ui.tooling.animation.PreviewAnimationClock] required to create a clock.
      */
-    fun createClock(animation: AnimationType, clockInfo: ClockInfo): ClockType
+    fun createClock(animation: Animation, clockInfo: ClockInfo): Clock
 
     /** Attach [SearchInfo]'s overrides to allow tooling control animation values. */
     fun attach() {}
