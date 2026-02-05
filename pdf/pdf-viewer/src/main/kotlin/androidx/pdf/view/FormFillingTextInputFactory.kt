@@ -47,7 +47,10 @@ internal class FormFillingTextInputFactory(private val context: Context) {
         startingText: String? = null,
         onTextChanged: (String) -> Unit,
     ): FormFillingEditText {
-        require(formWidgetInfo.widgetType == FormWidgetInfo.WIDGET_TYPE_TEXTFIELD)
+        require(
+            formWidgetInfo.widgetType == FormWidgetInfo.WIDGET_TYPE_TEXTFIELD ||
+                formWidgetInfo.widgetType == FormWidgetInfo.WIDGET_TYPE_COMBOBOX
+        )
         return EditText(context)
             .withFormWidget(pageNum, formWidgetInfo, startingText, onTextChanged)
     }

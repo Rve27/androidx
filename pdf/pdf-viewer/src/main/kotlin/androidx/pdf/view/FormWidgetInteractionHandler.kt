@@ -64,8 +64,11 @@ internal class FormWidgetInteractionHandler(
                 handleInteractionWithTextWidget(pageNum, formWidgetInfo)
             }
 
-            FormWidgetInfo.WIDGET_TYPE_LISTBOX,
             FormWidgetInfo.WIDGET_TYPE_COMBOBOX -> {
+                handleInteractionWithComboBox(pageNum, formWidgetInfo)
+            }
+
+            FormWidgetInfo.WIDGET_TYPE_LISTBOX -> {
                 handleInteractionWithChoiceSelectionWidget(pageNum, formWidgetInfo)
             }
         }
@@ -129,6 +132,14 @@ internal class FormWidgetInteractionHandler(
         FormEditInfo.createSetText(pageNum, widgetIndex, text).also { relayFormEditInfo(it) }
     }
 
+    private fun handleInteractionWithComboBox(pageNum: Int, formWidgetInfo: FormWidgetInfo) {
+        showSingleChoiceSelectMenu(
+            pageNum,
+            formWidgetInfo,
+            showCustomOption = formWidgetInfo.isEditableText,
+        )
+    }
+
     /**
      * Creates a drop-down menu with a list of options. Once option is selected by the user,
      * assembles a FormEditInfo
@@ -144,17 +155,43 @@ internal class FormWidgetInteractionHandler(
         }
     }
 
-    private fun showSingleChoiceSelectMenu(pageNum: Int, formWidgetInfo: FormWidgetInfo) {
-        var selectedItemIndex: Int = formWidgetInfo.listItems.indexOfFirst { it.isSelected }
-        val listItemValues: List<String> = formWidgetInfo.listItems.map { it.label }
+    private fun showSingleChoiceSelectMenu(
+        pageNum: Int,
+        formWidgetInfo: FormWidgetInfo,
+        showCustomOption: Boolean = false,
+    ) {
+        val listItems = formWidgetInfo.listItems
+        val labels =
+            if (showCustomOption) {
+                listOf(context.getString(R.string.combobox_custom_option)) +
+                    listItems.map { it.label }
+            } else {
+                listItems.map { it.label }
+            }
+
+        val initialSelection = listItems.indexOfFirst { it.isSelected }
+        // Offset by 1 if "Custom" is at index 0; otherwise use the raw index.
+        var selectedIndex = if (showCustomOption) initialSelection + 1 else initialSelection
 
         MaterialAlertDialogBuilder(context)
-            .setSingleChoiceItems(listItemValues.toTypedArray(), selectedItemIndex) { dialog, which
-                ->
-                selectedItemIndex = which
+            .setSingleChoiceItems(labels.toTypedArray(), selectedIndex) { _, which ->
+                selectedIndex = which
             }
-            .setPositiveButton(context.getString(R.string.confirm_selection)) { dialog, which ->
-                handleSelectedItem(pageNum, formWidgetInfo, listOf(selectedItemIndex))
+            .setPositiveButton(context.getString(R.string.confirm_selection)) { dialog, _ ->
+                if (showCustomOption && selectedIndex == 0) {
+                    // User selected the "Custom" option
+                    handleInteractionWithTextWidget(
+                        pageNum,
+                        formWidgetInfo,
+                        startingText = formWidgetInfo.textValue,
+                    )
+                } else {
+                    // Calculate the actual index in the original listItems
+                    val actualIndex = if (showCustomOption) selectedIndex - 1 else selectedIndex
+                    if (actualIndex >= 0) {
+                        handleSelectedItem(pageNum, formWidgetInfo, listOf(actualIndex))
+                    }
+                }
                 dialog.dismiss()
             }
             .show()
