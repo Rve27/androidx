@@ -3,7 +3,7 @@
     <appfunction>
         <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_inputClassDescribedByKdoc_false</id>
         <enabledByDefault>true</enabledByDefault>
-        <description>Tests that the input class description is empty when class's isDescribedByKdoc = false.</description>
+        <description>Tests that the input class description is empty when class's isDescribedByKDoc = false.</description>
         <parameters>
             <dataTypeMetadata>
                 <dataTypeReference>com.testdata.NotDescribedByKdoc</dataTypeReference>
@@ -26,7 +26,7 @@
         <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_inputClassDescribedByKdoc_false</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_false</id>
+        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_false</id>
         <enabledByDefault>true</enabledByDefault>
         <parameters>
             <dataTypeMetadata>
@@ -47,10 +47,10 @@
                 <type>8</type>
             </valueType>
         </response>
-        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_false</functionId>
+        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_false</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_true</id>
+        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_true</id>
         <enabledByDefault>true</enabledByDefault>
         <description>A fake free-form AppFunction to test the description element in the function's generated
  metadata xml.
@@ -78,10 +78,10 @@
             </valueType>
             <description>The result string.</description>
         </response>
-        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_true</functionId>
+        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_true</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_withDerivedSerializable_true</id>
+        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_withDerivedSerializable_true</id>
         <enabledByDefault>true</enabledByDefault>
         <description>A fake free-form AppFunction to test the description elements in the function generated
  metadata xml. This version uses a derived serializable class.
@@ -109,7 +109,7 @@
             </valueType>
             <description>The result string.</description>
         </response>
-        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_withDerivedSerializable_true</functionId>
+        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKDoc_withDerivedSerializable_true</functionId>
     </appfunction>
     <appfunction>
         <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_withParametrizedTypes</id>
