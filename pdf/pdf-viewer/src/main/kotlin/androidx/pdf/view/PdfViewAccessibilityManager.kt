@@ -225,6 +225,7 @@ internal class PdfViewAccessibilityManager(
         arguments: Bundle?,
     ): Boolean {
         if (action != AccessibilityNodeInfo.ACTION_CLICK) return false
+        pdfView.commitFormFillingEditText()
 
         formWidgetInfos[virtualViewId]?.let { pair ->
             val pageNum = pair.first
