@@ -190,6 +190,25 @@ package androidx.xr.scenecore.runtime {
     property @MainThread public abstract androidx.xr.runtime.math.FloatSize3d size;
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface GltfModelNodeFeature {
+    method @MainThread public void clearMaterialOverride(int primitiveIndex);
+    method @InaccessibleFromKotlin @MainThread public androidx.xr.runtime.math.Pose getLocalPose();
+    method @InaccessibleFromKotlin @MainThread public androidx.xr.runtime.math.Vector3 getLocalScale();
+    method @InaccessibleFromKotlin @MainThread public androidx.xr.runtime.math.Pose getModelPose();
+    method @InaccessibleFromKotlin @MainThread public androidx.xr.runtime.math.Vector3 getModelScale();
+    method @InaccessibleFromKotlin public String? getName();
+    method @InaccessibleFromKotlin @MainThread public void setLocalPose(androidx.xr.runtime.math.Pose);
+    method @InaccessibleFromKotlin @MainThread public void setLocalScale(androidx.xr.runtime.math.Vector3);
+    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.runtime.MaterialResource material, int primitiveIndex);
+    method @InaccessibleFromKotlin @MainThread public void setModelPose(androidx.xr.runtime.math.Pose);
+    method @InaccessibleFromKotlin @MainThread public void setModelScale(androidx.xr.runtime.math.Vector3);
+    property @MainThread public abstract androidx.xr.runtime.math.Pose localPose;
+    property @MainThread public abstract androidx.xr.runtime.math.Vector3 localScale;
+    property @MainThread public abstract androidx.xr.runtime.math.Pose modelPose;
+    property @MainThread public abstract androidx.xr.runtime.math.Vector3 modelScale;
+    property public abstract String? name;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface GltfModelResource extends androidx.xr.scenecore.runtime.Resource {
   }
 

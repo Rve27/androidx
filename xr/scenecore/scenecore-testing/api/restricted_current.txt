@@ -234,6 +234,30 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.runtime.GltfFeature createWithMockFeature(androidx.xr.scenecore.runtime.GltfFeature feature, androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder);
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeGltfModelNodeFeature implements androidx.xr.scenecore.runtime.GltfModelNodeFeature {
+    ctor public FakeGltfModelNodeFeature();
+    ctor public FakeGltfModelNodeFeature(optional String? name);
+    ctor @BytecodeOnly public FakeGltfModelNodeFeature(String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public void clearMaterialOverride(int primitiveIndex);
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getLocalPose();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getLocalScale();
+    method @InaccessibleFromKotlin public java.util.Map<java.lang.Integer,androidx.xr.scenecore.runtime.MaterialResource> getMaterialOverrides();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getModelPose();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getModelScale();
+    method @InaccessibleFromKotlin public String? getName();
+    method @InaccessibleFromKotlin public void setLocalPose(androidx.xr.runtime.math.Pose);
+    method @InaccessibleFromKotlin public void setLocalScale(androidx.xr.runtime.math.Vector3);
+    method public void setMaterialOverride(androidx.xr.scenecore.runtime.MaterialResource material, int primitiveIndex);
+    method @InaccessibleFromKotlin public void setModelPose(androidx.xr.runtime.math.Pose);
+    method @InaccessibleFromKotlin public void setModelScale(androidx.xr.runtime.math.Vector3);
+    property public androidx.xr.runtime.math.Pose localPose;
+    property public androidx.xr.runtime.math.Vector3 localScale;
+    property public java.util.Map<java.lang.Integer,androidx.xr.scenecore.runtime.MaterialResource> materialOverrides;
+    property public androidx.xr.runtime.math.Pose modelPose;
+    property public androidx.xr.runtime.math.Vector3 modelScale;
+    property public String? name;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeGltfModelResource implements androidx.xr.scenecore.runtime.GltfModelResource {
     ctor public FakeGltfModelResource(long mToken);
     method @InaccessibleFromKotlin public byte[] getAssetData();
