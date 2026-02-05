@@ -45,6 +45,7 @@ import androidx.compose.remote.integration.view.demos.examples.HostileActor;
 import androidx.compose.remote.integration.view.demos.examples.MClockKt;
 import androidx.compose.remote.integration.view.demos.examples.PieChartKt;
 import androidx.compose.remote.integration.view.demos.examples.PlotWaveKt;
+import androidx.compose.remote.integration.view.demos.examples.PressureGaugeKt;
 import androidx.compose.remote.integration.view.demos.examples.ServerSideKt;
 import androidx.compose.remote.integration.view.demos.examples.ShaderCalendarKt;
 import androidx.compose.remote.integration.view.demos.examples.TextKt;
@@ -63,11 +64,12 @@ public abstract class DemosCreation {
      */
     public static @NonNull ArrayList<RCDoc> getDemos(@NonNull Activity activity) {
         return new ArrayList<>(Arrays.asList(
-
+                getp("0/A/PressureGauge", PressureGaugeKt::demoPressureGauge),
                 getp("0/og/serverClock", ServerSideKt::serverClock),
                 getp("0/A/demoGraphs1", DemoGraphsKt::demoGraphs),
                 getp("0/A/demoGraphs0", DemoGraphsKt::demoGraphs2),
                 getpc("0/A/pieChart", PieChartKt::demoPieChart),
+                getpc("0/A/goodPieChart", PieChartKt::demoPieChart_good),
                 getp("0/v/badMemory", MemoryKt::fillMemory),
 
 
