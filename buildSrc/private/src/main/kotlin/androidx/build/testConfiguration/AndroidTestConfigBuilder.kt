@@ -26,6 +26,7 @@ class ConfigBuilder {
     var isMicrobenchmark: Boolean = false
     var isMacrobenchmark: Boolean = false
     var isPostsubmit: Boolean = true
+    var useOrchestrator: Boolean = false
     lateinit var minSdk: String
     val tags = mutableListOf<String>()
     lateinit var testApkName: String
@@ -90,6 +91,7 @@ class ConfigBuilder {
                 "appApkSha256" to appApk?.sha256,
                 "instrumentationArgs" to instrumentationArgsList,
                 "additionalApkKeys" to additionalApkKeys,
+                "useOrchestrator" to useOrchestrator,
             )
         return gson.toJson(values)
     }
