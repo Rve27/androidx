@@ -222,10 +222,24 @@ public class Rc {
 
         /** cubic Easing function */
         public static final float CUBIC = AnimatedFloatExpression.CUBIC;
+
         /** monotonic spline that loops function */
         public static final float A_SPLINE_LOOP = AnimatedFloatExpression.A_SPLINE_LOOP;
+
         /** Change the sign of value x -> -x */
         public static final float CHANGE_SIGN = AnimatedFloatExpression.CHANGE_SIGN;
+
+        /** sum all values to index */
+        public static final float A_SUM_UNTIL = AnimatedFloatExpression.A_SUM_TILL;
+
+        /** A_SUM operator */
+        public static final float A_SUM_XY = AnimatedFloatExpression.A_SUM_XY;
+
+        /** A_SUM operator */
+        public static final float A_SUM_SQR = AnimatedFloatExpression.A_SUM_SQR;
+
+        /** A_SUM operator */
+        public static final float A_LERP = AnimatedFloatExpression.A_LERP;
     }
 
     /** Used in IntegerExpressions */

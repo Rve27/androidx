@@ -19,6 +19,7 @@ When investigating this codebase or performing tasks, you MUST recursively searc
 - `PARTICLE_SYSTEM_GUIDE.md`: Initializing and evolving high-performance particle systems.
 - `PATH_EXPRESSION_GUIDE.md`: Algorithmic path generation (Cartesian & Polar).
 - `LOOP_GUIDE.md`: Player-side repetition and dynamic indexing.
+- `TOUCH_GUIDE.md`: Defining interactive variables and haptic feedback.
 - `DRAW_TEXT_ANCHORED_GUIDE.md`: Precise text alignment and justification.
 - `CREATION_DEMO_GUIDE.md`: How to write and register new procedural demos.
 
