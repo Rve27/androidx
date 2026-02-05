@@ -617,6 +617,21 @@ public fun arraySum(a: RFloat): RFloat {
     return RFloat(a.writer, floatArrayOf(*a.array, Rc.FloatExpression.A_SUM))
 }
 
+/** the sum of the values of an array up to index */
+public fun arraySum(a: RFloat, index: RFloat): RFloat {
+    return RFloat(a.writer, floatArrayOf(*a.array, *index.array, Rc.FloatExpression.A_SUM_UNTIL))
+}
+
+@Suppress("RestrictedApiAndroidX")
+public fun arraySumXY(a: RFloat, b: RFloat): RFloat {
+    return RFloat(a.writer, floatArrayOf(*a.array, *b.array, Rc.FloatExpression.A_SUM_XY))
+}
+
+@Suppress("RestrictedApiAndroidX")
+public fun arraySumSqr(a: RFloat): RFloat {
+    return RFloat(a.writer, floatArrayOf(*a.array, Rc.FloatExpression.A_SUM_SQR))
+}
+
 /** the avg values of an array */
 public fun arrayAvg(a: RFloat): RFloat {
     return RFloat(a.writer, floatArrayOf(*a.array, Rc.FloatExpression.A_AVG))
