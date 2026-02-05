@@ -44,6 +44,7 @@ import androidx.camera.camera2.pipe.internal.CameraGraphParametersImpl
 import androidx.camera.camera2.pipe.internal.CameraGraphRequestListenersImpl
 import androidx.camera.camera2.pipe.internal.FrameCaptureQueue
 import androidx.camera.camera2.pipe.internal.FrameDistributor
+import androidx.camera.camera2.pipe.internal.GraphSessionLock
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -73,6 +74,12 @@ import kotlinx.coroutines.SupervisorJob
 )
 internal interface CameraGraphComponent {
     fun cameraGraph(): CameraGraph
+
+    fun graphProcessor(): GraphProcessor
+
+    fun frameCaptureQueue(): FrameCaptureQueue
+
+    fun sessionLock(): GraphSessionLock
 
     fun frameDistributor(): FrameDistributor
 
