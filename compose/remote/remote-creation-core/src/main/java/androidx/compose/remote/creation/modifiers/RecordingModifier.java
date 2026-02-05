@@ -406,6 +406,16 @@ public class RecordingModifier {
     /**
      * Add a fixed size modifier
      *
+     * @param value
+     * @return
+     */
+    public @NonNull RecordingModifier size(float value) {
+        return width(value).height(value);
+    }
+
+    /**
+     * Add a fixed size modifier
+     *
      * @param width
      * @param height
      * @return

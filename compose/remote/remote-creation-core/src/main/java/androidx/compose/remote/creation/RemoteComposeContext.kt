@@ -772,6 +772,10 @@ public open class RemoteComposeContext {
         mRemoteWriter.setStringName(id, name)
     }
 
+    public fun setFloatName(id: Int, name: String) {
+        mRemoteWriter.setFloatName(id, name)
+    }
+
     public fun addNamedString(name: String, initialValue: String): Int {
         return mRemoteWriter.addNamedString(name, initialValue)
     }

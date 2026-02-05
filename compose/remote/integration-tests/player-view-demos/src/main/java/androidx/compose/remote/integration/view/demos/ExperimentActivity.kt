@@ -71,6 +71,8 @@ import androidx.compose.remote.core.operations.Theme
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeContext
 import androidx.compose.remote.creation.RemoteComposeWriter
+import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
+import androidx.compose.remote.creation.compose.RemoteComposeCreationComposeFlags
 import androidx.compose.remote.creation.compose.capture.DisplayPool
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCapture
 import androidx.compose.remote.creation.compose.capture.rememberVirtualDisplay
@@ -465,10 +467,12 @@ class ExperimentActivity : ComponentActivity() {
     }
 
     /** Runs the menu if no Bundle containing what to run */
+    @OptIn(ExperimentalRemoteCreationComposeApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        RemoteComposeCreationComposeFlags.isRemoteApplierEnabled = false
         val fullList = cmap.toMutableList()
         fullList.addAll(subMenus.values.flatten())
 
