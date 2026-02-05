@@ -154,7 +154,6 @@ package androidx.compose.ui {
     property public boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     property public boolean isBypassUnfocusableComposeViewEnabled;
     property public boolean isGraphicsLayerShapeSemanticsEnabled;
-    property public boolean isIgnoreInvalidPrevFocusRectEnabled;
     property public boolean isIndirectPointerNavigationGestureDetectorEnabled;
     property public boolean isInitialFocusOnFocusableAvailable;
     property public boolean isOptimizedFocusEventDispatchEnabled;
@@ -168,7 +167,6 @@ package androidx.compose.ui {
     field public static boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     field public static boolean isBypassUnfocusableComposeViewEnabled;
     field public static boolean isGraphicsLayerShapeSemanticsEnabled;
-    field public static boolean isIgnoreInvalidPrevFocusRectEnabled;
     field public static boolean isIndirectPointerNavigationGestureDetectorEnabled;
     field public static boolean isInitialFocusOnFocusableAvailable;
     field public static boolean isOptimizedFocusEventDispatchEnabled;
