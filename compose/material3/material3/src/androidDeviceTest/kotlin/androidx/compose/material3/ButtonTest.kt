@@ -263,10 +263,8 @@ class ButtonTest {
         )
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Test
-    fun text_button_isTextButtonContentPaddingFixEnabled_positioning() {
-        ComposeMaterial3Flags.isTextButtonContentPaddingFixEnabled = true
+    fun text_button_positioning() {
         rule.setMaterialContent(lightColorScheme()) {
             TextButton(
                 onClick = { /* Do something! */ },
@@ -293,10 +291,9 @@ class ButtonTest {
         )
     }
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Test
-    fun text_button_shapesRequired_isTextButtonContentPaddingFixEnabled_positioning() {
-        ComposeMaterial3Flags.isTextButtonContentPaddingFixEnabled = true
+    fun text_button_shapesRequired_positioning() {
         rule.setMaterialContent(lightColorScheme()) {
             TextButton(
                 onClick = { /* Do something! */ },
