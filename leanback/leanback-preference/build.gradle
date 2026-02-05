@@ -23,12 +23,13 @@ dependencies {
 
 android {
     compileSdk { version = release(35) }
-    sourceSets {
-        main.java.srcDirs += [
-                "api21"
-        ]
-    }
     namespace = "androidx.leanback.preference"
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.java.addStaticSourceDirectory("api21")
+    }
 }
 
 androidx {
