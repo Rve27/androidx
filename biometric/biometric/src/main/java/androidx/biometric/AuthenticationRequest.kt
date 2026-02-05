@@ -57,8 +57,10 @@ public abstract class AuthenticationRequest internal constructor() {
          * Construct an instance of [Biometric] that includes a set of configurable options for how
          * the biometric prompt should appear and behave with biometric authentication with
          * fallbacks.
+         *
+         * **Note for Java users:** This method is intended for use in Kotlin. For Java, please use
+         * [Biometric.Builder] instead.
          */
-        @JvmSynthetic
         @Suppress("MissingJvmstatic")
         public inline fun biometricRequest(
             title: String,
@@ -69,9 +71,11 @@ public abstract class AuthenticationRequest internal constructor() {
         /**
          * Construct an instance of [Credential] that includes a set of configurable options for how
          * the prompt should appear and behave with device credential authentication.
+         *
+         * **Note for Java users:** This method is intended for use in Kotlin. For Java, please use
+         * [Credential.Builder] instead.
          */
         @RequiresApi(Build.VERSION_CODES.R)
-        @JvmSynthetic
         @Suppress("MissingJvmstatic")
         public fun credentialRequest(
             title: String,
