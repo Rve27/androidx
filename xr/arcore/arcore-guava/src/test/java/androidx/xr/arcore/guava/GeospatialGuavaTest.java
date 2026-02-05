@@ -145,7 +145,7 @@ public class GeospatialGuavaTest {
 
                         assertThat(result).isInstanceOf(AnchorCreateIllegalState.class);
                     } catch (Exception e) {
-                        throw new RuntimeException();
+                        throw new RuntimeException(e);
                     }
                 });
     }
