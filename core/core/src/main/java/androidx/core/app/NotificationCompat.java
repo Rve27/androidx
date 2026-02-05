@@ -793,6 +793,13 @@ public class NotificationCompat {
     public static final String EXTRA_PROGRESS_END_ICON = "android.progressEndIcon";
 
     /**
+     * {@link #extras} key: requests that the notification card show the
+     * {@link #getSmallIcon() small icon} instead of the launcher app icon.
+     */
+    @SuppressLint("ActionValue")
+    public static final String EXTRA_PREFER_SMALL_ICON = "android.app.preferSmallIcon";
+
+    /**
      * Value of {@link Notification#color} equal to 0 (also known as
      * {@link android.graphics.Color#TRANSPARENT Color.TRANSPARENT}),
      * telling the system not to decorate this notification with any special color but instead use

@@ -364,6 +364,7 @@ package androidx.core.app {
     field public static final String EXTRA_PICTURE = "android.picture";
     field public static final String EXTRA_PICTURE_CONTENT_DESCRIPTION = "android.pictureContentDescription";
     field public static final String EXTRA_PICTURE_ICON = "android.pictureIcon";
+    field public static final String EXTRA_PREFER_SMALL_ICON = "android.app.preferSmallIcon";
     field public static final String EXTRA_PROGRESS = "android.progress";
     field public static final String EXTRA_PROGRESS_END_ICON = "android.progressEndIcon";
     field public static final String EXTRA_PROGRESS_INDETERMINATE = "android.progressIndeterminate";
