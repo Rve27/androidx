@@ -201,12 +201,18 @@ open public class RFloat : Number {
         return RFloat(writer, floatArrayOf(*toArray(this), *toArray(v), Rc.FloatExpression.DIV))
     }
 
-    public operator fun get(v: RFloat): RFloat {
-        return RFloat(writer, floatArrayOf(*toArray(v), *toArray(this), Rc.FloatExpression.A_DEREF))
+    public operator fun get(index: RFloat): RFloat {
+        return RFloat(
+            writer,
+            floatArrayOf(*toArray(this), *toArray(index), Rc.FloatExpression.A_DEREF),
+        )
     }
 
-    public operator fun get(v: Int): RFloat {
-        return RFloat(writer, floatArrayOf(v.toFloat(), *toArray(this), Rc.FloatExpression.A_DEREF))
+    public operator fun get(index: Int): RFloat {
+        return RFloat(
+            writer,
+            floatArrayOf(*toArray(this), index.toFloat(), Rc.FloatExpression.A_DEREF),
+        )
     }
 
     public companion object {
