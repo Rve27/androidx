@@ -646,20 +646,17 @@ package androidx.xr.scenecore.testing {
     method @BytecodeOnly public static androidx.xr.scenecore.testing.FakeResource! copy$default(androidx.xr.scenecore.testing.FakeResource!, long, int, Object!);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeScenePose implements androidx.xr.scenecore.runtime.ScenePose {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeScenePose extends androidx.xr.scenecore.runtime.impl.BaseScenePose {
     ctor public FakeScenePose();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getActivitySpacePose();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getActivitySpaceScale();
     method @InaccessibleFromKotlin public final androidx.xr.scenecore.runtime.HitTestResult getHitTestResult();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getWorldSpaceScale();
     method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.scenecore.runtime.ScenePose.HitTestFilterValue int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.HitTestResult>);
     method @InaccessibleFromKotlin public void setActivitySpacePose(androidx.xr.runtime.math.Pose);
     method @InaccessibleFromKotlin public void setActivitySpaceScale(androidx.xr.runtime.math.Vector3);
     method @InaccessibleFromKotlin public final void setHitTestResult(androidx.xr.scenecore.runtime.HitTestResult);
-    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.ScenePose destination);
     property public androidx.xr.runtime.math.Pose activitySpacePose;
     property public androidx.xr.runtime.math.Vector3 activitySpaceScale;
     property public final androidx.xr.scenecore.runtime.HitTestResult hitTestResult;
+    property public androidx.xr.runtime.math.Pose poseInActivitySpace;
     property public androidx.xr.runtime.math.Vector3 worldSpaceScale;
   }
 
