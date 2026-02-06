@@ -35,6 +35,7 @@ import androidx.camera.camera2.pipe.internal.CameraGraphRequestListenersImpl
 import androidx.camera.camera2.pipe.internal.CameraPipeLifetime
 import androidx.camera.camera2.pipe.internal.FrameCaptureQueue
 import androidx.camera.camera2.pipe.internal.FrameDistributor
+import androidx.camera.camera2.pipe.internal.GraphSessionLock
 import androidx.camera.camera2.pipe.testing.CameraControllerSimulator
 import androidx.camera.camera2.pipe.testing.FakeAudioRestrictionController
 import androidx.camera.camera2.pipe.testing.FakeCameraBackend
@@ -125,7 +126,7 @@ internal class CameraGraphImplTest {
     private val surfaceGraph =
         SurfaceGraph(streamGraph, cameraControllerProvider, cameraSurfaceManager, emptyMap())
     private val audioRestriction = FakeAudioRestrictionController()
-    private val sessionLock = SessionLock()
+    private val sessionLock = GraphSessionLock()
     private val cameraGraph =
         CameraGraphImpl(
             graphConfig,
