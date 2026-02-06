@@ -115,12 +115,6 @@ androidXMultiplatform {
         wasmJsMain {}.dependencies {
             implementation(libs.kotlinXw3c)
         }
-
-        unixMain {}.dependsOn(nativeMain)
-
-        appleMain {}.dependsOn(unixMain)
-
-        linuxMain.dependsOn(unixMain)
     }
 }
 
