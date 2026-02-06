@@ -21,7 +21,6 @@ import androidx.collection.MutableScatterSet
 import androidx.collection.mutableObjectIntMapOf
 import androidx.collection.mutableScatterSetOf
 import androidx.compose.runtime.snapshots.Snapshot
-import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.FrameRateCategory
 import androidx.compose.ui.Modifier
@@ -1153,17 +1152,15 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
         var coordinator: NodeCoordinator? = this
         var position = relativeToLocal
         while (coordinator != null) {
-            if (ComposeUiFlags.isRectManagerOffsetUsageFromLayoutCoordinatesEnabled) {
-                val layoutNode = coordinator.layoutNode
-                if (
-                    coordinator === layoutNode.outerCoordinator &&
-                        !layoutNode.hasPositionalLayerTransformationsInOffsetFromRoot
-                ) {
-                    val offsetFromRectList =
-                        layoutNode.requireOwner().rectManager.getOffsetFromRectListFor(layoutNode)
-                    if (offsetFromRectList != IntOffset.Max) {
-                        return position + offsetFromRectList
-                    }
+            val layoutNode = coordinator.layoutNode
+            if (
+                coordinator === layoutNode.outerCoordinator &&
+                    !layoutNode.hasPositionalLayerTransformationsInOffsetFromRoot
+            ) {
+                val offsetFromRectList =
+                    layoutNode.requireOwner().rectManager.getOffsetFromRectListFor(layoutNode)
+                if (offsetFromRectList != IntOffset.Max) {
+                    return position + offsetFromRectList
                 }
             }
             position = coordinator.toParentPosition(position)
