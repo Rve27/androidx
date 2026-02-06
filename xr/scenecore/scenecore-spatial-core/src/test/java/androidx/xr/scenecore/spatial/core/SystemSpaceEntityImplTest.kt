@@ -13,327 +13,353 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
-import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
-
-import static com.google.common.truth.Truth.assertThat;
-
-import static org.mockito.Mockito.verify;
-
-import androidx.xr.runtime.math.Matrix4;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-
-import com.android.extensions.xr.node.FakeCloseable;
-import com.android.extensions.xr.node.Mat4f;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeTransform;
-import com.android.extensions.xr.node.ShadowNode;
-import com.android.extensions.xr.node.ShadowNodeTransform;
-
-import org.junit.Test;
-import org.mockito.Mockito;
+import androidx.xr.runtime.math.Matrix4
+import androidx.xr.runtime.math.Matrix4.Companion.fromPose
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion
+import androidx.xr.runtime.math.Quaternion.Companion.fromAxisAngle
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.runtime.testing.math.assertPose
+import androidx.xr.runtime.testing.math.assertVector3
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.android.extensions.xr.node.FakeCloseable
+import com.android.extensions.xr.node.Mat4f
+import com.android.extensions.xr.node.Node
+import com.android.extensions.xr.node.NodeTransform
+import com.android.extensions.xr.node.ShadowNode
+import com.android.extensions.xr.node.ShadowNodeTransform
+import com.google.common.truth.Truth
+import org.junit.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 
 /**
- * Abstract test class for {@link SystemSpaceEntityImpl} implementations.
+ * Abstract test class for [SystemSpaceEntityImpl] implementations.
  *
- * <p>Concrete implementations of {@link SystemSpaceEntityImpl} should extend this class and provide
+ * Concrete implementations of [SystemSpaceEntityImpl] should extend this class and provide
  * implementations for its abstract methods to ensure they comply with the abstract class.
  */
-public abstract class SystemSpaceEntityImplTest {
+abstract class SystemSpaceEntityImplTest {
+    /** Returns the [SystemSpaceEntityImpl] instance to test. */
+    protected abstract val systemSpaceEntityImpl: SystemSpaceEntityImpl
 
-    /** Returns the {@link SystemSpaceEntityImpl} instance to test. */
-    protected abstract SystemSpaceEntityImpl getSystemSpaceEntityImpl();
+    /** Returns the default fake executor used by the [SystemSpaceEntityImpl] constructor. */
+    protected abstract val defaultFakeExecutor: FakeScheduledExecutorService
 
-    /** Returns the default fake executor used by the {@link SystemSpaceEntityImpl} constructor. */
-    protected abstract FakeScheduledExecutorService getDefaultFakeExecutor();
+    /** Returns an arbitrary [AndroidXrEntity] instance which can set its parent. */
+    protected abstract fun createChildAndroidXrEntity(): AndroidXrEntity
 
-    /** Returns an arbitrary {@link AndroidXrEntity} instance which can set its parent. */
-    protected abstract AndroidXrEntity createChildAndroidXrEntity();
-
-    /** Returns the {@link ActivitySpaceImpl} instance which is the root of the Activity Space. */
-    protected abstract ActivitySpaceImpl getActivitySpaceEntity();
+    /** Returns the [ActivitySpaceImpl] instance which is the root of the Activity Space. */
+    protected abstract val activitySpaceEntity: ActivitySpaceImpl
 
     @Test
-    public void systemSpaceEntityImplConstructor_setsNodeTransformSubscription() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        FakeScheduledExecutorService fakeExecutor = getDefaultFakeExecutor();
-        ShadowNode node = ShadowNode.extract(systemSpaceEntity.getNode());
-        assertThat(node.getTransformListener()).isNotNull();
-        assertThat(node.getTransformExecutor()).isEqualTo(fakeExecutor);
-        assertThat(systemSpaceEntity.mNodeTransformCloseable).isNotNull();
+    fun systemSpaceEntityImplConstructor_setsNodeTransformSubscription() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val fakeExecutor = this.defaultFakeExecutor
+        val node = ShadowNode.extract(systemSpaceEntity.getNode())
+        Truth.assertThat(node.transformListener).isNotNull()
+        Truth.assertThat(node.transformExecutor).isEqualTo(fakeExecutor)
+        Truth.assertThat(systemSpaceEntity.nodeTransformCloseable).isNotNull()
     }
 
     @Test
-    public void dispose_closesNodeTransformSubscription() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        FakeCloseable nodeTransformCloseable =
-                (FakeCloseable) systemSpaceEntity.mNodeTransformCloseable;
-        assertThat(nodeTransformCloseable.isClosed()).isFalse();
+    fun dispose_closesNodeTransformSubscription() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val nodeTransformCloseable = systemSpaceEntity.nodeTransformCloseable as FakeCloseable
+        Truth.assertThat(nodeTransformCloseable.isClosed).isFalse()
 
-        systemSpaceEntity.dispose();
-        assertThat(nodeTransformCloseable.isClosed()).isTrue();
+        systemSpaceEntity.dispose()
+        Truth.assertThat(nodeTransformCloseable.isClosed).isTrue()
     }
 
     @Test
-    public void getPoseInOpenXrReferenceSpace_defaultsToNull() {
-        assertThat(getSystemSpaceEntityImpl().getPoseInOpenXrReferenceSpace()).isNull();
+    fun getPoseInOpenXrReferenceSpace_defaultsToNull() {
+        Truth.assertThat(this.systemSpaceEntityImpl.poseInOpenXrReferenceSpace).isNull()
     }
 
     @Test
-    public void setOnOriginChangedListener_callListenersOnActivitySpace() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        Runnable listener1 = Mockito.mock(Runnable.class);
-        FakeScheduledExecutorService executor1 = new FakeScheduledExecutorService();
+    fun setOnOriginChangedListener_callListenersOnActivitySpace() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val listener1 = mock<Runnable>()
+        val executor1 = FakeScheduledExecutorService()
 
-        systemSpaceEntity.setOnOriginChangedListener(listener1, executor1);
-        systemSpaceEntity.onOriginChanged();
-        assertThat(executor1.hasNext()).isTrue();
-        executor1.runAll();
+        systemSpaceEntity.setOnOriginChangedListener(listener1, executor1)
+        systemSpaceEntity.onOriginChanged()
+        Truth.assertThat(executor1.hasNext()).isTrue()
+        executor1.runAll()
 
-        verify(listener1).run();
+        verify(listener1).run()
     }
 
     @Test
-    public void setOnOriginChangedListener_multipleListeners_callLastListenersOnActivitySpace() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        Runnable listener1 = Mockito.mock(Runnable.class);
-        Runnable listener2 = Mockito.mock(Runnable.class);
-        FakeScheduledExecutorService executor1 = new FakeScheduledExecutorService();
-        FakeScheduledExecutorService executor2 = new FakeScheduledExecutorService();
+    fun setOnOriginChangedListener_multipleListeners_callLastListenersOnActivitySpace() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val listener1 = mock<Runnable>()
+        val listener2 = mock<Runnable>()
+        val executor1 = FakeScheduledExecutorService()
+        val executor2 = FakeScheduledExecutorService()
 
-        systemSpaceEntity.setOnOriginChangedListener(listener1, executor1);
+        systemSpaceEntity.setOnOriginChangedListener(listener1, executor1)
         // This should override the previous listener.
-        systemSpaceEntity.setOnOriginChangedListener(listener2, executor2);
-        systemSpaceEntity.onOriginChanged();
+        systemSpaceEntity.setOnOriginChangedListener(listener2, executor2)
+        systemSpaceEntity.onOriginChanged()
 
-        assertThat(executor1.hasNext()).isFalse();
-        assertThat(executor2.hasNext()).isTrue();
+        Truth.assertThat(executor1.hasNext()).isFalse()
+        Truth.assertThat(executor2.hasNext()).isTrue()
 
-        executor1.runAll();
-        executor2.runAll();
+        executor1.runAll()
+        executor2.runAll()
 
-        verify(listener1, Mockito.never()).run();
-        verify(listener2).run();
+        verify(listener1, never()).run()
+        verify(listener2).run()
     }
 
     @Test
-    public void setOnOriginChangedListener_withNullExecutor_usesInternalExecutor() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        FakeScheduledExecutorService fakeExecutor = getDefaultFakeExecutor();
-        Runnable listener = Mockito.mock(Runnable.class);
+    fun setOnOriginChangedListener_withNullExecutor_usesInternalExecutor() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val fakeExecutor = this.defaultFakeExecutor
+        val listener = mock<Runnable>()
 
-        systemSpaceEntity.setOnOriginChangedListener(listener, null);
-        systemSpaceEntity.onOriginChanged();
+        systemSpaceEntity.setOnOriginChangedListener(listener, null)
+        systemSpaceEntity.onOriginChanged()
 
-        assertThat(fakeExecutor.hasNext()).isTrue();
-        fakeExecutor.runAll();
-        verify(listener).run();
+        Truth.assertThat(fakeExecutor.hasNext()).isTrue()
+        fakeExecutor.runAll()
+        verify(listener).run()
     }
 
     @Test
-    public void setOnOriginChangedListener_withNullListener_noListenerCallOnActivitySpace() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        Runnable listener = Mockito.mock(Runnable.class);
-        FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
-        systemSpaceEntity.setOnOriginChangedListener(listener, executor);
-        systemSpaceEntity.setOnOriginChangedListener(null, executor);
+    fun setOnOriginChangedListener_withNullListener_noListenerCallOnActivitySpace() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val listener = mock<Runnable>()
+        val executor = FakeScheduledExecutorService()
+        systemSpaceEntity.setOnOriginChangedListener(listener, executor)
+        systemSpaceEntity.setOnOriginChangedListener(null, executor)
 
-        systemSpaceEntity.onOriginChanged();
-        executor.runAll();
+        systemSpaceEntity.onOriginChanged()
+        executor.runAll()
 
-        verify(listener, Mockito.never()).run();
+        verify(listener, never()).run()
     }
 
     @Test
-    public void getPoseInOpenXrReferenceSpace_returnsPoseFromSubscribeToNodeTransform() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        // Column major, right handed 4x4 Transformation Matrix with translation of (4, 8, 12) and
+    fun getPoseInOpenXrReferenceSpace_returnsPoseFromSubscribeToNodeTransform() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        // Column major, right-handed 4x4 Transformation Matrix with translation of (4, 8, 12) and
         // rotation 90 (@) around Z axis
-        Mat4f mat4f =
-                new Mat4f(
-                        new float[] {
-                            0f, 1f, 0f, 0f, // --     cos(@),   sin(@), 0,  0
-                            -1f, 0f, 0f, 0f, // --    -sin(@),  cos(@), 0,  0
-                            0f, 0f, 1f, 0f, // --     0,        0,      1,  0
-                            4f, 8f, 12f, 1f, // --    tx,       ty,     tz, 1
-                        });
-        NodeTransform nodeTransformEvent = ShadowNodeTransform.create(mat4f);
+        val mat4f =
+            Mat4f(
+                floatArrayOf(
+                    0f,
+                    1f,
+                    0f,
+                    0f, // --     cos(@),   sin(@), 0,  0
+                    -1f,
+                    0f,
+                    0f,
+                    0f, // --    -sin(@),  cos(@), 0,  0
+                    0f,
+                    0f,
+                    1f,
+                    0f, // --     0,        0,      1,  0
+                    4f,
+                    8f,
+                    12f,
+                    1f, // --    tx,       ty,     tz, 1
+                )
+            )
+        val nodeTransformEvent = ShadowNodeTransform.create(mat4f)
 
-        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent);
-        getDefaultFakeExecutor().runAll();
+        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent)
+        this.defaultFakeExecutor.runAll()
 
-        Pose expectedPose =
-                new Pose(
-                        new Vector3(4f, 8f, 12f),
-                        Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 90f));
+        val expectedPose = Pose(Vector3(4f, 8f, 12f), fromAxisAngle(Vector3(0f, 0f, 1f), 90f))
 
-        assertPose(systemSpaceEntity.getPoseInOpenXrReferenceSpace(), expectedPose);
+        assertPose(systemSpaceEntity.poseInOpenXrReferenceSpace!!, expectedPose)
     }
 
-    private void sendTransformEvent(Node node, NodeTransform nodeTransform) {
-        ShadowNode shadowNode = ShadowNode.extract(node);
-        shadowNode
-                .getTransformExecutor()
-                .execute(() -> shadowNode.getTransformListener().accept(nodeTransform));
-    }
-
-    @Test
-    public void setOnOriginChangedListener_callsListenerOnNodeTransformEvent() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        Mat4f mat4f = new Mat4f(Matrix4.Identity.getData());
-        NodeTransform nodeTransformEvent = ShadowNodeTransform.create(mat4f);
-
-        Runnable listener = Mockito.mock(Runnable.class);
-        FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
-        systemSpaceEntity.setOnOriginChangedListener(listener, executor);
-
-        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent);
-        getDefaultFakeExecutor().runAll();
-
-        assertThat(executor.hasNext()).isTrue();
-        executor.runAll();
-
-        verify(listener).run();
+    private fun sendTransformEvent(node: Node?, nodeTransform: NodeTransform?) {
+        val shadowNode = ShadowNode.extract(node)
+        shadowNode.transformExecutor.execute { shadowNode.transformListener.accept(nodeTransform) }
     }
 
     @Test
-    public void
-            setOnOriginChangedListener_multipleListeners_callsLastListenerOnNodeTransformEvent() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        FakeScheduledExecutorService fakeExecutor = getDefaultFakeExecutor();
-        Mat4f mat4f = new Mat4f(Matrix4.Identity.getData());
-        NodeTransform nodeTransformEvent = ShadowNodeTransform.create(mat4f);
+    fun setOnOriginChangedListener_callsListenerOnNodeTransformEvent() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val mat4f = Mat4f(Matrix4.Identity.data)
+        val nodeTransformEvent = ShadowNodeTransform.create(mat4f)
 
-        Runnable listener = Mockito.mock(Runnable.class);
-        Runnable listener2 = Mockito.mock(Runnable.class);
-        FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
-        systemSpaceEntity.setOnOriginChangedListener(listener, executor);
-        systemSpaceEntity.setOnOriginChangedListener(listener2, executor);
+        val listener = mock<Runnable>()
+        val executor = FakeScheduledExecutorService()
+        systemSpaceEntity.setOnOriginChangedListener(listener, executor)
 
-        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent);
-        fakeExecutor.runAll();
-        assertThat(executor.hasNext()).isTrue();
-        executor.runAll();
+        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent)
+        this.defaultFakeExecutor.runAll()
 
-        verify(listener, Mockito.never()).run();
-        verify(listener2).run();
+        Truth.assertThat(executor.hasNext()).isTrue()
+        executor.runAll()
+
+        verify(listener).run()
     }
 
     @Test
-    public void
-            setOnOriginChangedListener_nullExecutor_callsListenerOnNodeTransformEventExecutor() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        Mat4f mat4f = new Mat4f(Matrix4.Identity.getData());
-        NodeTransform nodeTransformEvent = ShadowNodeTransform.create(mat4f);
+    fun setOnOriginChangedListener_multipleListeners_callsLastListenerOnNodeTransformEvent() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val fakeExecutor = this.defaultFakeExecutor
+        val mat4f = Mat4f(Matrix4.Identity.data)
+        val nodeTransformEvent = ShadowNodeTransform.create(mat4f)
 
-        Runnable listener = Mockito.mock(Runnable.class);
-        systemSpaceEntity.setOnOriginChangedListener(listener, null);
+        val listener = mock<Runnable>()
+        val listener2 = mock<Runnable>()
+        val executor = FakeScheduledExecutorService()
+        systemSpaceEntity.setOnOriginChangedListener(listener, executor)
+        systemSpaceEntity.setOnOriginChangedListener(listener2, executor)
 
-        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent);
-        getDefaultFakeExecutor().runAll();
+        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent)
+        fakeExecutor.runAll()
+        Truth.assertThat(executor.hasNext()).isTrue()
+        executor.runAll()
 
-        verify(listener).run();
+        verify(listener, never()).run()
+        verify(listener2).run()
     }
 
     @Test
-    public void setOnOriginChangedListener_withNullListener_noListenerCalledOnNodeTransformEvent() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        Mat4f mat4f = new Mat4f(Matrix4.Identity.getData());
-        NodeTransform nodeTransformEvent = ShadowNodeTransform.create(mat4f);
+    fun setOnOriginChangedListener_nullExecutor_callsListenerOnNodeTransformEventExecutor() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val mat4f = Mat4f(Matrix4.Identity.data)
+        val nodeTransformEvent = ShadowNodeTransform.create(mat4f)
 
-        Runnable listener = Mockito.mock(Runnable.class);
-        systemSpaceEntity.setOnOriginChangedListener(listener, null);
-        systemSpaceEntity.setOnOriginChangedListener(null, null);
+        val listener = mock<Runnable>()
+        systemSpaceEntity.setOnOriginChangedListener(listener, null)
 
-        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent);
-        getDefaultFakeExecutor().runAll();
+        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent)
+        this.defaultFakeExecutor.runAll()
 
-        verify(listener, Mockito.never()).run();
+        verify(listener).run()
     }
 
     @Test
-    public void zeroTransform_doesNotUpdatePoseOrScaleOrCallOnOriginChanged() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        Runnable listener = Mockito.mock(Runnable.class);
-        FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
-        Pose expectedPose = new Pose(Vector3.One, Quaternion.Identity);
-        Vector3 expectedScale = new Vector3(4f, 5f, 6f);
+    fun setOnOriginChangedListener_withNullListener_noListenerCalledOnNodeTransformEvent() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val mat4f = Mat4f(Matrix4.Identity.data)
+        val nodeTransformEvent = ShadowNodeTransform.create(mat4f)
 
-        systemSpaceEntity.mOpenXrReferenceSpaceTransform.set(Matrix4.fromPose(expectedPose));
-        systemSpaceEntity.mWorldSpaceScale = expectedScale;
-        systemSpaceEntity.setOnOriginChangedListener(listener, executor);
-        systemSpaceEntity.setOpenXrReferenceSpaceTransform(Matrix4.Zero);
-        executor.runAll();
+        val listener = mock<Runnable>()
+        systemSpaceEntity.setOnOriginChangedListener(listener, null)
+        systemSpaceEntity.setOnOriginChangedListener(null, null)
 
-        assertThat(systemSpaceEntity.getPoseInOpenXrReferenceSpace()).isEqualTo(expectedPose);
-        assertThat(systemSpaceEntity.mWorldSpaceScale).isEqualTo(expectedScale);
-        verify(listener, Mockito.never()).run();
+        sendTransformEvent(systemSpaceEntity.getNode(), nodeTransformEvent)
+        this.defaultFakeExecutor.runAll()
+
+        verify(listener, never()).run()
     }
 
     @Test
-    public void setPoseInOpenXrReferenceSpace_callsOnOriginChanged() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        Runnable listener = Mockito.mock(Runnable.class);
-        FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
+    fun zeroTransform_doesNotUpdatePoseOrScaleOrCallOnOriginChanged() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val listener = mock<Runnable>()
+        val executor = FakeScheduledExecutorService()
+        val expectedPose = Pose(Vector3.One, Quaternion.Identity)
+        val expectedScale = Vector3(4f, 5f, 6f)
 
-        systemSpaceEntity.setOnOriginChangedListener(listener, executor);
-        systemSpaceEntity.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
-        executor.runAll();
+        systemSpaceEntity.openXrReferenceSpaceTransform.set(fromPose(expectedPose))
+        systemSpaceEntity._worldSpaceScale = expectedScale
+        systemSpaceEntity.setOnOriginChangedListener(listener, executor)
+        systemSpaceEntity.setOpenXrReferenceSpaceTransform(Matrix4.Zero)
+        executor.runAll()
 
-        verify(listener).run();
+        Truth.assertThat(systemSpaceEntity.poseInOpenXrReferenceSpace).isEqualTo(expectedPose)
+        Truth.assertThat(systemSpaceEntity.worldSpaceScale).isEqualTo(expectedScale)
+        verify(listener, never()).run()
     }
 
     @Test
-    public void setPoseInOpenXrReferenceSpace_updatesPose() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        // Column major, right handed 4x4 Transformation Matrix with translation of (4, 8, 12)
+    fun setPoseInOpenXrReferenceSpace_callsOnOriginChanged() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        val listener = mock<Runnable>()
+        val executor = FakeScheduledExecutorService()
+
+        systemSpaceEntity.setOnOriginChangedListener(listener, executor)
+        systemSpaceEntity.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        executor.runAll()
+
+        verify(listener).run()
+    }
+
+    @Test
+    fun setPoseInOpenXrReferenceSpace_updatesPose() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        // Column major, right-handed 4x4 Transformation Matrix with translation of (4, 8, 12)
         // and rotation 90 (@) around Z axis
-        Matrix4 matrix =
-                new Matrix4(
-                        new float[] {
-                            0f, 1f, 0f, 0f, // --     cos(@),   sin(@), 0,  0
-                            -1f, 0f, 0f, 0f, // --    -sin(@),  cos(@), 0,  0
-                            0f, 0f, 1f, 0f, // --     0,        0,      1,  0
-                            4f, 8f, 12f, 1f, // --    tx,       ty,     tz, 1
-                        });
-        Pose pose =
-                new Pose(
-                        new Vector3(4f, 8f, 12f),
-                        Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 90f));
+        val matrix =
+            Matrix4(
+                floatArrayOf(
+                    0f,
+                    1f,
+                    0f,
+                    0f, // --     cos(@),   sin(@), 0,  0
+                    -1f,
+                    0f,
+                    0f,
+                    0f, // --    -sin(@),  cos(@), 0,  0
+                    0f,
+                    0f,
+                    1f,
+                    0f, // --     0,        0,      1,  0
+                    4f,
+                    8f,
+                    12f,
+                    1f, // --    tx,       ty,     tz, 1
+                )
+            )
+        val pose = Pose(Vector3(4f, 8f, 12f), fromAxisAngle(Vector3(0f, 0f, 1f), 90f))
 
-        systemSpaceEntity.setOpenXrReferenceSpaceTransform(matrix);
-        assertPose(systemSpaceEntity.getPoseInOpenXrReferenceSpace(), pose);
+        systemSpaceEntity.setOpenXrReferenceSpaceTransform(matrix)
+        assertPose(systemSpaceEntity.poseInOpenXrReferenceSpace!!, pose)
     }
 
     @Test
-    public void setPoseInOpenXrReferenceSpace_updatesScale() {
-        SystemSpaceEntityImpl systemSpaceEntity = getSystemSpaceEntityImpl();
-        // Column major, right handed 4x4 Transformation Matrix with translation of (4, 8, 12) and
+    fun setPoseInOpenXrReferenceSpace_updatesScale() {
+        val systemSpaceEntity = this.systemSpaceEntityImpl
+        // Column major, right-handed 4x4 Transformation Matrix with translation of (4, 8, 12) and
         // rotation 90 (@) around Z axis, and scale of 3.3.
-        Matrix4 matrix =
-                new Matrix4(
-                        new float[] {
-                            0f, 3.3f, 0f, 0f, // --     cos(@),   sin(@), 0,  0
-                            -3.3f, 0f, 0f, 0f, // --    -sin(@),  cos(@), 0,  0
-                            0f, 0f, 3.3f, 0f, // --     0,        0,      1,  0
-                            4f, 8f, 12f, 1f, // --      tx,       ty,     tz, 1
-                        });
-        Vector3 scale = new Vector3(3.3f, 3.3f, 3.3f);
+        val matrix =
+            Matrix4(
+                floatArrayOf(
+                    0f,
+                    3.3f,
+                    0f,
+                    0f, // --     cos(@),   sin(@), 0,  0
+                    -3.3f,
+                    0f,
+                    0f,
+                    0f, // --    -sin(@),  cos(@), 0,  0
+                    0f,
+                    0f,
+                    3.3f,
+                    0f, // --     0,        0,      1,  0
+                    4f,
+                    8f,
+                    12f,
+                    1f, // --      tx,       ty,     tz, 1
+                )
+            )
+        val scale = Vector3(3.3f, 3.3f, 3.3f)
 
-        systemSpaceEntity.setOpenXrReferenceSpaceTransform(matrix);
+        systemSpaceEntity.setOpenXrReferenceSpaceTransform(matrix)
         assertVector3(
-                systemSpaceEntity.getActivitySpaceScale(),
-                scale.scale(getActivitySpaceEntity().getWorldSpaceScale().inverse()));
-        assertVector3(systemSpaceEntity.getWorldSpaceScale(), scale);
+            systemSpaceEntity.activitySpaceScale,
+            scale.scale(this.activitySpaceEntity.worldSpaceScale.inverse()),
+        )
+        assertVector3(systemSpaceEntity.worldSpaceScale, scale)
         assertVector3(
-                systemSpaceEntity.getScale(Space.ACTIVITY),
-                scale.scale(getActivitySpaceEntity().getWorldSpaceScale().inverse()));
+            systemSpaceEntity.getScale(Space.ACTIVITY),
+            scale.scale(this.activitySpaceEntity.worldSpaceScale.inverse()),
+        )
     }
 }

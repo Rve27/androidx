@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You may a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -13,562 +13,501 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.os.IBinder
+import android.os.SystemClock
+import androidx.test.rule.GrantPermissionRule
+import androidx.xr.arcore.Anchor
+import androidx.xr.arcore.runtime.Anchor.PersistenceState
+import androidx.xr.arcore.runtime.ExportableAnchor
+import androidx.xr.arcore.testing.FakeRuntimeAnchor
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.runtime.TrackingState
+import androidx.xr.runtime.math.Matrix4
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.runtime.testing.math.assertPose
+import androidx.xr.runtime.testing.math.assertVector3
+import androidx.xr.scenecore.runtime.AnchorEntity
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeGltfFeature
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.android.extensions.xr.node.Node
+import com.android.extensions.xr.node.NodeRepository
+import com.google.common.truth.Truth
+import java.util.UUID
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
-import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
-
-import static com.google.common.truth.Truth.assertThat;
-
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.os.IBinder;
-import android.os.SystemClock;
-
-import androidx.test.rule.GrantPermissionRule;
-import androidx.xr.arcore.Anchor;
-import androidx.xr.arcore.runtime.Anchor.PersistenceState;
-import androidx.xr.arcore.runtime.ExportableAnchor;
-import androidx.xr.arcore.testing.FakeRuntimeAnchor;
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.runtime.TrackingState;
-import androidx.xr.runtime.math.Matrix4;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.AnchorEntity.OnStateChangedListener;
-import androidx.xr.scenecore.runtime.AnchorEntity.State;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeGltfFeature;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeRepository;
-
-import com.google.common.collect.ImmutableList;
-
-import org.jspecify.annotations.NonNull;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-
-import java.util.Objects;
-import java.util.UUID;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
-public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
-    private static final long NATIVE_POINTER = 1234567890L;
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final OnStateChangedListener mAnchorStateListener =
-            Mockito.mock(OnStateChangedListener.class);
-    private final IBinder mSharedAnchorToken = Mockito.mock(IBinder.class);
-    private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
-    private final EntityManager mEntityManager = new EntityManager();
+class AnchorEntityImplTest : SystemSpaceEntityImplTest() {
+    private val xrExtensions = getXrExtensions()!!
+    private val anchorStateListener = mock<AnchorEntity.OnStateChangedListener>()
+    private val sharedAnchorToken: IBinder = mock<IBinder>()
+    private val executor = FakeScheduledExecutorService()
+    private val entityManager = EntityManager()
 
-    @Rule
-    public GrantPermissionRule mGrantPermissionRule =
-            GrantPermissionRule.grant("android.permission.SCENE_UNDERSTANDING");
+    @get:Rule
+    val grantPermissionRule: GrantPermissionRule =
+        GrantPermissionRule.grant("android.permission.SCENE_UNDERSTANDING")
 
-    private ActivitySpaceImpl mActivitySpace;
+    private lateinit var activitySpace: ActivitySpaceImpl
 
     @Before
-    public void doBeforeEachTest() {
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
-        Activity activity = activityController.create().start().get();
-        Node taskNode = Objects.requireNonNull(mXrExtensions).createNode();
-        mActivitySpace =
-                new ActivitySpaceImpl(
-                        taskNode,
-                        activity,
-                        mXrExtensions,
-                        mEntityManager,
-                        () -> mXrExtensions.getSpatialState(activity),
-                        /* unscaledGravityAlignedActivitySpace= */ false,
-                        mExecutor);
-        long currentTimeMillis = 1000000000L;
-        SystemClock.setCurrentTimeMillis(currentTimeMillis);
-        mEntityManager.addSystemSpaceActivityPose(new PerceptionSpaceScenePoseImpl(mActivitySpace));
+    fun doBeforeEachTest() {
+        val activityController = Robolectric.buildActivity(Activity::class.java)
+        val activity = activityController.create().start().get()
+        val taskNode = xrExtensions.createNode()
+        activitySpace =
+            ActivitySpaceImpl(
+                taskNode,
+                activity,
+                xrExtensions,
+                entityManager,
+                { xrExtensions.getSpatialState(activity) },
+                /* unscaledGravityAlignedActivitySpace= */ false,
+                executor,
+            )
+        val currentTimeMillis = 1000000000L
+        SystemClock.setCurrentTimeMillis(currentTimeMillis)
+        entityManager.addSystemSpaceActivityPose(PerceptionSpaceScenePoseImpl(activitySpace))
     }
 
     /**
      * Returns the anchor entity impl. Used in the base SystemSpaceEntityImplTest to ensure that the
      * anchor entity complies with all the expected behaviors of a system space entity.
      */
-    @Override
-    protected SystemSpaceEntityImpl getSystemSpaceEntityImpl() {
-        return createAnchorEntityWithRuntimeAnchor();
+    override val systemSpaceEntityImpl: SystemSpaceEntityImpl
+        get() = createAnchorEntityWithRuntimeAnchor()
+
+    override val defaultFakeExecutor: FakeScheduledExecutorService
+        get() = executor
+
+    override fun createChildAndroidXrEntity(): AndroidXrEntity {
+        return createGltfEntity()
     }
 
-    @Override
-    protected FakeScheduledExecutorService getDefaultFakeExecutor() {
-        return mExecutor;
-    }
+    override val activitySpaceEntity: ActivitySpaceImpl
+        get() = activitySpace
 
-    @Override
-    protected AndroidXrEntity createChildAndroidXrEntity() {
-        return createGltfEntity();
-    }
-
-    @Override
-    protected ActivitySpaceImpl getActivitySpaceEntity() {
-        return mActivitySpace;
-    }
-
-    private AnchorEntityImpl createAnchorEntity() {
-        Node node = Objects.requireNonNull(mXrExtensions).createNode();
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
-        Activity activity = activityController.create().start().get();
+    private fun createAnchorEntity(): AnchorEntityImpl {
+        val node = (xrExtensions).createNode()
+        val activityController = Robolectric.buildActivity(Activity::class.java)
+        val activity = activityController.create().start().get()
         return AnchorEntityImpl.create(
-                activity, node, mActivitySpace, mXrExtensions, mEntityManager, mExecutor);
+            activity,
+            node,
+            activitySpace,
+            xrExtensions,
+            entityManager,
+            executor,
+        )
     }
 
-    private AnchorEntityImpl createAnchorEntityWithRuntimeAnchor() {
-        Node node = mXrExtensions.createNode();
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
-        Activity activity = activityController.create().start().get();
-        AnchorEntityImpl anchorEntity =
-                AnchorEntityImpl.create(
-                        activity, node, mActivitySpace, mXrExtensions, mEntityManager, mExecutor);
-        FakeExportableAnchor runtimeAnchor =
-                new FakeExportableAnchor(
-                        NATIVE_POINTER,
-                        mSharedAnchorToken,
-                        Pose.Identity,
-                        TrackingState.TRACKING,
-                        PersistenceState.NOT_PERSISTED,
-                        null);
-        anchorEntity.setAnchor(new Anchor(runtimeAnchor));
-        return anchorEntity;
+    private fun createAnchorEntityWithRuntimeAnchor(): AnchorEntityImpl {
+        val node = xrExtensions.createNode()
+        val activityController = Robolectric.buildActivity(Activity::class.java)
+        val activity = activityController.create().start().get()
+        val anchorEntity =
+            AnchorEntityImpl.create(
+                activity,
+                node,
+                activitySpace,
+                xrExtensions,
+                entityManager,
+                executor,
+            )
+        val runtimeAnchor =
+            FakeExportableAnchor(
+                NATIVE_POINTER,
+                sharedAnchorToken,
+                Pose.Identity,
+                TrackingState.TRACKING,
+                PersistenceState.NOT_PERSISTED,
+                null,
+            )
+        anchorEntity.setAnchor(Anchor(runtimeAnchor))
+        return anchorEntity
     }
 
-    private AnchorEntityImpl createUnanchoredAnchorEntity() {
-        Node node = Objects.requireNonNull(mXrExtensions).createNode();
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
-        Activity activity = activityController.create().start().get();
+    private fun createUnanchoredAnchorEntity(): AnchorEntityImpl {
+        val node = (xrExtensions).createNode()
+        val activityController = Robolectric.buildActivity(Activity::class.java)
+        val activity = activityController.create().start().get()
         return AnchorEntityImpl.create(
-                activity, node, mActivitySpace, mXrExtensions, mEntityManager, mExecutor);
+            activity,
+            node,
+            activitySpace,
+            xrExtensions,
+            entityManager,
+            executor,
+        )
     }
 
     /** Creates a generic glTF entity. */
-    private GltfEntityImpl createGltfEntity() {
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
-        Activity activity = activityController.create().start().get();
-        NodeHolder<?> nodeHolder =
-                new NodeHolder<>(Objects.requireNonNull(mXrExtensions).createNode(), Node.class);
-        return new GltfEntityImpl(
-                activity,
-                new FakeGltfFeature(nodeHolder),
-                mActivitySpace,
-                mXrExtensions,
-                mEntityManager,
-                mExecutor);
+    private fun createGltfEntity(): GltfEntityImpl {
+        val activityController = Robolectric.buildActivity(Activity::class.java)
+        val activity = activityController.create().start().get()
+        val nodeHolder: NodeHolder<*> =
+            NodeHolder<Node?>((xrExtensions).createNode(), Node::class.java)
+        return GltfEntityImpl(
+            activity,
+            FakeGltfFeature(nodeHolder),
+            activitySpace,
+            xrExtensions,
+            entityManager,
+            executor,
+        )
     }
 
     @Test
-    public void anchorEntityAddChildren_addsChildren() {
-        GltfEntityImpl childEntity1 = createGltfEntity();
-        GltfEntityImpl childEntity2 = createGltfEntity();
-        AnchorEntityImpl parentEntity = createAnchorEntityWithRuntimeAnchor();
+    fun anchorEntityAddChildren_addsChildren() {
+        val childEntity1 = createGltfEntity()
+        val childEntity2 = createGltfEntity()
+        val parentEntity = createAnchorEntityWithRuntimeAnchor()
 
-        parentEntity.addChild(childEntity1);
+        parentEntity.addChild(childEntity1)
 
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1);
+        Truth.assertThat(parentEntity.children).containsExactly(childEntity1)
 
-        parentEntity.addChildren(ImmutableList.of(childEntity2));
+        parentEntity.addChildren(listOf(childEntity2))
 
-        assertThat(childEntity1.getParent()).isEqualTo(parentEntity);
-        assertThat(childEntity2.getParent()).isEqualTo(parentEntity);
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1, childEntity2);
+        Truth.assertThat(childEntity1.parent).isEqualTo(parentEntity)
+        Truth.assertThat(childEntity2.parent).isEqualTo(parentEntity)
+        Truth.assertThat(parentEntity.children).containsExactly(childEntity1, childEntity2)
 
-        Node parentNode = parentEntity.getNode();
-        Node childNode1 = childEntity1.getNode();
-        Node childNode2 = childEntity2.getNode();
+        val parentNode = parentEntity.getNode()
+        val childNode1 = childEntity1.getNode()
+        val childNode2 = childEntity2.getNode()
 
-        assertThat(NodeRepository.getInstance().getParent(childNode1)).isEqualTo(parentNode);
-        assertThat(NodeRepository.getInstance().getParent(childNode2)).isEqualTo(parentNode);
+        Truth.assertThat(NodeRepository.getInstance().getParent(childNode1)).isEqualTo(parentNode)
+        Truth.assertThat(NodeRepository.getInstance().getParent(childNode2)).isEqualTo(parentNode)
     }
 
     @Test
-    public void anchorEntitySetPose_throwsException() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Pose pose = new Pose();
-        assertThrows(UnsupportedOperationException.class, () -> anchorEntity.setPose(pose));
+    fun anchorEntitySetPose_throwsException() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val pose = Pose()
+        Assert.assertThrows(UnsupportedOperationException::class.java) {
+            anchorEntity.setPose(pose)
+        }
     }
 
     @Test
-    public void anchorEntityGetPoseRelativeToParentSpace_throwsException() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
+    fun anchorEntityGetPoseRelativeToParentSpace_throwsException() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
 
-        assertThrows(UnsupportedOperationException.class, () -> anchorEntity.getPose(Space.PARENT));
+        Assert.assertThrows(UnsupportedOperationException::class.java) {
+            anchorEntity.getPose(Space.PARENT)
+        }
     }
 
     @Test
-    public void anchorEntityGetPoseRelativeToActivitySpace_returnsActivitySpacePose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
+    fun anchorEntityGetPoseRelativeToActivitySpace_returnsActivitySpacePose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
 
-        assertPose(anchorEntity.getPose(Space.ACTIVITY), anchorEntity.getPoseInActivitySpace());
+        assertPose(anchorEntity.getPose(Space.ACTIVITY), anchorEntity.poseInActivitySpace)
     }
 
     @Test
-    public void anchorEntityGetPoseRelativeToRealWorldSpace_returnsPerceptionSpacePose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
+    fun anchorEntityGetPoseRelativeToRealWorldSpace_returnsPerceptionSpacePose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
 
-        assertPose(anchorEntity.getPose(Space.REAL_WORLD), anchorEntity.getPoseInPerceptionSpace());
+        assertPose(anchorEntity.getPose(Space.REAL_WORLD), anchorEntity.getPoseInPerceptionSpace())
     }
 
     @Test
-    public void anchorEntitySetScale_throwsException() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Vector3 scale = new Vector3(1, 1, 1);
-        assertThrows(UnsupportedOperationException.class, () -> anchorEntity.setScale(scale));
+    fun anchorEntitySetScale_throwsException() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val scale = Vector3(1f, 1f, 1f)
+        Assert.assertThrows(UnsupportedOperationException::class.java) {
+            anchorEntity.setScale(scale)
+        }
     }
 
     @Test
-    public void anchorEntityGetScale_throwsException() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        assertThrows(UnsupportedOperationException.class, anchorEntity::getScale);
+    fun anchorEntityGetScale_throwsException() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        Assert.assertThrows(UnsupportedOperationException::class.java) { anchorEntity.getScale() }
     }
 
     @Test
-    public void anchorEntityGetWorldSpaceScale_returnsIdentityScale() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        assertVector3(anchorEntity.getWorldSpaceScale(), new Vector3(1f, 1f, 1f));
+    fun anchorEntityGetWorldSpaceScale_returnsIdentityScale() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        assertVector3(anchorEntity.worldSpaceScale, Vector3(1f, 1f, 1f))
     }
 
     @Test
-    public void anchorEntityGetActivitySpaceScale_returnsInverseOfActivitySpace() {
-        float activitySpaceScale = 5f;
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.fromScale(activitySpaceScale));
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        assertVector3(
-                anchorEntity.getActivitySpaceScale(),
-                new Vector3(1f, 1f, 1f).div(activitySpaceScale));
+    fun anchorEntityGetActivitySpaceScale_returnsInverseOfActivitySpace() {
+        val activitySpaceScale = 5f
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.fromScale(activitySpaceScale))
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        assertVector3(anchorEntity.activitySpaceScale, Vector3(1f, 1f, 1f).div(activitySpaceScale))
     }
 
     @Test
-    public void getPoseInActivitySpace_unanchored_returnsIdentityPose() {
-        AnchorEntityImpl anchorEntity = createUnanchoredAnchorEntity();
-        Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1));
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
+    fun getPoseInActivitySpace_unanchored_returnsIdentityPose() {
+        val anchorEntity = createUnanchoredAnchorEntity()
+        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
 
-        assertPose(anchorEntity.getPoseInActivitySpace(), new Pose());
+        assertPose(anchorEntity.poseInActivitySpace, Pose())
     }
 
     @Test
-    public void
-            getPoseInActivitySpace_noActivitySpaceOpenXrReferenceSpacePose_returnsIdentityPose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1));
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
-        assertPose(anchorEntity.getPoseInActivitySpace(), new Pose());
+    fun getPoseInActivitySpace_noActivitySpaceOpenXrReferenceSpacePose_returnsIdentityPose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
+        assertPose(anchorEntity.poseInActivitySpace, Pose())
     }
 
     @Test
-    public void getPoseInActivitySpace_noAnchorOpenXrReferenceSpacePose_returnsIdentityPose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1));
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
+    fun getPoseInActivitySpace_noAnchorOpenXrReferenceSpacePose_returnsIdentityPose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
+
         // anchorEntity.setOpenXrReferenceSpacePose(..) is not called to set the underlying pose.
-
-        assertPose(anchorEntity.getPoseInActivitySpace(), new Pose());
+        assertPose(anchorEntity.poseInActivitySpace, Pose())
     }
 
     @Test
-    public void getPoseInActivitySpace_whenAtSamePose_returnsIdentityPose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1));
-        mActivitySpace.setOpenXrReferenceSpaceTransform(
-                Matrix4.fromTrs(
-                        pose.getTranslation(), pose.getRotation(), new Vector3(2f, 2f, 2f)));
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
+    fun getPoseInActivitySpace_whenAtSamePose_returnsIdentityPose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
+        activitySpace.setOpenXrReferenceSpaceTransform(
+            Matrix4.fromTrs(pose.translation, pose.rotation, Vector3(2f, 2f, 2f))
+        )
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
 
-        assertPose(anchorEntity.getPoseInActivitySpace(), new Pose());
+        assertPose(anchorEntity.poseInActivitySpace, Pose())
     }
 
     @Test
-    public void getPoseInActivitySpace_returnsDifferencePose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1));
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
+    fun getPoseInActivitySpace_returnsDifferencePose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
 
-        assertPose(anchorEntity.getPoseInActivitySpace(), pose);
+        assertPose(anchorEntity.poseInActivitySpace, pose)
     }
 
     @Test
-    public void getPoseInActivitySpace_withScaledAndRotatedActivitySpace_returnsDifferencePose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Quaternion activitySpaceQuaternion = Quaternion.fromEulerAngles(new Vector3(0f, 0f, 90f));
-        Pose pose = new Pose(new Vector3(1, 1, 1), Quaternion.Identity);
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
-        mActivitySpace.setOpenXrReferenceSpaceTransform(
-                Matrix4.fromTrs(
-                        new Vector3(2f, 3f, 4f),
-                        activitySpaceQuaternion,
-                        /* scale= */ new Vector3(2f, 2f, 2f)));
-        // A 90 degree rotation around the z axis is a clockwise rotation of the XY plane.
-        Pose expectedPose =
-                new Pose(
-                        new Vector3(-1.0f, 0.5f, -1.5f),
-                        Quaternion.fromEulerAngles(new Vector3(0f, 0f, -90f)));
+    fun getPoseInActivitySpace_withScaledAndRotatedActivitySpace_returnsDifferencePose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val activitySpaceQuaternion = Quaternion.fromEulerAngles(Vector3(0f, 0f, 90f))
+        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
+        activitySpace.setOpenXrReferenceSpaceTransform(
+            Matrix4.fromTrs(
+                Vector3(2f, 3f, 4f),
+                activitySpaceQuaternion,
+                /* scale= */ Vector3(2f, 2f, 2f),
+            )
+        )
+        // A 90-degree rotation around the z axis is a clockwise rotation of the XY plane.
+        val expectedPose =
+            Pose(Vector3(-1.0f, 0.5f, -1.5f), Quaternion.fromEulerAngles(Vector3(0f, 0f, -90f)))
 
-        assertPose(anchorEntity.getPoseInActivitySpace(), expectedPose);
+        assertPose(anchorEntity.poseInActivitySpace, expectedPose)
     }
 
     @Test
-    public void getPoseInActivitySpace_withNoActivitySpace_throwsException() {
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
-        Activity activity = activityController.create().start().get();
-        Node node = mXrExtensions.createNode();
-        AnchorEntityImpl anchorEntity =
-                AnchorEntityImpl.create(
-                        activity,
-                        node,
-                        /* activitySpace= */ null,
-                        mXrExtensions,
-                        mEntityManager,
-                        mExecutor);
+    fun getActivitySpacePose_whenAtSamePose_returnsIdentityPose() {
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
 
-        assertThat(anchorEntity.getState()).isEqualTo(State.ERROR);
-        assertThrows(IllegalStateException.class, anchorEntity::getPoseInActivitySpace);
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
+
+        assertPose(anchorEntity.activitySpacePose, pose)
     }
 
     @Test
-    public void getActivitySpacePose_whenAtSamePose_returnsIdentityPose() {
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1));
+    fun getActivitySpacePose_returnsDifferencePose() {
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
 
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
 
-        assertPose(anchorEntity.getActivitySpacePose(), pose);
+        assertPose(anchorEntity.activitySpacePose, pose)
     }
 
     @Test
-    public void getActivitySpacePose_returnsDifferencePose() {
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Pose pose = new Pose(new Vector3(1, 1, 1), new Quaternion(0, 1, 0, 1));
+    fun transformPoseTo_withActivitySpace_returnsTransformedPose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion.Identity)
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
 
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
-
-        assertPose(anchorEntity.getActivitySpacePose(), pose);
-    }
-
-    @Test
-    public void transformPoseTo_withActivitySpace_returnsTransformedPose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), Quaternion.Identity);
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
-
-        Pose anchorOffset =
-                new Pose(
-                        new Vector3(10f, 0f, 0f),
-                        Quaternion.fromEulerAngles(new Vector3(0f, 0f, 90f)));
-        Pose transformedPose = anchorEntity.transformPoseTo(anchorOffset, mActivitySpace);
+        val anchorOffset =
+            Pose(Vector3(10f, 0f, 0f), Quaternion.fromEulerAngles(Vector3(0f, 0f, 90f)))
+        val transformedPose = anchorEntity.transformPoseTo(anchorOffset, activitySpace)
 
         assertPose(
-                transformedPose,
-                new Pose(
-                        new Vector3(11f, 2f, 3f),
-                        Quaternion.fromEulerAngles(new Vector3(0f, 0f, 90f))));
+            transformedPose,
+            Pose(Vector3(11f, 2f, 3f), Quaternion.fromEulerAngles(Vector3(0f, 0f, 90f))),
+        )
     }
 
     @Test
-    public void transformPoseTo_fromActivitySpaceChild_returnsAnchorSpacePose() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        GltfEntityImpl childEntity1 = createGltfEntity();
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), Quaternion.Identity);
-        Pose childPose = new Pose(new Vector3(-1f, -2f, -3f), Quaternion.Identity);
+    fun transformPoseTo_fromActivitySpaceChild_returnsAnchorSpacePose() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        val childEntity1 = createGltfEntity()
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion.Identity)
+        val childPose = Pose(Vector3(-1f, -2f, -3f), Quaternion.Identity)
 
-        mActivitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity);
-        mActivitySpace.addChild(childEntity1);
-        childEntity1.setPose(childPose);
-        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose));
+        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        activitySpace.addChild(childEntity1)
+        childEntity1.setPose(childPose)
+        anchorEntity.setOpenXrReferenceSpaceTransform(Matrix4.fromPose(pose))
 
         assertPose(
-                mActivitySpace.transformPoseTo(new Pose(), anchorEntity),
-                new Pose(new Vector3(-1f, -2f, -3f), Quaternion.Identity));
+            activitySpace.transformPoseTo(Pose(), anchorEntity),
+            Pose(Vector3(-1f, -2f, -3f), Quaternion.Identity),
+        )
 
-        Pose transformedPose = childEntity1.transformPoseTo(new Pose(), anchorEntity);
-        assertPose(transformedPose, new Pose(new Vector3(-2f, -4f, -6f), Quaternion.Identity));
+        val transformedPose = childEntity1.transformPoseTo(Pose(), anchorEntity)
+        assertPose(transformedPose, Pose(Vector3(-2f, -4f, -6f), Quaternion.Identity))
     }
 
     @Test
-    public void setAnchor_nonExportableAnchor_remainsUnanchored() {
-        AnchorEntityImpl anchorEntity = createAnchorEntity();
-        anchorEntity.setOnStateChangedListener(mAnchorStateListener);
-        FakeRuntimeAnchor runtimeAnchor = new FakeRuntimeAnchor(Pose.Identity, null, true);
-        anchorEntity.setAnchor(new Anchor(runtimeAnchor));
-        mExecutor.runAll();
+    fun setAnchor_nonExportableAnchor_remainsUnanchored() {
+        val anchorEntity = createAnchorEntity()
+        anchorEntity.setOnStateChangedListener(anchorStateListener)
+        val runtimeAnchor = FakeRuntimeAnchor(Pose.Identity, null, true)
+        anchorEntity.setAnchor(Anchor(runtimeAnchor))
+        executor.runAll()
 
-        verify(mAnchorStateListener, never()).onStateChanged(State.ERROR);
-        assertThat(anchorEntity.getState()).isEqualTo(State.UNANCHORED);
+        verify(anchorStateListener, never()).onStateChanged(AnchorEntity.State.ERROR)
+        Truth.assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.UNANCHORED)
     }
 
     @Test
-    public void disposeAnchor_detachesAnchor() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        anchorEntity.setOnStateChangedListener(mAnchorStateListener);
-        verify(mAnchorStateListener, never()).onStateChanged(State.ERROR);
-        assertThat(anchorEntity.getState()).isEqualTo(State.ANCHORED);
+    fun disposeAnchor_detachesAnchor() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        anchorEntity.setOnStateChangedListener(anchorStateListener)
+        verify(anchorStateListener, never()).onStateChanged(AnchorEntity.State.ERROR)
+        Truth.assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.ANCHORED)
 
         // Verify the parent of the anchor is the root node (ActivitySpace) before disposing it.
-        Node anchorNode = anchorEntity.getNode();
-        Node rootNode = mActivitySpace.getNode();
-        assertThat(NodeRepository.getInstance().getParent(anchorNode)).isEqualTo(rootNode);
-        assertThat(NodeRepository.getInstance().getAnchorId(anchorNode))
-                .isEqualTo(mSharedAnchorToken);
+        val anchorNode = anchorEntity.getNode()
+        val rootNode = activitySpace.getNode()
+        Truth.assertThat(NodeRepository.getInstance().getParent(anchorNode)).isEqualTo(rootNode)
+        Truth.assertThat(NodeRepository.getInstance().getAnchorId(anchorNode))
+            .isEqualTo(sharedAnchorToken)
 
         // Dispose the entity and verify that the state was updated.
-        anchorEntity.dispose();
+        anchorEntity.dispose()
 
-        verify(mAnchorStateListener).onStateChanged(State.ERROR);
-        assertThat(anchorEntity.getState()).isEqualTo(State.ERROR);
-        assertThat(NodeRepository.getInstance().getParent(anchorNode)).isNull();
-        assertThat(NodeRepository.getInstance().getAnchorId(anchorNode)).isNull();
+        verify(anchorStateListener).onStateChanged(AnchorEntity.State.ERROR)
+        Truth.assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.ERROR)
+        Truth.assertThat(NodeRepository.getInstance().getParent(anchorNode)).isNull()
+        Truth.assertThat(NodeRepository.getInstance().getAnchorId(anchorNode)).isNull()
     }
 
     @Test
-    public void disposeAnchorTwice_callsCalbackOnce() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
-        anchorEntity.setOnStateChangedListener(mAnchorStateListener);
-        verify(mAnchorStateListener, never()).onStateChanged(State.ERROR);
+    fun disposeAnchorTwice_callsCallbackOnce() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
+        anchorEntity.setOnStateChangedListener(anchorStateListener)
+        verify(anchorStateListener, never()).onStateChanged(AnchorEntity.State.ERROR)
 
         // Dispose the entity and verify that the state was updated.
-        anchorEntity.dispose();
+        anchorEntity.dispose()
 
-        verify(mAnchorStateListener).onStateChanged(State.ERROR);
+        verify(anchorStateListener).onStateChanged(AnchorEntity.State.ERROR)
 
         // Dispose anchor again and verify onStateChanged was called only once.
-        anchorEntity.dispose();
+        anchorEntity.dispose()
 
-        verify(mAnchorStateListener).onStateChanged(State.ERROR);
+        verify(anchorStateListener).onStateChanged(AnchorEntity.State.ERROR)
     }
 
     @Test
-    public void getScaleRelativeToParentSpace_throwsException() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
+    fun getScaleRelativeToParentSpace_throwsException() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
 
-        assertThrows(
-                UnsupportedOperationException.class, () -> anchorEntity.getScale(Space.PARENT));
+        Assert.assertThrows(UnsupportedOperationException::class.java) {
+            anchorEntity.getScale(Space.PARENT)
+        }
     }
 
     @Test
-    public void getScaleRelativeToActivitySpace_returnsActivitySpaceScale() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
+    fun getScaleRelativeToActivitySpace_returnsActivitySpaceScale() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
 
-        assertVector3(anchorEntity.getScale(Space.ACTIVITY), anchorEntity.getActivitySpaceScale());
+        assertVector3(anchorEntity.getScale(Space.ACTIVITY), anchorEntity.activitySpaceScale)
     }
 
     @Test
-    public void getScaleRelativeToRealWorldSpace_returnsVector3One() {
-        AnchorEntityImpl anchorEntity = createAnchorEntityWithRuntimeAnchor();
+    fun getScaleRelativeToRealWorldSpace_returnsVector3One() {
+        val anchorEntity = createAnchorEntityWithRuntimeAnchor()
 
-        assertVector3(anchorEntity.getScale(Space.REAL_WORLD), new Vector3(1f, 1f, 1f));
+        assertVector3(anchorEntity.getScale(Space.REAL_WORLD), Vector3(1f, 1f, 1f))
     }
 
     @Test
-    public void setAnchor_unanchoredAnchorEntity_updatesState() {
-        AnchorEntityImpl anchorEntity = createUnanchoredAnchorEntity();
-        assertThat(anchorEntity).isNotNull();
-        assertThat(anchorEntity.getState()).isEqualTo(State.UNANCHORED);
-        assertThat(NodeRepository.getInstance().getName(anchorEntity.getNode()))
-                .isEqualTo(AnchorEntityImpl.ANCHOR_NODE_NAME);
-        assertThat(NodeRepository.getInstance().getAnchorId(anchorEntity.getNode())).isNull();
-        assertThat(NodeRepository.getInstance().getParent(anchorEntity.getNode())).isNull();
+    fun setAnchor_unanchoredAnchorEntity_updatesState() {
+        val anchorEntity = createUnanchoredAnchorEntity()
+        Truth.assertThat(anchorEntity).isNotNull()
+        Truth.assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.UNANCHORED)
+        Truth.assertThat(NodeRepository.getInstance().getName(anchorEntity.getNode()))
+            .isEqualTo(AnchorEntityImpl.ANCHOR_NODE_NAME)
+        Truth.assertThat(NodeRepository.getInstance().getAnchorId(anchorEntity.getNode())).isNull()
+        Truth.assertThat(NodeRepository.getInstance().getParent(anchorEntity.getNode())).isNull()
 
-        FakeExportableAnchor runtimeAnchor =
-                new FakeExportableAnchor(
-                        NATIVE_POINTER,
-                        mSharedAnchorToken,
-                        Pose.Identity,
-                        TrackingState.TRACKING,
-                        PersistenceState.NOT_PERSISTED,
-                        null);
-        anchorEntity.setAnchor(new Anchor(runtimeAnchor));
+        val runtimeAnchor =
+            FakeExportableAnchor(
+                NATIVE_POINTER,
+                sharedAnchorToken,
+                Pose.Identity,
+                TrackingState.TRACKING,
+                PersistenceState.NOT_PERSISTED,
+                null,
+            )
+        anchorEntity.setAnchor(Anchor(runtimeAnchor))
 
-        assertThat(anchorEntity.getState()).isEqualTo(State.ANCHORED);
-        assertThat(NodeRepository.getInstance().getAnchorId(anchorEntity.getNode()))
-                .isEqualTo(mSharedAnchorToken);
-        assertThat(NodeRepository.getInstance().getParent(anchorEntity.getNode()))
-                .isEqualTo(mActivitySpace.getNode());
+        Truth.assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.ANCHORED)
+        Truth.assertThat(NodeRepository.getInstance().getAnchorId(anchorEntity.getNode()))
+            .isEqualTo(sharedAnchorToken)
+        Truth.assertThat(NodeRepository.getInstance().getParent(anchorEntity.getNode()))
+            .isEqualTo(activitySpace.getNode())
     }
 
-    private static class FakeExportableAnchor implements ExportableAnchor {
-        private final long mNativePointer;
-        private final IBinder mAnchorToken;
-        private final Pose mPose;
-        private final TrackingState mTrackingState;
-        private final PersistenceState mPersistenceState;
-        private final UUID mUuid;
+    private class FakeExportableAnchor(
+        override val nativePointer: Long,
+        override val anchorToken: IBinder,
+        override val pose: Pose,
+        override val trackingState: TrackingState,
+        override val persistenceState: PersistenceState,
+        override val uuid: UUID?,
+    ) : ExportableAnchor {
+        override fun detach() {}
 
-        FakeExportableAnchor(
-                long nativePointer,
-                IBinder anchorToken,
-                Pose pose,
-                TrackingState trackingState,
-                PersistenceState persistenceState,
-                UUID uuid) {
-            mNativePointer = nativePointer;
-            mAnchorToken = anchorToken;
-            mPose = pose;
-            mTrackingState = trackingState;
-            mPersistenceState = persistenceState;
-            mUuid = uuid;
-        }
+        override fun persist() {}
+    }
 
-        @Override
-        public long getNativePointer() {
-            return mNativePointer;
-        }
-
-        @Override
-        public @NonNull IBinder getAnchorToken() {
-            return mAnchorToken;
-        }
-
-        @Override
-        public @NonNull Pose getPose() {
-            return mPose;
-        }
-
-        @Override
-        public @NonNull TrackingState getTrackingState() {
-            return mTrackingState;
-        }
-
-        @Override
-        public @NonNull PersistenceState getPersistenceState() {
-            return mPersistenceState;
-        }
-
-        @Override
-        public UUID getUuid() {
-            return mUuid;
-        }
-
-        @Override
-        public void detach() {}
-
-        @Override
-        public void persist() {}
+    companion object {
+        private const val NATIVE_POINTER = 1234567890L
     }
 }
