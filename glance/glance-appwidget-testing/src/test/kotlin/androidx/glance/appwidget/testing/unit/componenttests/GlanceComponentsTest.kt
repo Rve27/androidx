@@ -16,34 +16,56 @@
 
 package androidx.glance.appwidget.testing.unit.componenttests
 
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.glance.Button
 import androidx.glance.GlanceModifier
+import androidx.glance.action.Action
 import androidx.glance.appwidget.ImageProvider
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.FilledButton
 import androidx.glance.appwidget.components.SquareIconButton
+import androidx.glance.appwidget.testing.unit.hasStartActivityClickAction
 import androidx.glance.appwidget.testing.unit.runGlanceAppWidgetUnitTest
 import androidx.glance.layout.Column
 import androidx.glance.semantics.semantics
 import androidx.glance.semantics.testTag
 import androidx.glance.testing.unit.assertHasClickAction
+import androidx.glance.testing.unit.hasAnyDescendant
 import androidx.glance.testing.unit.hasTestTag
 import androidx.glance.testing.unit.hasText
+import androidx.glance.text.Text
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 private const val arbitraryText = "some text"
 private const val buttonTestTag = "button-under-test"
+private const val columnTestTag = "column-under-test"
 
 private val anImageProvider = ImageProvider(uri = Uri.parse("example.com"))
 private const val contentDescription = "a content description"
 
+/**
+ * Tests that the unit testing framework runs correctly on Glance's components. The intent is that
+ * changes to the components should not break existing unit tests.
+ *
+ * TODO: add more tests for more components 480199909. Also, for each button test case, ensure that
+ *   the behavior is tested for the base button, TextButton, and IconButton
+ */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
 class ButtonsGlanceTest {
 
+    /**
+     * Test that the M3 buttons and the basic button behave in the same way. They have different
+     * implementations internally.
+     */
     @Test
     fun translateButton_hasCorrectText() = runGlanceAppWidgetUnitTest {
-        // Set the composable to test
         val buttonText = "Button Text"
         val m3ButtonText = "M3 Btn Text"
         provideComposable {
@@ -53,7 +75,6 @@ class ButtonsGlanceTest {
             }
         }
 
-        // Perform assertions
         onNode(hasText(m3ButtonText)).assertExists()
         onNode(hasText(buttonText)).assertExists()
     }
@@ -82,6 +103,59 @@ class ButtonsGlanceTest {
         provideComposable { TestSquareIconButton() }
         onNode(hasTestTag(buttonTestTag)).assertHasClickAction()
     }
+
+    @Test
+    fun m3FilledButton_hasStartActivityClickAction() = runGlanceAppWidgetUnitTest {
+        val (action, intent) = startActivityAction()
+
+        provideComposable { TestStartActivityButton(action) }
+
+        onNode(hasText(arbitraryText)).assertExists()
+        onAllNodes((hasText(arbitraryText)))
+            .filter(hasStartActivityClickAction(intent))
+            .assertCountEquals(1)
+    }
+
+    @Test
+    fun m3IconButton_hasStartActivityClickAction() = runGlanceAppWidgetUnitTest {
+        val (action, intent) = startActivityAction()
+        provideComposable { TestStartActivityIconButton(action) }
+
+        onAllNodes(hasTestTag(buttonTestTag))
+            .filter(hasStartActivityClickAction(intent))
+            .assertCountEquals(1)
+    }
+
+    @Test
+    fun hasAnyDescendent_columnAndText() = runGlanceAppWidgetUnitTest {
+        provideComposable {
+            Column(GlanceModifier.semantics { testTag = columnTestTag }) { Text(arbitraryText) }
+        }
+
+        onAllNodes(hasAnyDescendant(hasText(arbitraryText)))
+            .filter(hasTestTag(columnTestTag))
+            .assertCountEquals(1)
+    }
+
+    @Test
+    fun hasAnyDescendent_columnAndM3FilledButton() = runGlanceAppWidgetUnitTest {
+        val (action, intent) = startActivityAction()
+
+        provideComposable {
+            Column(GlanceModifier.semantics { testTag = columnTestTag }) {
+                FilledButton(arbitraryText, onClick = action)
+            }
+        }
+
+        onAllNodes(hasAnyDescendant(hasText(arbitraryText)))
+            .filter(hasTestTag(columnTestTag))
+            .assertCountEquals(1)
+    }
+}
+
+private fun startActivityAction(): Pair<Action, Intent> {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.example.com"))
+    return actionStartActivity(intent = intent) to intent
 }
 
 @Composable
@@ -109,3 +183,26 @@ private fun TestSquareIconButton() =
         onClick = {},
         modifier = GlanceModifier.semantics { testTag = buttonTestTag },
     )
+
+@Composable
+private fun TestStartActivityButton(startActivityAction: Action) {
+    Column {
+        FilledButton(
+            arbitraryText,
+            onClick = startActivityAction,
+            modifier = GlanceModifier.semantics { testTag = buttonTestTag },
+        )
+    }
+}
+
+@Composable
+private fun TestStartActivityIconButton(startActivityAction: Action) {
+    Column {
+        CircleIconButton(
+            imageProvider = anImageProvider,
+            contentDescription = contentDescription,
+            onClick = startActivityAction,
+            modifier = GlanceModifier.semantics { testTag = buttonTestTag },
+        )
+    }
+}
