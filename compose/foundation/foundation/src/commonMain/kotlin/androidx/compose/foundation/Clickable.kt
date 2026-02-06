@@ -20,8 +20,10 @@ import androidx.collection.mutableLongObjectMapOf
 import androidx.compose.foundation.ComposeFoundationFlags.isDelayPressesUsingGestureConsumptionEnabled
 import androidx.compose.foundation.gestures.PressGestureScope
 import androidx.compose.foundation.gestures.ScrollableContainerNode
+import androidx.compose.foundation.gestures.changedToDownIgnoreConsumed
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.isChangedToDown
+import androidx.compose.foundation.gestures.isDeepPress
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -871,17 +873,6 @@ internal open class ClickableNode(
         onClick = onClick,
     ) {
 
-    private fun getExtendedTouchPadding(size: IntSize): Size {
-        // copied from SuspendingPointerInputModifierNodeImpl.extendedTouchPadding:
-        // TODO expose this as a new public api available outside of suspending apis b/422396609
-        val minimumTouchTargetSizeDp = currentValueOf(LocalViewConfiguration).minimumTouchTargetSize
-        val minimumTouchTargetSize = with(requireDensity()) { minimumTouchTargetSizeDp.toSize() }
-        val size = size
-        val horizontal = max(0f, minimumTouchTargetSize.width - size.width) / 2f
-        val vertical = max(0f, minimumTouchTargetSize.height - size.height) / 2f
-        return Size(horizontal, vertical)
-    }
-
     private var downEvent: PointerInputChange? = null
 
     @OptIn(ExperimentalFoundationApi::class)
@@ -956,7 +947,7 @@ internal open class ClickableNode(
         onClick: () -> Unit,
     ) {
         // enabled and onClick are captured inside callbacks, not as an input to detectTapGestures,
-        // so no need need to reset pointer input handling when they change
+        // so no need to reset pointer input handling when they change
         updateCommon(
             interactionSource = interactionSource,
             indicationNodeFactory = indicationNodeFactory,
@@ -1005,34 +996,213 @@ private class CombinedClickableNode(
 
     private val longKeyPressJobs = mutableLongObjectMapOf<Job>()
     private val doubleKeyClickStates = mutableLongObjectMapOf<DoubleKeyClickState>()
+    @OptIn(ExperimentalFoundationApi::class)
+    private val isSuspendingPointerInputEnabled =
+        !ComposeFoundationFlags.isNonSuspendingPointerInputInCombinedClickableEnabled
+    private var downEvent: PointerInputChange? = null
+    private var longPressJob: Job? = null
+    private var tapJob: Job? = null
+    private var isSecondTap = false
+    private var longPressTriggered = false
+    private var firstTapUpTime = -1L
+    private var ignoreNextUp = false
 
-    override fun createPointerInputNodeIfNeeded() = SuspendingPointerInputModifierNode {
-        detectTapGestures(
-            onDoubleTap =
-                if (enabled && onDoubleClick != null) {
-                    { onDoubleClick?.invoke() }
-                } else null,
-            onLongPress =
-                if (enabled && onLongClick != null) {
-                    {
+    override fun createPointerInputNodeIfNeeded(): SuspendingPointerInputModifierNode? {
+        if (isSuspendingPointerInputEnabled) {
+            return SuspendingPointerInputModifierNode {
+                detectTapGestures(
+                    onDoubleTap =
+                        if (enabled && onDoubleClick != null) {
+                            { onDoubleClick?.invoke() }
+                        } else null,
+                    onLongPress =
+                        if (enabled && onLongClick != null) {
+                            {
+                                onLongClick?.invoke()
+                                if (hapticFeedbackEnabled) {
+                                    currentValueOf(LocalHapticFeedback)
+                                        .performHapticFeedback(HapticFeedbackType.LongPress)
+                                }
+                            }
+                        } else null,
+                    onPress = { offset ->
+                        if (enabled) {
+                            handlePressInteraction(offset)
+                        }
+                    },
+                    onTap = {
+                        if (enabled) {
+                            onClick()
+                        }
+                    },
+                )
+            }
+        }
+        return null
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    override fun onPointerEvent(
+        pointerEvent: PointerEvent,
+        pass: PointerEventPass,
+        bounds: IntSize,
+    ) {
+        super.onPointerEvent(pointerEvent, pass, bounds)
+        if (isSuspendingPointerInputEnabled) return
+
+        if (pass == PointerEventPass.Main) {
+            if (downEvent == null) {
+                if (pointerEvent.isChangedToDown(requireUnconsumed = true)) {
+                    handleDownEvent(pointerEvent.changes[0])
+                }
+            } else {
+                if (pointerEvent.isDeepPress) {
+                    handleDeepPress()
+                }
+                if (pointerEvent.changes.fastAll { it.changedToUp() }) {
+                    // All pointers are up
+                    handleUpEvent(pointerEvent.changes[0])
+                } else {
+                    // Other events need to be checked for consumption / bounds related
+                    // cancellation.
+                    handleNonUpEventIfNeeded(pointerEvent, bounds)
+                }
+            }
+        } else if (pass == PointerEventPass.Final) {
+            checkForCancellation(pointerEvent)
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    private fun handleDownEvent(down: PointerInputChange) {
+        down.consume()
+        this.downEvent = down
+
+        if (enabled) {
+            if (tapJob?.isActive == true) {
+                val minTime = currentValueOf(LocalViewConfiguration).doubleTapMinTimeMillis
+                if (down.uptimeMillis - firstTapUpTime < minTime) {
+                    ignoreNextUp = true
+                    // Ignore this down event, don't check for long press / emit press
+                    // interactions
+                    return
+                } else {
+                    isSecondTap = true
+                    tapJob?.cancel()
+                    tapJob = null
+                }
+            }
+            longPressTriggered = false
+            if (isDelayPressesUsingGestureConsumptionEnabled) {
+                handlePressInteractionStart(down)
+            } else {
+                handlePressInteractionStart(down.position, false)
+            }
+            if (onLongClick != null) {
+                longPressJob =
+                    coroutineScope.launch {
+                        delay(currentValueOf(LocalViewConfiguration).longPressTimeoutMillis)
                         onLongClick?.invoke()
                         if (hapticFeedbackEnabled) {
                             currentValueOf(LocalHapticFeedback)
                                 .performHapticFeedback(HapticFeedbackType.LongPress)
                         }
+                        longPressTriggered = true
+                        tapJob?.cancel()
+                        tapJob = null
+                        longPressJob = null
                     }
-                } else null,
-            onPress = { offset ->
-                if (enabled) {
-                    handlePressInteraction(offset)
+            }
+        }
+    }
+
+    private fun handleUpEvent(up: PointerInputChange) {
+        up.consume()
+        if (enabled && !ignoreNextUp) {
+            firstTapUpTime = up.uptimeMillis // store uptime for double tap check
+            if (!longPressTriggered) {
+                if (isSecondTap) {
+                    onDoubleClick?.invoke()
+                } else {
+                    if (onDoubleClick != null) {
+                        tapJob =
+                            coroutineScope.launch {
+                                delay(currentValueOf(LocalViewConfiguration).doubleTapTimeoutMillis)
+                                onClick()
+                                tapJob = null
+                            }
+                    } else {
+                        onClick()
+                    }
                 }
-            },
-            onTap = {
-                if (enabled) {
-                    onClick()
-                }
-            },
-        )
+            }
+            handlePressInteractionRelease(downEvent!!.position, indirectPointer = false)
+        }
+        this.downEvent = null
+        ignoreNextUp = false
+        isSecondTap = false
+        longPressJob?.cancel()
+        longPressJob = null
+        longPressTriggered = false
+    }
+
+    private fun handleNonUpEventIfNeeded(pointerEvent: PointerEvent, bounds: IntSize) {
+        val touchPadding = getExtendedTouchPadding(bounds)
+        for (i in 0 until pointerEvent.changes.size) {
+            val change = pointerEvent.changes[i]
+            if (change.isConsumed || change.isOutOfBounds(bounds, touchPadding)) {
+                cancelPointerInput()
+                break
+            } else if (longPressTriggered) {
+                // Once a long press has triggered, consume all events until pointer is
+                // released
+                change.consume()
+            }
+        }
+    }
+
+    private fun handleDeepPress() {
+        if (enabled && onLongClick != null) {
+            longPressJob?.cancel()
+            longPressJob = null
+            onLongClick?.invoke()
+            if (hapticFeedbackEnabled) {
+                currentValueOf(LocalHapticFeedback)
+                    .performHapticFeedback(HapticFeedbackType.LongPress)
+            }
+            longPressTriggered = true
+        }
+    }
+
+    private fun checkForCancellation(pointerEvent: PointerEvent) {
+        if (downEvent != null && !longPressTriggered) {
+            // Check for cancel by position consumption. We can look on the Final pass of the
+            // existing pointer event because it comes after the pass we checked above. We ignore
+            // cases where the long press has already triggered, as in this case we will consume
+            // events ourselves until the pointer is released.
+            if (pointerEvent.changes.fastAny { it.isConsumed && it != downEvent }) {
+                // Canceled
+                cancelPointerInput()
+            }
+        }
+    }
+
+    override fun onCancelPointerInput() {
+        super.onCancelPointerInput()
+        cancelPointerInput()
+    }
+
+    private fun cancelPointerInput() {
+        downEvent = null
+        longPressJob?.cancel()
+        longPressJob = null
+        tapJob?.cancel()
+        tapJob = null
+        isSecondTap = false
+        longPressTriggered = false
+        firstTapUpTime = -1L
+        ignoreNextUp = false
+        handlePressInteractionCancel(indirectPointer = false)
     }
 
     fun update(
@@ -1050,7 +1220,7 @@ private class CombinedClickableNode(
         var resetPointerInputHandling = false
 
         // onClick is captured inside a callback, not as an input to detectTapGestures,
-        // so no need need to reset pointer input handling
+        // so no need to reset pointer input handling
 
         if (this.onLongClickLabel != onLongClickLabel) {
             this.onLongClickLabel = onLongClickLabel
@@ -1059,7 +1229,7 @@ private class CombinedClickableNode(
 
         // We capture onLongClick and onDoubleClick inside the callback, so if the lambda changes
         // value we don't want to reset input handling - only reset if they go from not-defined to
-        // defined, and vice-versa, as that is what is captured in the parameter to
+        // defined, and vice versa, as that is what is captured in the parameter to
         // detectTapGestures.
         if ((this.onLongClick == null) != (onLongClick == null)) {
             // Adding or removing longClick should cancel any existing press interactions
@@ -1093,7 +1263,10 @@ private class CombinedClickableNode(
             onClick = onClick,
         )
 
-        if (resetPointerInputHandling) resetPointerInputHandler()
+        if (resetPointerInputHandling) {
+            resetPointerInputHandler()
+            cancelPointerInput()
+        }
     }
 
     override fun SemanticsPropertyReceiver.applyAdditionalSemantics() {
@@ -1349,6 +1522,16 @@ internal abstract class AbstractClickableNode(
             recreateIndicationIfNeeded()
         }
         focusableNode.update(this.interactionSource)
+    }
+
+    protected fun getExtendedTouchPadding(size: IntSize): Size {
+        // copied from SuspendingPointerInputModifierNodeImpl.extendedTouchPadding:
+        // TODO expose this as a new public api available outside of suspending apis b/422396609
+        val minimumTouchTargetSizeDp = currentValueOf(LocalViewConfiguration).minimumTouchTargetSize
+        val minimumTouchTargetSize = with(requireDensity()) { minimumTouchTargetSizeDp.toSize() }
+        val horizontal = max(0f, minimumTouchTargetSize.width - size.width) / 2f
+        val vertical = max(0f, minimumTouchTargetSize.height - size.height) / 2f
+        return Size(horizontal, vertical)
     }
 
     override fun onIndirectPointerEvent(event: IndirectPointerEvent, pass: PointerEventPass) {
@@ -1956,7 +2139,5 @@ private fun unsupportedIndicationExceptionMessage(indication: Indication): Strin
 }
 
 private fun IndirectPointerInputChange.changedToUp() = !isConsumed && previousPressed && !pressed
-
-private fun IndirectPointerInputChange.changedToDownIgnoreConsumed() = !previousPressed && pressed
 
 private fun IndirectPointerInputChange.isMovingIgnoreConsumed() = previousPressed && pressed
