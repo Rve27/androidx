@@ -715,6 +715,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             )
             project.configurePublicResourcesStub(variant)
             project.configureMultiplatformSourcesForAndroid(androidXExtension.samplesProjects)
+            project.configureVerifyELFRegionAlignment(variant)
             variant.aarMetadata.configureMinAgpVersion()
         }
 
@@ -875,17 +876,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                     taskProvider.configure { task -> task.dependsOn("compileReleaseJavaWithJavac") }
                 }
             }
-            val verifyELFRegionAlignmentTaskProvider =
-                project.tasks.register(
-                    variant.name + "VerifyELFRegionAlignment",
-                    VerifyELFRegionAlignmentTask::class.java,
-                ) { task ->
-                    task.mergedNativeLibs.set(
-                        variant.artifacts.get(SingleArtifact.MERGED_NATIVE_LIBS)
-                    )
-                    task.cacheEvenIfNoOutputs()
-                }
-            project.addToBuildOnServer(verifyELFRegionAlignmentTaskProvider)
+            project.configureVerifyELFRegionAlignment(variant)
             variant.aarMetadata.configureMinAgpVersion()
         }
         project.buildOnServerDependsOnAssembleRelease()
@@ -1351,6 +1342,18 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 }
             }
         }
+    }
+
+    private fun Project.configureVerifyELFRegionAlignment(variant: LibraryVariant) {
+        val verifyELFRegionAlignmentTaskProvider =
+            project.tasks.register(
+                variant.name + "VerifyELFRegionAlignment",
+                VerifyELFRegionAlignmentTask::class.java,
+            ) { task ->
+                task.mergedNativeLibs.set(variant.artifacts.get(SingleArtifact.MERGED_NATIVE_LIBS))
+                task.cacheEvenIfNoOutputs()
+            }
+        project.addToBuildOnServer(verifyELFRegionAlignmentTaskProvider)
     }
 
     /**
