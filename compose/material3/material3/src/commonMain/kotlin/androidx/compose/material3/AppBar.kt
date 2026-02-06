@@ -200,7 +200,10 @@ fun TopAppBar(
  *   [scrollBehavior] to customize its nested scrolling behavior when working in conjunction with a
  *   scrolling content looks like:
  * @sample androidx.compose.material3.samples.PinnedTopAppBar
+ * @sample androidx.compose.material3.samples.PinnedTopAppBarWithPreScrolledLazyColumn
+ * @sample androidx.compose.material3.samples.PinnedTopAppBarWithReversedLazyGrid
  * @sample androidx.compose.material3.samples.EnterAlwaysTopAppBar
+ * @sample androidx.compose.material3.samples.EnterAlwaysTopAppBarWithReverseScrolling
  * @param title the title to be displayed in the top app bar
  * @param modifier the [Modifier] to be applied to this top app bar
  * @param navigationIcon the navigation icon displayed at the start of the top app bar. This should
@@ -1679,13 +1682,11 @@ object TopAppBarDefaults {
         canScroll: () -> Boolean = { true },
     ): TopAppBarScrollBehavior {
         val isAtTopState = rememberIsAtTop(lazyListState = lazyListState)
-        return remember(state, canScroll, isAtTopState) {
-            PinnedScrollBehavior(
-                state = state,
-                canScroll = canScroll,
-                isAtTopState = { isAtTopState.value },
-            )
-        }
+        return pinnedScrollBehavior(
+            state = state,
+            canScroll = canScroll,
+            isAtTopState = { isAtTopState.value },
+        )
     }
 
     /**
@@ -1712,12 +1713,34 @@ object TopAppBarDefaults {
     ): TopAppBarScrollBehavior {
         val isAtTopState =
             rememberIsAtTop(scrollState = scrollState, reverseScrolling = reverseScrolling)
+        return pinnedScrollBehavior(
+            state = state,
+            canScroll = canScroll,
+            isAtTopState = { isAtTopState.value },
+        )
+    }
+
+    /**
+     * Returns a pinned [TopAppBarScrollBehavior] that tracks nested-scroll callbacks and updates
+     * its [TopAppBarState.contentOffset] accordingly.
+     *
+     * The returned [TopAppBarScrollBehavior] is remembered across compositions.
+     *
+     * @param state the state object to be used to control or observe the top app bar's scroll
+     *   state. See [rememberTopAppBarState] for a state that is remembered across compositions
+     * @param canScroll a callback used to determine whether scroll events are to be handled by this
+     *   pinned [TopAppBarScrollBehavior]
+     * @param isAtTopState state that indicates whether the content is scrolled to the top
+     */
+    @ExperimentalMaterial3Api
+    @Composable
+    fun pinnedScrollBehavior(
+        state: TopAppBarState = rememberTopAppBarState(),
+        canScroll: () -> Boolean = { true },
+        isAtTopState: () -> Boolean = { true },
+    ): TopAppBarScrollBehavior {
         return remember(state, canScroll, isAtTopState) {
-            PinnedScrollBehavior(
-                state = state,
-                canScroll = canScroll,
-                isAtTopState = { isAtTopState.value },
-            )
+            PinnedScrollBehavior(state = state, canScroll = canScroll, isAtTopState = isAtTopState)
         }
     }
 
@@ -1836,15 +1859,13 @@ object TopAppBarDefaults {
         flingAnimationSpec: DecayAnimationSpec<Float>? = rememberSplineBasedDecay(),
     ): TopAppBarScrollBehavior {
         val isAtTopState = rememberIsAtTop(lazyListState = lazyListState)
-        return remember(state, canScroll, snapAnimationSpec, flingAnimationSpec, isAtTopState) {
-            EnterAlwaysScrollBehavior(
-                state = state,
-                snapAnimationSpec = snapAnimationSpec,
-                flingAnimationSpec = flingAnimationSpec,
-                canScroll = canScroll,
-                isAtTopState = { isAtTopState.value },
-            )
-        }
+        return enterAlwaysScrollBehavior(
+            state = state,
+            canScroll = canScroll,
+            snapAnimationSpec = snapAnimationSpec,
+            flingAnimationSpec = flingAnimationSpec,
+            isAtTopState = { isAtTopState.value },
+        )
     }
 
     // TODO: Load the motionScheme tokens from the component tokens file
@@ -1879,16 +1900,54 @@ object TopAppBarDefaults {
         flingAnimationSpec: DecayAnimationSpec<Float>? = rememberSplineBasedDecay(),
     ): TopAppBarScrollBehavior {
         val isAtTopState = rememberIsAtTop(scrollState, reverseScrolling)
-        return remember(state, canScroll, snapAnimationSpec, flingAnimationSpec, isAtTopState) {
+        return enterAlwaysScrollBehavior(
+            state = state,
+            canScroll = canScroll,
+            snapAnimationSpec = snapAnimationSpec,
+            flingAnimationSpec = flingAnimationSpec,
+            isAtTopState = { isAtTopState.value },
+        )
+    }
+
+    // TODO: Load the motionScheme tokens from the component tokens file
+    /**
+     * Returns a [TopAppBarScrollBehavior]. A top app bar that is set up with this
+     * [TopAppBarScrollBehavior] will immediately collapse when the content is pulled up, and will
+     * immediately appear when the content is pulled down. Note: If your layout utilizes
+     * `reverseLayout` with [LazyListState] or involves `reverseScrolling` with [ScrollState],
+     * consider using other overloads that are specifically designed for these use cases.
+     *
+     * The returned [TopAppBarScrollBehavior] is remembered across compositions.
+     *
+     * @param state the state object to be used to control or observe the top app bar's scroll
+     *   state. See [rememberTopAppBarState] for a state that is remembered across compositions.
+     * @param canScroll a callback used to determine whether scroll events are to be handled by this
+     *   [TopAppBarScrollBehavior]
+     * @param snapAnimationSpec an optional [AnimationSpec] that defines how the top app bar snaps
+     *   to either fully collapsed or fully extended state when a fling or a drag scrolled it into
+     *   an intermediate position
+     * @param flingAnimationSpec an optional [DecayAnimationSpec] that defined how to fling the top
+     *   app bar when the user flings the app bar itself, or the content below it
+     * @param isAtTopState state that indicates whether the content is scrolled to the top
+     */
+    @ExperimentalMaterial3Api
+    @Composable
+    fun enterAlwaysScrollBehavior(
+        state: TopAppBarState = rememberTopAppBarState(),
+        canScroll: () -> Boolean = { true },
+        snapAnimationSpec: AnimationSpec<Float>? = MotionSchemeKeyTokens.DefaultEffects.value(),
+        flingAnimationSpec: DecayAnimationSpec<Float>? = rememberSplineBasedDecay(),
+        isAtTopState: () -> Boolean = { true },
+    ): TopAppBarScrollBehavior =
+        remember(state, canScroll, snapAnimationSpec, flingAnimationSpec) {
             EnterAlwaysScrollBehavior(
                 state = state,
                 snapAnimationSpec = snapAnimationSpec,
                 flingAnimationSpec = flingAnimationSpec,
                 canScroll = canScroll,
-                isAtTopState = { isAtTopState.value },
+                isAtTopState = isAtTopState,
             )
         }
-    }
 
     // TODO: Load the motionScheme tokens from the component tokens file
     /**
@@ -3642,10 +3701,7 @@ private class EnterAlwaysScrollBehavior(
             }
 
             override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-                if (
-                    available.y > 0f &&
-                        (state.heightOffset == 0f || state.heightOffset == state.heightOffsetLimit)
-                ) {
+                if (available.y > 0f) {
                     // Reset the total content offset to zero when scrolling all the way down.
                     // This will eliminate some float precision inaccuracies.
                     state.contentOffset = 0f
