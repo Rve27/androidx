@@ -136,6 +136,7 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
 
     private final PanelEntity mMainPanelEntity;
     private final AtomicBoolean mIsBoundaryConsentGrantedCache;
+    private final int mSpatialApiVersion;
     @VisibleForTesting boolean mIsExtensionVisibilityStateCallbackRegistered = false;
     @VisibleForTesting Closeable mKeyEntityTransformCloseable;
     private @Nullable Activity mActivity;
@@ -205,6 +206,7 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
         // Initialize the boundary consent cache and register the listener.
         mIsBoundaryConsentGrantedCache = new AtomicBoolean(calculateBoundaryConsentState());
         registerBoundaryConsentStateListener();
+        mSpatialApiVersion = new SpatialCoreApiVersionProvider().getSpatialApiVersion();
     }
 
     static @NonNull SpatialSceneRuntime create(
@@ -876,36 +878,41 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
         if (mKeyEntityTransformCloseable == null) {
             return;
         }
-        try {
-            mKeyEntityTransformCloseable.close();
-            mExtensions.getUnderlyingObject().clearSpatialContinuityHint(mActivity);
-        } catch (IOException e) {
-            if (throwException) {
-                // Re-throw as an unchecked exception but include the original cause.
-                throw new RuntimeException(
-                        "Could not close the key entity's transform subscription.", e);
+        if (mSpatialApiVersion >= 2) {
+            try {
+                mKeyEntityTransformCloseable.close();
+                mExtensions.getUnderlyingObject().clearSpatialContinuityHint(mActivity);
+            } catch (IOException e) {
+                if (throwException) {
+                    // Re-throw as an unchecked exception but include the original cause.
+                    throw new RuntimeException(
+                            "Could not close the key entity's transform subscription.", e);
+                }
+            } finally {
+                // Ensure the reference is cleared even if closing fails.
+                mKeyEntityTransformCloseable = null;
             }
-        } finally {
-            // Ensure the reference is cleared even if closing fails.
-            mKeyEntityTransformCloseable = null;
         }
     }
 
     /** Creates a new subscription to the transform of the given key entity. */
     private void setupKeyEntitySubscription(@NonNull AndroidXrEntity entity) {
-        mKeyEntityTransformCloseable =
-                entity.getNode()
-                        .subscribeToTransform(
-                                mExecutor,
-                                nodeTransform -> {
-                                    Matrix4 transform =
-                                            RuntimeUtils.getMatrix(nodeTransform.getTransform());
-                                    mExtensions
-                                            .getUnderlyingObject()
-                                            .setSpatialContinuityHint(
-                                                    mActivity,
-                                                    getPositionFromTransform(transform),
-                                                    getRotationFromTransform(transform));
-                                });
+        if (mSpatialApiVersion >= 2) {
+            mKeyEntityTransformCloseable =
+                    entity.getNode()
+                            .subscribeToTransform(
+                                    mExecutor,
+                                    nodeTransform -> {
+                                        Matrix4 transform =
+                                                RuntimeUtils.getMatrix(
+                                                        nodeTransform.getTransform());
+                                        mExtensions
+                                                .getUnderlyingObject()
+                                                .setSpatialContinuityHint(
+                                                        mActivity,
+                                                        getPositionFromTransform(transform),
+                                                        getRotationFromTransform(transform));
+                                    });
+        }
     }
 }
