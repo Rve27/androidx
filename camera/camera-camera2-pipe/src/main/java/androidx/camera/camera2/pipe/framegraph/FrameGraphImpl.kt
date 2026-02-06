@@ -26,6 +26,7 @@ import androidx.camera.camera2.pipe.CameraControls3A
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraGraphId
 import androidx.camera.camera2.pipe.FrameBuffer
+import androidx.camera.camera2.pipe.FrameCapture
 import androidx.camera.camera2.pipe.FrameGraph
 import androidx.camera.camera2.pipe.FrameInfo
 import androidx.camera.camera2.pipe.FrameMetadata
@@ -33,6 +34,7 @@ import androidx.camera.camera2.pipe.FrameNumber
 import androidx.camera.camera2.pipe.GraphState
 import androidx.camera.camera2.pipe.Lock3ABehavior
 import androidx.camera.camera2.pipe.Parameters
+import androidx.camera.camera2.pipe.Request
 import androidx.camera.camera2.pipe.RequestListeners
 import androidx.camera.camera2.pipe.Result3A
 import androidx.camera.camera2.pipe.StreamId
@@ -57,6 +59,7 @@ constructor(
     private val frameGraphBuffers: FrameGraphBuffers,
     @FrameGraphCoroutineScope private val frameGraphCoroutineScope: CoroutineScope,
     private val controller3A: Controller3A,
+    private val frameGraphFrameCaptureQueue: FrameGraphFrameCaptureQueue,
 ) : FrameGraph, CameraControls3A by cameraGraph {
     init {
         // Wire up the frameStartedListener.
@@ -141,6 +144,14 @@ constructor(
         cameraGraph.stop()
     }
 
+    override fun capture(request: Request): FrameCapture {
+        return frameGraphFrameCaptureQueue.enqueue(request)
+    }
+
+    override fun capture(requests: List<Request>): List<FrameCapture> {
+        return frameGraphFrameCaptureQueue.enqueue(requests)
+    }
+
     override fun captureWith(
         streamIds: Set<StreamId>,
         parameters: Map<Any, Any?>,
@@ -182,6 +193,7 @@ constructor(
         }
 
     override fun close() {
+        frameGraphFrameCaptureQueue.close()
         cameraGraph.close()
         frameGraphCoroutineScope.cancel()
     }
