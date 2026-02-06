@@ -1039,6 +1039,7 @@ includeProject(":room3:room3-compiler-processing", [BuildType.MAIN, BuildType.CO
 includeProject(":room3:room3-compiler-processing-testing", [BuildType.MAIN, BuildType.COMPOSE, BuildType.FLAN])
 includeProject(":room3:room3-external-antlr", [BuildType.MAIN])
 includeProject(":room3:room3-guava", [BuildType.MAIN])
+includeProject(":room3:room3-livedata", [BuildType.MAIN, BuildType.KMP])
 includeProject(":room3:room3-gradle-plugin", [BuildType.MAIN])
 includeProject(":room3:room3-migration", [BuildType.MAIN, BuildType.COMPOSE, BuildType.KMP, BuildType.INFRAROGUE])
 includeProject(":room3:room3-paging", [BuildType.MAIN, BuildType.COMPOSE, BuildType.KMP, BuildType.INFRAROGUE])
