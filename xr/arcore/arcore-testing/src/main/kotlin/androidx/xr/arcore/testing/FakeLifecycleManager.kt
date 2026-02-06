@@ -97,12 +97,7 @@ public class FakeLifecycleManager(
             DeviceTrackingMode.LAST_KNOWN,
             DepthEstimationMode.SMOOTH_AND_RAW,
             AnchorPersistenceMode.LOCAL,
-            augmentedObjectCategories =
-                listOf(
-                    AugmentedObjectCategory.KEYBOARD,
-                    AugmentedObjectCategory.MOUSE,
-                    AugmentedObjectCategory.LAPTOP,
-                ),
+            augmentedObjectCategories = AugmentedObjectCategory.allSupported(),
         )
 
     override fun configure(config: Config) {
