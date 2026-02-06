@@ -2726,8 +2726,13 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 """
                 import androidx.room3.*
                 import androidx.lifecycle.*
+                import kotlinx.coroutines.flow.map
+                import androidx.lifecycle.LiveData
+                import androidx.lifecycle.asLiveData
+                import androidx.room3.livedata.LiveDataDaoReturnTypeConverter
 
                 @Dao
+                @DaoReturnTypeConverters(LiveDataDaoReturnTypeConverter::class)
                 interface MyDao {
                     @Query("SELECT * FROM MyEntity WHERE pk IN (:arg)")
                     fun getLiveData(vararg arg: String?): LiveData<MyEntity>
@@ -2748,7 +2753,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
         runTest(
             sources = listOf(src, databaseSrc),
             expectedFilePath = getTestGoldenPath(testName.methodName),
-            compiledFiles = compileFiles(listOf(COMMON.LIVE_DATA)),
+            compiledFiles = compileFiles(listOf(COMMON.LIVE_DATA, COMMON.FLOW_LIVE_DATA)),
         )
     }
 
