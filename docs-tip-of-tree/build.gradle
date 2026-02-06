@@ -83,7 +83,7 @@ dependencies {
     kmpDocs(project(":compose:material3:xr:xr-adaptive"))
     kmpDocs(project(":compose:material:material"))
     kmpDocs(project(":compose:material:material-ripple"))
-    docs(project(":compose:material:material-navigation"))
+    kmpDocs(project(":compose:material:material-navigation"))
     docs(project(":compose:remote:remote-core"))
     kmpDocs(project(":compose:remote:remote-creation"))
     docs(project(":compose:remote:remote-creation-compose"))
