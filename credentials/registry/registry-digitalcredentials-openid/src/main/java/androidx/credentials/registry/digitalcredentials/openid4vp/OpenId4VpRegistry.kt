@@ -97,6 +97,7 @@ public constructor(
         private const val DC_SD_JWT = "dc+sd-jwt"
         private const val ISSUANCE = "issuance"
         private const val SUPPORTED = "supported"
+        private const val METADATA_DISPLAY_TEXT = "metadata_display_text"
 
         private fun getIconBytes(icon: Bitmap): ByteArray {
             val currWidth = icon.width
@@ -133,6 +134,10 @@ public constructor(
                         val verificationDisplay = JSONObject()
                         verificationDisplay.put(TITLE, display.title)
                         verificationDisplay.putOpt(SUBTITLE, display.subtitle)
+                        verificationDisplay.putOpt(
+                            METADATA_DISPLAY_TEXT,
+                            display.metadataDisplayText,
+                        )
                         val icon =
                             iconMap.get(itemId)?.get(display.displayType)
                                 ?: throw IllegalArgumentException(
