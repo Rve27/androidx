@@ -135,8 +135,8 @@ class PdfViewerFragmentExtended : PdfViewerFragment(), FeatureFlagListener {
         pdfThumbnailRecyclerView.visibility = View.GONE
     }
 
-    override fun onLoadDocumentSuccess() {
-        super.onLoadDocumentSuccess()
+    override fun onLoadDocumentSuccess(document: PdfDocument) {
+        super.onLoadDocumentSuccess(document)
         if (PdfFeatureFlags.isThumbnailPreviewEnabled) {
             thumbnailAdapter.clearThumbnails()
             generateThumbnails()
