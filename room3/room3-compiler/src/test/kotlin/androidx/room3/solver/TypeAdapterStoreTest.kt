@@ -34,7 +34,6 @@ import androidx.room3.compiler.processing.util.runKspTest
 import androidx.room3.compiler.processing.util.runProcessorTest
 import androidx.room3.ext.CommonTypeNames
 import androidx.room3.ext.GuavaUtilConcurrentTypeNames
-import androidx.room3.ext.LifecyclesTypeNames
 import androidx.room3.ext.PagingTypeNames
 import androidx.room3.ext.ReactiveStreamsTypeNames
 import androidx.room3.ext.RoomTypeNames.ROOM_DB
@@ -48,7 +47,6 @@ import androidx.room3.processor.DaoProcessor
 import androidx.room3.processor.DaoProcessorTest
 import androidx.room3.processor.ProcessorErrors
 import androidx.room3.solver.binderprovider.ListenableFuturePagingSourceQueryResultBinderProvider
-import androidx.room3.solver.binderprovider.LiveDataQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.PagingSourceQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.RxJava3PagingSourceQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.RxQueryResultBinderProvider
@@ -981,19 +979,6 @@ class TypeAdapterStoreTest {
                         .matches(future.type)
                 )
                 .isTrue()
-        }
-    }
-
-    @Test
-    fun testFindLiveData() {
-        runKspTest(sources = listOf(COMMON.COMPUTABLE_LIVE_DATA, COMMON.LIVE_DATA)) { invocation ->
-            val liveData =
-                invocation.processingEnv.requireTypeElement(LifecyclesTypeNames.LIVE_DATA)
-            assertThat(liveData, notNullValue())
-            assertThat(
-                LiveDataQueryResultBinderProvider(invocation.context).matches(liveData.type),
-                `is`(true),
-            )
         }
     }
 

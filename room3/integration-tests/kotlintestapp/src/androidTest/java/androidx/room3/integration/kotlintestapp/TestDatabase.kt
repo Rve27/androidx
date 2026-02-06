@@ -16,6 +16,7 @@
 
 package androidx.room3.integration.kotlintestapp
 
+import androidx.room3.DaoReturnTypeConverters
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.TypeConverter
@@ -57,6 +58,7 @@ import androidx.room3.integration.kotlintestapp.vo.School
 import androidx.room3.integration.kotlintestapp.vo.Song
 import androidx.room3.integration.kotlintestapp.vo.Toy
 import androidx.room3.integration.kotlintestapp.vo.User
+import androidx.room3.livedata.LiveDataDaoReturnTypeConverter
 import java.nio.ByteBuffer
 import java.util.Date
 import java.util.UUID
@@ -91,6 +93,7 @@ import java.util.UUID
     version = 1,
     exportSchema = false,
 )
+@DaoReturnTypeConverters(LiveDataDaoReturnTypeConverter::class)
 @TypeConverters(TestDatabase.Converters::class)
 abstract class TestDatabase : RoomDatabase() {
 
