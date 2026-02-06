@@ -44,13 +44,19 @@ package androidx.wear.compose.foundation
  * paths being completely removed from the artifact, which can often have nontrivial positive
  * performance impact.
  *
- *      -assumevalues class androidx.wear.compose.runtime.WearComposeFoundationFlags {
+ *      -assumevalues class androidx.wear.compose.foundation.WearComposeFoundationFlags {
  *          public static boolean SomeFeatureEnabled return false
  *      }
  */
 @ExperimentalWearFoundationApi
 public object WearComposeFoundationFlags {
-    /** Whether to use TransformingLazyColumn clickable threshold. */
+    /**
+     * Whether to use the new clickability threshold in
+     * [androidx.wear.compose.foundation.lazy.TransformingLazyColumn]. When true, the clickability
+     * threshold ignores clicks in the top or bottom 20dp of the layout, to avoid accidental clicks
+     * on small items that are partially shown due to fading/scaling in the TransformingLazyColumn.
+     * If false, all clicks will be recognized instead
+     */
     @field:Suppress("MutableBareField")
     @JvmField
     public var isTransformingLazyColumnClickableThresholdEnabled: Boolean = true
