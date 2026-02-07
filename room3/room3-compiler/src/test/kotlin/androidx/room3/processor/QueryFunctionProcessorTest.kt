@@ -55,6 +55,7 @@ import createVerifierFromEntitiesAndViews
 import kotlin.collections.listOf
 import mockElementAndType
 import org.junit.AssumptionViolatedException
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -333,6 +334,8 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
     }
 
     @Test
+    @Ignore("b/482435352") // Temporarily ignore, Java sources are not picking up the
+    // livedata dependency from the aar
     fun testLiveDataWithWithClause() {
         singleQueryMethod<ReadQueryFunction>(
             """
@@ -349,6 +352,8 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
     }
 
     @Test
+    @Ignore("b/482435352") // Temporarily ignore, Java sources are not picking up the
+    // livedata dependency from the aar
     fun testLiveDataWithNothingToObserve() {
         singleQueryMethod<ReadQueryFunction>(
             """
@@ -363,6 +368,8 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
     }
 
     @Test
+    @Ignore("b/482435352") // Temporarily ignore, Java sources are not picking up the
+    // livedata dependency from the aar
     fun testLiveDataWithWithClauseAndNothingToObserve() {
         singleQueryMethod<ReadQueryFunction>(
             """

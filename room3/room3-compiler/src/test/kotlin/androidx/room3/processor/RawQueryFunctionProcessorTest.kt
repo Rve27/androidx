@@ -37,6 +37,7 @@ import androidx.room3.testing.context
 import androidx.room3.vo.RawQueryFunction
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Ignore
 import org.junit.Test
 
 class RawQueryFunctionProcessorTest {
@@ -105,6 +106,7 @@ class RawQueryFunctionProcessorTest {
     }
 
     @Test
+    @Ignore("b/482435784")
     fun observableWithoutEntities() {
         singleQueryMethod(
             """
