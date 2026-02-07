@@ -138,6 +138,68 @@ class CameraGraphParametersImplTest {
             assertThat(csp1.events[1].graphParameters).containsExactly(TEST_KEY, 42)
         }
 
+    @Test
+    fun setMultipleTimes_invokesUpdate() =
+        testScope.runTest {
+            graphProcessor.onGraphStarted(grp1)
+            graphProcessor.repeatingRequest = request1
+
+            val parameters =
+                CameraGraphParametersImpl(GraphSessionLock(), graphProcessor, testScope)
+
+            parameters[TEST_KEY] = 1
+            parameters[TEST_KEY] = 2
+            parameters[TEST_KEY] = 3
+
+            advanceUntilIdle()
+
+            // Verify that the final applied parameter is 3
+            val lastEvent = csp1.events.last()
+            assertThat(lastEvent.graphParameters[TEST_KEY]).isEqualTo(3)
+        }
+
+    @Test
+    fun flush_applyUpdates() =
+        testScope.runTest {
+            graphProcessor.onGraphStarted(grp1)
+            graphProcessor.repeatingRequest = request1
+
+            val parameters =
+                CameraGraphParametersImpl(GraphSessionLock(), graphProcessor, testScope)
+            parameters[TEST_KEY] = 42
+
+            parameters.flush()
+
+            advanceUntilIdle()
+
+            assertThat(csp1.events.last().graphParameters[TEST_KEY]).isEqualTo(42)
+        }
+
+    @Test
+    fun flush_updatesWithoutSessionLockToken() =
+        testScope.runTest {
+            graphProcessor.onGraphStarted(grp1)
+            graphProcessor.repeatingRequest = request1
+            advanceUntilIdle()
+
+            val lock = GraphSessionLock()
+            val token = lock.tryAcquireToken()!!
+            val parameters = CameraGraphParametersImpl(lock, graphProcessor, testScope)
+
+            val eventsBeforeFlush = csp1.events.size
+
+            parameters[TEST_KEY] = 42
+
+            parameters.flush()
+
+            advanceUntilIdle()
+
+            assertThat(csp1.events.size).isGreaterThan(eventsBeforeFlush)
+            assertThat(csp1.events.last().graphParameters[TEST_KEY]).isEqualTo(42)
+
+            token.release()
+        }
+
     companion object {
         private val CAPTURE_REQUEST_KEY = CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION
         private val TEST_NULLABLE_KEY = CaptureRequest.BLACK_LEVEL_LOCK
