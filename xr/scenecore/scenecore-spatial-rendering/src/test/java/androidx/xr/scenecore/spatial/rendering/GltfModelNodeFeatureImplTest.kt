@@ -202,4 +202,11 @@ class GltfModelNodeFeatureImplTest {
         val nodeData = nodes.keys.first { it.entityId == modelImpressSubNode.handle }
         assertThat(nodeData.nodeMaterialOverrides).doesNotContainKey(primIndex)
     }
+
+    @Test
+    fun name_returnsNull_whenInputIsEmpty() {
+        val feature =
+            GltfModelNodeFeatureImpl(fakeImpressApi, modelImpressSubNode, modelImpressNode, "")
+        assertThat(feature.name).isNull()
+    }
 }
