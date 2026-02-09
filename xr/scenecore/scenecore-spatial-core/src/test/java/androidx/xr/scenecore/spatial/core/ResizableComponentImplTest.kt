@@ -65,7 +65,7 @@ class ResizableComponentImplTest {
     private val fakeExecutor = FakeScheduledExecutorService()
     private val xrExtensions = getXrExtensions()!!
     private val entityManager = EntityManager()
-    private val panelShadowRenderer: PanelShadowRenderer = mock<PanelShadowRenderer>()
+    private val panelShadowRenderer: EntityShadowRenderer = mock<EntityShadowRenderer>()
     private val nodeRepository: NodeRepository = NodeRepository.getInstance()
     private lateinit var activitySpaceImpl: ActivitySpaceImpl
     private lateinit var fakeSceneRuntime: SpatialSceneRuntime
