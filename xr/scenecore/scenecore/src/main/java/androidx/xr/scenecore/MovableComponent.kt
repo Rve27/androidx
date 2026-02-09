@@ -50,8 +50,6 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * This component cannot be attached to an [AnchorEntity] or to the [ActivitySpace]. Calling
  * [Entity.addComponent] to an Entity with these types will return false.
- *
- * NOTE: This Component is currently unsupported on [GltfModelEntity].
  */
 public class MovableComponent
 private constructor(

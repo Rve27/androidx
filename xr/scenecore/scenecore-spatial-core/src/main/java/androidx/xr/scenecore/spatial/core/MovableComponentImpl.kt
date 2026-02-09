@@ -90,7 +90,11 @@ internal class MovableComponentImpl(
     private var grabPointToCenterOffset = Vector3.Zero
     private val inputEventListener = InputEventListener { inputEvent: InputEvent ->
         moveEventListenersMap.forEach { (listener: MoveEventListener, executor: Executor) ->
-            executor.execute { listener.onMoveEvent(getMoveEvent(inputEvent)) }
+            executor.execute {
+                val moveEvent = getMoveEventFromInputEvent(inputEvent)
+                // ignoring other events that are not UP, DOWN and END
+                moveEvent?.let { listener.onMoveEvent(it) }
+            }
         }
     }
 
@@ -114,14 +118,14 @@ internal class MovableComponentImpl(
 
         moveEventListenersMap.forEach { (listener: MoveEventListener, listenerExecutor: Executor) ->
             listenerExecutor.execute {
-                listener.onMoveEvent(getMoveEvent(reformEvent, newPose, newScale))
+                listener.onMoveEvent(getMoveEventFromReformEvent(reformEvent, newPose, newScale))
             }
         }
         lastPose = newPose
         lastScale = newScale
     }
 
-    private fun getMoveEvent(
+    private fun getMoveEventFromReformEvent(
         reformEvent: ReformEvent,
         newPose: Pose,
         newScale: Vector3,
@@ -146,17 +150,10 @@ internal class MovableComponentImpl(
         )
     }
 
-    private fun getMoveEvent(inputEvent: InputEvent): MoveEvent {
+    private fun getMoveEventFromInputEvent(inputEvent: InputEvent): MoveEvent? {
         var moveState = -1
 
-        val parent =
-            if (entity != null && entity!!.parent != null) entity!!.parent else activitySpaceImpl
-
-        val originInParentSpace = activitySpaceImpl.transformPositionTo(inputEvent.origin, parent!!)
-        val directionInParentSpace =
-            activitySpaceImpl.transformDirectionTo(inputEvent.direction, parent)
-        val currentRay = Ray(originInParentSpace, directionInParentSpace)
-
+        val parent = entity?.parent ?: activitySpaceImpl
         when (inputEvent.action) {
             InputEvent.Action.DOWN -> {
                 moveState = MoveEvent.MOVE_STATE_START
@@ -165,23 +162,29 @@ internal class MovableComponentImpl(
                 isMoving = true
                 if (!inputEvent.hitInfoList.isEmpty()) {
                     val hitPosition = inputEvent.hitInfoList[0].hitPosition
-                    hitPointToOriginDistance = hitPosition!!.minus(originInParentSpace).length
-                    grabPointToCenterOffset = entity!!.getPose().translation.minus(hitPosition)
+                    hitPointToOriginDistance = hitPosition!!.minus(inputEvent.origin).length
+                    grabPointToCenterOffset =
+                        entity!!.getPose(Space.ACTIVITY).translation.minus(hitPosition)
                 }
             }
             InputEvent.Action.MOVE -> moveState = MoveEvent.MOVE_STATE_ONGOING
             InputEvent.Action.UP -> {
                 moveState = MoveEvent.MOVE_STATE_END
                 isMoving = false
-                entityShadowRenderer.destroy()
+                if (entity is GltfEntityImpl) entityShadowRenderer.destroy()
             }
+            else -> return null
         }
 
+        val originInParentSpace = activitySpaceImpl.transformPositionTo(inputEvent.origin, parent)
+        val directionInParentSpace =
+            activitySpaceImpl.transformDirectionTo(inputEvent.direction, parent)
+        val currentRay = Ray(originInParentSpace, directionInParentSpace)
         val grabPoint =
             originInParentSpace.plus(
                 directionInParentSpace.toNormalized().times(hitPointToOriginDistance)
             )
-        val proposedTranslation = grabPoint.plus(grabPointToCenterOffset)
+        var proposedTranslation = grabPoint.plus(grabPointToCenterOffset)
         val proposedPose = Pose(proposedTranslation, entity!!.getPose().rotation)
 
         val moveEvent =
@@ -197,7 +200,7 @@ internal class MovableComponentImpl(
                 null,
                 null,
             )
-        lastPose = entity!!.getPose()
+        lastPose = proposedPose
         lastScale = entity!!.getScale()
         return moveEvent
     }

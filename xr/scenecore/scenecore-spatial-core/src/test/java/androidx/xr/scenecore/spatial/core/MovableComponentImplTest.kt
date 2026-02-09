@@ -111,6 +111,7 @@ class MovableComponentImplTest {
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @After
     fun tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
@@ -308,6 +309,14 @@ class MovableComponentImplTest {
         }
         movableComponent.addMoveEventListener(eventListener)
 
+        val entity = gltfEntity as AndroidXrEntity?
+        val expectedTransform =
+            floatArrayOf(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f, 13f, 14f, 15f, 16f)
+        val transform = Mat4f(expectedTransform)
+        val hitPosition = Vec3(1f, 2f, 3f)
+        val extensionHitInfo =
+            InputEvent.HitInfo(1, checkNotNull(entity).mNode, transform, hitPosition)
+
         val inputEvent =
             ShadowInputEvent.create(
                 InputEvent.SOURCE_UNKNOWN,
@@ -315,13 +324,14 @@ class MovableComponentImplTest {
                 0,
                 Vec3(0f, 0f, 0f),
                 Vec3(1f, 1f, 1f),
+                extensionHitInfo,
+                extensionHitInfo,
                 InputEvent.DISPATCH_FLAG_NONE,
                 InputEvent.ACTION_DOWN,
             )
-        val entity = gltfEntity as AndroidXrEntity
-        val shadowNode = ShadowNode.extract(entity.mNode)
         Truth.assertThat(gltfEntity.addComponent(movableComponent)).isTrue()
 
+        val shadowNode = ShadowNode.extract(checkNotNull(entity).mNode)
         Truth.assertThat(shadowNode.inputListener).isNotNull()
         Truth.assertThat(shadowNode.inputExecutor).isEqualTo(fakeExecutor)
         shadowNode.inputExecutor.execute { shadowNode.inputListener.accept(inputEvent) }
