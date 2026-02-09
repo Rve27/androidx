@@ -91,6 +91,20 @@ public class LayoutComponent extends Component {
     protected boolean mChildrenHaveZIndex = false;
     private CanvasOperations mDrawContentOperations;
 
+    /**
+     * Get the horizontal scroll delegate
+     */
+    public @Nullable ScrollDelegate getHorizontalScrollDelegate() {
+        return mHorizontalScrollDelegate;
+    }
+
+    /**
+     * Get the vertical scroll delegate
+     */
+    public @Nullable ScrollDelegate getVerticalScrollDelegate() {
+        return mVerticalScrollDelegate;
+    }
+
     public LayoutComponent(
             @Nullable Component parent,
             int componentId,
