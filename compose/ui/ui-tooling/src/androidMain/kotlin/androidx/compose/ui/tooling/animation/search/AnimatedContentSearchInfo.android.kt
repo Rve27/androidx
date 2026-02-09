@@ -28,6 +28,10 @@ import androidx.compose.ui.tooling.animation.clock.TransitionClock
  */
 internal class AnimatedContentSearchInfo(transition: Transition<*>) :
     TransitionBasedSearchInfo<AnimatedContentComposeAnimation<*>>(transition) {
+
+    override val label: String
+        get() = transition.label ?: "AnimatedContent"
+
     override fun createAnimation(): AnimatedContentComposeAnimation<*>? {
         return transition.parseAnimatedContent()
     }

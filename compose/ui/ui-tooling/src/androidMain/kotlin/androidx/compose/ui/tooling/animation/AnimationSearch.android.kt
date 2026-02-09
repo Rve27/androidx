@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.animation.search.AnimatedContentSearchInfo
 import androidx.compose.ui.tooling.animation.search.AnimatedVisibilitySearchInfo
 import androidx.compose.ui.tooling.animation.search.InfiniteTransitionSearchInfo
 import androidx.compose.ui.tooling.animation.search.TransitionSearchInfo
+import androidx.compose.ui.tooling.animation.search.UnsupportedSearchInfo
 import androidx.compose.ui.tooling.data.CallGroup
 import androidx.compose.ui.tooling.data.Group
 import androidx.compose.ui.tooling.data.UiToolingDataApi
@@ -108,9 +109,15 @@ internal class AnimationSearch(
     private fun unsupportedSearch() =
         if (UnsupportedComposeAnimation.apiAvailable)
             setOf(
-                AnimateContentSizeSearch { clock().trackAnimateContentSize(it) },
-                TargetBasedSearch { clock().trackTargetBasedAnimations(it) },
-                DecaySearch { clock().trackDecayAnimations(it) },
+                AnimateContentSizeSearch {
+                    clock().trackUnsupported(UnsupportedSearchInfo(it, "animateContentSize"))
+                },
+                TargetBasedSearch {
+                    clock().trackUnsupported(UnsupportedSearchInfo(it, "TargetBasedAnimation"))
+                },
+                DecaySearch {
+                    clock().trackUnsupported(UnsupportedSearchInfo(it, "DecayAnimation"))
+                },
             )
         else emptyList()
 
