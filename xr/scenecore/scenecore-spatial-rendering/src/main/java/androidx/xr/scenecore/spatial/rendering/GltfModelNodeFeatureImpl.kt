@@ -29,8 +29,10 @@ internal class GltfModelNodeFeatureImpl(
     private val impressApi: ImpressApi,
     private val impressNode: ImpressNode,
     private val modelRootNode: ImpressNode,
-    override val name: String?,
+    name: String?,
 ) : GltfModelNodeFeature {
+
+    override val name: String? = name?.ifEmpty { null }
 
     override var localPose: Pose
         get() = impressApi.getImpressNodeLocalTransform(impressNode).pose
