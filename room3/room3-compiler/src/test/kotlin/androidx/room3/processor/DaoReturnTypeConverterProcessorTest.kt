@@ -23,6 +23,7 @@ import androidx.room3.compiler.processing.util.XTestInvocation
 import androidx.room3.compiler.processing.util.runKspTest
 import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_EMPTY_CLASS
 import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_WITHOUT_TYPE_PARAM_SHOULD_RETURN_UNIT
+import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_LAMBDA_MUST_BE_LAST_PARAM
 import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_MUST_CONTAIN_AN_ANNOTATED_FUNCTION
 import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_MUST_HAVE_ONE_LAMBDA_PARAM_THAT_IS_SUSPEND
 import androidx.room3.processor.ProcessorErrors.daoReturnTypeConverterFunctionsWithATypeParamShouldHaveReturnTypeContainingTheSameTypeArg
@@ -296,6 +297,35 @@ class DaoReturnTypeConverterProcessorTest {
             sources = listOf(problematicConverter, DATABASE, DAO, FOO_BAR_TYPES),
             expectedErrorCount = 1,
             expectedError = DAO_RETURN_TYPE_CONVERTER_MUST_HAVE_ONE_LAMBDA_PARAM_THAT_IS_SUSPEND,
+        )
+    }
+
+    @Test
+    fun lambdaParamMustBeLast() {
+        val problematicConverter =
+            Source.kotlin(
+                "FooReturnTypeConverter.kt",
+                """
+                import androidx.room3.*
+
+                class FooReturnTypeConverter {
+                    @DaoReturnTypeConverter
+                    suspend fun <T> convert(
+                        database: RoomDatabase,
+                        executeAndConvert: suspend () -> T,
+                        roomRawQuery: RoomRawQuery,
+                        tableNames: Array<String>,
+                    ): Foo<T> {
+                        TODO()
+                    }
+                }
+                """
+                    .trimIndent(),
+            )
+        runTest(
+            sources = listOf(problematicConverter, DATABASE, DAO, FOO_BAR_TYPES),
+            expectedErrorCount = 1,
+            expectedError = DAO_RETURN_TYPE_CONVERTER_LAMBDA_MUST_BE_LAST_PARAM,
         )
     }
 
