@@ -32,6 +32,20 @@ internal data class InfiniteTransitionSearchInfo(
     val infiniteTransition: InfiniteTransition,
     val toolingOverride: ToolingOverride<Long>,
 ) : SearchInfo<InfiniteTransitionComposeAnimation, InfiniteTransitionClock> {
+
+    override val animationObject: Any = infiniteTransition
+
+    override val label: String
+        get() = infiniteTransition.label
+
+    override val initialState: Any? = null
+
+    override val targetState: Any? = null
+
+    override fun setInitialStateToCurrentAnimationValue() {}
+
+    override fun setTargetStateToCurrentAnimationValue() {}
+
     override fun createAnimation(): InfiniteTransitionComposeAnimation? {
         return this.parse()
     }
