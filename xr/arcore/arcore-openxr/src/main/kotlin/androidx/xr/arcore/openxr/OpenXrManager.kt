@@ -91,7 +91,6 @@ internal constructor(
     override var config: Config =
         Config(
             PlaneTrackingMode.DISABLED,
-            augmentedObjectCategories = listOf(),
             HandTrackingMode.DISABLED,
             DeviceTrackingMode.DISABLED,
             DepthEstimationMode.DISABLED,
