@@ -369,6 +369,7 @@ public fun RememberRemoteDocumentInline(
                 captureSingleRemoteDocumentV2(
                     creationDisplayInfo = createCreationDisplayInfo(context),
                     layoutDirection = layoutDirection,
+                    profile = profile,
                     context = context,
                     content = content,
                 )
