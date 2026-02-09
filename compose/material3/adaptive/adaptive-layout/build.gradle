@@ -53,6 +53,14 @@ androidXMultiplatform {
             implementation("androidx.window:window-core:1.4.0")
         }
 
+        commonTest {
+            dependencies {
+                implementation(libs.kotlinTest)
+                implementation(project(":annotation:annotation"))
+                implementation(project(":kruth:kruth"))
+            }
+        }
+
         androidMain.dependencies {
             api("androidx.annotation:annotation:1.9.1")
             api("androidx.annotation:annotation-experimental:1.5.1")
