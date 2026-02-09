@@ -57,14 +57,10 @@ class CookieManagerActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_get_cookie_info)
         setTitle(R.string.cookie_manager_activity_title)
-        WebkitHelpers.enableEdgeToEdge(this)
-        WebkitHelpers.appendWebViewVersionToTitle(this)
+        setUpDemoAppActivity()
 
         if (!WebViewFeature.isFeatureSupported(WebViewFeature.GET_COOKIE_INFO)) {
-            WebkitHelpers.showMessageInActivity(
-                this,
-                R.string.cookie_manager_get_cookie_info_not_supported,
-            )
+            showMessage(R.string.cookie_manager_get_cookie_info_not_supported)
             return
         }
 
