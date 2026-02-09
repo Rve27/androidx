@@ -69,6 +69,12 @@ object ComposeFoundationFlags {
     @field:Suppress("MutableBareField") @JvmField var isSmartSelectionEnabled = true
 
     /**
+     * Whether to support inherited text styles. If enabled, text styles set by the styles API will
+     * be inherited by text composables contained in a style box.
+     */
+    @field:Suppress("MutableBareField") @JvmField var isInheritedTextStyleEnabled = true
+
+    /**
      * Selecting flag to enable the use of new PausableComposition in lazy layout prefetch. This
      * change allows us to distribute work we need to do during the prefetch better, for example we
      * can only perform the composition for parts of the LazyColumn's next item during one ui frame,
