@@ -130,9 +130,9 @@ import androidx.compose.ui.util.fastSumBy
  *   [AssistChipDefaults.assistChipElevation].
  * @param border the border to draw around the container of this chip. Pass `null` for no border.
  *   See [AssistChipDefaults.assistChipBorder].
- * @param horizontalSpacing the horizontal padding between the label and the icons. If there aren't
+ * @param horizontalArrangement the horizontal arrangement of the chip's children. If there aren't
  *   icons, then the horizontal padding between the [label] and the [border] will be the sum of
- *   [contentPadding] and this [horizontalSpacing]. See [AssistChipDefaults.HorizontalSpacing].
+ *   [contentPadding] and the spacing in this [horizontalArrangement].
  * @param contentPadding the padding around the content of this chip, including the [leadingIcon],
  *   [label], and [trailingIcon]. See [AssistChipDefaults.ContentPadding].
  * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
@@ -152,7 +152,7 @@ fun AssistChip(
     colors: ChipColors = AssistChipDefaults.assistChipColors(),
     elevation: ChipElevation? = AssistChipDefaults.assistChipElevation(),
     border: BorderStroke? = AssistChipDefaults.assistChipBorder(enabled),
-    horizontalSpacing: Dp = AssistChipDefaults.HorizontalSpacing,
+    horizontalArrangement: Arrangement.Horizontal = AssistChipDefaults.horizontalArrangement(),
     contentPadding: PaddingValues = AssistChipDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
 ) =
@@ -170,8 +170,89 @@ fun AssistChip(
         elevation = elevation,
         border = border,
         minHeight = AssistChipDefaults.Height,
-        horizontalArrangement = ChipArrangement(horizontalSpacing),
+        horizontalArrangement = horizontalArrangement,
         paddingValues = contentPadding,
+        interactionSource = interactionSource,
+    )
+
+/**
+ * [Material Design assist chip](https://m3.material.io/components/chips/overview)
+ *
+ * Chips help people enter information, make selections, filter content, or trigger actions. Chips
+ * can show multiple interactive elements together in the same area, such as a list of selectable
+ * movie times, or a series of email contacts.
+ *
+ * Assist chips represent smart or automated actions that can span multiple apps, such as opening a
+ * calendar event from the home screen. Assist chips function as though the user asked an assistant
+ * to complete the action. They should appear dynamically and contextually in a UI.
+ *
+ * ![Assist chip
+ * image](https://developer.android.com/images/reference/androidx/compose/material3/assist-chip.png)
+ *
+ * This assist chip is applied with a flat style. If you want an elevated style, use the
+ * [ElevatedAssistChip].
+ *
+ * Example of a flat AssistChip:
+ *
+ * @sample androidx.compose.material3.samples.AssistChipSample
+ * @param onClick called when this chip is clicked
+ * @param label text label for this chip
+ * @param modifier the [Modifier] to be applied to this chip
+ * @param enabled controls the enabled state of this chip. When `false`, this component will not
+ *   respond to user input, and it will appear visually disabled and disabled to accessibility
+ *   services.
+ * @param leadingIcon optional icon at the start of the chip, preceding the [label] text
+ * @param trailingIcon optional icon at the end of the chip
+ * @param shape defines the shape of this chip's container, border (when [border] is not null), and
+ *   shadow (when using [elevation])
+ * @param colors [ChipColors] that will be used to resolve the colors used for this chip in
+ *   different states. See [AssistChipDefaults.assistChipColors].
+ * @param elevation [ChipElevation] used to resolve the elevation for this chip in different states.
+ *   This controls the size of the shadow below the chip. Additionally, when the container color is
+ *   [ColorScheme.surface], this controls the amount of primary color applied as an overlay. See
+ *   [AssistChipDefaults.assistChipElevation].
+ * @param border the border to draw around the container of this chip. Pass `null` for no border.
+ *   See [AssistChipDefaults.assistChipBorder].
+ * @param horizontalSpacing the horizontal padding between the label and the icons. If there aren't
+ *   icons, then the horizontal padding between the [label] and the [border] will be the sum of
+ *   [contentPadding] and this [horizontalSpacing]. See [AssistChipDefaults.HorizontalSpacing].
+ * @param contentPadding the padding around the content of this chip, including the [leadingIcon],
+ *   [label], and [trailingIcon]. See [AssistChipDefaults.ContentPadding].
+ * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
+ *   emitting [Interaction]s for this chip. You can use this to change the chip's appearance or
+ *   preview the chip in different states. Note that if `null` is provided, interactions will still
+ *   happen internally.
+ */
+@Deprecated(message = "Maintained for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Composable
+fun AssistChip(
+    onClick: () -> Unit,
+    label: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    shape: Shape = AssistChipDefaults.shape,
+    colors: ChipColors = AssistChipDefaults.assistChipColors(),
+    elevation: ChipElevation? = AssistChipDefaults.assistChipElevation(),
+    border: BorderStroke? = AssistChipDefaults.assistChipBorder(enabled),
+    horizontalSpacing: Dp = AssistChipDefaults.HorizontalSpacing,
+    contentPadding: PaddingValues = AssistChipDefaults.ContentPadding,
+    interactionSource: MutableInteractionSource? = null,
+) =
+    AssistChip(
+        onClick = onClick,
+        label = label,
+        modifier = modifier,
+        enabled = enabled,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        shape = shape,
+        colors = colors,
+        elevation = elevation,
+        border = border,
+        horizontalArrangement = AssistChipDefaults.horizontalArrangement(horizontalSpacing),
+        contentPadding = contentPadding,
         interactionSource = interactionSource,
     )
 
@@ -245,7 +326,7 @@ fun AssistChip(
         colors = colors,
         elevation = elevation,
         border = border,
-        horizontalSpacing = AssistChipDefaults.HorizontalSpacing,
+        horizontalArrangement = AssistChipDefaults.horizontalArrangement(),
         contentPadding = AssistChipDefaults.ContentPadding,
         interactionSource = interactionSource,
     )
@@ -372,9 +453,9 @@ fun AssistChip(
  *   [ColorScheme.surface], this controls the amount of primary color applied as an overlay. See
  *   [AssistChipDefaults.elevatedAssistChipElevation].
  * @param border the border to draw around the container of this chip
- * @param horizontalSpacing the horizontal padding between the label and the icons. If there aren't
+ * @param horizontalArrangement the horizontal arrangement of the chip's children. If there aren't
  *   icons, then the horizontal padding between the [label] and the [border] will be the sum of
- *   [contentPadding] and this [horizontalSpacing]. See [AssistChipDefaults.HorizontalSpacing].
+ *   [contentPadding] and the spacing in this [horizontalArrangement].
  * @param contentPadding the padding around the content of this chip, including the [leadingIcon],
  *   [label], and [trailingIcon]. See [AssistChipDefaults.ContentPadding].
  * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
@@ -394,7 +475,7 @@ fun ElevatedAssistChip(
     colors: ChipColors = AssistChipDefaults.elevatedAssistChipColors(),
     elevation: ChipElevation? = AssistChipDefaults.elevatedAssistChipElevation(),
     border: BorderStroke? = null,
-    horizontalSpacing: Dp = AssistChipDefaults.HorizontalSpacing,
+    horizontalArrangement: Arrangement.Horizontal = AssistChipDefaults.horizontalArrangement(),
     contentPadding: PaddingValues = AssistChipDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
 ) =
@@ -410,10 +491,90 @@ fun ElevatedAssistChip(
         elevation = elevation,
         colors = colors,
         minHeight = AssistChipDefaults.Height,
-        horizontalArrangement = ChipArrangement(horizontalSpacing),
+        horizontalArrangement = horizontalArrangement,
         paddingValues = contentPadding,
         shape = shape,
         border = border,
+        interactionSource = interactionSource,
+    )
+
+/**
+ * [Material Design elevated assist chip](https://m3.material.io/components/chips/overview)
+ *
+ * Chips help people enter information, make selections, filter content, or trigger actions. Chips
+ * can show multiple interactive elements together in the same area, such as a list of selectable
+ * movie times, or a series of email contacts.
+ *
+ * Assist chips represent smart or automated actions that can span multiple apps, such as opening a
+ * calendar event from the home screen. Assist chips function as though the user asked an assistant
+ * to complete the action. They should appear dynamically and contextually in a UI.
+ *
+ * ![Assist chip
+ * image](https://developer.android.com/images/reference/androidx/compose/material3/elevated-assist-chip.png)
+ *
+ * This assist chip is applied with an elevated style. If you want a flat style, use the
+ * [AssistChip].
+ *
+ * Example of an elevated AssistChip with a trailing icon:
+ *
+ * @sample androidx.compose.material3.samples.ElevatedAssistChipSample
+ * @param onClick called when this chip is clicked
+ * @param label text label for this chip
+ * @param modifier the [Modifier] to be applied to this chip
+ * @param enabled controls the enabled state of this chip. When `false`, this component will not
+ *   respond to user input, and it will appear visually disabled and disabled to accessibility
+ *   services.
+ * @param leadingIcon optional icon at the start of the chip, preceding the [label] text
+ * @param trailingIcon optional icon at the end of the chip
+ * @param shape defines the shape of this chip's container, border (when [border] is not null), and
+ *   shadow (when using [elevation])
+ * @param colors [ChipColors] that will be used to resolve the colors used for this chip in
+ *   different states. See [AssistChipDefaults.elevatedAssistChipColors].
+ * @param elevation [ChipElevation] used to resolve the elevation for this chip in different states.
+ *   This controls the size of the shadow below the chip. Additionally, when the container color is
+ *   [ColorScheme.surface], this controls the amount of primary color applied as an overlay. See
+ *   [AssistChipDefaults.elevatedAssistChipElevation].
+ * @param border the border to draw around the container of this chip
+ * @param horizontalSpacing the horizontal padding between the label and the icons. If there aren't
+ *   icons, then the horizontal padding between the [label] and the [border] will be the sum of
+ *   [contentPadding] and this [horizontalSpacing]. See [AssistChipDefaults.HorizontalSpacing].
+ * @param contentPadding the padding around the content of this chip, including the [leadingIcon],
+ *   [label], and [trailingIcon]. See [AssistChipDefaults.ContentPadding].
+ * @param interactionSource an optional hoisted [MutableInteractionSource] for observing and
+ *   emitting [Interaction]s for this chip. You can use this to change the chip's appearance or
+ *   preview the chip in different states. Note that if `null` is provided, interactions will still
+ *   happen internally.
+ */
+@Deprecated(message = "Maintained for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Composable
+fun ElevatedAssistChip(
+    onClick: () -> Unit,
+    label: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    shape: Shape = AssistChipDefaults.shape,
+    colors: ChipColors = AssistChipDefaults.elevatedAssistChipColors(),
+    elevation: ChipElevation? = AssistChipDefaults.elevatedAssistChipElevation(),
+    border: BorderStroke? = null,
+    horizontalSpacing: Dp = AssistChipDefaults.HorizontalSpacing,
+    contentPadding: PaddingValues = AssistChipDefaults.ContentPadding,
+    interactionSource: MutableInteractionSource? = null,
+) =
+    ElevatedAssistChip(
+        onClick = onClick,
+        label = label,
+        modifier = modifier,
+        enabled = enabled,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        shape = shape,
+        colors = colors,
+        elevation = elevation,
+        border = border,
+        horizontalArrangement = AssistChipDefaults.horizontalArrangement(horizontalSpacing),
+        contentPadding = contentPadding,
         interactionSource = interactionSource,
     )
 
@@ -486,7 +647,7 @@ fun ElevatedAssistChip(
         colors = colors,
         elevation = elevation,
         border = border,
-        horizontalSpacing = AssistChipDefaults.HorizontalSpacing,
+        horizontalArrangement = AssistChipDefaults.horizontalArrangement(),
         contentPadding = AssistChipDefaults.ContentPadding,
         interactionSource = interactionSource,
     )
@@ -1538,6 +1699,20 @@ object AssistChipDefaults {
      * trailingIcon
      */
     val ContentPadding = PaddingValues(horizontal = 8.dp)
+
+    /** Returns the default arrangement of the icon and label within an assist chip. */
+    fun horizontalArrangement(): Arrangement.Horizontal = DefaultHorizontalArrangement
+
+    /**
+     * Creates an [Arrangement.Horizontal] that represents the default arrangement of the icon and
+     * label within an assist chip.
+     *
+     * @param spacing the spacing between the icon and label
+     */
+    fun horizontalArrangement(spacing: Dp): Arrangement.Horizontal {
+        if (spacing == HorizontalSpacing) return DefaultHorizontalArrangement
+        return ChipArrangement(spacing)
+    }
 
     /**
      * Creates a [ChipColors] that represents the default container , label, and icon colors used in
