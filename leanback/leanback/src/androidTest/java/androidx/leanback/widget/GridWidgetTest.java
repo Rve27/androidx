@@ -302,6 +302,9 @@ public class GridWidgetTest {
     }
 
     protected void verifyMargin() {
+        if (mGridView.mLayoutManager.mGrid instanceof StandardGrid) {
+            return;
+        }
         View[][] sorted = sortByRows();
         for (int row = 0; row < sorted.length; row++) {
             View[] views = sorted[row];
@@ -931,6 +934,126 @@ public class GridWidgetTest {
         waitOneUiCycle();
 
         assertEquals(29, mGridView.getSelectedPosition());
+    }
+
+    private void assertSpansThreeAt(int position, int expectedMultiSpanViewWidth) {
+        int top0 = mGridView.findViewHolderForAdapterPosition(position).itemView.getTop();
+        int left0 = mGridView.findViewHolderForAdapterPosition(position).itemView.getLeft();
+        int width = mGridView.findViewHolderForAdapterPosition(position).itemView.getWidth();
+        int top1 = mGridView.findViewHolderForAdapterPosition(position + 1).itemView.getTop();
+        int left1 = mGridView.findViewHolderForAdapterPosition(position + 1).itemView.getLeft();
+        int top2 = mGridView.findViewHolderForAdapterPosition(position + 2).itemView.getTop();
+        int top3 = mGridView.findViewHolderForAdapterPosition(position + 2).itemView.getTop();
+        assertEquals(expectedMultiSpanViewWidth, width, 1);
+        assertTrue("2nd item start from a new line", top0 < top1);
+        assertTrue("2nd item start from a new line", left0 == left1);
+        assertTrue("top aligned on 2nd line", top1 == top2);
+        assertTrue("top aligned on 2nd line", top1 == top3);
+
+    }
+
+    @Test
+    public void testFixedColumnSize_ThreeSpans() throws Throwable {
+        Intent intent = new Intent();
+        intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.vertical_grid);
+        intent.putExtra(GridActivity.EXTRA_NUM_ITEMS, 150);
+        intent.putExtra(GridActivity.EXTRA_STAGGERED, false);
+        intent.putExtra(GridActivity.EXTRA_SPAN_SIZES, new int[]{
+                0, 3, // 0th item span size is 3
+                99, 3, // 99th item span size is 3
+        });
+        initActivity(intent);
+        mOrientation = BaseGridView.VERTICAL;
+        mNumRows = 3;
+
+        int columnWidth = mGridView.mLayoutManager.mRowSizeSecondaryRequested;
+        int horizontalSpacing = mGridView.getHorizontalSpacing();
+        int expectedMultiSpanViewWidth = 3 * columnWidth + horizontalSpacing * 2;
+        assertSpansThreeAt(0, expectedMultiSpanViewWidth);
+        mActivityTestRule.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mGridView.smoothScrollToPosition(99);
+            }
+        });
+        PollingCheck.waitFor(10000, new PollingCheck.PollingCheckCondition() {
+            @Override
+            public boolean canProceed() {
+                return mGridView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE
+                        && mGridView.findViewHolderForAdapterPosition(99) != null;
+            }
+        });
+        assertSpansThreeAt(99, expectedMultiSpanViewWidth);
+
+        scrollToEnd(mVerifyLayout);
+
+        scrollToBegin(mVerifyLayout);
+
+        assertSpansThreeAt(0, expectedMultiSpanViewWidth);
+    }
+
+    @Test
+    public void testCalculatedColumnSize_ThreeSpans() throws Throwable {
+        Intent intent = new Intent();
+        intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.vertical_grid);
+        intent.putExtra(GridActivity.EXTRA_NUM_ITEMS, 150);
+        // Put a 0 as column width, so that the column width is calculated by
+        // gridView.width/numColumns
+        intent.putExtra(GridActivity.EXTRA_COLUMN_WIDTH, 0);
+        intent.putExtra(GridActivity.EXTRA_STAGGERED, false);
+        intent.putExtra(GridActivity.EXTRA_SPAN_SIZES, new int[]{
+                0, 3, // 0th item span size is 3
+                99, 3, // 99th item span size is 3
+        });
+        initActivity(intent);
+        mOrientation = BaseGridView.VERTICAL;
+        mNumRows = 3;
+
+        // With calculated column size, the 3 span item will occupy the entire gridView width.
+        int expectedMultiSpanViewWidth = mGridView.getWidth()
+                - mGridView.getPaddingLeft() - mGridView.getPaddingRight();
+        assertSpansThreeAt(0, expectedMultiSpanViewWidth);
+        mActivityTestRule.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mGridView.smoothScrollToPosition(99);
+            }
+        });
+        PollingCheck.waitFor(10000, new PollingCheck.PollingCheckCondition() {
+            @Override
+            public boolean canProceed() {
+                return mGridView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE
+                        && mGridView.findViewHolderForAdapterPosition(99) != null;
+            }
+        });
+        assertSpansThreeAt(99, expectedMultiSpanViewWidth);
+
+        scrollToEnd(mVerifyLayout);
+
+        scrollToBegin(mVerifyLayout);
+
+        assertSpansThreeAt(0, expectedMultiSpanViewWidth);
+    }
+
+    @Test
+    public void test_defaultSpanSizeLoop_usesStandardGrid() throws Throwable {
+        Intent intent = new Intent();
+        intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.vertical_grid);
+        intent.putExtra(GridActivity.EXTRA_NUM_ITEMS, 150);
+        intent.putExtra(GridActivity.EXTRA_STAGGERED, true);
+        // Pass empty spansizes Array to create a DefaultSpanSizeLookup, which will
+        // lead to create a StandardGrid with no span support.
+        intent.putExtra(GridActivity.EXTRA_SPAN_SIZES, new int[0]);
+        initActivity(intent);
+        mOrientation = BaseGridView.VERTICAL;
+        mNumRows = 3;
+
+        scrollToEnd(mVerifyLayout);
+
+        scrollToBegin(mVerifyLayout);
+
+        verifyBeginAligned();
+        assertTrue(((StandardGrid) mLayoutManager.mGrid).mSpanSupport == null);
     }
 
     @Ignore // b/266757643
