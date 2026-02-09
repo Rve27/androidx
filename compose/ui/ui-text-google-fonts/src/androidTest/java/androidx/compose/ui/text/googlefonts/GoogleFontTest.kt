@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.AndroidFont
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontLoadingStrategy
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.test.R
 import androidx.core.provider.FontRequest
@@ -149,98 +150,100 @@ class GoogleFontTest {
     @Test
     fun GoogleFontImpl_fontRequest_containsName() {
         val font = Font(GoogleFont("Test Name"), TestProvider) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("name=Test Name")
+        assertThat(font.toFontRequest(context).query).contains("name=Test Name")
     }
 
     @Test
     fun GoogleFontImpl_embeddedCert_fontRequest_containsName() {
         val font = Font(GoogleFont("Test Name")) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("name=Test Name")
+        assertThat(font.toFontRequest(context).query).contains("name=Test Name")
     }
 
     @Test
     fun GoogleFontImpl_fontRequest_containsWeight() {
         val font = Font(GoogleFont("a"), TestProvider, weight = FontWeight.W800) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("weight=800")
+        assertThat(font.toFontRequest(context).query).contains("weight=800")
     }
 
     @Test
     fun GoogleFontImpl_embeddedCert_fontRequest_containsWeight() {
         val font = Font(GoogleFont("a"), weight = FontWeight.W800) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("weight=800")
+        assertThat(font.toFontRequest(context).query).contains("weight=800")
     }
 
     @Test
     fun GoogleFontImpl_fontRequest_containsStyle_normal() {
         val font = Font(GoogleFont("a"), TestProvider) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("italic=0")
+        assertThat(font.toFontRequest(context).query).contains("italic=0")
     }
 
     @Test
     fun GoogleFontImpl_embeddedCert_fontRequest_containsStyle_normal() {
         val font = Font(GoogleFont("a")) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("italic=0")
+        assertThat(font.toFontRequest(context).query).contains("italic=0")
     }
 
     @Test
     fun GoogleFontImpl_fontRequest_containsStyle_italic() {
         val font = Font(GoogleFont("a"), TestProvider, style = FontStyle.Italic) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("italic=1")
+        assertThat(font.toFontRequest(context).query).contains("italic=1")
     }
 
     @Test
     fun GoogleFontImpl_embeddedCert_fontRequest_containsStyle_italic() {
         val font = Font(GoogleFont("a"), style = FontStyle.Italic) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("italic=1")
+        assertThat(font.toFontRequest(context).query).contains("italic=1")
     }
 
     @Test
     fun GoogleFontImpl_fontRequest_bestEffort() {
         val font = Font(GoogleFont("a"), TestProvider) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("besteffort=true")
+        assertThat(font.toFontRequest(context).query).contains("besteffort=true")
     }
 
     @Test
     fun GoogleFontImpl_embeddedCert_fontRequest_bestEffort() {
         val font = Font(GoogleFont("a")) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("besteffort=true")
+        assertThat(font.toFontRequest(context).query).contains("besteffort=true")
     }
 
     @Test
     fun GoogleFontImpl_fontRequest_bestEffort_false() {
         val font = Font(GoogleFont("a", bestEffort = false), TestProvider) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("besteffort=false")
+        assertThat(font.toFontRequest(context).query).contains("besteffort=false")
     }
 
     @Test
     fun GoogleFontImpl_embeddedCert_fontRequest_bestEffort_false() {
         val font = Font(GoogleFont("a", bestEffort = false)) as GoogleFontImpl
-        assertThat(font.toFontRequest().query).contains("besteffort=false")
+        assertThat(font.toFontRequest(context).query).contains("besteffort=false")
     }
 
     @Test
     fun GoogleFontImpl_providerAuthority_passedDown() {
         val font = Font(GoogleFont("a"), TestProvider) as GoogleFontImpl
-        assertThat(font.toFontRequest().providerAuthority).isEqualTo(TestProvider.providerAuthority)
+        assertThat(font.toFontRequest(context).providerAuthority)
+            .isEqualTo(TestProvider.providerAuthority)
     }
 
     @Test
     fun GoogleFontImpl_providerPackage_passedDown() {
         val font = Font(GoogleFont("a"), TestProvider) as GoogleFontImpl
-        assertThat(font.toFontRequest().providerPackage).isEqualTo(TestProvider.providerPackage)
+        assertThat(font.toFontRequest(context).providerPackage)
+            .isEqualTo(TestProvider.providerPackage)
     }
 
     @Test
     fun GoogleFontImpl_providerCerts_passedDown() {
         val font = Font(GoogleFont("a"), TestProvider) as GoogleFontImpl
-        assertThat(font.toFontRequest().certificates).isEqualTo(TestProvider.certificates)
+        assertThat(font.toFontRequest(context).certificates).isEqualTo(TestProvider.certificates)
     }
 
     @Test
     fun GoogleFontImpl_providercerts_fromRes_passedDown() {
         val provider = GoogleFont.Provider("a", "b", 17)
         val font = Font(GoogleFont("a"), provider) as GoogleFontImpl
-        assertThat(font.toFontRequest().certificatesArrayResId).isEqualTo(17)
+        assertThat(font.toFontRequest(context).certificatesArrayResId).isEqualTo(17)
     }
 
     @Test
@@ -295,6 +298,50 @@ class GoogleFontTest {
         assertThat(font.toTypefaceStyle()).isEqualTo(Typeface.BOLD_ITALIC)
     }
 
+    @Test
+    fun GoogleFont_embeddedCert_customVariationSettings() {
+        val font =
+            Font(
+                GoogleFont("a"),
+                variationSettings =
+                    FontVariation.Settings(
+                        FontVariation.weight(600),
+                        FontVariation.grade(1),
+                        FontVariation.slant(2f),
+                    ),
+            )
+                as GoogleFontImpl
+
+        assertThat(font.fontVariationSettings.settings)
+            .containsExactly(
+                FontVariation.grade(1),
+                FontVariation.slant(2f),
+                FontVariation.weight(600),
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun GoogleFont_variationSettings_alreadySorted_reused() {
+        val variationSettings =
+            FontVariation.Settings(
+                FontVariation.grade(1),
+                FontVariation.slant(2f),
+                FontVariation.weight(600),
+            )
+        val font = Font(GoogleFont("a"), variationSettings = variationSettings) as GoogleFontImpl
+
+        assertThat(font.fontVariationSettings).isSameInstanceAs(variationSettings)
+    }
+
+    @Test
+    fun GoogleFont_variationSettings_singleElement_reused() {
+        val variationSettings = FontVariation.Settings(FontVariation.weight(600))
+        val font = Font(GoogleFont("a"), variationSettings = variationSettings) as GoogleFontImpl
+
+        assertThat(font.fontVariationSettings).isSameInstanceAs(variationSettings)
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun GoogleFont_TypefaceLoader_resumesOnCompletion() {
@@ -303,7 +350,12 @@ class GoogleFontTest {
             val deferred = async {
                 GoogleFontTypefaceLoader.awaitLoad(
                     context,
-                    Font(GoogleFont("Foo"), TestProvider) as AndroidFont,
+                    Font(
+                        GoogleFont("Foo"),
+                        TestProvider,
+                        variationSettings = FontVariation.Settings(),
+                    )
+                        as AndroidFont,
                     compatLoader,
                 )
             }
@@ -320,7 +372,8 @@ class GoogleFontTest {
             val deferred = async {
                 GoogleFontTypefaceLoader.awaitLoad(
                     context,
-                    Font(GoogleFont("Foo")) as AndroidFont,
+                    Font(GoogleFont("Foo"), variationSettings = FontVariation.Settings())
+                        as AndroidFont,
                     compatLoader,
                 )
             }
@@ -441,7 +494,23 @@ class GoogleFontTest {
         assertThat(font.toString())
             .isEqualTo(
                 "Font(GoogleFont(\"Font Family\", bestEffort=true), weight=FontWeight(weight=400), " +
-                    "style=Normal)"
+                    "style=Normal, fontVariationSettings=Settings(settings=[]))"
+            )
+    }
+
+    @Test
+    fun GoogleFont_withVariationSettings_toString() {
+        val font =
+            Font(
+                GoogleFont("Font Family"),
+                TestProvider,
+                variationSettings = FontVariation.Settings(FontVariation.slant(-8f)),
+            )
+        assertThat(font.toString())
+            .isEqualTo(
+                "Font(GoogleFont(\"Font Family\", bestEffort=true), weight=FontWeight(weight=400), " +
+                    "style=Normal, fontVariationSettings=Settings(settings=[FontVariation.Setting(axisName='slnt'" +
+                    ", value=-8.0)]))"
             )
     }
 
@@ -451,7 +520,22 @@ class GoogleFontTest {
         assertThat(font.toString())
             .isEqualTo(
                 "Font(GoogleFont(\"Font Family\", bestEffort=true), weight=FontWeight(weight=400), " +
-                    "style=Normal)"
+                    "style=Normal, fontVariationSettings=Settings(settings=[]))"
+            )
+    }
+
+    @Test
+    fun GoogleFont_embeddedCert_withVariationSettings_toString() {
+        val font =
+            Font(
+                GoogleFont("Font Family"),
+                variationSettings = FontVariation.Settings(FontVariation.grade(3)),
+            )
+        assertThat(font.toString())
+            .isEqualTo(
+                "Font(GoogleFont(\"Font Family\", bestEffort=true), weight=FontWeight(weight=400), " +
+                    "style=Normal, fontVariationSettings=Settings(settings=[FontVariation.Setting(axisName='GRAD'" +
+                    ", value=3)]))"
             )
     }
 
@@ -539,7 +623,7 @@ class GoogleFontTest {
         val packageInfo = getComAndroidGmsOrNull()
         assumeTrue(packageInfo != null)
 
-        val fontRequest = (Font(GoogleFont("Font Family")) as GoogleFontImpl).toFontRequest()
+        val fontRequest = (Font(GoogleFont("Font Family")) as GoogleFontImpl).toFontRequest(context)
 
         val provider =
             GoogleFont.Provider(
