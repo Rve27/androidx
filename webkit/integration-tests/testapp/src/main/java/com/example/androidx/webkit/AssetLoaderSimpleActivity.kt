@@ -52,8 +52,7 @@ class AssetLoaderSimpleActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_asset_loader)
         setTitle(R.string.asset_loader_simple_activity_title)
-        WebkitHelpers.enableEdgeToEdge(this)
-        WebkitHelpers.appendWebViewVersionToTitle(this)
+        setUpDemoAppActivity()
 
         // Host application assets under http://appassets.androidplatform.net/assets/...
         val assetLoader =
