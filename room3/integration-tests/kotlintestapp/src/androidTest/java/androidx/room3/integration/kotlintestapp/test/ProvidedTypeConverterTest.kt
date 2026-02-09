@@ -40,6 +40,7 @@ import androidx.room3.integration.kotlintestapp.vo.PetWithUser
 import androidx.room3.integration.kotlintestapp.vo.Robot
 import androidx.room3.integration.kotlintestapp.vo.Toy
 import androidx.room3.livedata.LiveDataDaoReturnTypeConverter
+import androidx.room3.rxjava3.Rx3DaoReturnTypeConverters
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -155,7 +156,10 @@ class ProvidedTypeConverterTest {
         version = 1,
         exportSchema = false,
     )
-    @DaoReturnTypeConverters(LiveDataDaoReturnTypeConverter::class)
+    @DaoReturnTypeConverters(
+        LiveDataDaoReturnTypeConverter::class,
+        Rx3DaoReturnTypeConverters::class,
+    )
     @TypeConverters(TimeStampConverter::class, UUIDConverter::class)
     internal abstract class TestDatabaseWithConverterOne : RoomDatabase() {
         abstract fun petDao(): PetDao
