@@ -30,6 +30,7 @@ import androidx.room3.Room
 import androidx.room3.RoomDatabase
 import androidx.room3.integration.kotlintestapp.assumeKsp
 import androidx.room3.livedata.LiveDataDaoReturnTypeConverter
+import androidx.room3.rxjava3.Rx3DaoReturnTypeConverters
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -189,7 +190,10 @@ class BoxedNonNullTypesTest {
         version = 1,
         exportSchema = false,
     )
-    @DaoReturnTypeConverters(LiveDataDaoReturnTypeConverter::class)
+    @DaoReturnTypeConverters(
+        LiveDataDaoReturnTypeConverter::class,
+        Rx3DaoReturnTypeConverters::class,
+    )
     abstract class MyDb : RoomDatabase() {
         abstract fun myDao(): MyDao
     }
