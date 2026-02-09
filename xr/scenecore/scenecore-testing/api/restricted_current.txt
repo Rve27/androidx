@@ -694,6 +694,7 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public boolean getEnabledPanelDepthTest();
     method @InaccessibleFromKotlin public java.util.concurrent.Executor? getExecutor();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Entity? getKeyEntity();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.FakeMovableComponent? getLastMovableComponent();
     method @InaccessibleFromKotlin public android.app.Activity? getLastSetPreferredAspectRatioActivity();
     method @InaccessibleFromKotlin public float getLastSetPreferredAspectRatioRatio();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PanelEntity getMainPanelEntity();
@@ -732,6 +733,7 @@ package androidx.xr.scenecore.testing {
     property public java.util.concurrent.Executor? executor;
     property public boolean isBoundaryConsentGranted;
     property public androidx.xr.scenecore.runtime.Entity? keyEntity;
+    property public androidx.xr.scenecore.testing.FakeMovableComponent? lastMovableComponent;
     property public android.app.Activity? lastSetPreferredAspectRatioActivity;
     property public float lastSetPreferredAspectRatioRatio;
     property public androidx.xr.scenecore.runtime.PanelEntity mainPanelEntity;
