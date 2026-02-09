@@ -45,6 +45,36 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
     private val mAnimationStateListeners: MutableMap<Consumer<AnimationState>, Executor> =
         Collections.synchronizedMap(mutableMapOf())
 
+    private val _nodes: List<GltfModelNode> by lazy {
+        // The unique identifier of a node is their index so we first get the
+        // count of the nodes in the model from the native side.
+        val features = rtEntity!!.nodes
+        val list = ArrayList<GltfModelNode>(features.size)
+
+        for (i in features.indices) {
+            // For each node index in the model, query its name from the native side
+            // and create a [GltfModelNode]. A node may have no name (`null`).
+            val feature = features[i]
+            list.add(GltfModelNode(this, feature, i, feature.name))
+        }
+        list.toList()
+    }
+
+    /**
+     * A list of all [GltfModelNode]s defined in the [GltfModelEntity]. The list is lazily
+     * initialized on the first access.
+     *
+     * The returned list corresponds to the flattened array of nodes defined in the source glTF
+     * file. The order of elements in this list is guaranteed to match the order of nodes in the
+     * glTF file's `nodes` array.
+     */
+    public val nodes: List<GltfModelNode>
+        @MainThread
+        get() {
+            checkNotDisposed()
+            return _nodes
+        }
+
     /** Specifies the current animation state of the GltfModelEntity. */
     public class AnimationState private constructor(private val name: String) {
 
