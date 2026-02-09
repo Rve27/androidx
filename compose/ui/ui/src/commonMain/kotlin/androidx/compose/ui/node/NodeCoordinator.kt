@@ -1270,7 +1270,9 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
         if (layer != null) {
             if (isClipping) {
                 if (clipToMinimumTouchTargetSize) {
-                    val (horz, vert) = calculateMinimumTouchTargetPadding(minimumTouchTargetSize)
+                    val minTouch = minimumTouchTargetSize
+                    val horz = minTouch.width / 2f
+                    val vert = minTouch.height / 2f
                     bounds.intersect(
                         -horz,
                         -vert,
