@@ -267,10 +267,22 @@ internal object GridScopeInstance : GridScope {
  * respective axes.
  *
  * @sample androidx.compose.foundation.layout.samples.GridConfigurationDslSample
+ * @sample androidx.compose.foundation.layout.samples.GridWithConstraints
  */
 @LayoutScopeMarker
 @ExperimentalGridApi
 interface GridConfigurationScope : Density {
+
+    /**
+     * The layout constraints passed to this [Grid] from its parent.
+     *
+     * These constraints represent the minimum and maximum size limits that the parent has imposed
+     * on this Grid. This can be useful for creating responsive layouts that adapt based on
+     * available space.
+     *
+     * @see Constraints
+     */
+    val constraints: Constraints
 
     /**
      * The direction in which items that do not specify a position are placed. Defaults to
@@ -640,7 +652,7 @@ internal class GridMeasurePolicy(
         constraints: Constraints,
     ): MeasureResult {
         // 1. Run Configuration DSL
-        val gridConfig = GridConfigurationScopeImpl(this).apply(configState.value)
+        val gridConfig = GridConfigurationScopeImpl(this, constraints).apply(configState.value)
 
         // 2. Resolve Grid Item Indices (Resolve explicit and Auto placement)
         // This calculates the concrete index (row, col) for every item and determines total grid
@@ -698,7 +710,7 @@ internal class GridMeasurePolicy(
     }
 }
 
-private class GridConfigurationScopeImpl(density: Density) :
+private class GridConfigurationScopeImpl(density: Density, override val constraints: Constraints) :
     GridConfigurationScope, Density by density {
     val columnSpecs = mutableLongListOf()
     val rowSpecs = mutableLongListOf()
