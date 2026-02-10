@@ -81,7 +81,7 @@ androidXMultiplatform {
             implementation(libs.kotlinSerializationCore)
         }
 
-        nonAndroidMain {}.dependsOn(commonMain)
+        create("nonAndroidMain").dependsOn(commonMain)
         jvmStubsMain.dependsOn(nonAndroidMain)
         linuxx64StubsMain.dependsOn(nonAndroidMain)
     }

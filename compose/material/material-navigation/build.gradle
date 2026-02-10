@@ -50,8 +50,8 @@ androidXMultiplatform {
             implementation(libs.truth)
             implementation(libs.testRules)
         }
-        nonAndroidMain.dependsOn(commonMain)
-        nonAndroidTest.dependsOn(commonTest)
+        create("nonAndroidMain").dependsOn(commonMain)
+        create("nonAndroidTest").dependsOn(commonTest)
         jvmStubsMain.dependsOn(nonAndroidMain)
         jvmStubsTest.dependsOn(nonAndroidTest)
         nonJvmMain.dependsOn(nonAndroidMain)
