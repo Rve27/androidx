@@ -56,8 +56,6 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.removeModifiersOfType
-import androidx.glance.semantics.contentDescription
-import androidx.glance.semantics.semantics
 import androidx.glance.text.EmittableText
 import androidx.glance.text.FontWeight
 import androidx.glance.text.TextStyle
@@ -511,7 +509,6 @@ private fun EmittableM3TextButton.normalizeForRemoteViews(): Emittable {
 private fun EmittableM3IconButton.normalizeForRemoteViews(): Emittable {
     val contentColor = contentColor!! // mandatory
     val backgroundColor = backgroundColor
-    val theContentDescription = contentDescription
 
     val backgroundModifier =
         if (backgroundColor == null) GlanceModifier
@@ -528,25 +525,17 @@ private fun EmittableM3IconButton.normalizeForRemoteViews(): Emittable {
                 GlanceModifier.size(
                         shape.defaultSize
                     ) // acts as a default if not overridden by [modifier]
-                    .then(modifier)
+                    .then(this.modifier)
                     .then(backgroundModifier)
                     .enabled(enabled)
                     .then(maybeRoundCorners(shape.cornerRadius))
 
             outerBox.addChild(
                 EmittableImage().also { emittableImage ->
-                    val modifier = GlanceModifier.size(24.dp)
-                    val finalModifier =
-                        if (theContentDescription != null) {
-                            modifier.semantics { this.contentDescription = theContentDescription }
-                        } else {
-                            modifier
-                        }
-
                     emittableImage.provider = imageProvider
                     emittableImage.colorFilterParams =
                         ColorFilter.tint(contentColor).colorFilterParams
-                    emittableImage.modifier = finalModifier
+                    emittableImage.modifier = GlanceModifier.size(24.dp)
                 }
             )
         }
