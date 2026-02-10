@@ -538,7 +538,7 @@ internal class SlotTableEditor(val table: SlotTable) {
                             lastVisitedChild < 0 -> groups.groupChild(inGroup)
                             else -> groups.groupNext(lastVisitedChild)
                         }
-                    debugRuntimeCheck(nextGroup >= 0) {
+                    runtimeCheck(nextGroup >= 0) {
                         "A RememberObserver cannot be forgotten correctly because its group " +
                             "ordering metadata is inconsistent with the rest of the SlotTable"
                     }
