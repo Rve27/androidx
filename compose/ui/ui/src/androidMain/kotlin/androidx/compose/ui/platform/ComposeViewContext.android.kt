@@ -119,6 +119,10 @@ internal class ComposeViewContext(
     /** [UriHandler] provided by [LocalUriHandler] */
     internal val uriHandler = AndroidUriHandler(view.context)
 
+    /** [ViewConfiguration] provided by [LocalViewConfiguration] */
+    internal val viewConfiguration =
+        AndroidViewConfiguration(android.view.ViewConfiguration.get(view.context))
+
     /** [LayoutNodeDrawScope] shared across all [ComposeView]s using this [ComposeViewContext] */
     internal val sharedDrawScope = LayoutNodeDrawScope()
 
