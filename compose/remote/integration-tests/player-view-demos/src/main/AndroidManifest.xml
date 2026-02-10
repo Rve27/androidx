@@ -128,6 +128,23 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".CalendarDemoActivity"
+            android:configChanges="uiMode|assetsPaths"
+            android:exported="true"
+            android:label="RC Calendar"
+            android:icon="@drawable/recycler"
+            android:roundIcon="@drawable/recycler"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
         <receiver android:name=".widgets.MyWidget"
             android:exported="true"
             android:label="RC Widget">
@@ -152,6 +169,17 @@
                 android:resource="@xml/launcher_widget" />
         </receiver>
 
+        <receiver android:name=".widgets.CalendarWidget"
+            android:exported="true"
+            android:label="RC Calendar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="androidx.compose.remote.ACTION_CLICKED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/calendar_widget" />
+        </receiver>
 
         <receiver
             android:name=".ExperimentWidgetProvider"
