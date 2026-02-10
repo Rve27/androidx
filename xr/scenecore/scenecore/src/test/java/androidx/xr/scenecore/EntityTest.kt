@@ -718,11 +718,11 @@ class EntityTest {
     }
 
     @Test
-    fun groupEntity_canGetActivitySpacePose() {
+    fun groupEntity_canGetPoseInActivitySpace() {
         val entity = GroupEntity.create(session, "test")
         val pose = Pose.Identity
 
-        assertThat(entity.activitySpacePose).isEqualTo(pose)
+        assertThat(entity.poseInActivitySpace).isEqualTo(pose)
     }
 
     @Test
