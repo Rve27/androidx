@@ -96,7 +96,7 @@ androidXMultiplatform {
         linuxTest.dependsOn(hostNativeTest)
 
         // iOS, watchOS and tvOS families, but not Mac OS
-        appleOsNativeTest {}.dependsOn(nativeTest)
+        create("appleOsNativeTest").dependsOn(nativeTest)
         tvosTest.dependsOn(appleOsNativeTest)
         watchosTest.dependsOn(appleOsNativeTest)
 
