@@ -85,6 +85,7 @@ import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponent
 import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents4
 import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents5
 import androidx.compose.remote.integration.view.demos.examples.RcFlow
+import androidx.compose.remote.integration.view.demos.examples.RcScrollview
 import androidx.compose.remote.integration.view.demos.examples.RcSimpleClock1
 import androidx.compose.remote.integration.view.demos.examples.RcTextDemo
 import androidx.compose.remote.integration.view.demos.examples.RcTextDemo2
@@ -314,6 +315,7 @@ class ExperimentActivity : ComponentActivity() {
                 ),
             "Procedural..." to
                 listOf(
+                    getpc("RcScrollViewport") { RcScrollview() },
                     getpc("RcFlow") { RcFlow() },
                     getpc("Stock") { RcTicker(applicationContext) },
                     getpc("2 VText") { RcCanvasComponents5() },

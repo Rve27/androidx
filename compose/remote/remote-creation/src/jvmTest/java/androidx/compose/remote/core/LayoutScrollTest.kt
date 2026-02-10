@@ -225,4 +225,84 @@ class LayoutScrollTest : BaseLayoutTest() {
             ops,
         )
     }
+
+    @Test
+    fun testFillParentViewport() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(Modifier.fillMaxSize().verticalScroll()) {
+                        // This box should be exactly the size of the viewport (600x600)
+                        box(Modifier.fillParentMaxHeight().fillMaxWidth().background(Color.RED)) {
+                            text("Viewport Filler")
+                        }
+                        // This box makes the content scrollable
+                        box(Modifier.width(600).height(1000).background(Color.BLUE))
+                    }
+                },
+                CaptureComponentTree(),
+            )
+        checkLayout(
+            600,
+            600,
+            7,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "FillParentViewport",
+            ops,
+        )
+    }
+
+    @Test
+    fun testFillParentMaxWidthHorizontal() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    row(Modifier.fillMaxSize().horizontalScroll()) {
+                        // This box should be exactly the size of the viewport (600x600)
+                        box(Modifier.fillParentMaxWidth().fillMaxHeight().background(Color.RED)) {
+                            text("Viewport Filler")
+                        }
+                        // This box makes the content scrollable
+                        box(Modifier.width(1000).height(600).background(Color.BLUE))
+                    }
+                },
+                CaptureComponentTree(),
+            )
+        checkLayout(
+            600,
+            600,
+            7,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "FillParentMaxWidthHorizontal",
+            ops,
+        )
+    }
+
+    @Test
+    fun testFillParentMaxFraction() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(Modifier.fillMaxSize().verticalScroll()) {
+                        // This box should be half the size of the viewport height (300)
+                        box(
+                            Modifier.fillParentMaxHeight(0.5f).fillMaxWidth().background(Color.RED)
+                        ) {
+                            text("Half Viewport")
+                        }
+                        // This box makes the content scrollable
+                        box(Modifier.width(600).height(1000).background(Color.BLUE))
+                    }
+                },
+                CaptureComponentTree(),
+            )
+        checkLayout(
+            600,
+            600,
+            7,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "FillParentMaxFraction",
+            ops,
+        )
+    }
 }
