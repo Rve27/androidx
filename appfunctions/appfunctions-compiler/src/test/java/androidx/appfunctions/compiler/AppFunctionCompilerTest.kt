@@ -58,12 +58,12 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions.xml",
-            goldenFileName = "emptyXml_app_function.xml",
+            goldenFileName = "xml/emptyXml_app_function.xml",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "emptyXml_app_function.xml",
+            goldenFileName = "xml/emptyXml_app_function.xml",
         )
     }
 
@@ -110,7 +110,7 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}AllPrimitiveInputFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}AllPrimitiveInputFunctions_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}AllPrimitiveInputFunctions_AppFunctionInventory.KT",
         )
     }
 
@@ -126,12 +126,12 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}ParcelablePrimitiveFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}ParcelablePrimitiveFunctions_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}ParcelablePrimitiveFunctions_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "parcelablePrimitiveFunctions_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/parcelablePrimitiveFunctions_app_function_dynamic_schema.xml",
         )
     }
 
@@ -166,12 +166,14 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}FunctionWithSerializableProxyInput_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}FunctionWithSerializableProxyInput_AppFunctionInventory.KT",
+            goldenFileName =
+                "inventory/${'$'}FunctionWithSerializableProxyInput_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "functionWithSerializableProxyInput_app_function_dynamic_schema.xml",
+            goldenFileName =
+                "xml/functionWithSerializableProxyInput_app_function_dynamic_schema.xml",
         )
     }
 
@@ -186,7 +188,7 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}AllPrimitiveInputFunctions_AppFunctionInvoker.kt",
-            goldenFileName = "${'$'}AllPrimitiveInputFunctions_AppFunctionInvoker.KT",
+            goldenFileName = "invoker/${'$'}AllPrimitiveInputFunctions_AppFunctionInvoker.KT",
         )
     }
 
@@ -202,12 +204,12 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}SerializableInputFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}SerializableInputFunctions_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}SerializableInputFunctions_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "serializableInputFunctions_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/serializableInputFunctions_app_function_dynamic_schema.xml",
         )
     }
 
@@ -227,12 +229,13 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}DerivedSerializableInputFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}DerivedSerializableInputFunctions_AppFunctionInventory.KT",
+            goldenFileName =
+                "inventory/${'$'}DerivedSerializableInputFunctions_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "derivedSerializableInputFunctions_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/derivedSerializableInputFunctions_app_function_dynamic_schema.xml",
         )
     }
 
@@ -252,13 +255,14 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}NestedDerivedSerializableInputFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}NestedDerivedSerializableInputFunctions_AppFunctionInventory.KT",
+            goldenFileName =
+                "inventory/${'$'}NestedDerivedSerializableInputFunctions_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
             goldenFileName =
-                "nestedDerivedSerializableInputFunctions_app_function_dynamic_schema.xml",
+                "xml/nestedDerivedSerializableInputFunctions_app_function_dynamic_schema.xml",
         )
     }
 
@@ -278,12 +282,14 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}DerivedSerializableOutputFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}DerivedSerializableOutputFunctions_AppFunctionInventory.KT",
+            goldenFileName =
+                "inventory/${'$'}DerivedSerializableOutputFunctions_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "derivedSerializableOutputFunctions_app_function_dynamic_schema.xml",
+            goldenFileName =
+                "xml/derivedSerializableOutputFunctions_app_function_dynamic_schema.xml",
         )
     }
 
@@ -304,13 +310,13 @@ class AppFunctionCompilerTest {
             expectGeneratedSourceFileName =
                 "${'$'}NestedDerivedSerializableOutputFunctions_AppFunctionInventory.kt",
             goldenFileName =
-                "${'$'}NestedDerivedSerializableOutputFunctions_AppFunctionInventory.KT",
+                "inventory/${'$'}NestedDerivedSerializableOutputFunctions_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
             goldenFileName =
-                "nestedDerivedSerializableOutputFunctions_app_function_dynamic_schema.xml",
+                "xml/nestedDerivedSerializableOutputFunctions_app_function_dynamic_schema.xml",
         )
     }
 
@@ -333,13 +339,13 @@ class AppFunctionCompilerTest {
             expectGeneratedSourceFileName =
                 "${'$'}AppFunctionWithInputFromDifferentPackage_AppFunctionInventory.kt",
             goldenFileName =
-                "${'$'}AppFunctionWithInputFromDifferentPackage_AppFunctionInventory.KT",
+                "inventory/${'$'}AppFunctionWithInputFromDifferentPackage_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
             goldenFileName =
-                "appFunctionWithInputFromDifferentPackage_app_function_dynamic_schema.xml",
+                "xml/appFunctionWithInputFromDifferentPackage_app_function_dynamic_schema.xml",
         )
     }
 
@@ -355,13 +361,14 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}FakeAllPrimitiveParamsImpl_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}FakeAllPrimitiveParamsImpl_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}FakeAllPrimitiveParamsImpl_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}FakeAllPrimitiveArrayParamsImpl_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}FakeAllPrimitiveArrayParamsImpl_AppFunctionInventory.KT",
+            goldenFileName =
+                "inventory/${'$'}FakeAllPrimitiveArrayParamsImpl_AppFunctionInventory.KT",
         )
     }
 
@@ -379,7 +386,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}UnitReturnImpl_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}UnitReturnImpl_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}UnitReturnImpl_AppFunctionInventory.KT",
         )
     }
 
@@ -393,17 +400,17 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "intEnumValueFunctions_app_functions_v2.xml",
+            goldenFileName = "xml/intEnumValueFunctions_app_functions_v2.xml",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}AggregatedAppFunctionInventory_Impl.kt",
-            goldenFileName = "${'$'}AggregatedAppFunctionInventory_IntEnum_Impl.KT",
+            goldenFileName = "inventory/${'$'}AggregatedAppFunctionInventory_IntEnum_Impl.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}IntEnumValueFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}IntEnumValueFunctions_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}IntEnumValueFunctions_AppFunctionInventory.KT",
         )
     }
 
@@ -417,13 +424,13 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "stringEnumValueFunctions_app_functions_v2.xml",
+            goldenFileName = "xml/stringEnumValueFunctions_app_functions_v2.xml",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}StringEnumValueFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}StringEnumValueFunctions_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}StringEnumValueFunctions_AppFunctionInventory.KT",
         )
     }
 
@@ -439,12 +446,12 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}SerializableOutputFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}SerializableOutputFunctions_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}SerializableOutputFunctions_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "serializableOutputFunctions_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/serializableOutputFunctions_app_function_dynamic_schema.xml",
         )
     }
 
@@ -467,13 +474,13 @@ class AppFunctionCompilerTest {
             expectGeneratedSourceFileName =
                 "${'$'}AppFunctionWithOutputFromDifferentPackage_AppFunctionInventory.kt",
             goldenFileName =
-                "${'$'}AppFunctionWithOutputFromDifferentPackage_AppFunctionInventory.KT",
+                "inventory/${'$'}AppFunctionWithOutputFromDifferentPackage_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
             goldenFileName =
-                "appFunctionWithOutputFromDifferentPackage_app_function_dynamic_schema.xml",
+                "xml/appFunctionWithOutputFromDifferentPackage_app_function_dynamic_schema.xml",
         )
     }
 
@@ -493,12 +500,14 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}RecursiveSerializableInputFunctions_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}RecursiveSerializableInputFunctions_AppFunctionInventory.KT",
+            goldenFileName =
+                "inventory/${'$'}RecursiveSerializableInputFunctions_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "recursiveSerializableInputFunctions_app_function_dynamic_schema.xml",
+            goldenFileName =
+                "xml/recursiveSerializableInputFunctions_app_function_dynamic_schema.xml",
         )
     }
 
@@ -590,7 +599,8 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}FunctionWithGenericSerializable_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}FunctionWithGenericSerializable_AppFunctionInventory.KT",
+            goldenFileName =
+                "inventory/${'$'}FunctionWithGenericSerializable_AppFunctionInventory.KT",
         )
     }
 
@@ -605,7 +615,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "functionWithGenericSerializable_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/functionWithGenericSerializable_app_function_dynamic_schema.xml",
         )
     }
 
@@ -621,7 +631,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions.xml",
-            goldenFileName = "fakeNoArgImpl_app_function.xml",
+            goldenFileName = "xml/fakeNoArgImpl_app_function.xml",
         )
     }
 
@@ -640,7 +650,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions.xml",
-            goldenFileName = "fakeNoArgImpl_isEnabled_true_app_function.xml",
+            goldenFileName = "xml/fakeNoArgImpl_isEnabled_true_app_function.xml",
         )
     }
 
@@ -659,7 +669,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions.xml",
-            goldenFileName = "fakeNoArgImpl_isEnabled_false_app_function.xml",
+            goldenFileName = "xml/fakeNoArgImpl_isEnabled_false_app_function.xml",
         )
     }
 
@@ -674,7 +684,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions.xml",
-            goldenFileName = "fakeNoArg_freeForm_function_app_function.xml",
+            goldenFileName = "xml/fakeNoArg_freeForm_function_app_function.xml",
         )
     }
 
@@ -690,7 +700,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "fakeNoArgImpl_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/fakeNoArgImpl_app_function_dynamic_schema.xml",
         )
     }
 
@@ -709,7 +719,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "fakeNoArgImpl_isEnabled_true_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/fakeNoArgImpl_isEnabled_true_app_function_dynamic_schema.xml",
         )
     }
 
@@ -728,7 +738,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "fakeNoArgImpl_isEnabled_false_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/fakeNoArgImpl_isEnabled_false_app_function_dynamic_schema.xml",
         )
     }
 
@@ -743,7 +753,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "fakeNoArg_freeForm_function_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/fakeNoArg_freeForm_function_app_function_dynamic_schema.xml",
         )
     }
 
@@ -759,7 +769,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "fake_freeForm_with_detailed_kdoc_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/fake_freeForm_with_detailed_kdoc_app_function_dynamic_schema.xml",
         )
     }
 
@@ -774,7 +784,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "fake_freeForm_with_param_kdocs_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/fake_freeForm_with_param_kdocs_app_function_dynamic_schema.xml",
         )
     }
 
@@ -793,7 +803,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "fakeAllPrimitiveParams_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/fakeAllPrimitiveParams_app_function_dynamic_schema.xml",
         )
     }
 
@@ -812,7 +822,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "fakeAllPrimitiveReturns_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/fakeAllPrimitiveReturns_app_function_dynamic_schema.xml",
         )
     }
 
@@ -832,7 +842,7 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
             goldenFileName =
-                "fakeAllNullablePrimitiveParamsWithDefault_app_function_dynamic_schema.xml",
+                "xml/fakeAllNullablePrimitiveParamsWithDefault_app_function_dynamic_schema.xml",
         )
     }
 
@@ -850,7 +860,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}Main_InventoryComponentRegistry.kt",
-            goldenFileName = "${'$'}Main_InventoryComponentRegistry.KT",
+            goldenFileName = "registry/${'$'}Main_InventoryComponentRegistry.KT",
         )
     }
 
@@ -868,7 +878,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}Main_InvokerComponentRegistry.kt",
-            goldenFileName = "${'$'}Main_InvokerComponentRegistry.KT",
+            goldenFileName = "registry/${'$'}Main_InvokerComponentRegistry.KT",
         )
     }
 
@@ -887,7 +897,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}Main_FunctionComponentRegistry.kt",
-            goldenFileName = "${'$'}Main_FunctionComponentRegistry.KT",
+            goldenFileName = "registry/${'$'}Main_FunctionComponentRegistry.KT",
         )
     }
 
@@ -902,7 +912,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}Main_SerializableComponentRegistry.kt",
-            goldenFileName = "${'$'}Main_SerializableComponentRegistry.KT",
+            goldenFileName = "registry/${'$'}Main_SerializableComponentRegistry.KT",
         )
     }
 
@@ -921,7 +931,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}AggregatedAppFunctionInventory_Impl.kt",
-            goldenFileName = "${'$'}AggregatedAppFunctionInventory_Impl.KT",
+            goldenFileName = "inventory/${'$'}AggregatedAppFunctionInventory_Impl.KT",
         )
     }
 
@@ -940,7 +950,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}AggregatedAppFunctionInvoker_Impl.kt",
-            goldenFileName = "${'$'}AggregatedAppFunctionInvoker_Impl.KT",
+            goldenFileName = "invoker/${'$'}AggregatedAppFunctionInvoker_Impl.KT",
         )
     }
 
@@ -960,7 +970,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}Main_SchemaDefinitionComponentRegistry.kt",
-            goldenFileName = "${'$'}Main_SchemaDefinitionComponentRegistry.KT",
+            goldenFileName = "registry/${'$'}Main_SchemaDefinitionComponentRegistry.KT",
         )
     }
 
@@ -975,7 +985,7 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}SchemaAppFunctionInventory_Impl.kt",
-            goldenFileName = "${'$'}SchemaAppFunctionInventory_Impl.KT",
+            goldenFileName = "inventory/${'$'}SchemaAppFunctionInventory_Impl.KT",
         )
     }
 
@@ -991,12 +1001,12 @@ class AppFunctionCompilerTest {
             report = report,
             expectGeneratedSourceFileName =
                 "${'$'}FunctionWithEmptySerializable_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}FunctionWithEmptySerializable_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}FunctionWithEmptySerializable_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "functionWithEmptySerializable_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/functionWithEmptySerializable_app_function_dynamic_schema.xml",
         )
     }
 
@@ -1112,17 +1122,17 @@ class AppFunctionCompilerTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}DeprecatedFunction_AppFunctionInvoker.kt",
-            goldenFileName = "${'$'}DeprecatedFunction_AppFunctionInvoker.KT",
+            goldenFileName = "invoker/${'$'}DeprecatedFunction_AppFunctionInvoker.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}DeprecatedFunction_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}DeprecatedFunction_AppFunctionInventory.KT",
+            goldenFileName = "inventory/${'$'}DeprecatedFunction_AppFunctionInventory.KT",
         )
         compilationTestHelper.assertSuccessWithResourceContent(
             report = report,
             expectGeneratedResourceFileName = "app_functions_v2.xml",
-            goldenFileName = "deprecated_app_function_dynamic_schema.xml",
+            goldenFileName = "xml/deprecated_app_function_dynamic_schema.xml",
         )
     }
 }
