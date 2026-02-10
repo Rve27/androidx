@@ -45,9 +45,12 @@ ext {
 }
 
 android {
-    defaultConfig.consumerProguardFiles(
-            new File(webviewBoundaryInterfacesDir, "proguard.flags"), "proguard-rules.pro"
-    )
+    defaultConfig {
+        minSdk { version = release(24) }
+        consumerProguardFiles(
+                new File(webviewBoundaryInterfacesDir, "proguard.flags"), "proguard-rules.pro"
+        )
+    }
     // Don't change this value without contacting the WebKit owners.
     compileSdk  { version = release(33) }
     namespace = "androidx.webkit"
