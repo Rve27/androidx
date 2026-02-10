@@ -57,10 +57,6 @@ androidXMultiplatform {
             implementation("androidx.window:window:1.0.0")
         }
 
-        commonStubsMain {}.dependsOn(commonMain)
-        jvmStubsMain.dependsOn(commonStubsMain)
-        linuxx64StubsMain.dependsOn(commonStubsMain)
-
         androidDeviceTest.dependencies {
             implementation(project(":compose:test-utils"))
             implementation("androidx.compose.foundation:foundation:1.6.0")

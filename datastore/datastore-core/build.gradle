@@ -118,7 +118,7 @@ androidXMultiplatform {
             }
         }
 
-        nonWebCommonTest {}.dependsOn(commonTest)
+        create("nonWebCommonTest").dependsOn(commonTest)
 
         jvmAndAndroidTest {
             dependsOn(nonWebCommonTest)

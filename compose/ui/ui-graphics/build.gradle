@@ -69,10 +69,6 @@ androidXMultiplatform {
             api("androidx.annotation:annotation-experimental:1.4.1")
         }
 
-        commonStubsMain {}.dependsOn(commonMain)
-        jvmStubsMain.dependsOn(commonStubsMain)
-        linuxx64StubsMain.dependsOn(commonStubsMain)
-
         androidDeviceTest.dependencies {
             implementation(project(":compose:ui:ui-graphics:ui-graphics-samples"))
             implementation(project(":compose:ui:ui-test-junit4"))

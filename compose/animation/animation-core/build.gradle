@@ -65,10 +65,6 @@ androidXMultiplatform {
             api("androidx.annotation:annotation:1.8.1")
         }
 
-        commonStubsMain {}.dependsOn(commonMain)
-        jvmStubsMain.dependsOn(commonStubsMain)
-        linuxx64StubsMain.dependsOn(commonStubsMain)
-
         androidDeviceTest.dependencies {
             implementation(libs.testRules)
             implementation(libs.testRunner)
