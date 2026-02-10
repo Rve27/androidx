@@ -13,288 +13,288 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import static androidx.xr.scenecore.runtime.SpatialEnvironment.NO_PASSTHROUGH_OPACITY_PREFERENCE;
-
-import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
-
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import android.app.Activity;
-
-import androidx.xr.scenecore.runtime.ExrImageResource;
-import androidx.xr.scenecore.runtime.GltfModelResource;
-import androidx.xr.scenecore.runtime.SpatialEnvironment.SpatialEnvironmentPreference;
-import androidx.xr.scenecore.runtime.SpatialEnvironmentFeature;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-
-import com.android.extensions.xr.ShadowXrExtensions;
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.environment.EnvironmentVisibilityState;
-import com.android.extensions.xr.environment.PassthroughVisibilityState;
-import com.android.extensions.xr.environment.ShadowEnvironmentVisibilityState;
-import com.android.extensions.xr.environment.ShadowPassthroughVisibilityState;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeRepository;
-import com.android.extensions.xr.space.ShadowSpatialState;
-import com.android.extensions.xr.space.SpatialState;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-
-import java.util.Objects;
-import java.util.function.Consumer;
+import android.app.Activity
+import androidx.xr.scenecore.runtime.ExrImageResource
+import androidx.xr.scenecore.runtime.GltfModelResource
+import androidx.xr.scenecore.runtime.SpatialEnvironment
+import androidx.xr.scenecore.runtime.SpatialEnvironmentFeature
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import com.android.extensions.xr.ShadowXrExtensions
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.environment.EnvironmentVisibilityState
+import com.android.extensions.xr.environment.PassthroughVisibilityState
+import com.android.extensions.xr.environment.ShadowEnvironmentVisibilityState
+import com.android.extensions.xr.environment.ShadowPassthroughVisibilityState
+import com.android.extensions.xr.node.NodeRepository
+import com.android.extensions.xr.space.ShadowSpatialState
+import com.android.extensions.xr.space.SpatialState
+import com.google.common.truth.Truth.assertThat
+import com.google.common.util.concurrent.MoreExecutors
+import java.util.function.Consumer
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 // Technically this doesn't need to be a Robolectric test, since it doesn't directly depend on
 // any Android subsystems. However, we're currently using an Android test runner for consistency
 // with other Android XR impl tests in this directory.
-
 /** Unit tests for the AndroidXR implementation of JXRCore's SpatialEnvironment module. */
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public final class SpatialEnvironmentImplTest {
-    private final NodeRepository mNodeRepository = NodeRepository.getInstance();
-    private final SpatialEnvironmentFeature mMockSpatialEnvironmentFeature =
-            mock(SpatialEnvironmentFeature.class);
-    private ActivityController<Activity> mActivityController;
-    private Activity mActivity;
-    private XrExtensions mXrExtensions = null;
-    private SpatialEnvironmentImpl mEnvironment = null;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class SpatialEnvironmentImplTest {
+    private val nodeRepository: NodeRepository = NodeRepository.getInstance()
+    private val mockSpatialEnvironmentFeature: SpatialEnvironmentFeature =
+        mock<SpatialEnvironmentFeature>()
+    private val activityController = Robolectric.buildActivity(Activity::class.java)
+    private val activity = activityController.create().start().get()
+    private val xrExtensions: XrExtensions = getXrExtensions()!!
+    private lateinit var spatialEnvironmentImpl: SpatialEnvironmentImpl
 
     @Before
-    public void setUp() {
-        mActivityController = Robolectric.buildActivity(Activity.class);
-        mActivity = mActivityController.create().start().get();
+    fun setUp() {
         // Reset our state.
-        mXrExtensions = XrExtensionsProvider.getXrExtensions();
-        Node sceneRootNode = Objects.requireNonNull(mXrExtensions).createNode();
-
-        mEnvironment =
-                new SpatialEnvironmentImpl(
-                        mActivity, mXrExtensions, sceneRootNode, this::getSpatialState);
+        val sceneRootNode = xrExtensions.createNode()
+        spatialEnvironmentImpl =
+            SpatialEnvironmentImpl(activity, xrExtensions, sceneRootNode) { this.spatialState }
     }
 
-    private SpatialState getSpatialState() {
-        return mXrExtensions.getSpatialState(mActivity);
-    }
+    private val spatialState: SpatialState
+        get() = xrExtensions.getSpatialState(activity)
 
-    private void onRenderingFeatureReady() {
-        mEnvironment.onRenderingFeatureReady(mMockSpatialEnvironmentFeature);
+    private fun onRenderingFeatureReady() {
+        spatialEnvironmentImpl.onRenderingFeatureReady(mockSpatialEnvironmentFeature)
     }
 
     @After
-    public void tearDown() {
-        mActivityController.destroy();
+    fun tearDown() {
+        activityController.destroy()
     }
 
     @Test
-    public void setPreferredPassthroughOpacity() {
-        mEnvironment.setPreferredPassthroughOpacity(NO_PASSTHROUGH_OPACITY_PREFERENCE);
+    fun setPreferredPassthroughOpacity() {
+        spatialEnvironmentImpl.preferredPassthroughOpacity =
+            SpatialEnvironment.NO_PASSTHROUGH_OPACITY_PREFERENCE
 
-        assertThat(mEnvironment.getPreferredPassthroughOpacity())
-                .isEqualTo(NO_PASSTHROUGH_OPACITY_PREFERENCE);
+        assertThat(spatialEnvironmentImpl.preferredPassthroughOpacity)
+            .isEqualTo(SpatialEnvironment.NO_PASSTHROUGH_OPACITY_PREFERENCE)
 
-        mEnvironment.setPreferredPassthroughOpacity(0.1f);
+        spatialEnvironmentImpl.preferredPassthroughOpacity = (0.1f)
 
-        assertThat(mNodeRepository.getPassthroughOpacity(mEnvironment.mPassthroughNode))
-                .isEqualTo(0.1f);
-        assertThat(mEnvironment.getPreferredPassthroughOpacity()).isEqualTo(0.1f);
+        assertThat(nodeRepository.getPassthroughOpacity(spatialEnvironmentImpl.passthroughNode))
+            .isEqualTo(0.1f)
+        assertThat(spatialEnvironmentImpl.preferredPassthroughOpacity).isEqualTo(0.1f)
     }
 
     @Test
-    public void setPreferredPassthroughOpacityNearOrUnderZero_getsZeroOpacity() {
+    fun setPreferredPassthroughOpacityNearOrUnderZero_getsZeroOpacity() {
         // Opacity values below 1% should be treated as zero.
-        mEnvironment.setPreferredPassthroughOpacity(0.009f);
+        spatialEnvironmentImpl.preferredPassthroughOpacity = (0.009f)
 
-        assertThat(mEnvironment.getPreferredPassthroughOpacity()).isEqualTo(0.0f);
+        assertThat(spatialEnvironmentImpl.preferredPassthroughOpacity).isEqualTo(0.0f)
 
-        mEnvironment.setPreferredPassthroughOpacity(-0.1f);
+        spatialEnvironmentImpl.preferredPassthroughOpacity = (-0.1f)
 
-        assertThat(mNodeRepository.getPassthroughOpacity(mEnvironment.mPassthroughNode))
-                .isEqualTo(0.0f);
-        assertThat(mEnvironment.getPreferredPassthroughOpacity()).isEqualTo(0.0f);
+        assertThat(nodeRepository.getPassthroughOpacity(spatialEnvironmentImpl.passthroughNode))
+            .isEqualTo(0.0f)
+        assertThat(spatialEnvironmentImpl.preferredPassthroughOpacity).isEqualTo(0.0f)
     }
 
     @Test
-    public void setPreferredPassthroughOpacityNearOrOverOne_getsFullOpacity() {
+    fun setPreferredPassthroughOpacityNearOrOverOne_getsFullOpacity() {
         // Opacity values above 99% should be treated as full opacity.
-        mEnvironment.setPreferredPassthroughOpacity(0.991f);
+        spatialEnvironmentImpl.preferredPassthroughOpacity = (0.991f)
 
-        assertThat(mEnvironment.getPreferredPassthroughOpacity()).isEqualTo(1.0f);
+        assertThat(spatialEnvironmentImpl.preferredPassthroughOpacity).isEqualTo(1.0f)
 
-        mEnvironment.setPreferredPassthroughOpacity(1.1f);
+        spatialEnvironmentImpl.preferredPassthroughOpacity = (1.1f)
 
-        assertThat(mNodeRepository.getPassthroughOpacity(mEnvironment.mPassthroughNode))
-                .isEqualTo(1.0f);
-        assertThat(mEnvironment.getPreferredPassthroughOpacity()).isEqualTo(1.0f);
+        assertThat(nodeRepository.getPassthroughOpacity(spatialEnvironmentImpl.passthroughNode))
+            .isEqualTo(1.0f)
+        assertThat(spatialEnvironmentImpl.preferredPassthroughOpacity).isEqualTo(1.0f)
     }
 
     @Test
-    public void getCurrentPassthroughOpacity_returnsZeroInitially() {
-        assertThat(mEnvironment.getCurrentPassthroughOpacity()).isEqualTo(0.0f);
+    fun getCurrentPassthroughOpacity_returnsZeroInitially() {
+        assertThat(spatialEnvironmentImpl.currentPassthroughOpacity).isEqualTo(0.0f)
     }
 
     @Test
-    public void onPassthroughOpacityChangedListener_firesOnPassthroughOpacityChange() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<Float> listener1 = (Consumer<Float>) mock(Consumer.class);
-        @SuppressWarnings(value = "unchecked")
-        Consumer<Float> listener2 = (Consumer<Float>) mock(Consumer.class);
+    fun onPassthroughOpacityChangedListener_firesOnPassthroughOpacityChange() {
+        val listener1 = mock<Consumer<Float>>()
+        val listener2 = mock<Consumer<Float>>()
 
-        mEnvironment.addOnPassthroughOpacityChangedListener(directExecutor(), listener1);
-        mEnvironment.addOnPassthroughOpacityChangedListener(directExecutor(), listener2);
+        spatialEnvironmentImpl.addOnPassthroughOpacityChangedListener(
+            MoreExecutors.directExecutor(),
+            listener1,
+        )
+        spatialEnvironmentImpl.addOnPassthroughOpacityChangedListener(
+            MoreExecutors.directExecutor(),
+            listener2,
+        )
 
-        float opacity = mEnvironment.getCurrentPassthroughOpacity();
-        mEnvironment.firePassthroughOpacityChangedEvent();
+        val opacity = spatialEnvironmentImpl.currentPassthroughOpacity
+        spatialEnvironmentImpl.firePassthroughOpacityChangedEvent()
 
-        verify(listener1).accept(opacity);
-        verify(listener2).accept(opacity);
+        verify(listener1).accept(opacity)
+        verify(listener2).accept(opacity)
 
-        mEnvironment.removeOnPassthroughOpacityChangedListener(listener1);
-        mEnvironment.firePassthroughOpacityChangedEvent();
+        spatialEnvironmentImpl.removeOnPassthroughOpacityChangedListener(listener1)
+        spatialEnvironmentImpl.firePassthroughOpacityChangedEvent()
 
-        verify(listener1).accept(opacity);
-        verify(listener2, times(2)).accept(opacity);
+        verify(listener1).accept(opacity)
+        verify(listener2, times(2)).accept(opacity)
     }
 
     @Test
-    public void setPreferredSpatialEnv_throwsWhenRenderingFeatureNotReady() {
-
-        assertThrows(
-                UnsupportedOperationException.class,
-                () ->
-                        mEnvironment.setPreferredSpatialEnvironment(
-                                new SpatialEnvironmentPreference(
-                                        new ExrImageResource() {}, new GltfModelResource() {})));
+    fun setPreferredSpatialEnv_throwsWhenRenderingFeatureNotReady() {
+        Assert.assertThrows(UnsupportedOperationException::class.java) {
+            spatialEnvironmentImpl.preferredSpatialEnvironment =
+                (SpatialEnvironment.SpatialEnvironmentPreference(
+                    object : ExrImageResource {},
+                    object : GltfModelResource {},
+                ))
+        }
     }
 
     @Test
-    public void setPreferredSpatialEnv_featureReady_featureIsCalled() {
-        onRenderingFeatureReady();
+    fun setPreferredSpatialEnv_featureReady_featureIsCalled() {
+        onRenderingFeatureReady()
 
-        mEnvironment.setPreferredSpatialEnvironment(
-                new SpatialEnvironmentPreference(
-                        new ExrImageResource() {}, new GltfModelResource() {}));
+        spatialEnvironmentImpl.preferredSpatialEnvironment =
+            (SpatialEnvironment.SpatialEnvironmentPreference(
+                object : ExrImageResource {},
+                object : GltfModelResource {},
+            ))
 
-        verify(mMockSpatialEnvironmentFeature)
-                .setPreferredSpatialEnvironment(any(SpatialEnvironmentPreference.class));
+        verify(mockSpatialEnvironmentFeature).preferredSpatialEnvironment =
+            any<SpatialEnvironment.SpatialEnvironmentPreference>()
     }
 
     @Test
-    public void isPreferredSpatialEnvironmentActive_defaultsToFalse() {
-        assertThat(mEnvironment.isPreferredSpatialEnvironmentActive()).isFalse();
+    fun isPreferredSpatialEnvironmentActive_defaultsToFalse() {
+        assertThat(spatialEnvironmentImpl.isPreferredSpatialEnvironmentActive).isFalse()
     }
 
     @Test
-    public void onSpatialEnvironmentChangedListener_firesOnEnvironmentChange() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<Boolean> listener1 = (Consumer<Boolean>) mock(Consumer.class);
-        @SuppressWarnings(value = "unchecked")
-        Consumer<Boolean> listener2 = (Consumer<Boolean>) mock(Consumer.class);
+    fun onSpatialEnvironmentChangedListener_firesOnEnvironmentChange() {
+        val listener1 = mock<Consumer<Boolean>>()
+        val listener2 = mock<Consumer<Boolean>>()
 
-        SpatialState spatialState = ShadowSpatialState.create();
-        mEnvironment.setSpatialState(spatialState);
+        val spatialState = ShadowSpatialState.create()
+        spatialEnvironmentImpl.setSpatialState(spatialState)
 
-        mEnvironment.addOnSpatialEnvironmentChangedListener(directExecutor(), listener1);
-        mEnvironment.addOnSpatialEnvironmentChangedListener(directExecutor(), listener2);
+        spatialEnvironmentImpl.addOnSpatialEnvironmentChangedListener(
+            MoreExecutors.directExecutor(),
+            listener1,
+        )
+        spatialEnvironmentImpl.addOnSpatialEnvironmentChangedListener(
+            MoreExecutors.directExecutor(),
+            listener2,
+        )
 
-        boolean isPreferredSpatialEnvironmentActive =
-                mEnvironment.isPreferredSpatialEnvironmentActive();
+        val isPreferredSpatialEnvironmentActive =
+            spatialEnvironmentImpl.isPreferredSpatialEnvironmentActive
 
-        mEnvironment.fireOnSpatialEnvironmentChangedEvent();
+        spatialEnvironmentImpl.fireOnSpatialEnvironmentChangedEvent()
 
-        verify(listener1).accept(isPreferredSpatialEnvironmentActive);
-        verify(listener2).accept(isPreferredSpatialEnvironmentActive);
+        verify(listener1).accept(isPreferredSpatialEnvironmentActive)
+        verify(listener2).accept(isPreferredSpatialEnvironmentActive)
 
-        mEnvironment.removeOnSpatialEnvironmentChangedListener(listener1);
-        mEnvironment.fireOnSpatialEnvironmentChangedEvent();
-        verify(listener1).accept(isPreferredSpatialEnvironmentActive);
+        spatialEnvironmentImpl.removeOnSpatialEnvironmentChangedListener(listener1)
+        spatialEnvironmentImpl.fireOnSpatialEnvironmentChangedEvent()
+        verify(listener1).accept(isPreferredSpatialEnvironmentActive)
 
-        verify(listener2, times(2)).accept(isPreferredSpatialEnvironmentActive);
+        verify(listener2, times(2)).accept(isPreferredSpatialEnvironmentActive)
     }
 
     @Test
-    public void dispose_clearsSpatialEnvironmentPreferenceListeners() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<Boolean> listener = (Consumer<Boolean>) mock(Consumer.class);
+    fun dispose_clearsSpatialEnvironmentPreferenceListeners() {
+        val listener = mock<Consumer<Boolean>>()
 
-        SpatialState spatialState = ShadowSpatialState.create();
-        mEnvironment.setSpatialState(spatialState);
-        mEnvironment.addOnSpatialEnvironmentChangedListener(directExecutor(), listener);
+        val spatialState = ShadowSpatialState.create()
+        spatialEnvironmentImpl.setSpatialState(spatialState)
+        spatialEnvironmentImpl.addOnSpatialEnvironmentChangedListener(
+            MoreExecutors.directExecutor(),
+            listener,
+        )
 
-        boolean isPreferredSpatialEnvironmentActive =
-                mEnvironment.isPreferredSpatialEnvironmentActive();
-        mEnvironment.fireOnSpatialEnvironmentChangedEvent();
+        val isPreferredSpatialEnvironmentActive =
+            spatialEnvironmentImpl.isPreferredSpatialEnvironmentActive
+        spatialEnvironmentImpl.fireOnSpatialEnvironmentChangedEvent()
 
-        verify(listener).accept(isPreferredSpatialEnvironmentActive);
+        verify(listener).accept(isPreferredSpatialEnvironmentActive)
 
-        mEnvironment.dispose();
-        mEnvironment.fireOnSpatialEnvironmentChangedEvent();
+        spatialEnvironmentImpl.dispose()
+        spatialEnvironmentImpl.fireOnSpatialEnvironmentChangedEvent()
 
-        verify(listener).accept(isPreferredSpatialEnvironmentActive);
+        verify(listener).accept(isPreferredSpatialEnvironmentActive)
     }
 
     @Test
-    public void dispose_clearsPreferredPassthroughOpacityListeners() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<Float> listener = (Consumer<Float>) mock(Consumer.class);
-        mEnvironment.addOnPassthroughOpacityChangedListener(directExecutor(), listener);
+    fun dispose_clearsPreferredPassthroughOpacityListeners() {
+        val listener = mock<Consumer<Float>>()
+        spatialEnvironmentImpl.addOnPassthroughOpacityChangedListener(
+            MoreExecutors.directExecutor(),
+            listener,
+        )
 
-        float opacity = mEnvironment.getCurrentPassthroughOpacity();
-        mEnvironment.firePassthroughOpacityChangedEvent();
+        val opacity = spatialEnvironmentImpl.currentPassthroughOpacity
+        spatialEnvironmentImpl.firePassthroughOpacityChangedEvent()
 
-        verify(listener).accept(opacity);
+        verify(listener).accept(opacity)
 
         // Ensure the listener is called exactly once, even if the event is fired after dispose.
-        mEnvironment.dispose();
-        mEnvironment.firePassthroughOpacityChangedEvent();
+        spatialEnvironmentImpl.dispose()
+        spatialEnvironmentImpl.firePassthroughOpacityChangedEvent()
 
-        verify(listener).accept(opacity);
+        verify(listener).accept(opacity)
     }
 
     @Test
-    public void dispose_clearsResources() {
-        onRenderingFeatureReady();
-        SpatialState spatialState = ShadowSpatialState.create();
+    fun dispose_clearsResources() {
+        onRenderingFeatureReady()
+        val spatialState = ShadowSpatialState.create()
         ShadowSpatialState.extract(spatialState)
-                .setEnvironmentVisibilityState(
-                        /* environmentVisibilityState= */ ShadowEnvironmentVisibilityState.create(
-                                EnvironmentVisibilityState.APP_VISIBLE));
+            .setEnvironmentVisibilityState(
+                /* environmentVisibilityState= */ ShadowEnvironmentVisibilityState.create(
+                    EnvironmentVisibilityState.APP_VISIBLE
+                )
+            )
         ShadowSpatialState.extract(spatialState)
-                .setPassthroughVisibilityState(
-                        /* passthroughVisibilityState= */ ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.APP, 0.5f));
+            .setPassthroughVisibilityState(
+                /* passthroughVisibilityState= */ ShadowPassthroughVisibilityState.create(
+                    PassthroughVisibilityState.APP,
+                    0.5f,
+                )
+            )
 
-        mEnvironment.setSpatialState(spatialState);
+        spatialEnvironmentImpl.setSpatialState(spatialState)
 
-        mEnvironment.setPreferredPassthroughOpacity(0.5f);
+        spatialEnvironmentImpl.preferredPassthroughOpacity = 0.5f
 
-        assertThat(mEnvironment.isPreferredSpatialEnvironmentActive()).isTrue();
-        assertThat(mEnvironment.getPreferredPassthroughOpacity())
-                .isNotEqualTo(NO_PASSTHROUGH_OPACITY_PREFERENCE);
-        assertThat(mEnvironment.getCurrentPassthroughOpacity()).isEqualTo(0.5f);
+        assertThat(spatialEnvironmentImpl.isPreferredSpatialEnvironmentActive).isTrue()
+        assertThat(spatialEnvironmentImpl.preferredPassthroughOpacity)
+            .isNotEqualTo(SpatialEnvironment.NO_PASSTHROUGH_OPACITY_PREFERENCE)
+        assertThat(spatialEnvironmentImpl.currentPassthroughOpacity).isEqualTo(0.5f)
 
-        mEnvironment.dispose();
+        spatialEnvironmentImpl.dispose()
 
-        verify(mMockSpatialEnvironmentFeature).dispose();
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getEnvironmentNode(mActivity))
-                .isNull();
-        assertThat(mEnvironment.isPreferredSpatialEnvironmentActive()).isFalse();
-        assertThat(mEnvironment.getPreferredPassthroughOpacity())
-                .isEqualTo(NO_PASSTHROUGH_OPACITY_PREFERENCE);
-        assertThat(mEnvironment.getCurrentPassthroughOpacity()).isEqualTo(0.0f);
+        verify(mockSpatialEnvironmentFeature).dispose()
+        assertThat(ShadowXrExtensions.extract(xrExtensions).getEnvironmentNode(activity)).isNull()
+        assertThat(spatialEnvironmentImpl.isPreferredSpatialEnvironmentActive).isFalse()
+        assertThat(spatialEnvironmentImpl.preferredPassthroughOpacity)
+            .isEqualTo(SpatialEnvironment.NO_PASSTHROUGH_OPACITY_PREFERENCE)
+        assertThat(spatialEnvironmentImpl.currentPassthroughOpacity).isEqualTo(0.0f)
     }
 }
