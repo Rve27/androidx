@@ -60,6 +60,10 @@ public abstract class RemoteContext {
 
     public float mWidth = 0f;
     public float mHeight = 0f;
+
+    public float mViewportWidth = 0f;
+    public float mViewportHeight = 0f;
+
     private float mAnimationTime;
 
     private boolean mAnimate = true;

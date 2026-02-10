@@ -425,6 +425,65 @@ public class RecordingModifier {
     }
 
     /**
+     * Add a width modifier to fill the scrolling parent viewport width
+     *
+     * @return
+     */
+    public @NonNull RecordingModifier fillParentMaxWidth() {
+        return fillParentMaxWidth(1f);
+    }
+
+    /**
+     * Add a width modifier to fill the scrolling parent viewport width
+     *
+     * @param fraction the fraction of the viewport width to fill
+     * @return
+     */
+    public @NonNull RecordingModifier fillParentMaxWidth(float fraction) {
+        setWidthModifier(DimensionModifierOperation.Type.FILL_PARENT_MAX_WIDTH, fraction);
+        return this;
+    }
+
+    /**
+     * Add a height modifier to fill the scrolling parent viewport height
+     *
+     * @return
+     */
+    public @NonNull RecordingModifier fillParentMaxHeight() {
+        return fillParentMaxHeight(1f);
+    }
+
+    /**
+     * Add a height modifier to fill the scrolling parent viewport height
+     *
+     * @param fraction the fraction of the viewport height to fill
+     * @return
+     */
+    public @NonNull RecordingModifier fillParentMaxHeight(float fraction) {
+        setHeightModifier(DimensionModifierOperation.Type.FILL_PARENT_MAX_HEIGHT, fraction);
+        return this;
+    }
+
+    /**
+     * Add a size modifier to fill the scrolling parent viewport
+     *
+     * @return
+     */
+    public @NonNull RecordingModifier fillParentMaxSize() {
+        return fillParentMaxSize(1f);
+    }
+
+    /**
+     * Add a size modifier to fill the scrolling parent viewport
+     *
+     * @param fraction the fraction of the viewport to fill
+     * @return
+     */
+    public @NonNull RecordingModifier fillParentMaxSize(float fraction) {
+        return fillParentMaxWidth(fraction).fillParentMaxHeight(fraction);
+    }
+
+    /**
      * Add a width modifier to fill the parent width
      *
      * @return

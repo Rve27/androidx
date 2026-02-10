@@ -46,6 +46,10 @@ public fun RemoteModifier.fillMaxWidth(fraction: RemoteFloat = RemoteFloat(1f)):
 public fun RemoteModifier.fillMaxWidth(fraction: Float): RemoteModifier =
     then(WidthModifier(Type.FILL, RemoteFloat(fraction)))
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun RemoteModifier.fillParentMaxWidth(fraction: Float = 1f): RemoteModifier =
+    then(WidthModifier(Type.FILL_PARENT_MAX_WIDTH, RemoteFloat(fraction)))
+
 public fun RemoteModifier.width(width: Int): RemoteModifier =
     then(WidthModifier(Type.EXACT, RemoteFloat(width.toFloat())))
 
