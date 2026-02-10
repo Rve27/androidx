@@ -304,7 +304,6 @@ internal class MultiplatformCompilationInputs(
                         // Find the compilations that this source set is part of.
                         val allAssociatedCompilations =
                             allCompilations.filter { it.allKotlinSourceSets.contains(sourceSet) }
-                        allAssociatedCompilations.map { it.compileDependencyFiles }
                         // Include dependencies from all compilations which this source set is
                         // associated with.
                         val sourceSetDependencies =
