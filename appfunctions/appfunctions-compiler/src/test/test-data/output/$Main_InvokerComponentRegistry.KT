@@ -7,8 +7,7 @@ import javax.`annotation`.processing.Generated
   componentCategory = "INVOKER",
   componentNames = [
     "com.testdata.${'$'}AllPrimitiveInputFunctions_AppFunctionInvoker",
-    "com.testdata.${'$'}SimpleFunction_AppFunctionInvoker",
-    "com.testdata.diff.${'$'}SimpleFunction_AppFunctionInvoker",
+    "com.testdata.diff.${'$'}DiffPackageFunction_AppFunctionInvoker",
   ],
 )
 @Generated("androidx.appfunctions.compiler.AppFunctionCompiler")

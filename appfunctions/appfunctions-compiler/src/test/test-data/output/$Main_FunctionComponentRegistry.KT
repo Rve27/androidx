@@ -36,8 +36,7 @@ import javax.`annotation`.processing.Generated
     "com.testdata.FakeFreeFormFunctions.fakeFreeFormFunction_isDescribedByKDoc_withDerivedSerializable_true",
     "com.testdata.FakeFreeFormFunctions.fakeFreeFormFunction_withParametrizedTypes",
     "com.testdata.FakeFreeFormFunctions.fakeFreeFormFunction_withRepeatedTypes",
-    "com.testdata.SimpleFunction.simpleFunction",
-    "com.testdata.diff.SimpleFunction.simpleFunction",
+    "com.testdata.diff.DiffPackageFunction.diffPackageFunction",
   ],
   componentDocStrings = [
     "",
@@ -70,7 +69,6 @@ import javax.`annotation`.processing.Generated
     "\n A fake free-form AppFunction to test the description elements in the function generated\n metadata xml. This version uses a derived serializable class.\n\n This kdoc consists of multiple paragraphs and is used as the function's description to the\n agent.\n\n @param appFunctionContext the AppFunction's context.\n @param input an input AppFunctionSerializable.\n @return The result string.\n @throws IllegalArgumentException if the inputString is in an incorrect format.\n",
     "Tests the description elements for serializable's parametrized properties. ",
     "Tests the description elements for serializable's repeated properties. ",
-    "",
     "",
   ],
 )
