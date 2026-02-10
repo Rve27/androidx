@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import androidx.xr.scenecore.runtime.AnchorPlacement;
-import androidx.xr.scenecore.runtime.PlaneSemantic;
-import androidx.xr.scenecore.runtime.PlaneType;
-
-import java.util.HashSet;
-import java.util.Set;
+import androidx.xr.scenecore.runtime.AnchorPlacement
+import androidx.xr.scenecore.runtime.PlaneSemantic
+import androidx.xr.scenecore.runtime.PlaneType
 
 /**
  * Constructor for an AnchorPlacement.
  *
- * <p>Setting a [PlaneType] or [PlaneSemantic] anchor placement means that the [Entity] with a
- * [MovableComponent] will be anchored to a plane of that [PlaneType] or [PlaneSemantic] if it is
- * released while nearby after being moved. If no [PlaneType] or [PlaneSemantic] is set the [Entity]
- * will not be anchored.
+ * Setting a [PlaneType] or [PlaneSemantic] anchor placement means that the
+ * [androidx.xr.scenecore.runtime.Entity] with a [androidx.xr.scenecore.runtime.MovableComponent]
+ * will be anchored to a plane of that [PlaneType] or [PlaneSemantic] if it is released while nearby
+ * after being moved. If no [PlaneType] or [PlaneSemantic] is set the
+ * [androidx.xr.scenecore.runtime.Entity] will not be anchored.
  */
-class AnchorPlacementImpl implements AnchorPlacement {
-    protected Set<PlaneType> mPlaneTypeFilter = new HashSet<>();
-    protected Set<PlaneSemantic> mPlaneSemanticFilter = new HashSet<>();
-
-    AnchorPlacementImpl() {}
+internal class AnchorPlacementImpl : AnchorPlacement {
+    @JvmField var planeTypeFilter: MutableSet<PlaneType> = mutableSetOf()
+    @JvmField var planeSemanticFilter: MutableSet<PlaneSemantic> = mutableSetOf()
 }
