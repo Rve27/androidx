@@ -17,12 +17,12 @@
 package androidx.sqlite.driver
 
 import androidx.kruth.assertThat
-import androidx.sqlite.driver.SupportSQLiteStatement.Companion.getStatementPrefix
+import androidx.sqlite.util.getStatementPrefix
 import androidx.test.filters.SmallTest
 import kotlin.test.Test
 
 @SmallTest
-class SupportSQLiteStatementTest {
+class SQLiteStatementParserTest {
 
     @Test
     fun statementPrefixScanner() {

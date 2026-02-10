@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.room3.integration.multiplatformtestapp.test
+package androidx.sqlite.driver.web.util
 
-import kotlin.test.Test
+import org.khronos.webgl.Uint8Array
+import org.khronos.webgl.set
 
-// Temporary empty test to avoid test task error of 'no test found', see b/479894658
-class NoOpTest {
-    @Test fun nop() {}
-}
+internal fun <T : JsAny> initExternal(): T = js("({})")
+
+internal fun JsArray<JsNumber>.toIntArray() = IntArray(length) { this[it]!!.toInt() }
+
+internal fun JsArray<JsString>.toStringArray() = Array(length) { this[it]!!.toString() }
+
+internal fun ByteArray.toUint8Array(): Uint8Array =
+    Uint8Array(size).apply { forEachIndexed { index, byte -> this[index] = byte } }

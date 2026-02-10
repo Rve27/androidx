@@ -1073,6 +1073,7 @@ includeProject(":sqlite:sqlite-framework", [BuildType.MAIN, BuildType.COMPOSE, B
 includeProject(":sqlite:sqlite-bundled", [BuildType.MAIN, BuildType.KMP, BuildType.INFRAROGUE])
 includeProject(":sqlite:sqlite-inspection", [BuildType.MAIN])
 includeProject(":sqlite:sqlite-ktx", [BuildType.MAIN])
+includeProject(":sqlite:sqlite-web", [BuildType.MAIN, BuildType.KMP, BuildType.INFRAROGUE])
 includeProject(":startup:integration-tests:first-library", [BuildType.MAIN])
 includeProject(":startup:integration-tests:second-library", [BuildType.MAIN])
 includeProject(":startup:integration-tests:test-app", [BuildType.MAIN])
