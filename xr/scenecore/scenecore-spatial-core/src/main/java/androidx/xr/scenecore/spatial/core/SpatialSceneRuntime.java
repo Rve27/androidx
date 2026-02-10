@@ -463,7 +463,7 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
     public @NonNull AnchorEntity createAnchorEntity() {
         Node node = mExtensions.createNode();
         return AnchorEntityImpl.create(
-                mActivity, node, getActivitySpace(), mExtensions, mEntityManager, mExecutor);
+                mActivity, node, mActivitySpace, mExtensions, mEntityManager, mExecutor);
     }
 
     @Override
