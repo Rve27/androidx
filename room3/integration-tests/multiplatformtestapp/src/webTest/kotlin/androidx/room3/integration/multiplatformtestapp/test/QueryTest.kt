@@ -16,9 +16,14 @@
 
 package androidx.room3.integration.multiplatformtestapp.test
 
-import kotlin.test.Test
+import androidx.driver.web.worker.createDefaultWebWorkerDriver
+import androidx.room3.Room
 
-// Temporary empty test to avoid test task error of 'no test found', see b/479894658
-class NoOpTest {
-    @Test fun nop() {}
+class QueryTest : BaseQueryTest() {
+
+    override fun getRoomDatabase(): SampleDatabase {
+        return Room.inMemoryDatabaseBuilder<SampleDatabase>()
+            .setDriver(createDefaultWebWorkerDriver())
+            .build()
+    }
 }
