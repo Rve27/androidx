@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <appfunctions>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveParamsImpl#allPrimitiveArrayParams</id>
+        <id>com.testdata.FakeAllPrimitiveArrayParamsImpl#allPrimitiveArrayParams</id>
         <enabledByDefault>true</enabledByDefault>
         <parameters>
             <dataTypeMetadata>
@@ -127,9 +127,9 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveParams</schemaName>
+        <schemaName>allPrimitiveArrayParams</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveParamsImpl#allPrimitiveArrayParams</functionId>
+        <functionId>com.testdata.FakeAllPrimitiveArrayParamsImpl#allPrimitiveArrayParams</functionId>
     </appfunction>
     <appfunction>
         <id>com.testdata.FakeAllPrimitiveParamsImpl#allPrimitiveParams</id>

@@ -20,7 +20,6 @@ import androidx.appfunctions.compiler.testings.CompilationTestHelper
 import com.google.common.truth.Truth
 import java.io.File
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 class AppFunctionCompilerTest {
@@ -358,6 +357,12 @@ class AppFunctionCompilerTest {
                 "${'$'}FakeAllPrimitiveParamsImpl_AppFunctionInventory.kt",
             goldenFileName = "${'$'}FakeAllPrimitiveParamsImpl_AppFunctionInventory.KT",
         )
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName =
+                "${'$'}FakeAllPrimitiveArrayParamsImpl_AppFunctionInventory.kt",
+            goldenFileName = "${'$'}FakeAllPrimitiveArrayParamsImpl_AppFunctionInventory.KT",
+        )
     }
 
     @Test
@@ -373,9 +378,8 @@ class AppFunctionCompilerTest {
 
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
-            expectGeneratedSourceFileName =
-                "${'$'}FakeAllPrimitiveReturnsImpl_AppFunctionInventory.kt",
-            goldenFileName = "${'$'}FakeAllPrimitiveReturnsImpl_AppFunctionInventory.KT",
+            expectGeneratedSourceFileName = "${'$'}UnitReturnImpl_AppFunctionInventory.kt",
+            goldenFileName = "${'$'}UnitReturnImpl_AppFunctionInventory.KT",
         )
     }
 
@@ -961,7 +965,6 @@ class AppFunctionCompilerTest {
     }
 
     @Test
-    @Ignore("b/463909015 - Restore when schema is updated to host single function per interface")
     fun testGenerateSchemaInventory() {
         val report =
             compilationTestHelper.compileAll(

@@ -15,7 +15,10 @@ class FakeAllNullablePrimitiveParamsWithDefaultValuesImpl :
         arg5: String?,
         arg6: Boolean?,
     ) {}
+}
 
+class FakeAllNullablePrimitiveArrayParamsWithDefaultValuesImpl :
+    FakeAllNullablePrimitiveArrayParamsWithDefaultValues {
     @AppFunction
     override fun allNullablePrimitiveArrayParamsWithDefault(
         appFunctionContext: AppFunctionContext,

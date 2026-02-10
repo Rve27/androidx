@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <appfunctions>
     <appfunction>
-        <id>com.testdata.FakeAllNullablePrimitiveParamsWithDefaultValuesImpl#allNullablePrimitiveArrayParamsWithDefault</id>
+        <id>com.testdata.FakeAllNullablePrimitiveArrayParamsWithDefaultValuesImpl#allNullablePrimitiveArrayParamsWithDefault</id>
         <enabledByDefault>true</enabledByDefault>
         <parameters>
             <dataTypeMetadata>
@@ -112,9 +112,9 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allNullablePrimitiveParamsWithDefault</schemaName>
+        <schemaName>allNullablePrimitiveArrayParamsWithDefault</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllNullablePrimitiveParamsWithDefaultValuesImpl#allNullablePrimitiveArrayParamsWithDefault</functionId>
+        <functionId>com.testdata.FakeAllNullablePrimitiveArrayParamsWithDefaultValuesImpl#allNullablePrimitiveArrayParamsWithDefault</functionId>
     </appfunction>
     <appfunction>
         <id>com.testdata.FakeAllNullablePrimitiveParamsWithDefaultValuesImpl#allNullablePrimitiveParamsWithDefault</id>

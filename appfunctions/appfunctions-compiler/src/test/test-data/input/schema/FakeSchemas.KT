@@ -21,7 +21,10 @@ interface FakeAllPrimitiveParams {
         arg5: String,
         arg6: Boolean,
     )
+}
 
+@AppFunctionSchemaDefinition(name = "allPrimitiveArrayParams", version = 1, category = FAKE_CATEGORY)
+interface FakeAllPrimitiveArrayParams {
     fun allPrimitiveArrayParams(
         appFunctionContext: AppFunctionContext,
         arg1: IntArray,
@@ -50,7 +53,14 @@ interface FakeAllNullablePrimitiveParamsWithDefaultValues {
         arg5: String? = null,
         arg6: Boolean? = null,
     )
+}
 
+@AppFunctionSchemaDefinition(
+    name = "allNullablePrimitiveArrayParamsWithDefault",
+    version = 1,
+    category = FAKE_CATEGORY
+)
+interface FakeAllNullablePrimitiveArrayParamsWithDefaultValues {
     fun allNullablePrimitiveArrayParamsWithDefault(
         appFunctionContext: AppFunctionContext,
         arg1: IntArray? = intArrayOf(),
@@ -63,117 +73,142 @@ interface FakeAllNullablePrimitiveParamsWithDefaultValues {
     )
 }
 
-@AppFunctionSchemaDefinition(name = "allPrimitiveReturns", version = 1, category = FAKE_CATEGORY)
-interface FakeAllPrimitiveReturns {
-    fun unitReturn(
-        appFunctionContext: AppFunctionContext,
-    )
+@AppFunctionSchemaDefinition(name = "unitReturn", version = 1, category = FAKE_CATEGORY)
+interface UnitReturn {
+    fun unitReturn(appFunctionContext: AppFunctionContext)
+}
 
-    fun byteArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): ByteArray
+@AppFunctionSchemaDefinition(name = "byteArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface ByteArrayReturn {
+    fun byteArrayReturn(appFunctionContext: AppFunctionContext): ByteArray
+}
 
-    fun intReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Int
+@AppFunctionSchemaDefinition(name = "intReturn", version = 1, category = FAKE_CATEGORY)
+interface IntReturn {
+    fun intReturn(appFunctionContext: AppFunctionContext): Int
+}
 
-    fun longReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Long
+@AppFunctionSchemaDefinition(name = "longReturn", version = 1, category = FAKE_CATEGORY)
+interface LongReturn {
+    fun longReturn(appFunctionContext: AppFunctionContext): Long
+}
 
-    fun floatReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Float
+@AppFunctionSchemaDefinition(name = "floatReturn", version = 1, category = FAKE_CATEGORY)
+interface FloatReturn {
+    fun floatReturn(appFunctionContext: AppFunctionContext): Float
+}
 
-    fun doubleReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Double
+@AppFunctionSchemaDefinition(name = "doubleReturn", version = 1, category = FAKE_CATEGORY)
+interface DoubleReturn {
+    fun doubleReturn(appFunctionContext: AppFunctionContext): Double
+}
 
-    fun stringReturn(
-        appFunctionContext: AppFunctionContext,
-    ): String
+@AppFunctionSchemaDefinition(name = "stringReturn", version = 1, category = FAKE_CATEGORY)
+interface StringReturn {
+    fun stringReturn(appFunctionContext: AppFunctionContext): String
+}
 
-    fun booleanReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Boolean
+@AppFunctionSchemaDefinition(name = "booleanReturn", version = 1, category = FAKE_CATEGORY)
+interface BooleanReturn {
+    fun booleanReturn(appFunctionContext: AppFunctionContext): Boolean
+}
 
-    fun nullableByteArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): ByteArray?
+@AppFunctionSchemaDefinition(name = "nullableByteArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableByteArrayReturn {
+    fun nullableByteArrayReturn(appFunctionContext: AppFunctionContext): ByteArray?
+}
 
-    fun nullableIntReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Int?
+@AppFunctionSchemaDefinition(name = "nullableIntReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableIntReturn {
+    fun nullableIntReturn(appFunctionContext: AppFunctionContext): Int?
+}
 
-    fun nullableLongReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Long?
+@AppFunctionSchemaDefinition(name = "nullableLongReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableLongReturn {
+    fun nullableLongReturn(appFunctionContext: AppFunctionContext): Long?
+}
 
-    fun nullableFloatReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Float?
+@AppFunctionSchemaDefinition(name = "nullableFloatReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableFloatReturn {
+    fun nullableFloatReturn(appFunctionContext: AppFunctionContext): Float?
+}
 
-    fun nullableDoubleReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Double?
+@AppFunctionSchemaDefinition(name = "nullableDoubleReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableDoubleReturn {
+    fun nullableDoubleReturn(appFunctionContext: AppFunctionContext): Double?
+}
 
-    fun nullableStringReturn(
-        appFunctionContext: AppFunctionContext,
-    ): String?
+@AppFunctionSchemaDefinition(name = "nullableStringReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableStringReturn {
+    fun nullableStringReturn(appFunctionContext: AppFunctionContext): String?
+}
 
-    fun nullableBooleanReturn(
-        appFunctionContext: AppFunctionContext,
-    ): Boolean?
+@AppFunctionSchemaDefinition(name = "nullableBooleanReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableBooleanReturn {
+    fun nullableBooleanReturn(appFunctionContext: AppFunctionContext): Boolean?
+}
 
-    fun intArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): IntArray
+@AppFunctionSchemaDefinition(name = "intArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface IntArrayReturn {
+    fun intArrayReturn(appFunctionContext: AppFunctionContext): IntArray
+}
 
-    fun longArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): LongArray
+@AppFunctionSchemaDefinition(name = "longArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface LongArrayReturn {
+    fun longArrayReturn(appFunctionContext: AppFunctionContext): LongArray
+}
 
-    fun floatArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): FloatArray
+@AppFunctionSchemaDefinition(name = "floatArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface FloatArrayReturn {
+    fun floatArrayReturn(appFunctionContext: AppFunctionContext): FloatArray
+}
 
-    fun doubleArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): DoubleArray
+@AppFunctionSchemaDefinition(name = "doubleArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface DoubleArrayReturn {
+    fun doubleArrayReturn(appFunctionContext: AppFunctionContext): DoubleArray
+}
 
-    fun stringListReturn(
-        appFunctionContext: AppFunctionContext,
-    ): List<String>
+@AppFunctionSchemaDefinition(name = "stringListReturn", version = 1, category = FAKE_CATEGORY)
+interface StringListReturn {
+    fun stringListReturn(appFunctionContext: AppFunctionContext): List<String>
+}
 
-    fun booleanArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): BooleanArray
+@AppFunctionSchemaDefinition(name = "booleanArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface BooleanArrayReturn {
+    fun booleanArrayReturn(appFunctionContext: AppFunctionContext): BooleanArray
+}
 
-    fun nullableStringListReturn(
-        appFunctionContext: AppFunctionContext,
-    ): List<String>?
+@AppFunctionSchemaDefinition(name = "nullableStringListReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableStringListReturn {
+    fun nullableStringListReturn(appFunctionContext: AppFunctionContext): List<String>?
+}
 
-    fun nullableIntArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): IntArray?
+@AppFunctionSchemaDefinition(name = "nullableIntArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableIntArrayReturn {
+    fun nullableIntArrayReturn(appFunctionContext: AppFunctionContext): IntArray?
+}
 
-    fun nullableLongArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): LongArray?
+@AppFunctionSchemaDefinition(name = "nullableLongArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableLongArrayReturn {
+    fun nullableLongArrayReturn(appFunctionContext: AppFunctionContext): LongArray?
+}
 
-    fun nullableFloatArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): FloatArray?
+@AppFunctionSchemaDefinition(name = "nullableFloatArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableFloatArrayReturn {
+    fun nullableFloatArrayReturn(appFunctionContext: AppFunctionContext): FloatArray?
+}
 
-    fun nullableDoubleArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): DoubleArray?
+@AppFunctionSchemaDefinition(name = "nullableDoubleArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableDoubleArrayReturn {
+    fun nullableDoubleArrayReturn(appFunctionContext: AppFunctionContext): DoubleArray?
+}
 
-    fun nullableBooleanArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): BooleanArray?
+@AppFunctionSchemaDefinition(name = "nullableBooleanArrayReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableBooleanArrayReturn {
+    fun nullableBooleanArrayReturn(appFunctionContext: AppFunctionContext): BooleanArray?
+}
 
-    fun nullableStringItemListReturn(
-        appFunctionContext: AppFunctionContext,
-    ): List<String?>
+@AppFunctionSchemaDefinition(name = "nullableStringItemListReturn", version = 1, category = FAKE_CATEGORY)
+interface NullableStringItemListReturn {
+    fun nullableStringItemListReturn(appFunctionContext: AppFunctionContext): List<String?>
 }

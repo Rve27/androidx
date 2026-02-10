@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <appfunctions>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#booleanArrayReturn</id>
+        <id>com.testdata.BooleanArrayReturnImpl#booleanArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -17,12 +17,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>booleanArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#booleanArrayReturn</functionId>
+        <functionId>com.testdata.BooleanArrayReturnImpl#booleanArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#booleanReturn</id>
+        <id>com.testdata.BooleanReturnImpl#booleanReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -33,12 +33,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>booleanReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#booleanReturn</functionId>
+        <functionId>com.testdata.BooleanReturnImpl#booleanReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#byteArrayReturn</id>
+        <id>com.testdata.ByteArrayReturnImpl#byteArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -49,12 +49,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>byteArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#byteArrayReturn</functionId>
+        <functionId>com.testdata.ByteArrayReturnImpl#byteArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#doubleArrayReturn</id>
+        <id>com.testdata.DoubleArrayReturnImpl#doubleArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -70,12 +70,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>doubleArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#doubleArrayReturn</functionId>
+        <functionId>com.testdata.DoubleArrayReturnImpl#doubleArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#doubleReturn</id>
+        <id>com.testdata.DoubleReturnImpl#doubleReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -86,12 +86,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>doubleReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#doubleReturn</functionId>
+        <functionId>com.testdata.DoubleReturnImpl#doubleReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#floatArrayReturn</id>
+        <id>com.testdata.FloatArrayReturnImpl#floatArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -107,12 +107,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>floatArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#floatArrayReturn</functionId>
+        <functionId>com.testdata.FloatArrayReturnImpl#floatArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#floatReturn</id>
+        <id>com.testdata.FloatReturnImpl#floatReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -123,12 +123,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>floatReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#floatReturn</functionId>
+        <functionId>com.testdata.FloatReturnImpl#floatReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#intArrayReturn</id>
+        <id>com.testdata.IntArrayReturnImpl#intArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -144,12 +144,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>intArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#intArrayReturn</functionId>
+        <functionId>com.testdata.IntArrayReturnImpl#intArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#intReturn</id>
+        <id>com.testdata.IntReturnImpl#intReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -160,12 +160,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>intReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#intReturn</functionId>
+        <functionId>com.testdata.IntReturnImpl#intReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#longArrayReturn</id>
+        <id>com.testdata.LongArrayReturnImpl#longArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -181,12 +181,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>longArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#longArrayReturn</functionId>
+        <functionId>com.testdata.LongArrayReturnImpl#longArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#longReturn</id>
+        <id>com.testdata.LongReturnImpl#longReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -197,12 +197,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>longReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#longReturn</functionId>
+        <functionId>com.testdata.LongReturnImpl#longReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableBooleanArrayReturn</id>
+        <id>com.testdata.NullableBooleanArrayReturnImpl#nullableBooleanArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -218,12 +218,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableBooleanArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableBooleanArrayReturn</functionId>
+        <functionId>com.testdata.NullableBooleanArrayReturnImpl#nullableBooleanArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableBooleanReturn</id>
+        <id>com.testdata.NullableBooleanReturnImpl#nullableBooleanReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -234,12 +234,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableBooleanReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableBooleanReturn</functionId>
+        <functionId>com.testdata.NullableBooleanReturnImpl#nullableBooleanReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableByteArrayReturn</id>
+        <id>com.testdata.NullableByteArrayReturnImpl#nullableByteArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -250,12 +250,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableByteArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableByteArrayReturn</functionId>
+        <functionId>com.testdata.NullableByteArrayReturnImpl#nullableByteArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableDoubleArrayReturn</id>
+        <id>com.testdata.NullableDoubleArrayReturnImpl#nullableDoubleArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -271,12 +271,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableDoubleArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableDoubleArrayReturn</functionId>
+        <functionId>com.testdata.NullableDoubleArrayReturnImpl#nullableDoubleArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableDoubleReturn</id>
+        <id>com.testdata.NullableDoubleReturnImpl#nullableDoubleReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -287,12 +287,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableDoubleReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableDoubleReturn</functionId>
+        <functionId>com.testdata.NullableDoubleReturnImpl#nullableDoubleReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableFloatArrayReturn</id>
+        <id>com.testdata.NullableFloatArrayReturnImpl#nullableFloatArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -308,12 +308,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableFloatArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableFloatArrayReturn</functionId>
+        <functionId>com.testdata.NullableFloatArrayReturnImpl#nullableFloatArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableFloatReturn</id>
+        <id>com.testdata.NullableFloatReturnImpl#nullableFloatReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -324,12 +324,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableFloatReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableFloatReturn</functionId>
+        <functionId>com.testdata.NullableFloatReturnImpl#nullableFloatReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableIntArrayReturn</id>
+        <id>com.testdata.NullableIntArrayReturnImpl#nullableIntArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -345,12 +345,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableIntArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableIntArrayReturn</functionId>
+        <functionId>com.testdata.NullableIntArrayReturnImpl#nullableIntArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableIntReturn</id>
+        <id>com.testdata.NullableIntReturnImpl#nullableIntReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -361,12 +361,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableIntReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableIntReturn</functionId>
+        <functionId>com.testdata.NullableIntReturnImpl#nullableIntReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableLongArrayReturn</id>
+        <id>com.testdata.NullableLongArrayReturnImpl#nullableLongArrayReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -382,12 +382,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableLongArrayReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableLongArrayReturn</functionId>
+        <functionId>com.testdata.NullableLongArrayReturnImpl#nullableLongArrayReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableLongReturn</id>
+        <id>com.testdata.NullableLongReturnImpl#nullableLongReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -398,12 +398,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableLongReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableLongReturn</functionId>
+        <functionId>com.testdata.NullableLongReturnImpl#nullableLongReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableStringItemListReturn</id>
+        <id>com.testdata.NullableStringItemListReturnImpl#nullableStringItemListReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -419,12 +419,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableStringItemListReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableStringItemListReturn</functionId>
+        <functionId>com.testdata.NullableStringItemListReturnImpl#nullableStringItemListReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableStringListReturn</id>
+        <id>com.testdata.NullableStringListReturnImpl#nullableStringListReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -440,12 +440,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableStringListReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableStringListReturn</functionId>
+        <functionId>com.testdata.NullableStringListReturnImpl#nullableStringListReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#nullableStringReturn</id>
+        <id>com.testdata.NullableStringReturnImpl#nullableStringReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -456,12 +456,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>nullableStringReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#nullableStringReturn</functionId>
+        <functionId>com.testdata.NullableStringReturnImpl#nullableStringReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#stringListReturn</id>
+        <id>com.testdata.StringListReturnImpl#stringListReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -477,12 +477,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>stringListReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#stringListReturn</functionId>
+        <functionId>com.testdata.StringListReturnImpl#stringListReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#stringReturn</id>
+        <id>com.testdata.StringReturnImpl#stringReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -493,12 +493,12 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>stringReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#stringReturn</functionId>
+        <functionId>com.testdata.StringReturnImpl#stringReturn</functionId>
     </appfunction>
     <appfunction>
-        <id>com.testdata.FakeAllPrimitiveReturnsImpl#unitReturn</id>
+        <id>com.testdata.UnitReturnImpl#unitReturn</id>
         <enabledByDefault>true</enabledByDefault>
         <response>
             <id>unused</id>
@@ -509,8 +509,8 @@
             </valueType>
         </response>
         <schemaCategory>fake_schema_category</schemaCategory>
-        <schemaName>allPrimitiveReturns</schemaName>
+        <schemaName>unitReturn</schemaName>
         <schemaVersion>1</schemaVersion>
-        <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#unitReturn</functionId>
+        <functionId>com.testdata.UnitReturnImpl#unitReturn</functionId>
     </appfunction>
 </appfunctions>
