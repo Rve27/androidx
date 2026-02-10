@@ -193,6 +193,11 @@ public final class MessagePortInternal {
         public void close() {
             MessagePortInternal.this.closeLocally();
         }
+
+        @Override
+        public int getInterfaceVersion() {
+            return super.VERSION;
+        }
     }
 
     /**

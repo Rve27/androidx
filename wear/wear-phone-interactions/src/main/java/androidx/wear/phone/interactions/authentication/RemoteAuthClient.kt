@@ -431,6 +431,8 @@ internal constructor(
                 }
             )
         }
+
+        override fun getInterfaceVersion(): Int = VERSION
     }
 
     /** Manages the connection with Wearable Auth service. */

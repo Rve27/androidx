@@ -160,6 +160,11 @@ final class IsolateUsableState implements IsolateState {
                 Utils.closeQuietly(afd);
             }
         }
+
+        @Override
+        public int getInterfaceVersion() {
+            return super.VERSION;
+        }
     }
 
     private class IJsSandboxIsolateCallbackStubWrapper extends IJsSandboxIsolateCallback.Stub {
@@ -199,6 +204,11 @@ final class IsolateUsableState implements IsolateState {
             } finally {
                 Binder.restoreCallingIdentity(identityToken);
             }
+        }
+
+        @Override
+        public int getInterfaceVersion() {
+            return super.VERSION;
         }
     }
 
@@ -249,6 +259,11 @@ final class IsolateUsableState implements IsolateState {
             } finally {
                 Binder.restoreCallingIdentity(identity);
             }
+        }
+
+        @Override
+        public int getInterfaceVersion() {
+            return super.VERSION;
         }
 
     }
