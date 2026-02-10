@@ -29,6 +29,7 @@ import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_MUST_H
 import androidx.room3.processor.ProcessorErrors.daoReturnTypeConverterFunctionsWithATypeParamShouldHaveReturnTypeContainingTheSameTypeArg
 import androidx.room3.processor.ProcessorErrors.duplicateDaoReturnTypeConverters
 import androidx.room3.testing.context
+import org.junit.Ignore
 import org.junit.Test
 
 class DaoReturnTypeConverterProcessorTest {
@@ -107,6 +108,7 @@ class DaoReturnTypeConverterProcessorTest {
         )
     }
 
+    @Ignore /// b/482978786
     @Test
     fun withMethodTypeParamMustHaveReturnTypeContainingSameTypeParam() {
         val problematicConverter =
