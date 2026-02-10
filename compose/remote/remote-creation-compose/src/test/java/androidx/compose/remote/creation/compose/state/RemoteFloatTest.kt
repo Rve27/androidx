@@ -523,7 +523,7 @@ class RemoteFloatTest {
         val result = namedRemoteFloat * RemoteFloat(10f)
         val resultId = result.getIdForCreationState(creationState)
 
-        makeAndUpdateCoreDocument { context.setNamedFloatOverride("testFloat", 20f) }
+        makeAndUpdateCoreDocument { context.setNamedFloatOverride("USER:testFloat", 20f) }
 
         assertThat(context.getFloat(resultId)).isEqualTo(200f)
     }
@@ -535,7 +535,7 @@ class RemoteFloatTest {
         val result = plusOne * plusOne
         val resultId = result.getIdForCreationState(creationState)
 
-        makeAndUpdateCoreDocument { context.setNamedFloatOverride("testFloat", 19f) }
+        makeAndUpdateCoreDocument { context.setNamedFloatOverride("USER:testFloat", 19f) }
 
         assertThat(context.getFloat(resultId)).isEqualTo(400f)
     }

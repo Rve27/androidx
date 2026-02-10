@@ -44,7 +44,6 @@ import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.abs
 import androidx.compose.remote.creation.compose.state.rdp
-import androidx.compose.remote.creation.compose.state.rememberRemoteFloat
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
@@ -222,14 +221,12 @@ fun ScrollViewDemo() {
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
         ) {
             for (i in 0 until numElements) {
-                val scale = rememberRemoteFloat {
+                val scale =
                     0.8f.rf +
                         (1.rf - abs(scrollState.positionState - (height * i.toFloat())) / height) *
                             0.2f
-                }
-                val rotation = rememberRemoteFloat {
+                val rotation =
                     (abs(scrollState.positionState - (height * i.toFloat())) / height) * 40f
-                }
                 //                Box(horizontalAlignment = Alignment.End) {
                 CanvasCalendarMonth(
                     modifier =

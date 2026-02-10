@@ -161,7 +161,7 @@ public open class RemoteComposeCreationState : RemoteStateScope {
         this.layoutDirection = LayoutDirection.Ltr
     }
 
-    public open fun <T : RemoteState<*>> getOrCreateNamedState(
+    internal open fun <T : RemoteState<*>> getOrCreateNamedState(
         type: Class<T>,
         name: String,
         domain: String?,

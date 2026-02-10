@@ -27,6 +27,46 @@ import androidx.compose.remote.player.core.state.RemoteDomains
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 
+/**
+ * A readable but not writable Remote Compose State value.
+ *
+ * It may represent either a mutable direct value (var), or some expression that might change
+ * externally.
+ *
+ * In Remote Compose recording mode, the type specific id should be used.
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@Stable
+public interface RemoteState<T> {
+    /** The constant value or throws if null or unknown. */
+    public val constantValue: T
+
+    /** The constant value or null if there isn't one. */
+    public val constantValueOrNull: T?
+
+    /** Represents the domain (namespace) for named remote states. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public open class Domain internal constructor(internal val coreDomain: String?) {
+        /** The default user-defined domain. */
+        public object User : Domain(RemoteDomains.USER.toString())
+
+        /** The system-defined domain, used for platform-level states. */
+        public object System : Domain(RemoteDomains.SYSTEM.toString())
+
+        override fun toString(): String {
+            return coreDomain ?: ""
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return other is Domain && other.coreDomain == coreDomain
+        }
+
+        override fun hashCode(): Int {
+            return coreDomain.hashCode()
+        }
+    }
+}
+
 /** Common base interface for all Remote types. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public abstract class BaseRemoteState<T> internal constructor() : RemoteState<T> {
@@ -80,46 +120,6 @@ public abstract class BaseRemoteState<T> internal constructor() : RemoteState<T>
      * @return The ID allocated by the [RemoteComposeWriter]
      */
     public abstract fun writeToDocument(creationState: RemoteComposeCreationState): Int
-}
-
-/**
- * A readable but not writable Remote Compose State value.
- *
- * It may represent either a mutable direct value (var), or some expression that might change
- * externally.
- *
- * In Remote Compose recording mode, the type specific id should be used.
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Stable
-public interface RemoteState<T> {
-    /** The constant value or throws if null or unknown. */
-    public val constantValue: T
-
-    /** The constant value or null if there isn't one. */
-    public val constantValueOrNull: T?
-
-    /** Represents the domain (namespace) for named remote states. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public open class Domain internal constructor(internal val coreDomain: String?) {
-        /** The default user-defined domain. */
-        public object User : Domain(RemoteDomains.USER.toString())
-
-        /** The system-defined domain, used for platform-level states. */
-        public object System : Domain(RemoteDomains.SYSTEM.toString())
-
-        override fun toString(): String {
-            return coreDomain ?: ""
-        }
-
-        override fun equals(other: Any?): Boolean {
-            return other is Domain && other.coreDomain == coreDomain
-        }
-
-        override fun hashCode(): Int {
-            return coreDomain.hashCode()
-        }
-    }
 }
 
 /**

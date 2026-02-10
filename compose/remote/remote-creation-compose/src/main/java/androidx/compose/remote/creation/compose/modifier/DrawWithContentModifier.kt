@@ -54,7 +54,9 @@ internal class DrawWithContentModifier(val onDraw: RemoteDrawWithContentScope.()
             val drawScope =
                 RemoteDrawWithContentScope(
                     remoteCanvas =
-                        RemoteCanvas(this.drawContext.canvas.nativeCanvas as RecordingCanvas)
+                        RemoteCanvas(
+                            internalCanvas = drawContext.canvas.nativeCanvas as RecordingCanvas
+                        )
                 )
             captureMode.document.startCanvasOperations()
             drawScope.onDraw()

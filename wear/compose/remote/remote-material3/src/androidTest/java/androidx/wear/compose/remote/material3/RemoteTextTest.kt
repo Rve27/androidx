@@ -22,8 +22,7 @@ import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteString
-import androidx.compose.remote.creation.compose.state.rememberRemoteColor
-import androidx.compose.remote.creation.compose.state.rememberRemoteString
+import androidx.compose.remote.creation.compose.state.rememberNamedRemoteColor
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
@@ -61,7 +60,7 @@ class RemoteTextTest {
     @Test
     fun text_withDefaultColor() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
-            val text = rememberRemoteString { "text_withDefaultColor" }
+            val text = "text_withDefaultColor".rs
             RemoteText(text, fontSize = 32.sp)
         }
     }
@@ -69,7 +68,7 @@ class RemoteTextTest {
     @Test
     fun text_withStyle() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
-            val text = rememberRemoteString { "textWithStyle" }
+            val text = "textWithStyle".rs
             RemoteText(
                 text,
                 style = LocalTextStyle.current.copy(fontStyle = FontStyle.Italic, fontSize = 32.sp),
@@ -80,8 +79,8 @@ class RemoteTextTest {
     @Test
     fun text_withColor() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
-            val text = rememberRemoteString { "text_withColor" }
-            val color = rememberRemoteColor("TestColor2") { Color.Green }
+            val text = "text_withColor".rs
+            val color = rememberNamedRemoteColor("TestColor2", Color.Green)
             RemoteText(text, color = color, fontSize = 32.sp)
         }
     }
@@ -89,8 +88,8 @@ class RemoteTextTest {
     @Test
     fun text_withOverridingColor() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
-            val text = rememberRemoteString { "text_withOverridingColor" }
-            val color = rememberRemoteColor("TestColor3") { Color.Green }
+            val text = "text_withOverridingColor".rs
+            val color = rememberNamedRemoteColor("TestColor3", Color.Green)
 
             RemoteText(
                 text,
@@ -105,8 +104,8 @@ class RemoteTextTest {
     @Test
     fun text_withParamAndStyle_paramIsPreserved() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
-            val text = rememberRemoteString { "text_withParamAndStyle" }
-            val color = rememberRemoteColor("TestColor4") { Color.Green }
+            val text = "text_withParamAndStyle".rs
+            val color = rememberNamedRemoteColor("TestColor4", Color.Green)
 
             RemoteText(
                 text,
@@ -120,10 +119,10 @@ class RemoteTextTest {
     @Test
     fun text_withColorAndTextAlign() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
-            val left = rememberRemoteString { "LEFT" }
-            val center = rememberRemoteString { "CENTER" }
-            val right = rememberRemoteString { "RIGHT" }
-            val color = rememberRemoteColor("TestColor5") { Color.Green }
+            val left = "LEFT".rs
+            val center = "CENTER".rs
+            val right = "RIGHT".rs
+            val color = rememberNamedRemoteColor("TestColor5", Color.Green)
 
             RemoteColumn(RemoteModifier.fillMaxSize()) {
                 RemoteText(
@@ -273,9 +272,9 @@ class RemoteTextTest {
     @Test
     fun longText_overflow() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
-            val text = rememberRemoteString {
+            val text =
                 "a piece of writing in which the expression of feelings and ideas is given intensity by particular attention to diction (sometimes involving rhyme), rhythm, and imagery."
-            }
+                    .rs
             val color = RemoteColor(Color.Green)
 
             RemoteColumn(RemoteModifier.fillMaxSize()) {

@@ -21,7 +21,6 @@ import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.TextFromFloat
 import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.core.operations.utilities.IntegerExpressionEvaluator
-import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.runtime.Composable
@@ -160,7 +159,6 @@ internal constructor(
      *
      * This is temporarily useful because the floatArray has a maximum size.
      */
-    // TODO: Remove the need for this.
     public fun createReference(): RemoteInt {
         return RemoteIntExpression(
             constantValueOrNull,
@@ -263,14 +261,24 @@ internal constructor(
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
+        public operator fun invoke(value: Int): RemoteInt {
+            return RemoteIntExpression(value, { longArrayOf(value.toLong()) })
+        }
+
         /**
-         * Creates a [RemoteInt] instance from a constant [Int] value.
+         * Creates a [RemoteInt] referencing a remote ID.
          *
-         * @param v The constant [Int] value.
-         * @return A [RemoteIntExpression] representing the constant integer.
+         * @param v The remote ID.
+         * @return A [RemoteInt] referencing the ID.
          */
-        public operator fun invoke(v: Int): RemoteInt {
-            return RemoteIntExpression(v, { creationState -> longArrayOf(v.toLong()) })
+        internal fun createForId(v: Long): RemoteInt {
+            if (isConstant(v)) {
+                return RemoteIntExpression(v.toInt(), { longArrayOf(v) })
+            }
+            return RemoteIntExpression(
+                constantValueOrNull = null,
+                { creationState -> longArrayOf(v) },
+            )
         }
 
         /**
@@ -313,14 +321,9 @@ internal constructor(
          * @param v The constant [Long] value.
          * @return A [RemoteIntExpression] representing the constant integer.
          */
+        @Deprecated("Use createForId")
         public operator fun invoke(v: Long): RemoteInt {
-            if (isConstant(v)) {
-                return RemoteIntExpression(v.toInt(), { creationState -> longArrayOf(v) })
-            }
-            return RemoteIntExpression(
-                constantValueOrNull = null,
-                { creationState -> longArrayOf(v) },
-            )
+            return createForId(v)
         }
 
         /**
@@ -332,11 +335,13 @@ internal constructor(
          * @return A [RemoteInt] representing the named int.
          */
         @JvmStatic
-        public fun createNamedRemoteInt(name: String, initialValue: Int): RemoteInt {
+        public fun createNamedRemoteInt(
+            name: String,
+            initialValue: Int,
+            domain: RemoteState.Domain = RemoteState.Domain.User,
+        ): RemoteInt {
             return RemoteIntExpression(constantValueOrNull = null) { creationState ->
-                // TODO: check what happens if the initial value for this is the same as a
-                //  subsequent non-named variable.
-                longArrayOf(creationState.document.addNamedInt(name, initialValue))
+                longArrayOf(creationState.document.addNamedInt("$domain:$name", initialValue))
             }
         }
     }
@@ -637,14 +642,28 @@ public class MutableRemoteInt(
     ),
     MutableRemoteState<Int> {
 
-    /**
-     * Constructor for [MutableRemoteInt] that allows specifying an initial ID.
-     *
-     * @param id An explicit ID for this mutable integer.
-     */
-    public constructor(
-        id: Long
-    ) : this(constantValueOrNull = null, idProvider = { creationState -> id })
+    public companion object {
+        /**
+         * Creates a new mutable state (allocates an ID).
+         *
+         * @param initialValue The initial value for the state.
+         * @return A new [MutableRemoteInt] instance.
+         */
+        public fun createMutable(initialValue: Int): MutableRemoteInt {
+            return MutableRemoteInt(constantValueOrNull = null) { creationState ->
+                creationState.document.addInteger(initialValue)
+            }
+        }
+
+        /**
+         * Maps an existing mutable ID to a state instance.
+         *
+         * @param id The existing mutable ID.
+         * @return A [MutableRemoteInt] instance mapping to the ID.
+         */
+        internal fun createMutableForId(id: Long): MutableRemoteInt =
+            MutableRemoteInt(constantValueOrNull = null, idProvider = { creationState -> id })
+    }
 
     public override fun writeToDocument(creationState: RemoteComposeCreationState): Int =
         Utils.idFromLong(idProvider(creationState)).toInt()
@@ -820,21 +839,33 @@ internal constructor(
 }
 
 /**
- * A Composable function to remember and provide a mutable remote integer value.
+ * Factory composable for mutable remote integer state.
+ *
+ * @param initialValue The initial [Int] value.
+ * @return A [MutableRemoteInt] instance that will be remembered across recompositions.
+ */
+@Composable
+@RemoteComposable
+public fun rememberMutableRemoteInt(initialValue: Int): MutableRemoteInt {
+    return remember {
+        MutableRemoteInt(
+            constantValueOrNull = null,
+            idProvider = { creationState -> creationState.document.addInteger(initialValue) },
+        )
+    }
+}
+
+/**
+ * Factory composable for state.
  *
  * @param value A lambda that provides the initial [Int] value for this remote integer.
  * @return A [MutableRemoteInt] instance that will be remembered across recompositions.
  */
 @Composable
 @RemoteComposable
-public fun rememberRemoteIntValue(value: () -> Int): MutableRemoteInt {
-    val state = LocalRemoteComposeCreationState.current
-    return remember {
-        val initial = value()
-        val id = state.document.addInteger(initial)
-        MutableRemoteInt(id = id)
-    }
-}
+@Deprecated("Use rememberMutableRemoteInt", ReplaceWith("rememberMutableRemoteInt(value())"))
+public fun rememberRemoteIntValue(value: () -> Int): MutableRemoteInt =
+    rememberMutableRemoteInt(value())
 
 /**
  * A Composable function to remember and provide a **named** mutable remote integer value.
@@ -843,22 +874,27 @@ public fun rememberRemoteIntValue(value: () -> Int): MutableRemoteInt {
  * @param domain The domain of the named integer (defaults to [RemoteState.Domain.User]). This helps
  *   organize named values in the remote document.
  * @param value A lambda that provides the initial [Int] value for this remote integer.
- * @return A [MutableRemoteInt] instance that will be remembered across recompositions.
+ * @return A [RemoteInt] instance that will be remembered across recompositions.
  */
 @Composable
 @RemoteComposable
+@Deprecated(
+    "Use rememberNamedRemoteInt",
+    ReplaceWith("rememberNamedRemoteInt(name, domain) { value().ri }"),
+)
 public fun rememberRemoteIntValue(
     name: String,
     domain: RemoteState.Domain = RemoteState.Domain.User,
     value: () -> Int,
 ): RemoteInt {
-    val state = LocalRemoteComposeCreationState.current
     return rememberNamedState(name, domain) {
-        val initial = value()
-        // TODO either store with an id and reference, or use directly
-        val id = state.document.addInteger(initial)
-        state.document.setStringName(id.toInt(), "$domain:$name")
-        MutableRemoteInt(id = id)
+        MutableRemoteInt(
+            constantValueOrNull = null,
+            idProvider = { creationState ->
+                val initial = value()
+                creationState.document.addNamedInt("$domain:$name", initial)
+            },
+        )
     }
 }
 
@@ -870,38 +906,34 @@ public fun rememberRemoteIntValue(
  */
 @Composable
 @RemoteComposable
+@Deprecated("Use rememberMutableRemoteInt", ReplaceWith("rememberMutableRemoteInt(value())"))
 public fun rememberRemoteInt(content: () -> RemoteInt): RemoteInt {
-    val state = LocalRemoteComposeCreationState.current
     return remember {
         val remoteInt = content()
-        remoteInt.getIdForCreationState(state)
-        RemoteIntExpression(remoteInt.constantValue, remoteInt.arrayProvider)
+        RemoteIntExpression(remoteInt.constantValueOrNull, remoteInt.arrayProvider)
     }
 }
 
 /**
- * A Composable function to remember and provide a **named** [RemoteInt] expression.
+ * Remembers a named remote integer expression.
  *
  * @param name The unique name for this remote integer.
  * @param domain The domain of the named integer (defaults to [RemoteState.Domain.User]).
- * @param content A lambda that provides the [RemoteInt] expression.
- * @return A [RemoteIntExpression] representing the named remote integer.
+ * @param value The initial value.
+ * @return A [RemoteInt] representing the named remote integer expression.
  */
 @Composable
-public fun rememberRemoteInt(
+@RemoteComposable
+public fun rememberNamedRemoteInt(
     name: String,
+    value: Int,
     domain: RemoteState.Domain = RemoteState.Domain.User,
-    content: () -> RemoteInt,
-): RemoteIntExpression {
-    val state = LocalRemoteComposeCreationState.current
+): RemoteInt {
     return rememberNamedState(name, domain) {
 
         // Since this is named, its value can be change, so it's not const.
         RemoteIntExpression(constantValueOrNull = null) { creationState ->
-            val remoteInt = content()
-            state.document.setStringName(remoteInt.getIdForCreationState(state), "$domain:$name")
-
-            longArrayOf(remoteInt.getLongIdForCreationState(creationState))
+            longArrayOf(creationState.document.addNamedInt("$domain:$name", value))
         }
     }
 }

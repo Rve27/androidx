@@ -47,8 +47,7 @@ import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
-import androidx.compose.remote.creation.compose.state.rememberRemoteInt
-import androidx.compose.remote.creation.compose.state.rememberRemoteIntValue
+import androidx.compose.remote.creation.compose.state.rememberMutableRemoteInt
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
@@ -141,7 +140,7 @@ fun SwitchWidget(value: MutableRemoteInt) {
                 )
             )
         } else {
-            val toggleExpression = rememberRemoteInt { (fsm.currentState + 1) % 2 }
+            val toggleExpression = (fsm.currentState + 1) % 2
             RemoteModifier.clickable(
                 ValueChange(fsm.currentState as MutableRemoteInt, toggleExpression)
             )
@@ -211,9 +210,9 @@ fun Divider(modifier: RemoteModifier = RemoteModifier) {
 @RemoteComposable
 fun SwitchWidgetDemo() {
     RemoteColumn(modifier = Modifier.padding(8.dp).background(Color.LightGray)) {
-        val checkedA = rememberRemoteIntValue { 0 }
-        val checkedB = rememberRemoteIntValue { 0 }
-        val checkedC = rememberRemoteIntValue { 1 }
+        val checkedA = rememberMutableRemoteInt(0)
+        val checkedB = rememberMutableRemoteInt(0)
+        val checkedC = rememberMutableRemoteInt(1)
 
         val visibilityModifierC = RemoteModifier.visibility(checkedC)
         RowSwitch(checkedA, "State A")
