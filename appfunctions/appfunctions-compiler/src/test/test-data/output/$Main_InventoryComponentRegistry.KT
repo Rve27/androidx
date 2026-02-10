@@ -7,8 +7,7 @@ import javax.`annotation`.processing.Generated
   componentCategory = "INVENTORY",
   componentNames = [
     "com.testdata.${'$'}AllPrimitiveInputFunctions_AppFunctionInventory",
-    "com.testdata.${'$'}SimpleFunction_AppFunctionInventory",
-    "com.testdata.diff.${'$'}SimpleFunction_AppFunctionInventory",
+    "com.testdata.diff.${'$'}DiffPackageFunction_AppFunctionInventory",
   ],
 )
 @Generated("androidx.appfunctions.compiler.AppFunctionCompiler")
