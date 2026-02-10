@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.tooling.animation.AnimationSearch
+import androidx.compose.ui.tooling.animation.NoopClockInfo
 import androidx.compose.ui.tooling.animation.Utils.addAnimations
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -50,7 +51,7 @@ class TransitionSearchInfoTest {
             val animation = searchInfo.createAnimation()
             assertNotNull(animation)
             animation!!
-            val clock = searchInfo.createClock(animation)
+            val clock = searchInfo.createClock(animation, NoopClockInfo)
             assertNotNull(clock)
         }
     }
