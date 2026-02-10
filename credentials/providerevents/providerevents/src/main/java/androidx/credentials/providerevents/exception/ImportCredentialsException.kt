@@ -27,7 +27,7 @@ internal constructor(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val type: String,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val errorMessage: String? = null,
 ) : Exception(errorMessage) {
-    public companion object {
+    internal companion object {
         private const val EXTRA_IMPORT_CREDENTIALS_EXCEPTION_TYPE =
             "androidx.credentials.providerevents.extra.IMPORT_CREDENTIALS_EXCEPTION_TYPE"
         private const val EXTRA_IMPORT_CREDENTIALS_EXCEPTION_MESSAGE =
@@ -39,7 +39,7 @@ internal constructor(
          * reconstruct the class instance back from the bundle returned here.
          */
         @JvmStatic
-        public fun asBundle(ex: ImportCredentialsException): Bundle {
+        fun asBundle(ex: ImportCredentialsException): Bundle {
             val bundle = Bundle()
             bundle.putString(EXTRA_IMPORT_CREDENTIALS_EXCEPTION_TYPE, ex.type)
             ex.errorMessage?.let {
@@ -58,7 +58,7 @@ internal constructor(
          * avoid the failure.
          */
         @JvmStatic
-        public fun fromBundle(bundle: Bundle): ImportCredentialsException {
+        fun fromBundle(bundle: Bundle): ImportCredentialsException {
             val type =
                 bundle.getString(EXTRA_IMPORT_CREDENTIALS_EXCEPTION_TYPE)
                     ?: throw IllegalArgumentException("Bundle was missing exception type.")
