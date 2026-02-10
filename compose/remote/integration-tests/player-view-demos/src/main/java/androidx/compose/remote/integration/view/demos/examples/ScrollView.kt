@@ -19,7 +19,6 @@ package androidx.compose.remote.integration.view.demos.examples
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
@@ -207,8 +206,7 @@ fun ScrollViewDemo() {
         verticalArrangement = RemoteArrangement.Bottom,
         horizontalAlignment = RemoteAlignment.End,
     ) {
-        val density = LocalRemoteComposeCreationState.current.remoteDensity
-        val height = dimensionCard.toPx(density)
+        val height = dimensionCard.toPx()
         val h2 = 280.rdp
         RemoteColumn(
             modifier =
