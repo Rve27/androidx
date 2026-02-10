@@ -21,6 +21,7 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.AnimationVector
 import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation
 import androidx.compose.ui.tooling.animation.AnimateXAsStateComposeAnimation.Companion.parse
+import androidx.compose.ui.tooling.animation.ClockInfo
 import androidx.compose.ui.tooling.animation.ToolingOverride
 import androidx.compose.ui.tooling.animation.clock.AnimateXAsStateClock
 
@@ -61,7 +62,8 @@ internal data class AnimateXAsStateSearchInfo<T, V : AnimationVector>(
     }
 
     override fun createClock(
-        animation: AnimateXAsStateComposeAnimation<*, *>
+        animation: AnimateXAsStateComposeAnimation<*, *>,
+        clockInfo: ClockInfo,
     ): AnimateXAsStateClock<*, *> {
         return AnimateXAsStateClock(animation)
     }
