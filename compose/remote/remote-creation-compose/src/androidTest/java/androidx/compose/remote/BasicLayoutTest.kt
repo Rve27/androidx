@@ -63,6 +63,7 @@ import androidx.compose.remote.creation.compose.shaders.RemoteBrush
 import androidx.compose.remote.creation.compose.shaders.radialGradient
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteDp
+import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
@@ -106,7 +107,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
-import java.util.Collections.rotate
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Ignore
 import org.junit.Rule
@@ -975,9 +975,9 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                     stateMachine = fsm,
                     modifier =
                         RemoteModifier.fillMaxSize()
-                            .onTouchDown(ValueChange(checked, 0))
-                            .onTouchUp(ValueChange(checked, 1))
-                            .onTouchCancel(ValueChange(checked, 1)),
+                            .onTouchDown(ValueChange(checked, RemoteInt(value = 0)))
+                            .onTouchUp(ValueChange(checked, RemoteInt(value = 1)))
+                            .onTouchCancel(ValueChange(checked, RemoteInt(value = 1))),
                 ) { state ->
                     when (state) {
                         Checked.Off.ordinal -> {
