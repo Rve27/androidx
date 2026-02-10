@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
 class GltfModelMaterialTextureActivity : AppCompatActivity() {
     private val TAG = "GltfModelMaterialTextureActivity"
     private val ANIMATION_NAME = "Fast_Flying"
-    private val MESH_NAME = "Dragon"
+    private val NODE_NAME = "Dragon"
     private val DRAGON_SCALE = 0.2f
     private val DRAGON_TRANSLATION = Vector3(0f, 0.3f, 0f)
     private var session: Session? = null
@@ -187,13 +187,13 @@ class GltfModelMaterialTextureActivity : AppCompatActivity() {
             val entity = dragonModelEntity
             val mat = khronosPbrMaterial
             if (entity != null && mat != null) {
-                entity.setMaterialOverride(mat, MESH_NAME)
+                entity.nodes.find { it.name == NODE_NAME }?.setMaterialOverride(mat)
             } else {
                 Log.w(TAG, "Entity or Material not created yet")
             }
         }
         findViewById<Button>(R.id.gltf_model_button5_2).setOnClickListener {
-            dragonModelEntity?.clearMaterialOverride(MESH_NAME)
+            dragonModelEntity?.nodes?.find { it.name == NODE_NAME }?.clearMaterialOverride()
         }
     }
 
