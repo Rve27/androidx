@@ -22,7 +22,6 @@ import android.os.Build
 import android.os.OutcomeReceiver
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import com.google.wear.services.tiles.TileInstance
 import com.google.wear.services.tiles.TileProvider
@@ -30,14 +29,17 @@ import com.google.wear.services.tiles.TilesManager
 import java.util.concurrent.Executor
 import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
-@SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 class GlanceWearWidgetManagerTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
@@ -54,11 +56,19 @@ class GlanceWearWidgetManagerTest {
         on { id } doReturn 2
     }
     private val tilesManager: TilesManager = mock()
+    private val activeWidgetStore: ActiveWidgetStore = ActiveWidgetStore(context)
 
-    private val widgetManager: GlanceWearWidgetManager = GlanceWearWidgetManager(tilesManager)
+    private val widgetManager: GlanceWearWidgetManager =
+        GlanceWearWidgetManager(tilesManager, activeWidgetStore)
+
+    @After
+    fun tearDown() {
+        activeWidgetStore.markWidgetAsInactive(component1, 1)
+    }
 
     @Test
-    fun getActiveWidgets_returnsAllActiveWidgets() = runTest {
+    @Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun getActiveWidgetsApi34_returnsAllActiveWidgets() = runTest {
         whenever(tilesManager.getActiveTiles(any(), any())).thenAnswer { invocationOnMock ->
             val executor = invocationOnMock.getArgument<Executor>(0)
             val outcomeReceiver =
@@ -82,7 +92,8 @@ class GlanceWearWidgetManagerTest {
     }
 
     @Test(expected = RuntimeException::class)
-    fun getActiveWidgets_ifError_throwsException() = runTest {
+    @Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun getActiveWidgetsApi34_ifError_throwsException() = runTest {
         whenever(tilesManager.getActiveTiles(any(), any())).thenAnswer { invocationOnMock ->
             val executor = invocationOnMock.getArgument<Executor>(0)
             val outcomeReceiver =
@@ -94,7 +105,8 @@ class GlanceWearWidgetManagerTest {
     }
 
     @Test
-    fun getActiveWidgetsForProvider_returnsAllActiveWidgets() = runTest {
+    @Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun getActiveWidgetsForProviderApi34_returnsAllActiveWidgets() = runTest {
         whenever(tilesManager.getActiveTiles(any(), any())).thenAnswer { invocationOnMock ->
             val executor = invocationOnMock.getArgument<Executor>(0)
             val outcomeReceiver =
@@ -113,7 +125,8 @@ class GlanceWearWidgetManagerTest {
     }
 
     @Test(expected = RuntimeException::class)
-    fun getActiveWidgetsForProvider_ifError_throwsException() = runTest {
+    @Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun getActiveWidgetsForProviderApi34_ifError_throwsException() = runTest {
         whenever(tilesManager.getActiveTiles(any(), any())).thenAnswer { invocationOnMock ->
             val executor = invocationOnMock.getArgument<Executor>(0)
             val outcomeReceiver =
@@ -122,6 +135,22 @@ class GlanceWearWidgetManagerTest {
         }
 
         val unused = widgetManager.getActiveWidgetsForProvider(TestWidgetService1::class)
+    }
+
+    @Test
+    @Config(maxSdk = Build.VERSION_CODES.TIRAMISU)
+    fun getActiveWidgetsApi33_returnsAllActiveWidgets() = runTest {
+        activeWidgetStore.markWidgetAsActive(component1, 1)
+
+        val widgets = widgetManager.getActiveWidgets()
+
+        verify(tilesManager, never()).getActiveTiles(any(), any())
+        assertThat(widgets.size).isEqualTo(1)
+        assertThat(widgets[0].instanceId.id).isEqualTo(1)
+        assertThat(widgets[0].instanceId.namespace)
+            .isEqualTo(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE)
+        assertThat(widgets[0].provider).isEqualTo(component1)
+        assertThat(widgets[0].containerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_FULLSCREEN)
     }
 
     private class TestWidgetService1 : GlanceWearWidgetService() {
