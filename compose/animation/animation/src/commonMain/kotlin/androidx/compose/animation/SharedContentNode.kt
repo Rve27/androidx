@@ -451,109 +451,99 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
                 "Error: Layer is null when accessed for shared bounds/element : ${sharedElement.key}," +
                     "target: ${sharedElementEntry.boundsAnimation.target}, is attached: $isAttached"
             }
-        if (isLookaheadAnimationVisualDebuggingEnabled) {
-            val lookaheadAnimationVisualDebugConfig =
-                currentValueOf(LocalLookaheadAnimationVisualDebugConfig)
-            if (lookaheadAnimationVisualDebugConfig.isEnabled) {
-                if (lookaheadAnimationVisualDebugHelper == null) {
-                    lookaheadAnimationVisualDebugHelper = LookaheadAnimationVisualDebugHelper()
-                }
-                if (currentDensity == null) {
-                    currentDensity = currentValueOf(LocalDensity)
-                    currentLayoutDirection = currentValueOf(LocalLayoutDirection)
-                }
-                val lookaheadAnimationVisualDebugColor =
-                    currentValueOf(LocalLookaheadAnimationVisualDebugColor)
-                val strokeWeight = 2.5.dp.toPx()
-                val targetData = sharedElement.state.targetData
-                updateTextMeasurer(currentValueOf(LocalFontFamilyResolver))
-                layer.record {
-                    this@draw.drawContent()
-                    if (sharedElementEntry.isEnabled) {
-                        if (sharedElement.scope.isTransitionActive) {
-                            if (sharedElement.boundsTransformIsActive) {
-                                if (sharedElement.enabledEntries.size > 2) {
-                                    with(lookaheadAnimationVisualDebugHelper!!) {
-                                        this@draw.drawMultipleMatchesElement(
-                                            lookaheadAnimationVisualDebugConfig
-                                                .multipleMatchesColor,
-                                            lookaheadAnimationVisualDebugConfig
-                                                .isShowKeyLabelEnabled,
-                                            sharedElement.key,
-                                            sharedElement.enabledEntries.size - 1,
-                                            textMeasurer!!,
-                                            strokeWeight * 3,
-                                        )
-                                    }
-                                } else {
-                                    if (targetData != null && bounds != null) {
-                                        with(lookaheadAnimationVisualDebugHelper!!) {
-                                            this@draw.drawLocalVisualizations(
-                                                lookaheadAnimationVisualDebugColor,
-                                                targetData.targetBounds.topLeft,
-                                                targetData.size,
-                                                bounds,
-                                                center,
-                                                lookaheadAnimationVisualDebugConfig
-                                                    .isShowKeyLabelEnabled,
-                                                strokeWeight,
-                                                sharedElement.key,
-                                                textMeasurer,
-                                            )
-                                        }
-                                    }
-                                }
-                            } else {
-                                with(lookaheadAnimationVisualDebugHelper!!) {
-                                    this@draw.drawUnmatchedElement(
-                                        lookaheadAnimationVisualDebugConfig.unmatchedElementColor,
-                                        lookaheadAnimationVisualDebugConfig.isShowKeyLabelEnabled,
-                                        sharedElement.key,
-                                        textMeasurer!!,
-                                        strokeWeight,
-                                    )
-                                }
-                            }
-                        } else {
-                            with(lookaheadAnimationVisualDebugHelper!!) {
-                                this@draw.drawInactiveVisualizations(
-                                    lookaheadAnimationVisualDebugColor,
-                                    lookaheadAnimationVisualDebugConfig.isShowKeyLabelEnabled,
-                                    strokeWeight,
-                                    sharedElement.key,
-                                    textMeasurer,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            // Case for running app in debug mode, but lookaheadAnimationVisualDebugConfig.isEnabled
-            // is
-            // false
-            else {
-                layer.record {
-                    sharedTransitionDebug {
-                        "record layer at size: ${bounds?.size} for" +
-                            " key = ${sharedElement.key}"
-                    }
 
-                    this@draw.drawContent()
-                }
+        val visualDebugConfig =
+            if (isLookaheadAnimationVisualDebuggingEnabled) {
+                currentValueOf(LocalLookaheadAnimationVisualDebugConfig)
+            } else {
+                null
             }
-        } else {
+
+        if (visualDebugConfig == null || !visualDebugConfig.isEnabled) {
             layer.record {
                 sharedTransitionDebug {
-                    "record layer at size: ${bounds?.size} for" +
-                        " key = ${sharedElement.key}"
+                    "record layer at size: ${bounds?.size} for" + " key = ${sharedElement.key}"
                 }
 
                 this@draw.drawContent()
             }
+        } else {
+            drawContentWithLookaheadAnimationDebug(layer, bounds, visualDebugConfig)
         }
         if (sharedElementEntry.shouldRenderInPlace) {
             sharedTransitionDebug { "drawing in place. key = ${sharedElement.key}" }
             drawLayer(layer)
+        }
+    }
+
+    private fun ContentDrawScope.drawContentWithLookaheadAnimationDebug(
+        layer: GraphicsLayer,
+        bounds: Rect?,
+        visualDebugConfig: LookaheadAnimationVisualDebugConfig,
+    ) {
+
+        if (lookaheadAnimationVisualDebugHelper == null) {
+            lookaheadAnimationVisualDebugHelper = LookaheadAnimationVisualDebugHelper()
+        }
+        if (currentDensity == null) {
+            currentDensity = currentValueOf(LocalDensity)
+            currentLayoutDirection = currentValueOf(LocalLayoutDirection)
+        }
+        val lookaheadAnimationVisualDebugColor =
+            currentValueOf(LocalLookaheadAnimationVisualDebugColor)
+        val strokeWeight = 2.5.dp.toPx()
+        val targetData = sharedElement.state.targetData
+        updateTextMeasurer(currentValueOf(LocalFontFamilyResolver))
+        layer.record {
+            val drawScope = this@drawContentWithLookaheadAnimationDebug
+            drawScope.drawContent()
+
+            if (!sharedElementEntry.isEnabled) return@record
+
+            with(lookaheadAnimationVisualDebugHelper!!) {
+                if (sharedElement.scope.isTransitionActive) {
+                    if (sharedElement.boundsTransformIsActive) {
+                        if (sharedElement.enabledEntries.size > 2) {
+                            drawScope.drawMultipleMatchesElement(
+                                visualDebugConfig.multipleMatchesColor,
+                                visualDebugConfig.isShowKeyLabelEnabled,
+                                sharedElement.key,
+                                sharedElement.enabledEntries.size - 1,
+                                textMeasurer!!,
+                                strokeWeight * 3,
+                            )
+                        } else if (targetData != null && bounds != null) {
+                            drawScope.drawLocalVisualizations(
+                                lookaheadAnimationVisualDebugColor,
+                                targetData.targetBounds.topLeft,
+                                targetData.size,
+                                bounds,
+                                center,
+                                visualDebugConfig.isShowKeyLabelEnabled,
+                                strokeWeight,
+                                sharedElement.key,
+                                textMeasurer,
+                            )
+                        }
+                    } else {
+                        drawScope.drawUnmatchedElement(
+                            visualDebugConfig.unmatchedElementColor,
+                            visualDebugConfig.isShowKeyLabelEnabled,
+                            sharedElement.key,
+                            textMeasurer!!,
+                            strokeWeight,
+                        )
+                    }
+                } else {
+                    drawScope.drawInactiveVisualizations(
+                        lookaheadAnimationVisualDebugColor,
+                        visualDebugConfig.isShowKeyLabelEnabled,
+                        strokeWeight,
+                        sharedElement.key,
+                        textMeasurer,
+                    )
+                }
+            }
         }
     }
 
