@@ -3,142 +3,114 @@ package com.testdata
 import androidx.appfunctions.service.AppFunction
 import androidx.appfunctions.AppFunctionContext
 
-class FakeAllPrimitiveReturnsImpl : FakeAllPrimitiveReturns {
-
+class UnitReturnImpl : UnitReturn {
     @AppFunction override fun unitReturn(appFunctionContext: AppFunctionContext) {}
+}
 
-    @AppFunction
-    override fun byteArrayReturn(appFunctionContext: AppFunctionContext): ByteArray {
-        return byteArrayOf()
-    }
+class ByteArrayReturnImpl : ByteArrayReturn {
+    @AppFunction override fun byteArrayReturn(appFunctionContext: AppFunctionContext): ByteArray = byteArrayOf()
+}
 
-    @AppFunction
-    override fun intReturn(appFunctionContext: AppFunctionContext): Int {
-        return 0
-    }
+class IntReturnImpl : IntReturn {
+    @AppFunction override fun intReturn(appFunctionContext: AppFunctionContext): Int = 0
+}
 
-    @AppFunction
-    override fun longReturn(appFunctionContext: AppFunctionContext): Long {
-        return 0L
-    }
+class LongReturnImpl : LongReturn {
+    @AppFunction override fun longReturn(appFunctionContext: AppFunctionContext): Long = 0L
+}
 
-    @AppFunction
-    override fun floatReturn(appFunctionContext: AppFunctionContext): Float {
-        return 0.0f
-    }
+class FloatReturnImpl : FloatReturn {
+    @AppFunction override fun floatReturn(appFunctionContext: AppFunctionContext): Float = 0.0f
+}
 
-    @AppFunction
-    override fun doubleReturn(appFunctionContext: AppFunctionContext): Double {
-        return 0.0
-    }
+class DoubleReturnImpl : DoubleReturn {
+    @AppFunction override fun doubleReturn(appFunctionContext: AppFunctionContext): Double = 0.0
+}
 
-    @AppFunction
-    override fun stringReturn(appFunctionContext: AppFunctionContext): String {
-        return ""
-    }
+class StringReturnImpl : StringReturn {
+    @AppFunction override fun stringReturn(appFunctionContext: AppFunctionContext): String = ""
+}
 
-    @AppFunction
-    override fun booleanReturn(appFunctionContext: AppFunctionContext): Boolean {
-        return false
-    }
+class BooleanReturnImpl : BooleanReturn {
+    @AppFunction override fun booleanReturn(appFunctionContext: AppFunctionContext): Boolean = false
+}
 
-    @AppFunction
-    override fun nullableByteArrayReturn(appFunctionContext: AppFunctionContext): ByteArray? {
-        return null
-    }
+class NullableByteArrayReturnImpl : NullableByteArrayReturn {
+    @AppFunction override fun nullableByteArrayReturn(appFunctionContext: AppFunctionContext): ByteArray? = null
+}
 
-    @AppFunction
-    override fun nullableIntReturn(appFunctionContext: AppFunctionContext): Int? {
-        return null
-    }
+class NullableIntReturnImpl : NullableIntReturn {
+    @AppFunction override fun nullableIntReturn(appFunctionContext: AppFunctionContext): Int? = null
+}
 
-    @AppFunction
-    override fun nullableLongReturn(appFunctionContext: AppFunctionContext): Long? {
-        return null
-    }
+class NullableLongReturnImpl : NullableLongReturn {
+    @AppFunction override fun nullableLongReturn(appFunctionContext: AppFunctionContext): Long? = null
+}
 
-    @AppFunction
-    override fun nullableFloatReturn(appFunctionContext: AppFunctionContext): Float? {
-        return null
-    }
+class NullableFloatReturnImpl : NullableFloatReturn {
+    @AppFunction override fun nullableFloatReturn(appFunctionContext: AppFunctionContext): Float? = null
+}
 
-    @AppFunction
-    override fun nullableDoubleReturn(appFunctionContext: AppFunctionContext): Double? {
-        return null
-    }
+class NullableDoubleReturnImpl : NullableDoubleReturn {
+    @AppFunction override fun nullableDoubleReturn(appFunctionContext: AppFunctionContext): Double? = null
+}
 
-    @AppFunction
-    override fun nullableStringReturn(appFunctionContext: AppFunctionContext): String? {
-        return null
-    }
+class NullableStringReturnImpl : NullableStringReturn {
+    @AppFunction override fun nullableStringReturn(appFunctionContext: AppFunctionContext): String? = null
+}
 
-    @AppFunction
-    override fun nullableBooleanReturn(appFunctionContext: AppFunctionContext): Boolean? {
-        return null
-    }
+class NullableBooleanReturnImpl : NullableBooleanReturn {
+    @AppFunction override fun nullableBooleanReturn(appFunctionContext: AppFunctionContext): Boolean? = null
+}
 
-    @AppFunction
-    override fun intArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): IntArray = intArrayOf()
+class IntArrayReturnImpl : IntArrayReturn {
+    @AppFunction override fun intArrayReturn(appFunctionContext: AppFunctionContext): IntArray = intArrayOf()
+}
 
-    @AppFunction
-    override fun longArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): LongArray = longArrayOf()
+class LongArrayReturnImpl : LongArrayReturn {
+    @AppFunction override fun longArrayReturn(appFunctionContext: AppFunctionContext): LongArray = longArrayOf()
+}
 
-    @AppFunction
-    override fun floatArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): FloatArray = floatArrayOf()
+class FloatArrayReturnImpl : FloatArrayReturn {
+    @AppFunction override fun floatArrayReturn(appFunctionContext: AppFunctionContext): FloatArray = floatArrayOf()
+}
 
-    @AppFunction
-    override fun doubleArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): DoubleArray = doubleArrayOf()
+class DoubleArrayReturnImpl : DoubleArrayReturn {
+    @AppFunction override fun doubleArrayReturn(appFunctionContext: AppFunctionContext): DoubleArray = doubleArrayOf()
+}
 
-    @AppFunction
-    override fun stringListReturn(
-        appFunctionContext: AppFunctionContext,
-    ): List<String> = listOf()
+class StringListReturnImpl : StringListReturn {
+    @AppFunction override fun stringListReturn(appFunctionContext: AppFunctionContext): List<String> = listOf()
+}
 
-    @AppFunction
-    override fun booleanArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): BooleanArray = booleanArrayOf()
+class BooleanArrayReturnImpl : BooleanArrayReturn {
+    @AppFunction override fun booleanArrayReturn(appFunctionContext: AppFunctionContext): BooleanArray = booleanArrayOf()
+}
 
-    @AppFunction
-    override fun nullableStringListReturn(
-        appFunctionContext: AppFunctionContext,
-    ): List<String>? = null
+class NullableStringListReturnImpl : NullableStringListReturn {
+    @AppFunction override fun nullableStringListReturn(appFunctionContext: AppFunctionContext): List<String>? = null
+}
 
-    @AppFunction
-    override fun nullableIntArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): IntArray? = null
+class NullableIntArrayReturnImpl : NullableIntArrayReturn {
+    @AppFunction override fun nullableIntArrayReturn(appFunctionContext: AppFunctionContext): IntArray? = null
+}
 
-    @AppFunction
-    override fun nullableLongArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): LongArray? = null
+class NullableLongArrayReturnImpl : NullableLongArrayReturn {
+    @AppFunction override fun nullableLongArrayReturn(appFunctionContext: AppFunctionContext): LongArray? = null
+}
 
-    @AppFunction
-    override fun nullableDoubleArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): DoubleArray? = null
+class NullableFloatArrayReturnImpl : NullableFloatArrayReturn {
+    @AppFunction override fun nullableFloatArrayReturn(appFunctionContext: AppFunctionContext): FloatArray? = null
+}
 
-    @AppFunction
-    override fun nullableBooleanArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): BooleanArray? = null
+class NullableDoubleArrayReturnImpl : NullableDoubleArrayReturn {
+    @AppFunction override fun nullableDoubleArrayReturn(appFunctionContext: AppFunctionContext): DoubleArray? = null
+}
 
-    @AppFunction
-    override fun nullableFloatArrayReturn(
-        appFunctionContext: AppFunctionContext,
-    ): FloatArray? = null
+class NullableBooleanArrayReturnImpl : NullableBooleanArrayReturn {
+    @AppFunction override fun nullableBooleanArrayReturn(appFunctionContext: AppFunctionContext): BooleanArray? = null
+}
 
-    @AppFunction
-    override fun nullableStringItemListReturn(
-        appFunctionContext: AppFunctionContext,
-    ): List<String?> = emptyList()
+class NullableStringItemListReturnImpl : NullableStringItemListReturn {
+    @AppFunction override fun nullableStringItemListReturn(appFunctionContext: AppFunctionContext): List<String?> = emptyList()
 }
