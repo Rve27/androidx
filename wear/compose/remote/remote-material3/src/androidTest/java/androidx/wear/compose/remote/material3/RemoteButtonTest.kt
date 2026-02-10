@@ -33,7 +33,7 @@ import androidx.compose.remote.creation.compose.shapes.RemoteCircleShape
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.rb
 import androidx.compose.remote.creation.compose.state.rdp
-import androidx.compose.remote.creation.compose.state.rememberRemoteBitmapValue
+import androidx.compose.remote.creation.compose.state.rememberNamedRemoteBitmap
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
@@ -222,7 +222,7 @@ class RemoteButtonTest {
             creationDisplayInfo = creationDisplayInfo,
         ) {
             val backgroundImage =
-                rememberRemoteBitmapValue(name = "backgroundImage") {
+                rememberNamedRemoteBitmap(name = "backgroundImage") {
                     createImage(200, 200).asImageBitmap()
                 }
             Center(RemoteModifier.fillMaxSize()) {
@@ -246,7 +246,7 @@ class RemoteButtonTest {
             creationDisplayInfo = creationDisplayInfo,
         ) {
             val backgroundImage =
-                rememberRemoteBitmapValue(name = "button_disabled_container_background_image") {
+                rememberNamedRemoteBitmap(name = "button_disabled_container_background_image") {
                     createImage(200, 200).asImageBitmap()
                 }
             Center(RemoteModifier.fillMaxSize()) {

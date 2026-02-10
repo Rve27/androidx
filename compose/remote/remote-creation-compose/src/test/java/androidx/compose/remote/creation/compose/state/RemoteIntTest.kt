@@ -408,7 +408,7 @@ class RemoteIntTest {
         val result = namedRemoteInt * RemoteInt(10)
         val resultId = result.getIdForCreationState(creationState)
 
-        makeAndUpdateCoreDocument { context.setNamedIntegerOverride("testInt", 20) }
+        makeAndUpdateCoreDocument { context.setNamedIntegerOverride("USER:testInt", 20) }
 
         assertThat(context.getInteger(resultId)).isEqualTo(200)
     }
@@ -420,7 +420,7 @@ class RemoteIntTest {
         val result = plusOne * plusOne
         val resultId = result.getIdForCreationState(creationState)
 
-        makeAndUpdateCoreDocument { context.setNamedIntegerOverride("testInt", 19) }
+        makeAndUpdateCoreDocument { context.setNamedIntegerOverride("USER:testInt", 19) }
 
         assertThat(context.getInteger(resultId)).isEqualTo(400)
     }

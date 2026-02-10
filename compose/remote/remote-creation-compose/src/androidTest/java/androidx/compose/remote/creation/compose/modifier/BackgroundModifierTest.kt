@@ -35,7 +35,7 @@ import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rc
-import androidx.compose.remote.creation.compose.state.rememberRemoteColor
+import androidx.compose.remote.creation.compose.state.rememberNamedRemoteColor
 import androidx.compose.remote.creation.compose.state.ri
 import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
@@ -131,9 +131,10 @@ class BackgroundModifierTest {
             creationDisplayInfo = creationDisplayInfo,
             backgroundColor = Color.Black,
         ) {
-            val blue = rememberRemoteColor("ABC") { Color.Blue }
-            val title = ("background(".rs + blue.toHexString() + ".rc named)")
-            DemoBox(title) { RemoteBox(modifier = RemoteModifier.fillMaxSize().background(blue)) }
+            val blue = rememberNamedRemoteColor("ABC", Color.Blue)
+            DemoBox("background(".rs + blue.toHexString() + ".rc named)") {
+                RemoteBox(modifier = RemoteModifier.fillMaxSize().background(blue))
+            }
         }
     }
 

@@ -36,7 +36,8 @@ class RemotePaddingValuesTest {
 
     @Test
     fun equals_nonConstantValues_areNotEqual() {
-        val namedRemoteFloat = RemoteFloat.createNamedRemoteFloat("testFloat", 100.0f)
+        val namedRemoteFloat =
+            RemoteFloat.createNamedRemoteFloat("testFloat", initialValue = 100.0f)
         val nonConstantRemoteFloat = namedRemoteFloat * RemoteFloat(10f)
         assertThat(nonConstantRemoteFloat.hasConstantValue).isFalse()
 

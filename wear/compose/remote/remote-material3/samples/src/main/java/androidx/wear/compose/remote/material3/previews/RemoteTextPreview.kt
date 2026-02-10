@@ -24,7 +24,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.state.RemoteColor
-import androidx.compose.remote.creation.compose.state.rememberRemoteString
+import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
@@ -44,7 +44,8 @@ private fun RemoteTextStylePreview(
 ) =
     RemotePreview(profile = profile) {
         Container {
-            val text = rememberRemoteString { "textWithStyle" }
+            val text = "textWithStyle".rs
+
             RemoteText(
                 text,
                 style = LocalTextStyle.current.copy(fontStyle = FontStyle.Italic, fontSize = 32.sp),
@@ -59,9 +60,10 @@ private fun RemoteTextOverflowPreview(
 ) =
     RemotePreview(profile = profile) {
         Container {
-            val text = rememberRemoteString {
+            val text =
                 "a piece of writing in which the expression of feelings and ideas is given intensity by particular attention to diction (sometimes involving rhyme), rhythm, and imagery."
-            }
+                    .rs
+
             val color = RemoteColor(Color.Green)
 
             RemoteText(

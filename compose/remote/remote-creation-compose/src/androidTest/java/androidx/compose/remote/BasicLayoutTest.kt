@@ -44,6 +44,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.compose.remote.creation.compose.layout.StateLayout
 import androidx.compose.remote.creation.compose.layout.rememberStateMachine
+import androidx.compose.remote.creation.compose.layout.withGlobalScope
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.clickable
@@ -65,8 +66,8 @@ import androidx.compose.remote.creation.compose.state.RemoteDp
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
-import androidx.compose.remote.creation.compose.state.rememberRemoteIntValue
-import androidx.compose.remote.creation.compose.state.rememberRemoteString
+import androidx.compose.remote.creation.compose.state.rememberMutableRemoteInt
+import androidx.compose.remote.creation.compose.state.rememberNamedRemoteString
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.creation.compose.vector.painterRemoteVector
@@ -603,7 +604,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val text = rememberRemoteString("test") { "Bonjour le monde!" }
+                val text = rememberNamedRemoteString("test", "Bonjour le monde!")
                 val white = RemoteColor(Color.White)
 
                 RemoteRow(
@@ -699,7 +700,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val text = rememberRemoteString("plop") { "Bonjour Le Monde!" }
+                val text = rememberNamedRemoteString("plop", "Bonjour Le Monde!")
                 val white = RemoteColor(Color.White)
 
                 RemoteText(
@@ -819,7 +820,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val param = rememberRemoteIntValue { 128 }
+                val param = rememberMutableRemoteInt(128)
                 RemoteBox(
                     modifier =
                         RemoteModifier.size(100.rdp)
@@ -862,7 +863,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val checked = rememberRemoteIntValue { Checked.On.ordinal }
+                val checked = rememberMutableRemoteInt(0)
                 val fsm = rememberStateMachine<Checked>(checked)
 
                 StateLayout(stateMachine = fsm, modifier = RemoteModifier.fillMaxSize()) { state ->
@@ -914,7 +915,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val checked = rememberRemoteIntValue { Checked.Off.ordinal }
+                val checked = rememberMutableRemoteInt(1)
                 val fsm = rememberStateMachine<Checked>(checked)
 
                 StateLayout(stateMachine = fsm, modifier = RemoteModifier.fillMaxSize()) { state ->
@@ -967,7 +968,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val checked = rememberRemoteIntValue { Checked.On.ordinal }
+                val checked = rememberMutableRemoteInt(1).withGlobalScope()
                 val fsm = rememberStateMachine<Checked>(checked)
 
                 StateLayout(

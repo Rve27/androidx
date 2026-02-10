@@ -82,7 +82,7 @@ class ListActivity : ComponentActivity() {
 fun ScrollableList(name: String, modifier: RemoteModifier = RemoteModifier) {
     val scrollState = rememberRemoteScrollState()
     RemoteColumn(
-        modifier = modifier.verticalScroll(scrollState).background(Color.White),
+        modifier = modifier.verticalScroll(scrollState).background(Color.Yellow.rc),
         horizontalAlignment = RemoteAlignment.CenterHorizontally,
         verticalArrangement = RemoteArrangement.Center,
     ) {
