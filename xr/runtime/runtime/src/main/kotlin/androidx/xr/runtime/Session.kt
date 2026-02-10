@@ -355,15 +355,7 @@ public constructor(
 
     /** The current state of the runtime configuration. */
     @GuardedBy("lock")
-    public var config: Config =
-        Config(
-            PlaneTrackingMode.DISABLED,
-            augmentedObjectCategories = listOf(),
-            HandTrackingMode.DISABLED,
-            DeviceTrackingMode.DISABLED,
-            DepthEstimationMode.DISABLED,
-            AnchorPersistenceMode.DISABLED,
-        )
+    public var config: Config = Config()
         private set
 
     private val lifecycleObserver = LifecycleEventObserver { _, event ->
