@@ -21,6 +21,7 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.glance.Button
 import androidx.glance.GlanceModifier
+import androidx.glance.Image
 import androidx.glance.action.Action
 import androidx.glance.appwidget.ImageProvider
 import androidx.glance.appwidget.action.actionStartActivity
@@ -34,6 +35,7 @@ import androidx.glance.semantics.semantics
 import androidx.glance.semantics.testTag
 import androidx.glance.testing.unit.assertHasClickAction
 import androidx.glance.testing.unit.hasAnyDescendant
+import androidx.glance.testing.unit.hasContentDescription
 import androidx.glance.testing.unit.hasTestTag
 import androidx.glance.testing.unit.hasText
 import androidx.glance.text.Text
@@ -150,6 +152,26 @@ class ButtonsGlanceTest {
         onAllNodes(hasAnyDescendant(hasText(arbitraryText)))
             .filter(hasTestTag(columnTestTag))
             .assertCountEquals(1)
+    }
+
+    @Test
+    fun hasContentDescription_iconButton() = runGlanceAppWidgetUnitTest {
+        provideComposable {
+            CircleIconButton(
+                imageProvider = anImageProvider,
+                contentDescription = arbitraryText,
+                onClick = {},
+            )
+        }
+
+        onNode(hasContentDescription(arbitraryText)).assertExists()
+    }
+
+    @Test
+    fun hasContentDescription_image() = runGlanceAppWidgetUnitTest {
+        provideComposable { Image(provider = anImageProvider, contentDescription = arbitraryText) }
+
+        onNode(hasContentDescription(arbitraryText)).assertExists()
     }
 }
 
