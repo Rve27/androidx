@@ -45,7 +45,6 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.bundling.ZipEntryCompression
 import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask
@@ -209,11 +208,24 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
                 it.yarnrcFile.set(layout.buildDirectory.file("wasm/.yarnrc"))
             }
 
+        val createKotlinToolingYarnRcFileTask =
+            tasks.register("createKotlinToolingYarnRcFile", CreateYarnRcFileTask::class.java) {
+                it.offlineMirrorStorage.set(File(offlineMirrorStorage, "tooling"))
+                it.cacheStorage.set(layout.buildDirectory.dir("kotlinToolingYarnCache"))
+                it.yarnrcFile.set(
+                    File(project.getOutDirectory(), ".kotlin/kotlin-npm-tooling/.yarnrc")
+                )
+            }
+
         configureNode()
 
         // ensure yarn install is complete before using it to install kotlin wasm tooling
         tasks.withType<KotlinToolingSetupTask>().configureEach {
-            it.dependsOn(tasks.withType<KotlinNpmInstallTask>())
+            it.dependsOn(tasks.withType<KotlinNpmInstallTask>(), createKotlinToolingYarnRcFileTask)
+            it.args.addAll(listOf("--ignore-engines", "--verbose"))
+            if (project.useYarnOffline()) {
+                it.args.add("--offline")
+            }
         }
 
         tasks.withType<KotlinNpmInstallTask>().configureEach {
