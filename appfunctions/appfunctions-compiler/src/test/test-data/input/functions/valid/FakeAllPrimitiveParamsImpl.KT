@@ -14,7 +14,9 @@ class FakeAllPrimitiveParamsImpl : FakeAllPrimitiveParams {
         arg5: String,
         arg6: Boolean,
     ) {}
+}
 
+class FakeAllPrimitiveArrayParamsImpl : FakeAllPrimitiveArrayParams {
     @AppFunction
     override fun allPrimitiveArrayParams(
         appFunctionContext: AppFunctionContext,
