@@ -1,7 +1,7 @@
 package androidx.appfunctions.service.`internal`
 
 import com.testdata.`$AllPrimitiveInputFunctions_AppFunctionInvoker`
-import com.testdata.`$SimpleFunction_AppFunctionInvoker`
+import com.testdata.diff.`$DiffPackageFunction_AppFunctionInvoker`
 import javax.`annotation`.processing.Generated
 import kotlin.collections.List
 
@@ -9,6 +9,6 @@ import kotlin.collections.List
 public class `$AggregatedAppFunctionInvoker_Impl` : AggregatedAppFunctionInvoker() {
   override val invokers: List<AppFunctionInvoker> = listOf(
     `$AllPrimitiveInputFunctions_AppFunctionInvoker`(),
-    `$SimpleFunction_AppFunctionInvoker`(),
+    `$DiffPackageFunction_AppFunctionInvoker`(),
   )
 }
