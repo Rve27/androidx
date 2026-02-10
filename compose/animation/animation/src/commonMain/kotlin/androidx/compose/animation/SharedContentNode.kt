@@ -335,13 +335,11 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
                 }
 
             sharedElement.state.updateBounds(bounds)
-            if (SharedTransitionDebug) {
-                println(
-                    "SharedTransition, animated bounds: $bounds," +
-                        " target: ${targetData.targetBounds}," +
-                        " scope size: ${sharedElement.scope.lookaheadRoot.size}," +
-                        " ${sharedElement.state}"
-                )
+            sharedTransitionDebug {
+                "animated bounds: $bounds," +
+                    " target: ${targetData.targetBounds}," +
+                    " scope size: ${sharedElement.scope.lookaheadRoot.size}," +
+                    " ${sharedElement.state}"
             }
         } else {
             topLeft = animatedTopLeft ?: currentBounds.topLeft
@@ -420,24 +418,21 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
                 }
                 Constraints.fixed(width.coerceAtLeast(0), height.coerceAtLeast(0))
             } ?: constraints
-        if (SharedTransitionDebug) {
-            println(
-                "SharedTransition, approach measure constraints: $resolvedConstraints," +
-                    " key = ${sharedElement.key}, state: ${sharedElement.state}"
-            )
+        sharedTransitionDebug {
+            "approach measure constraints: $resolvedConstraints," +
+                " key = ${sharedElement.key}, state: ${sharedElement.state}"
         }
         val placeable = measurable.measure(resolvedConstraints)
         return approachPlace(placeable)
     }
 
     override fun ContentDrawScope.draw() {
+        val sharedElement = sharedElement
         val matchState = sharedElement.state
         val bounds = matchState.currentBounds
-        if (SharedTransitionDebug) {
-            println(
-                "SharedTransition, ContentDrawScope.draw() invoked. Bounds size: ${bounds?.size}" +
-                    " for key = ${sharedElement.key}"
-            )
+        sharedTransitionDebug {
+            "ContentDrawScope.draw() invoked. Bounds size: ${bounds?.size}" +
+                " for key = ${sharedElement.key}"
         }
         // Update clipPath
         sharedElementEntry.clipPathInOverlay =
@@ -538,11 +533,9 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
             // false
             else {
                 layer.record {
-                    if (SharedTransitionDebug) {
-                        println(
-                            "SharedTransition, record layer at size: ${bounds?.size} for" +
-                                " key = ${sharedElement.key}"
-                        )
+                    sharedTransitionDebug {
+                        "record layer at size: ${bounds?.size} for" +
+                            " key = ${sharedElement.key}"
                     }
 
                     this@draw.drawContent()
@@ -550,20 +543,16 @@ internal class SharedBoundsNode(state: SharedElementEntry) :
             }
         } else {
             layer.record {
-                if (SharedTransitionDebug) {
-                    println(
-                        "SharedTransition, record layer at size: ${bounds?.size} for" +
-                            " key = ${sharedElement.key}"
-                    )
+                sharedTransitionDebug {
+                    "record layer at size: ${bounds?.size} for" +
+                        " key = ${sharedElement.key}"
                 }
 
                 this@draw.drawContent()
             }
         }
         if (sharedElementEntry.shouldRenderInPlace) {
-            if (SharedTransitionDebug) {
-                println("SharedTransition, drawing in place. key = ${sharedElement.key}")
-            }
+            sharedTransitionDebug { "drawing in place. key = ${sharedElement.key}" }
             drawLayer(layer)
         }
     }
