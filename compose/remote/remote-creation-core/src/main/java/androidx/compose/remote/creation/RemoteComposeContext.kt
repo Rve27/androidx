@@ -1085,6 +1085,21 @@ public open class RemoteComposeContext {
         mRemoteWriter.loop(indexId, from, step, until, content)
     }
 
+    public fun ifElse(positive: Number, trueOps: RemoteComposeWriterInterface) {
+        conditionalOperations(Rc.Condition.GT, positive.toFloat(), 0f, trueOps)
+    }
+
+    public fun ifElse(
+        positive: Number,
+        trueOps: RemoteComposeWriterInterface,
+        elseOps: RemoteComposeWriterInterface?,
+    ) {
+        conditionalOperations(Rc.Condition.GT, positive.toFloat(), 0f, trueOps)
+        if (elseOps != null) {
+            conditionalOperations(Rc.Condition.LTE, positive.toFloat(), 0f, elseOps)
+        }
+    }
+
     public fun conditionalOperations(
         type: Byte,
         a: Float,
