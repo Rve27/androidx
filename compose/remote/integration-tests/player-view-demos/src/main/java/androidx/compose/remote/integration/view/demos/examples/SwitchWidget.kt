@@ -18,9 +18,6 @@ package androidx.compose.remote.integration.view.demos.examples
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.remote.creation.compose.action.ValueChange
-import androidx.compose.remote.creation.compose.capture.LocalRemoteComposeCreationState
-import androidx.compose.remote.creation.compose.capture.LogTodo
-import androidx.compose.remote.creation.compose.capture.NoRemoteCompose
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
@@ -116,10 +113,7 @@ fun RemoteComponent(name: String, content: @Composable @RemoteComposable () -> U
 @Composable
 @RemoteComposable
 fun SwitchComponent(value: MutableRemoteInt) {
-    RemoteComponent("switch") {
-        // val localValue = parameter(value)
-        SwitchWidget(value)
-    }
+    RemoteComponent("switch") { SwitchWidget(value) }
 }
 
 @Suppress("RestrictedApiAndroidX")
@@ -129,22 +123,8 @@ fun SwitchWidget(value: MutableRemoteInt) {
     val (off, on) = listOf(0, 1)
     val fsm = rememberStateMachine(value, off, on)
 
-    val captureMode = LocalRemoteComposeCreationState.current
     val modifier =
-        if (captureMode is NoRemoteCompose) {
-            LogTodo("support expressions in previews")
-            RemoteModifier.clickable(
-                ValueChange(
-                    fsm.currentState as MutableRemoteInt,
-                    (fsm.currentState.constantValue + 1) % 2,
-                )
-            )
-        } else {
-            val toggleExpression = (fsm.currentState + 1) % 2
-            RemoteModifier.clickable(
-                ValueChange(fsm.currentState as MutableRemoteInt, toggleExpression)
-            )
-        }
+        RemoteModifier.clickable(ValueChange(remoteState = value, updatedValue = (value + 1) % 2))
 
     RemoteBox(
         modifier = RemoteModifier.padding(4.dp),
