@@ -67,4 +67,5 @@ dependencies {
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.kotlinCoroutinesTest)
     androidTestImplementation(libs.testParameterInjector)
+    androidTestImplementation(project(":test:uiautomator:uiautomator"))
 }
