@@ -56,7 +56,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$EntityWithValidPropertiesFactory.kt",
-            goldenFileName = "\$EntityWithValidPropertiesFactory.KT",
+            goldenFileName = "factory/\$EntityWithValidPropertiesFactory.KT",
         )
     }
 
@@ -74,7 +74,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$EntityWithValidNullablePropertiesFactory.kt",
-            goldenFileName = "\$EntityWithValidNullablePropertiesFactory.KT",
+            goldenFileName = "factory/\$EntityWithValidNullablePropertiesFactory.KT",
         )
     }
 
@@ -88,12 +88,12 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$DerivedSerializableFactory.kt",
-            goldenFileName = "\$DerivedSerializableFactory.KT",
+            goldenFileName = "factory/\$DerivedSerializableFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$LongBaseSerializableFactory.kt",
-            goldenFileName = "\$LongBaseSerializableFactory.KT",
+            goldenFileName = "factory/\$LongBaseSerializableFactory.KT",
         )
     }
 
@@ -107,17 +107,17 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$NestedDerivedSerializableFactory.kt",
-            goldenFileName = "\$NestedDerivedSerializableFactory.KT",
+            goldenFileName = "factory/\$NestedDerivedSerializableFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$NestedBaseSerializableFactory.kt",
-            goldenFileName = "\$NestedBaseSerializableFactory.KT",
+            goldenFileName = "factory/\$NestedBaseSerializableFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$NonNestedChildSerializableFactory.kt",
-            goldenFileName = "\$NonNestedChildSerializableFactory.KT",
+            goldenFileName = "factory/\$NonNestedChildSerializableFactory.KT",
         )
     }
 
@@ -162,7 +162,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$EntityWithDiffPackageSerializablePropertyFactory.kt",
-            goldenFileName = "\$EntityWithDiffPackageSerializablePropertyFactory.KT",
+            goldenFileName = "factory/\$EntityWithDiffPackageSerializablePropertyFactory.KT",
         )
     }
 
@@ -176,7 +176,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$RecursiveSerializableFactory.kt",
-            goldenFileName = "\$RecursiveSerializableFactory.KT",
+            goldenFileName = "factory/\$RecursiveSerializableFactory.KT",
         )
     }
 
@@ -223,12 +223,12 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$LocalDateTimeFactory.kt",
-            goldenFileName = "\$LocalDateTimeFactory.KT",
+            goldenFileName = "factory/\$LocalDateTimeFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$UriFactory.kt",
-            goldenFileName = "\$UriFactory.KT",
+            goldenFileName = "factory/\$UriFactory.KT",
         )
     }
 
@@ -242,7 +242,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$SerializableWithProxyTypeFactory.kt",
-            goldenFileName = "\$SerializableWithProxyTypeFactory.KT",
+            goldenFileName = "factory/\$SerializableWithProxyTypeFactory.KT",
         )
     }
 
@@ -281,7 +281,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}SetFieldFactory.kt",
-            goldenFileName = "${'$'}SetFieldFactory.KT",
+            goldenFileName = "factory/${'$'}SetFieldFactory.KT",
         )
     }
 
@@ -295,7 +295,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}UpdateNoteParamsFactory.kt",
-            goldenFileName = "${'$'}UpdateNoteParamsFactory.KT",
+            goldenFileName = "factory/${'$'}UpdateNoteParamsFactory.KT",
         )
     }
 
@@ -309,7 +309,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}EmptyFactory.kt",
-            goldenFileName = "${'$'}EmptyFactory.KT",
+            goldenFileName = "factory/${'$'}EmptyFactory.KT",
         )
     }
 
@@ -323,12 +323,12 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}MyNoteFactory.kt",
-            goldenFileName = "${'$'}MyNoteFactory.KT",
+            goldenFileName = "factory/${'$'}MyNoteFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}ResponseFactory.kt",
-            goldenFileName = "${'$'}ResponseFactory.KT",
+            goldenFileName = "factory/${'$'}ResponseFactory.KT",
         )
     }
 
@@ -343,39 +343,39 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$SimpleNoteFactory.kt",
-            goldenFileName = "\$SimpleNoteFactory.KT",
+            goldenFileName = "factory/\$SimpleNoteFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$SimpleNote\$SimpleAttachmentFactory.kt",
-            goldenFileName = "\$SimpleNote\$SimpleAttachmentFactory.KT",
+            goldenFileName = "factory/\$SimpleNote\$SimpleAttachmentFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$CreateSimpleNoteParamsFactory.kt",
-            goldenFileName = "\$CreateSimpleNoteParamsFactory.KT",
+            goldenFileName = "factory/\$CreateSimpleNoteParamsFactory.KT",
         )
 
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$SimpleMessageFactory.kt",
-            goldenFileName = "\$SimpleMessageFactory.KT",
+            goldenFileName = "factory/\$SimpleMessageFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$SimpleMessage\$SimpleAttachmentFactory.kt",
-            goldenFileName = "\$SimpleMessage\$SimpleAttachmentFactory.KT",
+            goldenFileName = "factory/\$SimpleMessage\$SimpleAttachmentFactory.KT",
         )
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$UpdateSimpleMessageParamsFactory.kt",
-            goldenFileName = "\$UpdateSimpleMessageParamsFactory.KT",
+            goldenFileName = "factory/\$UpdateSimpleMessageParamsFactory.KT",
         )
 
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$ContainsBothAttachmentsFactory.kt",
-            goldenFileName = "\$ContainsBothAttachmentsFactory.KT",
+            goldenFileName = "factory/\$ContainsBothAttachmentsFactory.KT",
         )
     }
 
@@ -389,7 +389,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "${'$'}SerializableWithDefaultValueFactory.kt",
-            goldenFileName = "${'$'}SerializableWithDefaultValueFactory.KT",
+            goldenFileName = "factory/${'$'}SerializableWithDefaultValueFactory.KT",
         )
     }
 
@@ -417,7 +417,7 @@ class AppFunctionSerializableProcessorTest {
         compilationTestHelper.assertSuccessWithSourceContent(
             report,
             "\$SerializableWithParcelablesFactory.kt",
-            "\$SerializableWithParcelablesFactory.KT",
+            "factory/\$SerializableWithParcelablesFactory.KT",
         )
     }
 }
