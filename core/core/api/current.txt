@@ -4221,6 +4221,7 @@ package androidx.core.view.accessibility {
     ctor public AccessibilityNodeInfoCompat.SelectionCompat(androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat);
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat? getEnd();
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat? getStart();
+    method public android.view.accessibility.AccessibilityNodeInfo.Selection? unwrap();
   }
 
   public static final class AccessibilityNodeInfoCompat.SelectionPositionCompat {
