@@ -39,36 +39,6 @@ import androidx.compose.runtime.remember
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
-private const val MAX_SAFE_FLOAT_ARRAY = 30
-private const val OP_ADD = AnimatedFloatExpression.OFFSET + 1
-private const val OP_SUB = AnimatedFloatExpression.OFFSET + 2
-private const val OP_MUL = AnimatedFloatExpression.OFFSET + 3
-private const val OP_DIV = AnimatedFloatExpression.OFFSET + 4
-
-/** An inline value class representing a reference to a remote float. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@JvmInline
-public value class RemoteFloatReference(private val v: Float)
-
-/** Extension property to convert an [Int] to a [RemoteFloat]. */
-public val Int.rf: RemoteFloat
-    get() {
-        return RemoteFloatExpression(this.toFloat()) { _ -> floatArrayOf(this.toFloat()) }
-    }
-
-/** Extension property to convert a [Float] to a [RemoteFloat]. */
-public val Float.rf: RemoteFloat
-    get() {
-        return RemoteFloat(this)
-    }
-
-/** Extension function to get either a Float ID or a Float literal from a [Number]. */
-internal fun Number.getFloatIdForCreationState(creationState: RemoteComposeCreationState): Float =
-    when (this) {
-        is Float -> this
-        else -> toFloat()
-    }
-
 /**
  * Abstract base class for all remote float representations. It extends [Number] and implements
  * [RemoteState<Float>].
@@ -500,6 +470,14 @@ public abstract class RemoteFloat : BaseRemoteState<Float>() {
         }
 
         /**
+         * Creates a [RemoteFloat] referencing a remote ID.
+         *
+         * @param id The remote ID.
+         * @return A [RemoteFloat] referencing the ID.
+         */
+        internal fun createForId(id: Float): RemoteFloat = RemoteFloat(id)
+
+        /**
          * Creates a named [RemoteFloat] with an initial value. This allows referring to a float by
          * a symbolic name in the remote document. Named remote ints can be set via
          * AndroidRemoteContext.setNamedFloat.
@@ -509,11 +487,28 @@ public abstract class RemoteFloat : BaseRemoteState<Float>() {
          * @return A [RemoteFloat] representing the named float.
          */
         @JvmStatic
-        public fun createNamedRemoteFloat(name: String, initialValue: Float): RemoteFloat {
+        public fun createNamedRemoteFloat(
+            name: String,
+            initialValue: Float,
+            domain: RemoteState.Domain = RemoteState.Domain.User,
+        ): RemoteFloat {
             return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
-                // TODO: check what happens if the initial value for this is the same as a
-                // subsequent non-named variable.
-                floatArrayOf(creationState.document.addNamedFloat(name, initialValue))
+                floatArrayOf(creationState.document.addNamedFloat("$domain:$name", initialValue))
+            }
+        }
+
+        @JvmStatic
+        public fun createNamedRemoteFloatExpression(
+            name: String,
+            domain: RemoteState.Domain = RemoteState.Domain.User,
+            expression: RemoteFloatContext.() -> RemoteFloat,
+        ): RemoteFloat {
+            return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
+                val context = RemoteFloatContext(creationState)
+                val result = expression(context)
+                val initialValueId = result.getFloatIdForCreationState(creationState)
+                val floatId = creationState.document.addNamedFloat("$domain:$name", initialValueId)
+                floatArrayOf(floatId)
             }
         }
     }
@@ -691,7 +686,7 @@ internal fun comparisonOp(
     val aConst = a.constantValueOrNull
     val bConst = b.constantValueOrNull
     if (aConst != null && bConst != null) {
-        return RemoteBoolean(RemoteInt(directEval(aConst, bConst)))
+        return RemoteBoolean(RemoteInt.createForId(directEval(aConst, bConst)))
     }
 
     return RemoteBoolean(
@@ -1016,6 +1011,28 @@ public class MutableRemoteFloat(
 
     public override fun writeToDocument(creationState: RemoteComposeCreationState): Int =
         Utils.idFromNan(idProvider(creationState))
+
+    public companion object {
+        /**
+         * Creates a new mutable state (allocates an ID).
+         *
+         * @param initialValue The initial value for the state.
+         * @return A new [MutableRemoteFloat] instance.
+         */
+        public fun createMutable(initialValue: Float): MutableRemoteFloat {
+            return MutableRemoteFloat { creationState ->
+                creationState.document.addFloatConstant(initialValue)
+            }
+        }
+
+        /**
+         * Maps an existing mutable ID to a state instance.
+         *
+         * @param id The existing mutable ID.
+         * @return A [MutableRemoteFloat] instance mapping to the ID.
+         */
+        internal fun createMutableForId(id: Float): MutableRemoteFloat = MutableRemoteFloat(id)
+    }
 }
 
 /**
@@ -1189,18 +1206,25 @@ public fun toArray(a: RemoteFloat, creationState: RemoteComposeCreationState): F
 @RemoteComposable
 public fun rememberRemoteFloatArray(content: () -> FloatArray): RemoteFloat {
     val state = LocalRemoteComposeCreationState.current
-    val floatArrayId = state.document.addFloatArray(content())
-    return rememberRemoteFloat { floatArrayId.rf }
+    return rememberRemoteFloatExpression {
+        val floatArrayId = state.document.addFloatArray(content())
+        floatArrayId.rf
+    }
 }
 
 /**
- * Composable function to remember and provide a mutable remote float value. This is intended for
- * use within a `@Composable` context and allows defining the initial value using a
- * [RemoteFloatContext].
+ * Factory composable for mutable remote float state.
  *
- * @param content A lambda that takes a [RemoteFloatContext] and returns the initial float value.
- * @return A [MutableRemoteFloat] that can be observed and changed.
+ * @param initialValue The initial [Float] value.
+ * @return A [MutableRemoteFloat] instance that will be remembered across recompositions.
  */
+@Composable
+@RemoteComposable
+public fun rememberMutableRemoteFloat(initialValue: Float): MutableRemoteFloat {
+    return remember { MutableRemoteFloat { it.document.addFloatConstant(initialValue) } }
+}
+
+/** Factory composable for mutable remote float state. */
 @Composable
 @RemoteComposable
 public fun rememberMutableRemoteFloat(
@@ -1217,26 +1241,23 @@ public fun rememberMutableRemoteFloat(
     }
 }
 
-/**
- * Composable function to remember and provide a [RemoteFloat]. This is intended for use within a
- * `@Composable` context.
- *
- * @param content A lambda that provides the [RemoteFloat] to be remembered.
- * @return A [RemoteFloat] representing the remembered remote float.
- */
+/** Factory composable for state. */
 @Composable
 @RemoteComposable
-public fun rememberRemoteFloat(content: RemoteFloatContext.() -> RemoteFloat): RemoteFloat {
+public fun rememberRemoteFloatExpression(
+    content: RemoteFloatContext.() -> RemoteFloat
+): RemoteFloat {
     val state = LocalRemoteComposeCreationState.current
-    val context = RemoteFloatContext(state)
-    val remoteFloat = content(context)
-    return remember { remoteFloat }
+    return remember {
+        val context = RemoteFloatContext(state)
+        val remoteFloat = content(context)
+        remoteFloat
+    }
 }
 
 /**
- * A Composable function to remember and provide a **named** remote float value.
+ * Remembers a named remote float expression.
  *
- * @param name The unique name for this remote float.
  * @param domain The domain of the named float (defaults to [RemoteState.Domain.User]). This helps
  *   organize named values in the remote document.
  * @param content default [RemoteFloat] value for this remote float.
@@ -1244,7 +1265,7 @@ public fun rememberRemoteFloat(content: RemoteFloatContext.() -> RemoteFloat): R
  */
 @Composable
 @RemoteComposable
-public fun rememberRemoteFloat(
+public fun rememberNamedRemoteFloat(
     name: String,
     domain: RemoteState.Domain = RemoteState.Domain.User,
     content: RemoteFloatContext.() -> RemoteFloat,
@@ -1256,12 +1277,24 @@ public fun rememberRemoteFloat(
         RemoteFloatExpression(constantValueOrNull = null) { creationState ->
             // Create an additional expression to name, in case the input value is meaningful
             // and just a default. So override is of this named value, not the expression.
-            val id =
+            val floatId =
                 state.document.floatExpression(*remoteFloat.arrayForCreationState(creationState))
-            state.document.setStringName(Utils.idFromNan(id), "$domain:$name")
-            floatArrayOf(id)
+            state.document.addNamedFloat("$domain:$name", floatId)
+            floatArrayOf(floatId)
         }
     }
+}
+
+/** A Composable function to remember and provide a **named** remote float value. */
+@Composable
+@RemoteComposable
+@Deprecated("Use rememberNamedRemoteFloat(name, domain, content = { content() })")
+public fun rememberRemoteFloat(
+    name: String,
+    domain: RemoteState.Domain = RemoteState.Domain.User,
+    content: RemoteFloatContext.() -> RemoteFloat,
+): RemoteFloat {
+    return rememberNamedRemoteFloat(name, domain, content)
 }
 
 /**
@@ -1272,6 +1305,7 @@ public fun rememberRemoteFloat(
  * @param content A lambda that takes a [RemoteFloatContext] and returns a [RemoteFloat].
  * @return The created [RemoteFloat].
  */
+@Deprecated("Use rememberRemoteFloatExpression(content = { content() })")
 public fun remoteFloat(
     state: RemoteStateScope,
     content: RemoteFloatContext.() -> RemoteFloat,
@@ -1352,3 +1386,33 @@ internal fun combineToFloatArray(
 
     return combinedArray
 }
+
+private const val MAX_SAFE_FLOAT_ARRAY = 30
+private const val OP_ADD = AnimatedFloatExpression.OFFSET + 1
+private const val OP_SUB = AnimatedFloatExpression.OFFSET + 2
+private const val OP_MUL = AnimatedFloatExpression.OFFSET + 3
+private const val OP_DIV = AnimatedFloatExpression.OFFSET + 4
+
+/** An inline value class representing a reference to a remote float. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@JvmInline
+public value class RemoteFloatReference(private val v: Float)
+
+/** Extension property to convert an [Int] to a [RemoteFloat]. */
+public val Int.rf: RemoteFloat
+    get() {
+        return RemoteFloatExpression(this.toFloat()) { _ -> floatArrayOf(this.toFloat()) }
+    }
+
+/** Extension property to convert a [Float] to a [RemoteFloat]. */
+public val Float.rf: RemoteFloat
+    get() {
+        return RemoteFloat(this)
+    }
+
+/** Extension function to get either a Float ID or a Float literal from a [Number]. */
+internal fun Number.getFloatIdForCreationState(creationState: RemoteComposeCreationState): Float =
+    when (this) {
+        is Float -> this
+        else -> toFloat()
+    }

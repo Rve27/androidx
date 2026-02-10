@@ -547,7 +547,7 @@ class RemoteStringTest {
         val result = namedRemoteString + RemoteString("!")
         val resultId = result.getIdForCreationState(creationState)
 
-        makeAndUpdateCoreDocument { context.setNamedStringOverride("testString", "override") }
+        makeAndUpdateCoreDocument { context.setNamedStringOverride("USER:testString", "override") }
 
         assertThat(context.getText(resultId)).isEqualTo("override!")
     }

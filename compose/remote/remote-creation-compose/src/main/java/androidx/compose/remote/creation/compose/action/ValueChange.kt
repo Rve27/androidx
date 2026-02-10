@@ -115,7 +115,7 @@ public fun ValueChange(
 }
 
 public fun ValueChange(remoteState: MutableRemoteInt, updatedValue: Int): ValueChangeAction<Int> =
-    ValueChangeAction(remoteState, RemoteInt(v = updatedValue))
+    ValueChangeAction(remoteState, RemoteInt(value = updatedValue))
 
 public fun ValueChange(
     remoteState: MutableRemoteInt,

@@ -24,7 +24,7 @@ import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.toComposeUiLayout
 import androidx.compose.remote.creation.compose.modifier.toRecordingModifier
 import androidx.compose.remote.creation.compose.state.RemoteInt
-import androidx.compose.remote.creation.compose.state.rememberRemoteIntValue
+import androidx.compose.remote.creation.compose.state.rememberMutableRemoteInt
 import androidx.compose.remote.creation.compose.v2.RemoteComposeApplierV2
 import androidx.compose.remote.creation.compose.v2.StateLayoutV2
 import androidx.compose.runtime.Composable
@@ -47,7 +47,7 @@ public class StateMachineSpec(public val currentState: RemoteInt, public var sta
 @RemoteComposable
 @Composable
 public fun rememberStateMachine(vararg states: Int): StateMachineSpec {
-    val currentState = rememberRemoteIntValue { 0 }
+    val currentState = rememberMutableRemoteInt(0)
     val stateMachine = remember { StateMachineSpec(currentState, states.sorted()) }
     return stateMachine
 }

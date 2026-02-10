@@ -20,6 +20,8 @@ package androidx.compose.remote.creation.compose.state
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RemoteDensity
+import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -45,6 +47,48 @@ public class RemoteDp(public val value: RemoteFloat) : BaseRemoteState<Dp>() {
     public fun toPx(density: RemoteDensity): RemoteFloat {
         return density.density * value
     }
+
+    public companion object {
+        /**
+         * Creates a [RemoteDp] from a literal [Dp] value.
+         *
+         * @param value The [Dp] value.
+         * @return A [RemoteDp] representing the constant Dp.
+         */
+        public operator fun invoke(value: Dp): RemoteDp = RemoteDp(value.value.rf)
+
+        /**
+         * Creates a [RemoteDp] referencing a remote ID.
+         *
+         * @param id The remote ID (stored as a [RemoteFloat]).
+         * @return A [RemoteDp] referencing the ID.
+         */
+        internal fun createForId(id: RemoteFloat): RemoteDp = RemoteDp(id)
+
+        /**
+         * Creates a named [RemoteDp] with an initial value. Named remote Dps can be set via
+         * AndroidRemoteContext.setNamedFloat.
+         *
+         * @param name The unique name for this remote Dp.
+         * @param domain The domain of the named Dp (defaults to [RemoteState.Domain.User]).
+         * @param initialValue The initial [Dp] value for the named remote Dp.
+         * @return A [RemoteDp] representing the named Dp.
+         */
+        @JvmStatic
+        public fun createNamedRemoteDp(
+            name: String,
+            initialValue: Dp,
+            domain: RemoteState.Domain = RemoteState.Domain.User,
+        ): RemoteDp {
+            return RemoteDp(
+                RemoteFloat.createNamedRemoteFloat(
+                    name = name,
+                    initialValue = initialValue.value,
+                    domain = domain,
+                )
+            )
+        }
+    }
 }
 
 /** Extension property to convert an [Int] to a [RemoteDp]. */
@@ -56,4 +100,32 @@ public val Int.rdp: RemoteDp
 /** Extension property to convert a [Dp] to a [RemoteDp]. */
 public fun Dp.asRdp(): RemoteDp {
     return RemoteDp(this.value.rf)
+}
+
+/**
+ * Remembers a named remote Dp expression.
+ *
+ * @param name The unique name for this remote Dp.
+ * @param domain The domain of the named Dp (defaults to [RemoteState.Domain.User]).
+ * @param content A lambda that provides the [RemoteDp] expression.
+ * @return A [RemoteDp] representing the named remote Dp expression.
+ */
+@Composable
+@RemoteComposable
+public fun rememberNamedRemoteDp(
+    name: String,
+    domain: RemoteState.Domain = RemoteState.Domain.User,
+    content: () -> RemoteDp,
+): RemoteDp {
+    return rememberNamedState(name, domain) {
+        val remoteDp = content()
+        RemoteDp(
+            RemoteFloatExpression(constantValueOrNull = null) { creationState ->
+                val px = remoteDp.toPx(creationState.remoteDensity)
+                val initialValueId = px.getFloatIdForCreationState(creationState)
+                val floatId = creationState.document.addNamedFloat("$domain:$name", initialValueId)
+                floatArrayOf(floatId)
+            }
+        )
+    }
 }
