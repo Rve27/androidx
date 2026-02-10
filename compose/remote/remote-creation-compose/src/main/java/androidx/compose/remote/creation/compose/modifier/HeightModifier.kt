@@ -46,6 +46,10 @@ public fun RemoteModifier.fillMaxHeight(fraction: RemoteFloat = RemoteFloat(1f))
 public fun RemoteModifier.fillMaxHeight(fraction: Float): RemoteModifier =
     then(HeightModifier(Type.FILL, RemoteFloat(fraction)))
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun RemoteModifier.fillParentMaxHeight(fraction: Float = 1f): RemoteModifier =
+    then(HeightModifier(Type.FILL_PARENT_MAX_HEIGHT, RemoteFloat(fraction)))
+
 @Composable
 public fun RemoteModifier.height(height: Int): RemoteModifier =
     then(HeightModifier(Type.EXACT, RemoteFloat(height.toFloat())))
