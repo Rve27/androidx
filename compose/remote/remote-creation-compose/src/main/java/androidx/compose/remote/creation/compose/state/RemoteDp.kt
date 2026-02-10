@@ -37,7 +37,7 @@ public class RemoteDp(public val value: RemoteFloat) : BaseRemoteState<Dp>() {
         get() = value.constantValueOrNull?.dp
 
     override fun writeToDocument(creationState: RemoteComposeCreationState): Int {
-        return toPx(creationState.remoteDensity).writeToDocument(creationState)
+        return toPx().writeToDocument(creationState)
     }
 
     /**
@@ -46,6 +46,14 @@ public class RemoteDp(public val value: RemoteFloat) : BaseRemoteState<Dp>() {
      */
     public fun toPx(density: RemoteDensity): RemoteFloat {
         return density.density * value
+    }
+
+    /** Converts a RemoteDp to a RemoteFloat Px using the [RemoteDensity]. */
+    public fun toPx(): RemoteFloat {
+        return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
+            val density = creationState.remoteDensity
+            (value * density.density).arrayForCreationState(creationState)
+        }
     }
 
     public companion object {
@@ -121,7 +129,7 @@ public fun rememberNamedRemoteDp(
         val remoteDp = content()
         RemoteDp(
             RemoteFloatExpression(constantValueOrNull = null) { creationState ->
-                val px = remoteDp.toPx(creationState.remoteDensity)
+                val px = remoteDp.toPx()
                 val initialValueId = px.getFloatIdForCreationState(creationState)
                 val floatId = creationState.document.addNamedFloat("$domain:$name", initialValueId)
                 floatArrayOf(floatId)
