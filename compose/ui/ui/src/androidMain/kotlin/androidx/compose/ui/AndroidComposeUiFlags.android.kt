@@ -73,4 +73,10 @@ object AndroidComposeUiFlags {
     /** This moves DrawScope and CanvasHolder into the shared ComposeViewContext. */
     // To be removed b/479849019
     @field:Suppress("MutableBareField") @JvmField var isSharedDrawingEnabled: Boolean = true
+
+    /** This moves ViewConfiguration into the shared ComposeViewContext. */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    // To be removed b/479890645
+    var isSharedViewConfigurationEnabled: Boolean = true
 }
