@@ -32,6 +32,10 @@ public fun RemoteModifier.fillMaxSize(fraction: Float = 1f): RemoteModifier =
     fillMaxWidth(fraction).fillMaxHeight(fraction)
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun RemoteModifier.fillParentMaxSize(fraction: Float = 1f): RemoteModifier =
+    fillParentMaxWidth(fraction).fillParentMaxHeight(fraction)
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteModifier.fillMaxSize(fraction: RemoteFloat): RemoteModifier =
     fillMaxWidth(fraction).fillMaxHeight(fraction)
 
