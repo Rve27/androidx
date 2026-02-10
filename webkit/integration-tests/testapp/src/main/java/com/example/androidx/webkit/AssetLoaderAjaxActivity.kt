@@ -79,8 +79,7 @@ class AssetLoaderAjaxActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_asset_loader)
         setTitle(R.string.asset_loader_ajax_activity_title)
-        WebkitHelpers.enableEdgeToEdge(this)
-        WebkitHelpers.appendWebViewVersionToTitle(this)
+        setUpDemoAppActivity()
 
         // The "https://example.com" domain with the virtual path "/androidx_webkit/example/
         // is used to host resources/assets is used for demonstration purpose only.
