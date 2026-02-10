@@ -301,6 +301,7 @@ testMonitor = { module = "androidx.test:monitor", version.ref = "androidxTestMon
 testParameterInjector = { module = "com.google.testparameterinjector:test-parameter-injector", version = "1.9" }
 testRules = { module = "androidx.test:rules", version.ref = "androidxTestRules" }
 testRunner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
+testOrchestrator = { module = "androidx.test:orchestrator", version = "1.6.1" }
 testUiautomator = { module = "androidx.test.uiautomator:uiautomator", version = "2.2.0" }
 truth = { module = "com.google.truth:truth", version = "1.0.1" }
 toml = { module = "org.tomlj:tomlj", version = "1.0.0" }
