@@ -31,8 +31,8 @@ androidXMultiplatform {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":sqlite:sqlite"))
-                api(libs.kotlinCoroutinesCore)
+                implementation(project(":sqlite:sqlite-web"))
+                implementation(npm("@androidx/sqlite-web-worker", "$projectDir/web-worker"))
             }
         }
         wasmJsMain {
@@ -41,21 +41,13 @@ androidXMultiplatform {
                 implementation(libs.kotlinXw3c)
             }
         }
-        commonTest {
-            dependencies {
-                implementation(libs.kotlinTest)
-                implementation(libs.kotlinCoroutinesTest)
-                implementation(project(":kruth:kruth"))
-                implementation(project(":sqlite:sqlite-web-worker-test"))
-            }
-        }
     }
 }
 
 androidx {
-    name = "SQLite Web Integration"
-    type = SoftwareType.PUBLISHED_LIBRARY
+    name = "SQLite Web Worker Module"
+    type = SoftwareType.INTERNAL_TEST_LIBRARY
     inceptionYear = "2026"
-    description = "The implementation of SQLite Web library using a Web Worker"
+    description = "The Web Worker implementation of the SQLite Web driver for tests using the SQLite WASM project"
     kotlinTarget = KotlinTarget.KOTLIN_2_2
 }
