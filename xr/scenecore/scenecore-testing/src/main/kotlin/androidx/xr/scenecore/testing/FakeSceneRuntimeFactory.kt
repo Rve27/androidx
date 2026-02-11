@@ -26,9 +26,6 @@ import androidx.xr.runtime.internal.SceneRuntimeFactory
 public class FakeSceneRuntimeFactory() : SceneRuntimeFactory {
     override val requirements: Set<Feature> = emptySet()
 
-    override fun create(
-        activity: Activity,
-        unscaledGravityAlignedActivitySpace: Boolean,
-    ): FakeSceneRuntime =
-        FakeSceneRuntime(unscaledGravityAlignedActivitySpace, FakeScheduledExecutorService())
+    override fun create(activity: Activity): FakeSceneRuntime =
+        FakeSceneRuntime(FakeScheduledExecutorService())
 }

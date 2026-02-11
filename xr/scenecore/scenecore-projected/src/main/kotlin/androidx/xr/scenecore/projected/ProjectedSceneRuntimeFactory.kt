@@ -35,10 +35,7 @@ internal class ProjectedSceneRuntimeFactory(
     override val requirements: Set<Feature> = setOf(Feature.FULLSTACK, Feature.PROJECTED)
 
     // TODO: b/478248818 - Handle creation from MainThread without deadlocking due to RunBlocking
-    override fun create(
-        activity: Activity,
-        unscaledGravityAlignedActivitySpace: Boolean,
-    ): SceneRuntime = runBlocking {
+    override fun create(activity: Activity): SceneRuntime = runBlocking {
         val serviceClient = serviceClientProvider()
         serviceClient.bindService(context = activity)
 

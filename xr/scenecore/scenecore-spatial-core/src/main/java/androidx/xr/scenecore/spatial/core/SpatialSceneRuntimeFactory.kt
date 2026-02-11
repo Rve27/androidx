@@ -30,13 +30,9 @@ internal class SpatialSceneRuntimeFactory() : SceneRuntimeFactory {
     override val requirements: Set<Feature> =
         setOf(Feature.FULLSTACK, Feature.OPEN_XR, Feature.SPATIAL)
 
-    override fun create(
-        activity: Activity,
-        unscaledGravityAlignedActivitySpace: Boolean,
-    ): SceneRuntime =
+    override fun create(activity: Activity): SceneRuntime =
         SpatialSceneRuntime.create(
             activity,
-            unscaledGravityAlignedActivitySpace,
             Executors.newSingleThreadScheduledExecutor { r -> Thread(r, "JXRRuntimeSession") },
         )
 }
