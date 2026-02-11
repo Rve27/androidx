@@ -118,7 +118,7 @@ class DaoReturnTypeConverterProcessor(
             val functionParamType =
                 function.executableType.typeVariables.singleOrNull()?.upperBounds?.singleOrNull()
             val functionReturnType =
-                if (to.typeArguments.isNotEmpty()) {
+                if (rowAdapterPosition > -1) {
                     to.typeArguments[rowAdapterPosition]
                 } else {
                     to

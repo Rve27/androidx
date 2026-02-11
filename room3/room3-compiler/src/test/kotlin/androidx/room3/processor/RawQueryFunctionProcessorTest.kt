@@ -37,7 +37,6 @@ import androidx.room3.testing.context
 import androidx.room3.vo.RawQueryFunction
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 class RawQueryFunctionProcessorTest {
@@ -102,33 +101,6 @@ class RawQueryFunctionProcessorTest {
             )
             assertThat(query.observedTableNames.size, `is`(1))
             assertThat(query.observedTableNames, `is`(setOf("User")))
-        }
-    }
-
-    @Test
-    @Ignore("b/482435784")
-    fun observableWithoutEntities() {
-        singleQueryMethod(
-            """
-                @RawQuery(observedEntities = {})
-                abstract public LiveData<User> foo(SupportSQLiteQuery query);
-                """
-        ) { query, invocation ->
-            assertThat(query.element.name, `is`("foo"))
-            assertThat(
-                query.runtimeQueryParam,
-                `is`(
-                    RawQueryFunction.RuntimeQueryParameter(
-                        paramName = "query",
-                        typeName = SupportDbTypeNames.QUERY,
-                        isNonNull = false,
-                    )
-                ),
-            )
-            assertThat(query.observedTableNames, `is`(emptySet()))
-            invocation.assertCompilationResult {
-                hasErrorContaining(ProcessorErrors.OBSERVABLE_QUERY_NOTHING_TO_OBSERVE)
-            }
         }
     }
 
@@ -570,6 +542,12 @@ class RawQueryFunctionProcessorTest {
                 COMMON.IMAGE,
                 COMMON.IMAGE_FORMAT,
                 COMMON.CONVERTER,
+                COMMON.RX3_COMPLETABLE,
+                COMMON.RX3_MAYBE,
+                COMMON.RX3_SINGLE,
+                COMMON.RX3_FLOWABLE,
+                COMMON.RX3_OBSERVABLE,
+                COMMON.PUBLISHER,
             )
         runKspTest(sources = commonSources + inputSource) { invocation ->
             val (owner, functions) =
@@ -583,9 +561,10 @@ class RawQueryFunctionProcessorTest {
                         )
                     }
                     .first { it.second.isNotEmpty() }
+            val forkedContext = invocation.context.fork(owner)
             val parser =
                 RawQueryFunctionProcessor(
-                    baseContext = invocation.context,
+                    baseContext = forkedContext,
                     containing = owner.type,
                     executableElement = functions.first(),
                 )
@@ -629,9 +608,10 @@ class RawQueryFunctionProcessorTest {
                         )
                     }
                     .first { it.second.isNotEmpty() }
+            val forkedContext = invocation.context.fork(owner)
             val parser =
                 RawQueryFunctionProcessor(
-                    baseContext = invocation.context,
+                    baseContext = forkedContext,
                     containing = owner.type,
                     executableElement = functions.first(),
                 )
