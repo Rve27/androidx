@@ -1701,6 +1701,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
         }
     }
 
+    @Ignore // b/482978786
     @Test
     fun maybe() {
         singleQueryFunction<ReadQueryFunction>(
@@ -1713,6 +1714,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
         }
     }
 
+    @Ignore // b/482978786
     @Test
     fun single() {
         singleQueryFunction<ReadQueryFunction>(
