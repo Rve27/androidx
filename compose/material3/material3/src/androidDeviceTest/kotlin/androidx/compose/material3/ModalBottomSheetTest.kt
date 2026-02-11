@@ -883,7 +883,7 @@ class ModalBottomSheetTest {
             sheetState = rememberModalBottomSheetState()
             scope = rememberCoroutineScope()
             ModalBottomSheet(onDismissRequest = {}, sheetState = sheetState) {
-                Box(Modifier.fillMaxSize().testTag(sheetTag))
+                Box(Modifier.fillMaxSize().weight(1f).testTag(sheetTag))
             }
         }
 
