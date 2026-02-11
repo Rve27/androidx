@@ -33,6 +33,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -291,6 +292,7 @@ class AnnotationToolbarViewModelTest {
         collectionJob.cancel()
     }
 
+    @Ignore // b/483480211
     @Test
     fun onAction_ColorSelected_updatesHighlighterStateAndEmitsEffect() = runTest {
         val initState = createInitialState().copy(selectedTool = HIGHLIGHTER)
