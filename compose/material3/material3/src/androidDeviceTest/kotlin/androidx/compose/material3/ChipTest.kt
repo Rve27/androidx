@@ -555,7 +555,7 @@ class ChipTest {
                     )
                 },
                 contentPadding = PaddingValues(horizontal = 4.dp),
-                horizontalSpacing = 6.dp,
+                horizontalArrangement = FilterChipDefaults.horizontalArrangement(6.dp),
             )
         }
 
