@@ -20,7 +20,6 @@ import android.content.Context
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
 import androidx.camera.camera2.adapter.CameraStateAdapter
-import androidx.camera.camera2.adapter.GraphStateToCameraStateAdapter
 import androidx.camera.camera2.adapter.SessionConfigAdapter
 import androidx.camera.camera2.adapter.ZslControlNoOpImpl
 import androidx.camera.camera2.compat.StreamConfigurationMapCompat
@@ -107,9 +106,9 @@ class TestUseCaseCamera(
             UseCaseCameraConfig.create(
                 cameraGraphConfigProvider = configProvider,
                 cameraGraphFactory = { config -> cameraPipe.createCameraGraph(config) },
-                graphStateToCameraStateAdapter = GraphStateToCameraStateAdapter(cameraStateAdapter),
+                cameraStateAdapter = cameraStateAdapter,
                 sessionConfigAdapter = sessionConfigAdapter,
-                isExtensions = false,
+                extensionMode = null,
                 sessionProcessor = null,
             )
         useCaseGraphContext = useCaseCameraConfig.provideUseCaseGraphContext(cameraStateAdapter)

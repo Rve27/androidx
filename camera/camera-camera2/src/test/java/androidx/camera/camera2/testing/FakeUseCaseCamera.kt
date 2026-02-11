@@ -63,7 +63,6 @@ class FakeUseCaseCameraComponentBuilder : UseCaseCameraComponent.Builder {
     private var sessionConfigAdapter = SessionConfigAdapter(emptyList())
     private var cameraGraph = FakeCameraGraph()
     private val cameraStateAdapter = CameraStateAdapter()
-    private val graphStateToCameraStateAdapter = GraphStateToCameraStateAdapter(cameraStateAdapter)
     private val cameraMetadata = FakeCameraMetadata()
     private val cameraQuirks =
         CameraQuirks(
@@ -91,9 +90,9 @@ class FakeUseCaseCameraComponentBuilder : UseCaseCameraComponent.Builder {
         UseCaseCameraConfig.create(
             cameraGraphConfigProvider = configProvider,
             cameraGraphFactory = { _ -> cameraGraph },
-            graphStateToCameraStateAdapter = graphStateToCameraStateAdapter,
+            cameraStateAdapter = cameraStateAdapter,
             sessionConfigAdapter = sessionConfigAdapter,
-            isExtensions = false,
+            extensionMode = null,
             sessionProcessor = null,
         )
 
