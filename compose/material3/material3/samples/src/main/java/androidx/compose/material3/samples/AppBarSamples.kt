@@ -614,9 +614,9 @@ fun PinnedTopAppBarWithPreScrolledLazyColumn() {
 @Composable
 fun PinnedTopAppBarWithReversedLazyGrid() {
     val lazyGridState = rememberLazyGridState()
-    // In a reversed grid, we need to provide a custom `isAtTopState` to the scroll behavior
+    // In a reversed grid, we need to provide a custom `isAtTop` to the scroll behavior
     // to ensure the top app bar's color changes correctly.
-    val isAtTopState =
+    val isAtTop =
         remember(lazyGridState) {
             derivedStateOf {
                 if (lazyGridState.layoutInfo.reverseLayout) {
@@ -626,8 +626,7 @@ fun PinnedTopAppBarWithReversedLazyGrid() {
                 }
             }
         }
-    val scrollBehavior =
-        TopAppBarDefaults.pinnedScrollBehavior(isAtTopState = { isAtTopState.value })
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(isAtTop = { isAtTop.value })
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
