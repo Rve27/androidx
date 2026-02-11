@@ -22,12 +22,14 @@ import android.hardware.camera2.CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LE
 import android.hardware.camera2.CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL
 import android.hardware.camera2.CaptureRequest
 import android.util.Size
+import androidx.camera.camera2.pipe.AfMode
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraStream
 import androidx.camera.camera2.pipe.FrameGraph
 import androidx.camera.camera2.pipe.GraphState.GraphStateStarting
 import androidx.camera.camera2.pipe.GraphState.GraphStateStopped
 import androidx.camera.camera2.pipe.GraphState.GraphStateStopping
+import androidx.camera.camera2.pipe.Lock3ABehavior
 import androidx.camera.camera2.pipe.Metadata
 import androidx.camera.camera2.pipe.Request
 import androidx.camera.camera2.pipe.StreamFormat
@@ -323,6 +325,110 @@ class FrameGraphImplTest {
 
             assertEquals(initialStreams, frameGraph.simulateNextFrame().request.streams)
             assertEquals(initialParameters, frameGraph.simulateNextFrame().request.parameters)
+        }
+
+    @Test
+    fun useSession_invalidatesSessionAfterClosure_restores3A() =
+        testScope.runTest {
+            initialize(this)
+            val stream1 = frameGraph.streams[streamConfig1]!!.id
+            val initialStreams = listOf(stream1)
+            val initialParameters = emptyMap<CaptureRequest.Key<*>, Any>()
+            val frameGraph3AParameters =
+                mapOf<CaptureRequest.Key<*>, Any>(CaptureRequest.CONTROL_AE_LOCK to true)
+
+            frameGraph.captureWith(initialStreams.toSet(), initialParameters.toMap())
+            advanceUntilIdle()
+
+            frameGraph.lock3A(aeLockBehavior = Lock3ABehavior.IMMEDIATE)
+            advanceUntilIdle()
+            frameGraph.simulateNextFrame()
+            assertEquals(
+                frameGraph3AParameters,
+                frameGraph.simulateNextFrame().requestSequence.requiredParameters,
+            )
+
+            frameGraph.useSession {
+                it.unlock3A(ae = true)
+                advanceUntilIdle()
+                assertEquals(
+                    mapOf<CaptureRequest.Key<*>, Any>(CaptureRequest.CONTROL_AE_LOCK to false),
+                    frameGraph.simulateNextFrame().requestSequence.requiredParameters,
+                )
+            }
+            advanceUntilIdle()
+
+            assertEquals(
+                frameGraph3AParameters,
+                frameGraph.simulateNextFrame().requestSequence.requiredParameters,
+            )
+        }
+
+    @Test
+    fun useSession_invalidatesSessionAfterClosure_revertsStreamsAndParametersAnd3A() =
+        testScope.runTest {
+            initialize(this)
+            val stream1 = frameGraph.streams[streamConfig1]!!.id
+            val stream2 = frameGraph.streams[streamConfig2]!!.id
+            val initialStreams = listOf(stream1)
+            val repeatingRequestStreams = listOf(stream2)
+            val initialParameters = emptyMap<CaptureRequest.Key<*>, Any>()
+            val repeatingRequestParameters =
+                mapOf<CaptureRequest.Key<*>, Any>(CaptureRequest.SCALER_CROP_REGION to Rect())
+            val frameGraph3AParameters =
+                mapOf<CaptureRequest.Key<*>, Any>(
+                    CaptureRequest.CONTROL_AF_MODE to AfMode.AUTO.value
+                )
+
+            frameGraph.captureWith(initialStreams.toSet(), initialParameters.toMap())
+            advanceUntilIdle()
+            assertEquals(initialStreams, frameGraph.simulateNextFrame().request.streams)
+            assertEquals(initialParameters, frameGraph.simulateNextFrame().request.parameters)
+
+            frameGraph.update3A(afMode = AfMode.AUTO)
+            advanceUntilIdle()
+            assertEquals(
+                frameGraph3AParameters,
+                frameGraph.simulateNextFrame().requestSequence.requiredParameters,
+            )
+
+            frameGraph.useSession {
+                it.startRepeating(
+                    Request(
+                        streams = repeatingRequestStreams,
+                        parameters = repeatingRequestParameters,
+                    )
+                )
+                advanceUntilIdle()
+                assertEquals(
+                    repeatingRequestStreams,
+                    frameGraph.simulateNextFrame().request.streams,
+                )
+                assertEquals(
+                    repeatingRequestParameters,
+                    frameGraph.simulateNextFrame().request.parameters,
+                )
+
+                it.update3A(afMode = AfMode.MACRO)
+                advanceUntilIdle()
+                assertEquals(
+                    mapOf<CaptureRequest.Key<*>, Any>(
+                        CaptureRequest.CONTROL_AF_MODE to AfMode.MACRO.value
+                    ),
+                    frameGraph.simulateNextFrame().requestSequence.requiredParameters,
+                )
+            }
+            advanceUntilIdle()
+
+            // Simulate a few requests to invalidate the FrameBuffer(s) when session closes.
+            frameGraph.simulateNextFrame()
+
+            assertEquals(initialStreams, frameGraph.simulateNextFrame().request.streams)
+            assertEquals(initialParameters, frameGraph.simulateNextFrame().request.parameters)
+            assertEquals(
+                frameGraph3AParameters,
+                frameGraph.simulateNextFrame().requestSequence.requiredParameters,
+            )
         }
 
     companion object {

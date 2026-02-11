@@ -69,8 +69,6 @@ constructor(
     private val streamGraph: StreamGraphImpl,
     private val surfaceGraph: SurfaceGraph,
     private val cameraController: CameraController,
-    private val graphState3A: GraphState3A,
-    private val listener3A: Listener3A,
     private val frameDistributor: FrameDistributor,
     private val frameCaptureQueue: FrameCaptureQueue,
     private val audioRestrictionController: AudioRestrictionController,
@@ -79,8 +77,8 @@ constructor(
     override val listeners: CameraGraphRequestListenersImpl,
     private val sessionLock: GraphSessionLock,
     @ForCameraGraph private val graphScope: CoroutineScope,
+    private val controller3A: Controller3A,
 ) : CameraGraph {
-    private val controller3A = Controller3A(graphProcessor, metadata, graphState3A, listener3A)
     private val closed = atomic(false)
 
     init {

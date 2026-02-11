@@ -38,6 +38,7 @@ import androidx.camera.camera2.pipe.Result3A
 import androidx.camera.camera2.pipe.StreamId
 import androidx.camera.camera2.pipe.config.FrameGraphCoroutineScope
 import androidx.camera.camera2.pipe.config.FrameGraphScope
+import androidx.camera.camera2.pipe.graph.Controller3A
 import androidx.camera.camera2.pipe.internal.FrameDistributor
 import javax.inject.Inject
 import kotlin.reflect.KClass
@@ -55,6 +56,7 @@ constructor(
     private val frameDistributor: FrameDistributor,
     private val frameGraphBuffers: FrameGraphBuffers,
     @FrameGraphCoroutineScope private val frameGraphCoroutineScope: CoroutineScope,
+    private val controller3A: Controller3A,
 ) : FrameGraph, CameraControls3A by cameraGraph {
     init {
         // Wire up the frameStartedListener.
@@ -148,20 +150,18 @@ constructor(
     }
 
     override suspend fun acquireSession(): FrameGraph.Session {
-        return FrameGraphSessionImpl(cameraGraph.acquireSession(), frameGraphBuffers)
+        return createSession(cameraGraph.acquireSession())
     }
 
     override fun acquireSessionOrNull(): FrameGraph.Session? {
-        return cameraGraph.acquireSessionOrNull()?.let {
-            FrameGraphSessionImpl(it, frameGraphBuffers)
-        }
+        return cameraGraph.acquireSessionOrNull()?.let { createSession(it) }
     }
 
     override suspend fun <T> useSession(
         action: suspend CoroutineScope.(FrameGraph.Session) -> T
     ): T {
         return cameraGraph.useSession { cameraGraphSession ->
-            FrameGraphSessionImpl(cameraGraphSession, frameGraphBuffers).use { action(it) }
+            createSession(cameraGraphSession).use { action(it) }
         }
     }
 
@@ -170,7 +170,7 @@ constructor(
         action: suspend CoroutineScope.(FrameGraph.Session) -> T,
     ): Deferred<T> {
         return cameraGraph.useSessionIn(scope) { cameraGraphSession ->
-            FrameGraphSessionImpl(cameraGraphSession, frameGraphBuffers).use { action(it) }
+            createSession(cameraGraphSession).use { action(it) }
         }
     }
 
@@ -184,5 +184,9 @@ constructor(
     override fun close() {
         cameraGraph.close()
         frameGraphCoroutineScope.cancel()
+    }
+
+    private fun createSession(cameraGraphSession: CameraGraph.Session): FrameGraph.Session {
+        return FrameGraphSessionImpl(cameraGraphSession, frameGraphBuffers, controller3A)
     }
 }
