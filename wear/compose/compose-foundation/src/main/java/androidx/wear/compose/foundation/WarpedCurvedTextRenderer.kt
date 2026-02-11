@@ -208,8 +208,10 @@ private class EmojiRunProcessorManager {
         val processor: EmojiRunProcessor by lazy {
             if (Build.VERSION.SDK_INT >= 34) {
                 EmojiRunProcessorGCSF()
-            } else {
+            } else if (EmojiCompat.isConfigured()) {
                 EmojiRunProcessorEC()
+            } else {
+                EmojiRunProcessorBase()
             }
         }
 
@@ -243,7 +245,16 @@ private class EmojiRunProcessorManager {
             paint: TextPaint,
             textRuns: MutableList<TextRunInfo>,
             emojis: MutableList<EmojiInfo>,
-        ) {}
+        ) {
+            textRuns.add(
+                TextRunInfo(
+                    start = 0,
+                    end = text.length,
+                    startPosition = 0f,
+                    advance = totalAdvance,
+                )
+            )
+        }
     }
 
     // Builds text and emoji runs using EmojiCompat (requires Android API 19)
