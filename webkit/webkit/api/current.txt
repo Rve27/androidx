@@ -266,6 +266,7 @@ package androidx.webkit {
   @SuppressCompatibility @RequiresFeature(name=androidx.webkit.WebViewFeature.PROFILE_URL_PREFETCH, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") @androidx.webkit.Profile.ExperimentalUrlPrefetch public final class SpeculativeLoadingParameters {
     method public java.util.Map<java.lang.String!,java.lang.String!> getAdditionalHeaders();
     method public androidx.webkit.NoVarySearchHeader? getExpectedNoVarySearchData();
+    method public Integer? getVariationsId();
     method public boolean isJavaScriptEnabled();
   }
 
@@ -276,6 +277,7 @@ package androidx.webkit {
     method @SuppressCompatibility @RequiresFeature(name=androidx.webkit.WebViewFeature.PROFILE_URL_PREFETCH, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") @androidx.webkit.Profile.ExperimentalUrlPrefetch public androidx.webkit.SpeculativeLoadingParameters build();
     method @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public androidx.webkit.SpeculativeLoadingParameters.Builder setExpectedNoVarySearchData(androidx.webkit.NoVarySearchHeader);
     method @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public androidx.webkit.SpeculativeLoadingParameters.Builder setJavaScriptEnabled(boolean);
+    method @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public androidx.webkit.SpeculativeLoadingParameters.Builder setVariationsId(Integer?);
   }
 
   @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public interface StartUpLocation {
