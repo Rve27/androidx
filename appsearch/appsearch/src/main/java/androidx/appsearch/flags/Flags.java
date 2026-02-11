@@ -382,6 +382,10 @@ public final class Flags {
     public static final String FLAG_ENABLE_EMBED_QUERY_OPTIMIZATION =
             FLAG_PREFIX + "enable_embed_query_optimization";
 
+    /** Enables set SearchFeatures and RankingFeatures APIs. */
+    public static final String FLAG_ENABLE_SET_SEARCH_AND_RANKING_FEATURE =
+            FLAG_PREFIX + "enable_set_search_and_ranking_feature";
+
     // Whether the features should be enabled.
     //
     // In Jetpack, those should always return true.
@@ -837,6 +841,14 @@ public final class Flags {
      * Whether to enable the query optimization to rewrite AND'd embedding queries.
      */
     public static boolean enableEmbedQueryOptimization() {
+        return true;
+    }
+
+    /**
+     * Whether {@link androidx.appsearch.app.SearchFeatures} and
+     * {@link androidx.appsearch.app.RankingFeatures} related APIs should be enabled.
+     */
+    public static boolean enableSetSearchAndRankingFeature() {
         return true;
     }
 }
