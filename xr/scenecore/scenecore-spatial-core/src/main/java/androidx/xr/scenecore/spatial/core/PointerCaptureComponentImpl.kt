@@ -13,48 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.InputEventListener;
-import androidx.xr.scenecore.runtime.PointerCaptureComponent;
-
-import org.jspecify.annotations.NonNull;
-
-import java.util.concurrent.Executor;
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.InputEventListener
+import androidx.xr.scenecore.runtime.PointerCaptureComponent
+import java.util.concurrent.Executor
 
 /** Implementation of PointerCaptureComponent. */
-final class PointerCaptureComponentImpl implements PointerCaptureComponent {
+internal class PointerCaptureComponentImpl(
+    private val executor: Executor,
+    private val stateListener: PointerCaptureComponent.StateListener,
+    private val inputListener: InputEventListener,
+) : PointerCaptureComponent {
+    private var attachedEntity: AndroidXrEntity? = null
 
-    private final Executor mExecutor;
-    private final StateListener mStateListener;
-    private final InputEventListener mInputListener;
-
-    private AndroidXrEntity mAttachedEntity;
-
-    PointerCaptureComponentImpl(
-            @NonNull Executor executor,
-            @NonNull StateListener stateListener,
-            @NonNull InputEventListener inputListener) {
-        mExecutor = executor;
-        mStateListener = stateListener;
-        mInputListener = inputListener;
-    }
-
-    @Override
-    public boolean onAttach(@NonNull Entity entity) {
-        if (!(entity instanceof AndroidXrEntity) || mAttachedEntity != null) {
-            return false;
+    override fun onAttach(entity: Entity): Boolean {
+        if (entity !is AndroidXrEntity || attachedEntity != null) {
+            return false
         }
 
-        mAttachedEntity = (AndroidXrEntity) entity;
-        return mAttachedEntity.requestPointerCapture(mExecutor, mInputListener, mStateListener);
+        attachedEntity = entity
+        return attachedEntity!!.requestPointerCapture(executor, inputListener, stateListener)
     }
 
-    @Override
-    public void onDetach(@NonNull Entity entity) {
-        mAttachedEntity.stopPointerCapture();
-        mAttachedEntity = null;
+    override fun onDetach(entity: Entity) {
+        checkNotNull(attachedEntity) { "No attached Entity, cannot detach." }
+        attachedEntity!!.stopPointerCapture()
+        attachedEntity = null
     }
 }
