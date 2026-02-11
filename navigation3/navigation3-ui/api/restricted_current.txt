@@ -12,6 +12,10 @@ package androidx.navigation3.scene {
     method @BytecodeOnly public static java.util.Map! dialog$default(androidx.navigation3.scene.DialogSceneStrategy.Companion!, androidx.compose.ui.window.DialogProperties!, int, Object!);
   }
 
+  public static final class DialogSceneStrategy.Companion.DialogKey implements androidx.navigation3.runtime.NavMetadataKey<androidx.compose.ui.window.DialogProperties> {
+    field public static final androidx.navigation3.scene.DialogSceneStrategy.Companion.DialogKey INSTANCE;
+  }
+
   public interface OverlayScene<T> extends androidx.navigation3.scene.Scene<T> {
     method @InaccessibleFromKotlin public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getOverlaidEntries();
     method public default suspend Object? onRemove(kotlin.coroutines.Continuation<? super kotlin.Unit>);
