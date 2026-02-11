@@ -93,16 +93,16 @@ public data class UseCaseCameraConfig(
     }
 
     /**
-     * [UseCaseGraphContext] would store the CameraGraph and related surface map that would be used
+     * [UseCaseCameraContext] would store the CameraGraph and related surface map that would be used
      * for [UseCaseCamera].
      */
     @UseCaseCameraScope
     @Provides
-    public fun provideUseCaseGraphContext(
+    public fun provideUseCaseCameraContext(
         cameraStateAdapter: CameraStateAdapter
-    ): UseCaseGraphContext {
-        Camera2Logger.debug { "Prepared UseCaseGraphContext (Deferred)" }
-        return UseCaseGraphContext(
+    ): UseCaseCameraContext {
+        Camera2Logger.debug { "Prepared UseCaseCameraContext (Deferred)" }
+        return UseCaseCameraContext(
             cameraGraphProvider = { cameraGraphFactory(cameraGraphConfig) },
             cameraStateAdapter = cameraStateAdapter,
             streamConfigMapProvider = { lazyGraphConfigBundle.value.streamToSurfaceMap },
@@ -190,7 +190,7 @@ public data class UseCaseCameraConfig(
     }
 }
 
-public class UseCaseGraphContext(
+public class UseCaseCameraContext(
     private val cameraGraphProvider: Provider<CameraGraph>,
     private val cameraStateAdapter: CameraStateAdapter,
     private val graphStateToCameraStateAdapter: GraphStateToCameraStateAdapter,
@@ -244,7 +244,7 @@ public class UseCaseGraphContext(
 public interface UseCaseCameraComponent {
     public fun getUseCaseCamera(): UseCaseCamera
 
-    public fun getUseCaseGraphContext(): UseCaseGraphContext
+    public fun getUseCaseCameraContext(): UseCaseCameraContext
 
     @Subcomponent.Builder
     public interface Builder {
