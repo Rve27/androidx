@@ -1446,8 +1446,9 @@ package androidx.xr.scenecore {
 
 package androidx.xr.scenecore.impl.extensions {
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class XrExtensionsProvider {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class XrExtensionsProvider {
     method public static com.android.extensions.xr.XrExtensions? getXrExtensions();
+    field public static final androidx.xr.scenecore.impl.extensions.XrExtensionsProvider INSTANCE;
   }
 
 }

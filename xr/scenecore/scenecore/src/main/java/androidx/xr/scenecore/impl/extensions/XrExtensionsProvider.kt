@@ -13,70 +13,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.impl.extensions
 
-package androidx.xr.scenecore.impl.extensions;
+import android.annotation.SuppressLint
+import androidx.annotation.RestrictTo
+import androidx.xr.runtime.Log
+import com.android.extensions.xr.XrExtensions
+import java.lang.reflect.InvocationTargetException
 
-import android.annotation.SuppressLint;
-import android.util.Log;
-
-import androidx.annotation.RestrictTo;
-
-import com.android.extensions.xr.XrExtensions;
-
-import org.jspecify.annotations.Nullable;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-/** Provides the OEM implementation of {@link XrExtensions}. */
+/** Provides the OEM implementation of [XrExtensions]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class XrExtensionsProvider {
-    private static final String TAG = "XrExtensionsProvider";
-
-    private XrExtensionsProvider() {}
+public object XrExtensionsProvider {
 
     /**
-     * Returns the OEM implementation of {@link XrExtensions} or returns null if no implementation
-     * is found.
+     * Returns the OEM implementation of [XrExtensions] or returns null if no implementation is
+     * found.
      */
-    public static @Nullable XrExtensions getXrExtensions() {
-        try {
-            return XrExtensionsInstance.getInstance();
-        } catch (NoClassDefFoundError e) {
-            Log.w(TAG, "No XrExtensions implementation found.", e);
-            return null;
+    @JvmStatic
+    public fun getXrExtensions(): XrExtensions? {
+        return try {
+            XrExtensionsInstance.instance
+        } catch (e: NoClassDefFoundError) {
+            Log.warn(e) { "XrExtensionsProvider: No XrExtensions implementation found." }
+            null
         }
     }
 
-    private static class XrExtensionsInstance {
-        private XrExtensionsInstance() {}
+    private object XrExtensionsInstance {
+        val instance: XrExtensions = XrExtensions()
 
-        private static XrExtensions getInstance() {
-            return XrExtensionsHolder.INSTANCE;
+        init {
+            initExtensions()
         }
 
         @SuppressLint("BanUncheckedReflection")
-        private static class XrExtensionsHolder {
-            public static final XrExtensions INSTANCE = new XrExtensions();
-
-            static {
-                // Try to call the @TestApi method XrExtensions.setCurrentExtensions to register
-                // the current extensions instance. If this fails for various reasons (e.g. the
-                // platform has removed this method or the app is not debuggable), ignore the
-                // error.
-                try {
-                    Method setCurrentExtensionsMethod =
-                            XrExtensions.class.getDeclaredMethod(
-                                    "setCurrentExtensions", XrExtensions.class);
-                    setCurrentExtensionsMethod.setAccessible(true);
-                    setCurrentExtensionsMethod.invoke(null, INSTANCE);
-                } catch (NoSuchMethodException
-                        | InvocationTargetException
-                        | IllegalAccessException
-                        | SecurityException e) {
-                    Log.d(
-                            TAG,
-                            "XrExtensions.setCurrentExtensions method could not be called: " + e);
+        private fun initExtensions() {
+            // Try to call the @TestApi method XrExtensions.setCurrentExtensions to register
+            // the current extensions instance. If this fails for various reasons (e.g. the
+            // platform has removed this method or the app is not debuggable), ignore the
+            // error.
+            try {
+                val setCurrentExtensionsMethod =
+                    XrExtensions::class
+                        .java
+                        .getDeclaredMethod("setCurrentExtensions", XrExtensions::class.java)
+                setCurrentExtensionsMethod.isAccessible = true
+                setCurrentExtensionsMethod.invoke(null, instance)
+            } catch (e: Exception) {
+                when (e) {
+                    is NoSuchMethodException,
+                    is InvocationTargetException,
+                    is IllegalAccessException,
+                    is SecurityException ->
+                        Log.debug(
+                            "XrExtensions.setCurrentExtensions method could not be called: $e"
+                        )
+                    else -> throw e
                 }
             }
         }
