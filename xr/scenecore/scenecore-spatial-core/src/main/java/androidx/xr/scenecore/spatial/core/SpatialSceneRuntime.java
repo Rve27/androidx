@@ -720,8 +720,8 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
             @NonNull Set<PlaneType> planeTypeFilter,
             @NonNull Set<PlaneSemantic> planeSemanticFilter) {
         AnchorPlacementImpl anchorPlacement = new AnchorPlacementImpl();
-        anchorPlacement.mPlaneTypeFilter.addAll(planeTypeFilter);
-        anchorPlacement.mPlaneSemanticFilter.addAll(planeSemanticFilter);
+        anchorPlacement.planeTypeFilter.addAll(planeTypeFilter);
+        anchorPlacement.planeSemanticFilter.addAll(planeSemanticFilter);
         return anchorPlacement;
     }
 
