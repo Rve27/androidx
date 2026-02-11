@@ -127,6 +127,8 @@ internal class CameraGraphImplTest {
         SurfaceGraph(streamGraph, cameraControllerProvider, cameraSurfaceManager, emptyMap())
     private val audioRestriction = FakeAudioRestrictionController()
     private val sessionLock = GraphSessionLock()
+    private val controller3A =
+        Controller3A(fakeGraphProcessor, metadata, GraphState3A(), Listener3A())
     private val cameraGraph =
         CameraGraphImpl(
             graphConfig,
@@ -136,8 +138,6 @@ internal class CameraGraphImplTest {
             streamGraph,
             surfaceGraph,
             cameraController,
-            GraphState3A(),
-            Listener3A(),
             frameDistributor,
             frameCaptureQueue,
             audioRestriction,
@@ -146,6 +146,7 @@ internal class CameraGraphImplTest {
             CameraGraphRequestListenersImpl(sessionLock, fakeGraphProcessor, testScope),
             sessionLock,
             testBackgroundScope,
+            controller3A,
         )
     private val stream1: CameraStream =
         checkNotNull(cameraGraph.streams[stream1Config]) {
