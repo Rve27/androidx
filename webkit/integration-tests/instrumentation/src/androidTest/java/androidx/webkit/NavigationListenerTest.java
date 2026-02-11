@@ -359,8 +359,7 @@ public class NavigationListenerTest {
 
     @Test
     public void isSamePageObject_listenerV2() throws Exception {
-        WebkitUtils.checkFeature(
-                WebViewFeature.WEB_VIEW_NAVIGATION_LISTENER_EXPERIMENTAL_V2);
+        WebkitUtils.checkFeature(WebViewFeature.NAVIGATION_LISTENER_V2);
         // Success URL is obtained outside of the activity scope in order to avoid a
         // StrictModeViolation for attempting to resolve the hostname on the main thread.
         final String successUrl = getSuccessUrl();

@@ -124,6 +124,8 @@ public class WebViewFeature {
             SAVE_STATE,
             NAVIGATION_CALLBACK_BASIC,
             NAVIGATION_LISTENER_V1,
+            NAVIGATION_LISTENER_V2,
+            NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED,
             PAYMENT_REQUEST,
             WEBVIEW_BUILDER_EXPERIMENTAL_V1,
             WEBVIEW_BUILDER_EXPERIMENTAL_V2,
@@ -134,8 +136,6 @@ public class WebViewFeature {
             ORIGIN_MATCHED_HEADERS,
             CUSTOM_REQUEST_HEADERS,
             ADD_QUIC_HINTS_V1,
-            NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED,
-            WEB_VIEW_NAVIGATION_LISTENER_EXPERIMENTAL_V2,
             PAGE_GET_URL
     })
     @Retention(RetentionPolicy.SOURCE)
@@ -750,6 +750,36 @@ public class WebViewFeature {
     /**
      * Feature for {@link #isFeatureSupported(String)}.
      * This feature covers
+     * {@link NavigationListener#onFirstContentfulPaintMillis(Page, long)},
+     * {@link NavigationListener#onLargestContentfulPaintMillis(Page, long)}, and
+     * {@link NavigationListener#onPerformanceMarkMillis(Page, String, long)}
+     */
+    @WebNavigationClient.ExperimentalNavigationCallback
+    public static final String NAVIGATION_LISTENER_V2 = "NAVIGATION_LISTENER_V2";
+
+    /**
+     * When this feature is enabled, {@link NavigationListener#onNavigationCompleted} will be
+     * called even for navigations that do not commit (eg, results in 204/download/cancelled).
+     * <p>
+     * This will become the default behavior of {@link NavigationListener}.
+     */
+    @WebNavigationClient.ExperimentalNavigationCallback
+    public static final String NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED =
+            "NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED";
+
+    /**
+     * When this feature is enabled, {@link Navigation#getPage()} will return non-null for committed
+     * navigations that are same document. Previously {@code null} was returned.
+     * <p>
+     * This will become the default behavior of {@link NavigationListener}.
+     */
+    @WebNavigationClient.ExperimentalNavigationCallback
+    public static final String NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATIONS =
+            "NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATIONS";
+
+    /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers
      * {@link WebSettingsCompat#setPaymentRequestEnabled(WebSettings, boolean)},
      * {@link WebSettingsCompat#getPaymentRequestEnabled(WebSettings)},
      * {@link WebSettingsCompat#setHasEnrolledInstrumentEnabled(WebSettings, boolean)}, and
@@ -864,38 +894,6 @@ public class WebViewFeature {
      * {@link WebSettingsCompat#setHyperlinkContextMenuItems(WebSettings, int)},
      */
     public static final String HYPERLINK_CONTEXT_MENU_ITEMS = "HYPERLINK_CONTEXT_MENU_ITEMS";
-
-    /**
-     * When this feature is enabled, {@link NavigationListener#onNavigationCompleted} will be
-     * called even for navigations that do not commit (eg, results in 204/download/cancelled).
-     * <p>
-     * This will become the default behavior of {@link NavigationListener}.
-     */
-    @WebNavigationClient.ExperimentalNavigationCallback
-    public static final String NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED =
-            "NAVIGATION_LISTENER_ON_COMPLETED_FIRES_FOR_NON_COMMITTED";
-
-    /**
-     * When this feature is enabled, {@link Navigation#getPage()} will return non-null for committed
-     * navigations that are same document. Previously {@code null} was returned.
-     * <p>
-     * This will become the default behavior of {@link NavigationListener}.
-     */
-    @WebNavigationClient.ExperimentalNavigationCallback
-    public static final String NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATIONS =
-            "NAVIGATION_LISTENER_NON_NULL_PAGE_FOR_SAME_DOCUMENT_NAVIGATIONS";
-
-    /**
-     * Feature for {@link #isFeatureSupported(String)}.
-     * This feature covers
-     * {@link NavigationListener#onFirstContentfulPaintMillis(Page, long)},
-     * {@link NavigationListener#onLargestContentfulPaintMillis(Page, long)}, and
-     * {@link NavigationListener#onPerformanceMarkMillis(Page, String, long)}
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    @WebNavigationClient.ExperimentalNavigationCallback
-    public static final String WEB_VIEW_NAVIGATION_LISTENER_EXPERIMENTAL_V2 =
-            "WEB_VIEW_NAVIGATION_LISTENER_EXPERIMENTAL_V2";
 
     /**
      * This is an internal only feature that indicate whether it is safe to cache WebView Provider
