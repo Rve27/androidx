@@ -1751,7 +1751,10 @@ public class ImpressApiImpl : ImpressApi {
     override fun clearPreferredEnvironmentIblAsset(): Unit =
         nClearEnvironmentLight(getViewNativeHandle(view))
 
-    override fun disposeAllResources(): Unit = nDisposeAllResources(getViewNativeHandle(view))
+    override fun disposeAllResources(): Unit {
+        resourceManager.disable()
+        nDisposeAllResources(getViewNativeHandle(view))
+    }
 
     private fun getViewNativeHandle(view: View?): Long {
         if (view != null) {
