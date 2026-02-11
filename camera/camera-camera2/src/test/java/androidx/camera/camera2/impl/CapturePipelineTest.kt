@@ -609,7 +609,7 @@ class CapturePipelineTest {
         runTest {
             capturePipeline =
                 createCapturePipeline(useTorchAsFlash = createUseTorchAsFlash(forceEnable = true))
-            val initialListenerSize = comboRequestListener.listeners.size
+            val initialListenerSize = comboRequestListener.listenerHolders.size
 
             withFlashTypeTorch_shouldLock3AAsNeeded(
                 capturePipeline,
@@ -619,7 +619,7 @@ class CapturePipelineTest {
                 simulate3aConvergence = false,
             )
 
-            assertThat(comboRequestListener.listeners.size).isEqualTo(initialListenerSize)
+            assertThat(comboRequestListener.listenerHolders.size).isEqualTo(initialListenerSize)
         }
 
     @Test
