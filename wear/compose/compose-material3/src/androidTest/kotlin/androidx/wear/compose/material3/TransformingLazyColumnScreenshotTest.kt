@@ -186,7 +186,7 @@ class TransformingLazyColumnScreenshotTest(
                                 .then(
                                     if (useMinimumVerticalContentPadding)
                                         Modifier.minimumVerticalContentPadding(
-                                            ButtonDefaults.minimumListVerticalContentPadding
+                                            ButtonDefaults.minimumVerticalListContentPadding
                                         )
                                     else Modifier
                                 )
@@ -211,7 +211,7 @@ class TransformingLazyColumnScreenshotTest(
                                 .then(
                                     if (useMinimumVerticalContentPadding)
                                         Modifier.minimumVerticalContentPadding(
-                                            ButtonDefaults.minimumListVerticalContentPadding
+                                            ButtonDefaults.minimumVerticalListContentPadding
                                         )
                                     else Modifier
                                 )
@@ -236,7 +236,7 @@ class TransformingLazyColumnScreenshotTest(
                                 .then(
                                     if (useMinimumVerticalContentPadding)
                                         Modifier.minimumVerticalContentPadding(
-                                            CardDefaults.minimumListVerticalContentPadding
+                                            CardDefaults.minimumVerticalListContentPadding
                                         )
                                     else Modifier
                                 )
