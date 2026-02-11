@@ -20,6 +20,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.os.Build
 import android.os.OutcomeReceiver
+import androidx.glance.wear.core.ContainerInfo
+import androidx.glance.wear.core.WidgetInstanceId
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat

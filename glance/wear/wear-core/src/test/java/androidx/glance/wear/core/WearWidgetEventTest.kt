@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import com.google.common.truth.Truth.assertThat
 import java.time.Duration

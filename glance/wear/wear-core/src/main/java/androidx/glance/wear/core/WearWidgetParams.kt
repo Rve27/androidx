@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import androidx.annotation.Dimension
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.glance.wear.parcel.WearWidgetRequestParcel
 import androidx.glance.wear.proto.WearWidgetRequestProto
 
@@ -27,38 +26,39 @@ import androidx.glance.wear.proto.WearWidgetRequestProto
  *
  * @property instanceId The instance id of the widget for this request. The id is created by the
  *   system and is provided when [GlanceWearWidget.onActivated] is called.
- * @property containerType The container type being requested. See [ContainerInfo].
+ * @property containerType The container type being requested. See
+ *   [androidx.glance.wear.ContainerInfo].
  * @property widthDp The width in dp of the content for this widget.
  * @property heightDp The height in dp of the content for this widget.
  */
 public class WearWidgetParams
-@RestrictTo(LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public constructor(
     public val instanceId: WidgetInstanceId,
     @param:ContainerInfo.ContainerType
     @get:ContainerInfo.ContainerType
     public val containerType: Int,
-    @param:Dimension(unit = Dimension.DP)
-    @get:Dimension(unit = Dimension.DP)
+    @param:Dimension(unit = Dimension.Companion.DP)
+    @get:Dimension(unit = Dimension.Companion.DP)
     public val widthDp: Float,
-    @param:Dimension(unit = Dimension.DP)
-    @get:Dimension(unit = Dimension.DP)
+    @param:Dimension(unit = Dimension.Companion.DP)
+    @get:Dimension(unit = Dimension.Companion.DP)
     public val heightDp: Float,
-    @get:RestrictTo(LIBRARY_GROUP)
-    @param:Dimension(unit = Dimension.DP)
-    @get:Dimension(unit = Dimension.DP)
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @param:Dimension(unit = Dimension.Companion.DP)
+    @get:Dimension(unit = Dimension.Companion.DP)
     public val horizontalPaddingDp: Float,
-    @get:RestrictTo(LIBRARY_GROUP)
-    @param:Dimension(unit = Dimension.DP)
-    @get:Dimension(unit = Dimension.DP)
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @param:Dimension(unit = Dimension.Companion.DP)
+    @get:Dimension(unit = Dimension.Companion.DP)
     public val verticalPaddingDp: Float,
-    @get:RestrictTo(LIBRARY_GROUP)
-    @param:Dimension(unit = Dimension.DP)
-    @get:Dimension(unit = Dimension.DP)
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @param:Dimension(unit = Dimension.Companion.DP)
+    @get:Dimension(unit = Dimension.Companion.DP)
     public val cornerRadiusDp: Float,
 ) {
 
-    @RestrictTo(LIBRARY_GROUP)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun withContainerType(containerType: Int = this.containerType): WearWidgetParams {
         return WearWidgetParams(
             instanceId = instanceId,
@@ -71,8 +71,8 @@ public constructor(
         )
     }
 
-    /** Converts this object to [WearWidgetRequestParcel]. */
-    @RestrictTo(LIBRARY_GROUP)
+    /** Converts this object to [androidx.glance.wear.parcel.WearWidgetRequestParcel]. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun toParcel(): WearWidgetRequestParcel {
         val requestProto =
             WearWidgetRequestProto(
@@ -89,9 +89,9 @@ public constructor(
     }
 
     public companion object {
-        @RestrictTo(LIBRARY_GROUP)
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun fromParcel(parcel: WearWidgetRequestParcel): WearWidgetParams {
-            val requestProto = WearWidgetRequestProto.ADAPTER.decode(parcel.payload)
+            val requestProto = WearWidgetRequestProto.Companion.ADAPTER.decode(parcel.payload)
             return WearWidgetParams(
                 instanceId =
                     WidgetInstanceId(namespace = requestProto.id_namespace, requestProto.id),

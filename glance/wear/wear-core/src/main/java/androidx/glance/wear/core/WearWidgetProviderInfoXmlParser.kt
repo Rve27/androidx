@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import android.content.ComponentName
 import android.content.pm.PackageManager
@@ -178,12 +178,13 @@ internal object WearWidgetProviderInfoXmlParser {
                 // Parse String as either one of the types or an integer.
                 val attrValue = getAttributeValue(NAMESPACE_DISABLED, attrName)
                 if (attrValue != null) {
-                    ContainerInfo.containerTypeFromString(attrValue) ?: attrValue.toIntOrNull()
+                    ContainerInfo.Companion.containerTypeFromString(attrValue)
+                        ?: attrValue.toIntOrNull()
                 } else {
                     defaultValue
                 }
             } ?: throw XmlPullParserException("Failed to parse Container Type for $attrName")
-        if (type == ContainerInfo.CONTAINER_TYPE_FULLSCREEN) {
+        if (type == ContainerInfo.Companion.CONTAINER_TYPE_FULLSCREEN) {
             throw XmlPullParserException("Fullscreen container type is not supported for widgets")
         }
         return type
