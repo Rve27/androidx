@@ -1374,6 +1374,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         if (t != oldt) {
             maybeShowFastScroller()
         }
+        manageActionModeOnScroll()
         onViewportChanged()
     }
 
@@ -1493,6 +1494,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         pdfDocument?.removeOnPdfContentInvalidatedListener(onPdfContentInvalidatedListener)
         accessibilityManager.removeAccessibilityStateChangeListener(accessibilityStateChangeHandler)
+        removeCallbacks(showSelectionActionModeRunnable)
     }
 
     override fun onSaveInstanceState(): Parcelable? {
@@ -1560,6 +1562,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         val cappedX = x.coerceIn(0..computeHorizontalScrollRange())
         val cappedY = y.coerceIn(minVerticalScrollPosition..computeVerticalScrollRange())
         super.scrollTo(cappedX, cappedY)
+    }
+
+    /**
+     * Manages the visibility of the selection action mode during scrolling. The action mode is
+     * immediately hidden when scrolling starts and a delayed runnable is posted to potentially show
+     * it again after scrolling has settled.
+     */
+    private fun manageActionModeOnScroll() {
+        // Immediately hide the action mode as soon as scrolling begins.
+        hideActionMode()
+        // Always remove any pending show runnables. This prevents the action mode
+        // from flickering or reappearing during continuous scrolling.
+        removeCallbacks(showSelectionActionModeRunnable)
+        // Post a runnable to potentially show the action mode after a delay.
+        // This ensures the action mode only reappears after scrolling has settled.
+        postDelayed(showSelectionActionModeRunnable, ACTION_MODE_REAPPEAR_DELAY_MS)
     }
 
     override fun computeHorizontalScrollRange(): Int {
@@ -2056,6 +2074,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             pageLocationsPool.release(location)
         }
     }
+
+    private val showSelectionActionModeRunnable = Runnable { updateSelectionActionModeVisibility() }
 
     /**
      * Shows or hides the selection action mode, as appropriate. If the current selection is visible
@@ -2728,6 +2748,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         /** The amount of delay between two scroll events */
         private const val AUTO_SCROLL_DELAY_IN_MILLIS = 5L
+
+        /** The amount of delay for actionMode to show after scroll event */
+        private const val ACTION_MODE_REAPPEAR_DELAY_MS = 500L
 
         /**
          * The tolerance in percentage to control how close the touch point needs to be to the
