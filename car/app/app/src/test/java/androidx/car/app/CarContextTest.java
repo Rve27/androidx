@@ -468,6 +468,18 @@ public class CarContextTest {
     }
 
     @Test
+    public void lifecycleDestroyed_releasesVirtualDisplay() {
+        mLifecycleOwner.mRegistry.handleLifecycleEvent(Event.ON_CREATE);
+
+        mLifecycleOwner.mRegistry.handleLifecycleEvent(Event.ON_DESTROY);
+
+        // The only display should be the built-in display with no extra virtual display.
+        Context applicationContext = mCarContext.getApplicationContext();
+        DisplayManager displayManager = applicationContext.getSystemService(DisplayManager.class);
+        assertThat(displayManager.getDisplays()).hasLength(1);
+    }
+
+    @Test
     public void requestPermissions_startsTheExpectedActivity() throws RemoteException {
         List<String> permissions = new ArrayList<>();
         permissions.add("foo");
