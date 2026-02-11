@@ -20,6 +20,7 @@ import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.FrameGraph
 import androidx.camera.camera2.pipe.core.Threads
 import androidx.camera.camera2.pipe.framegraph.FrameGraphImpl
+import androidx.camera.camera2.pipe.graph.Controller3A
 import androidx.camera.camera2.pipe.graph.GraphProcessor
 import androidx.camera.camera2.pipe.internal.FrameCaptureQueue
 import androidx.camera.camera2.pipe.internal.FrameDistributor
@@ -72,6 +73,8 @@ internal class FrameGraphConfigModule(
 
     @Provides
     fun provideFrameDistributor(): FrameDistributor = cameraGraphComponent.frameDistributor()
+
+    @Provides fun provideController3A(): Controller3A = cameraGraphComponent.controller3A()
 }
 
 @Module
