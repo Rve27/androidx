@@ -156,7 +156,6 @@ package androidx.compose.ui {
   }
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class ComposeUiFlags {
-    property @Deprecated public boolean areWindowInsetsRulersEnabled;
     property public boolean isAccessibilityShouldIncludeOffscreenChildrenEnabled;
     property public boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     property public boolean isBypassUnfocusableComposeViewEnabled;
@@ -169,7 +168,6 @@ package androidx.compose.ui {
     property public boolean isTraversableDelegatesFixEnabled;
     property public boolean isViewFocusFixEnabled;
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
-    field @Deprecated public static boolean areWindowInsetsRulersEnabled;
     field public static boolean isAccessibilityShouldIncludeOffscreenChildrenEnabled;
     field public static boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     field public static boolean isBypassUnfocusableComposeViewEnabled;
