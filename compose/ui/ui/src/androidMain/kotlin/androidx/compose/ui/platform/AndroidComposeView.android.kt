@@ -162,7 +162,6 @@ import androidx.compose.ui.input.pointer.ProcessResult
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.input.rotary.RotaryInputModifierNode
 import androidx.compose.ui.input.rotary.RotaryScrollEvent
-import androidx.compose.ui.internal.checkPrecondition
 import androidx.compose.ui.internal.checkPreconditionNotNull
 import androidx.compose.ui.layout.InsetsListener
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -231,6 +230,7 @@ import androidx.compose.ui.util.trace
 import androidx.compose.ui.viewinterop.AndroidViewHolder
 import androidx.compose.ui.viewinterop.InteropView
 import androidx.core.os.ConfigurationCompat
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.InputDeviceCompat.SOURCE_ROTARY_ENCODER
 import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
@@ -668,14 +668,22 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         mutableStateOf(Configuration(context.resources.configuration))
 
     override val localeList: LocaleList by derivedStateOf {
-        val platformLocaleListCompat = ConfigurationCompat.getLocales(configuration)
-        checkPrecondition(!platformLocaleListCompat.isEmpty) {
-            "LocaleList from Configuration was empty - this indicates that Compose is being used " +
-                "in an environment with no available locale, which is not supported. If you " +
-                "are seeing this error and you believe the use case should work, please report a " +
-                "bug to the issue tracker."
-        }
-        LocaleList(List(platformLocaleListCompat.size()) { Locale(platformLocaleListCompat[it]!!) })
+        val configurationLocaleListCompat = ConfigurationCompat.getLocales(configuration)
+        val guaranteedNonEmptyLocaleListCompat =
+            if (configurationLocaleListCompat.isEmpty) {
+                // The Configuration doesn't have a locale. This is weird, since we should have a
+                // fully defined Configuration in a fully defined environment, but some
+                // environments like previews may not have one. Instead of crashing, pull a
+                // guaranteed non-empty list.
+                LocaleListCompat.getDefault()
+            } else {
+                configurationLocaleListCompat
+            }
+        LocaleList(
+            List(guaranteedNonEmptyLocaleListCompat.size()) {
+                Locale(guaranteedNonEmptyLocaleListCompat[it]!!)
+            }
+        )
     }
 
     private val _autofill = if (autofillSupported()) AndroidAutofill(this, autofillTree) else null
