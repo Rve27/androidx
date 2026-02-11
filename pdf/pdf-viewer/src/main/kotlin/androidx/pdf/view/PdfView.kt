@@ -27,6 +27,7 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Looper
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -2650,18 +2651,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         ): Boolean {
             links.externalLinks.forEach { externalLink ->
                 if (externalLink.bounds.any { it.contains(pdfCoordinates.x, pdfCoordinates.y) }) {
-                    val link = ExternalLink(externalLink.uri)
-                    if (linkClickListener?.onLinkClicked(link) == true) {
-                        return true
-                    } else {
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW, link.uri)
-                            context.startActivity(intent)
-                        } catch (_: Exception) {
-                            return false
-                        }
-                    }
-                    return true
+                    return openExternalLink(externalLink.uri)
                 }
             }
             return false
@@ -2684,6 +2674,21 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 }
             }
             return false
+        }
+    }
+
+    internal fun openExternalLink(uri: Uri): Boolean {
+        val externalLink = ExternalLink(uri)
+        if (linkClickListener?.onLinkClicked(externalLink) == true) {
+            return true
+        } else {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, externalLink.uri)
+                context.startActivity(intent)
+                return true
+            } catch (_: Exception) {
+                return false
+            }
         }
     }
 
