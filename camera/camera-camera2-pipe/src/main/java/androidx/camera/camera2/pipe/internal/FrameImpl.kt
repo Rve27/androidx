@@ -200,8 +200,37 @@ internal constructor(
 
     override fun imageStatus(streamId: StreamId): OutputStatus {
         if (closed.value || !imageStreams.contains(streamId)) return OutputStatus.UNAVAILABLE
-        return frameState.imageOutputs.firstOrNull { it.streamId == streamId }?.status
-            ?: OutputStatus.UNAVAILABLE
+        val statuses = frameState.imageOutputs.filter { it.streamId == streamId }.map { it.status }
+
+        check(statuses.isNotEmpty()) {
+            "No matching outputs found with $streamId. This is unexpected."
+        }
+
+        // For a single-output frame, return the status directly.
+        if (statuses.size == 1) {
+            return statuses[0]
+        }
+
+        // For a multi-output frame, look at all the statuses.
+        // If any of the outputs is still pending, consider the status as pending.
+        if (statuses.any { it == OutputStatus.PENDING }) {
+            return OutputStatus.PENDING
+        }
+
+        // All the outputs are complete.
+        // If any of the outputs is available, consider the status as available, given that there is
+        // available output to be retrieved.
+        if (statuses.any { it == OutputStatus.AVAILABLE }) {
+            return OutputStatus.AVAILABLE
+        }
+
+        // If no output is available, but all the statues are the same, use the status.
+        if (statuses.all { it == statuses.first() }) {
+            return statuses.first()
+        }
+
+        // Otherwise, consider the status as unavailable.
+        return OutputStatus.UNAVAILABLE
     }
 
     override fun imageStatus(outputId: OutputId): OutputStatus {
