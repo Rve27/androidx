@@ -553,6 +553,167 @@ class FrameImplTest {
         assertThat(sharedOutputFrame.getImages(stream1Id)).isEmpty()
     }
 
+    @Test
+    fun imageStatusIsAvailableWhenAllOutputsAreAvailable() {
+        val stream4Image3 = FakeImage(1024, 768, StreamFormat.RAW12.value, frameTimestampNs)
+        val stream4OutputImage3 = OutputImage.from(stream4Id, output9Id, stream4Image3)
+
+        streamResult4[0].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.from(stream4OutputImage1),
+        )
+        streamResult4[1].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.from(stream4OutputImage2),
+        )
+        streamResult4[2].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.from(stream4OutputImage3),
+        )
+
+        assertThat(sharedOutputFrame.imageStatus(stream4Id)).isEqualTo(OutputStatus.AVAILABLE)
+    }
+
+    @Test
+    fun imageStatusAggregatesMultiOutputStatus() {
+        // Initially everything is PENDING
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete one output (output4Id)
+        streamResult3[0].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.from(stream3OutputImage1),
+        )
+        // Still pending because others are pending
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete second output (output5Id) with failure
+        streamResult3[1].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.failure(OutputStatus.ERROR_OUTPUT_DROPPED),
+        )
+        // Still pending because output6Id is pending
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete third output (output6Id) with failure
+        streamResult3[2].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.failure(OutputStatus.UNAVAILABLE),
+        )
+
+        // Now all are done.
+        // Statuses: AVAILABLE, ERROR_OUTPUT_DROPPED, UNAVAILABLE.
+        // any == AVAILABLE is true.
+        // Result should be AVAILABLE.
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.AVAILABLE)
+    }
+
+    @Test
+    fun imageStatusAggregatesMultiOutputStatusAsUnavailableWhenAllFail() {
+        // Initially everything is PENDING
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete one output (output4Id)
+        streamResult3[0].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.failure(OutputStatus.ERROR_OUTPUT_MISSING),
+        )
+        // Still pending because others are pending
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete second output (output5Id) with failure
+        streamResult3[1].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.failure(OutputStatus.ERROR_OUTPUT_DROPPED),
+        )
+        // Still pending because output6Id is pending
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete third output (output6Id) with failure
+        streamResult3[2].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.failure(OutputStatus.UNAVAILABLE),
+        )
+
+        // Now all are done.
+        // Statuses: ERROR_OUTPUT_MISSING, ERROR_OUTPUT_DROPPED, UNAVAILABLE.
+        // any == AVAILABLE is false.
+        // Result should be UNAVAILABLE.
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.UNAVAILABLE)
+    }
+
+    @Test
+    fun imageStatusAggregatesMultiOutputStatusWhenAllFailWithSameStatus() {
+        // Initially everything is PENDING
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete one output (output4Id)
+        streamResult3[0].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.failure(OutputStatus.ERROR_OUTPUT_FAILED),
+        )
+        // Still pending because others are pending
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete second output (output5Id) with failure
+        streamResult3[1].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.failure(OutputStatus.ERROR_OUTPUT_FAILED),
+        )
+        // Still pending because output6Id is pending
+        assertThat(sharedOutputFrame.imageStatus(stream3Id)).isEqualTo(OutputStatus.PENDING)
+
+        // Complete third output (output6Id) with failure
+        streamResult3[2].onOutputComplete(
+            frameNumber,
+            frameTimestamp,
+            42,
+            frameTimestamp.value,
+            OutputResult.failure(OutputStatus.ERROR_OUTPUT_FAILED),
+        )
+
+        // Now all are done.
+        // Statuses: ERROR_OUTPUT_FAILED, ERROR_OUTPUT_FAILED, ERROR_OUTPUT_FAILED.
+        // any == AVAILABLE is false.
+        // all == statuses.first().
+        // Result should be statuses.first() (ERROR_OUTPUT_FAILED).
+        assertThat(sharedOutputFrame.imageStatus(stream3Id))
+            .isEqualTo(OutputStatus.ERROR_OUTPUT_FAILED)
+    }
+
     @After
     fun cleanup() {
         fakeSurfaces.close()
