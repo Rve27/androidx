@@ -39,8 +39,12 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.configuration.BuildFeatures
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RelativePath
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.bundling.ZipEntryCompression
 import org.gradle.build.event.BuildEventsListenerRegistry
@@ -195,66 +199,113 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
                 File(getPrebuiltsRoot(), "androidx/javascript-for-kotlin")
             }
 
-        val createYarnRcFileTask =
-            tasks.register("createYarnRcFile", CreateYarnRcFileTask::class.java) {
-                it.offlineMirrorStorage.set(offlineMirrorStorage)
-                it.cacheStorage.set(layout.buildDirectory.dir("yarnCache"))
-                it.yarnrcFile.set(layout.buildDirectory.file(".yarnrc"))
-            }
-        val createWasmYarnRcFileTask =
-            tasks.register("createWasmYarnRcFile", CreateYarnRcFileTask::class.java) {
-                it.offlineMirrorStorage.set(offlineMirrorStorage)
-                it.cacheStorage.set(layout.buildDirectory.dir("wasmYarnCache"))
-                it.yarnrcFile.set(layout.buildDirectory.file("wasm/.yarnrc"))
-            }
+        val createToolingYarnRcTask =
+            registerYarnConfigTask(
+                taskName = "createKotlinToolingYarnRcFile",
+                offlineMirror = offlineMirrorStorage,
+                cacheDir = layout.buildDirectory.dir("kotlinToolingYarnCache"),
+                destFile =
+                    project.objects
+                        .fileProperty()
+                        .fileValue(
+                            File(project.getOutDirectory(), ".kotlin/kotlin-npm-tooling/.yarnrc")
+                        ),
+            )
 
-        val createKotlinToolingYarnRcFileTask =
-            tasks.register("createKotlinToolingYarnRcFile", CreateYarnRcFileTask::class.java) {
-                it.offlineMirrorStorage.set(File(offlineMirrorStorage, "tooling"))
-                it.cacheStorage.set(layout.buildDirectory.dir("kotlinToolingYarnCache"))
-                it.yarnrcFile.set(
-                    File(project.getOutDirectory(), ".kotlin/kotlin-npm-tooling/.yarnrc")
-                )
-            }
+        val createYarnRcTask =
+            registerYarnConfigTask(
+                taskName = "createYarnRcFile",
+                offlineMirror = offlineMirrorStorage,
+                cacheDir = layout.buildDirectory.dir("yarnCache"),
+                destFile = layout.buildDirectory.file(".yarnrc"),
+            )
+
+        val createWasmYarnRcTask =
+            registerYarnConfigTask(
+                taskName = "createWasmYarnRcFile",
+                offlineMirror = offlineMirrorStorage,
+                cacheDir = layout.buildDirectory.dir("wasmYarnCache"),
+                destFile = layout.buildDirectory.file("wasm/.yarnrc"),
+            )
 
         configureNode()
-
-        // ensure yarn install is complete before using it to install kotlin wasm tooling
-        tasks.withType<KotlinToolingSetupTask>().configureEach {
-            it.dependsOn(tasks.withType<KotlinNpmInstallTask>(), createKotlinToolingYarnRcFileTask)
-            it.args.addAll(listOf("--ignore-engines", "--verbose"))
-            if (project.useYarnOffline()) {
-                it.args.add("--offline")
-            }
-        }
-
-        tasks.withType<KotlinNpmInstallTask>().configureEach {
-            when (it.name) {
-                "kotlinNpmInstall" -> it.dependsOn(createYarnRcFileTask)
-                "kotlinWasmNpmInstall" -> it.dependsOn(createWasmYarnRcFileTask)
-            }
-            it.args.addAll(listOf("--ignore-engines", "--verbose"))
-            if (project.useYarnOffline()) {
-                it.args.add("--offline")
-                it.additionalFiles.plus(offlineMirrorStorage)
-                it.doFirst {
-                    println(
-                        """
-                    Fetching yarn packages from the offline mirror: ${offlineMirrorStorage.path}.
-                    Your build will fail if a package is not in the offline mirror. To fix, run:
-
-                    $TERMINAL_RED./gradlew kotlinNpmInstall kotlinWasmNpmInstall -Pandroidx.yarnOfflineMode=false && ./gradlew kotlinUpgradeYarnLock kotlinWasmUpgradeYarnLock$TERMINAL_RESET
-
-                    this will download the dependencies from the internet and update the lockfile.
-                    Don't forget to upload the changes to Gerrit!
-                    """
-                            .trimIndent()
-                            .replace("\n", " ")
-                    )
-                }
-            }
-        }
+        configureKotlinToolingTasks(offlineMirrorStorage, createToolingYarnRcTask)
+        configureNpmInstallTasks(offlineMirrorStorage, createYarnRcTask, createWasmYarnRcTask)
     }
+
+    private fun Project.registerYarnConfigTask(
+        taskName: String,
+        offlineMirror: File,
+        cacheDir: Provider<Directory>,
+        destFile: Provider<RegularFile>,
+    ): TaskProvider<CreateYarnRcFileTask> =
+        tasks.register(taskName, CreateYarnRcFileTask::class.java) { task ->
+            task.offlineMirrorStorage.set(offlineMirror)
+            task.cacheStorage.set(cacheDir)
+            task.yarnrcFile.set(destFile)
+        }
+
+    private fun Project.configureKotlinToolingTasks(
+        offlineMirror: File,
+        configTask: TaskProvider<CreateYarnRcFileTask>,
+    ) =
+        tasks.withType<KotlinToolingSetupTask>().configureEach { task ->
+            task.dependsOn(tasks.withType<KotlinNpmInstallTask>(), configTask)
+            task.args.addAll(COMMON_YARN_ARGS)
+
+            if (project.useYarnOffline()) {
+                task.args.add("--offline")
+                task.doFirst { println(getToolingOfflineErrorMsg(offlineMirror.path)) }
+            }
+        }
+
+    private fun Project.configureNpmInstallTasks(
+        offlineMirror: File,
+        npmConfig: TaskProvider<CreateYarnRcFileTask>,
+        wasmConfig: TaskProvider<CreateYarnRcFileTask>,
+    ) =
+        tasks.withType<KotlinNpmInstallTask>().configureEach { task ->
+            when (task.name) {
+                "kotlinNpmInstall" -> task.dependsOn(npmConfig)
+                "kotlinWasmNpmInstall" -> task.dependsOn(wasmConfig)
+            }
+
+            task.args.addAll(COMMON_YARN_ARGS)
+
+            if (project.useYarnOffline()) {
+                task.args.add("--offline")
+                task.additionalFiles.plus(offlineMirror)
+                task.doFirst { println(getOfflineErrorMsg(offlineMirror.path)) }
+            }
+        }
 }
+
+private val COMMON_YARN_ARGS = listOf("--ignore-engines", "--verbose")
+
+private fun getToolingOfflineErrorMsg(path: String) =
+    """
+    Fetching yarn packages from the offline mirror: $path.
+    Your build will fail if a package is not in the offline mirror. To fix, run:
+
+    $TERMINAL_RED./gradlew kotlinWasmToolingSetup -Pandroidx.yarnOfflineMode=false$TERMINAL_RESET
+
+    This will download the dependencies from the internet.
+    Don't forget to upload the changes to Gerrit!
+"""
+        .trimIndent()
+        .replace("\n", " ")
+
+private fun getOfflineErrorMsg(path: String) =
+    """
+    Fetching yarn packages from the offline mirror: $path.
+    Your build will fail if a package is not in the offline mirror. To fix, run:
+
+    $TERMINAL_RED./gradlew kotlinNpmInstall kotlinWasmNpmInstall -Pandroidx.yarnOfflineMode=false && ./gradlew kotlinUpgradeYarnLock kotlinWasmUpgradeYarnLock$TERMINAL_RESET
+
+    This will download the dependencies from the internet and update the lockfile.
+    Don't forget to upload the changes to Gerrit!
+"""
+        .trimIndent()
+        .replace("\n", " ")
 
 internal const val AGGREGATE_BUILD_INFO_FILE_NAME = "androidx_aggregate_build_info.txt"
