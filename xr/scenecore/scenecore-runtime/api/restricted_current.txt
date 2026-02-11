@@ -682,10 +682,10 @@ package androidx.xr.scenecore.runtime {
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getActivitySpaceScale();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getWorldSpaceScale();
     method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.scenecore.runtime.ScenePose.HitTestFilterValue int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.HitTestResult>);
-    method public default androidx.xr.runtime.math.Vector3 transformDirectionTo(androidx.xr.runtime.math.Vector3 direction, androidx.xr.scenecore.runtime.ScenePose destination);
+    method public androidx.xr.runtime.math.Vector3 transformDirectionTo(androidx.xr.runtime.math.Vector3 direction, androidx.xr.scenecore.runtime.ScenePose destination);
     method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.ScenePose destination);
-    method public default androidx.xr.runtime.math.Vector3 transformPositionTo(androidx.xr.runtime.math.Vector3 position, androidx.xr.scenecore.runtime.ScenePose destination);
-    method public default androidx.xr.runtime.math.Vector3 transformVectorTo(androidx.xr.runtime.math.Vector3 vector, androidx.xr.scenecore.runtime.ScenePose destination);
+    method public androidx.xr.runtime.math.Vector3 transformPositionTo(androidx.xr.runtime.math.Vector3 position, androidx.xr.scenecore.runtime.ScenePose destination);
+    method public androidx.xr.runtime.math.Vector3 transformVectorTo(androidx.xr.runtime.math.Vector3 vector, androidx.xr.scenecore.runtime.ScenePose destination);
     property public abstract androidx.xr.runtime.math.Pose activitySpacePose;
     property public abstract androidx.xr.runtime.math.Vector3 activitySpaceScale;
     property public abstract androidx.xr.runtime.math.Vector3 worldSpaceScale;
@@ -1421,6 +1421,27 @@ package androidx.xr.scenecore.runtime.extensions {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class XrExtensionsProvider {
     method public static com.android.extensions.xr.XrExtensions? getXrExtensions();
     field public static final androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider INSTANCE;
+  }
+
+}
+
+package androidx.xr.scenecore.runtime.impl {
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseScenePose implements androidx.xr.scenecore.runtime.ScenePose {
+    ctor public BaseScenePose();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getActivitySpacePose();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getActivitySpaceScale();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPoseInActivitySpace();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getWorldSpaceScale();
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.scenecore.runtime.ScenePose.HitTestFilterValue int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.HitTestResult>);
+    method public androidx.xr.runtime.math.Vector3 transformDirectionTo(androidx.xr.runtime.math.Vector3 direction, androidx.xr.scenecore.runtime.ScenePose destination);
+    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.ScenePose destination);
+    method public androidx.xr.runtime.math.Vector3 transformPositionTo(androidx.xr.runtime.math.Vector3 position, androidx.xr.scenecore.runtime.ScenePose destination);
+    method public androidx.xr.runtime.math.Vector3 transformVectorTo(androidx.xr.runtime.math.Vector3 vector, androidx.xr.scenecore.runtime.ScenePose destination);
+    property public androidx.xr.runtime.math.Pose activitySpacePose;
+    property public androidx.xr.runtime.math.Vector3 activitySpaceScale;
+    property public androidx.xr.runtime.math.Pose poseInActivitySpace;
+    property public androidx.xr.runtime.math.Vector3 worldSpaceScale;
   }
 
 }
