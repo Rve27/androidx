@@ -1209,7 +1209,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 formWidgetMetadataLoader?.let { loader ->
                     pageManager?.maybeUpdateFormWidgetMetadata(pageNumber, loader)
                 }
-                formFillingEditText = null
             }
         }
 
@@ -2289,7 +2288,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     }
 
     internal fun commitFormFillingEditText() {
-        formFillingEditText?.let { formWidgetInteractionHandler?.commitEditTextValue(it) }
+        formFillingEditText?.let { formWidgetInteractionHandler?.finishTextEditing(it) }
     }
 
     private val shouldShowFormFillingTooltip: Boolean

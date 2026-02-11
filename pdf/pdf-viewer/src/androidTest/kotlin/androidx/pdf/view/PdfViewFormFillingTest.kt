@@ -283,8 +283,14 @@ class PdfViewFormFillingTest {
             }
             close()
         }
-        assertThat(formEditInfos).hasSize(1)
-        assertThat(formEditInfos[0]).isEqualTo(FormEditInfo.createSetText(0, 0, finalText))
+        // We get callbacks when the edit text gets updated.
+        assertThat(formEditInfos).hasSize(textToAppend.length)
+        for (i in 0..<formEditInfos.size) {
+            assertThat(formEditInfos[i])
+                .isEqualTo(
+                    FormEditInfo.createSetText(0, 0, textValue + textToAppend.substring(0, i + 1))
+                )
+        }
     }
 
     @Test
