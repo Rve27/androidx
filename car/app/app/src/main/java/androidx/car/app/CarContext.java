@@ -186,6 +186,7 @@ public class CarContext extends ContextWrapper {
     private final HostDispatcher mHostDispatcher;
     private final Lifecycle mLifecycle;
     private final ManagerCache mManagers = new ManagerCache();
+    private @Nullable VirtualDisplay mVirtualDisplay = null;
 
     /** API level, updated once host connection handshake is completed. */
     @CarAppApiLevel
@@ -691,7 +692,7 @@ public class CarContext extends ContextWrapper {
         // update the configuration.
         if (getBaseContext() == null) {
             // Create the virtual display with the proper dimensions.
-            VirtualDisplay display =
+            mVirtualDisplay =
                     ((DisplayManager) requireNonNull(
                             context.getSystemService(Context.DISPLAY_SERVICE)))
                             .createVirtualDisplay(
@@ -704,15 +705,14 @@ public class CarContext extends ContextWrapper {
 
             attachBaseContext(
                     context
-                            .createDisplayContext(display.getDisplay())
+                            .createDisplayContext(mVirtualDisplay.getDisplay())
                             .createConfigurationContext(configuration));
         }
 
         onCarConfigurationChanged(configuration);
     }
 
-    @RestrictTo(LIBRARY_GROUP)
-    // Restrict to testing library
+    @RestrictTo(LIBRARY_GROUP) // Restrict to testing library
     ManagerCache getManagers() {
         return mManagers;
     }
@@ -752,6 +752,10 @@ public class CarContext extends ContextWrapper {
             @Override
             public void onDestroy(@NonNull LifecycleOwner owner) {
                 hostDispatcher.resetHosts();
+                if (mVirtualDisplay != null) {
+                    mVirtualDisplay.release();
+                    mVirtualDisplay = null;
+                }
                 owner.getLifecycle().removeObserver(this);
             }
         };
