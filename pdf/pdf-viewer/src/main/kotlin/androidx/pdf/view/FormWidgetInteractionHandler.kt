@@ -97,12 +97,15 @@ internal class FormWidgetInteractionHandler(
         startingText: String? = null,
     ): FormFillingEditText {
         val formFillingEditText =
-            formFillingTextInputFactory.makeEditText(pageNum, formWidgetInfo, startingText)
+            formFillingTextInputFactory.makeEditText(pageNum, formWidgetInfo, startingText) {
+                currentText ->
+                createAndRelayEditTextInfo(pageNum, formWidgetInfo.widgetIndex, currentText)
+            }
         formFillingEditText.let {
             val editText = it.editText
             editText.setOnEditorActionListener { _, actionId: Int, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    commitEditTextValue(it)
+                    finishTextEditing(formFillingEditText)
                 }
                 false
             }
@@ -116,16 +119,14 @@ internal class FormWidgetInteractionHandler(
         imm.hideSoftInputFromWindow(editText.windowToken, 0)
     }
 
-    fun commitEditTextValue(formFillingEditText: FormFillingEditText) {
+    fun finishTextEditing(formFillingEditText: FormFillingEditText) {
         formFillingEditText.editText.clearFocus()
         hideKeyboard(formFillingEditText.editText)
-        val formEditInfo =
-            FormEditInfo.createSetText(
-                formFillingEditText.pageNum,
-                formFillingEditText.formWidget.widgetIndex,
-                formFillingEditText.editText.text.toString(),
-            )
-        relayFormEditInfo(formEditInfo)
+        placeTextInputInLayout(null)
+    }
+
+    fun createAndRelayEditTextInfo(pageNum: Int, widgetIndex: Int, text: String) {
+        FormEditInfo.createSetText(pageNum, widgetIndex, text).also { relayFormEditInfo(it) }
     }
 
     /**
