@@ -2333,16 +2333,32 @@ package androidx.compose.material3 {
 
   public final class MaterialTheme {
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material3.ColorScheme getColorScheme(androidx.compose.runtime.Composer?, int);
-    method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.runtime.CompositionLocal<androidx.compose.material3.MotionScheme> getLocalMotionScheme();
+    method @InaccessibleFromKotlin public androidx.compose.runtime.CompositionLocal<androidx.compose.material3.MaterialTheme.Values> getLocalMaterialTheme();
+    method @InaccessibleFromKotlin @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.runtime.CompositionLocal<androidx.compose.material3.MotionScheme> getLocalMotionScheme();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material3.MotionScheme getMotionScheme(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material3.Shapes getShapes(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.compose.material3.Typography getTypography(androidx.compose.runtime.Composer?, int);
-    property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.runtime.CompositionLocal<androidx.compose.material3.MotionScheme> LocalMotionScheme;
+    property public androidx.compose.runtime.CompositionLocal<androidx.compose.material3.MaterialTheme.Values> LocalMaterialTheme;
+    property @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.runtime.CompositionLocal<androidx.compose.material3.MotionScheme> LocalMotionScheme;
     property public androidx.compose.material3.ColorScheme colorScheme;
     property public androidx.compose.material3.MotionScheme motionScheme;
     property public androidx.compose.material3.Shapes shapes;
     property public androidx.compose.material3.Typography typography;
     field public static final androidx.compose.material3.MaterialTheme INSTANCE;
+  }
+
+  @androidx.compose.runtime.Immutable public static final class MaterialTheme.Values {
+    ctor public MaterialTheme.Values();
+    ctor public MaterialTheme.Values(optional androidx.compose.material3.ColorScheme colorScheme, optional androidx.compose.material3.Typography typography, optional androidx.compose.material3.Shapes shapes, optional androidx.compose.material3.MotionScheme motionScheme);
+    ctor @BytecodeOnly public MaterialTheme.Values(androidx.compose.material3.ColorScheme!, androidx.compose.material3.Typography!, androidx.compose.material3.Shapes!, androidx.compose.material3.MotionScheme!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @InaccessibleFromKotlin public androidx.compose.material3.ColorScheme getColorScheme();
+    method @InaccessibleFromKotlin public androidx.compose.material3.MotionScheme getMotionScheme();
+    method @InaccessibleFromKotlin public androidx.compose.material3.Shapes getShapes();
+    method @InaccessibleFromKotlin public androidx.compose.material3.Typography getTypography();
+    property public androidx.compose.material3.ColorScheme colorScheme;
+    property public androidx.compose.material3.MotionScheme motionScheme;
+    property public androidx.compose.material3.Shapes shapes;
+    property public androidx.compose.material3.Typography typography;
   }
 
   public final class MaterialThemeKt {
