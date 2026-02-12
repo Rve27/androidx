@@ -41,6 +41,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -48,12 +51,12 @@ import kotlinx.coroutines.launch
 class SeekableTransitionInterrupt : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { SeekableTransitionInterruptDemo() }
+        setContent { SeekableTransitionInterruptTest() }
     }
 }
 
 @Composable
-fun SeekableTransitionInterruptDemo() {
+fun SeekableTransitionInterruptTest() {
     var isToggled by remember { mutableStateOf(false) }
 
     val seekableState = remember { SeekableTransitionState(isToggled) }
@@ -66,13 +69,14 @@ fun SeekableTransitionInterruptDemo() {
         transition.animateColor(label = "Color") { state -> if (state) Color.Red else Color.Blue }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().semantics { testTagsAsResourceId = true },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(modifier = Modifier.size(size).background(color))
 
         Button(
+            modifier = Modifier.testTag("seekable_transition_interrupt_button"),
             onClick = {
                 isToggled = !isToggled
 
@@ -92,7 +96,7 @@ fun SeekableTransitionInterruptDemo() {
 
                     animationJob.cancel()
                 }
-            }
+            },
         ) {
             Text("interrupt animation w/ seekTo")
         }
