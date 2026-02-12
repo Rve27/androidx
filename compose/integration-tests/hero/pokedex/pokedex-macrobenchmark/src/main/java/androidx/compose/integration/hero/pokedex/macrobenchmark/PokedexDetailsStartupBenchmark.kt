@@ -18,19 +18,12 @@ package androidx.compose.integration.hero.pokedex.macrobenchmark
 
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.StartupMode
-import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.compose.integration.hero.common.macrobenchmark.HeroMacrobenchmarkDefaults
-import androidx.compose.integration.hero.pokedex.macrobenchmark.internal.PokedexConstants.Compose.POKEDEX_ENABLE_SHARED_ELEMENT_TRANSITIONS
-import androidx.compose.integration.hero.pokedex.macrobenchmark.internal.PokedexConstants.Compose.POKEDEX_ENABLE_SHARED_TRANSITION_SCOPE
-import androidx.compose.integration.hero.pokedex.macrobenchmark.internal.PokedexConstants.Compose.POKEDEX_START_DESTINATION
 import androidx.compose.integration.hero.pokedex.macrobenchmark.internal.PokedexConstants.POKEDEX_TARGET_PACKAGE_NAME
-import androidx.compose.integration.hero.pokedex.macrobenchmark.internal.PokedexDatabaseCleanupRule
 import androidx.test.filters.LargeTest
 import androidx.testutils.createStartupCompilationParams
 import androidx.testutils.measureStartup
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
@@ -41,12 +34,8 @@ class PokedexDetailsStartupBenchmark(
     private val compilation: CompilationMode,
     private val enableSharedTransitionScope: Boolean,
     private val enableSharedElementTransitions: Boolean,
-) {
-    val benchmarkRule = MacrobenchmarkRule()
-
-    @get:Rule
-    val pokedexBenchmarkRuleChain: RuleChain =
-        RuleChain.outerRule(PokedexDatabaseCleanupRule()).around(benchmarkRule)
+) : PokedexBenchmarkBase() {
+    private val PokemonToOpen = "Ablazeon"
 
     @Test
     fun startupCompose() = measureStartup("$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY")
@@ -61,12 +50,19 @@ class PokedexDetailsStartupBenchmark(
             startupMode = startupMode,
             packageName = POKEDEX_TARGET_PACKAGE_NAME,
             iterations = HeroMacrobenchmarkDefaults.ITERATIONS,
-        ) {
-            this.action = action
-            this.putExtra(POKEDEX_ENABLE_SHARED_TRANSITION_SCOPE, enableSharedTransitionScope)
-            this.putExtra(POKEDEX_ENABLE_SHARED_ELEMENT_TRANSITIONS, enableSharedElementTransitions)
-            this.putExtra(POKEDEX_START_DESTINATION, "details")
-        }
+            setupIntent = {
+                configure(
+                    action = action,
+                    enableSharedTransitionScope = enableSharedTransitionScope,
+                    enableSharedElementTransitions = enableSharedElementTransitions,
+                    startDestination = "details",
+                )
+            },
+            waitForContent = {
+                waitForAppToBeVisible(packageName)
+                onElement { text == PokemonToOpen }
+            },
+        )
 
     companion object {
         /**

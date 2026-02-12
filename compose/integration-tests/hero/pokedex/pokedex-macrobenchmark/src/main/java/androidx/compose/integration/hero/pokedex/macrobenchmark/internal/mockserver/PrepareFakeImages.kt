@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.compose.integration.hero.pokedex.macrobenchmark.target
+package androidx.compose.integration.hero.pokedex.macrobenchmark.internal.mockserver
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RadialGradient
 import android.graphics.Shader
-import androidx.compose.ui.util.trace
-import com.skydoves.pokedex.compose.core.model.AllPokemonNames
+import androidx.benchmark.inMemoryTrace
 import java.io.File
 import kotlin.math.sqrt
+
+fun generateAndStoreImages(filesDir: File, amount: Int) {
+    val pokemonToCreateImagesFor = findPokemonNamesWithoutCachedImage(filesDir, amount)
+    createAndStoreGradientImages(pokemonToCreateImagesFor, directory = filesDir)
+}
 
 /**
  * Find the Pokemon names we do not have images for in the [filesDir] by iterating over
@@ -37,7 +41,7 @@ import kotlin.math.sqrt
  * @return The subset of [AllPokemonNames]'s names that don't have a cached image in the [filesDir].
  */
 fun findPokemonNamesWithoutCachedImage(filesDir: File, limit: Int = 150): List<String> =
-    trace("findPokemonNamesWithoutCachedImage") {
+    inMemoryTrace("findPokemonNamesWithoutCachedImage") {
         val pokemonToCreateImagesFor = mutableListOf<String>()
         val alreadyStoredPokemon = findPokemonNamesWithCachedImages(filesDir)
         var index = 0
@@ -48,7 +52,7 @@ fun findPokemonNamesWithoutCachedImage(filesDir: File, limit: Int = 150): List<S
             }
             index++
         }
-        return@trace pokemonToCreateImagesFor
+        return@inMemoryTrace pokemonToCreateImagesFor
     }
 
 private fun findPokemonNamesWithCachedImages(filesDir: File): List<String> {
@@ -71,24 +75,20 @@ fun createAndStoreGradientImages(
     width: Int = 300,
     height: Int = 300,
 ) {
-    trace("createAndStoreGradientImages") {
+    inMemoryTrace("createAndStoreGradientImages") {
         pokemonNames.forEach { pokemonName ->
             val image =
-                trace("Create Bitmap for $pokemonName") {
-                    GradientBitmap(
-                        width = width,
-                        height = height,
-                        colors =
-                            GradientColorsFor(
-                                pokemonName.hashCode() * 100 /* introduce greater variance */
-                            ),
-                    )
-                }
-            trace("Store Bitmap for $pokemonName") {
-                val outFile = File(directory, "$pokemonName.png")
-                outFile.outputStream().use { outputStream ->
-                    image.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                }
+                GradientBitmap(
+                    width = width,
+                    height = height,
+                    colors =
+                        GradientColorsFor(
+                            pokemonName.hashCode() * 100 /* introduce greater variance */
+                        ),
+                )
+            val outFile = File(directory, "$pokemonName.png")
+            outFile.outputStream().use { outputStream ->
+                image.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
             }
         }
     }
