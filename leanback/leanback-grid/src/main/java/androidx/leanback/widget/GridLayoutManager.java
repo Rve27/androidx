@@ -77,6 +77,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
      */
     static final class LayoutParams extends RecyclerView.LayoutParams {
 
+        int mSpanSize;
         // For placement
         int mLeftInset;
         int mTopInset;
@@ -629,7 +630,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     /**
      * User-specified row height/column width.  Can be WRAP_CONTENT.
      */
-    private int mRowSizeSecondaryRequested;
+    int mRowSizeSecondaryRequested;
 
     /**
      * The fixed size of each grid item in the secondary direction. This corresponds to
@@ -723,6 +724,11 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
      * Optional interface implemented by Adapter.
      */
     private FacetProviderAdapter mFacetProviderAdapter;
+
+    /**
+     * Optional SpanSizeLookup retrieved from Adapter.
+     */
+    private androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup mSpanSizeLookup;
 
     public GridLayoutManager() {
         this(null);
@@ -1299,7 +1305,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
             if (mGrid == null || mNumRows != mGrid.getNumRows()
                     || ((mFlag & PF_REVERSE_FLOW_PRIMARY) != 0) != mGrid.isReversedFlow()) {
-                mGrid = Grid.createGrid(mNumRows);
+                mGrid = Grid.createGrid(mNumRows, mSpanSizeLookup);
                 mGrid.setProvider(mGridProvider);
                 mGrid.setReversedFlow((mFlag & PF_REVERSE_FLOW_PRIMARY) != 0);
             }
@@ -1621,10 +1627,12 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         int widthUsed = lp.leftMargin + lp.rightMargin + sTempRect.left + sTempRect.right;
         int heightUsed = lp.topMargin + lp.bottomMargin + sTempRect.top + sTempRect.bottom;
 
+        final int spanSize = lp.mSpanSize;
         final int secondarySpec =
                 (mRowSizeSecondaryRequested == ViewGroup.LayoutParams.WRAP_CONTENT)
                         ? MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
-                        : MeasureSpec.makeMeasureSpec(mFixedRowSizeSecondary, MeasureSpec.EXACTLY);
+                        : MeasureSpec.makeMeasureSpec(mFixedRowSizeSecondary * spanSize
+                                + (spanSize - 1) * mSpacingSecondary, MeasureSpec.EXACTLY);
         int widthSpec, heightSpec;
 
         if (mOrientation == HORIZONTAL) {
@@ -1678,9 +1686,13 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
 
         @Override
-        public int createItem(int index, boolean append, Object[] item, boolean disappearingItem) {
+        public int createItem(int index, int spanSize, boolean append, Object[] item,
+                boolean disappearingItem) {
             View v = getViewForPosition(index - mPositionDeltaInPreLayout);
             LayoutParams lp = (LayoutParams) v.getLayoutParams();
+            if (!disappearingItem) {
+                lp.mSpanSize = spanSize;
+            }
             // See recyclerView docs:  we don't need re-add scraped view if it was removed.
             if (!lp.isItemRemoved()) {
                 if (disappearingItem) {
@@ -1740,7 +1752,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
 
         @Override
-        public void addItem(Object item, int index, int length, int rowIndex, int edge) {
+        public void addItem(Object item, int index, int length, int rowIndex, int edge,
+                boolean finishedAllCreateItems) {
             View v = (View) item;
             int start, end;
             if (edge == Integer.MIN_VALUE || edge == Integer.MAX_VALUE) {
@@ -1764,16 +1777,19 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                 Log.d(getTag(), "addView " + index + " " + v);
             }
 
-            if (!mState.isPreLayout()) {
-                updateScrollLimits();
-            }
-            if ((mFlag & PF_STAGE_MASK) != PF_STAGE_LAYOUT && mPendingMoveSmoothScroller != null) {
-                mPendingMoveSmoothScroller.consumePendingMovesAfterLayout();
-            }
-            if (mChildLaidOutListener != null) {
-                RecyclerView.ViewHolder vh = mBaseGridView.getChildViewHolder(v);
-                mChildLaidOutListener.onChildLaidOut(mBaseGridView, v, index,
-                        vh == null ? NO_ID : vh.getItemId());
+            if (finishedAllCreateItems) {
+                if (!mState.isPreLayout()) {
+                    updateScrollLimits();
+                }
+                if ((mFlag & PF_STAGE_MASK) != PF_STAGE_LAYOUT
+                        && mPendingMoveSmoothScroller != null) {
+                    mPendingMoveSmoothScroller.consumePendingMovesAfterLayout();
+                }
+                if (mChildLaidOutListener != null) {
+                    RecyclerView.ViewHolder vh = mBaseGridView.getChildViewHolder(v);
+                    mChildLaidOutListener.onChildLaidOut(mBaseGridView, v, index,
+                            vh == null ? NO_ID : vh.getItemId());
+                }
             }
         }
 
@@ -1802,23 +1818,29 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     void layoutChild(int rowIndex, View v, int start, int end, int startSecondary) {
         int sizeSecondary = mOrientation == HORIZONTAL ? getDecoratedMeasuredHeightWithMargin(v)
                 : getDecoratedMeasuredWidthWithMargin(v);
-        if (mFixedRowSizeSecondary > 0) {
-            sizeSecondary = Math.min(sizeSecondary, mFixedRowSizeSecondary);
-        }
-        final int verticalGravity = mGravity & Gravity.VERTICAL_GRAVITY_MASK;
-        final int horizontalGravity = (mFlag & PF_REVERSE_FLOW_MASK) != 0
-                ? Gravity.getAbsoluteGravity(mGravity & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK,
-                View.LAYOUT_DIRECTION_RTL)
-                : mGravity & Gravity.HORIZONTAL_GRAVITY_MASK;
-        if ((mOrientation == HORIZONTAL && verticalGravity == Gravity.TOP)
-                || (mOrientation == VERTICAL && horizontalGravity == Gravity.LEFT)) {
-            // do nothing
-        } else if ((mOrientation == HORIZONTAL && verticalGravity == Gravity.BOTTOM)
-                || (mOrientation == VERTICAL && horizontalGravity == Gravity.RIGHT)) {
-            startSecondary += getRowSizeSecondary(rowIndex) - sizeSecondary;
-        } else if ((mOrientation == HORIZONTAL && verticalGravity == Gravity.CENTER_VERTICAL)
-                || (mOrientation == VERTICAL && horizontalGravity == Gravity.CENTER_HORIZONTAL)) {
-            startSecondary += (getRowSizeSecondary(rowIndex) - sizeSecondary) / 2;
+        if (((LayoutParams) v.getLayoutParams()).mSpanSize == 1) {
+            // For single span item, we cap size within the fixed column size and adjust location
+            // within the column according to gravity.
+            if (mFixedRowSizeSecondary > 0) {
+                sizeSecondary = Math.min(sizeSecondary, mFixedRowSizeSecondary);
+            }
+            final int verticalGravity = mGravity & Gravity.VERTICAL_GRAVITY_MASK;
+            final int horizontalGravity = (mFlag & PF_REVERSE_FLOW_MASK) != 0
+                    ? Gravity.getAbsoluteGravity(
+                            mGravity & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK,
+                            View.LAYOUT_DIRECTION_RTL)
+                    : mGravity & Gravity.HORIZONTAL_GRAVITY_MASK;
+            if ((mOrientation == HORIZONTAL && verticalGravity == Gravity.TOP)
+                    || (mOrientation == VERTICAL && horizontalGravity == Gravity.LEFT)) {
+                // do nothing
+            } else if ((mOrientation == HORIZONTAL && verticalGravity == Gravity.BOTTOM)
+                    || (mOrientation == VERTICAL && horizontalGravity == Gravity.RIGHT)) {
+                startSecondary += getRowSizeSecondary(rowIndex) - sizeSecondary;
+            } else if ((mOrientation == HORIZONTAL && verticalGravity == Gravity.CENTER_VERTICAL)
+                    || (mOrientation == VERTICAL
+                        && horizontalGravity == Gravity.CENTER_HORIZONTAL)) {
+                startSecondary += (getRowSizeSecondary(rowIndex) - sizeSecondary) / 2;
+            }
         }
         int left, top, right, bottom;
         if (mOrientation == HORIZONTAL) {
@@ -2594,7 +2616,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
         int maxEdge, maxViewCenter;
         if (highAvailable) {
-            maxEdge = mGrid.findRowMax(true, sTwoInts);
+            maxEdge = mGrid.findRowMax(sTwoInts);
             View maxChild = findViewByPosition(sTwoInts[1]);
             maxViewCenter = getViewCenter(maxChild);
             final LayoutParams lp = (LayoutParams) maxChild.getLayoutParams();
@@ -2608,7 +2630,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
         int minEdge, minViewCenter;
         if (lowAvailable) {
-            minEdge = mGrid.findRowMin(false, sTwoInts);
+            minEdge = mGrid.findRowMin(sTwoInts);
             View minChild = findViewByPosition(sTwoInts[1]);
             minViewCenter = getViewCenter(minChild);
         } else {
@@ -3668,6 +3690,13 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             mFacetProviderAdapter = (FacetProviderAdapter) newAdapter;
         } else {
             mFacetProviderAdapter = null;
+        }
+        if (newAdapter instanceof FacetProvider) {
+            mSpanSizeLookup = (androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup)
+                    ((FacetProvider) newAdapter).getFacet(
+                            androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup.class);
+        } else {
+            mSpanSizeLookup = null;
         }
         super.onAdapterChanged(oldAdapter, newAdapter);
     }
