@@ -29,7 +29,6 @@ import org.junit.runner.RunWith
 
 @SmallTest
 @RunWith(AndroidJUnit4::class)
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 class MotionSchemeTest {
     @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
@@ -62,6 +61,7 @@ class MotionSchemeTest {
         }
     }
 
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Test
     fun readLocalMotionScheme() {
         lateinit var mainMotionScheme: MotionScheme
