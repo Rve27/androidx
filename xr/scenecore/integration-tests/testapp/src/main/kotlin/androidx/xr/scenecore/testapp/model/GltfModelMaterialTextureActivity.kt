@@ -33,6 +33,8 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.AlphaMode
+import androidx.xr.scenecore.GltfAnimation
+import androidx.xr.scenecore.GltfAnimationStartOptions
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.KhronosPbrMaterial
@@ -175,10 +177,11 @@ class GltfModelMaterialTextureActivity : AppCompatActivity() {
         findViewById<Button>(R.id.gltf_model_button4_3).setOnClickListener {
             val entity = dragonModelEntity
             if (entity != null) {
-                if (entity.animationState == GltfModelEntity.AnimationState.PLAYING) {
-                    entity.stopAnimation()
+                val animation = entity.animations.find { it.name == ANIMATION_NAME }
+                if (animation?.animationState == GltfAnimation.AnimationState.PLAYING) {
+                    animation.stop()
                 } else {
-                    entity.startAnimation(loop = true, animationName = ANIMATION_NAME)
+                    animation?.start(GltfAnimationStartOptions(shouldLoop = true))
                 }
             }
         }
