@@ -83,6 +83,8 @@ public constructor(
         private const val ID = "id"
         private const val TITLE = "title"
         private const val SUBTITLE = "subtitle"
+        private const val EXPLAINER = "explainer"
+        private const val WARNING = "warning"
         private const val ICON = "icon"
         private const val START = "start"
         private const val LENGTH = "length"
@@ -134,6 +136,8 @@ public constructor(
                         val verificationDisplay = JSONObject()
                         verificationDisplay.put(TITLE, display.title)
                         verificationDisplay.putOpt(SUBTITLE, display.subtitle)
+                        verificationDisplay.putOpt(EXPLAINER, display.explainer)
+                        verificationDisplay.putOpt(WARNING, display.warning)
                         verificationDisplay.putOpt(
                             METADATA_DISPLAY_TEXT,
                             display.metadataDisplayText,
