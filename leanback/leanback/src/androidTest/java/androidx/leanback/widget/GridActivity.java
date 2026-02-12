@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.leanback.test.R;
 import androidx.recyclerview.widget.ConcatAdapter;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jspecify.annotations.NonNull;
@@ -35,6 +36,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GridActivity extends Activity {
 
@@ -54,6 +57,8 @@ public class GridActivity extends Activity {
     public static final String EXTRA_CONCAT_ADAPTER = "concatAdapter";
     public static final String EXTRA_ITEMS_FOCUSABLE = "itemsFocusable";
     public static final String EXTRA_STAGGERED = "staggered";
+    public static final String EXTRA_COLUMN_WIDTH = "columnWidth";
+    public static final String EXTRA_SPAN_SIZES = "spanSizes";
     public static final String EXTRA_REQUEST_LAYOUT_ONFOCUS = "requestLayoutOnFocus";
     public static final String EXTRA_REQUEST_FOCUS_ONLAYOUT = "requstFocusOnLayout";
     public static final String EXTRA_CHILD_LAYOUT_ID = "childLayoutId";
@@ -94,6 +99,7 @@ public class GridActivity extends Activity {
     int mNumItems;
     int mChildLayout;
     boolean mStaggered;
+    Map<Integer, Integer> mSpanSizes;
     boolean mRequestLayoutOnFocus;
     boolean mRequestFocusOnLayout;
     boolean mSecondarySizeZero;
@@ -149,6 +155,13 @@ public class GridActivity extends Activity {
         mLayoutId = intent.getIntExtra(EXTRA_LAYOUT_RESOURCE_ID, R.layout.horizontal_grid);
         mChildLayout = intent.getIntExtra(EXTRA_CHILD_LAYOUT_ID, -1);
         mStaggered = intent.getBooleanExtra(EXTRA_STAGGERED, DEFAULT_STAGGERED);
+        int[] spanSizesArray = intent.getIntArrayExtra(EXTRA_SPAN_SIZES);
+        if (spanSizesArray != null) {
+            mSpanSizes = new HashMap<>();
+            for (int i = 0; i <= spanSizesArray.length - 2; i += 2) {
+                mSpanSizes.put(spanSizesArray[i], spanSizesArray[i + 1]);
+            }
+        }
         mRequestLayoutOnFocus = intent.getBooleanExtra(EXTRA_REQUEST_LAYOUT_ONFOCUS,
                 DEFAULT_REQUEST_LAYOUT_ONFOCUS);
         mRequestFocusOnLayout = intent.getBooleanExtra(EXTRA_REQUEST_FOCUS_ONLAYOUT,
@@ -219,6 +232,10 @@ public class GridActivity extends Activity {
         }
 
         View view = createView();
+        if (intent.hasExtra(EXTRA_COLUMN_WIDTH)) {
+            ((VerticalGridView) mGridView).setColumnWidth(
+                    intent.getIntExtra(EXTRA_COLUMN_WIDTH, 0));
+        }
         mGridView.setAdapter(adapter);
         setContentView(view);
 
@@ -367,7 +384,28 @@ public class GridActivity extends Activity {
         }
     }
 
-    class MyAdapter extends RecyclerView.Adapter implements FacetProviderAdapter {
+    class MyAdapter extends RecyclerView.Adapter implements FacetProviderAdapter, FacetProvider {
+
+        GridLayoutManager.SpanSizeLookup mSpanSizeLookup;
+
+        MyAdapter() {
+            if (mSpanSizes != null) {
+                if (mSpanSizes.size() == 0) {
+                    mSpanSizeLookup = new GridLayoutManager.DefaultSpanSizeLookup();
+                } else {
+                    mSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+                        @Override
+                        public int getSpanSize(int position) {
+                            Integer spanSize = mSpanSizes.get(position);
+                            if (spanSize != null) {
+                                return spanSize;
+                            }
+                            return 1;
+                        }
+                    };
+                }
+            }
+        }
 
         @Override
         public int getItemViewType(int position) {
@@ -375,6 +413,16 @@ public class GridActivity extends Activity {
                 return mViewTypeProvider.getViewType(position);
             }
             return 0;
+        }
+
+        @Override
+        public @Nullable Object getFacet(@NonNull Class<?> facetClass) {
+            if (mSpanSizeLookup != null) {
+                if (facetClass.equals(GridLayoutManager.SpanSizeLookup.class)) {
+                    return mSpanSizeLookup;
+                }
+            }
+            return null;
         }
 
         @Override
@@ -524,6 +572,12 @@ public class GridActivity extends Activity {
         if (!mUpdateSize && !mUpdateSizeSecondary) {
             return;
         }
+        boolean multiSpan = false;
+        if (mGridView.getAdapter() instanceof MyAdapter) {
+            androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup spanSizeLookup =
+                    ((MyAdapter) mGridView.getAdapter()).mSpanSizeLookup;
+            multiSpan = spanSizeLookup != null && spanSizeLookup.getSpanSize(position) > 1;
+        }
         ViewGroup.LayoutParams p = view.getLayoutParams();
         if (p == null) {
             p = new ViewGroup.LayoutParams(0, 0);
@@ -531,12 +585,15 @@ public class GridActivity extends Activity {
         if (mOrientation == BaseGridView.HORIZONTAL) {
             p.width = mItemLengths[position]
                     + (mUpdateSize && mRequestLayoutOnFocus && view.hasFocus() ? 1 : 0);
-            p.height = mSecondarySizeZero ? 0
-                    : (mUpdateSizeSecondary && mRequestLayoutOnFocus && view.hasFocus() ? 96 : 80);
+            p.height = multiSpan ? ViewGroup.LayoutParams.MATCH_PARENT :
+                    mSecondarySizeZero ? 0
+                            : (mUpdateSizeSecondary && mRequestLayoutOnFocus && view.hasFocus()
+                                    ? 96 : 80);
         } else {
-            p.width = mSecondarySizeZero ? 0
-                    : (mUpdateSizeSecondary && mRequestLayoutOnFocus && view.hasFocus()
-                            ? 260 : 240);
+            p.width = multiSpan ? ViewGroup.LayoutParams.MATCH_PARENT :
+                    mSecondarySizeZero ? 0
+                            : (mUpdateSizeSecondary && mRequestLayoutOnFocus && view.hasFocus()
+                                    ? 260 : 240);
             p.height = mItemLengths[position] + (mRequestLayoutOnFocus && view.hasFocus() ? 1 : 0);
         }
         view.setLayoutParams(p);
