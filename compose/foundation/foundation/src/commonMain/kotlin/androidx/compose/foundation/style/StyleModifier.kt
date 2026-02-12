@@ -1138,10 +1138,10 @@ internal class StyleInnerNode() : Modifier.Node(), LayoutModifierNode {
         constraints: Constraints,
     ): MeasureResult {
         val resolved = currentLayoutStyle()
-        val start = resolved.contentPaddingStart
-        val end = resolved.contentPaddingEnd
-        val top = resolved.contentPaddingTop
-        val bottom = resolved.contentPaddingBottom
+        val start = resolved.contentPaddingStart + resolved.borderWidth
+        val end = resolved.contentPaddingEnd + resolved.borderWidth
+        val top = resolved.contentPaddingTop + resolved.borderWidth
+        val bottom = resolved.contentPaddingBottom + resolved.borderWidth
 
         val horizontal = (start + end).fastRoundToInt()
         val vertical = (top + bottom).fastRoundToInt()

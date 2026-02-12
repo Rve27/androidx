@@ -177,7 +177,8 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
                 contentPaddingStart != other.contentPaddingStart ||
                     contentPaddingEnd != other.contentPaddingEnd ||
                     contentPaddingTop != other.contentPaddingTop ||
-                    contentPaddingBottom != other.contentPaddingBottom
+                    contentPaddingBottom != other.contentPaddingBottom ||
+                    borderWidth != other.borderWidth
             ) {
                 change = change or InnerLayoutFlag
             }
@@ -630,7 +631,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
 
     // border
     override fun borderWidth(value: Dp) {
-        flags = flags or DrawFlag
+        flags = flags or DrawFlag or InnerLayoutFlag
         val width = value.value * _density
         borderWidth = width
     }
