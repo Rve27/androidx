@@ -151,16 +151,4 @@ object ComposeUiFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isTrackpadGestureHandlingEnabled: Boolean = true
-
-    /**
-     * If enabled, [androidx.compose.ui.graphics.vector.VectorPainter] will use a shared
-     * [GraphicsResourceCache] to reuse [DrawCache] instances across different painters using the
-     * same [androidx.compose.ui.graphics.vector.ImageVector].
-     *
-     * This reduces redundant Texture uploads and improves performance when the same vector is used
-     * multiple times within a composition tree, such as in a LazyColumn.
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isVectorDrawCacheSharingEnabled: Boolean = true
 }
