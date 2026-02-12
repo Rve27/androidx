@@ -1319,12 +1319,10 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
                             }
                             .also {
                                 it.updateAnimation(animation, boundsTransform)
-                                if (SharedTransitionDebug) {
-                                    println(
-                                        "SharedTransition, current state:" +
-                                            " ${boundsTransition.currentState}" +
-                                            ", target: ${boundsTransition.targetState}"
-                                    )
+                                sharedTransitionDebug {
+                                    "current state:" +
+                                        " ${boundsTransition.currentState}" +
+                                        ", target: ${boundsTransition.targetState}"
                                 }
                             }
                     }
@@ -1432,11 +1430,9 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
     }
 
     internal fun onEntryRemoved(sharedElementState: SharedElementEntry) {
-        if (SharedTransitionDebug) {
-            println(
-                "SharedTransition, entry removed, key: ${sharedElementState.sharedElement.key}," +
-                    " state: ${sharedElementState.sharedElement.state}"
-            )
+        sharedTransitionDebug {
+            "entry removed, key: ${sharedElementState.sharedElement.key}," +
+                " state: ${sharedElementState.sharedElement.state}"
         }
         with(sharedElementState.sharedElement) {
             removeEntry(sharedElementState)
@@ -1445,12 +1441,10 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
             if (allEntries.isEmpty()) {
                 scope.coroutineScope.launch {
                     if (allEntries.isEmpty()) {
-                        if (SharedTransitionDebug) {
-                            println(
-                                "SharedTransition, key removed. key =" +
-                                    " ${sharedElementState.sharedElement.key}," +
-                                    " state: ${sharedElementState.sharedElement.state}"
-                            )
+                        sharedTransitionDebug {
+                            "key removed. key =" +
+                                " ${sharedElementState.sharedElement.key}," +
+                                " state: ${sharedElementState.sharedElement.state}"
                         }
                         scope.sharedElements.remove(key)
                     }
