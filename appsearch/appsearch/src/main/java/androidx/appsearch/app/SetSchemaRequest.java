@@ -951,7 +951,7 @@ public final class SetSchemaRequest {
          * incrementally manage multiple account-associated fields within a single schema.
          *
          * @param schemaType The name of the schema type being configured (e.g., "Email").
-         * @param accountPropertyPaths A collection of property paths (e.g., "sender.account") point
+         * @param accountPropertyPaths A Set of property paths (e.g., "sender.account") point
          *                             to the field containing the account identifier.
          * @param autoWipeout If {@code true}, enables automatic account wipeout for the given
          *                    paths. If {@code false}, disables it.
@@ -970,7 +970,7 @@ public final class SetSchemaRequest {
         @FlaggedApi(Flags.FLAG_ENABLE_SCHEMAS_WIPEOUT_ACCOUNT_PROPERTY_PATHS)
         @ExperimentalAppSearchApi
         public @NonNull Builder setSchemaTypeWipeoutAccountPropertyPaths(
-                @NonNull String schemaType, @NonNull Collection<PropertyPath> accountPropertyPaths,
+                @NonNull String schemaType, @NonNull Set<PropertyPath> accountPropertyPaths,
                 boolean autoWipeout) {
             Preconditions.checkNotNull(schemaType);
             Preconditions.checkNotNull(accountPropertyPaths);
@@ -1017,7 +1017,7 @@ public final class SetSchemaRequest {
          *
          * @param documentClass the {@link androidx.appsearch.annotation.Document} annotated class
          *                      of the schema type being configured (e.g., "Email").
-         * @param accountPropertyPaths A collection of property paths (e.g., "sender.account") point
+         * @param accountPropertyPaths A Set of property paths (e.g., "sender.account") point
          *                             to the field containing the account identifier.
          * @param autoWipeOut If {@code true}, enables automatic account wipeout for the given
          *                    paths. If {@code false}, disables it.
@@ -1033,7 +1033,7 @@ public final class SetSchemaRequest {
         @ExperimentalAppSearchApi
         public @NonNull Builder setDocumentClassWipeoutAccountPropertyPaths(
                 @NonNull Class<?> documentClass,
-                @NonNull Collection<PropertyPath> accountPropertyPaths,
+                @NonNull Set<PropertyPath> accountPropertyPaths,
                 boolean autoWipeOut) throws AppSearchException {
             Preconditions.checkNotNull(documentClass);
             resetIfBuilt();
