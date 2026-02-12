@@ -113,7 +113,7 @@ internal class TrackpadScrollingLogic(
 
         pointerEvent.changes.firstOrNull()?.let {
             it.historical.fastForEach { historicalChange ->
-                val delta = -historicalChange.panGestureOffset
+                val delta = -historicalChange.panOffset
                 if (scrollingLogic.canConsumeDelta(delta)) {
                     sent =
                         channel
@@ -127,7 +127,7 @@ internal class TrackpadScrollingLogic(
                             .isSuccess || sent
                 }
             }
-            val delta = -it.panGestureOffset
+            val delta = -it.panOffset
             val isPanEnd = pointerEvent.type == PointerEventType.PanEnd
             if (scrollingLogic.canConsumeDelta(delta) || isPanEnd) {
                 sent =

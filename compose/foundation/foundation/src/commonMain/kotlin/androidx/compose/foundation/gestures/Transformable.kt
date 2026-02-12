@@ -380,9 +380,9 @@ private fun AwaitPointerEventScope.consumePointerEventAsCtrlScrollOrNull(
         with(scrollConfig) { calculateMouseWheelScroll(pointer, size) } +
             if (ComposeFoundationFlags.isTrackpadGestureHandlingEnabled) {
                 (pointer.changes.firstOrNull()?.let {
-                    -it.panGestureOffset +
+                    -it.panOffset +
                         it.historical.fastFold(Offset.Zero) { acc, historicalChange ->
-                            acc - historicalChange.panGestureOffset
+                            acc - historicalChange.panOffset
                         }
                 } ?: Offset.Zero)
             } else {
@@ -409,9 +409,9 @@ private fun AwaitPointerEventScope.consumePointerEventAsPanOrNull(pointer: Point
     }
     val scrollDelta =
         pointer.changes.firstOrNull()?.let {
-            -it.panGestureOffset +
+            -it.panOffset +
                 it.historical.fastFold(Offset.Zero) { acc, historicalChange ->
-                    acc - historicalChange.panGestureOffset
+                    acc - historicalChange.panOffset
                 }
         } ?: Offset.Zero
 
@@ -435,8 +435,8 @@ private fun AwaitPointerEventScope.consumePointerEventAsScaleOrNull(pointer: Poi
     }
     var scaleDelta = 1f
     pointer.changes.fastForEach {
-        scaleDelta *= it.scaleGestureFactor
-        it.historical.fastForEach { scaleDelta *= it.scaleGestureFactor }
+        scaleDelta *= it.scaleFactor
+        it.historical.fastForEach { scaleDelta *= it.scaleFactor }
     }
 
     if (scaleDelta == 1f) {

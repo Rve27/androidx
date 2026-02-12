@@ -152,7 +152,7 @@ private class TrackpadPanInputRecorder : PointerInputModifier {
             if (it.pressed) {
                 fingerVelocityTracker.addPosition(it.uptimeMillis, it.position)
             } else if (event.type == PointerEventType.PanMove) {
-                accumulatedPan += it.panGestureOffset
+                accumulatedPan += it.panOffset
                 panVelocityTracker.addPosition(it.uptimeMillis, accumulatedPan)
             }
         }

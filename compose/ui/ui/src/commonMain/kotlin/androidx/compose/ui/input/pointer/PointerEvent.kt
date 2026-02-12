@@ -308,7 +308,7 @@ value class PointerEventType private constructor(internal val value: Int) {
         /**
          * An intermediate scale move. This can happen, for example, due to a trackpad gesture
          * recognized by the platform. This event indicates that the
-         * [PointerInputChange.scaleGestureFactor]'s [Offset] may be different from 1.
+         * [PointerInputChange.scaleFactor]'s [Offset] may be different from 1.
          */
         val ScaleChange = PointerEventType(8)
 
@@ -328,7 +328,7 @@ value class PointerEventType private constructor(internal val value: Int) {
         /**
          * An intermediate pan move. This can happen, for example, due to a trackpad gesture
          * recognized by the platform. This event indicates that the
-         * [PointerInputChange.panGestureOffset]'s [Offset] may be non-zero.
+         * [PointerInputChange.panOffset]'s [Offset] may be non-zero.
          */
         val PanMove = PointerEventType(11)
 
@@ -408,13 +408,15 @@ value class PointerEventType private constructor(internal val value: Int) {
  * @param type The device type that produced the event, such as [mouse][PointerType.Mouse], or
  *   [touch][PointerType.Touch].
  * @param scrollDelta The amount of scroll wheel movement in the horizontal and vertical directions.
- *   Note that this is not an offset in pixel coordinates. Also consider [panGestureOffset].
- * @param scaleGestureFactor A multiplicative scale factor indicating the amount of scale to perform
- *   as part of this pointer input change. A value of `1f` indicates no scale, a value less than
- *   `1f` indicates a scale down, commonly causing a zoom out, and a value greater than `1f`
- *   indicates a scale up, commonly causing a zoom in.
- * @param panGestureOffset An [Offset] in pixel coordinates indicating an amount of scrolling. Also
- *   consider [scrollDelta].
+ *   Note that this is not an offset in pixel coordinates, but is instead an offset in a platform
+ *   specific mouse wheel tick units. Also consider handling [panOffset], which represents a similar
+ *   action from trackpads.
+ * @param scaleFactor A multiplicative scale factor indicating the amount of scale to perform as
+ *   part of this pointer input change. A value of `1f` indicates no scale, a value less than `1f`
+ *   indicates a scale down, commonly causing a zoom out, and a value greater than `1f` indicates a
+ *   scale up, commonly causing a zoom in.
+ * @param panOffset An [Offset] in pixel coordinates indicating an amount of panning. Also consider
+ *   handling [scrollDelta], which represents a similar action from mouse wheels.
  */
 @Immutable
 class PointerInputChange(
@@ -429,8 +431,8 @@ class PointerInputChange(
     isInitiallyConsumed: Boolean,
     val type: PointerType = PointerType.Touch,
     val scrollDelta: Offset = Offset.Zero,
-    val scaleGestureFactor: Float = 1f,
-    val panGestureOffset: Offset = Offset.Zero,
+    val scaleFactor: Float = 1f,
+    val panOffset: Offset = Offset.Zero,
 ) {
     constructor(
         id: PointerId,
@@ -457,8 +459,8 @@ class PointerInputChange(
         isInitiallyConsumed = isInitiallyConsumed,
         type = type,
         scrollDelta = scrollDelta,
-        scaleGestureFactor = scaleGestureFactor,
-        panGestureOffset = panGestureOffset,
+        scaleFactor = scaleGestureFactor,
+        panOffset = panGestureOffset,
     )
 
     @Deprecated(message = "Maintained for binary compatibility", level = DeprecationLevel.HIDDEN)
@@ -576,8 +578,8 @@ class PointerInputChange(
         isInitiallyConsumed = isInitiallyConsumed,
         type = type,
         scrollDelta = scrollDelta,
-        scaleGestureFactor = scaleGestureFactor,
-        panGestureOffset = panGestureOffset,
+        scaleFactor = scaleGestureFactor,
+        panOffset = panGestureOffset,
     ) {
         _historical = historical
         this.originalEventPosition = originalEventPosition
@@ -672,8 +674,8 @@ class PointerInputChange(
                 type = type,
                 historical = this.historical,
                 scrollDelta = this.scrollDelta,
-                scaleGestureFactor = this.scaleGestureFactor,
-                panGestureOffset = this.panGestureOffset,
+                scaleGestureFactor = this.scaleFactor,
+                panGestureOffset = this.panOffset,
                 originalEventPosition = this.originalEventPosition,
             )
             .also {
@@ -758,8 +760,8 @@ class PointerInputChange(
                 type = type,
                 historical = this.historical,
                 scrollDelta = scrollDelta,
-                scaleGestureFactor = this.scaleGestureFactor,
-                panGestureOffset = this.panGestureOffset,
+                scaleGestureFactor = this.scaleFactor,
+                panGestureOffset = this.panOffset,
                 originalEventPosition = this.originalEventPosition,
             )
             .also {
@@ -802,8 +804,8 @@ class PointerInputChange(
                 type = type,
                 historical = this.historical,
                 scrollDelta = scrollDelta,
-                scaleGestureFactor = this.scaleGestureFactor,
-                panGestureOffset = this.panGestureOffset,
+                scaleGestureFactor = this.scaleFactor,
+                panGestureOffset = this.panOffset,
                 originalEventPosition = this.originalEventPosition,
             )
             .also {
@@ -888,8 +890,8 @@ class PointerInputChange(
                 type = type,
                 historical = historical,
                 scrollDelta = scrollDelta,
-                scaleGestureFactor = this.scaleGestureFactor,
-                panGestureOffset = this.panGestureOffset,
+                scaleGestureFactor = this.scaleFactor,
+                panGestureOffset = this.panOffset,
                 originalEventPosition = this.originalEventPosition,
             )
             .also {
@@ -919,8 +921,8 @@ class PointerInputChange(
         type: PointerType = this.type,
         historical: List<HistoricalChange> = this.historical,
         scrollDelta: Offset = this.scrollDelta,
-        scaleGestureFactor: Float = this.scaleGestureFactor,
-        panGestureOffset: Offset = this.panGestureOffset,
+        scaleGestureFactor: Float = this.scaleFactor,
+        panGestureOffset: Offset = this.panOffset,
     ): PointerInputChange =
         PointerInputChange(
                 id = id,
@@ -959,8 +961,8 @@ class PointerInputChange(
             "type=$type, " +
             "historical=$historical, " +
             "scrollDelta=$scrollDelta, " +
-            "scaleGestureFactor=$scaleGestureFactor, " +
-            "panGestureOffset=$panGestureOffset)"
+            "scaleFactor=$scaleFactor, " +
+            "panOffset=$panOffset)"
     }
 }
 
@@ -973,18 +975,18 @@ class PointerInputChange(
  * @param uptimeMillis The time of the historical pointer event, in milliseconds. In between the
  *   current and previous pointer event times.
  * @param position The [Offset] of the historical pointer event, relative to the containing element.
- * @param scaleGestureFactor A multiplicative scale factor indicating the amount of scale to perform
- *   as part of this pointer input change. A value of `1f` indicates no scale, a value less than
- *   `1f` indicates a scale down, commonly causing a zoom out, and a value greater than `1f`
- *   indicates a scale up, commonly causing a zoom in.
- * @param panGestureOffset An [Offset] in pixel coordinates indicating an amount of scrolling.
+ * @param scaleFactor A multiplicative scale factor indicating the amount of scale to perform as
+ *   part of this pointer input change. A value of `1f` indicates no scale, a value less than `1f`
+ *   indicates a scale down, commonly causing a zoom out, and a value greater than `1f` indicates a
+ *   scale up, commonly causing a zoom in.
+ * @param panOffset An [Offset] in pixel coordinates indicating an amount of scrolling.
  */
 @Immutable
 class HistoricalChange(
     val uptimeMillis: Long,
     val position: Offset,
-    val scaleGestureFactor: Float = 1f,
-    val panGestureOffset: Offset = Offset.Zero,
+    val scaleFactor: Float = 1f,
+    val panOffset: Offset = Offset.Zero,
 ) {
     internal var originalEventPosition: Offset = Offset.Zero
         private set
@@ -996,8 +998,8 @@ class HistoricalChange(
     ) : this(
         uptimeMillis = uptimeMillis,
         position = position,
-        scaleGestureFactor = 1f,
-        panGestureOffset = Offset.Zero,
+        scaleFactor = 1f,
+        panOffset = Offset.Zero,
     )
 
     internal constructor(
@@ -1013,8 +1015,8 @@ class HistoricalChange(
     override fun toString(): String {
         return "HistoricalChange(uptimeMillis=$uptimeMillis, " +
             "position=$position, " +
-            "scaleGestureFactor=$scaleGestureFactor, " +
-            "panGestureOffset=$panGestureOffset)"
+            "scaleFactor=$scaleFactor, " +
+            "panOffset=$panOffset)"
     }
 }
 

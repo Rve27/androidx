@@ -210,8 +210,8 @@ internal actual constructor(
                             type = change.type,
                             activeHover =
                                 this.internalPointerEvent?.activeHoverEvent(change.id) == true,
-                            scaleGestureFactor = change.scaleGestureFactor,
-                            panGestureOffset = change.panGestureOffset,
+                            scaleGestureFactor = change.scaleFactor,
+                            panGestureOffset = change.panOffset,
                         )
                 }
 
