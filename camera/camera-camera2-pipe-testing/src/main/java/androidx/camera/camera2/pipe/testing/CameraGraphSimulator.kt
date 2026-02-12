@@ -216,7 +216,7 @@ internal constructor(
         for (streamId in request.streams) {
             val outputId =
                 if (physicalCameraId == null) {
-                    streams.outputs.single().id
+                    streams[streamId]?.outputs?.single()?.id
                 } else {
                     streams[streamId]?.outputs?.find { it.camera == physicalCameraId }?.id
                 }
