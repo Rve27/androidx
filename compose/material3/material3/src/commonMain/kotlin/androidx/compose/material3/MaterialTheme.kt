@@ -49,7 +49,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * @param typography A set of text styles to be used as this hierarchy's typography system
  * @param content The content inheriting this theme
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MaterialTheme(
     colorScheme: ColorScheme = MaterialTheme.colorScheme,
@@ -86,7 +85,6 @@ fun MaterialTheme(
  * @param shapes A set of corner shapes to be used as this hierarchy's shape system
  * @param typography A set of text styles to be used as this hierarchy's typography system
  */
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun MaterialTheme(
     colorScheme: ColorScheme = MaterialTheme.colorScheme,
@@ -141,7 +139,7 @@ object MaterialTheme {
         @Composable @ReadOnlyComposable get() = LocalShapes.current
 
     /** Retrieves the current [MotionScheme] at the call site's position in the hierarchy. */
-    @ExperimentalMaterial3ExpressiveApi
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     val motionScheme: MotionScheme
         @Composable @ReadOnlyComposable get() = LocalMotionScheme.current
 
@@ -237,5 +235,4 @@ internal const val TextSelectionBackgroundOpacity = 0.4f
 
 /** Use [MaterialTheme.LocalMotionScheme] to access this publicly. */
 @Suppress("CompositionLocalNaming")
-@ExperimentalMaterial3ExpressiveApi
 private val _localMotionScheme = staticCompositionLocalOf { standard() }
