@@ -35,7 +35,7 @@ internal class FrameGraphSessionImpl(
      */
     override fun close() {
         controller3A.reset3A(state3ASnapshot)
+        frameGraphBuffers.flush(cameraGraphSession)
         cameraGraphSession.close()
-        frameGraphBuffers.invalidate()
     }
 }
