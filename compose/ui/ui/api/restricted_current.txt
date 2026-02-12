@@ -163,7 +163,6 @@ package androidx.compose.ui {
     property public boolean isScrollCaptureCenteringEnabled;
     property public boolean isTrackpadGestureHandlingEnabled;
     property public boolean isTraversableDelegatesFixEnabled;
-    property public boolean isVectorDrawCacheSharingEnabled;
     property public boolean isViewFocusFixEnabled;
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
     field public static boolean areWindowInsetsRulersEnabled;
@@ -181,7 +180,6 @@ package androidx.compose.ui {
     field public static boolean isScrollCaptureCenteringEnabled;
     field public static boolean isTrackpadGestureHandlingEnabled;
     field public static boolean isTraversableDelegatesFixEnabled;
-    field public static boolean isVectorDrawCacheSharingEnabled;
     field public static boolean isViewFocusFixEnabled;
   }
 
