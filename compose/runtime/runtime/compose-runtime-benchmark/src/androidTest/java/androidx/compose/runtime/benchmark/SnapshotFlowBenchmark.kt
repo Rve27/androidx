@@ -93,6 +93,7 @@ class SnapshotFlowBenchmark(
                 runWithMeasurementDisabled {
                     testScheduler.advanceUntilIdle()
                     assertEquals(n, count)
+                    Snapshot.notifyObjectsInitialized()
                 }
 
                 stateObjects.forEach {
