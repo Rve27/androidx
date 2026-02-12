@@ -71,8 +71,9 @@ class GltfModelAnimationActivity : AppCompatActivity() {
     private lateinit var speedText: TextView
 
     // UI related to the animation seek to time (in seconds) controlling
-    private lateinit var seekPlayGltfButton: Button
+    private lateinit var seekCurrentTimeText: TextView
     private lateinit var seekPlaySlider: Slider
+    private lateinit var seekEndText: TextView
 
     // Text UI and map about animation state
     private lateinit var animationStateText: TextView
@@ -131,8 +132,9 @@ class GltfModelAnimationActivity : AppCompatActivity() {
         speedText = findViewById(R.id.speed_textview)
         speedSlider = findViewById(R.id.speed_slider)
 
-        seekPlayGltfButton = findViewById(R.id.seek_play)
+        seekCurrentTimeText = findViewById(R.id.seek_current_time_text)
         seekPlaySlider = findViewById(R.id.seek_time_second_slider)
+        seekEndText = findViewById(R.id.seek_end_text)
 
         animationStateText = findViewById(R.id.animation_current_state_text)
         animationList = findViewById(R.id.autoCompleteTextView)
@@ -196,21 +198,25 @@ class GltfModelAnimationActivity : AppCompatActivity() {
             animations[selectedIndexAtAnimationList].resume()
         }
 
-        seekPlayGltfButton.setOnClickListener {
-            if (selectedIndexAtAnimationList < 0 || animations.isEmpty()) {
-                return@setOnClickListener
-            }
+        seekPlaySlider.addOnChangeListener { _, value, fromUser ->
+            seekCurrentTimeText.text = "Start time=$value"
 
-            if (
-                animations[selectedIndexAtAnimationList].animationState ==
-                    GltfAnimation.AnimationState.STOPPED
-            ) {
-                return@setOnClickListener
-            }
+            if (fromUser) {
+                if (selectedIndexAtAnimationList < 0 || animations.isEmpty()) {
+                    return@addOnChangeListener
+                }
 
-            animations[selectedIndexAtAnimationList].seekTo(
-                seekPlaySlider.value.toDouble().seconds.toJavaDuration()
-            )
+                if (
+                    animations[selectedIndexAtAnimationList].animationState ==
+                        GltfAnimation.AnimationState.STOPPED
+                ) {
+                    return@addOnChangeListener
+                }
+
+                animations[selectedIndexAtAnimationList].seekTo(
+                    value.toDouble().seconds.toJavaDuration()
+                )
+            }
         }
 
         speedSlider.addOnChangeListener { _, value, _ ->
@@ -299,6 +305,8 @@ class GltfModelAnimationActivity : AppCompatActivity() {
                 seekPlaySlider.valueTo = animations[position].duration.toMillis() / 1000f
                 seekPlaySlider.stepSize = (seekPlaySlider.valueTo - seekPlaySlider.valueFrom) / 20f
 
+                seekEndText.text = String.format("%.1fs", seekPlaySlider.valueTo)
+
                 speedSlider.value = 1f
             }
 
@@ -361,7 +369,7 @@ class GltfModelAnimationActivity : AppCompatActivity() {
 
         speedSlider.isEnabled = isEnabled
 
-        seekPlayGltfButton.isEnabled = isEnabled
+        seekCurrentTimeText.isEnabled = isEnabled
         seekPlaySlider.isEnabled = isEnabled
     }
 }
