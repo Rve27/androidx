@@ -16,6 +16,7 @@
 
 package androidx.glance.wear
 
+import androidx.annotation.RestrictTo
 import java.util.Objects
 
 /**
@@ -43,5 +44,12 @@ public class WidgetInstanceId(public val namespace: String, public val id: Int) 
 
     public override fun toString(): String {
         return "WidgetInstanceId(namespace=$namespace, instanceId=$id)"
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public companion object {
+        /** The namespace used for widget instances in the carousel. */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public const val WIDGET_CAROUSEL_NAMESPACE: String = "tiles"
     }
 }
