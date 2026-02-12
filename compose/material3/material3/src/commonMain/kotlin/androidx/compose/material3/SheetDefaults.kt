@@ -92,7 +92,6 @@ import kotlin.math.min
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
-// TODO: Samples will be added alongside the Dialog implementation.
 /**
  * [Material Design bottom sheet](https://m3.material.io/components/bottom-sheets/overview)
  *
@@ -118,15 +117,17 @@ import kotlinx.coroutines.launch
  * For a persistent bottom sheet that is structurally integrated into a screen layout, use
  * [BottomSheetScaffold].
  *
- * The following sample shows how the component can be used alongside [ModalBottomSheetDialog].
+ * The following sample shows how the component can be used alongside your UI.
  *
  * @sample androidx.compose.material3.samples.ManualModalBottomSheetSample
  * @param modifier The modifier to be applied to the bottom sheet.
  * @param state The state object managing the sheet's value and offsets.
- * @param gesturesEnabled Whether gestures are enabled.
  * @param onDismissRequest Optional callback invoked when the sheet is swiped to [Hidden].
  * @param maxWidth [Dp] that defines what the maximum width the sheet will take. Pass in
  *   [Dp.Unspecified] for a sheet that spans the entire screen width.
+ * @param gesturesEnabled Whether gestures are enabled.
+ * @param backHandlerEnabled Whether dismissing via back press and predictive back behavior is
+ *   enabled
  * @param dragHandle Optional visual marker to indicate the sheet is draggable.
  * @param contentWindowInsets Window insets to be applied to the content.
  * @param shape The shape of the bottom sheet.
@@ -144,6 +145,7 @@ fun BottomSheet(
     onDismissRequest: () -> Unit = {},
     maxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     gesturesEnabled: Boolean = true,
+    backHandlerEnabled: Boolean = true,
     dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
     contentWindowInsets: @Composable () -> WindowInsets = {
         BottomSheetDefaults.standardWindowInsets
@@ -168,16 +170,14 @@ fun BottomSheet(
         }
     }
 
-    if (state.isVisible) {
-        PredictiveBackHandler { progress ->
-            try {
-                progress.collect { backEvent ->
-                    predictiveBackProgress.snapTo(PredictiveBack.transform(backEvent.progress))
-                }
-                settleToDismiss()
-            } catch (e: CancellationException) {
-                predictiveBackProgress.animateTo(0f)
+    PredictiveBackHandler(enabled = backHandlerEnabled && state.isVisible) { progress ->
+        try {
+            progress.collect { backEvent ->
+                predictiveBackProgress.snapTo(PredictiveBack.transform(backEvent.progress))
             }
+            settleToDismiss()
+        } catch (e: CancellationException) {
+            predictiveBackProgress.animateTo(0f)
         }
     }
     BottomSheetImpl(
