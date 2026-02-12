@@ -258,6 +258,7 @@ public class LayoutComponent extends Component {
                 mComponentModifiers.add((ModifierOperation) op);
             } else if (op instanceof ComponentData) {
                 supportedOperations.add(op);
+                // TODO: remove
                 if (op instanceof TouchListener) {
                     ((TouchListener) op).setComponent(this);
                 }
@@ -277,6 +278,12 @@ public class LayoutComponent extends Component {
             if (op instanceof ComponentValue) {
                 ComponentValue componentValue = (ComponentValue) op;
                 componentValue.setComponentId(getComponentId());
+            }
+            if (op instanceof TouchListener) {
+                ((TouchListener) op).setComponent(this);
+            }
+            if (op instanceof LayoutComputeOperation) {
+                ((LayoutComputeOperation) op).setParent(this);
             }
         }
         mList.add(mComponentModifiers);
@@ -357,8 +364,8 @@ public class LayoutComponent extends Component {
             }
         }
 
-        setWidth(computeModifierDefinedWidth(null));
-        setHeight(computeModifierDefinedHeight(null));
+        setWidth(computeModifierDefinedWidth(null, true));
+        setHeight(computeModifierDefinedHeight(null, true));
     }
 
     @NonNull
@@ -534,6 +541,11 @@ public class LayoutComponent extends Component {
 
     /** Traverse the modifiers to compute indicated dimension */
     public float computeModifierDefinedWidth(@Nullable RemoteContext context) {
+        return computeModifierDefinedWidth(context, false);
+    }
+
+    /** Traverse the modifiers to compute indicated dimension */
+    public float computeModifierDefinedWidth(@Nullable RemoteContext context, boolean isMin) {
         float s = 0f;
         float e = 0f;
         float w = 0f;
@@ -547,6 +559,13 @@ public class LayoutComponent extends Component {
                 if (o.getType() == DimensionModifierOperation.Type.EXACT
                         || o.getType() == DimensionModifierOperation.Type.EXACT_DP) {
                     w = o.getValue();
+                } else if (o.getType() == DimensionModifierOperation.Type.FILL
+                        || o.getType() == DimensionModifierOperation.Type.FILL_PARENT_MAX_WIDTH) {
+                    w = isMin ? 0f : Float.MAX_VALUE;
+                }
+                WidthInModifierOperation widthIn = o.getWidthIn();
+                if (widthIn != null) {
+                    w = Math.max(w, widthIn.getMin());
                 }
                 break;
             }
@@ -582,6 +601,11 @@ public class LayoutComponent extends Component {
 
     /** Traverse the modifiers to compute indicated dimension */
     public float computeModifierDefinedHeight(@Nullable RemoteContext context) {
+        return computeModifierDefinedHeight(context, false);
+    }
+
+    /** Traverse the modifiers to compute indicated dimension */
+    public float computeModifierDefinedHeight(@Nullable RemoteContext context, boolean isMin) {
         float t = 0f;
         float b = 0f;
         float h = 0f;
@@ -595,6 +619,13 @@ public class LayoutComponent extends Component {
                 if (o.getType() == DimensionModifierOperation.Type.EXACT
                         || o.getType() == DimensionModifierOperation.Type.EXACT_DP) {
                     h = o.getValue();
+                } else if (o.getType() == DimensionModifierOperation.Type.FILL
+                        || o.getType() == DimensionModifierOperation.Type.FILL_PARENT_MAX_HEIGHT) {
+                    h = isMin ? 0f : Float.MAX_VALUE;
+                }
+                HeightInModifierOperation heightIn = o.getHeightIn();
+                if (heightIn != null) {
+                    h = Math.max(h, heightIn.getMin());
                 }
                 break;
             }

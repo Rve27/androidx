@@ -174,6 +174,15 @@ public open class RemoteComposeContext {
         mRemoteWriter.box(modifier, horizontal, vertical) { content() }
     }
 
+    public fun fitBox(
+        modifier: RecordingModifier = Modifier,
+        horizontal: Int = BoxLayout.START,
+        vertical: Int = BoxLayout.TOP,
+        content: RemoteComposeContext.() -> Unit,
+    ) {
+        mRemoteWriter.fitBox(modifier, horizontal, vertical) { content() }
+    }
+
     public val Modifier: RecordingModifier
         get() = RecordingModifier()
 
