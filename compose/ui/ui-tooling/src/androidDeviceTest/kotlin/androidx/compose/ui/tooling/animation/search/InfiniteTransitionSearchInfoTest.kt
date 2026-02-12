@@ -78,6 +78,8 @@ class InfiniteTransitionSearchInfoTest {
                 override fun getMaxDurationPerIterationMillis(): Long {
                     return duration
                 }
+
+                override fun requestLayout() {}
             }
         val clock = searchInfo.createClock(animation, clockInfo)
         // Both max duration and max duration per iteration are actual duration of the animation.
