@@ -90,6 +90,7 @@ import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
 import androidx.compose.ui.unit.width
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -503,6 +504,40 @@ class ModalBottomSheetTest {
 
         // Popup should not exist
         rule.onNodeWithTag(sheetTag).assertDoesNotExist()
+    }
+
+    @Test
+    fun modalBottomSheet_doesNotDismissOnBack_whenPropertyFalse() {
+        var dismissCount = 0
+        lateinit var sheetState: SheetState
+
+        rule.setContent {
+            sheetState = rememberModalBottomSheetState()
+            val scope = rememberCoroutineScope()
+
+            // Explicitly set shouldDismissOnBackPress = false
+            ModalBottomSheet(
+                onDismissRequest = { dismissCount++ },
+                sheetState = sheetState,
+                properties = ModalBottomSheetProperties(shouldDismissOnBackPress = false),
+            ) {
+                Box(Modifier.fillMaxSize())
+            }
+
+            // Ensure sheet is expanded to start
+            if (!sheetState.isVisible) {
+                androidx.compose.runtime.LaunchedEffect(Unit) { sheetState.show() }
+            }
+        }
+
+        rule.waitForIdle()
+        assertThat(sheetState.isVisible).isTrue()
+
+        Espresso.pressBackUnconditionally()
+        rule.waitForIdle()
+
+        assertThat(sheetState.isVisible).isTrue()
+        assertThat(dismissCount).isEqualTo(0)
     }
 
     @Test

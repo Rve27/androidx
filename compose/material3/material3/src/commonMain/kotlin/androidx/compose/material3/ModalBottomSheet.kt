@@ -169,6 +169,7 @@ fun ModalBottomSheet(
                 onDismissRequest = onDismissRequest,
                 maxWidth = sheetMaxWidth,
                 gesturesEnabled = sheetGesturesEnabled,
+                backHandlerEnabled = properties.shouldDismissOnBackPress,
                 shape = shape,
                 containerColor = containerColor,
                 contentColor = contentColor,
