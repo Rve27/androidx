@@ -243,13 +243,18 @@ private constructor(
 
         if (anchorablePlanePose != null && anchorablePlane != null) {
             if (moveEvent.moveState == MoveEvent.MOVE_STATE_END) {
-                val planeRotation = anchorablePlanePose.rotation
-                val rotatedPose =
-                    Pose(
-                        moveEventPoseInOxr.translation,
-                        rotateEntityToPlane(moveEventPoseInOxr.rotation, planeRotation),
-                    )
-
+                val rotation =
+                    when (entity) {
+                        is PanelEntity ->
+                            moveEventPoseInOxr.getForwardVectorToUpRotation(anchorablePlanePose)
+                        is GltfModelEntity ->
+                            moveEventPoseInOxr.getUpVectorToUpRotation(anchorablePlanePose)
+                        else ->
+                            throw IllegalArgumentException(
+                                "Movable component can be applied to either a PanelEntity or GltfModelEntity"
+                            )
+                    }
+                val rotatedPose = Pose(moveEventPoseInOxr.translation, rotation)
                 var poseToAnchor: Pose = anchorablePlanePose.inverse.compose(rotatedPose)
                 poseToAnchor =
                     Pose(

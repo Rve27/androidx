@@ -188,10 +188,7 @@ internal class PanelShadowRendererImpl(
             Pose(
                 Vector3(planeToPanel.translation.x, 0f, planeToPanel.translation.z),
                 planeToOpenXr.rotation.times(
-                    PlaneUtils.rotateEntityToPlane(
-                        openXrToProposedPanel.rotation,
-                        openXrtoPlane.rotation,
-                    )
+                    openXrToProposedPanel.getForwardVectorToUpRotation(openXrtoPlane)
                 ),
             )
         val panelInOxr = openXrtoPlane.compose(planeToProjectedPanel)
