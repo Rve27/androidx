@@ -591,7 +591,6 @@ includeProject(":compose:integration-tests:hero:sysui:sysui-macrobenchmark-targe
 includeProject(":compose:integration-tests:macrobenchmark", [BuildType.COMPOSE])
 includeProject(":compose:integration-tests:macrobenchmark-target", [BuildType.COMPOSE])
 includeProject(":compose:integration-tests:material-catalog", [BuildType.COMPOSE])
-includeProject(":compose:integration-tests:hero:hero-common:hero-common-implementation", [BuildType.COMPOSE])
 includeProject(":compose:integration-tests:hero:hero-common:hero-common-macrobenchmark", [BuildType.COMPOSE])
 includeProject(":compose:lint", [BuildType.COMPOSE])
 includeProject(":compose:lint:internal-lint-checks", [BuildType.COMPOSE])
