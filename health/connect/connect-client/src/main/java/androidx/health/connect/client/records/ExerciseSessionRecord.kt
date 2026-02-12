@@ -15,11 +15,9 @@
  */
 package androidx.health.connect.client.records
 
-import android.os.Build
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
 import androidx.health.connect.client.aggregate.AggregateMetric
-import androidx.health.connect.client.impl.platform.records.toPlatformRecord
 import androidx.health.connect.client.records.ExerciseSegment.Companion.isSegmentTypeCompatibleWithSessionType
 import androidx.health.connect.client.records.metadata.Metadata
 import java.time.Duration
@@ -108,58 +106,51 @@ internal constructor(
     )
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            this.toPlatformRecord()
-        } else {
-            require(startTime.isBefore(endTime)) { "startTime must be before endTime." }
-            if (segments.isNotEmpty()) {
-                var sortedSegments =
-                    segments.sortedWith { a, b -> a.startTime.compareTo(b.startTime) }
-                for (i in 0 until sortedSegments.lastIndex) {
-                    require(!sortedSegments[i].endTime.isAfter(sortedSegments[i + 1].startTime)) {
-                        "segments can not overlap."
-                    }
-                }
-                // check all segments are within parent session duration
-                require(!sortedSegments.first().startTime.isBefore(startTime)) {
-                    "segments can not be out of parent time range."
-                }
-                require(!sortedSegments.last().endTime.isAfter(endTime)) {
-                    "segments can not be out of parent time range."
-                }
-                for (segment in sortedSegments) {
-                    require(
-                        isSegmentTypeCompatibleWithSessionType(segment.segmentType, exerciseType)
-                    ) {
-                        "segmentType and sessionType is not compatible."
-                    }
+        require(startTime.isBefore(endTime)) { "startTime must be before endTime." }
+        if (segments.isNotEmpty()) {
+            var sortedSegments = segments.sortedWith { a, b -> a.startTime.compareTo(b.startTime) }
+            for (i in 0 until sortedSegments.lastIndex) {
+                require(!sortedSegments[i].endTime.isAfter(sortedSegments[i + 1].startTime)) {
+                    "segments can not overlap."
                 }
             }
-            if (laps.isNotEmpty()) {
-                val sortedLaps = laps.sortedWith { a, b -> a.startTime.compareTo(b.startTime) }
-                for (i in 0 until sortedLaps.lastIndex) {
-                    require(!sortedLaps[i].endTime.isAfter(sortedLaps[i + 1].startTime)) {
-                        "laps can not overlap."
-                    }
-                }
-                // check all laps are within parent session duration
-                require(!sortedLaps.first().startTime.isBefore(startTime)) {
-                    "laps can not be out of parent time range."
-                }
-                require(!sortedLaps.last().endTime.isAfter(endTime)) {
-                    "laps can not be out of parent time range."
+            // check all segments are within parent session duration
+            require(!sortedSegments.first().startTime.isBefore(startTime)) {
+                "segments can not be out of parent time range."
+            }
+            require(!sortedSegments.last().endTime.isAfter(endTime)) {
+                "segments can not be out of parent time range."
+            }
+            for (segment in sortedSegments) {
+                require(isSegmentTypeCompatibleWithSessionType(segment.segmentType, exerciseType)) {
+                    "segmentType and sessionType is not compatible."
                 }
             }
-            if (
-                exerciseRouteResult is ExerciseRouteResult.Data &&
-                    exerciseRouteResult.exerciseRoute.route.isNotEmpty()
-            ) {
-                val route = exerciseRouteResult.exerciseRoute.route
-                val minTime = route.minBy { it.time }.time
-                val maxTime = route.maxBy { it.time }.time
-                require(!minTime.isBefore(startTime) && maxTime.isBefore(endTime)) {
-                    "route can not be out of parent time range."
+        }
+        if (laps.isNotEmpty()) {
+            val sortedLaps = laps.sortedWith { a, b -> a.startTime.compareTo(b.startTime) }
+            for (i in 0 until sortedLaps.lastIndex) {
+                require(!sortedLaps[i].endTime.isAfter(sortedLaps[i + 1].startTime)) {
+                    "laps can not overlap."
                 }
+            }
+            // check all laps are within parent session duration
+            require(!sortedLaps.first().startTime.isBefore(startTime)) {
+                "laps can not be out of parent time range."
+            }
+            require(!sortedLaps.last().endTime.isAfter(endTime)) {
+                "laps can not be out of parent time range."
+            }
+        }
+        if (
+            exerciseRouteResult is ExerciseRouteResult.Data &&
+                exerciseRouteResult.exerciseRoute.route.isNotEmpty()
+        ) {
+            val route = exerciseRouteResult.exerciseRoute.route
+            val minTime = route.minBy { it.time }.time
+            val maxTime = route.maxBy { it.time }.time
+            require(!minTime.isBefore(startTime) && maxTime.isBefore(endTime)) {
+                "route can not be out of parent time range."
             }
         }
     }

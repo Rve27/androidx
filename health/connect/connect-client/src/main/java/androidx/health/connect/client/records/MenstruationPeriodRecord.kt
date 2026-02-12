@@ -16,8 +16,6 @@
 
 package androidx.health.connect.client.records
 
-import android.os.Build
-import androidx.health.connect.client.impl.platform.records.toPlatformRecord
 import androidx.health.connect.client.records.metadata.Metadata
 import java.time.Duration
 import java.time.Instant
@@ -33,14 +31,10 @@ class MenstruationPeriodRecord(
 ) : IntervalRecord {
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            this.toPlatformRecord()
-        } else {
-            require(startTime.isBefore(endTime)) { "startTime must be before endTime." }
+        require(startTime.isBefore(endTime)) { "startTime must be before endTime." }
 
-            require(Duration.between(startTime, endTime) <= MAX_DURATION) {
-                "Period must not exceed 31 days"
-            }
+        require(Duration.between(startTime, endTime) <= MAX_DURATION) {
+            "Period must not exceed 31 days"
         }
     }
 
