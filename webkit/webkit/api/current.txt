@@ -75,7 +75,7 @@ package androidx.webkit {
 
   @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public interface OutcomeReceiverCompat<T, E extends java.lang.Throwable> {
     method public default void onError(E);
-    method public void onResult(T!);
+    method public void onResult(T);
   }
 
   @SuppressCompatibility @androidx.webkit.WebNavigationClient.ExperimentalNavigationCallback public interface Page {

@@ -2782,7 +2782,7 @@ package androidx.compose.ui.layout {
 
   public interface BeyondBoundsLayout {
     method @KotlinOnly public <T> T? layout(androidx.compose.ui.layout.BeyondBoundsLayout.LayoutDirection direction, kotlin.jvm.functions.Function1<androidx.compose.ui.layout.BeyondBoundsLayout.BeyondBoundsScope,T?> block);
-    method @BytecodeOnly public <T> T? layout-o7g1Pn8(int, kotlin.jvm.functions.Function1<? super androidx.compose.ui.layout.BeyondBoundsLayout.BeyondBoundsScope!,? extends T!>);
+    method @BytecodeOnly public <T> T? layout-o7g1Pn8(int, kotlin.jvm.functions.Function1<? super androidx.compose.ui.layout.BeyondBoundsLayout.BeyondBoundsScope!,? extends T>);
   }
 
   public static interface BeyondBoundsLayout.BeyondBoundsScope {
@@ -3406,7 +3406,7 @@ package androidx.compose.ui.layout {
     method public boolean retainAll(kotlin.jvm.functions.Function1<java.lang.Object?,java.lang.Boolean> predicate);
     method @BytecodeOnly public int size();
     method @BytecodeOnly public Object![]! toArray();
-    method @BytecodeOnly public <T> T![]! toArray(T![]!);
+    method @BytecodeOnly public <T> T[]! toArray(T[]!);
     method public void trimToSize(int maxSlotsToRetainForReuse);
     property @kotlin.PublishedApi internal androidx.collection.MutableOrderedScatterSet<java.lang.Object?> set;
     property public int size;
@@ -3950,8 +3950,8 @@ package androidx.compose.ui.platform {
 
   public final class AndroidUiFrameClock implements androidx.compose.runtime.MonotonicFrameClock {
     ctor public AndroidUiFrameClock(android.view.Choreographer choreographer);
-    method @BytecodeOnly public <R> R! fold(R!, kotlin.jvm.functions.Function2<? super R!,? super kotlin.coroutines.CoroutineContext.Element!,? extends R!>);
-    method @BytecodeOnly public <E extends kotlin.coroutines.CoroutineContext.Element> E? get(kotlin.coroutines.CoroutineContext.Key<E!>);
+    method @BytecodeOnly public <R> R fold(R, kotlin.jvm.functions.Function2<? super R,? super kotlin.coroutines.CoroutineContext.Element!,? extends R>);
+    method @BytecodeOnly public <E extends kotlin.coroutines.CoroutineContext.Element> E? get(kotlin.coroutines.CoroutineContext.Key<E>);
     method @InaccessibleFromKotlin public android.view.Choreographer getChoreographer();
     method @BytecodeOnly public kotlin.coroutines.CoroutineContext minusKey(kotlin.coroutines.CoroutineContext.Key<? extends java.lang.Object!>);
     method @BytecodeOnly public kotlin.coroutines.CoroutineContext plus(kotlin.coroutines.CoroutineContext);
@@ -4164,7 +4164,7 @@ package androidx.compose.ui.platform {
   }
 
   public final class JvmActuals_jvmKt {
-    method @BytecodeOnly @Deprecated @kotlin.PublishedApi internal static <R> R! synchronized(Object!, kotlin.jvm.functions.Function0<? extends R!>!);
+    method @BytecodeOnly @Deprecated @kotlin.PublishedApi internal static <R> R synchronized(Object!, kotlin.jvm.functions.Function0<? extends R>!);
   }
 
   public final class NestedScrollInteropConnectionKt {
@@ -5034,8 +5034,8 @@ package androidx.compose.ui.text {
 package androidx.compose.ui.viewinterop {
 
   public final class AndroidView_androidKt {
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.ui.UiComposable public static <T extends android.view.View> void AndroidView(kotlin.jvm.functions.Function1<? super android.content.Context!,? extends T!>, androidx.compose.ui.Modifier?, kotlin.jvm.functions.Function1<? super T!,kotlin.Unit!>?, androidx.compose.runtime.Composer?, int, int);
-    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.ui.UiComposable public static <T extends android.view.View> void AndroidView(kotlin.jvm.functions.Function1<? super android.content.Context!,? extends T!>, androidx.compose.ui.Modifier?, kotlin.jvm.functions.Function1<? super T!,kotlin.Unit!>?, kotlin.jvm.functions.Function1<? super T!,kotlin.Unit!>?, kotlin.jvm.functions.Function1<? super T!,kotlin.Unit!>?, androidx.compose.runtime.Composer?, int, int);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.ui.UiComposable public static <T extends android.view.View> void AndroidView(kotlin.jvm.functions.Function1<? super android.content.Context!,? extends T>, androidx.compose.ui.Modifier?, kotlin.jvm.functions.Function1<? super T,kotlin.Unit!>?, androidx.compose.runtime.Composer?, int, int);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.ui.UiComposable public static <T extends android.view.View> void AndroidView(kotlin.jvm.functions.Function1<? super android.content.Context!,? extends T>, androidx.compose.ui.Modifier?, kotlin.jvm.functions.Function1<? super T,kotlin.Unit!>?, kotlin.jvm.functions.Function1<? super T,kotlin.Unit!>?, kotlin.jvm.functions.Function1<? super T,kotlin.Unit!>?, androidx.compose.runtime.Composer?, int, int);
     method @KotlinOnly @androidx.compose.runtime.Composable @androidx.compose.ui.UiComposable public static <T extends android.view.View> void AndroidView(kotlin.jvm.functions.Function1<android.content.Context,T> factory, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function1<T,kotlin.Unit> update);
     method @KotlinOnly @androidx.compose.runtime.Composable @androidx.compose.ui.UiComposable public static <T extends android.view.View> void AndroidView(kotlin.jvm.functions.Function1<android.content.Context,T> factory, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function1<T,kotlin.Unit>? onReset, optional kotlin.jvm.functions.Function1<T,kotlin.Unit> onRelease, optional kotlin.jvm.functions.Function1<T,kotlin.Unit> update);
     method @InaccessibleFromKotlin public static kotlin.jvm.functions.Function1<android.view.View,kotlin.Unit> getNoOpUpdate();
