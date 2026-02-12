@@ -19,4 +19,6 @@ package androidx.compose.ui.tooling.animation
 internal val NoopClockInfo =
     object : ClockInfo {
         override fun getMaxDurationPerIterationMillis() = 0L
+
+        override fun requestLayout() {}
     }

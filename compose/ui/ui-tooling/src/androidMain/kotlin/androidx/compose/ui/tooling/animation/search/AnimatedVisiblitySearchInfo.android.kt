@@ -57,6 +57,9 @@ internal class AnimatedVisibilitySearchInfo(val transition: Transition<Boolean>)
         animation: AnimatedVisibilityComposeAnimation,
         clockInfo: ClockInfo,
     ): AnimatedVisibilityClock {
-        return AnimatedVisibilityClock(animation)
+        clockInfo.requestLayout()
+        val clock = AnimatedVisibilityClock(animation)
+        clock.setClockTime(0L)
+        return clock
     }
 }

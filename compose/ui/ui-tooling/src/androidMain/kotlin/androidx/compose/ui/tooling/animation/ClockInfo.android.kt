@@ -26,4 +26,7 @@ internal interface ClockInfo {
      * example rememberInfiniteTransition is repeatable with multiple iterations.
      */
     fun getMaxDurationPerIterationMillis(): Long
+
+    /** Schedule a layout pass of the view tree. */
+    fun requestLayout()
 }
