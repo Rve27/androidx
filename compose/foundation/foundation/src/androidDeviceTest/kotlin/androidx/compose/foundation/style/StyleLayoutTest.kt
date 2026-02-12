@@ -188,6 +188,20 @@ class StyleLayoutTest {
             .assertHeightIsEqualTo(50.dp + 10.dp + 20.dp)
     }
 
+    @Test // 483067194
+    fun test_border_width_as_additional_padding() {
+        rule
+            .onParentWith(
+                parent = {
+                    border(10.dp, Color.Red)
+                    contentPadding(5.dp)
+                },
+                child = { size(50.dp) },
+            )
+            .assertWidthIsEqualTo(50.dp + 10.dp + 10.dp + 5.dp + 5.dp)
+            .assertHeightIsEqualTo(50.dp + 10.dp + 10.dp + 5.dp + 5.dp)
+    }
+
     @Test
     fun testPadding_horizontal_vertical() {
         rule
