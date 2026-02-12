@@ -39,7 +39,7 @@ internal constructor(
          * reconstruct the class instance back from the bundle returned here.
          */
         @JvmStatic
-        fun asBundle(ex: ImportCredentialsException): Bundle {
+        internal fun toBundle(ex: ImportCredentialsException): Bundle {
             val bundle = Bundle()
             bundle.putString(EXTRA_IMPORT_CREDENTIALS_EXCEPTION_TYPE, ex.type)
             ex.errorMessage?.let {
@@ -49,16 +49,16 @@ internal constructor(
         }
 
         /**
-         * Helper method to convert a [Bundle] retrieved through [asBundle], back to an instance of
+         * Helper method to convert a [Bundle] retrieved through [toBundle], back to an instance of
          * [ImportCredentialsException].
          *
          * Throws [IllegalArgumentException] if the conversion fails. This means that the given
          * [bundle] does not contain a `ImportCredentialsException`. The bundle should be
-         * constructed and retrieved from [asBundle] itself and never be created from scratch to
+         * constructed and retrieved from [toBundle] itself and never be created from scratch to
          * avoid the failure.
          */
         @JvmStatic
-        fun fromBundle(bundle: Bundle): ImportCredentialsException {
+        internal fun fromBundle(bundle: Bundle): ImportCredentialsException {
             val type =
                 bundle.getString(EXTRA_IMPORT_CREDENTIALS_EXCEPTION_TYPE)
                     ?: throw IllegalArgumentException("Bundle was missing exception type.")
