@@ -30,7 +30,6 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.EdgeEffect;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.CoreDocument;
@@ -327,7 +326,7 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
      *
      * @return array of names or null
      */
-    public  @NonNull ArrayList<ColorTheme> getThemedColors() {
+    public @NonNull ArrayList<ColorTheme> getThemedColors() {
         return mDocument.getThemedColors();
     }
 
@@ -928,7 +927,8 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
     }
 
     private float getDefaultTextSize() {
-        return new TextView(getContext()).getTextSize();
+        float density = getContext().getResources().getDisplayMetrics().density;
+        return 14f * density * getContext().getResources().getConfiguration().fontScale;
     }
 
     /**

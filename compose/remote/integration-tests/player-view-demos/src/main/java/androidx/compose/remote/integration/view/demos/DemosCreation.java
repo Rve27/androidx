@@ -49,6 +49,7 @@ import androidx.compose.remote.integration.view.demos.examples.MoonPhasesKt;
 import androidx.compose.remote.integration.view.demos.examples.PieChartKt;
 import androidx.compose.remote.integration.view.demos.examples.PlotWaveKt;
 import androidx.compose.remote.integration.view.demos.examples.PressureGaugeKt;
+import androidx.compose.remote.integration.view.demos.examples.RCPlayerInfoKt;
 import androidx.compose.remote.integration.view.demos.examples.ServerSideKt;
 import androidx.compose.remote.integration.view.demos.examples.ShaderCalendarKt;
 import androidx.compose.remote.integration.view.demos.examples.TextKt;
@@ -67,6 +68,7 @@ public abstract class DemosCreation {
      */
     public static @NonNull ArrayList<RCDoc> getDemos(@NonNull Activity activity) {
         return new ArrayList<>(Arrays.asList(
+                getp("0/0/PlayerInfo", RCPlayerInfoKt::info),
                 getp("0/A/PressureGauge", PressureGaugeKt::demoPressureGauge),
                 getp("0/og/serverClock", ServerSideKt::serverClock),
                 getp("0/A/demoGraphs1", DemoGraphsKt::demoGraphs),
