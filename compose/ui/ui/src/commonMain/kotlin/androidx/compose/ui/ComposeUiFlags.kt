@@ -119,14 +119,6 @@ object ComposeUiFlags {
     var isGraphicsLayerShapeSemanticsEnabled: Boolean = true
 
     /**
-     * Enable fix to scroll target rect to the center when performing scroll capture, thus generally
-     * avoiding floating content at the top and bottom of the UI.
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isScrollCaptureCenteringEnabled: Boolean = true
-
-    /**
      * Enables a fix where [TraversableNode] traversal method [findNearestAncestor] will take into
      * consideration any delegates that might also be traversable.
      */
