@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.integration.hero.pokedex.macrobenchmark
+package androidx.compose.integration.hero.pokedex.macrobenchmark.internal
 
 import androidx.test.uiautomator.By.res
 import androidx.test.uiautomator.BySelector
