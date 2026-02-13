@@ -3432,7 +3432,25 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             // Add focusables of neighbor depending on the focus search direction.
             final int focusedRow = mGrid != null && immediateFocusedChild != null
                     ? mGrid.getLocation(focusedPos).mRow : NO_POSITION;
+
+            // We will treat spans differently for searching in primary direction. Instead of search
+            // item in the same row, we search the item in the next span group.
+            // Imagine we have this grid with spans.
+            //   Card1  Card2
+            //   Header(not_focusable)
+            //   Card3  Card4 Card5
+            // When search PRE_ITEM from Card5,  we will skip the not focusable "Header" span group,
+            // and add Card1 and Card2 into focusables.
+            final StandardGrid focusSearchInNextSpanGroup =
+                    (movement == NEXT_ITEM || movement == PREV_ITEM)
+                            && mGrid.mSearchFocusInNextSpanGroup
+                            ? (StandardGrid) mGrid : null;
+            final int focusSpanGroup = focusSearchInNextSpanGroup != null && focusedPos > 0
+                    ? focusSearchInNextSpanGroup.getSpanGroupIndex(focusedPos) : -1;
+            int focusSpanGroupHasfocusable = -1;
+
             final int focusableCount = views.size();
+
             int inc = movement == NEXT_ITEM || movement == NEXT_ROW ? 1 : -1;
             int loop_end = inc > 0 ? getChildCount() - 1 : 0;
             int loop_start;
@@ -3460,7 +3478,24 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                 if (loc == null) {
                     continue;
                 }
-                if (movement == NEXT_ITEM) {
+                if (focusSearchInNextSpanGroup != null) {
+                    // Search any focusable items in next span group.
+                    int spanGroup = focusSearchInNextSpanGroup.getSpanGroupIndex(position);
+                    if (movement == NEXT_ITEM
+                            ? spanGroup > focusSpanGroup : spanGroup < focusSpanGroup) {
+                        if (focusSpanGroupHasfocusable >= 0
+                                && focusSpanGroupHasfocusable != spanGroup) {
+                            // We have a new span group than current focusSpanGroupHasfocusable
+                            if (views.size() > focusableCount) {
+                                // If the current focusSpanGroupHasfocusable already has focusable
+                                // views, we can stop search.
+                                break;
+                            }
+                        }
+                        focusSpanGroupHasfocusable = spanGroup;
+                        child.addFocusables(views, direction, focusableMode);
+                    }
+                } else if (movement == NEXT_ITEM) {
                     // Add first focusable item on the same row
                     if (loc.mRow == focusedRow && position > focusedPos) {
                         child.addFocusables(views, direction, focusableMode);
