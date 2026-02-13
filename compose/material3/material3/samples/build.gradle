@@ -64,10 +64,3 @@ android {
     namespace = "androidx.compose.material3.samples"
 }
 
-tasks.withType(KotlinCompile).configureEach {
-    def dirToDelete = new File(project.buildDir, "kotlin/${it.name}/cacheable")
-    it.doFirst {
-        dirToDelete.deleteDir()
-    }
-}
-
