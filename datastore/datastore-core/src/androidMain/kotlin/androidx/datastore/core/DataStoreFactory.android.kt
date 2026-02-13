@@ -132,6 +132,8 @@ public actual object DataStoreFactory {
      * @return a new DataStore instance with the provided configuration.
      */
     @JvmOverloads
+    // TODO(b/486189894): When androidx.tracing becomes available in all target platforms
+    //  supported by DataStore, this function can be revised and moved to common.
     public fun <T> createWithTracing(
         storage: Storage<T>,
         tracer: Tracer,
