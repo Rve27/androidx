@@ -52,6 +52,7 @@ import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -61,6 +62,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import org.hamcrest.CoreMatchers.not
 import org.junit.After
@@ -312,6 +315,81 @@ class EditablePdfViewerFragmentTests {
         }
     }
 
+    @Test
+    fun test_annotationToolbarHidden_onSearchActive() {
+        if (!isRequiredSdkExtensionAvailable()) return
+
+        loadDocumentAndSetupFragment()
+        enterEditMode()
+
+        // assert annotation toolbar is visible in edit mode
+        onView(withId(R.id.annotationToolbar)).check(matches(isDisplayed()))
+        performDragAndDrop(
+            toolbarId = R.id.annotationToolbar,
+            to = ToolbarViewActions.DragTarget.LEFT,
+        )
+        onIdle()
+
+        // Enable search on fragment
+        scenario.onFragment { fragment -> fragment.isTextSearchActive = true }
+
+        // assert annotation toolbar is hidden when search is initiated
+        onView(withId(R.id.annotationToolbar)).check(matches(not(isDisplayed())))
+
+        // disable search on fragment
+        scenario.onFragment { fragment -> fragment.isTextSearchActive = false }
+
+        // assert toolbar is shown again at the previous position
+        onView(withId(R.id.annotationToolbar)).check(matches(isDisplayed()))
+        scenario.onFragment { fragment ->
+            assertEquals(DOCK_STATE_START, fragment.annotationToolbar.dockState)
+        }
+    }
+
+    @Test
+    fun test_annotationInteractionDisabled_onSearchActive() {
+        if (!isRequiredSdkExtensionAvailable()) return
+
+        loadDocumentAndSetupFragment()
+        enterEditMode()
+
+        var firstVisiblePage: Int
+        var pdfView: PdfView? = null
+
+        // Enable search on fragment
+        scenario.onFragment { fragment ->
+            fragment.isTextSearchActive = true
+            pdfView = fragment.getPdfViewInstance()
+        }
+        requireNotNull(pdfView)
+        // extract first visible page initially
+        firstVisiblePage = pdfView.firstVisiblePage
+
+        // Swipe up to verify the PDF scrolls; ink interaction should be disabled during search
+        onView(isRoot()).perform(swipeUp())
+        // extract first visible page after swipe
+        val firstVisiblePageAfterSwipe = pdfView.firstVisiblePage
+
+        assertNotEquals(firstVisiblePage, firstVisiblePageAfterSwipe)
+    }
+
+    @Test
+    fun test_annotationToolbar_isHidden_forFormFilling() {
+        if (!isRequiredSdkExtensionAvailable()) return
+
+        loadDocumentAndSetupFragment(file = FORM_WITH_CHECKBOX_PDF)
+
+        // Click on a form widget to start form filling journey
+        onView(withId(PdfFragmentR.id.pdfContentLayout))
+            .perform(clickOnPdfPoint(PdfPoint(0, PointF(145f, 80f))))
+
+        scenario.onFragment { fragment -> fragment.pdfFormFillingIdlingResource.increment() }
+        onIdle()
+
+        // assert annotation toolbar is hidden
+        onView(withId(R.id.annotationToolbar)).check(matches(not(isDisplayed())))
+    }
+
     private fun longClickAtCenter() {
         onView(isRoot())
             .perform(
@@ -332,6 +410,7 @@ class EditablePdfViewerFragmentTests {
     companion object {
         private const val TEST_DOCUMENT_FILE = "sample.pdf"
         private const val FORM_PDF = "text_form.pdf"
+        private const val FORM_WITH_CHECKBOX_PDF = "sample_form.pdf"
         private const val REQUIRED_EXTENSION_VERSION = 18
 
         fun isRequiredSdkExtensionAvailable(): Boolean {
