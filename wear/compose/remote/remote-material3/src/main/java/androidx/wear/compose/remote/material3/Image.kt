@@ -167,7 +167,7 @@ private fun FallbackAvatar(
 @SuppressLint("RestrictedApiAndroidX")
 private fun BackgroundOverlay(modifier: RemoteModifier, overlayColor: RemoteColor) {
     RemoteCanvas(modifier = modifier.clip(ImageDefaults.backgroundShape())) {
-        val cornerRadius = RemoteDp(ImageDefaults.BACKGROUND_CORNER_RADIUS_DP.value.rf).toPx()
+        val cornerRadius = ImageDefaults.BACKGROUND_CORNER_RADIUS_DP.asRdp().toPx()
         drawRoundRect(
             paint = RemotePaint().apply { remoteColor = overlayColor },
             cornerRadius = RemoteOffset(cornerRadius, cornerRadius),
