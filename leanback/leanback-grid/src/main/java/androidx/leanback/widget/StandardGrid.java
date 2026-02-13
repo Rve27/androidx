@@ -282,7 +282,7 @@ class StandardGrid extends Grid {
 
         while (index < count) {
             final int groupIndex = getSpanGroupIndex(index);
-            final int prevGroupIndex = (index > mFirstVisibleIndex)
+            final int prevGroupIndex = (index > mFirstVisibleIndex && index > 0)
                     ? getSpanGroupIndex(index - 1) : -1;
             int edge;
 
