@@ -19,9 +19,9 @@ package androidx.navigation
 import androidx.kruth.assertThat
 import androidx.kruth.assertWithMessage
 import androidx.navigation.testing.TestNavigatorState
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
+import kotlinx.coroutines.Dispatchers
 
 @IgnoreAndroidHostTestTarget
 class NavigatorProviderTest {
@@ -49,10 +49,9 @@ class NavigatorProviderTest {
         assertThat(provider.getNavigator<EmptyNavigator>(EmptyNavigator.NAME)).isEqualTo(navigator)
     }
 
-    @Ignore // b/479842725
     @Test
     fun addExistingNavigatorDoesntReplace() {
-        val navigatorState = TestNavigatorState()
+        val navigatorState = TestNavigatorState(Dispatchers.Unconfined)
         val provider = NavigatorProvider()
         val navigator = EmptyNavigator()
 
