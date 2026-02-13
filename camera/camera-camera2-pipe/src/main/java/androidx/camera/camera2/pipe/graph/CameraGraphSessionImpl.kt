@@ -44,6 +44,11 @@ internal class CameraGraphSessionImpl(
     private val listeners: CameraGraphRequestListenersImpl,
 ) : CameraGraph.Session {
     private val debugId = cameraGraphSessionIds.incrementAndGet()
+    override var repeatingRequest: Request?
+        get() = graphProcessor.repeatingRequest
+        set(request) {
+            graphProcessor.repeatingRequest = request
+        }
 
     override fun submit(request: Request) {
         check(!token.released) { "Cannot call submit on $this after close." }
