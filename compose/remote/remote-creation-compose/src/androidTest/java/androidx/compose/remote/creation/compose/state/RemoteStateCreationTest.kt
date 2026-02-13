@@ -224,13 +224,13 @@ class RemoteStateCreationTest {
     fun creation_createNamedRemoteX_isStandardized() = runTest {
         remoteComposeTestRule.captureDocument(context) {
             val state = LocalRemoteComposeCreationState.current
-            RemoteInt.createNamedRemoteInt("i", initialValue = 1).writeToDocument(state)
-            RemoteFloat.createNamedRemoteFloat("f", initialValue = 1f).writeToDocument(state)
-            RemoteLong.createNamedRemoteLong("l", initialValue = 1L).writeToDocument(state)
-            RemoteBoolean.createNamedRemoteBoolean("b", initialValue = true).writeToDocument(state)
-            RemoteString.createNamedRemoteString("s", initialValue = "h").writeToDocument(state)
-            RemoteColor.createNamedRemoteColor("c", initialValue = Color.Red).writeToDocument(state)
-            RemoteDp.createNamedRemoteDp("d", initialValue = 1.dp).writeToDocument(state)
+            RemoteInt.createNamedRemoteInt("i", defaultValue = 1).writeToDocument(state)
+            RemoteFloat.createNamedRemoteFloat("f", defaultValue = 1f).writeToDocument(state)
+            RemoteLong.createNamedRemoteLong("l", defaultValue = 1L).writeToDocument(state)
+            RemoteBoolean.createNamedRemoteBoolean("b", defaultValue = true).writeToDocument(state)
+            RemoteString.createNamedRemoteString("s", defaultValue = "h").writeToDocument(state)
+            RemoteColor.createNamedRemoteColor("c", defaultValue = Color.Red).writeToDocument(state)
+            RemoteDp.createNamedRemoteDp("d", defaultValue = 1.dp).writeToDocument(state)
         }
     }
 

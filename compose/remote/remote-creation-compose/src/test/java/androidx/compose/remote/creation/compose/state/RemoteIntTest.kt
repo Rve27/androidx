@@ -112,8 +112,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfLT_less() {
-        val result = selectIfLT(RemoteInt(1), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfLt_less() {
+        val result = selectIfLt(RemoteInt(1), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -121,8 +121,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfLT_equal() {
-        val result = selectIfLT(RemoteInt(2), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfLt_equal() {
+        val result = selectIfLt(RemoteInt(2), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -130,8 +130,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfLT_greater() {
-        val result = selectIfLT(RemoteInt(3), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfLt_greater() {
+        val result = selectIfLt(RemoteInt(3), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -139,8 +139,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfLE_less() {
-        val result = selectIfLE(RemoteInt(1), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfLe_less() {
+        val result = selectIfLe(RemoteInt(1), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -148,8 +148,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfLE_equal() {
-        val result = selectIfLE(RemoteInt(2), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfLe_equal() {
+        val result = selectIfLe(RemoteInt(2), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -157,8 +157,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfLE_greater() {
-        val result = selectIfLE(RemoteInt(2), RemoteInt(1), RemoteInt(100), RemoteInt(200))
+    fun selectIfLe_greater() {
+        val result = selectIfLe(RemoteInt(2), RemoteInt(1), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -166,8 +166,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfGT_less() {
-        val result = selectIfGT(RemoteInt(1), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfGt_less() {
+        val result = selectIfGt(RemoteInt(1), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -175,8 +175,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfGT_equal() {
-        val result = selectIfGT(RemoteInt(2), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfGt_equal() {
+        val result = selectIfGt(RemoteInt(2), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -184,8 +184,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfGT_greater() {
-        val result = selectIfGT(RemoteInt(3), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfGt_greater() {
+        val result = selectIfGt(RemoteInt(3), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -193,8 +193,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfGE_less() {
-        val result = selectIfGE(RemoteInt(1), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfGe_less() {
+        val result = selectIfGe(RemoteInt(1), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -202,8 +202,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfGE_equal() {
-        val result = selectIfGE(RemoteInt(2), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+    fun selectIfGe_equal() {
+        val result = selectIfGe(RemoteInt(2), RemoteInt(2), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -211,8 +211,8 @@ class RemoteIntTest {
     }
 
     @Test
-    fun selectIfGE_greater() {
-        val result = selectIfGE(RemoteInt(2), RemoteInt(1), RemoteInt(100), RemoteInt(200))
+    fun selectIfGe_greater() {
+        val result = selectIfGe(RemoteInt(2), RemoteInt(1), RemoteInt(100), RemoteInt(200))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -370,7 +370,7 @@ class RemoteIntTest {
         assertThat(RemoteInt(10).minus(RemoteInt(2)).hasConstantValue).isTrue()
         assertThat(RemoteInt(10).div(RemoteInt(2)).hasConstantValue).isTrue()
         assertThat(
-                selectIfGT(RemoteInt(3), RemoteInt(2), RemoteInt(100), RemoteInt(200))
+                selectIfGt(RemoteInt(3), RemoteInt(2), RemoteInt(100), RemoteInt(200))
                     .hasConstantValue
             )
             .isTrue()

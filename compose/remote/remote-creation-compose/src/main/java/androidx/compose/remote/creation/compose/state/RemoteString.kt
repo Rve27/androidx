@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.state
 
@@ -24,16 +23,20 @@ import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression
 import androidx.compose.remote.core.operations.utilities.IntegerExpressionEvaluator
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 
 /**
- * Abstract base class for all remote string representations in Compose Remote, this class extends
- * [RemoteState<String>].
+ * Abstract base class for all remote string representations.
+ *
+ * `RemoteString` represents a string value that can be a constant, a named variable, or a dynamic
+ * expression (e.g., a concatenation).
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public abstract class RemoteString : BaseRemoteState<String>() {
+@Stable
+public abstract class RemoteString internal constructor() : BaseRemoteState<String>() {
 
     public val length: RemoteInt
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // Restricts operator
         get() {
             constantValueOrNull?.let {
                 return RemoteInt(it.length)
@@ -52,6 +55,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
             }
         }
 
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val isEmpty: RemoteBoolean
         get() {
             constantValueOrNull?.let {
@@ -76,6 +80,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
             )
         }
 
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val isNotEmpty: RemoteBoolean
         get() {
             constantValueOrNull?.let {
@@ -106,6 +111,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      * @param v The other [RemoteString] to concatenate.
      * @return A new [MutableRemoteString] representing the concatenated string.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun plus(v: RemoteString): RemoteString {
         if (constantValueOrNull != null && v.constantValueOrNull != null) {
             return RemoteString(constantValueOrNull!! + v.constantValueOrNull!!)
@@ -137,6 +143,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      * @param v The [String] to concatenate.
      * @return A new [MutableRemoteString] representing the concatenated string.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun plus(v: String): RemoteString {
         return this + RemoteString(v)
     }
@@ -147,6 +154,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      * @param start The inclusive index of the character at which the substring starts.
      * @return A new [MutableRemoteString] representing the substring.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun substring(start: Int): RemoteString {
         constantValueOrNull?.let {
             return RemoteString(it.substring(start))
@@ -176,6 +184,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      *
      * @return A new [MutableRemoteString] representing the upper case version of this string.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun uppercase(): RemoteString {
         constantValueOrNull?.let {
             return RemoteString(it.uppercase())
@@ -209,6 +218,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      *
      * @return A new [MutableRemoteString] representing the lower case version of this string.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun lowercase(): RemoteString {
         constantValueOrNull?.let {
             return RemoteString(it.lowercase())
@@ -242,6 +252,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      *
      * @return A new [MutableRemoteString] representing the trimmed version of this string.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun trim(): RemoteString {
         constantValueOrNull?.let {
             return RemoteString(it.trim())
@@ -276,6 +287,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      *   substring starts.
      * @return A new [MutableRemoteString] representing the substring.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun substring(start: RemoteInt): RemoteString {
         val constV = constantValueOrNull
         val constStart = start.constantValueOrNull
@@ -309,6 +321,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      * @param end The exclusive index after the last character of the substring.
      * @return A new [MutableRemoteString] representing the substring.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun substring(start: Int, end: Int): RemoteString {
         constantValueOrNull?.let {
             return RemoteString(it.substring(start, end))
@@ -341,6 +354,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      *   substring.
      * @return A new [MutableRemoteString] representing the substring.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun substring(start: Int, end: RemoteInt): RemoteString {
         val constV = constantValueOrNull
         val constEnd = end.constantValueOrNull
@@ -376,6 +390,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      *   substring.
      * @return A new [MutableRemoteString] representing the substring.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun substring(start: RemoteInt, end: RemoteInt): RemoteString {
         val constV = constantValueOrNull
         val constStart = start.constantValueOrNull
@@ -413,6 +428,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
      * @return The set of unicode code points that can occur in this string, or null if that can\'t
      *   be statically determined .
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public abstract fun computeRequiredCodePointSet(
         creationState: RemoteComposeCreationState
     ): Set<String>?
@@ -425,6 +441,7 @@ public abstract class RemoteString : BaseRemoteState<String>() {
          * @param v The constant [String] value.
          * @return A [MutableRemoteString] representing the constant string.
          */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public operator fun invoke(v: String): RemoteString {
             return MutableRemoteString(
                 constantValueOrNull = v,
@@ -448,24 +465,25 @@ public abstract class RemoteString : BaseRemoteState<String>() {
         internal fun createForId(id: Int): RemoteString = MutableRemoteString(id)
 
         /**
-         * Creates a named [RemoteString] with an initial value. Named remote strings can be set via
-         * AndroidRemoteContext.setNamedString.
+         * Creates a named [RemoteString] with an initial value.
          *
-         * @param name The unique name for this remote string.
-         * @param initialValue The initial [String] value for the named remote string.
+         * @param name A unique name to identify this state within its [domain].
+         * @param defaultValue The initial [String] value for the named remote string.
+         * @param domain The domain for the named state. Defaults to [RemoteState.Domain.User].
          * @return A [RemoteString] representing the named string.
          */
         @JvmStatic
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun createNamedRemoteString(
             name: String,
-            initialValue: String,
+            defaultValue: String,
             domain: RemoteState.Domain = RemoteState.Domain.User,
         ): RemoteString {
             return MutableRemoteString(
                 constantValueOrNull = null,
                 object : LazyRemoteString {
                     override fun reserveTextId(creationState: RemoteComposeCreationState) =
-                        creationState.document.addNamedString("$domain:$name", initialValue)
+                        creationState.document.addNamedString("$domain:$name", defaultValue)
 
                     // Named strings can change so we can't statically determine the needed glyphs
                     override fun computeRequiredCodePointSet(
@@ -555,7 +573,8 @@ private class SelectIntImpl(
  * @param ifFalse The [RemoteFloat] expression to return if `a < b` evaluates to false.
  * @return A new [RemoteFloat] representing the selected value, evaluated remotely.
  */
-public fun selectIfLT(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun selectIfLt(
     a: RemoteFloat,
     b: RemoteFloat,
     ifTrue: RemoteString,
@@ -584,7 +603,8 @@ public fun selectIfLT(
  * @param ifFalse The [RemoteInt] expression to return if `a < b` evaluates to false.
  * @return A new [RemoteInt] representing the selected value, evaluated remotely.
  */
-public fun selectIfLT(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun selectIfLt(
     a: RemoteInt,
     b: RemoteInt,
     ifTrue: RemoteString,
@@ -613,7 +633,8 @@ public fun selectIfLT(
  * @param ifFalse The [RemoteFloat] expression to return if `a <= b` evaluates to false.
  * @return A new [RemoteFloat] representing the selected value, evaluated remotely.
  */
-public fun selectIfLE(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun selectIfLe(
     a: RemoteFloat,
     b: RemoteFloat,
     ifTrue: RemoteString,
@@ -642,7 +663,8 @@ public fun selectIfLE(
  * @param ifFalse The [RemoteInt] expression to return if `a <= b` evaluates to false.
  * @return A new [RemoteInt] representing the selected value, evaluated remotely.
  */
-public fun selectIfLE(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun selectIfLe(
     a: RemoteInt,
     b: RemoteInt,
     ifTrue: RemoteString,
@@ -671,7 +693,8 @@ public fun selectIfLE(
  * @param ifFalse The [RemoteFloat] expression to return if `a > b` evaluates to false.
  * @return A new [RemoteFloat] representing the selected value, evaluated remotely.
  */
-public fun selectIfGT(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun selectIfGt(
     a: RemoteFloat,
     b: RemoteFloat,
     ifTrue: RemoteString,
@@ -700,7 +723,8 @@ public fun selectIfGT(
  * @param ifFalse The [RemoteInt] expression to return if `a > b` evaluates to false.
  * @return A new [RemoteInt] representing the selected value, evaluated remotely.
  */
-public fun selectIfGT(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun selectIfGt(
     a: RemoteInt,
     b: RemoteInt,
     ifTrue: RemoteString,
@@ -729,7 +753,8 @@ public fun selectIfGT(
  * @param ifFalse The [RemoteFloat] expression to return if `a >= b` evaluates to false.
  * @return A new [RemoteFloat] representing the selected value, evaluated remotely.
  */
-public fun selectIfGE(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun selectIfGe(
     a: RemoteFloat,
     b: RemoteFloat,
     ifTrue: RemoteString,
@@ -758,7 +783,8 @@ public fun selectIfGE(
  * @param ifFalse The [RemoteInt] expression to return if `a >= b` evaluates to false.
  * @return A new [RemoteInt] representing the selected value, evaluated remotely.
  */
-public fun selectIfGE(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun selectIfGe(
     a: RemoteInt,
     b: RemoteInt,
     ifTrue: RemoteString,
@@ -807,19 +833,15 @@ internal fun mergeSets(a: Set<String>?, b: Set<String>?): Set<String>? {
     return a + b
 }
 
-/**
- * An implementation of [RemoteString] that holds its value in a [MutableState<String>].
- *
- * @property lazyRemoteString An instance of [LazyRemoteString] that handles deferred operations.
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+/** An implementation of [RemoteString] that holds its value in a [MutableState<String>]. */
 public class MutableRemoteString
 internal constructor(
-    public override val constantValueOrNull: String?,
+    @get:Suppress("AutoBoxing") public override val constantValueOrNull: String?,
     private val lazyRemoteString: LazyRemoteString,
 ) : RemoteString(), MutableRemoteState<String> {
 
     /** Create a MutableRemoteString from an existing id. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public constructor(
         id: Int
     ) : this(
@@ -833,6 +855,7 @@ internal constructor(
     )
 
     /** Create a MutableRemoteString for a default value. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public constructor(
         value: String
     ) : this(
@@ -846,9 +869,11 @@ internal constructor(
         },
     )
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public override fun writeToDocument(creationState: RemoteComposeCreationState): Int =
         lazyRemoteString.reserveTextId(creationState)
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public override fun computeRequiredCodePointSet(
         creationState: RemoteComposeCreationState
     ): Set<String>? = lazyRemoteString.computeRequiredCodePointSet(creationState)
@@ -887,6 +912,7 @@ public fun rememberMutableRemoteString(initialValue: String): MutableRemoteStrin
 /** Factory composable for mutable remote string state. */
 @Composable
 @Deprecated("Use rememberMutableRemoteString(content())")
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun rememberRemoteString(content: () -> String): MutableRemoteString {
     return remember {
         val string = content()
@@ -899,13 +925,13 @@ public fun rememberRemoteString(content: () -> String): MutableRemoteString {
  *
  * @param name The unique name for this remote string.
  * @param domain The domain of the named string (defaults to [RemoteState.Domain.User]).
- * @param content A lambda that provides the [RemoteString] expression.
+ * @param defaultValue The initial [String] value for this remote string.
  * @return A [RemoteString] representing the named remote string expression.
  */
 @Composable
 public fun rememberNamedRemoteString(
     name: String,
-    value: String,
+    defaultValue: String,
     domain: RemoteState.Domain = RemoteState.Domain.User,
 ): RemoteString {
     return rememberNamedState(name, domain) {
@@ -913,18 +939,24 @@ public fun rememberNamedRemoteString(
             constantValueOrNull = null,
             object : LazyRemoteString {
                 override fun reserveTextId(creationState: RemoteComposeCreationState): Int {
-                    return creationState.document.addNamedString("$domain:$name", value)
+                    return creationState.document.addNamedString("$domain:$name", defaultValue)
                 }
 
                 override fun computeRequiredCodePointSet(
                     creationState: RemoteComposeCreationState
-                ): Set<String>? = value.rs.computeRequiredCodePointSet(creationState)
+                ): Set<String>? = defaultValue.rs.computeRequiredCodePointSet(creationState)
             },
         )
     }
 }
 
-/** A Composable function to remember and provide a **named** mutable remote string. */
+/**
+ * A Composable function to remember and provide an anonymous (unnamed) mutable remote string.
+ *
+ * @param content A lambda that provides the initial [String] value for this remote string.
+ * @return A [MutableRemoteString] instance that will be remembered across recompositions.
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
 @Deprecated("Use rememberNamedRemoteString(name, domain, content = { RemoteString(content()) })")
 public fun rememberRemoteString(
@@ -932,7 +964,7 @@ public fun rememberRemoteString(
     domain: RemoteState.Domain = RemoteState.Domain.User,
     content: () -> String,
 ): RemoteString {
-    return rememberNamedRemoteString(name = name, value = content(), domain = domain)
+    return rememberNamedRemoteString(name = name, defaultValue = content(), domain = domain)
 }
 
 /**
@@ -945,10 +977,15 @@ public fun rememberRemoteString(
  * @param content A lambda that provides the initial [String] value for this remote string.
  * @return A [MutableRemoteString] instance with a system domain, remembered across recompositions.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
 @Deprecated("Use rememberRemoteString with SYSTEM domain")
 public fun rememberSystemRemoteString(name: String, content: () -> String): RemoteString =
-    rememberNamedRemoteString(name = name, domain = RemoteState.Domain.System, value = content())
+    rememberNamedRemoteString(
+        name = name,
+        domain = RemoteState.Domain.System,
+        defaultValue = content(),
+    )
 
 /** Extension property to convert a [String] to a [RemoteString]. */
 public val String.rs: RemoteString

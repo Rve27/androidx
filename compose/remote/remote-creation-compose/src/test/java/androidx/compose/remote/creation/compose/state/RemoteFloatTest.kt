@@ -82,9 +82,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfLT_less() {
+    fun selectIfLt_less() {
         val result =
-            selectIfLT(RemoteFloat(1f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfLt(RemoteFloat(1f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -92,9 +92,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfLT_equal() {
+    fun selectIfLt_equal() {
         val result =
-            selectIfLT(RemoteFloat(2f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfLt(RemoteFloat(2f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -102,9 +102,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfLT_greater() {
+    fun selectIfLt_greater() {
         val result =
-            selectIfLT(RemoteFloat(3f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfLt(RemoteFloat(3f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -112,9 +112,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfLE_less() {
+    fun selectIfLe_less() {
         val result =
-            selectIfLE(RemoteFloat(1f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfLe(RemoteFloat(1f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -122,9 +122,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfLE_equal() {
+    fun selectIfLe_equal() {
         val result =
-            selectIfLE(RemoteFloat(2f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfLe(RemoteFloat(2f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -132,9 +132,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfLE_greater() {
+    fun selectIfLe_greater() {
         val result =
-            selectIfLE(RemoteFloat(2f), RemoteFloat(1f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfLe(RemoteFloat(2f), RemoteFloat(1f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -142,9 +142,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfGT_less() {
+    fun selectIfGt_less() {
         val result =
-            selectIfGT(RemoteFloat(1f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfGt(RemoteFloat(1f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -152,9 +152,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfGT_equal() {
+    fun selectIfGt_equal() {
         val result =
-            selectIfGT(RemoteFloat(2f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfGt(RemoteFloat(2f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -162,9 +162,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfGT_greater() {
+    fun selectIfGt_greater() {
         val result =
-            selectIfGT(RemoteFloat(3f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfGt(RemoteFloat(3f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -172,9 +172,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfGE_less() {
+    fun selectIfGe_less() {
         val result =
-            selectIfGE(RemoteFloat(1f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfGe(RemoteFloat(1f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -182,9 +182,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfGE_equal() {
+    fun selectIfGe_equal() {
         val result =
-            selectIfGE(RemoteFloat(2f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfGe(RemoteFloat(2f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -192,9 +192,9 @@ class RemoteFloatTest {
     }
 
     @Test
-    fun selectIfGE_greater() {
+    fun selectIfGe_greater() {
         val result =
-            selectIfGE(RemoteFloat(2f), RemoteFloat(1f), RemoteFloat(100f), RemoteFloat(200f))
+            selectIfGe(RemoteFloat(2f), RemoteFloat(1f), RemoteFloat(100f), RemoteFloat(200f))
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -374,7 +374,7 @@ class RemoteFloatTest {
         assertThat(RemoteFloat(21.5f).div(RemoteFloat(21.5f)).hasConstantValue).isTrue()
         assertThat(clamp(10.5f, 20.5f, RemoteFloat(21.5f)).hasConstantValue).isTrue()
         assertThat(
-                selectIfGT(RemoteFloat(3f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
+                selectIfGt(RemoteFloat(3f), RemoteFloat(2f), RemoteFloat(100f), RemoteFloat(200f))
                     .hasConstantValue
             )
             .isTrue()
