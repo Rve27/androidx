@@ -79,4 +79,10 @@ object AndroidComposeUiFlags {
     @JvmField
     // To be removed b/479890645
     var isSharedViewConfigurationEnabled: Boolean = true
+
+    /** This moves Clipboard-related instances into the shared ComposeViewContext. */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    // To be removed b/479895130
+    var isSharedClipboardManagerEnabled: Boolean = true
 }
