@@ -153,6 +153,15 @@ class GlanceWearWidgetManagerTest {
         assertThat(widgets[0].containerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_FULLSCREEN)
     }
 
+    @Test
+    @Config(maxSdk = Build.VERSION_CODES.TIRAMISU)
+    fun initApi33_tilesManagerIsNullAndActiveWidgetStoreIsAvailable() {
+        val manager = GlanceWearWidgetManager(context)
+
+        assertThat(manager.tilesManager).isNull()
+        assertThat(manager.activeWidgetStore).isNotNull()
+    }
+
     private class TestWidgetService1 : GlanceWearWidgetService() {
         override val widget: GlanceWearWidget = mock()
     }
