@@ -111,12 +111,10 @@ public actual object DataStoreFactory {
         migrations: List<DataMigration<T>>,
         scope: CoroutineScope,
     ): DataStore<T> =
-        DataStoreImpl(
-            storage = storage,
-            corruptionHandler = corruptionHandler ?: ReThrowCorruptionHandler(),
-            initTasksList = listOf(DataMigrationInitializer.getInitializer(migrations)),
-            scope = scope,
-        )
+        DataStore.Builder(storage = storage, context = scope.coroutineContext)
+            .apply { corruptionHandler?.let { setCorruptionHandler(it) } }
+            .addMigrations(migrations)
+            .build()
 
     /**
      * Create an instance of SingleProcessDataStore with tracing enabled.
@@ -141,13 +139,11 @@ public actual object DataStoreFactory {
         migrations: List<DataMigration<T>> = listOf(),
         scope: CoroutineScope = CoroutineScope(ioDispatcher() + SupervisorJob()),
     ): DataStore<T> =
-        DataStoreImpl(
-            storage = storage,
-            corruptionHandler = corruptionHandler,
-            initTasksList = listOf(DataMigrationInitializer.getInitializer(migrations)),
-            scope = scope,
-            tracer = tracer,
-        )
+        DataStore.Builder(storage = storage, context = scope.coroutineContext)
+            .setCorruptionHandler(corruptionHandler)
+            .addMigrations(migrations)
+            .setTracer(tracer)
+            .build()
 
     /**
      * Create an instance of SingleProcessDataStore that can be used during direct boot.
@@ -180,15 +176,16 @@ public actual object DataStoreFactory {
         migrations: List<DataMigration<T>> = listOf(),
         scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
     ): DataStore<T> {
-        return DataStoreImpl(
-            storage =
-                FileStorage(
-                    serializer = serializer,
-                    produceFile = { context.deviceProtectedDataStoreFile(fileName) },
-                ),
-            corruptionHandler = corruptionHandler ?: ReThrowCorruptionHandler(),
-            initTasksList = listOf(DataMigrationInitializer.getInitializer(migrations)),
-            scope = scope,
-        )
+        return DataStore.Builder(
+                storage =
+                    FileStorage(
+                        serializer = serializer,
+                        produceFile = { context.deviceProtectedDataStoreFile(fileName) },
+                    ),
+                context = scope.coroutineContext,
+            )
+            .apply { corruptionHandler?.let { setCorruptionHandler(it) } }
+            .addMigrations(migrations)
+            .build()
     }
 }
