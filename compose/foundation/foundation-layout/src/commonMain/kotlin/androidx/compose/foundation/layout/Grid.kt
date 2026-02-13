@@ -19,7 +19,7 @@
 package androidx.compose.foundation.layout
 
 import androidx.annotation.FloatRange
-import androidx.annotation.IntRange
+import androidx.annotation.IntRange as AndroidXIntRange
 import androidx.collection.LongList
 import androidx.collection.MutableIntList
 import androidx.collection.MutableIntSet
@@ -155,12 +155,12 @@ interface GridScope {
      */
     @Stable
     fun Modifier.gridItem(
-        @IntRange(from = -MaxGridIndex.toLong(), to = MaxGridIndex.toLong())
+        @AndroidXIntRange(from = -MaxGridIndex.toLong(), to = MaxGridIndex.toLong())
         row: Int = GridIndexUnspecified,
-        @IntRange(from = -MaxGridIndex.toLong(), to = MaxGridIndex.toLong())
+        @AndroidXIntRange(from = -MaxGridIndex.toLong(), to = MaxGridIndex.toLong())
         column: Int = GridIndexUnspecified,
-        @IntRange(from = 1) rowSpan: Int = 1,
-        @IntRange(from = 1) columnSpan: Int = 1,
+        @AndroidXIntRange(from = 1) rowSpan: Int = 1,
+        @AndroidXIntRange(from = 1) columnSpan: Int = 1,
         alignment: Alignment = Alignment.TopStart,
     ): Modifier
 
@@ -187,8 +187,8 @@ interface GridScope {
      */
     @Stable
     fun Modifier.gridItem(
-        rows: kotlin.ranges.IntRange,
-        columns: kotlin.ranges.IntRange,
+        rows: IntRange,
+        columns: IntRange,
         alignment: Alignment = Alignment.TopStart,
     ): Modifier
 
@@ -238,8 +238,8 @@ internal object GridScopeInstance : GridScope {
     }
 
     override fun Modifier.gridItem(
-        rows: kotlin.ranges.IntRange,
-        columns: kotlin.ranges.IntRange,
+        rows: IntRange,
+        columns: IntRange,
         alignment: Alignment,
     ): Modifier {
         require(!rows.isEmpty()) { "Row range ($rows) cannot be empty" }
