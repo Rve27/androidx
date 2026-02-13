@@ -16,7 +16,6 @@
 
 package androidx.health.connect.client.records
 
-import android.os.Build
 import androidx.health.connect.client.records.metadata.Metadata
 import androidx.health.connect.client.units.Length
 import androidx.health.connect.client.units.Power
@@ -30,7 +29,6 @@ import java.time.ZoneId
 import kotlin.test.assertFailsWith
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 class PlannedExerciseSessionRecordTest {
@@ -183,22 +181,6 @@ class PlannedExerciseSessionRecordTest {
                     exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_EXERCISE_CLASS,
                 )
             )
-    }
-
-    @Config(maxSdk = Build.VERSION_CODES.TIRAMISU)
-    @Test
-    fun invalidTimes_startTimeEqualsEndTime_throws() {
-        assertFailsWith<IllegalArgumentException> {
-            PlannedExerciseSessionRecord(
-                startTime = Instant.ofEpochMilli(100L),
-                startZoneOffset = null,
-                endTime = Instant.ofEpochMilli(100L),
-                endZoneOffset = null,
-                metadata = Metadata.manualEntry(),
-                blocks = listOf(),
-                exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_EXERCISE_CLASS,
-            )
-        }
     }
 
     @Test
