@@ -1036,6 +1036,45 @@ public class GridWidgetTest {
     }
 
     @Test
+    public void testSpanFocusSearch_landOnNextFocusableSpanGroup() throws Throwable {
+        Intent intent = new Intent();
+        intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.vertical_grid);
+        intent.putExtra(GridActivity.EXTRA_NUM_ITEMS, 150);
+        // Put a 0 as column width, so that the column width is calculated by
+        // gridView.width/numColumns
+        intent.putExtra(GridActivity.EXTRA_COLUMN_WIDTH, 0);
+        intent.putExtra(GridActivity.EXTRA_STAGGERED, false);
+
+
+        int[] itemsLength = new int[150];
+        Arrays.fill(itemsLength, 80);
+        intent.putExtra(GridActivity.EXTRA_ITEMS, itemsLength);
+        // Item[11] is a header with span of 3 and not focusable.
+        intent.putExtra(GridActivity.EXTRA_SPAN_SIZES, new int[]{
+                11, 3, // 11th item span size is 3
+        });
+        boolean[] itemsFocusable = new boolean[150];
+        Arrays.fill(itemsFocusable, true);
+        itemsFocusable[11] = false;
+        intent.putExtra(GridActivity.EXTRA_ITEMS_FOCUSABLE, itemsFocusable);
+
+        initActivity(intent);
+        mOrientation = BaseGridView.VERTICAL;
+        mNumRows = 3;
+
+        mActivityTestRule.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mGridView.smoothScrollToPosition(14);
+            }
+        });
+        assertEquals(14, mGridView.getSelectedPosition());
+        sendKey(KeyEvent.KEYCODE_DPAD_UP);
+        // Skip the unfocusable span group header (at 11) and focus on 10 at a different column.
+        assertEquals(10, mGridView.getSelectedPosition());
+    }
+
+    @Test
     public void test_defaultSpanSizeLoop_usesStandardGrid() throws Throwable {
         Intent intent = new Intent();
         intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.vertical_grid);
