@@ -783,6 +783,18 @@ public class WebViewFeatureInternal {
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
+     * This feature covers
+     * {@link Navigation#getWebResourceError()}
+     * {@link WebResourceErrorCompat#getDebugCode()}.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public static final ApiFeature.NoFramework NAVIGATION_GET_WEB_RESOURCE_ERROR =
+            new ApiFeature.NoFramework(
+                    WebViewFeature.NAVIGATION_GET_WEB_RESOURCE_ERROR,
+                    Features.NAVIGATION_GET_WEB_RESOURCE_ERROR);
+
+    /**
+     * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
      * This feature covers {@link WebNavigationClient} and all methods within.
      * This feature covers basic methods in {@link Navigation}.
      * This feature covers basic version of {@link Page}.
