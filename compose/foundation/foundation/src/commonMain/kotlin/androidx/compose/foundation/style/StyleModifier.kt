@@ -615,11 +615,15 @@ internal class StyleOuterNode(styleState: StyleState?, style: Style) :
         foregroundBrush: Brush?,
         borderWidth: Float,
     ) {
+        val needsBorder =
+            hasBorder &&
+                (hasBackground && bgColor != borderColor || borderBrush != null || !hasBackground)
+
         val halfStrokeWidth = borderWidth / 2f
-        val topLeft = Offset.Zero + halfStrokeWidth
-        val outerSize = size - borderWidth
-        val innerTopLeft = if (hasBorder) topLeft + (halfStrokeWidth - eps) else topLeft
-        val innerSize = if (hasBorder) outerSize - (borderWidth - 2 * eps) else outerSize
+        val topLeft = Offset.Zero + if (needsBorder) halfStrokeWidth else 0f
+        val outerSize = size - if (needsBorder) borderWidth else 0f
+        val innerTopLeft = if (needsBorder) topLeft + (halfStrokeWidth - eps) else topLeft
+        val innerSize = if (needsBorder) outerSize - (borderWidth - 2 * eps) else outerSize
 
         // background
         if (hasBackground && bgBrush == null)
@@ -636,11 +640,13 @@ internal class StyleOuterNode(styleState: StyleState?, style: Style) :
             drawRect(foregroundBrush, topLeft = topLeft, size = outerSize)
 
         // border
-        if (hasBorder) {
+        if (needsBorder) {
             val stroke = getStroke(borderWidth)
-            if (borderBrush == null)
+            if (borderBrush == null) {
                 drawRect(borderColor, topLeft = topLeft, size = outerSize, style = stroke)
-            else drawRect(borderBrush, topLeft = topLeft, size = outerSize, style = stroke)
+            } else {
+                drawRect(borderBrush, topLeft = topLeft, size = outerSize, style = stroke)
+            }
         }
     }
 
