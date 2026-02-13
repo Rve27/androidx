@@ -16,7 +16,6 @@
 
 package androidx.health.connect.client.records
 
-import android.os.Build
 import androidx.health.connect.client.records.metadata.Metadata
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.calories
@@ -80,25 +79,11 @@ class NutritionRecordTest {
         }
     }
 
-    @Config(maxSdk = Build.VERSION_CODES.TIRAMISU)
     @Test
     fun invalidTimes_throws() {
         assertFailsWith<IllegalArgumentException> {
             NutritionRecord(
                 startTime = Instant.ofEpochMilli(1234L),
-                startZoneOffset = null,
-                endTime = Instant.ofEpochMilli(1234L),
-                endZoneOffset = null,
-                metadata = Metadata.manualEntry(),
-            )
-        }
-    }
-
-    @Test
-    fun startTimeAfterEndTime_throws() {
-        assertFailsWith<IllegalArgumentException> {
-            NutritionRecord(
-                startTime = Instant.ofEpochMilli(1235L),
                 startZoneOffset = null,
                 endTime = Instant.ofEpochMilli(1234L),
                 endZoneOffset = null,

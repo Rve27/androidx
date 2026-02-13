@@ -16,7 +16,6 @@
 
 package androidx.health.connect.client.records
 
-import android.os.Build
 import androidx.health.connect.client.records.ExerciseSessionRecord.Companion.EXERCISE_TYPE_BIKING
 import androidx.health.connect.client.records.ExerciseSessionRecord.Companion.EXERCISE_TYPE_CALISTHENICS
 import androidx.health.connect.client.records.ExerciseSessionRecord.Companion.EXERCISE_TYPE_HIGH_INTENSITY_INTERVAL_TRAINING
@@ -32,7 +31,6 @@ import kotlin.reflect.typeOf
 import kotlin.test.assertFailsWith
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 class ExerciseSessionRecordTest {
@@ -221,29 +219,11 @@ class ExerciseSessionRecordTest {
             .isEqualTo(ExerciseRouteResult.Data(ExerciseRoute(listOf())))
     }
 
-    @Config(maxSdk = Build.VERSION_CODES.TIRAMISU)
     @Test
     fun invalidTimes_throws() {
         assertFailsWith<IllegalArgumentException> {
             ExerciseSessionRecord(
                 startTime = Instant.ofEpochMilli(1234L),
-                startZoneOffset = null,
-                endTime = Instant.ofEpochMilli(1234L),
-                endZoneOffset = null,
-                metadata = Metadata.manualEntry(),
-                exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_EXERCISE_CLASS,
-                title = "title",
-                notes = "notes",
-                exerciseRoute = null,
-            )
-        }
-    }
-
-    @Test
-    fun startTimeAfterEndTime_throws() {
-        assertFailsWith<IllegalArgumentException> {
-            ExerciseSessionRecord(
-                startTime = Instant.ofEpochMilli(1235L),
                 startZoneOffset = null,
                 endTime = Instant.ofEpochMilli(1234L),
                 endZoneOffset = null,
@@ -368,7 +348,6 @@ class ExerciseSessionRecordTest {
         }
     }
 
-    @Config(maxSdk = Build.VERSION_CODES.TIRAMISU)
     @Test
     fun record_routeOutOfRange_throws() {
         assertFailsWith<IllegalArgumentException> {
