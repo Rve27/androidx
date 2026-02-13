@@ -168,6 +168,10 @@ abstract class Grid {
     // the first index that grid will layout
     protected int mStartIndex = START_DEFAULT;
 
+    // When true: focus search for next item located in next span group.
+    // When false(For SingleRow or StaggeredGrid): search item on the same "row".
+    boolean mSearchFocusInNextSpanGroup = false;
+
     /**
      * Creates a single or multiple rows (can be staggered or not staggered) grid
      */

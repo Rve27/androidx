@@ -39,8 +39,10 @@ class StandardGrid extends Grid {
         if (spanSizeLookup != null
                 && !(spanSizeLookup instanceof GridLayoutManager.DefaultSpanSizeLookup)) {
             mSpanSupport = new SpanSupport(spanSizeLookup);
+            mSearchFocusInNextSpanGroup = true;
         } else {
             mSpanSupport = null;
+            mSearchFocusInNextSpanGroup = false;
         }
     }
 
@@ -61,7 +63,7 @@ class StandardGrid extends Grid {
         return index % mNumRows;
     }
 
-    private int getSpanGroupIndex(int index) {
+    int getSpanGroupIndex(int index) {
         if (mSpanSupport != null) {
             return mSpanSupport.getCachedSpanGroupIndex(index, mNumRows);
         }
