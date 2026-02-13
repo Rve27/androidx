@@ -33,16 +33,15 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.SupportingPane
 import androidx.navigation.navOptions
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @IgnoreAndroidHostTest // Runs on all targets EXCEPT AndroidHost; still runs on AndroidDevice.
+@IgnoreLinuxTest // Runs on all targets EXCEPT Linux.
 internal class TestNavigatorStateTest {
 
     @OptIn(ExperimentalCoroutinesApi::class) private val state = TestNavigatorState()
 
-    @Ignore // b/479842725
     @Test
     fun testLifecycle() {
         val navigator = TestNavigator()
@@ -63,7 +62,6 @@ internal class TestNavigatorStateTest {
         assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.DESTROYED)
     }
 
-    @Ignore // b/479842725
     @Test
     fun testFloatingWindowLifecycle() {
         val navigator = FloatingWindowTestNavigator()
@@ -84,7 +82,6 @@ internal class TestNavigatorStateTest {
         assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.DESTROYED)
     }
 
-    @Ignore // b/479842725
     @Test
     fun testSupportingPaneLifecycle() {
         val navigator = SupportingPaneTestNavigator()
@@ -105,7 +102,6 @@ internal class TestNavigatorStateTest {
         assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.DESTROYED)
     }
 
-    @Ignore // b/479842725
     @Test
     fun testWithTransitionLifecycle() {
         val navigator = TestTransitionNavigator()
@@ -149,7 +145,6 @@ internal class TestNavigatorStateTest {
         assertThat(restoredSecondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
     }
 
-    @Ignore // b/479842725
     @Test
     fun testWithSupportingPaneTransitionLifecycle() {
         val navigator = SupportingPaneTestTransitionNavigator()
@@ -202,7 +197,6 @@ internal class TestNavigatorStateTest {
         assertThat(restoredSecondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
     }
 
-    @Ignore // b/479842725
     @Test
     fun testSameEntry() {
         val navigator = TestTransitionNavigator()
@@ -242,7 +236,6 @@ internal class TestNavigatorStateTest {
         assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.DESTROYED)
     }
 
-    @Ignore // b/479842725
     @Test
     fun testNewInstanceBeforeComplete() {
         val navigator = TestTransitionNavigator()
@@ -289,7 +282,6 @@ internal class TestNavigatorStateTest {
         assertThat(viewModel.wasCleared).isFalse()
     }
 
-    @Ignore // b/479842725
     @Test
     fun testTransitionInterruptPushPop() {
         val navigator = TestTransitionNavigator()
@@ -315,7 +307,6 @@ internal class TestNavigatorStateTest {
         assertThat(secondEntry.lifecycle.currentState).isEqualTo(Lifecycle.State.DESTROYED)
     }
 
-    @Ignore // b/479842725
     @Test
     fun testTransitionInterruptPopPush() {
         val navigator = TestTransitionNavigator()
@@ -354,7 +345,6 @@ internal class TestNavigatorStateTest {
         assertThat(secondEntryReplace.lifecycle.currentState).isEqualTo(Lifecycle.State.RESUMED)
     }
 
-    @Ignore // b/479842725
     @Test
     fun testPrepareForTransition() {
         val navigator = TestTransitionNavigator()
