@@ -856,14 +856,15 @@ internal fun buildSpatialPanelModifier(
                 )
 
             is MovePolicy ->
-                baseModifier.movable(
-                    enabled = dragPolicy.isEnabled,
-                    stickyPose = dragPolicy.isStickyPose,
-                    scaleWithDistance = dragPolicy.shouldScaleWithDistance,
-                    onMoveStart = dragPolicy.onMoveStart,
-                    onMoveEnd = dragPolicy.onMoveEnd,
-                    onMove = dragPolicy.onMove,
-                )
+                SubspaceModifier.movable(
+                        enabled = dragPolicy.isEnabled,
+                        stickyPose = dragPolicy.isStickyPose,
+                        scaleWithDistance = dragPolicy.shouldScaleWithDistance,
+                        onMoveStart = dragPolicy.onMoveStart,
+                        onMoveEnd = dragPolicy.onMoveEnd,
+                        onMove = dragPolicy.onMove,
+                    )
+                    .then(baseModifier)
 
             else -> {
                 baseModifier
