@@ -720,9 +720,23 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     private var observationClearRequested = false
 
     /** Provide clipboard manager to the user. Use the Android version of clipboard manager. */
-    override val clipboardManager = AndroidClipboardManager(context)
+    override val clipboardManager =
+        // TODO: when removing the flag, change this to a get() block
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isSharedClipboardManagerEnabled) {
+            composeViewContext.clipboardManager
+        } else {
+            AndroidClipboardManager(context)
+        }
 
-    override val clipboard = AndroidClipboard(clipboardManager)
+    override val clipboard =
+        // TODO: when removing the flag, change this to a get() block
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isSharedClipboardManagerEnabled) {
+            composeViewContext.clipboard
+        } else {
+            AndroidClipboard(clipboardManager)
+        }
 
     override val snapshotObserver = OwnerSnapshotObserver { command ->
         val exceptionHandler = uncaughtExceptionHandler
