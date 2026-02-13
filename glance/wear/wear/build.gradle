@@ -80,6 +80,7 @@ android {
     compileSdk { version = release(36) }
     defaultConfig {
         minSdk { version = release(29) }
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 }
 

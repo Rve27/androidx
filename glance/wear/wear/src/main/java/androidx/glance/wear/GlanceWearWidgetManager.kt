@@ -19,6 +19,7 @@ package androidx.glance.wear
 import android.content.Context
 import android.os.Build
 import android.os.OutcomeReceiver
+import androidx.annotation.DoNotInline
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
@@ -28,6 +29,7 @@ import com.google.wear.services.tiles.TilesManager
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.reflect.KClass
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
@@ -37,18 +39,37 @@ import kotlinx.coroutines.suspendCancellableCoroutine
  */
 // TODO: b/429980862 - Make this public.
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class GlanceWearWidgetManager
-@VisibleForTesting
-internal constructor(private val tilesManager: TilesManager) {
+public class GlanceWearWidgetManager {
+
+    /** The [TilesManager] used to query for active tiles/widgets on API 34+. */
+    private val tilesManager: TilesManager?
+    /** The [ActiveWidgetStore] used to query for active widgets on API < 34. */
+    private val activeWidgetStore: ActiveWidgetStore?
+
+    /**
+     * Creates a new [GlanceWearWidgetManager].
+     *
+     * @param tilesManager The [TilesManager] used to query for active tiles/widgets on API 34+.
+     * @param activeWidgetStore The [ActiveWidgetStore] used to query for active widgets on API
+     *   < 34.
+     */
+    @VisibleForTesting
+    internal constructor(tilesManager: TilesManager?, activeWidgetStore: ActiveWidgetStore?) {
+        this.tilesManager = tilesManager
+        this.activeWidgetStore = activeWidgetStore
+    }
 
     /**
      * Creates a new [GlanceWearWidgetManager].
      *
      * @param context The application context.
      */
-    public constructor(
-        context: Context
-    ) : this(Sdk.getWearManager(context, TilesManager::class.java))
+    public constructor(context: Context) {
+        val isAtLeastU = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+        this.tilesManager =
+            if (isAtLeastU) Sdk.getWearManager(context, TilesManager::class.java) else null
+        this.activeWidgetStore = if (!isAtLeastU) ActiveWidgetStore(context) else null
+    }
 
     /**
      * Returns the currently active widgets associated with the specified component.
@@ -60,10 +81,8 @@ internal constructor(private val tilesManager: TilesManager) {
      *
      * @param clazz The component class of the [GlanceWearWidgetService] to filter by.
      */
-    // TODO: b/429980862 - Add a fallback for older devices.
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    public suspend fun <T : GlanceWearWidgetService> getActiveWidgetsForProvider(
-        clazz: KClass<T>
+    public suspend fun getActiveWidgetsForProvider(
+        clazz: KClass<out GlanceWearWidgetService>
     ): List<ActiveWearWidgetHandle> =
         getActiveWidgets().filter { it.provider.className == clazz.java.name }
 
@@ -76,34 +95,49 @@ internal constructor(private val tilesManager: TilesManager) {
      * * Note: A [ContainerInfo.CONTAINER_TYPE_FULLSCREEN] result represents either a standard
      *   TileService or a [GlanceWearWidgetService] running in compatibility/fullscreen mode.
      */
-    // TODO: b/429980862 - Add a fallback for older devices.
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     public suspend fun getActiveWidgets(): List<ActiveWearWidgetHandle> =
-        getActiveWidgetsInternal().map { instance ->
-            val provider = instance.tileProvider
-            ActiveWearWidgetHandle(
-                provider = provider.componentName,
-                instanceId =
-                    WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, instance.id),
-                // TODO: b/429980862 - Set container type correctly.
-                containerType = ContainerInfo.CONTAINER_TYPE_FULLSCREEN,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            Api34Impl.getActiveTiles(
+                tilesManager ?: throw IllegalStateException("TilesManager is not available.")
             )
+        } else {
+            activeWidgetStore?.getActiveWidgets()
+                ?: throw IllegalStateException("ActiveWidgetStore is not available")
         }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    private suspend fun getActiveWidgetsInternal(): List<TileInstance> =
-        suspendCancellableCoroutine { continuation ->
-            tilesManager.getActiveTiles(
-                Runnable::run,
-                object : OutcomeReceiver<List<TileInstance>, Exception> {
-                    override fun onResult(values: List<TileInstance>) {
-                        continuation.resume(values)
-                    }
+    private object Api34Impl {
+        @DoNotInline
+        suspend fun getActiveTiles(tilesManager: TilesManager): List<ActiveWearWidgetHandle> =
+            suspendCancellableCoroutine { continuation ->
+                val receiver = ContinuationOutcomeReceiver(continuation)
+                tilesManager.getActiveTiles(Runnable::run, receiver)
+            }
 
-                    override fun onError(error: Exception) {
-                        continuation.resumeWithException(error)
+        private class ContinuationOutcomeReceiver(
+            private val continuation: CancellableContinuation<List<ActiveWearWidgetHandle>>
+        ) : OutcomeReceiver<List<TileInstance>, Exception> {
+            override fun onResult(result: List<TileInstance>) {
+                val widgets =
+                    result.map { instance ->
+                        val provider = instance.tileProvider
+                        ActiveWearWidgetHandle(
+                            provider = provider.componentName,
+                            instanceId =
+                                WidgetInstanceId(
+                                    WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE,
+                                    instance.id,
+                                ),
+                            // TODO: b/429980862 - Set container type correctly.
+                            containerType = ContainerInfo.CONTAINER_TYPE_FULLSCREEN,
+                        )
                     }
-                },
-            )
+                continuation.resume(widgets)
+            }
+
+            override fun onError(error: Exception) {
+                continuation.resumeWithException(error)
+            }
         }
+    }
 }
