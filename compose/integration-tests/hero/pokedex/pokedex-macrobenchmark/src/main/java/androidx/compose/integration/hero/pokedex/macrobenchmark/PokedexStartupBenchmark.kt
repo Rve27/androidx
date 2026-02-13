@@ -16,6 +16,7 @@
 
 package androidx.compose.integration.hero.pokedex.macrobenchmark
 
+import android.content.Intent
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.StartupMode
 import androidx.compose.integration.hero.common.macrobenchmark.HeroMacrobenchmarkDefaults
@@ -40,7 +41,11 @@ class PokedexStartupBenchmark(
     private val enableSharedElementTransitions: Boolean,
 ) : PokedexBenchmarkBase() {
 
-    private fun measureStartup(action: String, contentSelector: BySelector) =
+    private fun measureStartup(
+        action: String,
+        contentSelector: BySelector,
+        setupIntent: Intent.() -> Unit = {},
+    ) =
         benchmarkRule.measureStartup(
             compilationMode = compilation,
             startupMode = startupMode,
@@ -65,6 +70,14 @@ class PokedexStartupBenchmark(
         measureStartup(
             action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY",
             contentSelector = By.res("PokedexList"),
+        )
+
+    @Test
+    fun startupComposeOptimized() =
+        measureStartup(
+            action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY",
+            contentSelector = By.res("PokedexList"),
+            setupIntent = { putExtra("useLifecycleEventForDataLoad", true) },
         )
 
     @Test
