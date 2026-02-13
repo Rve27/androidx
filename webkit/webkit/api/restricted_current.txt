@@ -284,7 +284,7 @@ package androidx.webkit {
   }
 
   @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public interface StartUpLocation {
-    method public String getStackInformation();
+    method public Throwable getStackInformation();
   }
 
   public class TracingConfig {
