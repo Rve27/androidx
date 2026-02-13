@@ -92,19 +92,19 @@ package androidx.appsearch.annotation {
 package androidx.appsearch.app {
 
   public final class AppSearchBatchResult<KeyType, ValueType> {
-    method public java.util.Map<KeyType!,androidx.appsearch.app.AppSearchResult<ValueType!>!> getAll();
-    method public java.util.Map<KeyType!,androidx.appsearch.app.AppSearchResult<ValueType!>!> getFailures();
-    method public java.util.Map<KeyType!,ValueType!> getSuccesses();
+    method public java.util.Map<KeyType,androidx.appsearch.app.AppSearchResult<ValueType>!> getAll();
+    method public java.util.Map<KeyType,androidx.appsearch.app.AppSearchResult<ValueType>!> getFailures();
+    method public java.util.Map<KeyType,ValueType> getSuccesses();
     method public boolean isSuccess();
   }
 
   public static final class AppSearchBatchResult.Builder<KeyType, ValueType> {
     ctor public AppSearchBatchResult.Builder();
-    ctor @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public AppSearchBatchResult.Builder(androidx.appsearch.app.AppSearchBatchResult<KeyType!,ValueType!>);
-    method public androidx.appsearch.app.AppSearchBatchResult<KeyType!,ValueType!> build();
-    method public androidx.appsearch.app.AppSearchBatchResult.Builder<KeyType!,ValueType!> setFailure(KeyType, int, String?);
-    method public androidx.appsearch.app.AppSearchBatchResult.Builder<KeyType!,ValueType!> setResult(KeyType, androidx.appsearch.app.AppSearchResult<ValueType!>);
-    method public androidx.appsearch.app.AppSearchBatchResult.Builder<KeyType!,ValueType!> setSuccess(KeyType, ValueType?);
+    ctor @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public AppSearchBatchResult.Builder(androidx.appsearch.app.AppSearchBatchResult<KeyType,ValueType>);
+    method public androidx.appsearch.app.AppSearchBatchResult<KeyType,ValueType> build();
+    method public androidx.appsearch.app.AppSearchBatchResult.Builder<KeyType,ValueType> setFailure(KeyType, int, String?);
+    method public androidx.appsearch.app.AppSearchBatchResult.Builder<KeyType,ValueType> setResult(KeyType, androidx.appsearch.app.AppSearchResult<ValueType>);
+    method public androidx.appsearch.app.AppSearchBatchResult.Builder<KeyType,ValueType> setSuccess(KeyType, ValueType?);
   }
 
   public final class AppSearchBlobHandle {
@@ -126,8 +126,8 @@ package androidx.appsearch.app {
     method public int getResultCode();
     method public ValueType? getResultValue();
     method public boolean isSuccess();
-    method public static <ValueType> androidx.appsearch.app.AppSearchResult<ValueType!> newFailedResult(int, String?);
-    method public static <ValueType> androidx.appsearch.app.AppSearchResult<ValueType!> newSuccessfulResult(ValueType?);
+    method public static <ValueType> androidx.appsearch.app.AppSearchResult<ValueType> newFailedResult(int, String?);
+    method public static <ValueType> androidx.appsearch.app.AppSearchResult<ValueType> newSuccessfulResult(ValueType?);
     field @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public static final int RESULT_ABORTED = 13; // 0xd
     field @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public static final int RESULT_ALREADY_EXISTS = 12; // 0xc
     field @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public static final int RESULT_DENIED = 9; // 0x9
@@ -427,8 +427,8 @@ package androidx.appsearch.app {
     method public String getSchemaType();
     method public int getScore();
     method public long getTtlMillis();
-    method public <T> T toDocumentClass(Class<T!>) throws androidx.appsearch.exceptions.AppSearchException;
-    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public <T> T toDocumentClass(Class<T!>, androidx.appsearch.app.DocumentClassMappingContext) throws androidx.appsearch.exceptions.AppSearchException;
+    method public <T> T toDocumentClass(Class<T>) throws androidx.appsearch.exceptions.AppSearchException;
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public <T> T toDocumentClass(Class<T>, androidx.appsearch.app.DocumentClassMappingContext) throws androidx.appsearch.exceptions.AppSearchException;
   }
 
   public static class GenericDocument.Builder<BuilderType extends androidx.appsearch.app.GenericDocument.Builder> {
@@ -670,8 +670,8 @@ package androidx.appsearch.app {
 
   public final class SearchResult {
     method public String getDatabaseName();
-    method public <T> T getDocument(Class<T!>) throws androidx.appsearch.exceptions.AppSearchException;
-    method public <T> T getDocument(Class<T!>, java.util.Map<java.lang.String!,java.util.List<java.lang.String!>!>?) throws androidx.appsearch.exceptions.AppSearchException;
+    method public <T> T getDocument(Class<T>) throws androidx.appsearch.exceptions.AppSearchException;
+    method public <T> T getDocument(Class<T>, java.util.Map<java.lang.String!,java.util.List<java.lang.String!>!>?) throws androidx.appsearch.exceptions.AppSearchException;
     method public androidx.appsearch.app.GenericDocument getGenericDocument();
     method public java.util.List<java.lang.Double!> getInformationalRankingSignals();
     method public java.util.List<androidx.appsearch.app.SearchResult!> getJoinedResults();
@@ -1168,7 +1168,7 @@ package androidx.appsearch.exceptions {
     ctor public AppSearchException(int, String?);
     ctor public AppSearchException(int, String?, Throwable?);
     method public int getResultCode();
-    method public <T> androidx.appsearch.app.AppSearchResult<T!> toAppSearchResult();
+    method public <T> androidx.appsearch.app.AppSearchResult<T> toAppSearchResult();
   }
 
 }
