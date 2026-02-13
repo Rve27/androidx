@@ -596,7 +596,7 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
             graphicsLayerScope.size = size.toSize()
             snapshotObserver.observeReads(this, onCommitAffectingLayerParams) {
                 layerBlock.invoke(graphicsLayerScope)
-                val hasShapeChanged = lastShape !== graphicsLayerScope.shape
+                val hasShapeChanged = lastShape != graphicsLayerScope.shape
                 val hasClipChanged = lastClip != graphicsLayerScope.clip
                 if (hasShapeChanged || hasClipChanged) {
                     lastShape = graphicsLayerScope.shape
