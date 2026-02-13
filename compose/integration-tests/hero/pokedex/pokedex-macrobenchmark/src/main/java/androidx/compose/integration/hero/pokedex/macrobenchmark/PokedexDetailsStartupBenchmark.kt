@@ -20,7 +20,10 @@ import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.StartupMode
 import androidx.compose.integration.hero.common.macrobenchmark.HeroMacrobenchmarkDefaults
 import androidx.compose.integration.hero.pokedex.macrobenchmark.internal.PokedexConstants.POKEDEX_TARGET_PACKAGE_NAME
+import androidx.compose.integration.hero.pokedex.macrobenchmark.internal.waitOrThrow
 import androidx.test.filters.LargeTest
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
 import androidx.testutils.createStartupCompilationParams
 import androidx.testutils.measureStartup
 import org.junit.Test
@@ -60,7 +63,7 @@ class PokedexDetailsStartupBenchmark(
             },
             waitForContent = {
                 waitForAppToBeVisible(packageName)
-                onElement { text == PokemonToOpen }
+                device.waitOrThrow(Until.hasObject(By.text(PokemonToOpen)), timeoutMillis = 3000)
             },
         )
 
