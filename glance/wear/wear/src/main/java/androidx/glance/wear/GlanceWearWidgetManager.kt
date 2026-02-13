@@ -42,9 +42,9 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 public class GlanceWearWidgetManager {
 
     /** The [TilesManager] used to query for active tiles/widgets on API 34+. */
-    private val tilesManager: TilesManager?
+    @VisibleForTesting internal val tilesManager: TilesManager?
     /** The [ActiveWidgetStore] used to query for active widgets on API < 34. */
-    private val activeWidgetStore: ActiveWidgetStore?
+    @VisibleForTesting internal val activeWidgetStore: ActiveWidgetStore?
 
     /**
      * Creates a new [GlanceWearWidgetManager].
@@ -54,7 +54,7 @@ public class GlanceWearWidgetManager {
      *   < 34.
      */
     @VisibleForTesting
-    internal constructor(tilesManager: TilesManager?, activeWidgetStore: ActiveWidgetStore?) {
+    internal constructor(tilesManager: TilesManager, activeWidgetStore: ActiveWidgetStore) {
         this.tilesManager = tilesManager
         this.activeWidgetStore = activeWidgetStore
     }
