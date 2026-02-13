@@ -119,6 +119,12 @@ internal class ComposeViewContext(
     /** [UriHandler] provided by [LocalUriHandler] */
     internal val uriHandler = AndroidUriHandler(view.context)
 
+    /** [ClipboardManager] provided by [LocalClipboardManager] */
+    internal val clipboardManager: AndroidClipboardManager = AndroidClipboardManager(view.context)
+
+    /** [Clipboard] provided by [LocalClipboard] */
+    internal val clipboard: AndroidClipboard = AndroidClipboard(clipboardManager)
+
     /** [ViewConfiguration] provided by [LocalViewConfiguration] */
     internal val viewConfiguration =
         AndroidViewConfiguration(android.view.ViewConfiguration.get(view.context))
