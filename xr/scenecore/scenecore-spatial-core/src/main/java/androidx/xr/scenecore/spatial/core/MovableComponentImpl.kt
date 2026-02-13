@@ -23,6 +23,7 @@ import androidx.xr.runtime.math.Ray
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.GltfEntity
 import androidx.xr.scenecore.runtime.InputEvent
 import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.MovableComponent
@@ -198,7 +199,7 @@ internal class MovableComponentImpl(
         lastPose = entity.getPose(Space.PARENT)
         lastScale = entity.getScale(Space.PARENT)
 
-        if (entity is GltfEntityImpl) {
+        if (entity is GltfEntity) {
             entity.setReformAffordanceEnabled(
                 /* enabled */
                 true,
@@ -232,7 +233,7 @@ internal class MovableComponentImpl(
     }
 
     override fun onDetach(entity: Entity) {
-        if (entity is GltfEntityImpl) {
+        if (entity is GltfEntity) {
             entity.setReformAffordanceEnabled(
                 /* enabled */
                 false,

@@ -13,131 +13,103 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import android.content.Context;
-
-import androidx.annotation.RestrictTo;
-import androidx.xr.runtime.math.BoundingBox;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.GltfAnimationFeature;
-import androidx.xr.scenecore.runtime.GltfEntity;
-import androidx.xr.scenecore.runtime.GltfFeature;
-import androidx.xr.scenecore.runtime.GltfModelNodeFeature;
-import androidx.xr.scenecore.runtime.MaterialResource;
-
-import com.android.extensions.xr.XrExtensions;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Consumer;
+import android.content.Context
+import androidx.annotation.RestrictTo
+import androidx.xr.runtime.math.BoundingBox
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.GltfAnimationFeature
+import androidx.xr.scenecore.runtime.GltfEntity
+import androidx.xr.scenecore.runtime.GltfFeature
+import androidx.xr.scenecore.runtime.GltfModelNodeFeature
+import androidx.xr.scenecore.runtime.MaterialResource
+import com.android.extensions.xr.XrExtensions
+import java.util.concurrent.Executor
+import java.util.concurrent.ScheduledExecutorService
+import java.util.function.Consumer
 
 /**
  * Implementation of a SceneCore GltfEntity.
  *
- * <p>This is used to create an entity that contains a glTF object.
+ * This is used to create an entity that contains a glTF object.
  */
-class GltfEntityImpl extends BaseRenderingEntity implements GltfEntity {
-    private final GltfFeature mFeature;
-
-    GltfEntityImpl(
-            Context context,
-            GltfFeature feature,
-            Entity parentEntity,
-            XrExtensions extensions,
-            EntityManager entityManager,
-            ScheduledExecutorService executor) {
-        super(context, feature, extensions, entityManager, executor);
-        mFeature = feature;
-        setParent(parentEntity);
+internal class GltfEntityImpl(
+    context: Context,
+    private val gltfFeature: GltfFeature,
+    parentEntity: Entity?,
+    extensions: XrExtensions,
+    entityManager: EntityManager,
+    executor: ScheduledExecutorService,
+) : BaseRenderingEntity(context, gltfFeature, extensions, entityManager, executor), GltfEntity {
+    init {
+        parent = parentEntity
     }
 
-    @Override
-    @NonNull
-    public List<GltfModelNodeFeature> getNodes() {
-        return mFeature.getNodes();
+    override val nodes: List<GltfModelNodeFeature>
+        get() = gltfFeature.nodes
+
+    override val gltfModelBoundingBox: BoundingBox
+        get() = gltfFeature.getGltfModelBoundingBox()
+
+    override val animations: List<GltfAnimationFeature>
+        get() = gltfFeature.getAnimations(mExecutor)
+
+    override fun startAnimation(loop: Boolean, animationName: String?) {
+        gltfFeature.startAnimation(loop, animationName, mExecutor)
     }
 
-    @Override
-    @NonNull
-    public BoundingBox getGltfModelBoundingBox() {
-        return mFeature.getGltfModelBoundingBox();
+    override fun stopAnimation() {
+        gltfFeature.stopAnimation()
     }
 
-    @Override
-    @NonNull
-    public List<GltfAnimationFeature> getAnimations() {
-        return mFeature.getAnimations(mExecutor);
-    }
-
-    @Override
-    public void startAnimation(boolean looping, @Nullable String animationName) {
-        mFeature.startAnimation(looping, animationName, mExecutor);
-    }
-
-    @Override
-    public void stopAnimation() {
-        mFeature.stopAnimation();
-    }
-
-    @Override
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public void pauseAnimation() {
-        mFeature.pauseAnimation();
+    override fun pauseAnimation() {
+        gltfFeature.pauseAnimation()
     }
 
-    @Override
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public void resumeAnimation() {
-        mFeature.resumeAnimation();
+    override fun resumeAnimation() {
+        gltfFeature.resumeAnimation()
     }
 
-    @Override
-    @AnimationStateValue
-    public int getAnimationState() {
-        return mFeature.getAnimationState();
+    @GltfEntity.AnimationStateValue
+    override val animationState: Int
+        get() = gltfFeature.animationState
+
+    override fun setMaterialOverride(
+        material: MaterialResource,
+        nodeName: String,
+        primitiveIndex: Int,
+    ) {
+        gltfFeature.setMaterialOverride(material, nodeName, primitiveIndex)
     }
 
-    @Override
-    public void setMaterialOverride(
-            @NonNull MaterialResource material, @NonNull String nodeName, int primitiveIndex) {
-        mFeature.setMaterialOverride(material, nodeName, primitiveIndex);
+    override fun clearMaterialOverride(nodeName: String, primitiveIndex: Int) {
+        gltfFeature.clearMaterialOverride(nodeName, primitiveIndex)
     }
 
-    @Override
-    public void clearMaterialOverride(@NonNull String nodeName, int primitiveIndex) {
-        mFeature.clearMaterialOverride(nodeName, primitiveIndex);
+    override fun setColliderEnabled(enabled: Boolean) {
+        gltfFeature.setColliderEnabled(enabled)
     }
 
-    public void setColliderEnabled(boolean enableCollider) {
-        mFeature.setColliderEnabled(enableCollider);
+    override fun addAnimationStateListener(executor: Executor, listener: Consumer<Int>) {
+        gltfFeature.addAnimationStateListener(executor, listener)
     }
 
-    @Override
-    public void addAnimationStateListener(
-            @NonNull Executor executor, @NonNull Consumer<@NonNull Integer> listener) {
-        mFeature.addAnimationStateListener(executor, listener);
+    override fun removeAnimationStateListener(listener: Consumer<Int>) {
+        gltfFeature.removeAnimationStateListener(listener)
     }
 
-    @Override
-    public void removeAnimationStateListener(@NonNull Consumer<@NonNull Integer> listener) {
-        mFeature.removeAnimationStateListener(listener);
+    override fun addOnBoundsUpdateListener(listener: Consumer<BoundingBox>) {
+        gltfFeature.addOnBoundsUpdateListener(listener)
     }
 
-    public void addOnBoundsUpdateListener(@NonNull Consumer<@NonNull BoundingBox> listener) {
-        mFeature.addOnBoundsUpdateListener(listener);
+    override fun removeOnBoundsUpdateListener(listener: Consumer<BoundingBox>) {
+        gltfFeature.removeOnBoundsUpdateListener(listener)
     }
 
-    public void removeOnBoundsUpdateListener(@NonNull Consumer<@NonNull BoundingBox> listener) {
-        mFeature.removeOnBoundsUpdateListener(listener);
-    }
-
-    public void setReformAffordanceEnabled(boolean enabled, boolean systemMovable) {
-        mFeature.setReformAffordanceEnabled(this, enabled, mExecutor, systemMovable);
+    override fun setReformAffordanceEnabled(enabled: Boolean, systemMovable: Boolean) {
+        gltfFeature.setReformAffordanceEnabled(this, enabled, mExecutor, systemMovable)
     }
 }

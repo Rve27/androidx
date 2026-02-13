@@ -13,254 +13,247 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.app.Activity
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.runtime.math.BoundingBox.Companion.fromMinMax
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.GltfEntity
+import androidx.xr.scenecore.runtime.GltfFeature
+import androidx.xr.scenecore.runtime.GltfModelNodeFeature
+import androidx.xr.scenecore.runtime.MaterialResource
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeGltfFeature.Companion.createWithMockFeature
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.android.extensions.xr.ShadowXrExtensions
+import com.android.extensions.xr.node.Node
+import com.google.common.truth.Truth
+import java.util.concurrent.Executor
+import java.util.function.Consumer
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import android.app.Activity;
-
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.runtime.math.BoundingBox;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.GltfEntity;
-import androidx.xr.scenecore.runtime.GltfFeature;
-import androidx.xr.scenecore.runtime.GltfModelNodeFeature;
-import androidx.xr.scenecore.runtime.MaterialResource;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeGltfFeature;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-
-import com.android.extensions.xr.ShadowXrExtensions;
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.function.Consumer;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public class GltfEntityImplTest {
-    private static final int OPEN_XR_REFERENCE_SPACE_TYPE = 1;
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final EntityManager mEntityManager = new EntityManager();
-    private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
-    private final GltfFeature mMockGltfFeature = Mockito.mock(GltfFeature.class);
-    private ActivitySpaceImpl mActivitySpace;
-    private GltfEntityImpl mGltfEntity;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class GltfEntityImplTest {
+    private val xrExtensions = requireNotNull(getXrExtensions())
+    private val entityManager = EntityManager()
+    private val fakeScheduledExecutorService = FakeScheduledExecutorService()
+    private val mockGltfFeature: GltfFeature = mock<GltfFeature>()
+    private lateinit var activitySpace: ActivitySpaceImpl
+    private lateinit var gltfEntityImpl: GltfEntityImpl
 
     @Before
-    public void setUp() {
-        ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
-        Activity activity = activityController.create().start().get();
+    fun setUp() {
+        val activityController = Robolectric.buildActivity(Activity::class.java)
+        val activity = activityController.create().start().get()
 
-        assertThat(mXrExtensions).isNotNull();
+        Truth.assertThat(xrExtensions).isNotNull()
 
-        ShadowXrExtensions.extract(mXrExtensions)
-                .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
+        ShadowXrExtensions.extract(xrExtensions)
+            .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE)
 
-        Node taskNode = mXrExtensions.createNode();
-        mActivitySpace =
-                new ActivitySpaceImpl(
-                        taskNode,
-                        activity,
-                        mXrExtensions,
-                        mEntityManager,
-                        () -> mXrExtensions.getSpatialState(activity),
-                        /* unscaledGravityAlignedActivitySpace= */ false,
-                        mExecutor);
-        mEntityManager.addSystemSpaceActivityPose(new PerceptionSpaceScenePoseImpl(mActivitySpace));
+        val taskNode = xrExtensions.createNode()
+        activitySpace =
+            ActivitySpaceImpl(
+                taskNode,
+                activity,
+                xrExtensions,
+                entityManager,
+                { xrExtensions.getSpatialState(activity) },
+                unscaledGravityAlignedActivitySpace = false,
+                fakeScheduledExecutorService,
+            )
+        entityManager.addSystemSpaceActivityPose(PerceptionSpaceScenePoseImpl(activitySpace))
 
-        mGltfEntity = createGltfEntity(activity);
+        gltfEntityImpl = createGltfEntity(activity)
     }
 
     @After
-    public void tearDown() {
-        if (mGltfEntity != null) mGltfEntity.dispose();
-        mGltfEntity = null;
+    fun tearDown() {
+        gltfEntityImpl.dispose()
     }
 
-    private GltfEntityImpl createGltfEntity(Activity activity) {
-        NodeHolder<?> nodeHolder = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
-        GltfFeature fakeGltfFeature =
-                FakeGltfFeature.Companion.createWithMockFeature(mMockGltfFeature, nodeHolder);
+    private fun createGltfEntity(activity: Activity): GltfEntityImpl {
+        val nodeHolder = NodeHolder<Node>(xrExtensions.createNode(), Node::class.java)
+        val fakeGltfFeature = createWithMockFeature(mockGltfFeature, nodeHolder)
 
-        return new GltfEntityImpl(
-                activity,
-                fakeGltfFeature,
-                mActivitySpace,
-                mXrExtensions,
-                mEntityManager,
-                mExecutor);
-    }
-
-    @Test
-    public void getGltfModelBoundingBox_returnsBoundingBox() {
-        BoundingBox expectedResult = BoundingBox.fromMinMax(Vector3.Zero, Vector3.One);
-        when(mMockGltfFeature.getGltfModelBoundingBox()).thenReturn(expectedResult);
-
-        BoundingBox boundingBox = mGltfEntity.getGltfModelBoundingBox();
-
-        verify(mMockGltfFeature).getGltfModelBoundingBox();
-        assertThat(boundingBox).isEqualTo(expectedResult);
+        return GltfEntityImpl(
+            activity,
+            fakeGltfFeature,
+            activitySpace,
+            xrExtensions,
+            entityManager,
+            fakeScheduledExecutorService,
+        )
     }
 
     @Test
-    public void startAnimation_startsAnimation() {
-        when(mMockGltfFeature.getAnimationState()).thenReturn(GltfEntity.AnimationState.PLAYING);
+    fun getGltfModelBoundingBox_returnsBoundingBox() {
+        val expectedResult = fromMinMax(Vector3.Zero, Vector3.One)
+        whenever(mockGltfFeature.getGltfModelBoundingBox()).thenReturn(expectedResult)
 
-        mGltfEntity.startAnimation(/* looping= */ true, "test_animation");
+        val boundingBox = gltfEntityImpl.gltfModelBoundingBox
 
-        verify(mMockGltfFeature).startAnimation(true, "test_animation", mExecutor);
-        assertThat(mGltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
+        verify(mockGltfFeature).getGltfModelBoundingBox()
+        Truth.assertThat(boundingBox).isEqualTo(expectedResult)
     }
 
     @Test
-    public void stopAnimation_stopsAnimation() {
-        mGltfEntity.startAnimation(/* looping= */ true, "test_animation");
+    fun startAnimation_startsAnimation() {
+        whenever(mockGltfFeature.animationState).thenReturn(GltfEntity.AnimationState.PLAYING)
 
-        verify(mMockGltfFeature).startAnimation(true, "test_animation", mExecutor);
+        gltfEntityImpl.startAnimation(/* looping= */ true, "test_animation")
 
-        mGltfEntity.stopAnimation();
-
-        verify(mMockGltfFeature).stopAnimation();
+        verify(mockGltfFeature).startAnimation(true, "test_animation", fakeScheduledExecutorService)
+        Truth.assertThat(gltfEntityImpl.animationState).isEqualTo(GltfEntity.AnimationState.PLAYING)
     }
 
     @Test
-    public void pauseAnimation_pauseAnimation() {
-        mGltfEntity.startAnimation(/* looping= */ true, "test_animation");
-        verify(mMockGltfFeature).startAnimation(true, "test_animation", mExecutor);
+    fun stopAnimation_stopsAnimation() {
+        gltfEntityImpl.startAnimation(/* looping= */ true, "test_animation")
 
-        mGltfEntity.pauseAnimation();
+        verify(mockGltfFeature).startAnimation(true, "test_animation", fakeScheduledExecutorService)
 
-        verify(mMockGltfFeature).pauseAnimation();
+        gltfEntityImpl.stopAnimation()
+
+        verify(mockGltfFeature).stopAnimation()
     }
 
     @Test
-    public void resumeAnimation_resumeAnimation() {
-        mGltfEntity.startAnimation(/* looping= */ true, "test_animation");
-        verify(mMockGltfFeature).startAnimation(true, "test_animation", mExecutor);
-        mGltfEntity.pauseAnimation();
-        verify(mMockGltfFeature).pauseAnimation();
+    fun pauseAnimation_pauseAnimation() {
+        gltfEntityImpl.startAnimation(/* looping= */ true, "test_animation")
+        verify(mockGltfFeature).startAnimation(true, "test_animation", fakeScheduledExecutorService)
 
-        mGltfEntity.resumeAnimation();
+        gltfEntityImpl.pauseAnimation()
 
-        verify(mMockGltfFeature).resumeAnimation();
+        verify(mockGltfFeature).pauseAnimation()
     }
 
     @Test
-    public void setMaterialOverrideGltfEntity_materialOverridesNode() {
-        MaterialResource material = Mockito.mock(MaterialResource.class);
-        String nodeName = "fake_node_name";
-        int primitiveIndex = 0;
+    fun resumeAnimation_resumeAnimation() {
+        gltfEntityImpl.startAnimation(/* looping= */ true, "test_animation")
+        verify(mockGltfFeature).startAnimation(true, "test_animation", fakeScheduledExecutorService)
+        gltfEntityImpl.pauseAnimation()
+        verify(mockGltfFeature).pauseAnimation()
 
-        mGltfEntity.setMaterialOverride(material, nodeName, primitiveIndex);
+        gltfEntityImpl.resumeAnimation()
 
-        verify(mMockGltfFeature).setMaterialOverride(material, nodeName, primitiveIndex);
+        verify(mockGltfFeature).resumeAnimation()
     }
 
     @Test
-    public void clearMaterialOverrideGltfEntity_clearsMaterialOverride() {
-        String nodeName = "fake_node_name";
-        int primitiveIndex = 0;
+    fun setMaterialOverrideGltfEntity_materialOverridesNode() {
+        val material = mock<MaterialResource>()
+        val nodeName = "fake_node_name"
+        val primitiveIndex = 0
 
-        mGltfEntity.clearMaterialOverride(nodeName, primitiveIndex);
+        gltfEntityImpl.setMaterialOverride(material, nodeName, primitiveIndex)
 
-        verify(mMockGltfFeature).clearMaterialOverride(nodeName, primitiveIndex);
+        verify(mockGltfFeature).setMaterialOverride(material, nodeName, primitiveIndex)
     }
 
     @Test
-    public void addAnimationStateListener_addsListener() {
-        Executor executor = Runnable::run;
-        Consumer<Integer> listener = (value) -> assertThat(value).isNotNull();
+    fun clearMaterialOverrideGltfEntity_clearsMaterialOverride() {
+        val nodeName = "fake_node_name"
+        val primitiveIndex = 0
 
-        mGltfEntity.addAnimationStateListener(executor, listener);
+        gltfEntityImpl.clearMaterialOverride(nodeName, primitiveIndex)
 
-        verify(mMockGltfFeature).addAnimationStateListener(executor, listener);
+        verify(mockGltfFeature).clearMaterialOverride(nodeName, primitiveIndex)
     }
 
     @Test
-    public void removeAnimationStateListener_removesListener() {
-        Consumer<Integer> listener = (value) -> assertThat(value).isNotNull();
+    fun addAnimationStateListener_addsListener() {
+        val executor = Executor { it.run() }
+        val listener = Consumer { value: Int -> Truth.assertThat(value).isNotNull() }
 
-        mGltfEntity.removeAnimationStateListener(listener);
+        gltfEntityImpl.addAnimationStateListener(executor, listener)
 
-        verify(mMockGltfFeature).removeAnimationStateListener(listener);
+        verify(mockGltfFeature).addAnimationStateListener(executor, listener)
     }
 
     @Test
-    public void dispose_featureDisposed() {
-        mGltfEntity.dispose();
+    fun removeAnimationStateListener_removesListener() {
+        val listener = Consumer { value: Int -> Truth.assertThat(value).isNotNull() }
 
-        verify(mMockGltfFeature).dispose();
+        gltfEntityImpl.removeAnimationStateListener(listener)
 
-        mGltfEntity = null;
+        verify(mockGltfFeature).removeAnimationStateListener(listener)
     }
 
     @Test
-    public void getParent_nullParent_returnsNull() {
-        mGltfEntity.setParent(null);
-        assertThat(mGltfEntity.getParent()).isEqualTo(null);
+    fun dispose_featureDisposed() {
+        gltfEntityImpl.dispose()
+
+        verify(mockGltfFeature).dispose()
     }
 
     @Test
-    public void getPoseInParentSpace_nullParent_returnsIdentity() {
-        mGltfEntity.setParent(null);
-        mGltfEntity.setPose(Pose.Identity);
-        assertThat(mGltfEntity.getPose(Space.PARENT)).isEqualTo(Pose.Identity);
+    fun getParent_nullParent_returnsNull() {
+        gltfEntityImpl.parent = null
+        Truth.assertThat(gltfEntityImpl.parent).isEqualTo(null)
     }
 
     @Test
-    public void getPoseInActivitySpace_nullParent_throwsException() {
-        mGltfEntity.setParent(null);
-        assertThrows(IllegalStateException.class, () -> mGltfEntity.getPose(Space.ACTIVITY));
+    fun getPoseInParentSpace_nullParent_returnsIdentity() {
+        gltfEntityImpl.parent = null
+        gltfEntityImpl.setPose(Pose.Identity)
+        Truth.assertThat(gltfEntityImpl.getPose(Space.PARENT)).isEqualTo(Pose.Identity)
     }
 
     @Test
-    public void getPoseInRealWorldSpace_nullParent_throwsException() {
-        mGltfEntity.setParent(null);
-        assertThrows(IllegalStateException.class, () -> mGltfEntity.getPose(Space.REAL_WORLD));
+    fun getPoseInActivitySpace_nullParent_throwsException() {
+        gltfEntityImpl.parent = null
+        Assert.assertThrows(IllegalStateException::class.java) {
+            gltfEntityImpl.getPose(Space.ACTIVITY)
+        }
     }
 
     @Test
-    public void getNodes_returnsNodesFromFeature() {
-        List<GltfModelNodeFeature> fakeNodes = new ArrayList<>();
-        GltfModelNodeFeature mockNodeFeature = Mockito.mock(GltfModelNodeFeature.class);
-        fakeNodes.add(mockNodeFeature);
-        when(mMockGltfFeature.getNodes()).thenReturn(fakeNodes);
-
-        List<GltfModelNodeFeature> result = mGltfEntity.getNodes();
-
-        verify(mMockGltfFeature).getNodes();
-        assertThat(result).isSameInstanceAs(fakeNodes);
-        assertThat(result).hasSize(1);
+    fun getPoseInRealWorldSpace_nullParent_throwsException() {
+        gltfEntityImpl.parent = null
+        Assert.assertThrows(IllegalStateException::class.java) {
+            gltfEntityImpl.getPose(Space.REAL_WORLD)
+        }
     }
 
     @Test
-    public void getNodes_returnsEmptyList_whenFeatureHasNoNodes() {
-        when(mMockGltfFeature.getNodes()).thenReturn(Collections.emptyList());
+    fun getNodes_returnsNodesFromFeature() {
+        val fakeNodes: MutableList<GltfModelNodeFeature> = ArrayList()
+        val mockNodeFeature = mock<GltfModelNodeFeature>()
+        fakeNodes.add(mockNodeFeature)
+        whenever(mockGltfFeature.nodes).thenReturn(fakeNodes)
 
-        List<GltfModelNodeFeature> result = mGltfEntity.getNodes();
+        val result = gltfEntityImpl.nodes
 
-        assertThat(result).isEmpty();
+        verify(mockGltfFeature).nodes
+        Truth.assertThat(result).isSameInstanceAs(fakeNodes)
+        Truth.assertThat(result).hasSize(1)
+    }
+
+    @Test
+    fun getNodes_returnsEmptyList_whenFeatureHasNoNodes() {
+        whenever(mockGltfFeature.nodes).thenReturn(mutableListOf())
+
+        val result = gltfEntityImpl.nodes
+
+        Truth.assertThat(result).isEmpty()
+    }
+
+    companion object {
+        private const val OPEN_XR_REFERENCE_SPACE_TYPE = 1
     }
 }
