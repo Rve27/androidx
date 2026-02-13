@@ -149,6 +149,10 @@ internal constructor(
     override suspend fun awaitImage(streamId: StreamId): OutputImage? {
         if (closed.value) return null
         if (!imageStreams.contains(streamId)) return null
+        check(frameState.concurrentImageStreams?.contains(streamId) != true) {
+            "This is a multi-output stream, " +
+                "use awaitImage(outputId) or awaitImages(streamId) to acquire image(s)"
+        }
         val outputs = frameState.imageOutputs.filter { it.streamId == streamId }
         for (output in outputs) {
             output.await()?.let {
@@ -161,6 +165,10 @@ internal constructor(
     override fun getImage(streamId: StreamId): OutputImage? {
         if (closed.value) return null
         if (!imageStreams.contains(streamId)) return null
+        check(frameState.concurrentImageStreams?.contains(streamId) != true) {
+            "This is a multi-output stream, " +
+                "use awaitImage(outputId) or awaitImages(streamId) to acquire image(s)"
+        }
         val outputs = frameState.imageOutputs.filter { it.streamId == streamId }
         for (output in outputs) {
             output.outputOrNull()?.let {
