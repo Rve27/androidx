@@ -98,5 +98,5 @@ object ComposeMaterial3Flags {
      */
     @field:Suppress("MutableBareField")
     @JvmField
-    var isTextButtonContentPaddingFixEnabled: Boolean = true
+    var isTextButtonContentPaddingFixEnabled: Boolean = false
 }
