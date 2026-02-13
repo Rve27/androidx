@@ -778,7 +778,7 @@ package androidx.xr.scenecore.testing {
     method public void runAll();
     method public void runNext();
     method public java.util.concurrent.ScheduledFuture<? extends java.lang.Object!> schedule(Runnable?, long, java.util.concurrent.TimeUnit?);
-    method public <V> java.util.concurrent.ScheduledFuture<V!> schedule(java.util.concurrent.Callable<V!>?, long, java.util.concurrent.TimeUnit?);
+    method public <V> java.util.concurrent.ScheduledFuture<V> schedule(java.util.concurrent.Callable<V>?, long, java.util.concurrent.TimeUnit?);
     method public java.util.concurrent.ScheduledFuture<? extends java.lang.Object!> scheduleAtFixedRate(Runnable?, long, long, java.util.concurrent.TimeUnit?);
     method public java.util.concurrent.ScheduledFuture<? extends java.lang.Object!> scheduleWithFixedDelay(Runnable?, long, long, java.util.concurrent.TimeUnit?);
     method public void shutdown();
