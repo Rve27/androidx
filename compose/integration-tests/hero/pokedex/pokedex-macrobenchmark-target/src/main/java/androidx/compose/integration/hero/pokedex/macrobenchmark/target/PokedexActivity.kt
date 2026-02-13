@@ -63,6 +63,11 @@ class PokedexActivity : ComponentActivity() {
         }
         PokedexFeatureFlags.EnableSharedElementTransitions =
             intent.getBooleanExtra("enableSharedElementTransitions", false)
+
+        if (intent.getBooleanExtra("useLifecycleEventForDataLoad", false)) {
+            PokedexFeatureFlags.UseLifecycleEffectForDataLoadingOnStartup = true
+        }
+
         val startDestination =
             when (intent.getStringExtra("startDestination")) {
                 "home" -> PokedexScreen.Home
