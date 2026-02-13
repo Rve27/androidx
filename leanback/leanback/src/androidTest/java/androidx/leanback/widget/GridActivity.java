@@ -396,6 +396,9 @@ public class GridActivity extends Activity {
                     mSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int position) {
+                            if (position < 0 || position >= mGridView.getAdapter().getItemCount()) {
+                                throw new RuntimeException("invalid span position");
+                            }
                             Integer spanSize = mSpanSizes.get(position);
                             if (spanSize != null) {
                                 return spanSize;
