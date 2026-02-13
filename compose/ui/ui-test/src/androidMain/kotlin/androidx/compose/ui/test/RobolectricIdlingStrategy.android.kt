@@ -96,14 +96,22 @@ internal class RobolectricIdlingStrategy(
                     throw AppNotIdleException.create(emptyList(), errorMessage)
                 }
                 iteration++
+                // Snapshot the registry state before we touch the main thread
+                // If a background task finishes during the drain, we must still loop again
+                // to process any side effects it may have posted.
+                var isRegistryIdle = idlingResourceRegistry.isIdleNow
                 // Run Espresso.onIdle() to drain the main message queue
                 runEspressoOnIdle()
                 // Check if we need a measure/layout pass
                 requestLayoutIfNeeded()
                 // Let ComposeIdlingResource fast-forward compositions
                 val isComposeIdle = composeIdlingResource.isIdleNow
-                // Check if user-registered resources are idle
-                val isRegistryIdle = idlingResourceRegistry.isIdleNow
+                // If the registry was idle at the start, we must verify it remains idle
+                // after we drained the main thread. If runEspressoOnIdle() triggered
+                // a new background job, this second check will catch it.
+                if (isRegistryIdle) {
+                    isRegistryIdle = idlingResourceRegistry.isIdleNow
+                }
                 // Repeat while not idle
             } while (!isComposeIdle || !isRegistryIdle)
         }
