@@ -21,6 +21,7 @@ import static androidx.webkit.test.common.WebkitUtils.waitForNextQueueElement;
 import android.os.Bundle;
 import android.util.Pair;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -277,6 +278,17 @@ public class NavigationListenerTest {
         mWebViewOnUiThread.loadUrl(getErrorUrl(404));
         Navigation navigation = waitForNextQueueElement(mListener.mOnNavigationCompletedQueue);
         Assert.assertTrue(navigation.didCommitErrorPage());
+    }
+
+    @Test
+    public void didCommitErrorPage_webResourceErrorReturned() {
+        WebkitUtils.checkFeature(WebViewFeature.NAVIGATION_GET_WEB_RESOURCE_ERROR);
+        mWebViewOnUiThread.loadUrl("malformed-url");
+        Navigation navigation = waitForNextQueueElement(mListener.mOnNavigationCompletedQueue);
+        Assert.assertTrue(navigation.didCommitErrorPage());
+        Assert.assertNotNull(navigation.getWebResourceError());
+        Assert.assertEquals(WebViewClient.ERROR_HOST_LOOKUP,
+                navigation.getWebResourceError().getErrorCode());
     }
 
     @Test

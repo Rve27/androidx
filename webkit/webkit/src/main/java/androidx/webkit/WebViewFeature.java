@@ -122,6 +122,7 @@ public class WebViewFeature {
             DELETE_BROWSING_DATA,
             PRERENDER_WITH_URL,
             SAVE_STATE,
+            NAVIGATION_GET_WEB_RESOURCE_ERROR,
             NAVIGATION_CALLBACK_BASIC,
             NAVIGATION_LISTENER_V1,
             NAVIGATION_LISTENER_V2,
@@ -724,6 +725,15 @@ public class WebViewFeature {
      */
     @WebViewCompat.ExperimentalSaveState
     public static final String SAVE_STATE = "SAVE_STATE";
+
+    /**
+     * Feature for
+     * {@link Navigation#getWebResourceError()}
+     * {@link WebResourceErrorCompat#getDebugCode()}.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public static final String NAVIGATION_GET_WEB_RESOURCE_ERROR =
+            "NAVIGATION_GET_WEB_RESOURCE_ERROR";
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
