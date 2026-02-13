@@ -224,11 +224,11 @@ fun demoMoonPhases(): RemoteComposeContextAndroid {
 }
 
 @Suppress("RestrictedApiAndroidX")
-private fun drawCircle(x: Number, y: Number, rad: Number) {
+private fun RemoteComposeContextAndroid.drawCircle(x: Number, y: Number, rad: Number) {
     drawCircle(x.toFloat(), y.toFloat(), rad.toFloat())
 }
 
 @Suppress("RestrictedApiAndroidX")
-private fun drawOval(x: Number, y: Number, w: Number, h: Number) {
+private fun RemoteComposeContextAndroid.drawOval(x: Number, y: Number, w: Number, h: Number) {
     drawOval(x.toFloat(), y.toFloat(), w.toFloat(), h.toFloat())
 }
