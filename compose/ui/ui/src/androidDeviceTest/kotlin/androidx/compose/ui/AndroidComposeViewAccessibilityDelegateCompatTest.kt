@@ -33,6 +33,7 @@ import android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
 import android.view.accessibility.AccessibilityNodeInfo.EXTRA_DATA_TEXT_CHARACTER_LOCATION_KEY
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,9 +41,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Switch
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +75,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.ScrollAxisRange
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.accessibilityClassName
@@ -109,11 +114,14 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.semantics.textSelectionRange
+import androidx.compose.ui.test.SemanticsMatcher.Companion.expectValue
 import androidx.compose.ui.test.TestActivity
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.Density
@@ -1728,7 +1736,96 @@ class AndroidComposeViewAccessibilityDelegateCompatTest {
         rule.runOnIdle { assertThat(info.childCount).isEqualTo(1) }
     }
 
-    @SdkSuppress(maxSdkVersion = 33) // b/321824038
+    @Test
+    @OptIn(ExperimentalComposeUiApi::class)
+    fun testOffScreenNode_insideMergingContainer_included() {
+        assumeTrue(ComposeUiFlags.isAccessibilityShouldIncludeOffscreenChildrenEnabled)
+        rule.setContentWithAccessibilityEnabled {
+            Column(Modifier.size(10.toDp()).verticalScroll(rememberScrollState())) {
+                Column(Modifier.semantics(true) {}.testTag(tag)) {
+                    BasicText("one", Modifier.height(10.dp))
+                    // off-screen node (BasicText) inside merging container (Column)
+                    BasicText("two", Modifier.height(10.dp))
+                }
+            }
+        }
+
+        val bounds = Rect(0, 0, 0, 0)
+        val secondTextId = rule.onNodeWithText("two", useUnmergedTree = true).semanticsId()
+        rule.runOnIdle {
+            val secondTextInfo = androidComposeView.createAccessibilityNodeInfo(secondTextId)
+            secondTextInfo.getBoundsInScreen(bounds)
+            assertThat(bounds.height()).isGreaterThan(0)
+            assertThat(bounds.width()).isGreaterThan(0)
+            assertThat(secondTextInfo.isVisibleToUser).isFalse()
+        }
+    }
+
+    @Test
+    @OptIn(ExperimentalComposeUiApi::class)
+    fun testOffScreenNestedNode_insideMergingContainer_included() {
+        assumeTrue(ComposeUiFlags.isAccessibilityShouldIncludeOffscreenChildrenEnabled)
+        rule.setContentWithAccessibilityEnabled {
+            Column(Modifier.size(10.toDp()).verticalScroll(rememberScrollState())) {
+                Column(Modifier.semantics(true) {}.testTag(tag)) {
+                    Box(Modifier.semantics { text = AnnotatedString("box") }.height(30.dp)) {
+                        // off-screen node (BasicText) inside merging container (Column) nested
+                        // inside non-merging node (Box)
+                        BasicText("text", Modifier.height(10.dp).align(Alignment.BottomCenter))
+                    }
+                }
+            }
+        }
+
+        val textNode = rule.onNodeWithText("text", useUnmergedTree = true).fetchSemanticsNode()
+        val bounds = Rect(0, 0, 0, 0)
+
+        rule.runOnIdle {
+            val textNodeInfo = androidComposeView.createAccessibilityNodeInfo(textNode.id)
+            assertThat(textNodeInfo.isVisibleToUser).isFalse()
+            assertThat(textNodeInfo.text.toString()).isEqualTo("text")
+            textNodeInfo.getBoundsInScreen(bounds)
+            assertThat(bounds.height()).isGreaterThan(0)
+            assertThat(bounds.width()).isGreaterThan(0)
+        }
+    }
+
+    @Test
+    @OptIn(ExperimentalComposeUiApi::class)
+    fun testFakeNode_usesParentsVisibility() {
+        assumeTrue(ComposeUiFlags.isAccessibilityShouldIncludeOffscreenChildrenEnabled)
+        val buttonTag = "button"
+        rule.setContentWithAccessibilityEnabled {
+            Column(Modifier.size(100.dp).verticalScroll(rememberScrollState())) {
+                Box(Modifier.size(100.dp))
+                Box(Modifier.testTag(buttonTag).size(100.dp).clickable(role = Role.Button) {}) {
+                    Text("button", Modifier.height(50.dp).align(Alignment.BottomCenter))
+                }
+            }
+        }
+
+        val buttonNodeId = rule.onNodeWithTag(buttonTag).semanticsId()
+        val fakeNodeId =
+            rule.onNode(expectValue(SemanticsProperties.Role, Role.Button), true).semanticsId()
+
+        rule.runOnIdle {
+            val fakeNodeInfo = androidComposeView.createAccessibilityNodeInfo(fakeNodeId)
+            val buttonNodeInfo = androidComposeView.createAccessibilityNodeInfo(buttonNodeId)
+            assertThat(fakeNodeInfo.isVisibleToUser).isFalse()
+            assertThat(buttonNodeInfo.isVisibleToUser).isFalse()
+        }
+
+        rule.onNodeWithTag(buttonTag).performScrollTo()
+
+        rule.runOnIdle {
+            val fakeNodeInfo = androidComposeView.createAccessibilityNodeInfo(fakeNodeId)
+            val buttonNodeInfo = androidComposeView.createAccessibilityNodeInfo(buttonNodeId)
+            assertThat(fakeNodeInfo.isVisibleToUser).isTrue()
+            assertThat(buttonNodeInfo.isVisibleToUser).isTrue()
+        }
+    }
+
+    @SdkSuppress(maxSdkVersion = 33) // b/321824038-
     @Test
     fun testGetBoundsInScreen_translation() {
         rule.setContentWithAccessibilityEnabled { Box(Modifier.width(30.toDp()).height(70.toDp())) }
