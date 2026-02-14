@@ -3443,11 +3443,11 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             // and add Card1 and Card2 into focusables.
             final StandardGrid focusSearchInNextSpanGroup =
                     (movement == NEXT_ITEM || movement == PREV_ITEM)
-                            && mGrid.mSearchFocusInNextSpanGroup
+                            && mGrid.mSearchFocusInNextSpanGroup && focusedPos >= 0
                             ? (StandardGrid) mGrid : null;
-            final int focusSpanGroup = focusSearchInNextSpanGroup != null && focusedPos > 0
+            final int focusSpanGroup = focusSearchInNextSpanGroup != null
                     ? focusSearchInNextSpanGroup.getSpanGroupIndex(focusedPos) : -1;
-            int focusSpanGroupHasfocusable = -1;
+            int nextFocusableSpanGroup = -1;
 
             final int focusableCount = views.size();
 
@@ -3483,16 +3483,16 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                     int spanGroup = focusSearchInNextSpanGroup.getSpanGroupIndex(position);
                     if (movement == NEXT_ITEM
                             ? spanGroup > focusSpanGroup : spanGroup < focusSpanGroup) {
-                        if (focusSpanGroupHasfocusable >= 0
-                                && focusSpanGroupHasfocusable != spanGroup) {
-                            // We have a new span group than current focusSpanGroupHasfocusable
+                        if (nextFocusableSpanGroup >= 0
+                                && nextFocusableSpanGroup != spanGroup) {
+                            // We have a new span group than current nextFocusableSpanGroup
                             if (views.size() > focusableCount) {
-                                // If the current focusSpanGroupHasfocusable already has focusable
+                                // If the current nextFocusableSpanGroup already has focusable
                                 // views, we can stop search.
                                 break;
                             }
                         }
-                        focusSpanGroupHasfocusable = spanGroup;
+                        nextFocusableSpanGroup = spanGroup;
                         child.addFocusables(views, direction, focusableMode);
                     }
                 } else if (movement == NEXT_ITEM) {
