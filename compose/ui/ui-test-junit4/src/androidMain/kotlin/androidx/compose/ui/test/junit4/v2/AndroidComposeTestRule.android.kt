@@ -30,6 +30,26 @@ import kotlinx.coroutines.test.TestDispatcher
 import org.junit.rules.TestRule
 
 /**
+ * Factory method to provide an implementation of [ComposeContentTestRule].
+ *
+ * This API differs from the deprecated API by using
+ * [kotlinx.coroutines.test.StandardTestDispatcher] by default for running composition, instead of
+ * [kotlinx.coroutines.test.UnconfinedTestDispatcher]. This ensures that the test behavior is
+ * consistent with [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine
+ * execution order. This means you may need to explicitly advance time or run current coroutines
+ * when testing complex coroutine logic, as tasks are queued on the scheduler rather than running
+ * eagerly.
+ *
+ * This method is useful for tests in compose libraries where it is irrelevant where the compose
+ * content is hosted (e.g. an Activity on Android). Such tests typically set compose content
+ * themselves via [setContent][ComposeContentTestRule.setContent] and only instrument and assert
+ * that content.
+ *
+ * For Android this will use the default Activity (android.app.Activity). You need to add a
+ * reference to this activity into the manifest file of the corresponding tests (usually in
+ * androidTest/AndroidManifest.xml). If your Android test requires a specific Activity to be
+ * launched, see [createAndroidComposeRule].
+ *
  * @param effectContext The [CoroutineContext] used to run the composition. The context for
  *   `LaunchedEffect`s and `rememberCoroutineScope` will be derived from this context. If this
  *   context contains a [TestDispatcher], it is used for composition and the [MainTestClock].
