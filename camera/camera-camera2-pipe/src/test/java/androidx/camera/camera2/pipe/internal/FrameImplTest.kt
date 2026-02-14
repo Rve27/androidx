@@ -35,6 +35,7 @@ import androidx.camera.camera2.pipe.testing.FakeFrameMetadata
 import androidx.camera.camera2.pipe.testing.FakeImage
 import androidx.camera.camera2.pipe.testing.FakeRequestMetadata
 import androidx.camera.camera2.pipe.testing.FakeSurfaces
+import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
 import org.junit.Test
@@ -148,7 +149,8 @@ class FrameImplTest {
             requestMetadata = fakeRequestMetadata,
             frameNumber = frameNumber,
             frameTimestamp = frameTimestamp,
-            imageStreams,
+            imageStreams = imageStreams,
+            concurrentImageStreams = setOf(stream4Id),
         )
 
     private val frameInfoResult = frameState.frameInfoOutput
@@ -307,6 +309,13 @@ class FrameImplTest {
     }
 
     @Test
+    fun getImageFromConcurrentStreamsShouldThrow() {
+        distributeAllOutputs()
+
+        assertThrows<IllegalStateException> { sharedOutputFrame.getImage(stream4Id) }
+    }
+
+    @Test
     fun outputsAcquiredBeforeClosedAreNotClosedImmediately() {
         distributeAllOutputs()
 
@@ -374,9 +383,9 @@ class FrameImplTest {
         assertThat(frame2.isImageAvailable(output4Id)).isTrue()
         assertThat(frame2.isImageAvailable(output5Id)).isFalse()
         assertThat(frame2.isImageAvailable(output6Id)).isFalse()
-        val stream3OutputImage = frame2.getImage(stream4Id)!!
-        assertThat(stream3OutputImage.streamId).isEqualTo(stream4Id)
-        assertThat(stream3OutputImage.outputId).isEqualTo(output7Id)
+        val stream3OutputImage = frame2.getImage(stream3Id)!!
+        assertThat(stream3OutputImage.streamId).isEqualTo(stream3Id)
+        assertThat(stream3OutputImage.outputId).isEqualTo(output4Id)
         val stream3OutputImages = frame2.getImages(stream3Id)
         assertThat(stream3OutputImages.size).isEqualTo(1)
         assertThat(stream3OutputImages[0].streamId).isEqualTo(stream3Id)
