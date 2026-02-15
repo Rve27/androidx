@@ -220,6 +220,7 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
         }
         mARContext.setDocLoadTime();
         mARContext.setAnimationEnabled(true);
+        mDensity = getContext().getResources().getDisplayMetrics().density;
         mARContext.setDensity(mDensity);
         mARContext.setUseChoreographer(true);
         setContentDescription(mDocument.getDocument().getContentDescription());
