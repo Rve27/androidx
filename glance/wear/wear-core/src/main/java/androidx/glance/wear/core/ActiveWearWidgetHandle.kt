@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import android.content.ComponentName
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
-import androidx.glance.wear.ContainerInfo.ContainerType
 import androidx.glance.wear.parcel.ActiveWearWidgetHandleParcel
 import androidx.glance.wear.proto.ActiveWearWidgetHandleProto
 import java.util.Objects
@@ -34,11 +32,13 @@ import java.util.Objects
  * @property containerType The container type of the widget instance.
  */
 public class ActiveWearWidgetHandle
-@RestrictTo(LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public constructor(
     public val provider: ComponentName,
     public val instanceId: WidgetInstanceId,
-    @get:ContainerType @param:ContainerType public val containerType: Int,
+    @get:ContainerInfo.ContainerType
+    @param:ContainerInfo.ContainerType
+    public val containerType: Int,
 ) {
     override fun equals(other: Any?): Boolean =
         when {
@@ -53,9 +53,9 @@ public constructor(
     override fun hashCode(): Int = Objects.hash(provider, instanceId, containerType)
 
     override fun toString(): String =
-        "ActiveWidget{${provider.className}:$instanceId type=${ContainerInfo.containerTypeToString(containerType)}}"
+        "ActiveWidget{${provider.className}:$instanceId type=${ContainerInfo.Companion.containerTypeToString(containerType)}}"
 
-    @RestrictTo(LIBRARY_GROUP)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun toParcel(): ActiveWearWidgetHandleParcel {
         val handleProto =
             ActiveWearWidgetHandleProto(
@@ -67,12 +67,13 @@ public constructor(
     }
 
     public companion object {
-        @RestrictTo(LIBRARY_GROUP)
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun fromParcel(
             handleParcel: ActiveWearWidgetHandleParcel,
             provider: ComponentName,
         ): ActiveWearWidgetHandle {
-            val handleProto = ActiveWearWidgetHandleProto.ADAPTER.decode(handleParcel.payload)
+            val handleProto =
+                ActiveWearWidgetHandleProto.Companion.ADAPTER.decode(handleParcel.payload)
             return ActiveWearWidgetHandle(
                 provider = provider,
                 instanceId = WidgetInstanceId(handleProto.id_namespace, handleProto.id),

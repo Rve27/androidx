@@ -24,6 +24,9 @@ import androidx.annotation.VisibleForTesting
 import androidx.glance.wear.ActiveWidgetStore.Companion.ACTIVE_WIDGET_SHARED_PREF_NAME
 import androidx.glance.wear.ActiveWidgetStore.Companion.INACTIVE_WIDGET_DURATION
 import androidx.glance.wear.ActiveWidgetStore.Companion.getWidgetKey
+import androidx.glance.wear.core.ActiveWearWidgetHandle
+import androidx.glance.wear.core.ContainerInfo
+import androidx.glance.wear.core.WidgetInstanceId
 import java.time.Duration
 import java.time.Instant
 

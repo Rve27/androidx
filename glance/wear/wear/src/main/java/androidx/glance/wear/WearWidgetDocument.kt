@@ -24,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.glance.wear.composable.WearWidgetContainer
+import androidx.glance.wear.core.WearWidgetParams
+import androidx.glance.wear.core.WearWidgetRawContent
 import androidx.glance.wear.parcel.WearWidgetCapture
 
 /**

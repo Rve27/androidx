@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import android.content.ComponentName
 import android.content.Context
@@ -22,7 +22,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.content.res.XmlResourceParser
-import androidx.glance.wear.WearWidgetProviderInfoXmlParser.parseWearWidgetProviderInfo
+import androidx.glance.wear.core.WearWidgetProviderInfoXmlParser.parseWearWidgetProviderInfo
 import androidx.glance.wear.core.test.R
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.common.truth.Truth.assertThat

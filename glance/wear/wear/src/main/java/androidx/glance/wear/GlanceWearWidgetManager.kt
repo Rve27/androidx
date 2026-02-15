@@ -23,6 +23,9 @@ import androidx.annotation.DoNotInline
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
+import androidx.glance.wear.core.ActiveWearWidgetHandle
+import androidx.glance.wear.core.ContainerInfo
+import androidx.glance.wear.core.WidgetInstanceId
 import com.google.wear.Sdk
 import com.google.wear.services.tiles.TileInstance
 import com.google.wear.services.tiles.TilesManager

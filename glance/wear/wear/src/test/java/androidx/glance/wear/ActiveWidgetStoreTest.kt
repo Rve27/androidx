@@ -17,6 +17,8 @@
 package androidx.glance.wear
 
 import android.content.ComponentName
+import androidx.glance.wear.core.ContainerInfo
+import androidx.glance.wear.core.WidgetInstanceId
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
