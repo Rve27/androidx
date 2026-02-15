@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.os.Looper
-import androidx.glance.wear.ContainerInfo.Companion.CONTAINER_TYPE_LARGE
+import androidx.glance.wear.core.ContainerInfo.Companion.CONTAINER_TYPE_LARGE
 import androidx.glance.wear.parcel.ActiveWearWidgetHandleParcel
 import androidx.glance.wear.parcel.IExecutionCallback
 import androidx.glance.wear.parcel.IWearWidgetCallback

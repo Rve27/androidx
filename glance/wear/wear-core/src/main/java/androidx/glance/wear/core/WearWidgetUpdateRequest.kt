@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.glance.wear.parcel.WearWidgetUpdateRequestParcel
 import androidx.glance.wear.proto.WearWidgetUpdateRequestProto
 
 /** Describes the necessary information to request or push an update to the Host. */
-@RestrictTo(LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class WearWidgetUpdateRequest(public val instanceId: WidgetInstanceId) {
 
-    /** Convert to the parcelable [WearWidgetUpdateRequestParcel]. */
-    @RestrictTo(LIBRARY_GROUP)
+    /** Convert to the parcelable [androidx.glance.wear.parcel.WearWidgetUpdateRequestParcel]. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun toParcel(): WearWidgetUpdateRequestParcel {
         val requestProto =
             WearWidgetUpdateRequestProto(id = instanceId.id, id_namespace = instanceId.namespace)
         return WearWidgetUpdateRequestParcel().apply { payload = requestProto.encode() }
     }
 
-    @RestrictTo(LIBRARY_GROUP)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
         public fun fromParcel(
             contentParcel: WearWidgetUpdateRequestParcel
         ): WearWidgetUpdateRequest {
-            val requestProto = WearWidgetUpdateRequestProto.ADAPTER.decode(contentParcel.payload)
+            val requestProto =
+                WearWidgetUpdateRequestProto.Companion.ADAPTER.decode(contentParcel.payload)
             return WearWidgetUpdateRequest(
                 instanceId =
                     WidgetInstanceId(namespace = requestProto.id_namespace, id = requestProto.id)

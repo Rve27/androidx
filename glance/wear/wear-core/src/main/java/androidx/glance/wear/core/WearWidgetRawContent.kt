@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import android.os.Bundle
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.glance.wear.parcel.WearWidgetRawContentParcel
 import androidx.glance.wear.proto.WearWidgetRawContentProto
 import okio.ByteString.Companion.toByteString
@@ -27,11 +26,11 @@ import okio.ByteString.Companion.toByteString
  * Describes the raw contents from [WearWidgetContent]. This is after RC content is captured and
  * serialized.
  */
-@RestrictTo(LIBRARY_GROUP)
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class WearWidgetRawContent(public val rcDocument: ByteArray, public val extras: Bundle) {
 
-    /** Convert to the parcelable [WearWidgetRawContentParcel]. */
-    @RestrictTo(LIBRARY_GROUP)
+    /** Convert to the parcelable [androidx.glance.wear.parcel.WearWidgetRawContentParcel]. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun toParcel(): WearWidgetRawContentParcel {
         val contentProto = WearWidgetRawContentProto(rc_document = rcDocument.toByteString())
         return WearWidgetRawContentParcel().apply {
@@ -40,10 +39,11 @@ public class WearWidgetRawContent(public val rcDocument: ByteArray, public val e
         }
     }
 
-    @RestrictTo(LIBRARY_GROUP)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
         public fun fromParcel(contentParcel: WearWidgetRawContentParcel): WearWidgetRawContent {
-            val contentProto = WearWidgetRawContentProto.ADAPTER.decode(contentParcel.payload)
+            val contentProto =
+                WearWidgetRawContentProto.Companion.ADAPTER.decode(contentParcel.payload)
             return WearWidgetRawContent(
                 rcDocument = contentProto.rc_document.toByteArray(),
                 extras = contentParcel.extras ?: Bundle.EMPTY,
