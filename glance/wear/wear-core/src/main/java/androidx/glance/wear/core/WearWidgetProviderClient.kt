@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import android.content.ComponentName
 import android.content.Context
@@ -25,9 +25,6 @@ import android.os.IBinder
 import android.os.UserHandle
 import android.util.Log
 import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY
-import androidx.glance.wear.ContainerInfo.ContainerType
-import androidx.glance.wear.WearWidgetProviderInfo.Companion.ACTION_BIND_WIDGET_PROVIDER
 import androidx.glance.wear.parcel.ActiveWearWidgetHandleParcel
 import androidx.glance.wear.parcel.IExecutionCallback
 import androidx.glance.wear.parcel.IWearWidgetProvider
@@ -42,30 +39,35 @@ import kotlinx.coroutines.guava.future
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
- * Client for a [IWearWidgetProvider] provider.
+ * Client for a [androidx.glance.wear.parcel.IWearWidgetProvider] provider.
  *
  * This class handles the connection with the provider service. Each call will create a new
  * temporary connection to the service.
  */
-@RestrictTo(LIBRARY)
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class WearWidgetProviderClient(
     private val context: Context,
     private val componentName: ComponentName,
     private val userHandle: UserHandle? = null,
 ) {
     private val serviceIntent =
-        Intent(ACTION_BIND_WIDGET_PROVIDER).apply { component = componentName }
+        Intent(WearWidgetProviderInfo.Companion.ACTION_BIND_WIDGET_PROVIDER).apply {
+            component = componentName
+        }
 
-    /** Call [IWearWidgetProvider.onAdded] on the provider and wait for completion. */
+    /**
+     * Call [androidx.glance.wear.parcel.IWearWidgetProvider.onAdded] on the provider and wait for
+     * completion.
+     */
     public suspend fun sendAddEvent(
         instanceId: WidgetInstanceId,
-        @ContainerType containerType: Int,
+        @ContainerInfo.ContainerType containerType: Int,
     ): Unit = sendEvent(instanceId, containerType, "onAdded", IWearWidgetProvider::onAdded)
 
     /** ListenableFuture version of [sendAddEvent]. */
     public fun sendAddEventAsync(
         instanceId: WidgetInstanceId,
-        @ContainerType containerType: Int,
+        @ContainerInfo.ContainerType containerType: Int,
         executor: Executor,
     ): ListenableFuture<Void?> =
         sendEventAsync(executor) { sendAddEvent(instanceId, containerType) }
@@ -73,20 +75,20 @@ public class WearWidgetProviderClient(
     /** Call [IWearWidgetProvider.onRemoved] on the provider and wait for completion. */
     public suspend fun sendRemoveEvent(
         instanceId: WidgetInstanceId,
-        @ContainerType containerType: Int,
+        @ContainerInfo.ContainerType containerType: Int,
     ): Unit = sendEvent(instanceId, containerType, "onRemoved", IWearWidgetProvider::onRemoved)
 
     /** ListenableFuture version of [sendRemoveEvent]. */
     public fun sendRemoveEventAsync(
         instanceId: WidgetInstanceId,
-        @ContainerType containerType: Int,
+        @ContainerInfo.ContainerType containerType: Int,
         executor: Executor,
     ): ListenableFuture<Void?> =
         sendEventAsync(executor) { sendRemoveEvent(instanceId, containerType) }
 
     private suspend fun sendEvent(
         instanceId: WidgetInstanceId,
-        @ContainerType containerType: Int,
+        @ContainerInfo.ContainerType containerType: Int,
         eventTag: String,
         eventSender: IWearWidgetProvider.(ActiveWearWidgetHandleParcel, IExecutionCallback) -> Unit,
     ) {

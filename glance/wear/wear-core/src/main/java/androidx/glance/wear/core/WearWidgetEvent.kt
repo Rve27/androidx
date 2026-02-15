@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.glance.wear
+package androidx.glance.wear.core
 
 import androidx.annotation.RestrictTo
 import androidx.glance.wear.parcel.WearWidgetEventBatchParcel
