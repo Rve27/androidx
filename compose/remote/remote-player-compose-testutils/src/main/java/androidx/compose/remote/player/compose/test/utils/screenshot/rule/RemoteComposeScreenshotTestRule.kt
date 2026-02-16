@@ -143,6 +143,10 @@ class RemoteComposeScreenshotTestRule(
         backgroundColor: Color? = null,
         deviceConfigurationOverride: DeviceConfigurationOverride? = null,
         profile: Profile? = null,
+        outerContent:
+            (@Composable
+            (modifier: Modifier, content: @Composable @RemoteComposable () -> Unit) -> Unit)? =
+            null,
         content: @Composable @RemoteComposable () -> Unit,
     ) {
         setContent(
@@ -151,6 +155,7 @@ class RemoteComposeScreenshotTestRule(
             backgroundColor = backgroundColor,
             deviceConfigurationOverride = deviceConfigurationOverride,
             profile = profile,
+            outerContent = outerContent,
             content = content,
         )
         composeTestRule.verifyScreenshot(screenshotName, screenshotRule)
@@ -200,33 +205,44 @@ class RemoteComposeScreenshotTestRule(
         backgroundColor: Color?,
         deviceConfigurationOverride: DeviceConfigurationOverride? = null,
         profile: Profile? = null,
+        outerContent:
+            (@Composable
+            (modifier: Modifier, content: @Composable @RemoteComposable () -> Unit) -> Unit)? =
+            null,
         content: @Composable @RemoteComposable () -> Unit,
     ) {
         composeTestRule.setContent {
             WithOverride(layoutDirection?.let { DeviceConfigurationOverride.LayoutDirection(it) }) {
                 WithOverride(deviceConfigurationOverride) {
-                    val boxModifier =
-                        Modifier.width(creationDisplayInfo.widthDp)
-                            .height(creationDisplayInfo.heightDp)
-                            .then(
-                                if (backgroundColor != null) {
-                                    Modifier.background(backgroundColor)
-                                } else {
-                                    Modifier
-                                }
-                            )
-                            .testTag(ROOT_TEST_TAG)
+                    val document: CoreDocument? by
+                        rememberRemoteDocument(
+                            content = content,
+                            creationDisplayInfo = creationDisplayInfo,
+                            profile = profile ?: this@RemoteComposeScreenshotTestRule.profile,
+                        )
+                    document?.let { doc ->
+                        val boxModifier =
+                            Modifier.width(creationDisplayInfo.widthDp)
+                                .height(creationDisplayInfo.heightDp)
+                                .then(
+                                    if (backgroundColor != null) {
+                                        Modifier.background(backgroundColor)
+                                    } else {
+                                        Modifier
+                                    }
+                                )
+                                .testTag(ROOT_TEST_TAG)
 
-                    Box(modifier = boxModifier) {
-                        val document: CoreDocument? by
-                            rememberRemoteDocument(
-                                content = content,
-                                creationDisplayInfo = creationDisplayInfo,
-                                profile = profile ?: this@RemoteComposeScreenshotTestRule.profile,
-                            )
-                        document?.let {
-                            saveDocument(it.buffer, testDescription.goldenIdentifier() + ".rc")
-                            RemoteDocumentPlayer(it, creationDisplayInfo)
+                        saveDocument(doc.buffer, testDescription.goldenIdentifier() + ".rc")
+
+                        val content: @Composable @RemoteComposable () -> Unit = {
+                            RemoteDocumentPlayer(doc, creationDisplayInfo)
+                        }
+
+                        if (outerContent != null) {
+                            outerContent(boxModifier, content)
+                        } else {
+                            Box(modifier = boxModifier) { content() }
                         }
                     }
                 }
