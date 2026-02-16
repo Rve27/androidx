@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@file:Suppress("RestrictedApiAndroidX")
 
 package androidx.wear.compose.remote.material3
 
+import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.action.Action
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
@@ -102,8 +102,9 @@ public fun RemoteIconButton(
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RemoteIconButtonDefaults {
     /** Recommended [RemoteShape] for [RemoteIconButton]. */
+    @Suppress("RestrictedApiAndroidX")
     public val shape: RemoteRoundedCornerShape
-        @Composable get() = RemoteCircleShape
+        get() = RemoteCircleShape
 
     /** Recommended alpha to apply to an IconButton with Image content with disabled */
     public val DisabledImageOpacity: RemoteFloat = DisabledContentAlpha.rf
@@ -151,6 +152,7 @@ public object RemoteIconButtonDefaults {
      *
      * @param buttonSize The size of the icon button
      */
+    @SuppressLint("RestrictedApiAndroidX")
     public fun iconSizeFor(buttonSize: RemoteDp): RemoteDp =
         buttonSize.value
             .gt(LargeButtonSize.value)
@@ -211,7 +213,6 @@ public object RemoteIconButtonDefaults {
  */
 @Immutable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Suppress("RestrictedApiAndroidX")
 public class RemoteIconButtonColors(
     public val containerColor: RemoteColor,
     public val contentColor: RemoteColor,
@@ -219,11 +220,13 @@ public class RemoteIconButtonColors(
     public val disabledContentColor: RemoteColor,
 ) {
     @Stable
+    @SuppressLint("RestrictedApiAndroidX")
     internal fun contentColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(ifTrue = contentColor, ifFalse = disabledContentColor)
     }
 
     @Stable
+    @SuppressLint("RestrictedApiAndroidX")
     internal fun containerColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(ifTrue = containerColor, ifFalse = disabledContainerColor)
     }

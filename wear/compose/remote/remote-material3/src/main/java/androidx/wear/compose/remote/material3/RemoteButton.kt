@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@file:Suppress("RestrictedApiAndroidX")
 
 package androidx.wear.compose.remote.material3
 
@@ -67,8 +66,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.ButtonDefaults.scrimGradientEndColor
 import androidx.wear.compose.material3.ButtonDefaults.scrimGradientStartColor
@@ -561,11 +558,11 @@ private fun RemoteButtonImpl(
 public object RemoteButtonDefaults {
     /** Recommended [RemoteRoundedCornerShape] for [RemoteButton]. */
     public val shape: RemoteRoundedCornerShape
-        @Composable get() = RemoteRoundedCornerShape(16.rdp)
+        get() = RemoteRoundedCornerShape(16.rdp)
 
     /** Recommended [RemoteRoundedCornerShape] for [RemoteCompactButton]. */
     public val compactButtonShape: RemoteRoundedCornerShape
-        @Composable get() = RemoteRoundedCornerShape(18.rdp)
+        get() = RemoteRoundedCornerShape(18.rdp)
 
     /**
      * Creates a [RemoteButtonColors] that represents the default background and content colors used
@@ -637,10 +634,10 @@ public object RemoteButtonDefaults {
         }
 
     /** The default minimum height applied for the [RemoteButton]. */
-    public val Height: Dp = 52.dp
+    public val Height: RemoteDp = 52.rdp
 
     /** The default minimum width applied for the [RemoteButton]. */
-    public val Width: Dp = 12.dp
+    public val Width: RemoteDp = 12.rdp
 
     /**
      * The default size of the spacing between an icon and a text when they are used inside a
@@ -864,6 +861,7 @@ public class RemoteButtonColors(
 }
 
 /** Draws a colored and shaped background with when clipping is not supported. */
+@Suppress("RestrictedApiAndroidX")
 internal fun RemoteDrawScope.drawShapedBackground(
     shape: RemoteShape,
     color: RemoteColor,
@@ -943,17 +941,16 @@ private fun RemoteDrawScope.drawSolidColorShape(
     }
 }
 
-// TODO(b/451927368): Adds HeightInModifier and WidthInModifier that accept RemoteDp
 // TODO(b/459724215): Constraint shouldn't be enforced when there is not enough space.
-@Composable
+@Suppress("RestrictedApiAndroidX")
 public fun RemoteModifier.buttonSizeModifier(): RemoteModifier =
     this.heightIn(min = RemoteButtonDefaults.Height).widthIn(min = RemoteButtonDefaults.Width)
 
-@Composable
 private fun RemoteModifier.compactButtonModifier(): RemoteModifier {
     return this.height(RemoteButtonDefaults.CompactButtonHeight)
 }
 
+@Suppress("RestrictedApiAndroidX")
 internal fun RemoteColor.toDisabledColor(
     disabledAlpha: RemoteFloat = DisabledContentAlpha.rf
 ): RemoteColor = this.copy(alpha = this.alpha * disabledAlpha)
