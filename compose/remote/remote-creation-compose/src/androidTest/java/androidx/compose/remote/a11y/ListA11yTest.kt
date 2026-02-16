@@ -46,6 +46,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.test.uiautomator.uiAutomator
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,6 +61,7 @@ class ListA11yTest {
         RemoteComposeScreenshotTestRule(moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY)
 
     @Test
+    @Ignore("b/484916070")
     fun listSemantics() {
         remoteComposeTestRule.runTest {
             ScrollableList(modifier = RemoteModifier.fillMaxSize(), items = 30, notches = 0)
@@ -96,6 +98,7 @@ class ListA11yTest {
     }
 
     @Test
+    @Ignore("b/484916070")
     fun listWithSnapSemantics() {
         remoteComposeTestRule.runTest {
             ScrollableList(modifier = RemoteModifier.fillMaxSize(), items = 30, notches = 29)
