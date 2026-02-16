@@ -71,8 +71,7 @@ public inline fun <reified T : Enum<T>> rememberStateMachine(
 }
 
 /** Utility modifier to record the layout information */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteComposeStateLayoutModifier(
+internal class RemoteComposeStateLayoutModifier(
     public var modifier: RemoteModifier,
     public var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start,
     public var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top,
