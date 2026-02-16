@@ -35,6 +35,7 @@ import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.ink.authoring.InProgressStrokeId
 import androidx.ink.authoring.InProgressStrokesView
@@ -219,7 +220,7 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private val toolbarLayoutChangeListener =
         View.OnLayoutChangeListener {
-            v,
+            _,
             left,
             top,
             right,
@@ -387,6 +388,12 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
 
     private fun setupUiStateCollectors() {
         collectFlowOnLifecycleScope {
+            documentViewModel.shouldShowAnnotationToolbar.collect {
+                updateAnnotationToolbarVisibility(it)
+            }
+        }
+
+        collectFlowOnLifecycleScope {
             documentViewModel.pdfEditModeFlow.collect { editMode ->
                 if (editMode is PdfEditMode.Enabled) onEnterEditMode() else onExitEditMode()
                 updateUiForEditMode(editMode)
@@ -455,13 +462,17 @@ public open class EditablePdfViewerFragment : PdfViewerFragment {
         }
     }
 
+    private fun updateAnnotationToolbarVisibility(isAnnotationToolbarVisible: Boolean) {
+        toolbarCoordinator.isVisible = isAnnotationToolbarVisible
+        annotationToolbar.isVisible = isAnnotationToolbarVisible
+    }
+
     private fun updateUiForAnnotationsEditMode(isEnabled: Boolean) {
         PdfFeatureFlags.isMultiTouchScrollEnabled = isEnabled
 
-        annotationToolbar.visibility = if (isEnabled) VISIBLE else GONE
-
         if (isEnabled) {
             pdfView.clearCurrentSelection()
+
             // Wait for the toolbar to be laid out, as we need to utilize its width and height
             annotationToolbar.post { wetStrokesView.maskPath = createToolbarMaskPath() }
         } else {

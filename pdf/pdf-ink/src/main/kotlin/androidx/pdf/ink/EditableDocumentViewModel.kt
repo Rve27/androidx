@@ -134,6 +134,14 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
 
     internal var visiblePageRange: IntRange = 0..0
 
+    internal val shouldShowAnnotationToolbar: StateFlow<Boolean> =
+        combine(pdfEditModeFlow, isTextSearchActiveFlow) { pdfEditMode, isTextSearchActive ->
+                pdfEditMode is PdfEditMode.Enabled &&
+                    pdfEditMode.journey == EDITING_JOURNEY_ANNOTATIONS &&
+                    !isTextSearchActive
+            }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     /** Reactive state that combines multiple flows to determine if interaction is enabled. */
     internal val isAnnotationInteractionEnabled: StateFlow<Boolean> =
         combine(
@@ -141,12 +149,14 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
                 areAnnotationsVisibleFlow,
                 _applyEditsStatus,
                 _isPdfViewGestureActive,
-            ) { pdfEditMode, isVisible, status, isGestureActive ->
+                isTextSearchActiveFlow,
+            ) { pdfEditMode, isVisible, status, isGestureActive, isTextSearchActive ->
                 (pdfEditMode is PdfEditMode.Enabled &&
                     pdfEditMode.journey == EDITING_JOURNEY_ANNOTATIONS) &&
                     isVisible &&
                     status != ApplyEditsState.InProgress &&
-                    !isGestureActive
+                    !isGestureActive &&
+                    !isTextSearchActive
             }
             .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
