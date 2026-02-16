@@ -66,6 +66,8 @@ class ListA11yTest {
         }
 
         uiAutomator {
+            device.dumpWindowHierarchy(System.out)
+
             val list = onElement { isScrollable }
 
             val listAni = list.accessibilityNodeInfo
