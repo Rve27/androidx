@@ -29,6 +29,8 @@ import androidx.webkit.StartUpLocation
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewStartUpConfig
 import androidx.webkit.WebViewStartUpResult
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.util.concurrent.Executors
 
 /**
@@ -98,8 +100,14 @@ class AsyncStartUpActivity : AppCompatActivity() {
             null -> "null"
             emptyList<WebViewStartUpResult>() -> "empty list"
             else -> {
-                startUpLocations.joinToString("\n") { it.stackInformation }
+                startUpLocations.joinToString("\n") { convertToString(it.stackInformation) }
             }
         }
+    }
+
+    private fun convertToString(t: Throwable): String {
+        val sw = StringWriter()
+        t.printStackTrace(PrintWriter(sw))
+        return sw.toString()
     }
 }
