@@ -50,9 +50,13 @@ public fun RemoteModifier.background(color: Color): RemoteModifier =
  * @param color The [RemoteColor] to use for the background.
  */
 public fun RemoteModifier.background(color: RemoteColor): RemoteModifier =
-    this.drawWithContent {
-        with(painterRemoteColor(color)) { onDraw() }
-        drawContent()
+    if (color.hasConstantValue) {
+        this.background(color.constantValue)
+    } else {
+        this.drawWithContent {
+            with(painterRemoteColor(color)) { onDraw() }
+            drawContent()
+        }
     }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
