@@ -26,6 +26,7 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.MotionEvent.CLASSIFICATION_DEEP_PRESS
 import android.view.MotionEvent.CLASSIFICATION_NONE
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ComposeFoundationFlags.isDelayPressesUsingGestureConsumptionEnabled
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -72,10 +73,13 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.InspectableValue
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -595,7 +599,7 @@ class CombinedClickableTest {
     @LargeTest
     fun longClick_consumesEventsAfterLongClick() {
         var counter = 0
-        val onClick: () -> Unit = { ++counter }
+        val onLongClick: () -> Unit = { ++counter }
         val receivedEvents = mutableListOf<PointerEvent>()
 
         rule.setContent {
@@ -612,7 +616,7 @@ class CombinedClickableTest {
                                     }
                                 }
                             }
-                            .combinedClickable(onLongClick = onClick) {},
+                            .combinedClickable(onLongClick = onLongClick) {},
                 )
             }
         }
@@ -645,6 +649,175 @@ class CombinedClickableTest {
             assertThat(counter).isEqualTo(1)
             assertThat(receivedEvents.size).isEqualTo(2)
             // Long click should consume the subsequent move and up
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Release)
+            assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isTrue()
+        }
+    }
+
+    @Test
+    @LargeTest
+    fun longClick_consumesEventsAfterLongClick_outOfBounds() {
+        var counter = 0
+        val onLongClick: () -> Unit = { ++counter }
+        val receivedEvents = mutableListOf<PointerEvent>()
+        val clickableSize = 100
+        lateinit var viewConfiguration: ViewConfiguration
+
+        rule.setContent {
+            viewConfiguration = LocalViewConfiguration.current
+            Box(
+                modifier =
+                    Modifier.testTag("myClickable")
+                        .size(with(LocalDensity.current) { clickableSize.toDp() })
+                        .pointerInput(Unit) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    receivedEvents += event
+                                }
+                            }
+                        }
+                        .combinedClickable(onLongClick = onLongClick) {}
+            )
+        }
+
+        rule.onNodeWithTag("myClickable").performTouchInput {
+            down(center)
+            moveBy(Offset(1f, 1f))
+        }
+
+        rule.runOnIdle {
+            assertThat(counter).isEqualTo(0)
+            assertThat(receivedEvents.size).isEqualTo(2)
+            // Long click has not triggered yet, so the first move should not be consumed
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Press)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isFalse()
+            receivedEvents.clear()
+        }
+
+        val longPressTimeout = viewConfiguration.longPressTimeoutMillis + 100
+        rule.mainClock.advanceTimeBy(longPressTimeout)
+
+        rule.runOnIdle {
+            // Long click will now have triggered
+            assertThat(counter).isEqualTo(1)
+            assertThat(receivedEvents.size).isEqualTo(0)
+        }
+
+        rule.onNodeWithTag("myClickable").performTouchInput {
+            // Move outside the touch bounds - normally this would cancel input, but since we
+            // already triggered a long click, we still want to consume events until all pointers
+            // are up (even out of bounds)
+            moveBy(Offset(clickableSize * 2f, clickableSize * 2f))
+            up()
+        }
+
+        rule.runOnIdle {
+            assertThat(receivedEvents.size).isEqualTo(2)
+            // Long click should consume the subsequent move and up
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Release)
+            assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isTrue()
+        }
+    }
+
+    /**
+     * Test case to make sure that after a long press is triggered, we consume _all_ pointer events,
+     * even if a child consumed an event after the long press was triggered
+     */
+    @Test
+    @LargeTest
+    fun longClick_consumesEventsAfterLongClick_childConsumesFirst() {
+        var counter = 0
+        val onLongClick: () -> Unit = { ++counter }
+        val receivedEvents = mutableListOf<PointerEvent>()
+        var consumeEventsInChild = false
+        lateinit var viewConfiguration: ViewConfiguration
+
+        rule.setContent {
+            viewConfiguration = LocalViewConfiguration.current
+            Box(
+                modifier =
+                    Modifier.size(100.dp)
+                        .testTag("myClickable")
+                        .pointerInput(Unit) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    receivedEvents += awaitPointerEvent()
+                                }
+                            }
+                        }
+                        .combinedClickable(onLongClick = onLongClick) {}
+                        .pointerInput(Unit) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    if (consumeEventsInChild) {
+                                        event.changes.forEach { it.consume() }
+                                    }
+                                }
+                            }
+                        }
+            )
+        }
+
+        rule.onNodeWithTag("myClickable").performTouchInput {
+            down(center)
+            moveBy(Offset(1f, 1f))
+        }
+
+        rule.runOnIdle {
+            assertThat(counter).isEqualTo(0)
+            assertThat(receivedEvents.size).isEqualTo(2)
+            // Long click has not triggered yet, so the first move should not be consumed
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Press)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isFalse()
+            receivedEvents.clear()
+        }
+
+        val longPressTimeout = viewConfiguration.longPressTimeoutMillis + 100
+        rule.mainClock.advanceTimeBy(longPressTimeout)
+
+        rule.runOnIdle {
+            // Long click will now have triggered
+            assertThat(counter).isEqualTo(1)
+            assertThat(receivedEvents.size).isEqualTo(0)
+            // Start consuming events in the child
+            consumeEventsInChild = true
+        }
+
+        rule.onNodeWithTag("myClickable").performTouchInput {
+            // Move - this move will be consumed by the child
+            moveBy(Offset(1f, 1f))
+        }
+
+        rule.runOnIdle {
+            assertThat(receivedEvents.size).isEqualTo(1)
+            // The move will be consumed by the child
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            receivedEvents.clear()
+            // Stop consuming events in the child
+            consumeEventsInChild = false
+        }
+
+        rule.onNodeWithTag("myClickable").performTouchInput {
+            // Move again
+            moveBy(Offset(1f, 1f))
+            up()
+        }
+
+        rule.runOnIdle {
+            assertThat(receivedEvents.size).isEqualTo(2)
+            // Long click should consume the subsequent move and up, even though the child consumed
+            // an event before this
             assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
             assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
             assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Release)
@@ -3063,38 +3236,7 @@ class CombinedClickableTest {
             }
         }
 
-        val pointerProperties =
-            arrayOf(
-                MotionEvent.PointerProperties().also {
-                    it.id = 0
-                    it.toolType = MotionEvent.TOOL_TYPE_FINGER
-                }
-            )
-
-        val downEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 0,
-                /* action = */ ACTION_DOWN,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 5f
-                        y = 5f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_NONE,
-            )
+        val downEvent = obtainMotionEvent(eventTime = 0, action = ACTION_DOWN, x = 5f, y = 5f)
 
         view.dispatchTouchEvent(downEvent)
         rule.mainClock.advanceTimeBy(50)
@@ -3106,54 +3248,15 @@ class CombinedClickableTest {
         }
 
         val deepPressMoveEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 50,
-                /* action = */ ACTION_MOVE,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 10f
-                        y = 10f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_DEEP_PRESS,
+            obtainMotionEvent(
+                eventTime = 50,
+                action = ACTION_MOVE,
+                x = 10f,
+                y = 10f,
+                classification = CLASSIFICATION_DEEP_PRESS,
             )
 
-        val upEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 100,
-                /* action = */ ACTION_UP,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 10f
-                        y = 10f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_NONE,
-            )
+        val upEvent = obtainMotionEvent(eventTime = 100, action = ACTION_UP, x = 10f, y = 10f)
 
         view.dispatchTouchEvent(deepPressMoveEvent)
         rule.mainClock.advanceTimeBy(50)
@@ -3162,6 +3265,79 @@ class CombinedClickableTest {
 
         // Even though the timeout didn't pass, the deep press should immediately trigger the long
         // click. No other callbacks should be triggered.
+        rule.runOnIdle {
+            assertThat(clicks).isEqualTo(0)
+            assertThat(longClicks).isEqualTo(1)
+            assertThat(doubleClicks).isEqualTo(0)
+        }
+    }
+
+    /** Regression test for b/483931967 */
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    @Test
+    fun longClick_deepPress_triggersOnce_multipleDeepPressEvents() {
+        lateinit var view: View
+        var clicks = 0
+        var longClicks = 0
+        var doubleClicks = 0
+        val onClick: () -> Unit = { ++clicks }
+        val onLongClick: () -> Unit = { ++longClicks }
+        val onDoubleClick: () -> Unit = { ++doubleClicks }
+        rule.setContent {
+            view = LocalView.current
+            Box {
+                BasicText(
+                    "ClickableText",
+                    modifier =
+                        Modifier.testTag("myClickable")
+                            .combinedClickable(
+                                onClick = onClick,
+                                onLongClick = onLongClick,
+                                onDoubleClick = onDoubleClick,
+                            ),
+                )
+            }
+        }
+
+        val downEvent = obtainMotionEvent(eventTime = 0, action = ACTION_DOWN, x = 5f, y = 5f)
+
+        view.dispatchTouchEvent(downEvent)
+        rule.mainClock.advanceTimeBy(50)
+
+        rule.runOnIdle {
+            assertThat(clicks).isEqualTo(0)
+            assertThat(longClicks).isEqualTo(0)
+            assertThat(doubleClicks).isEqualTo(0)
+        }
+
+        val deepPressMoveEvent1 =
+            obtainMotionEvent(
+                eventTime = 50,
+                action = ACTION_MOVE,
+                x = 10f,
+                y = 10f,
+                classification = CLASSIFICATION_DEEP_PRESS,
+            )
+
+        val deepPressMoveEvent2 =
+            obtainMotionEvent(
+                eventTime = 100,
+                action = ACTION_MOVE,
+                x = 15f,
+                y = 15f,
+                classification = CLASSIFICATION_DEEP_PRESS,
+            )
+
+        val upEvent = obtainMotionEvent(eventTime = 150, action = ACTION_UP, x = 15f, y = 15f)
+
+        view.dispatchTouchEvent(deepPressMoveEvent1)
+        rule.mainClock.advanceTimeBy(50)
+        view.dispatchTouchEvent(deepPressMoveEvent2)
+        rule.mainClock.advanceTimeBy(50)
+        view.dispatchTouchEvent(upEvent)
+        rule.mainClock.advanceTimeBy(50)
+
+        // Multiple deep presses should still only trigger one long click
         rule.runOnIdle {
             assertThat(clicks).isEqualTo(0)
             assertThat(longClicks).isEqualTo(1)
@@ -3197,63 +3373,9 @@ class CombinedClickableTest {
             }
         }
 
-        val pointerProperties =
-            arrayOf(
-                MotionEvent.PointerProperties().also {
-                    it.id = 0
-                    it.toolType = MotionEvent.TOOL_TYPE_FINGER
-                }
-            )
+        val downEvent = obtainMotionEvent(eventTime = 0, action = ACTION_DOWN, x = 5f, y = 5f)
 
-        val downEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 0,
-                /* action = */ ACTION_DOWN,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 5f
-                        y = 5f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_NONE,
-            )
-
-        val moveEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 50,
-                /* action = */ ACTION_MOVE,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 10f
-                        y = 10f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_NONE,
-            )
+        val moveEvent = obtainMotionEvent(eventTime = 50, action = ACTION_MOVE, x = 10f, y = 10f)
 
         view.dispatchTouchEvent(downEvent)
         rule.mainClock.advanceTimeBy(50)
@@ -3272,79 +3394,18 @@ class CombinedClickableTest {
         }
 
         val deepPressMoveEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 100,
-                /* action = */ ACTION_MOVE,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 5f
-                        y = 5f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_DEEP_PRESS,
+            obtainMotionEvent(
+                eventTime = 100,
+                action = ACTION_MOVE,
+                x = 15f,
+                y = 15f,
+                classification = CLASSIFICATION_DEEP_PRESS,
             )
 
         val postDeepPressMoveEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 150,
-                /* action = */ ACTION_MOVE,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 10f
-                        y = 10f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_NONE,
-            )
+            obtainMotionEvent(eventTime = 150, action = ACTION_MOVE, x = 20f, y = 20f)
 
-        val upEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 200,
-                /* action = */ ACTION_UP,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 10f
-                        y = 10f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_NONE,
-            )
+        val upEvent = obtainMotionEvent(eventTime = 200, action = ACTION_UP, x = 20f, y = 20f)
 
         view.dispatchTouchEvent(deepPressMoveEvent)
         rule.mainClock.advanceTimeBy(50)
@@ -3364,6 +3425,231 @@ class CombinedClickableTest {
             assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isTrue()
             assertThat(receivedEvents[2].type).isEqualTo(PointerEventType.Release)
             assertThat(receivedEvents[2].changes.fastAll { it.isConsumed }).isTrue()
+        }
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    @Test
+    fun longClick_deepPress_consumesEventsAfterLongClick_outOfBounds() {
+        lateinit var view: View
+        var counter = 0
+        val onLongClick: () -> Unit = { ++counter }
+        val receivedEvents = mutableListOf<PointerEvent>()
+        val clickableSize = 100
+
+        rule.setContent {
+            view = LocalView.current
+            Box(
+                modifier =
+                    Modifier.testTag("myClickable")
+                        .size(with(LocalDensity.current) { clickableSize.toDp() })
+                        .pointerInput(Unit) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    receivedEvents += event
+                                }
+                            }
+                        }
+                        .combinedClickable(onLongClick = onLongClick) {}
+            )
+        }
+
+        val downEvent = obtainMotionEvent(eventTime = 0, action = ACTION_DOWN, x = 5f, y = 5f)
+
+        val moveEvent = obtainMotionEvent(eventTime = 50, action = ACTION_MOVE, x = 10f, y = 10f)
+
+        view.dispatchTouchEvent(downEvent)
+        rule.mainClock.advanceTimeBy(50)
+        view.dispatchTouchEvent(moveEvent)
+        rule.mainClock.advanceTimeBy(50)
+
+        rule.runOnIdle {
+            assertThat(counter).isEqualTo(0)
+            assertThat(receivedEvents.size).isEqualTo(2)
+            // Long click has not triggered yet, so the first move should not be consumed
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Press)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isFalse()
+            receivedEvents.clear()
+        }
+
+        val deepPressMoveEvent =
+            obtainMotionEvent(
+                eventTime = 100,
+                action = ACTION_MOVE,
+                x = 15f,
+                y = 15f,
+                classification = CLASSIFICATION_DEEP_PRESS,
+            )
+
+        view.dispatchTouchEvent(deepPressMoveEvent)
+        rule.mainClock.advanceTimeBy(50)
+
+        rule.runOnIdle {
+            // Long click will now have triggered
+            assertThat(counter).isEqualTo(1)
+            assertThat(receivedEvents.size).isEqualTo(1)
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            receivedEvents.clear()
+        }
+
+        val outOfBoundsMoveEvent =
+            obtainMotionEvent(
+                eventTime = 150,
+                action = ACTION_MOVE,
+                x = clickableSize * 2f,
+                y = clickableSize * 2f,
+            )
+
+        val upEvent =
+            obtainMotionEvent(
+                eventTime = 200,
+                action = ACTION_UP,
+                x = clickableSize * 2f,
+                y = clickableSize * 2f,
+            )
+
+        // Move outside the touch bounds - normally this would cancel input, but since we
+        // already triggered a long click, we still want to consume events until all pointers
+        // are up (even out of bounds)
+        view.dispatchTouchEvent(outOfBoundsMoveEvent)
+        rule.mainClock.advanceTimeBy(50)
+        view.dispatchTouchEvent(upEvent)
+        rule.mainClock.advanceTimeBy(50)
+
+        rule.runOnIdle {
+            assertThat(receivedEvents.size).isEqualTo(2)
+            // Long click should consume the subsequent move and up
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Release)
+            assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isTrue()
+        }
+    }
+
+    /**
+     * Test case to make sure that after a deep press is triggered, we consume _all_ pointer events,
+     * even if a child consumed an event after the long press was triggered
+     */
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    @Test
+    fun longClick_deepPress_consumesEventsAfterLongClick_childConsumesFirst() {
+        lateinit var view: View
+        var counter = 0
+        val onLongClick: () -> Unit = { ++counter }
+        val receivedEvents = mutableListOf<PointerEvent>()
+        var consumeEventsInChild = false
+
+        rule.setContent {
+            view = LocalView.current
+            Box {
+                BasicText(
+                    "ClickableText",
+                    modifier =
+                        Modifier.testTag("myClickable")
+                            .pointerInput(Unit) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        receivedEvents += awaitPointerEvent()
+                                    }
+                                }
+                            }
+                            .combinedClickable(onLongClick = onLongClick) {}
+                            .pointerInput(Unit) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        if (consumeEventsInChild) {
+                                            event.changes.forEach { it.consume() }
+                                        }
+                                    }
+                                }
+                            },
+                )
+            }
+        }
+
+        val downEvent = obtainMotionEvent(eventTime = 0, action = ACTION_DOWN, x = 5f, y = 5f)
+
+        val moveEvent = obtainMotionEvent(eventTime = 50, action = ACTION_MOVE, x = 10f, y = 10f)
+
+        view.dispatchTouchEvent(downEvent)
+        rule.mainClock.advanceTimeBy(50)
+        view.dispatchTouchEvent(moveEvent)
+        rule.mainClock.advanceTimeBy(50)
+
+        rule.runOnIdle {
+            assertThat(counter).isEqualTo(0)
+            assertThat(receivedEvents.size).isEqualTo(2)
+            // Long click has not triggered yet, so the first move should not be consumed
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Press)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isFalse()
+            receivedEvents.clear()
+        }
+
+        val deepPressMoveEvent =
+            obtainMotionEvent(
+                eventTime = 100,
+                action = ACTION_MOVE,
+                x = 15f,
+                y = 15f,
+                classification = CLASSIFICATION_DEEP_PRESS,
+            )
+
+        view.dispatchTouchEvent(deepPressMoveEvent)
+        rule.mainClock.advanceTimeBy(50)
+
+        rule.runOnIdle {
+            // Long click will now have triggered
+            assertThat(counter).isEqualTo(1)
+            assertThat(receivedEvents.size).isEqualTo(1)
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            receivedEvents.clear()
+            // Start consuming events in the child
+            consumeEventsInChild = true
+        }
+
+        val postDeepPressMoveEvent1 =
+            obtainMotionEvent(eventTime = 150, action = ACTION_MOVE, x = 20f, y = 20f)
+
+        // Move - this move will be consumed by the child
+        view.dispatchTouchEvent(postDeepPressMoveEvent1)
+        rule.mainClock.advanceTimeBy(50)
+
+        rule.runOnIdle {
+            assertThat(receivedEvents.size).isEqualTo(1)
+            // The move will be consumed by the child
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            receivedEvents.clear()
+            // Stop consuming events in the child
+            consumeEventsInChild = false
+        }
+
+        val postDeepPressMoveEvent2 =
+            obtainMotionEvent(eventTime = 200, action = ACTION_MOVE, x = 25f, y = 25f)
+
+        val upEvent = obtainMotionEvent(eventTime = 250, action = ACTION_UP, x = 25f, y = 25f)
+
+        view.dispatchTouchEvent(postDeepPressMoveEvent2)
+        rule.mainClock.advanceTimeBy(50)
+        view.dispatchTouchEvent(upEvent)
+        rule.mainClock.advanceTimeBy(50)
+
+        rule.runOnIdle {
+            assertThat(receivedEvents.size).isEqualTo(2)
+            // Deep press long click should consume the subsequent move and up, even though the
+            // child consumed an event before this
+            assertThat(receivedEvents[0].type).isEqualTo(PointerEventType.Move)
+            assertThat(receivedEvents[0].changes.fastAll { it.isConsumed }).isTrue()
+            assertThat(receivedEvents[1].type).isEqualTo(PointerEventType.Release)
+            assertThat(receivedEvents[1].changes.fastAll { it.isConsumed }).isTrue()
         }
     }
 
@@ -3406,38 +3692,7 @@ class CombinedClickableTest {
             assertThat(doubleClicks).isEqualTo(0)
         }
 
-        val pointerProperties =
-            arrayOf(
-                MotionEvent.PointerProperties().also {
-                    it.id = 0
-                    it.toolType = MotionEvent.TOOL_TYPE_FINGER
-                }
-            )
-
-        val downEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 50,
-                /* action = */ ACTION_DOWN,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 5f
-                        y = 5f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_NONE,
-            )
+        val downEvent = obtainMotionEvent(eventTime = 50, action = ACTION_DOWN, x = 5f, y = 5f)
 
         view.dispatchTouchEvent(downEvent)
         rule.mainClock.advanceTimeBy(50)
@@ -3449,54 +3704,15 @@ class CombinedClickableTest {
         }
 
         val deepPressMoveEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 100,
-                /* action = */ ACTION_MOVE,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 10f
-                        y = 10f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_DEEP_PRESS,
+            obtainMotionEvent(
+                eventTime = 100,
+                action = ACTION_MOVE,
+                x = 10f,
+                y = 10f,
+                classification = CLASSIFICATION_DEEP_PRESS,
             )
 
-        val upEvent =
-            MotionEvent.obtain(
-                /* downTime = */ 0,
-                /* eventTime = */ 150,
-                /* action = */ ACTION_UP,
-                /* pointerCount = */ 1,
-                /* pointerProperties = */ pointerProperties,
-                /* pointerCoords = */ arrayOf(
-                    MotionEvent.PointerCoords().apply {
-                        x = 10f
-                        y = 10f
-                    }
-                ),
-                /* metaState = */ 0,
-                /* buttonState = */ 0,
-                /* xPrecision = */ 0f,
-                /* yPrecision = */ 0f,
-                /* deviceId = */ 0,
-                /* edgeFlags = */ 0,
-                /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
-                /* displayId = */ 0,
-                /* flags = */ 0,
-                /* classification = */ CLASSIFICATION_NONE,
-            )
+        val upEvent = obtainMotionEvent(eventTime = 150, action = ACTION_UP, x = 10f, y = 10f)
 
         view.dispatchTouchEvent(deepPressMoveEvent)
         rule.mainClock.advanceTimeBy(50)
@@ -3640,6 +3856,49 @@ class CombinedClickableTest {
 
         rule.runOnIdle { assertThat(clickCounter).isEqualTo(0) }
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+private fun obtainMotionEvent(
+    eventTime: Int,
+    action: Int,
+    x: Float,
+    y: Float,
+    classification: Int = CLASSIFICATION_NONE,
+): MotionEvent {
+    val pointerProperties =
+        arrayOf(
+            MotionEvent.PointerProperties().also {
+                it.id = 0
+                it.toolType = MotionEvent.TOOL_TYPE_FINGER
+            }
+        )
+    val pointerCoords =
+        arrayOf(
+            MotionEvent.PointerCoords().apply {
+                this.x = x
+                this.y = y
+            }
+        )
+
+    return MotionEvent.obtain(
+        /* downTime = */ 0,
+        /* eventTime = */ eventTime.toLong(),
+        /* action = */ action,
+        /* pointerCount = */ 1,
+        /* pointerProperties = */ pointerProperties,
+        /* pointerCoords = */ pointerCoords,
+        /* metaState = */ 0,
+        /* buttonState = */ 0,
+        /* xPrecision = */ 0f,
+        /* yPrecision = */ 0f,
+        /* deviceId = */ 0,
+        /* edgeFlags = */ 0,
+        /* source = */ InputDevice.SOURCE_TOUCHSCREEN,
+        /* displayId = */ 0,
+        /* flags = */ 0,
+        /* classification = */ classification,
+    )!!
 }
 
 private fun SemanticsNodeInteraction.assertOnLongClickLabelMatches(
