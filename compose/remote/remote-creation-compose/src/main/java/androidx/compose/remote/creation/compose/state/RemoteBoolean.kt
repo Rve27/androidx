@@ -238,7 +238,6 @@ public open class RemoteBoolean internal constructor(internal val intValue: Remo
      * @param ifFalse The [RemoteColor] to be selected if this boolean is `false`.
      * @return A new [RemoteColor] representing the conditionally selected color.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun select(ifTrue: RemoteColor, ifFalse: RemoteColor): RemoteColor {
         intValue.constantValueOrNull?.let {
             return if (it != 0) {

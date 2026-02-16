@@ -555,13 +555,14 @@ private fun RemoteButtonImpl(
 
 /** Contains the default values used by [RemoteButton] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Suppress("RestrictedApiAndroidX")
 public object RemoteButtonDefaults {
     /** Recommended [RemoteRoundedCornerShape] for [RemoteButton]. */
+    @Suppress("RestrictedApiAndroidX")
     public val shape: RemoteRoundedCornerShape
         get() = RemoteRoundedCornerShape(16.rdp)
 
     /** Recommended [RemoteRoundedCornerShape] for [RemoteCompactButton]. */
+    @Suppress("RestrictedApiAndroidX")
     public val compactButtonShape: RemoteRoundedCornerShape
         get() = RemoteRoundedCornerShape(18.rdp)
 
@@ -624,6 +625,7 @@ public object RemoteButtonDefaults {
      * Creates a [RemoteButtonColors] for the content in a [RemoteButton], returns default
      * [buttonColors] if painter is null, else return [defaultButtonWithContainerPainterColors]
      */
+    @Suppress("RestrictedApiAndroidX")
     @Composable
     internal fun buttonWithNullableContainerPainterColors(
         containerPainter: RemotePainter?
@@ -749,6 +751,7 @@ public object RemoteButtonDefaults {
      *   that any text drawn over the image is legible.
      * @param alpha Opacity of the container image painter and scrim.
      */
+    @Suppress("RestrictedApiAndroidX")
     @Composable
     public fun containerPainter(
         image: RemotePainter,
@@ -768,6 +771,7 @@ public object RemoteButtonDefaults {
      * @param containerPainter The [RemotePainter] to use to draw the container background of the
      *   [RemoteButton].
      */
+    @Suppress("RestrictedApiAndroidX")
     @Composable
     public fun disabledContainerPainter(containerPainter: RemotePainter): RemotePainter {
         return disabledRemoteContainerPainter(
@@ -780,6 +784,7 @@ public object RemoteButtonDefaults {
      * Creates a [RemoteBrush] for the recommended scrim drawn on top of image container
      * backgrounds.
      */
+    @Suppress("RestrictedApiAndroidX")
     @Composable
     public fun scrimBrush(size: RemoteSize): RemoteBrush {
         val startColor = scrimGradientStartColor.rc
@@ -808,7 +813,6 @@ public object RemoteButtonDefaults {
  */
 @Immutable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Suppress("RestrictedApiAndroidX")
 public class RemoteButtonColors(
     public val containerColor: RemoteColor,
     public val contentColor: RemoteColor,
@@ -951,7 +955,6 @@ private fun RemoteModifier.compactButtonModifier(): RemoteModifier {
     return this.height(RemoteButtonDefaults.CompactButtonHeight)
 }
 
-@Suppress("RestrictedApiAndroidX")
 internal fun RemoteColor.toDisabledColor(
     disabledAlpha: RemoteFloat = DisabledContentAlpha.rf
 ): RemoteColor = this.copy(alpha = this.alpha * disabledAlpha)
