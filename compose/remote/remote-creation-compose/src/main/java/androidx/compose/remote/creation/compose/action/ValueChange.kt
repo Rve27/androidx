@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.action
 
@@ -103,7 +102,6 @@ public fun ValueChange(value: RemoteDp, updatedValue: Int): Action {
  * @param updatedValue The new remote state value to apply.
  * @return An [Action] representing the value change.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun <T> ValueChange(
     remoteState: MutableRemoteState<T>,
     updatedValue: RemoteState<T>,

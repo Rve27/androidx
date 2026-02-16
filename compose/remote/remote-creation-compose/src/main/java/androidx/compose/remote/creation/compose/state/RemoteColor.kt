@@ -412,9 +412,7 @@ public fun rememberNamedRemoteColor(
     val idFactory =
         remember(name, domain) {
             Memorize { creationState ->
-                val id =
-                    creationState.document.addNamedColor("$domain:$name", initialValue.toArgb())
-                id
+                creationState.document.addNamedColor("$domain:$name", initialValue.toArgb())
             }
         }
 

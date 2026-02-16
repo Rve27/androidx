@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.modifier
 
@@ -34,12 +33,12 @@ import androidx.compose.remote.creation.modifiers.DynamicBorderModifier
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.ui.graphics.toArgb
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class BorderModifier(
+internal class BorderModifier(
     public val width: RemoteFloat,
     public val color: RemoteColor,
     public val shape: RemoteShape = RemoteRectangleShape,
 ) : RemoteModifier.Element {
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override fun RemoteStateScope.toRecordingModifierElement(): RecordingModifier.Element {
         var shapeType = ShapeType.RECTANGLE
         var roundedCorner = 0f

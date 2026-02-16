@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isSpecified
 
 /**
  * Represents a Density-independent pixel (Dp) value.
@@ -63,6 +64,11 @@ internal constructor(
         }
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    override fun getFloatIdForCreationState(creationState: RemoteComposeCreationState): Float {
+        return toPx().getFloatIdForCreationState(creationState)
+    }
+
     public companion object {
         /**
          * Creates a [RemoteDp] from a literal [Dp] value.
@@ -70,7 +76,7 @@ internal constructor(
          * @param value The [Dp] value.
          * @return A [RemoteDp] representing the constant Dp.
          */
-        public operator fun invoke(value: Dp): RemoteDp = RemoteDp(value.value.rf)
+        public operator fun invoke(value: Dp): RemoteDp = value.asRdp()
 
         /**
          * Creates a [RemoteDp] referencing a remote ID.
@@ -122,6 +128,7 @@ public val Float.rdp: RemoteDp
 /** Extension property to convert a [Dp] to a [RemoteDp]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Dp.asRdp(): RemoteDp {
+    check(isSpecified) { "Dp conversion not possible for unspecified Dp" }
     return RemoteDp(this.value.rf)
 }
 
