@@ -21,6 +21,7 @@ import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.operations.Theme
 import androidx.compose.remote.player.core.RemoteDocument
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 
 /** A player of a [CoreDocument] */
+@OptIn(ExperimentalRemotePlayerApi::class)
 @Composable
 public fun RemoteDocumentPlayer(
     document: CoreDocument,
@@ -76,8 +78,20 @@ public fun RemoteDocumentPlayer(
             Theme.LIGHT
         }
 
+    val androidViewModifier =
+        modifier.then(
+            if (RemoteComposePlayerFlags.shouldPlayerWrapContentSize) {
+                // The modifier defaults to wrapContentSize, meaning the view will size itself to
+                // the content of the RemoteComposePlayer. However, this can be overridden by the
+                // external modifier provided to RemoteDocumentPlayer.
+                Modifier.wrapContentSize()
+            } else {
+                Modifier.size(documentWidth.dp, documentHeight.dp)
+            }
+        )
+
     AndroidView(
-        modifier = modifier.size(documentWidth.dp, documentHeight.dp),
+        modifier = androidViewModifier,
         factory = {
             RemoteComposePlayer(it).apply {
                 init(this)
