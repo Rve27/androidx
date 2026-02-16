@@ -109,6 +109,7 @@ public abstract class RemoteContext {
     public void setDensity(float density) {
         if (!Float.isNaN(density) && density > 0) {
             mDensity = density;
+            loadFloat(ID_DENSITY, density);
         }
     }
 
