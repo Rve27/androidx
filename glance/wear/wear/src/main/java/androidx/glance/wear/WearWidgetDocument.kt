@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -58,8 +59,8 @@ public class WearWidgetDocument(
             ),
         ) {
             WearWidgetContainer(
-                horizontalPadding = params.horizontalPaddingDp.dp,
-                verticalPadding = params.verticalPaddingDp.dp,
+                horizontalPadding = params.horizontalPaddingDp.rdp,
+                verticalPadding = params.verticalPaddingDp.rdp,
                 cornerRadius = params.cornerRadiusDp.dp,
                 backgroundColor = backgroundColor,
                 content = content,
