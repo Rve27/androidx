@@ -2609,6 +2609,14 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
                             AccessibilityEventCompat.CONTENT_CHANGE_TYPE_UNDEFINED,
                         )
                     }
+                    SemanticsProperties.Error -> {
+                        sendEventForVirtualView(
+                            semanticsNodeIdToAccessibilityVirtualNodeId(id),
+                            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED,
+                            AccessibilityEventCompat.CONTENT_CHANGE_TYPE_ERROR or
+                                AccessibilityEventCompat.CONTENT_CHANGE_TYPE_CONTENT_INVALID,
+                        )
+                    }
                     SemanticsProperties.ProgressBarRangeInfo -> {
                         sendEventForVirtualView(
                             semanticsNodeIdToAccessibilityVirtualNodeId(id),
