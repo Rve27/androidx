@@ -24,6 +24,8 @@ import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.clip
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.padding
+import androidx.compose.remote.creation.compose.state.rc
+import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -46,12 +48,15 @@ internal fun WearWidgetContainer(
         modifier =
             RemoteModifier.fillMaxSize()
                 .clip(shape = RoundedCornerShape(size = cornerRadius))
-                .background(backgroundColor)
+                .background(backgroundColor.rc)
     ) {
         RemoteBox(
             modifier =
                 RemoteModifier.fillMaxSize()
-                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                    .padding(
+                        horizontal = horizontalPadding.value.rdp,
+                        vertical = verticalPadding.value.rdp,
+                    ),
             content = content,
         )
     }

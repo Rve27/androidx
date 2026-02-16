@@ -265,8 +265,7 @@ public fun RemoteText(
 }
 
 /** Utility modifier to record the layout information */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteComposeTextComponentModifier(
+internal class RemoteComposeTextComponentModifier(
     public var modifier: RecordingModifier,
     public var id: RemoteIntReference,
     public var color: Int,
@@ -309,8 +308,7 @@ public class RemoteComposeTextComponentModifier(
 }
 
 /** Utility modifier to record the layout information */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteComposeCoreTextComponentModifier(
+internal class RemoteComposeCoreTextComponentModifier(
     public val modifier: RecordingModifier,
     public val id: RemoteString,
     public val color: RemoteColor,
