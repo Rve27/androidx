@@ -302,12 +302,6 @@ public final class Flags {
             FLAG_PREFIX + "enable_early_set_schema_exit";
 
     /**
-     * Whether to enable the new embedding iterator which has improved access order.
-     */
-    public static final String FLAG_ENABLE_EMBEDDING_ITERATOR_V2 =
-            FLAG_PREFIX + "enable_embedding_iterator_v2";
-
-    /**
      * Whether to enable reusing a single buffer of memory to avoid reallocating a new buffer for
      * every single document read..
      */
@@ -734,14 +728,6 @@ public final class Flags {
      */
     public static boolean enableEarlySetSchemaExit() {
         // TODO(b/436813583): Enable this once the feature is rolled out to Nextfood in platform.
-        return false;
-    }
-
-    /**
-     * Whether to enable the new embedding iterator which has improved access order.
-     */
-    public static boolean enableEmbeddingIteratorV2() {
-        // TODO(b/435005853): Enable this once the feature is rolled out to Nextfood in platform.
         return false;
     }
 
