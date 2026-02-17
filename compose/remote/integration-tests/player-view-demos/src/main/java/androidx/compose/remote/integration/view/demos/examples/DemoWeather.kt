@@ -18,7 +18,6 @@
 package androidx.compose.remote.integration.view.demos.examples
 
 import android.graphics.BitmapFactory
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.remote.creation.compose.layout.FitBox
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
@@ -41,6 +40,7 @@ import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.modifier.widthIn
+import androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape
 import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.integration.view.demos.R
@@ -82,7 +82,7 @@ fun WeatherDemo() {
                     modifier =
                         RemoteModifier.fillMaxWidth()
                             .widthIn(min = 180.dp)
-                            .clip(RoundedCornerShape(24.dp))
+                            .clip(RemoteRoundedCornerShape(24.rdp))
                             .background(Color(219, 247, 239))
                 ) {
                     WeatherHeader()
@@ -97,7 +97,7 @@ fun WeatherDemo() {
                     RemoteColumn(
                         modifier =
                             RemoteModifier.height(120.rdp)
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(RemoteRoundedCornerShape(8.rdp))
                                 .background(Color(219, 247, 239))
                                 //                            .background(Color.Blue)
                                 .padding(8.dp),
@@ -229,7 +229,7 @@ fun WeatherDays() {
         modifier =
             RemoteModifier.fillMaxWidth()
                 .padding(16.dp)
-                .clip(RoundedCornerShape(8.dp))
+                .clip(RemoteRoundedCornerShape(8.rdp))
                 .background(Color(205, 232, 225))
                 .padding(8.dp),
         verticalArrangement = RemoteArrangement.SpaceEvenly,
