@@ -56,7 +56,6 @@ import androidx.pdf.PdfDocument
 import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
-import androidx.pdf.featureflag.PdfFeatureFlags.isExternalHardwareInteractionEnabled
 import androidx.pdf.models.FormEditInfo
 import androidx.pdf.selection.Selection
 import androidx.pdf.util.AnnotationUtils
@@ -574,11 +573,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
 
         // Activates text search when PdfView receives Ctrl + F key press
         _pdfView.setOnKeyListener { _, keyCode, event ->
-            if (
-                isExternalHardwareInteractionEnabled &&
-                    keyCode == KeyEvent.KEYCODE_F &&
-                    event.action == KeyEvent.ACTION_DOWN
-            ) {
+            if (keyCode == KeyEvent.KEYCODE_F && event.action == KeyEvent.ACTION_DOWN) {
                 isTextSearchActive = true
                 return@setOnKeyListener true
             }

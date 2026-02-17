@@ -22,7 +22,6 @@ import androidx.annotation.RequiresExtension
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
-import androidx.pdf.featureflag.PdfFeatureFlags
 import androidx.pdf.util.Preconditions
 import androidx.pdf.view.PdfView
 import androidx.pdf.viewer.FragmentUtils.scenarioLoadDocument
@@ -68,7 +67,6 @@ class PdfViewerFragmentExternalInputTest {
             IdlingRegistry.getInstance()
                 .register(fragment.pdfSearchViewVisibleIdlingResource.countingIdlingResource)
         }
-        PdfFeatureFlags.isExternalHardwareInteractionEnabled = true
     }
 
     @After
@@ -80,7 +78,6 @@ class PdfViewerFragmentExternalInputTest {
                 .unregister(fragment.pdfSearchViewVisibleIdlingResource.countingIdlingResource)
         }
         scenario.close()
-        PdfFeatureFlags.isExternalHardwareInteractionEnabled = false
     }
 
     @Test
