@@ -817,6 +817,9 @@ expect value class Key(val keyCode: Long) {
         /** Numeric keypad Insert Key. */
         val NumPadInsert: Key
 
+        /** Numeric keypad Delete Key. */
+        val NumPadDelete: Key
+
         /** Play media key. */
         val MediaPlay: Key
 

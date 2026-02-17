@@ -1751,6 +1751,7 @@ package androidx.compose.ui.input.key {
     method @BytecodeOnly public long getNumPad9-EK5gGoQ();
     method @BytecodeOnly public long getNumPadAdd-EK5gGoQ();
     method @BytecodeOnly public long getNumPadComma-EK5gGoQ();
+    method @BytecodeOnly public long getNumPadDelete-EK5gGoQ();
     method @BytecodeOnly public long getNumPadDirectionDown-EK5gGoQ();
     method @BytecodeOnly public long getNumPadDirectionLeft-EK5gGoQ();
     method @BytecodeOnly public long getNumPadDirectionRight-EK5gGoQ();
@@ -2048,6 +2049,7 @@ package androidx.compose.ui.input.key {
     property public androidx.compose.ui.input.key.Key NumPad9;
     property public androidx.compose.ui.input.key.Key NumPadAdd;
     property public androidx.compose.ui.input.key.Key NumPadComma;
+    property public androidx.compose.ui.input.key.Key NumPadDelete;
     property public androidx.compose.ui.input.key.Key NumPadDirectionDown;
     property public androidx.compose.ui.input.key.Key NumPadDirectionLeft;
     property public androidx.compose.ui.input.key.Key NumPadDirectionRight;

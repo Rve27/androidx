@@ -2883,6 +2883,8 @@ final value class androidx.compose.ui.input.key/Key { // androidx.compose.ui.inp
             final fun <get-NumPadAdd>(): androidx.compose.ui.input.key/Key // androidx.compose.ui.input.key/Key.Companion.NumPadAdd.<get-NumPadAdd>|<get-NumPadAdd>(){}[0]
         final val NumPadComma // androidx.compose.ui.input.key/Key.Companion.NumPadComma|{}NumPadComma[0]
             final fun <get-NumPadComma>(): androidx.compose.ui.input.key/Key // androidx.compose.ui.input.key/Key.Companion.NumPadComma.<get-NumPadComma>|<get-NumPadComma>(){}[0]
+        final val NumPadDelete // androidx.compose.ui.input.key/Key.Companion.NumPadDelete|{}NumPadDelete[0]
+            final fun <get-NumPadDelete>(): androidx.compose.ui.input.key/Key // androidx.compose.ui.input.key/Key.Companion.NumPadDelete.<get-NumPadDelete>|<get-NumPadDelete>(){}[0]
         final val NumPadDirectionDown // androidx.compose.ui.input.key/Key.Companion.NumPadDirectionDown|{}NumPadDirectionDown[0]
             final fun <get-NumPadDirectionDown>(): androidx.compose.ui.input.key/Key // androidx.compose.ui.input.key/Key.Companion.NumPadDirectionDown.<get-NumPadDirectionDown>|<get-NumPadDirectionDown>(){}[0]
         final val NumPadDirectionLeft // androidx.compose.ui.input.key/Key.Companion.NumPadDirectionLeft|{}NumPadDirectionLeft[0]
