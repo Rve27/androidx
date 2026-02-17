@@ -37,6 +37,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -162,9 +163,11 @@ fun ModalBottomSheet(
             )
             BottomSheet(
                 modifier =
-                    modifier.consumeWindowInsets(
-                        WindowInsets(top = sheetState.offset.toInt().coerceAtLeast(0))
-                    ),
+                    modifier
+                        .align(TopCenter)
+                        .consumeWindowInsets(
+                            WindowInsets(top = sheetState.offset.toInt().coerceAtLeast(0))
+                        ),
                 state = sheetState,
                 onDismissRequest = onDismissRequest,
                 maxWidth = sheetMaxWidth,
