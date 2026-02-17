@@ -20,7 +20,7 @@ import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteTextUnit
-import androidx.compose.remote.creation.compose.state.asRemote
+import androidx.compose.remote.creation.compose.state.asRemoteTextUnit
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -47,6 +47,8 @@ public class RemoteTextStyle(
     public val lineHeight: RemoteTextUnit? = null,
     public val textDecoration: TextDecoration? = null,
 ) {
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun merge(other: RemoteTextStyle?): RemoteTextStyle {
         if (other == null) return this
         return RemoteTextStyle(
@@ -63,6 +65,7 @@ public class RemoteTextStyle(
         )
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun merge(
         color: RemoteColor? = null,
         fontSize: RemoteTextUnit? = null,
@@ -89,6 +92,7 @@ public class RemoteTextStyle(
         )
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun copy(
         color: RemoteColor? = this.color,
         fontSize: RemoteTextUnit? = this.fontSize,
@@ -115,21 +119,23 @@ public class RemoteTextStyle(
         )
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
         @SuppressLint("RestrictedApiAndroidX")
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun fromTextStyle(style: TextStyle): RemoteTextStyle {
             // Maps unspecified color into null as it's not supported in remote compose.
             val color = if (style.color == Color.Unspecified) null else style.color.rc
             return RemoteTextStyle(
                 color = color,
-                fontSize = style.fontSize.asRemote,
+                fontSize = style.fontSize.asRemoteTextUnit(),
                 fontWeight = style.fontWeight,
                 fontStyle = style.fontStyle,
                 fontFamily = style.fontFamily,
-                letterSpacing = style.letterSpacing.asRemote,
+                letterSpacing = style.letterSpacing.asRemoteTextUnit(),
                 background = style.background.rc,
                 textAlign = style.textAlign,
-                lineHeight = style.lineHeight.asRemote,
+                lineHeight = style.lineHeight.asRemoteTextUnit(),
                 textDecoration = style.textDecoration,
             )
         }
