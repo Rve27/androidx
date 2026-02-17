@@ -151,6 +151,7 @@ actual value class Key(val keyCode: Long) {
         actual val NumPadPageUp: Key = implementedInJetBrainsFork()
         actual val NumPadPageDown: Key = implementedInJetBrainsFork()
         actual val NumPadInsert: Key = implementedInJetBrainsFork()
+        actual val NumPadDelete: Key = implementedInJetBrainsFork()
         actual val MoveHome: Key = implementedInJetBrainsFork()
         actual val MoveEnd: Key = implementedInJetBrainsFork()
         actual val SoftLeft: Key = implementedInJetBrainsFork()

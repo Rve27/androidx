@@ -1420,32 +1420,35 @@ actual value class Key(val keyCode: Long) {
         // The values are just consecutive negative numbers which hopefully don't correspond to any
         // real keycodes.
 
-        /** Numeric keypad Up Arrow Key. */
+        /** Numeric keypad Up Arrow Key. Unsupported on Android. */
         actual val NumPadDirectionUp = Key(-1000000001)
 
-        /** Numeric keypad Down Arrow Key. */
+        /** Numeric keypad Down Arrow Key. Unsupported on Android. */
         actual val NumPadDirectionDown = Key(-1000000002)
 
-        /** Numeric keypad Left Arrow Key. */
+        /** Numeric keypad Left Arrow Key. Unsupported on Android. */
         actual val NumPadDirectionLeft = Key(-1000000003)
 
-        /** Numeric keypad Right Arrow Key. */
+        /** Numeric keypad Right Arrow Key. Unsupported on Android. */
         actual val NumPadDirectionRight = Key(-1000000004)
 
-        /** Numeric keypad Home Key. */
+        /** Numeric keypad Home Key. Unsupported on Android. */
         actual val NumPadMoveHome = Key(-1000000005)
 
-        /** Numeric keypad End Key. */
+        /** Numeric keypad End Key. Unsupported on Android. */
         actual val NumPadMoveEnd = Key(-1000000006)
 
-        /** Numeric keypad Page Up Key. */
+        /** Numeric keypad Page Up Key. Unsupported on Android. */
         actual val NumPadPageUp = Key(-1000000007)
 
-        /** Numeric keypad Page Down Key. */
+        /** Numeric keypad Page Down Key. Unsupported on Android. */
         actual val NumPadPageDown = Key(-1000000008)
 
-        /** Numeric keypad Insert Key. */
+        /** Numeric keypad Insert Key. Unsupported on Android. */
         actual val NumPadInsert = Key(-1000000009)
+
+        /** Numeric keypad Delete key. Unsupported on Android. */
+        actual val NumPadDelete = Key(-1000000010)
     }
 
     actual override fun toString(): String = "Key code: $keyCode"
