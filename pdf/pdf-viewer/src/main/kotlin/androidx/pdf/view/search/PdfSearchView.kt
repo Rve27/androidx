@@ -26,7 +26,6 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.RestrictTo
 import androidx.pdf.R
-import androidx.pdf.featureflag.PdfFeatureFlags
 
 /**
  * A [View] that provides a search UI for searching through a PDF's content.
@@ -115,7 +114,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         if (event == null) return super.dispatchKeyEvent(event)
 
-        return (PdfFeatureFlags.isExternalHardwareInteractionEnabled &&
-            externalInputManager.handleKeyEvent(event)) || super.dispatchKeyEvent(event)
+        return externalInputManager.handleKeyEvent(event) || super.dispatchKeyEvent(event)
     }
 }
