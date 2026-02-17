@@ -41,7 +41,7 @@
     <string name="pdf_pen_color_palette_item_lime_green" msgid="3841967923966525202">"青柠绿"</string>
     <string name="pdf_pen_color_palette_item_yellow" msgid="4727631332525029494">"黄色"</string>
     <string name="pdf_pen_color_palette_item_pale_lime" msgid="788428039617260017">"淡绿黄色"</string>
-    <string name="pdf_pen_color_palette_item_tan" msgid="8683991930359923110">"棕褐色"</string>
+    <string name="pdf_pen_color_palette_item_tan" msgid="8683991930359923110">"棕黄色"</string>
     <string name="pdf_pen_color_palette_item_light_gray" msgid="1826258279260761568">"浅灰色"</string>
     <string name="pdf_pen_color_palette_item_purple" msgid="4874203867122898447">"紫色"</string>
     <string name="pdf_pen_color_palette_item_pink" msgid="910303583995020849">"粉色"</string>
@@ -68,7 +68,7 @@
     <string name="pdf_highlighter_color_palette_item_pale_green" msgid="6277595714452533675">"淡绿色"</string>
     <string name="pdf_highlighter_color_palette_item_bright_yellow" msgid="7631420996977636184">"亮黄色"</string>
     <string name="pdf_highlighter_color_palette_item_peach" msgid="3074189144452054229">"桃红色"</string>
-    <string name="pdf_highlighter_color_palette_item_dusty_rose" msgid="5604104736640334540">"灰玫瑰色"</string>
+    <string name="pdf_highlighter_color_palette_item_dusty_rose" msgid="5604104736640334540">"灰粉色"</string>
     <string name="pdf_highlighter_color_palette_item_olive_green" msgid="515781557822485029">"橄榄绿"</string>
     <string name="pdf_highlighter_color_palette_item_medium_purple" msgid="2072323998502107059">"中紫色"</string>
     <string name="pdf_highlighter_color_palette_item_medium_green" msgid="7887546086583310004">"中绿色"</string>
