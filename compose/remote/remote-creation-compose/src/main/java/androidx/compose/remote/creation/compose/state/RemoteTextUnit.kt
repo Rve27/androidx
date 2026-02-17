@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.sp
  * @property value The [RemoteFloat] that holds the scalar value.
  * @property type The [TextUnitType] (Sp or Em).
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class RemoteTextUnit
 internal constructor(public val value: RemoteFloat, public val type: TextUnitType) :
     BaseRemoteState<TextUnit>() {
@@ -67,7 +66,6 @@ internal constructor(public val value: RemoteFloat, public val type: TextUnitTyp
     }
 
     /** Converts this [RemoteTextUnit] to pixels using the screen's density. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun toPx(): RemoteFloat {
         checkTextUnit()
         return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
@@ -82,7 +80,7 @@ internal constructor(public val value: RemoteFloat, public val type: TextUnitTyp
 
 /** Extension property to convert an [Int] to a [RemoteTextUnit] in Sp. */
 public val Int.rsp: RemoteTextUnit
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get() = RemoteTextUnit(this.rf, TextUnitType.Sp)
+    get() = RemoteTextUnit(this.rf, TextUnitType.Sp)
 
 /** Extension function to convert a [TextUnit] to a [RemoteTextUnit]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
