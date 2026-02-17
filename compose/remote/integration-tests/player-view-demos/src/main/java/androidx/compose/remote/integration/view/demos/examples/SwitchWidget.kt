@@ -16,7 +16,6 @@
 
 package androidx.compose.remote.integration.view.demos.examples
 
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.remote.creation.compose.action.ValueChange
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
@@ -39,6 +38,7 @@ import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.visibility
 import androidx.compose.remote.creation.compose.modifier.wrapContentSize
+import androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape
 import androidx.compose.remote.creation.compose.state.MutableRemoteInt
 import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.compose.state.RemotePaint
@@ -59,7 +59,7 @@ fun SwitchWidgetOnState(modifier: RemoteModifier = RemoteModifier, id: Int = 0) 
     RemoteBox(
         modifier =
             modifier
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RemoteRoundedCornerShape(20.rdp))
                 .background(Color(63, 81, 181, 255))
                 .padding(2.dp),
         horizontalAlignment = RemoteAlignment.End,
@@ -84,7 +84,7 @@ fun SwitchWidgetOffState(modifier: RemoteModifier = RemoteModifier) {
         modifier =
             modifier
                 // todo: use the animationId
-                .clip(RoundedCornerShape(20.dp))
+                .clip(RemoteRoundedCornerShape(20.rdp))
                 .background(Color(100, 100, 100))
                 .padding(8.dp)
                 .then(modifier),
@@ -144,7 +144,7 @@ fun SwitchWidget(value: MutableRemoteInt) {
                 }
             }
         }
-        RemoteBox(modifier = modifierSize.clip(RoundedCornerShape(20.dp)).then(modifier))
+        RemoteBox(modifier = modifierSize.clip(RemoteRoundedCornerShape(20.rdp)).then(modifier))
     }
 }
 
