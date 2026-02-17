@@ -783,7 +783,6 @@ fun OutlinedButton(
  *   still happen internally.
  * @param content The content displayed on the button, expected to be text.
  */
-@Suppress("DEPRECATION")
 @Composable
 fun TextButton(
     onClick: () -> Unit,
@@ -861,7 +860,6 @@ fun TextButton(
  *   still happen internally.
  * @param content The content displayed on the button, expected to be text.
  */
-@Suppress("DEPRECATION")
 @ExperimentalMaterial3ExpressiveApi
 @Composable
 fun TextButton(
@@ -872,7 +870,7 @@ fun TextButton(
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
+    contentPadding: PaddingValues = ButtonDefaults.contentPaddingFor(ButtonDefaults.MinHeight),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable RowScope.() -> Unit,
 ) =
@@ -1038,13 +1036,10 @@ object ButtonDefaults {
      * The default content padding used by [TextButton].
      * - See [TextButtonWithIconContentPadding] for content padding used by [TextButton] that
      *   contains [Icon].
+     *
+     * Note: it's recommended to use [ContentPadding] instead for a more consistent look between all
+     * buttons variants.
      */
-    @Deprecated(
-        "Obsolete value. Use ButtonDefaults.contentPaddingFor for correct value instead.",
-        replaceWith =
-            ReplaceWith("ButtonDefaults.contentPaddingFor(buttonHeight, hasStartIcon, hasEndIcon)"),
-        level = DeprecationLevel.WARNING,
-    )
     val TextButtonContentPadding =
         PaddingValues(
             start = TextButtonHorizontalPadding,
@@ -1055,13 +1050,12 @@ object ButtonDefaults {
 
     private val TextButtonWithIconHorizontalEndPadding = 16.dp
 
-    /** The default content padding used by [TextButton] that contains an [Icon]. */
-    @Deprecated(
-        "Obsolete value. Use ButtonDefaults.contentPaddingFor for correct value instead.",
-        replaceWith =
-            ReplaceWith("ButtonDefaults.contentPaddingFor(buttonHeight, hasStartIcon, hasEndIcon)"),
-        level = DeprecationLevel.WARNING,
-    )
+    /**
+     * The default content padding used by [TextButton] that contains an [Icon].
+     *
+     * Note: it's recommended to use [ButtonWithIconContentPadding] instead for a more consistent
+     * look between all buttons variants.
+     */
     val TextButtonWithIconContentPadding =
         PaddingValues(
             start = TextButtonHorizontalPadding,
