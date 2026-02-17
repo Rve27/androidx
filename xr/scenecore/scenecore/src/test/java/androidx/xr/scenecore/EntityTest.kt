@@ -1045,8 +1045,7 @@ class EntityTest {
     }
 
     @Test
-    @OptIn(ExperimentalPanelCoordinateApi::class)
-    fun transformPixelCoordinatesToPose_callsRuntime() {
+    fun transformPixelCoordinatesToLocalPosition_callsRuntime() {
         val input = Vector2(100f, 100f)
 
         var sizeInPixels = (panelEntity.rtEntity as FakePanelEntity).sizeInPixels
@@ -1056,10 +1055,10 @@ class EntityTest {
         var coordinates = Vector2(u * 2 - 1, (1 - v) * 2 - 1)
         var xInLocal3DSpace = coordinates.x * size.width / 2f
         var yInLocal3DSpace = coordinates.y * size.height / 2f
-        val expectedPose = Pose(Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f))
-        val pose = panelEntity.transformPixelCoordinatesToPose(input)
+        val expectedPosition = Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f)
+        val position = panelEntity.transformPixelCoordinatesToLocalPosition(input)
 
-        assertThat(pose).isEqualTo(expectedPose)
+        assertThat(position).isEqualTo(expectedPosition)
 
         val input2 = Vector2(200f, 200f)
 
@@ -1070,34 +1069,33 @@ class EntityTest {
         coordinates = Vector2(u * 2 - 1, (1 - v) * 2 - 1)
         xInLocal3DSpace = coordinates.x * size.width / 2f
         yInLocal3DSpace = coordinates.y * size.height / 2f
-        val expectedPose2 = Pose(Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f))
-        val pose2 = activityPanelEntity.transformPixelCoordinatesToPose(input2)
+        val expectedPosition2 = Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f)
+        val position2 = activityPanelEntity.transformPixelCoordinatesToLocalPosition(input2)
 
-        assertThat(pose2).isEqualTo(expectedPose2)
+        assertThat(position2).isEqualTo(expectedPosition2)
     }
 
     @Test
-    @OptIn(ExperimentalPanelCoordinateApi::class)
-    fun transformNormalizedCoordinatesToPose_callsRuntime() {
+    fun transformNormalizedCoordinatesToLocalPosition_callsRuntime() {
         val input = Vector2(1f, 1f)
 
         var size = (panelEntity.rtEntity as FakePanelEntity).size
         var xInLocal3DSpace = input.x * size.width / 2f
         var yInLocal3DSpace = input.y * size.height / 2f
-        val expectedPose = Pose(Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f))
-        val pose = panelEntity.transformNormalizedCoordinatesToPose(input)
+        val expectedPosition = Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f)
+        val position = panelEntity.transformNormalizedCoordinatesToLocalPosition(input)
 
-        assertThat(pose).isEqualTo(expectedPose)
+        assertThat(position).isEqualTo(expectedPosition)
 
         val input2 = Vector2(2f, 2f)
 
         size = (activityPanelEntity.rtEntity as FakeActivityPanelEntity).size
         xInLocal3DSpace = input2.x * size.width / 2f
         yInLocal3DSpace = input2.y * size.height / 2f
-        val expectedPose2 = Pose(Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f))
-        val pose2 = activityPanelEntity.transformNormalizedCoordinatesToPose(input2)
+        val expectedPosition2 = Vector3(xInLocal3DSpace, yInLocal3DSpace, 0f)
+        val position2 = activityPanelEntity.transformNormalizedCoordinatesToLocalPosition(input2)
 
-        assertThat(pose2).isEqualTo(expectedPose2)
+        assertThat(position2).isEqualTo(expectedPosition2)
     }
 
     @Test
