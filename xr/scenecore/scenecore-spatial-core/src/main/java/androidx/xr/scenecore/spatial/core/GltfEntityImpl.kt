@@ -23,7 +23,6 @@ import androidx.xr.scenecore.runtime.GltfAnimationFeature
 import androidx.xr.scenecore.runtime.GltfEntity
 import androidx.xr.scenecore.runtime.GltfFeature
 import androidx.xr.scenecore.runtime.GltfModelNodeFeature
-import androidx.xr.scenecore.runtime.MaterialResource
 import com.android.extensions.xr.XrExtensions
 import java.util.concurrent.Executor
 import java.util.concurrent.ScheduledExecutorService
@@ -76,18 +75,6 @@ internal class GltfEntityImpl(
     @GltfEntity.AnimationStateValue
     override val animationState: Int
         get() = gltfFeature.animationState
-
-    override fun setMaterialOverride(
-        material: MaterialResource,
-        nodeName: String,
-        primitiveIndex: Int,
-    ) {
-        gltfFeature.setMaterialOverride(material, nodeName, primitiveIndex)
-    }
-
-    override fun clearMaterialOverride(nodeName: String, primitiveIndex: Int) {
-        gltfFeature.clearMaterialOverride(nodeName, primitiveIndex)
-    }
 
     override fun setColliderEnabled(enabled: Boolean) {
         gltfFeature.setColliderEnabled(enabled)

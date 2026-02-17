@@ -23,7 +23,6 @@ import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.GltfEntity
 import androidx.xr.scenecore.runtime.GltfFeature
 import androidx.xr.scenecore.runtime.GltfModelNodeFeature
-import androidx.xr.scenecore.runtime.MaterialResource
 import androidx.xr.scenecore.runtime.Space
 import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
 import androidx.xr.scenecore.testing.FakeGltfFeature.Companion.createWithMockFeature
@@ -152,27 +151,6 @@ class GltfEntityImplTest {
         gltfEntityImpl.resumeAnimation()
 
         verify(mockGltfFeature).resumeAnimation()
-    }
-
-    @Test
-    fun setMaterialOverrideGltfEntity_materialOverridesNode() {
-        val material = mock<MaterialResource>()
-        val nodeName = "fake_node_name"
-        val primitiveIndex = 0
-
-        gltfEntityImpl.setMaterialOverride(material, nodeName, primitiveIndex)
-
-        verify(mockGltfFeature).setMaterialOverride(material, nodeName, primitiveIndex)
-    }
-
-    @Test
-    fun clearMaterialOverrideGltfEntity_clearsMaterialOverride() {
-        val nodeName = "fake_node_name"
-        val primitiveIndex = 0
-
-        gltfEntityImpl.clearMaterialOverride(nodeName, primitiveIndex)
-
-        verify(mockGltfFeature).clearMaterialOverride(nodeName, primitiveIndex)
     }
 
     @Test
