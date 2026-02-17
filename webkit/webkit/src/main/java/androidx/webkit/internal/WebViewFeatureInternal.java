@@ -1022,6 +1022,21 @@ public class WebViewFeatureInternal {
                     WebViewFeature.PAGE_GET_URL,
                     Features.PAGE_GET_URL);
 
+    /**
+     * This feature covers {@link
+     * androidx.webkit.WebViewCompat#addJavaScriptOnEvent(android.webkit.WebView, String, int, Set,
+     * androidx.webkit.WebViewCompat.JsExecutionWorld)} {@link
+     * androidx.webkit.WebViewCompat#getExecutionWorld(android.webkit.WebView, String)} {@link
+     * androidx.webkit.WebViewCompat#addWebMessageListener(android.webkit.WebView, String, Set,
+     * WebMessageListener, JsExecutionWorld)} {@link
+     * androidx.webkit.WebViewCompat#removeWebMessageListener(android.webkit.WebView, String,
+     * JsExecutionWorld)}
+     */
+    public static final ApiFeature.NoFramework JS_INJECTION_IN_FRAME_AND_WORLD =
+            new ApiFeature.NoFramework(
+                    WebViewFeature.JS_INJECTION_IN_FRAME_AND_WORLD,
+                    Features.JS_INJECTION_IN_FRAME_AND_WORLD);
+
     // --- Add new feature constants above this line ---
 
     private WebViewFeatureInternal() {
