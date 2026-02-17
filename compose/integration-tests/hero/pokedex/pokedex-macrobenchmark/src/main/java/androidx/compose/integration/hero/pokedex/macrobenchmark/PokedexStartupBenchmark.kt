@@ -62,6 +62,7 @@ class PokedexStartupBenchmark(
                     enableSharedTransitionScope = enableSharedTransitionScope,
                     enableSharedElementTransitions = enableSharedElementTransitions,
                 )
+                setupIntent()
             },
         )
 
