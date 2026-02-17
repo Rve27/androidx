@@ -5173,8 +5173,10 @@ package androidx.compose.ui.window {
     ctor @BytecodeOnly @Deprecated public DialogProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!);
     ctor @BytecodeOnly @Deprecated public DialogProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean);
     ctor @BytecodeOnly @Deprecated public DialogProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    ctor public DialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean usePlatformDefaultWidth, optional boolean decorFitsSystemWindows, optional String windowTitle);
-    ctor @BytecodeOnly public DialogProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly @Deprecated public DialogProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, String!);
+    ctor public DialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean usePlatformDefaultWidth, optional boolean decorFitsSystemWindows, optional String windowTitle, optional int windowType);
+    ctor @BytecodeOnly public DialogProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, String!, int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly @Deprecated public DialogProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean, boolean, String!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public DialogProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public DialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth);
     ctor @BytecodeOnly public DialogProperties(boolean, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
@@ -5184,12 +5186,14 @@ package androidx.compose.ui.window {
     method @InaccessibleFromKotlin public androidx.compose.ui.window.SecureFlagPolicy getSecurePolicy();
     method @InaccessibleFromKotlin public boolean getUsePlatformDefaultWidth();
     method @InaccessibleFromKotlin public String getWindowTitle();
+    method @InaccessibleFromKotlin public int getWindowType();
     property public boolean decorFitsSystemWindows;
     property public boolean dismissOnBackPress;
     property public boolean dismissOnClickOutside;
     property public androidx.compose.ui.window.SecureFlagPolicy securePolicy;
     property public boolean usePlatformDefaultWidth;
     property public String windowTitle;
+    property public int windowType;
   }
 
   public interface DialogWindowProvider {
