@@ -73,7 +73,12 @@ public class RemoteComposeConverterTest {
 
         assertNotNull("Converted JSON should not be null for " + mRcFile.getName(), json);
         if (VERBOSE) {
-            System.out.println(json);
+            System.out.println("===========================================");
+            System.out.println(mRcFile.getName());
+            System.out.println("===========================================");
+            System.out.println(json.substring(0, Math.min(json.length(), 1000)));
+            System.out.println("===========================================");
+
         }
         System.out.println(System.getProperties().toString());
         byte[] reconstructedBytes = RemoteComposeConverter.jsonToRemoteCompose(json);
