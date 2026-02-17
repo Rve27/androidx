@@ -32,6 +32,7 @@ import androidx.compose.remote.creation.compose.painter.painterRemoteBitmap
 import androidx.compose.remote.creation.compose.shapes.RemoteCircleShape
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.rb
+import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rememberNamedRemoteBitmap
 import androidx.compose.remote.creation.compose.state.rf
@@ -177,8 +178,7 @@ class RemoteButtonTest {
                     RemoteText(
                         "button_overrides_textStyle".rs,
                         color = null,
-                        style =
-                            RemoteMaterialTheme.typography.typography.labelSmall.copy(Color.Cyan),
+                        style = RemoteMaterialTheme.typography.labelSmall.copy(Color.Cyan.rc),
                     )
                 }
             }

@@ -38,12 +38,12 @@ import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rememberNamedRemoteColor
 import androidx.compose.remote.creation.compose.state.ri
 import androidx.compose.remote.creation.compose.state.rs
+import androidx.compose.remote.creation.compose.state.rsp
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.sp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
@@ -254,7 +254,7 @@ class BackgroundModifierTest {
                 verticalArrangement = RemoteArrangement.Bottom,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                RemoteText(title, color = RemoteColor(Color.White), fontSize = 8.sp)
+                RemoteText(title, color = RemoteColor(Color.White), fontSize = 8.rsp)
             }
         }
     }
