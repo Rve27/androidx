@@ -40,6 +40,20 @@ package androidx.compose.remote.creation.compose.capture {
     property public androidx.collection.IntObjectMap<android.app.PendingIntent> pendingIntents;
   }
 
+  public final class RemoteDensity {
+    ctor public RemoteDensity(androidx.compose.remote.creation.compose.state.RemoteFloat density, androidx.compose.remote.creation.compose.state.RemoteFloat fontScale);
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteFloat getDensity();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteFloat getFontScale();
+    property public androidx.compose.remote.creation.compose.state.RemoteFloat density;
+    property public androidx.compose.remote.creation.compose.state.RemoteFloat fontScale;
+    field public static final androidx.compose.remote.creation.compose.capture.RemoteDensity.Companion Companion;
+  }
+
+  public static final class RemoteDensity.Companion {
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.capture.RemoteDensity getHost();
+    property public androidx.compose.remote.creation.compose.capture.RemoteDensity Host;
+  }
+
 }
 
 package androidx.compose.remote.creation.compose.layout {
@@ -209,6 +223,11 @@ package androidx.compose.remote.creation.compose.modifier {
     method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier background(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.remote.creation.compose.state.RemoteColor color);
   }
 
+  public final class BorderModifierKt {
+    method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier border(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.remote.creation.compose.state.RemoteDp width, androidx.compose.remote.creation.compose.state.RemoteColor color, optional androidx.compose.remote.creation.compose.shapes.RemoteShape shape);
+    method @BytecodeOnly public static androidx.compose.remote.creation.compose.modifier.RemoteModifier! border$default(androidx.compose.remote.creation.compose.modifier.RemoteModifier!, androidx.compose.remote.creation.compose.state.RemoteDp!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.shapes.RemoteShape!, int, Object!);
+  }
+
   public final class ClickActionModifierKt {
     method @KotlinOnly public static androidx.compose.remote.creation.compose.modifier.RemoteModifier clickable(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.remote.creation.compose.action.Action... actions, optional boolean enabled, optional androidx.compose.ui.semantics.Role? role);
     method @KotlinOnly public static androidx.compose.remote.creation.compose.modifier.RemoteModifier clickable(androidx.compose.remote.creation.compose.modifier.RemoteModifier, java.util.List<androidx.compose.remote.creation.compose.action.Action> actions, optional boolean enabled, optional androidx.compose.ui.semantics.Role? role);
@@ -219,7 +238,9 @@ package androidx.compose.remote.creation.compose.modifier {
   }
 
   public final class ClipModifierKt {
+    method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier clip(androidx.compose.remote.creation.compose.modifier.RemoteModifier, optional androidx.compose.remote.creation.compose.shapes.RemoteShape shape);
     method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.compose.remote.creation.compose.modifier.RemoteModifier clip(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.ui.graphics.Shape shape, optional androidx.compose.ui.unit.DpSize size);
+    method @BytecodeOnly public static androidx.compose.remote.creation.compose.modifier.RemoteModifier! clip$default(androidx.compose.remote.creation.compose.modifier.RemoteModifier!, androidx.compose.remote.creation.compose.shapes.RemoteShape!, int, Object!);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.remote.creation.compose.modifier.RemoteModifier clip-USBMPiE(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.ui.graphics.Shape, long, androidx.compose.runtime.Composer?, int, int);
   }
 
@@ -311,6 +332,44 @@ package androidx.compose.remote.creation.compose.modifier {
 
   public final class ZIndexModifierKt {
     method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier zIndex(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.remote.creation.compose.state.RemoteFloat zIndex);
+  }
+
+}
+
+package androidx.compose.remote.creation.compose.shapes {
+
+  public abstract class RemoteCornerBasedShape implements androidx.compose.remote.creation.compose.shapes.RemoteShape {
+    method @InaccessibleFromKotlin public final androidx.compose.remote.creation.compose.shapes.RemoteCornerSize getBottomEnd();
+    method @InaccessibleFromKotlin public final androidx.compose.remote.creation.compose.shapes.RemoteCornerSize getBottomStart();
+    method @InaccessibleFromKotlin public final androidx.compose.remote.creation.compose.shapes.RemoteCornerSize getTopEnd();
+    method @InaccessibleFromKotlin public final androidx.compose.remote.creation.compose.shapes.RemoteCornerSize getTopStart();
+    property public final androidx.compose.remote.creation.compose.shapes.RemoteCornerSize bottomEnd;
+    property public final androidx.compose.remote.creation.compose.shapes.RemoteCornerSize bottomStart;
+    property public final androidx.compose.remote.creation.compose.shapes.RemoteCornerSize topEnd;
+    property public final androidx.compose.remote.creation.compose.shapes.RemoteCornerSize topStart;
+  }
+
+  @androidx.compose.runtime.Immutable public interface RemoteCornerSize {
+    method public androidx.compose.remote.creation.compose.state.RemoteFloat toPx(androidx.compose.remote.creation.compose.layout.RemoteSize shapeSize, androidx.compose.remote.creation.compose.capture.RemoteDensity density);
+  }
+
+  public final class RemoteCornerSizeKt {
+    method public static androidx.compose.remote.creation.compose.shapes.RemoteCornerSize RemoteCornerSize(androidx.compose.remote.creation.compose.state.RemoteDp size);
+    method public static androidx.compose.remote.creation.compose.shapes.RemoteCornerSize RemoteCornerSize(@IntRange(from=0L, to=100L) int percent);
+  }
+
+  public final class RemoteRoundedCornerShape extends androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape {
+  }
+
+  public final class RemoteRoundedCornerShapeKt {
+    method public static androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape RemoteRoundedCornerShape(androidx.compose.remote.creation.compose.state.RemoteDp size);
+    method @InaccessibleFromKotlin public static androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape getRemoteCircleShape();
+    method @InaccessibleFromKotlin public static androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape getRemoteRectangleShape();
+    property public static androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape RemoteCircleShape;
+    property public static androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape RemoteRectangleShape;
+  }
+
+  public interface RemoteShape {
   }
 
 }
