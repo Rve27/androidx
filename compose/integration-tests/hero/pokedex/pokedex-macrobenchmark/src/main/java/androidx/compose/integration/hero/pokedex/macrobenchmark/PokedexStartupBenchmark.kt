@@ -78,7 +78,10 @@ class PokedexStartupBenchmark(
         measureStartup(
             action = "$POKEDEX_TARGET_PACKAGE_NAME.POKEDEX_COMPOSE_ACTIVITY",
             contentSelector = By.res("PokedexList"),
-            setupIntent = { putExtra("useLifecycleEventForDataLoad", true) },
+            setupIntent = {
+                putExtra("useLifecycleEventForDataLoad", true)
+                putExtra("useBackgroundTextPrewarming", true)
+            },
         )
 
     @Test
