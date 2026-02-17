@@ -51,22 +51,16 @@ import java.lang.reflect.Modifier as JavaModifier
 import kotlin.jvm.internal.FunctionReference
 import kotlin.math.abs
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.allSuperclasses
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaGetter
-
-private val reflectionScope: ReflectionScope = ReflectionScope()
 
 /**
  * Factory of [NodeParameter]s.
  *
  * Each parameter value is converted to a user readable value.
  */
-internal class ParameterFactory(private val inlineClassConverter: InlineClassConverter) {
+internal class ParameterFactory {
     /** A map from known values to a user readable string representation. */
     private val valueLookup = mutableMapOf<Any, String>()
 
@@ -103,9 +97,7 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
 
         // AbsoluteAlignment is not found from an instance of BiasAbsoluteAlignment,
         // because Alignment has no file level class.
-        reflectionScope.withReflectiveAccess {
-            loadConstantsFromEnclosedClasses(AbsoluteAlignment::class.java)
-        }
+        loadConstantsFromEnclosedClasses(AbsoluteAlignment::class.java)
     }
 
     /**
@@ -127,19 +119,17 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
     ): NodeParameter {
         val creator = creatorCache ?: ParameterCreator()
         try {
-            return reflectionScope.withReflectiveAccess {
-                creator.create(
-                    rootId,
-                    nodeId,
-                    anchorId,
-                    name,
-                    value,
-                    kind,
-                    parameterIndex,
-                    maxRecursions,
-                    maxInitialIterableSize,
-                )
-            }
+            return creator.create(
+                rootId,
+                nodeId,
+                anchorId,
+                name,
+                value,
+                kind,
+                parameterIndex,
+                maxRecursions,
+                maxInitialIterableSize,
+            )
         } finally {
             creatorCache = creator
         }
@@ -172,20 +162,18 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
     ): NodeParameter? {
         val creator = creatorCache ?: ParameterCreator()
         try {
-            return reflectionScope.withReflectiveAccess {
-                creator.expand(
-                    rootId,
-                    nodeId,
-                    anchorId,
-                    name,
-                    value,
-                    reference,
-                    startIndex,
-                    maxElements,
-                    maxRecursions,
-                    maxInitialIterableSize,
-                )
-            }
+            return creator.expand(
+                rootId,
+                nodeId,
+                anchorId,
+                name,
+                value,
+                reference,
+                startIndex,
+                maxElements,
+                maxRecursions,
+                maxInitialIterableSize,
+            )
         } finally {
             creatorCache = creator
         }
@@ -240,8 +228,9 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
     private fun loadConstantsFromObjectInstance(kClass: KClass<*>) {
         try {
             val instance = kClass.objectInstance ?: return
-            kClass.declaredMemberProperties
-                .asSequence()
+            instance::class
+                .members
+                .filterIsInstance<KProperty1<Any, *>>()
                 .filter { it.isFinal && !it.isLateinit }
                 .mapNotNull { constantValueOf(it, instance)?.let { key -> Pair(key, it.name) } }
                 .filter { !ignoredValue(it.first) }
@@ -291,14 +280,10 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
             null
         }
 
-    private fun constantValueOf(property: KProperty1<out Any, *>, instance: Any): Any? =
+    private fun constantValueOf(property: KProperty1<Any, *>, instance: Any): Any? =
         try {
-            val field = property.javaField
-            field?.isAccessible = true
-            inlineClassConverter.castParameterValue(
-                inlineResultClass(property),
-                field?.get(instance),
-            )
+            property.isAccessible = true
+            property.getter.invoke(instance)
         } catch (_: ReflectiveOperationException) {
             // ignore reflection errors
             null
@@ -648,7 +633,7 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
             return Pair(element.name, valueOf(element, value))
         }
 
-        private fun lookup(value: Any): Map<String, KProperty<*>>? {
+        private fun lookup(value: Any): Map<String, KProperty1<Any, *>>? {
             val kClass = value::class
             val simpleName = kClass.simpleName
             val qualifiedName = kClass.qualifiedName
@@ -663,22 +648,26 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
                 return null
             }
             return try {
-                sequenceOf(kClass)
-                    .plus(kClass.allSuperclasses.asSequence())
-                    .flatMap { it.declaredMemberProperties.asSequence() }
+                listOf(kClass)
+                    .plus(kClass.mySuperClasses)
+                    .flatMap { it.members }
+                    .filterIsInstance<KProperty1<Any, *>>()
                     .associateBy { it.name }
-            } catch (_: Throwable) {
-                Log.w(SPAM_LOG_TAG, "Could not decompose ${kClass.simpleName}")
+            } catch (t: Throwable) {
+                Log.w(SPAM_LOG_TAG, "Could not decompose ${kClass.simpleName}", t)
                 null
             }
         }
 
-        private fun valueOf(property: KProperty<*>, instance: Any): Any? =
+        private val KClass<*>.mySuperClasses: List<KClass<*>>
+            get() = generateSequence(java) { it.superclass }.map { it.kotlin }.toList()
+
+        private fun valueOf(property: KProperty1<Any, *>, instance: Any): Any? =
             try {
                 property.isAccessible = true
                 // Bug in kotlin reflection API: if the type is a nullable inline type with a null
                 // value, we get an IllegalArgumentException in this line:
-                property.getter.call(instance)
+                property.getter.invoke(instance)
             } catch (_: Throwable) {
                 // TODO: Remove this warning since this is expected with nullable inline types
                 Log.w(SPAM_LOG_TAG, "Could not get value of ${property.name}")
@@ -880,7 +869,7 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
 
         // Temporary handling of TextStyle: remove when TextStyle implements InspectableValue
         // Hide: paragraphStyle, spanStyle, platformStyle, lineHeightStyle
-        private fun createFromTextStyle(name: String, value: TextStyle): NodeParameter? {
+        private fun createFromTextStyle(name: String, value: TextStyle): NodeParameter {
             val parameter =
                 NodeParameter(name, ParameterType.String, TextStyle::class.java.simpleName)
             val elements = parameter.elements
