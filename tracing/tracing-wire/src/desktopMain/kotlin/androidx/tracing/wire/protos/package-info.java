@@ -15,6 +15,6 @@
  */
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-package protos;
+package androidx.tracing.wire.protos;
 
 import androidx.annotation.RestrictTo;
