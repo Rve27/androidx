@@ -367,8 +367,7 @@ public interface IcingOptionsConfig {
                         Flags.enablePassingFilterToChildren() || isVMEnabled)
                 .setEnableProtoLogNewHeaderFormat(
                         Flags.enableProtoLogNewHeaderFormat() || isVMEnabled)
-                .setEnableEmbeddingIteratorV2(
-                        Flags.enableEmbeddingIteratorV2() || isVMEnabled)
+                .setEnableEmbeddingIteratorV2(true)
                 .setEnableReusableDecompressionBuffer(
                         Flags.enableReusableDecompressionBuffer() || isVMEnabled)
                 .setEmbeddingIndexNumShards(
