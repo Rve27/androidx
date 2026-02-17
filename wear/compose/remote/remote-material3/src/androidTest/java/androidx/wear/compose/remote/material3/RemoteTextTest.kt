@@ -22,9 +22,11 @@ import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rememberNamedRemoteColor
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.rs
+import androidx.compose.remote.creation.compose.state.rsp
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -35,10 +37,8 @@ import androidx.compose.ui.text.font.FontVariation.Settings
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.sp
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
-import androidx.wear.compose.material3.LocalTextStyle
 import java.text.DecimalFormat
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -61,7 +61,7 @@ class RemoteTextTest {
     fun text_withDefaultColor() {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
             val text = "text_withDefaultColor".rs
-            RemoteText(text, fontSize = 32.sp)
+            RemoteText(text, fontSize = 32.rsp)
         }
     }
 
@@ -71,7 +71,11 @@ class RemoteTextTest {
             val text = "textWithStyle".rs
             RemoteText(
                 text,
-                style = LocalTextStyle.current.copy(fontStyle = FontStyle.Italic, fontSize = 32.sp),
+                style =
+                    LocalRemoteTextStyle.current.copy(
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 32.rsp,
+                    ),
             )
         }
     }
@@ -81,7 +85,7 @@ class RemoteTextTest {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
             val text = "text_withColor".rs
             val color = rememberNamedRemoteColor("TestColor2", Color.Green)
-            RemoteText(text, color = color, fontSize = 32.sp)
+            RemoteText(text, color = color, fontSize = 32.rsp)
         }
     }
 
@@ -94,9 +98,11 @@ class RemoteTextTest {
             RemoteText(
                 text,
                 color = color, // text color should be green
-                fontSize = 32.sp,
+                fontSize = 32.rsp,
                 style =
-                    LocalTextStyle.current.copy(color = Color.Red), // style color should be ignored
+                    LocalRemoteTextStyle.current.copy(
+                        color = Color.Red.rc
+                    ), // style color should be ignored
             )
         }
     }
@@ -111,7 +117,7 @@ class RemoteTextTest {
                 text,
                 color = color,
                 fontStyle = FontStyle.Italic,
-                style = LocalTextStyle.current.copy(fontSize = 32.sp),
+                style = LocalRemoteTextStyle.current.copy(fontSize = 32.rsp),
             )
         }
     }
@@ -128,21 +134,21 @@ class RemoteTextTest {
                 RemoteText(
                     text = left,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
+                    fontSize = 32.rsp,
                     color = color,
                     textAlign = TextAlign.Left,
                 )
                 RemoteText(
                     text = center,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
+                    fontSize = 32.rsp,
                     color = color,
                     textAlign = TextAlign.Center,
                 )
                 RemoteText(
                     text = right,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
+                    fontSize = 32.rsp,
                     color = color,
                     textAlign = TextAlign.Right,
                 )
@@ -182,13 +188,13 @@ class RemoteTextTest {
                 RemoteText(
                     text = RemoteString("WWWiii 012345679"),
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
+                    fontSize = 32.rsp,
                     fontVariationSettings = Settings(Setting("tnum", 1f)),
                 )
                 RemoteText(
                     text = RemoteString("WWWiii 012345679"),
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
+                    fontSize = 32.rsp,
                 )
             }
         }
@@ -213,19 +219,23 @@ class RemoteTextTest {
                 RemoteText(
                     text = "None".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
+                    fontSize = 32.rsp,
                 )
                 RemoteText(
                     text = "Underline".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
-                    style = LocalTextStyle.current.copy(textDecoration = TextDecoration.Underline),
+                    fontSize = 32.rsp,
+                    style =
+                        LocalRemoteTextStyle.current.copy(textDecoration = TextDecoration.Underline),
                 )
                 RemoteText(
                     text = "LineThrough".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
-                    style = LocalTextStyle.current.copy(textDecoration = TextDecoration.LineThrough),
+                    fontSize = 32.rsp,
+                    style =
+                        LocalRemoteTextStyle.current.copy(
+                            textDecoration = TextDecoration.LineThrough
+                        ),
                 )
             }
         }
@@ -236,21 +246,21 @@ class RemoteTextTest {
         remoteComposeTestRule.runScreenshotTest(backgroundColor = Color.Black) {
             RemoteColumn(RemoteModifier.fillMaxSize()) {
                 RemoteText(
-                    text = RemoteString("Standard\nParagraph"),
+                    text = "Standard\nParagraph".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
+                    fontSize = 32.rsp,
                 )
                 RemoteText(
-                    text = RemoteString("Double Line Height\nParagraph\nAnd one more"),
+                    text = "Double Line Height\nParagraph\nAnd one more".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
-                    style = LocalTextStyle.current.copy(lineHeight = 64.sp),
+                    fontSize = 32.rsp,
+                    style = LocalRemoteTextStyle.current.copy(lineHeight = 64.rsp),
                 )
                 RemoteText(
-                    text = RemoteString("Letter Spacing\nParagraph"),
+                    text = "Letter Spacing\nParagraph".rs,
                     modifier = RemoteModifier.fillMaxWidth(),
-                    fontSize = 32.sp,
-                    style = LocalTextStyle.current.copy(letterSpacing = 64.sp),
+                    fontSize = 32.rsp,
+                    style = LocalRemoteTextStyle.current.copy(letterSpacing = 64.rsp),
                 )
             }
         }
@@ -264,7 +274,7 @@ class RemoteTextTest {
                     RemoteString(" = ") +
                     setting.toVariationValue(null).rf.toRemoteString(DecimalFormat("0")),
             modifier = RemoteModifier.fillMaxWidth(),
-            fontSize = 32.sp,
+            fontSize = 32.rsp,
             fontVariationSettings = Settings(setting),
         )
     }
@@ -279,38 +289,38 @@ class RemoteTextTest {
 
             RemoteColumn(RemoteModifier.fillMaxSize()) {
                 // Default
-                RemoteText(text = text, fontSize = 18.sp, color = color)
+                RemoteText(text = text, fontSize = 18.rsp, color = color)
                 RemoteText(
                     text = text,
-                    fontSize = 18.sp,
+                    fontSize = 18.rsp,
                     color = color,
                     overflow = TextOverflow.Clip,
                     maxLines = 1,
                 )
                 RemoteText(
                     text = text,
-                    fontSize = 18.sp,
+                    fontSize = 18.rsp,
                     color = color,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )
                 RemoteText(
                     text = text,
-                    fontSize = 18.sp,
+                    fontSize = 18.rsp,
                     color = color,
                     overflow = TextOverflow.Visible,
                     maxLines = 1,
                 )
                 RemoteText(
                     text = text,
-                    fontSize = 18.sp,
+                    fontSize = 18.rsp,
                     color = color,
                     overflow = TextOverflow.MiddleEllipsis,
                     maxLines = 1,
                 )
                 RemoteText(
                     text = text,
-                    fontSize = 18.sp,
+                    fontSize = 18.rsp,
                     color = color,
                     overflow = TextOverflow.StartEllipsis,
                     maxLines = 1,

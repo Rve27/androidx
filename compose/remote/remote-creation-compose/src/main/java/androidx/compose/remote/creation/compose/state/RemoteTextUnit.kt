@@ -35,6 +35,12 @@ import androidx.compose.ui.unit.sp
 public class RemoteTextUnit(public val value: RemoteFloat, public val type: TextUnitType) :
     BaseRemoteState<TextUnit>() {
 
+    init {
+        require(type == TextUnitType.Sp || type == TextUnitType.Em) {
+            "TextUnitType must be Sp or Em, but was $type"
+        }
+    }
+
     override val constantValueOrNull: TextUnit?
         get() {
             val constValue = value.constantValueOrNull ?: return null
@@ -49,19 +55,23 @@ public class RemoteTextUnit(public val value: RemoteFloat, public val type: Text
         return toPx(creationState.remoteDensity).writeToDocument(creationState)
     }
 
-    /**
-     * Converts this [RemoteTextUnit] to pixels using the provided [density].
-     *
-     * Note: Only [TextUnitType.Sp] is supported for conversion to pixels via [RemoteDensity].
-     * [TextUnitType.Em] requires current font size context which is not available here.
-     */
+    /** Converts this [RemoteTextUnit] to pixels using the provided [density]. */
     public fun toPx(density: RemoteDensity): RemoteFloat {
-        return when (type) {
-            TextUnitType.Sp -> value * density.fontScale * density.density
-            TextUnitType.Em -> value
-            else -> throw IllegalStateException("Unsupported TextUnitType: $type")
+        checkTextUnit()
+        return value * density.fontScale * density.density
+    }
+
+    /** Converts this [RemoteTextUnit] to pixels using the screen's density. */
+    public fun toPx(): RemoteFloat {
+        checkTextUnit()
+        return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
+            val density = creationState.remoteDensity
+            (value * density.fontScale * density.density).arrayForCreationState(creationState)
         }
     }
+
+    private fun checkTextUnit() =
+        check(type == TextUnitType.Sp) { "Only Sp is supported for conversion to pixels" }
 }
 
 /** Extension property to convert an [Int] to a [RemoteTextUnit] in Sp. */
