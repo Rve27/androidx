@@ -20,6 +20,7 @@ import android.graphics.Matrix
 import android.net.Uri
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
+import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -388,10 +389,13 @@ public class EditableDocumentViewModel(private val state: SavedStateHandle, load
                     AnnotationDrawingMode.PenMode(toolInfo.brushSize, toolInfo.color)
             is Highlighter -> {
                 if (toolInfo.color != null && pdfDocument != null) {
+                    val colorWithHighlighterAlpha =
+                        ColorUtils.setAlphaComponent(toolInfo.color, InkDefaults.HIGHLIGHTER_ALPHA)
+
                     _drawingMode.value =
                         AnnotationDrawingMode.HighlighterMode(
                             toolInfo.brushSize,
-                            toolInfo.color,
+                            colorWithHighlighterAlpha,
                             pdfDocument,
                         )
                 } else {
