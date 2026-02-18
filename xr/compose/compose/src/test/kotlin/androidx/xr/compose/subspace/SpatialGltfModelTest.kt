@@ -24,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
-import androidx.concurrent.futures.await
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.SpatialGltfModelStatus.Failed
@@ -60,10 +59,10 @@ import androidx.xr.scenecore.scene
 import androidx.xr.scenecore.testing.FakeGltfEntity
 import androidx.xr.scenecore.testing.FakeGltfModelNodeFeature
 import com.google.common.truth.Truth.assertThat
-import com.google.common.util.concurrent.SettableFuture
 import java.nio.file.Paths
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -474,14 +473,14 @@ class SpatialGltfModelTest {
         // `SpatialModel`'s layout size is initially zero but then matches the intrinsic bounding
         // box of the 3D asset after it loads.
 
-        val settableFuture = SettableFuture.create<GltfModelResource>()
+        val completableDeferred = CompletableDeferred<GltfModelResource>()
 
         composeTestRule.configureFakeSession(
             defaultDpPerMeter = 1000f,
             renderingRuntime = {
                 object : RenderingRuntime by it {
                     override suspend fun loadGltfByAssetName(assetName: String): GltfModelResource =
-                        settableFuture.await()
+                        completableDeferred.await()
 
                     override fun createGltfEntity(
                         pose: Pose,
@@ -517,7 +516,7 @@ class SpatialGltfModelTest {
             .assertHeightIsEqualTo(0.dp)
             .assertDepthIsEqualTo(0.dp)
 
-        settableFuture.set(object : GltfModelResource {})
+        completableDeferred.complete(object : GltfModelResource {})
 
         // The glTF size is 1m x 1m x 1m and 1000 dp per meter the size should be 1000.dp x 1000.dp
         // x 1000.dp
@@ -871,7 +870,7 @@ class SpatialGltfModelTest {
         // Pass a `SpatialModelState` and assert that `isSpatialModelReady.value` is `false`
         // initially and becomes `true` after the model has finished loading.
 
-        val settableFuture = SettableFuture.create<GltfModelResource>()
+        val completableDeferred = CompletableDeferred<GltfModelResource>()
         val state =
             SpatialGltfModelState(source = SpatialGltfModelSource.fromPath(Paths.get("asset.glb")))
 
@@ -879,7 +878,7 @@ class SpatialGltfModelTest {
             renderingRuntime = {
                 object : RenderingRuntime by it {
                     override suspend fun loadGltfByAssetName(assetName: String): GltfModelResource =
-                        settableFuture.await()
+                        completableDeferred.await()
                 }
             }
         )
@@ -893,7 +892,7 @@ class SpatialGltfModelTest {
         composeTestRule.onSubspaceNodeWithTag("model").assertExists()
         assertIs<Loading>(state.status.value)
 
-        settableFuture.set(object : GltfModelResource {}) // simulate loading the glTF
+        completableDeferred.complete(object : GltfModelResource {}) // simulate loading the glTF
 
         composeTestRule.waitForIdle()
         composeTestRule.onSubspaceNodeWithTag("model").assertExists()
@@ -907,8 +906,8 @@ class SpatialGltfModelTest {
 
         val assets =
             mapOf(
-                "first_asset.glb" to SettableFuture.create<GltfModelResource>(),
-                "second_asset.glb" to SettableFuture.create(),
+                "first_asset.glb" to CompletableDeferred<GltfModelResource>(),
+                "second_asset.glb" to CompletableDeferred(),
             )
         var state by
             mutableStateOf(
@@ -935,7 +934,9 @@ class SpatialGltfModelTest {
         composeTestRule.onSubspaceNodeWithTag("model").assertExists()
         assertIs<Loading>(state.status.value)
 
-        assets["first_asset.glb"]?.set(object : GltfModelResource {}) // simulate loading the glTF
+        assets["first_asset.glb"]?.complete(
+            object : GltfModelResource {}
+        ) // simulate loading the glTF
 
         composeTestRule.onSubspaceNodeWithTag("model").assertExists()
         assertIs<Loaded>(state.status.value)
@@ -1266,7 +1267,7 @@ class SpatialGltfModelTest {
 
     @Test
     fun state_nodes_arePopulatedAfterLoad() {
-        val settableFuture = SettableFuture.create<GltfModelResource>()
+        val completableDeferred = CompletableDeferred<GltfModelResource>()
         val state =
             SpatialGltfModelState(source = SpatialGltfModelSource.fromPath(Paths.get("asset.glb")))
 
@@ -1276,7 +1277,7 @@ class SpatialGltfModelTest {
             renderingRuntime = { runtime ->
                 object : RenderingRuntime by runtime {
                     override suspend fun loadGltfByAssetName(assetName: String): GltfModelResource =
-                        settableFuture.await()
+                        completableDeferred.await()
 
                     override fun createGltfEntity(
                         pose: Pose,
@@ -1299,7 +1300,7 @@ class SpatialGltfModelTest {
 
         assertThat(state.nodes).isEmpty()
 
-        settableFuture.set(object : GltfModelResource {})
+        completableDeferred.complete(object : GltfModelResource {})
         composeTestRule.waitForIdle()
 
         assertThat(state.nodes).hasSize(1)
