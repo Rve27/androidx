@@ -120,6 +120,7 @@ package androidx.navigation3.runtime {
   }
 
   public final class NavMetadataKt {
+    method public static operator <T> boolean contains(java.util.Map<java.lang.String,?>, androidx.navigation3.runtime.NavMetadataKey<T> key);
     method public static operator <T> T? get(java.util.Map<java.lang.String,?>, androidx.navigation3.runtime.NavMetadataKey<T> key);
     method public static inline java.util.Map<java.lang.String,java.lang.Object> metadata(kotlin.jvm.functions.Function1<? super androidx.navigation3.runtime.MetadataScope,kotlin.Unit> builder);
   }
