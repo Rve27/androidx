@@ -22,15 +22,19 @@ import androidx.compose.remote.core.Operation;
 import androidx.compose.remote.core.Operations;
 import androidx.compose.remote.core.WireBuffer;
 import androidx.compose.remote.core.operations.Header;
+import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression;
+import androidx.compose.remote.core.operations.utilities.IntegerExpressionEvaluator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,9 +44,30 @@ import java.util.Map;
  */
 @SuppressLint("RestrictedApiAndroidX")
 public class RemoteComposeConverter {
+    @SuppressLint("PrimitiveInCollection")
+    private static final Map<String, Integer> sFloatRpnMap = new HashMap<>();
+    @SuppressLint("PrimitiveInCollection")
+    private static final Map<String, Integer> sIntRpnMap = new HashMap<>();
+
+    static {
+        // Build reverse maps for RPN operators
+        for (int i = 0; i < 256; i++) {
+            String name = AnimatedFloatExpression.toMathName(
+                    AnimatedFloatExpression.asNan(AnimatedFloatExpression.OFFSET + i));
+            if (name != null) {
+                sFloatRpnMap.put(name, AnimatedFloatExpression.OFFSET + i);
+            }
+            String iName = IntegerExpressionEvaluator.toMathName(
+                    IntegerExpressionEvaluator.OFFSET + i);
+            if (iName != null) {
+                sIntRpnMap.put(iName, IntegerExpressionEvaluator.OFFSET + i);
+            }
+        }
+    }
 
     private RemoteComposeConverter() {
     }
+
     /**
      * Convert RemoteCompose binary to JSON.
      *
@@ -54,15 +79,10 @@ public class RemoteComposeConverter {
             throws JSONException {
         WireBuffer buffer = new WireBuffer(rcBytes.length);
         System.arraycopy(rcBytes, 0, buffer.getBuffer(), 0, rcBytes.length);
-        // Force set size in WireBuffer (internal field)
-        try {
-            java.lang.reflect.Field sizeField = WireBuffer.class.getDeclaredField("mSize");
-            sizeField.setAccessible(true);
-            sizeField.set(buffer, rcBytes.length);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
+        int totalLen = rcBytes.length;
+
+        buffer.setIndex(0);
         int apiLevel = Header.peekApiLevel(buffer);
         int profiles = 0;
         if (apiLevel >= 7) {
@@ -91,53 +111,53 @@ public class RemoteComposeConverter {
         rc.put("profiles", profiles);
         JSONArray opsJson = new JSONArray();
 
-        while (buffer.available()) {
+        while (buffer.getIndex() < totalLen) {
             int startIdx = buffer.getIndex();
             int opcode = buffer.readByte();
 
-            CompanionOperation companion = map.get(opcode);
-            if (companion == null) {
-                throw new RuntimeException("Unknown opcode " + opcode + " at index " + startIdx);
-            }
-
-            List<Operation> tempOps = new ArrayList<>();
-            companion.read(buffer, tempOps);
-            int endIdx = buffer.getIndex();
-
-            byte[] payload = new byte[endIdx - startIdx - 1];
-            System.arraycopy(rcBytes, startIdx + 1, payload, 0, payload.length);
-
             OpcodeRegistry.OpSpec spec = OpcodeRegistry.get(opcode);
             JSONObject opJson = new JSONObject();
+            opJson.put("opcode", opcode);
 
             if (spec != null) {
                 opJson.put("kind", "op");
-                opJson.put("opcode", opcode);
                 opJson.put("name", spec.name);
 
                 JSONArray fields = new JSONArray();
-                // Rewind to read fields for the structured view
-                int currentIdx = buffer.getIndex();
-                buffer.setIndex(startIdx + 1);
                 for (OpcodeRegistry.FieldSpec fSpec : spec.fields) {
                     fields.put(encodeField(buffer, fSpec, fields));
                 }
-                buffer.setIndex(currentIdx);
                 opJson.put("fields", fields);
 
                 if (spec.isFixedLength() || spec.forceReconstruct) {
                     opJson.put("reconstructFromFields", true);
                 }
-                if (!spec.isFixedLength()) {
+
+                int endIdx = buffer.getIndex();
+                if (!spec.isFixedLength() && !spec.forceReconstruct) {
+                    byte[] payload = new byte[endIdx - startIdx - 1];
+                    System.arraycopy(rcBytes, startIdx + 1, payload, 0, payload.length);
                     opJson.put("payloadBase64", Base64.getEncoder().encodeToString(payload));
                 }
             } else {
+                CompanionOperation companion = map.get(opcode);
+                if (companion == null) {
+                    throw new RuntimeException(
+                            "Unknown opcode " + opcode + " at index " + startIdx);
+                }
+                List<Operation> tempOps = new ArrayList<>();
+                companion.read(buffer, tempOps);
+                int endIdx = buffer.getIndex();
+
                 opJson.put("kind", "opaque");
-                opJson.put("opcode", opcode);
                 if (!tempOps.isEmpty()) {
                     opJson.put("name", tempOps.get(0).getClass().getSimpleName());
                 }
+
+                byte[] payload = new byte[endIdx - startIdx - 1];
+                System.arraycopy(rcBytes, startIdx + 1, payload, 0, payload.length);
                 opJson.put("payloadBase64", Base64.getEncoder().encodeToString(payload));
+                buffer.setIndex(endIdx);
             }
 
             opsJson.put(opJson);
@@ -169,14 +189,19 @@ public class RemoteComposeConverter {
     }
 
     @SuppressLint("RestrictedApiAndroidX")
-    private static int findFieldInt(JSONArray fields, String name) throws JSONException {
+    private static long findFieldLong(JSONArray fields, String name) throws JSONException {
         for (int i = 0; i < fields.length(); i++) {
             JSONObject f = fields.getJSONObject(i);
             if (name.equals(f.getString("name"))) {
-                return Integer.parseInt(f.getString("value"));
+                return Long.parseLong(f.getString("value"));
             }
         }
         return 0;
+    }
+
+    @SuppressLint("RestrictedApiAndroidX")
+    private static int findFieldInt(JSONArray fields, String name) throws JSONException {
+        return (int) findFieldLong(fields, name);
     }
 
     @SuppressLint("RestrictedApiAndroidX")
@@ -199,12 +224,10 @@ public class RemoteComposeConverter {
                 f.put("value", String.valueOf(buffer.readLong()));
                 break;
             case FLOAT:
-                float fv = buffer.readFloat();
-                f.put("value", formatFloat(fv));
+                f.put("value", formatFloat(buffer.readFloat()));
                 break;
             case DOUBLE:
-                double dv = buffer.readDouble();
-                f.put("value", formatDouble(dv));
+                f.put("value", formatDouble(buffer.readDouble()));
                 break;
             case UTF8:
                 f.put("value", buffer.readUTF8());
@@ -216,33 +239,117 @@ public class RemoteComposeConverter {
                 byte[] data = buffer.readBuffer();
                 f.put("value", Base64.getEncoder().encodeToString(data));
                 break;
-            case FLOAT_ARRAY:
-                int len = findFieldInt(currentFields, "expressionLen");
+            case HEADER_BODY: {
+                long major = findFieldLong(currentFields, "major");
+                if ((major & 0xFFFF0000) == 0x048C0000) {
+                    f.put("format", "modern");
+                    int propCount = buffer.readInt();
+                    JSONArray props = new JSONArray();
+                    for (int i = 0; i < propCount; i++) {
+                        short tag = (short) buffer.readShort();
+                        buffer.readShort(); // itemLen
+                        int dataType = tag >> 10;
+                        int propId = tag & 0x3F;
+                        JSONObject prop = new JSONObject();
+                        prop.put("tag", propId);
+                        switch (dataType) {
+                            case 0: // INT
+                                prop.put("type", "INT");
+                                prop.put("value", buffer.readInt());
+                                break;
+                            case 1: // FLOAT
+                                prop.put("type", "FLOAT");
+                                prop.put("value", formatFloat(buffer.readFloat()));
+                                break;
+                            case 2: // LONG
+                                prop.put("type", "LONG");
+                                prop.put("value", buffer.readLong());
+                                break;
+                            case 3: // STRING
+                                prop.put("type", "STRING");
+                                prop.put("value", buffer.readUTF8());
+                                break;
+                        }
+                        props.put(prop);
+                    }
+                    f.put("value", props);
+                } else {
+                    f.put("format", "legacy");
+                    JSONObject legacy = new JSONObject();
+                    legacy.put("width", buffer.readInt());
+                    legacy.put("height", buffer.readInt());
+                    legacy.put("capabilities", buffer.readLong());
+                    f.put("value", legacy);
+                }
+                break;
+            }
+            case FLOAT_ARRAY: {
+                int len = findFieldInt(currentFields, "length");
                 JSONArray arr = new JSONArray();
                 for (int i = 0; i < len; i++) {
                     arr.put(formatFloat(buffer.readFloat()));
                 }
                 f.put("value", arr);
                 break;
-            case FLOAT_ARRAY_BASE64:
-                int lenB64 = findFieldInt(currentFields, "animationLen");
-                byte[] b64data = new byte[lenB64 * 4];
+            }
+            case INT_ARRAY: {
+                int len = findFieldInt(currentFields, "length");
+                JSONArray arr = new JSONArray();
+                for (int i = 0; i < len; i++) {
+                    arr.put(buffer.readInt());
+                }
+                f.put("value", arr);
+                break;
+            }
+            case FLOAT_RPN: {
+                int packed = findFieldInt(currentFields, "packedLen");
+                int len = packed & 0xFFFF;
+                JSONArray rpnArr = new JSONArray();
+                for (int i = 0; i < len; i++) {
+                    float v = buffer.readFloat();
+                    if (AnimatedFloatExpression.isMathOperator(v)) {
+                        rpnArr.put(AnimatedFloatExpression.toMathName(v));
+                    } else {
+                        rpnArr.put(formatFloat(v));
+                    }
+                }
+                f.put("value", rpnArr);
+                break;
+            }
+            case INT_RPN: {
+                int len = findFieldInt(currentFields, "length");
+                int mask = findFieldInt(currentFields, "mask");
+                JSONArray rpnIntArr = new JSONArray();
+                for (int i = 0; i < len; i++) {
+                    int v = buffer.readInt();
+                    if (IntegerExpressionEvaluator.isOperation(mask, i)) {
+                        String name = IntegerExpressionEvaluator.toMathName(v);
+                        rpnIntArr.put(name != null ? name : String.valueOf(v));
+                    } else {
+                        rpnIntArr.put(String.valueOf(v));
+                    }
+                }
+                f.put("value", rpnIntArr);
+                break;
+            }
+            case FLOAT_ARRAY_BASE64: {
+                int packed = findFieldInt(currentFields, "packedLen");
+                int len = (packed >> 16) & 0xFFFF;
+                byte[] b64data = new byte[len * 4];
                 int startIdx = buffer.getIndex();
                 System.arraycopy(buffer.getBuffer(), startIdx, b64data, 0, b64data.length);
                 buffer.setIndex(startIdx + b64data.length);
                 f.put("value", Base64.getEncoder().encodeToString(b64data));
                 break;
+            }
+            case GLYPH_ARRAY:
+            case KERNING_TABLE:
+                // For now keep them as opaque or simple arrays if we must
+                break;
         }
         return f;
     }
 
-    /**
-     * Convert JSON to RemoteCompose binary.
-     *
-     * @param jsonStr JSON string
-     * @return RemoteCompose binary
-     */
-    @SuppressLint("RestrictedApiAndroidX")
     public static byte @NonNull [] jsonToRemoteCompose(@NonNull String jsonStr)
             throws JSONException {
         JSONObject root = new JSONObject(jsonStr);
@@ -276,12 +383,10 @@ public class RemoteComposeConverter {
                     JSONObject fJson = fields.getJSONObject(j);
                     OpcodeRegistry.FieldType type = OpcodeRegistry.FieldType.valueOf(
                             fJson.getString("type"));
-                    writeField(buffer, type, fJson);
+                    writeField(buffer, type, fJson, opJson);
                 }
             } else {
-                // AUTHORITATIVE PAYLOAD reconstruction
                 byte[] payload = Base64.getDecoder().decode(opJson.getString("payloadBase64"));
-                // writeBuffer would add a length prefix, we need to write raw bytes
                 for (byte b : payload) {
                     buffer.writeByte(b & 0xFF);
                 }
@@ -293,9 +398,8 @@ public class RemoteComposeConverter {
         return result;
     }
 
-    @SuppressLint("RestrictedApiAndroidX")
     private static void writeField(WireBuffer buffer, OpcodeRegistry.FieldType type,
-            JSONObject fJson) throws JSONException {
+            JSONObject fJson, JSONObject opJson) throws JSONException {
         switch (type) {
             case BYTE:
                 buffer.writeByte(Integer.parseInt(fJson.getString("value")));
@@ -304,12 +408,20 @@ public class RemoteComposeConverter {
                 buffer.writeShort(Integer.parseInt(fJson.getString("value")));
                 break;
             case INT:
-                buffer.writeInt(Integer.parseInt(fJson.getString("value")));
+                if ("packedLen".equals(fJson.getString("name"))) {
+                    JSONArray expr = findFieldArray(opJson.getJSONArray("fields"), "expression");
+                    String anim = findFieldValue(opJson.getJSONArray("fields"), "animation");
+                    int eLen = expr.length();
+                    int aLen = (anim != null) ? Base64.getDecoder().decode(anim).length / 4 : 0;
+                    buffer.writeInt((aLen << 16) | (eLen & 0xFFFF));
+                } else {
+                    buffer.writeInt(Integer.parseInt(fJson.getString("value")));
+                }
                 break;
             case LONG:
                 buffer.writeLong(Long.parseLong(fJson.getString("value")));
                 break;
-            case FLOAT:
+            case FLOAT: {
                 String s = fJson.getString("value");
                 if (s.startsWith("NaN(")) {
                     int id = Integer.parseInt(s.substring(4, s.length() - 1));
@@ -318,15 +430,17 @@ public class RemoteComposeConverter {
                     buffer.writeFloat(Float.parseFloat(s));
                 }
                 break;
-            case DOUBLE:
-                String sd = fJson.getString("value");
-                if (sd.startsWith("NaN(")) {
-                    long id = Long.parseLong(sd.substring(4, sd.length() - 1));
+            }
+            case DOUBLE: {
+                String s = fJson.getString("value");
+                if (s.startsWith("NaN(")) {
+                    long id = Long.parseLong(s.substring(4, s.length() - 1));
                     buffer.writeDouble(Double.longBitsToDouble(id | 0x7FF8000000000000L));
                 } else {
-                    buffer.writeDouble(Double.parseDouble(sd));
+                    buffer.writeDouble(Double.parseDouble(s));
                 }
                 break;
+            }
             case UTF8:
                 buffer.writeUTF8(fJson.getString("value"));
                 break;
@@ -334,78 +448,139 @@ public class RemoteComposeConverter {
                 buffer.writeBoolean(Boolean.parseBoolean(fJson.getString("value")));
                 break;
             case BUFFER:
-                byte[] data = Base64.getDecoder().decode(fJson.getString("value"));
-                buffer.writeBuffer(data);
+                buffer.writeBuffer(Base64.getDecoder().decode(fJson.getString("value")));
                 break;
-            case FLOAT_ARRAY:
+            case HEADER_BODY: {
+                String format = fJson.getString("format");
+                if ("modern".equals(format)) {
+                    JSONArray props = fJson.getJSONArray("value");
+                    buffer.writeInt(props.length());
+                    for (int i = 0; i < props.length(); i++) {
+                        JSONObject p = props.getJSONObject(i);
+                        int tag = p.getInt("tag");
+                        String pType = p.getString("type");
+                        switch (pType) {
+                            case "INT":
+                                buffer.writeShort((short) (tag | (0 << 10)));
+                                buffer.writeShort(4);
+                                buffer.writeInt(p.getInt("value"));
+                                break;
+                            case "FLOAT": {
+                                buffer.writeShort((short) (tag | (1 << 10)));
+                                buffer.writeShort(4);
+                                String fv = p.getString("value");
+                                if (fv.startsWith("NaN(")) {
+                                    int id = Integer.parseInt(fv.substring(4, fv.length() - 1));
+                                    buffer.writeFloat(Float.intBitsToFloat(id | -0x800000));
+                                } else {
+                                    buffer.writeFloat(Float.parseFloat(fv));
+                                }
+                                break;
+                            }
+                            case "LONG":
+                                buffer.writeShort((short) (tag | (2 << 10)));
+                                buffer.writeShort(8);
+                                buffer.writeLong(p.getLong("value"));
+                                break;
+                            case "STRING": {
+                                buffer.writeShort((short) (tag | (3 << 10)));
+                                String sv = p.getString("value");
+                                byte[] data = sv.getBytes();
+                                buffer.writeShort((short) (data.length + 4));
+                                buffer.writeBuffer(data);
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    JSONObject legacy = fJson.getJSONObject("value");
+                    buffer.writeInt(legacy.getInt("width"));
+                    buffer.writeInt(legacy.getInt("height"));
+                    buffer.writeLong(legacy.getLong("capabilities"));
+                }
+                break;
+            }
+            case FLOAT_ARRAY: {
                 JSONArray arr = fJson.getJSONArray("value");
                 for (int i = 0; i < arr.length(); i++) {
-                    String fs = arr.getString(i);
-                    if (fs.startsWith("NaN(")) {
-                        int id = Integer.parseInt(fs.substring(4, fs.length() - 1));
+                    String s = arr.getString(i);
+                    if (s.startsWith("NaN(")) {
+                        int id = Integer.parseInt(s.substring(4, s.length() - 1));
                         buffer.writeFloat(Float.intBitsToFloat(id | -0x800000));
                     } else {
-                        buffer.writeFloat(Float.parseFloat(fs));
+                        buffer.writeFloat(Float.parseFloat(s));
                     }
                 }
                 break;
-            case FLOAT_ARRAY_BASE64:
-                byte[] b64data = Base64.getDecoder().decode(fJson.getString("value"));
-                for (byte b : b64data) {
+            }
+            case FLOAT_RPN: {
+                JSONArray arr = fJson.getJSONArray("value");
+                for (int i = 0; i < arr.length(); i++) {
+                    String s = arr.getString(i);
+                    Integer op = sFloatRpnMap.get(s);
+                    if (op != null) {
+                        buffer.writeFloat(AnimatedFloatExpression.asNan(op));
+                    } else if (s.startsWith("NaN(")) {
+                        int id = Integer.parseInt(s.substring(4, s.length() - 1));
+                        buffer.writeFloat(Float.intBitsToFloat(id | -0x800000));
+                    } else {
+                        buffer.writeFloat(Float.parseFloat(s));
+                    }
+                }
+                break;
+            }
+            case INT_ARRAY: {
+                JSONArray arr = fJson.getJSONArray("value");
+                for (int i = 0; i < arr.length(); i++) {
+                    buffer.writeInt(arr.getInt(i));
+                }
+                break;
+            }
+            case INT_RPN: {
+                JSONArray arr = fJson.getJSONArray("value");
+                for (int i = 0; i < arr.length(); i++) {
+                    String s = arr.getString(i);
+                    Integer op = sIntRpnMap.get(s);
+                    if (op != null) {
+                        buffer.writeInt(op);
+                    } else {
+                        buffer.writeInt(Integer.parseInt(s));
+                    }
+                }
+                break;
+            }
+            case FLOAT_ARRAY_BASE64: {
+                byte[] data = Base64.getDecoder().decode(fJson.getString("value"));
+                for (byte b : data) {
                     buffer.writeByte(b & 0xFF);
                 }
+                break;
+            }
+            case GLYPH_ARRAY:
+            case KERNING_TABLE:
                 break;
         }
     }
 
-    /**
-     * Generate a report of all opcodes.
-     */
-    public static void generateReport() throws JSONException {
-        System.out.println("Opcode Registry Report");
-        System.out.println("======================");
-
-        @SuppressLint("PrimitiveInCollection")
-        Map<Integer, OpcodeRegistry.OpSpec> all = OpcodeRegistry.getAll();
-        for (Integer opcode : all.keySet()) {
-            OpcodeRegistry.OpSpec spec = all.get(opcode);
-            System.out.print(opcode + " -> " + spec.name + " [");
-            for (int i = 0; i < spec.fields.length; i++) {
-                System.out.print(spec.fields[i].name + ":" + spec.fields[i].type);
-                if (i < spec.fields.length - 1) System.out.print(", ");
+    private static @Nullable JSONArray findFieldArray(JSONArray fields, String name)
+            throws JSONException {
+        for (int i = 0; i < fields.length(); i++) {
+            JSONObject f = fields.getJSONObject(i);
+            if (name.equals(f.getString("name"))) {
+                return f.getJSONArray("value");
             }
-            System.out.println("]");
         }
+        return null;
     }
 
-    /**
-     * Main entry point.
-     */
-    public static void main(String @NonNull [] args) throws Exception {
-        if (args.length == 1 && "report".equals(args[0])) {
-            generateReport();
-            return;
+    private static @Nullable String findFieldValue(JSONArray fields, String name)
+            throws JSONException {
+        for (int i = 0; i < fields.length(); i++) {
+            JSONObject f = fields.getJSONObject(i);
+            if (name.equals(f.getString("name"))) {
+                return f.optString("value", null);
+            }
         }
-        if (args.length < 3) {
-            System.out.println("RemoteCompose Lossless Converter CLI");
-            System.out.println("Usage: rc2json <in.rc> <out.json>");
-            System.out.println("       json2rc <in.json> <out.rc>");
-            return;
-        }
-        String cmd = args[0];
-        java.io.File in = new java.io.File(args[1]);
-        java.io.File out = new java.io.File(args[2]);
-
-        if ("rc2json".equals(cmd)) {
-            byte[] bytes = java.nio.file.Files.readAllBytes(in.toPath());
-            String json = remoteComposeToJson(bytes);
-            java.nio.file.Files.write(out.toPath(), json.getBytes());
-            System.out.println("Success: Binary -> JSON (" + in.getName() + ")");
-        } else if ("json2rc".equals(cmd)) {
-            String json = new String(java.nio.file.Files.readAllBytes(in.toPath()));
-            byte[] bytes = jsonToRemoteCompose(json);
-            java.nio.file.Files.write(out.toPath(), bytes);
-            System.out.println("Success: JSON -> Binary (" + in.getName() + ")");
-        }
+        return null;
     }
 }
