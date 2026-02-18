@@ -358,7 +358,7 @@ public class Component extends PaintOperation
      *
      * @return the width in pixels
      */
-    public float minIntrinsicWidth(@Nullable RemoteContext context) {
+    public float minIntrinsicWidth(@NonNull RemoteContext context) {
         return getWidth();
     }
 
@@ -367,7 +367,7 @@ public class Component extends PaintOperation
      *
      * @return the width in pixels
      */
-    public float maxIntrinsicWidth(@Nullable RemoteContext context) {
+    public float maxIntrinsicWidth(@NonNull RemoteContext context) {
         return getWidth();
     }
 
@@ -376,7 +376,7 @@ public class Component extends PaintOperation
      *
      * @return the height in pixels
      */
-    public float minIntrinsicHeight(@Nullable RemoteContext context) {
+    public float minIntrinsicHeight(@NonNull RemoteContext context) {
         return getHeight();
     }
 
@@ -385,7 +385,7 @@ public class Component extends PaintOperation
      *
      * @return the height in pixels
      */
-    public float maxIntrinsicHeight(@Nullable RemoteContext context) {
+    public float maxIntrinsicHeight(@NonNull RemoteContext context) {
         return getHeight();
     }
 

@@ -3154,6 +3154,24 @@ public class RemoteComposeWriter {
     }
 
     /**
+     * Add a fitBox layout
+     *
+     * @param modifier   list of modifiers for the layout
+     * @param horizontal horizontal positioning
+     * @param vertical   vertical positioning
+     * @param content    content of the layout
+     */
+    public void fitBox(
+            @NonNull RecordingModifier modifier,
+            int horizontal,
+            int vertical,
+            @NonNull RemoteComposeWriterInterface content) {
+        startFitBox(modifier, horizontal, vertical);
+        content.run();
+        endFitBox();
+    }
+
+    /**
      * Start a fitbox layout
      */
     public void startFitBox(@NonNull RecordingModifier modifier, int horizontal, int vertical) {

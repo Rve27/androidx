@@ -128,6 +128,9 @@ public class Header extends Operation implements RemoteComposeOperation {
     /** Support for actions like "DOWN(time,x,y), MOVE(duration,x,y), UP(x,y)" */
     public static final short TEST_ACTIONS = 22;
 
+    /** Fix priority logic in collapsible layouts */
+    public static final short FEATURE_PRIORITY_FIX = 23;
+
     /** The object is an integer */
     private static final short DATA_TYPE_INT = 0;
 
@@ -153,7 +156,8 @@ public class Header extends Operation implements RemoteComposeOperation {
             FEATURE_PAINT_MEASURE,
             DEBUG,
             FEATURE_MEASURE_VERSION,
-            FEATURE_TOUCH_VERSION
+            FEATURE_TOUCH_VERSION,
+            FEATURE_PRIORITY_FIX
     };
     private static final String[] KEY_NAMES = {
             "DOC_WIDTH",
@@ -168,7 +172,8 @@ public class Header extends Operation implements RemoteComposeOperation {
             "PAINT_MEASURE",
             "DEBUG",
             "MEASURE_VERSION",
-            "TOUCH_VERSION"
+            "TOUCH_VERSION",
+            "PRIORITY_FIX"
     };
 
     /**
