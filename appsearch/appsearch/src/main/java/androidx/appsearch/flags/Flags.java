@@ -302,13 +302,6 @@ public final class Flags {
             FLAG_PREFIX + "enable_early_set_schema_exit";
 
     /**
-     * Whether to enable reusing a single buffer of memory to avoid reallocating a new buffer for
-     * every single document read..
-     */
-    public static final String FLAG_ENABLE_REUSABLE_DECOMPRESSION_BUFFER =
-            FLAG_PREFIX + "enable_reusable_decompression_buffer";
-
-    /**
      * Whether to enable sharded storage for embedding index.
      */
     public static final String FLAG_ENABLE_SHARDED_EMBEDDING_STORAGE =
@@ -728,15 +721,6 @@ public final class Flags {
      */
     public static boolean enableEarlySetSchemaExit() {
         // TODO(b/436813583): Enable this once the feature is rolled out to Nextfood in platform.
-        return false;
-    }
-
-    /**
-     * Whether to enable reusing a single buffer of memory to avoid reallocating a new buffer for
-     * every single document read..
-     */
-    public static boolean enableReusableDecompressionBuffer() {
-        // TODO(b/435754056): Enable this once the feature is rolled out to Nextfood in platform.
         return false;
     }
 
