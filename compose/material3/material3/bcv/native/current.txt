@@ -2918,6 +2918,8 @@ final object androidx.compose.material3/LoadingIndicatorDefaults { // androidx.c
 }
 
 final object androidx.compose.material3/MaterialTheme { // androidx.compose.material3/MaterialTheme|null[0]
+    final val LocalMaterialTheme // androidx.compose.material3/MaterialTheme.LocalMaterialTheme|{}LocalMaterialTheme[0]
+        final fun <get-LocalMaterialTheme>(): androidx.compose.runtime/CompositionLocal<androidx.compose.material3/MaterialTheme.Values> // androidx.compose.material3/MaterialTheme.LocalMaterialTheme.<get-LocalMaterialTheme>|<get-LocalMaterialTheme>(){}[0]
     final val LocalMotionScheme // androidx.compose.material3/MaterialTheme.LocalMotionScheme|{}LocalMotionScheme[0]
         final fun <get-LocalMotionScheme>(): androidx.compose.runtime/CompositionLocal<androidx.compose.material3/MotionScheme> // androidx.compose.material3/MaterialTheme.LocalMotionScheme.<get-LocalMotionScheme>|<get-LocalMotionScheme>(){}[0]
     final val colorScheme // androidx.compose.material3/MaterialTheme.colorScheme|{}colorScheme[0]
@@ -2928,6 +2930,23 @@ final object androidx.compose.material3/MaterialTheme { // androidx.compose.mate
         final fun <get-shapes>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.material3/Shapes // androidx.compose.material3/MaterialTheme.shapes.<get-shapes>|<get-shapes>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
     final val typography // androidx.compose.material3/MaterialTheme.typography|{}typography[0]
         final fun <get-typography>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.material3/Typography // androidx.compose.material3/MaterialTheme.typography.<get-typography>|<get-typography>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+
+    final class Values { // androidx.compose.material3/MaterialTheme.Values|null[0]
+        constructor <init>(androidx.compose.material3/ColorScheme = ..., androidx.compose.material3/Typography = ..., androidx.compose.material3/Shapes = ..., androidx.compose.material3/MotionScheme = ...) // androidx.compose.material3/MaterialTheme.Values.<init>|<init>(androidx.compose.material3.ColorScheme;androidx.compose.material3.Typography;androidx.compose.material3.Shapes;androidx.compose.material3.MotionScheme){}[0]
+
+        final val colorScheme // androidx.compose.material3/MaterialTheme.Values.colorScheme|{}colorScheme[0]
+            final fun <get-colorScheme>(): androidx.compose.material3/ColorScheme // androidx.compose.material3/MaterialTheme.Values.colorScheme.<get-colorScheme>|<get-colorScheme>(){}[0]
+        final val motionScheme // androidx.compose.material3/MaterialTheme.Values.motionScheme|{}motionScheme[0]
+            final fun <get-motionScheme>(): androidx.compose.material3/MotionScheme // androidx.compose.material3/MaterialTheme.Values.motionScheme.<get-motionScheme>|<get-motionScheme>(){}[0]
+        final val shapes // androidx.compose.material3/MaterialTheme.Values.shapes|{}shapes[0]
+            final fun <get-shapes>(): androidx.compose.material3/Shapes // androidx.compose.material3/MaterialTheme.Values.shapes.<get-shapes>|<get-shapes>(){}[0]
+        final val typography // androidx.compose.material3/MaterialTheme.Values.typography|{}typography[0]
+            final fun <get-typography>(): androidx.compose.material3/Typography // androidx.compose.material3/MaterialTheme.Values.typography.<get-typography>|<get-typography>(){}[0]
+
+        final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3/MaterialTheme.Values.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // androidx.compose.material3/MaterialTheme.Values.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // androidx.compose.material3/MaterialTheme.Values.toString|toString(){}[0]
+    }
 }
 
 final object androidx.compose.material3/MenuDefaults { // androidx.compose.material3/MenuDefaults|null[0]
@@ -3731,6 +3750,7 @@ final val androidx.compose.material3/androidx_compose_material3_ListItemShapes$s
 final val androidx.compose.material3/androidx_compose_material3_LoadingIndicatorDefaults$stableprop // androidx.compose.material3/androidx_compose_material3_LoadingIndicatorDefaults$stableprop|#static{}androidx_compose_material3_LoadingIndicatorDefaults$stableprop[0]
 final val androidx.compose.material3/androidx_compose_material3_MaterialShapes$stableprop // androidx.compose.material3/androidx_compose_material3_MaterialShapes$stableprop|#static{}androidx_compose_material3_MaterialShapes$stableprop[0]
 final val androidx.compose.material3/androidx_compose_material3_MaterialTheme$stableprop // androidx.compose.material3/androidx_compose_material3_MaterialTheme$stableprop|#static{}androidx_compose_material3_MaterialTheme$stableprop[0]
+final val androidx.compose.material3/androidx_compose_material3_MaterialTheme_Values$stableprop // androidx.compose.material3/androidx_compose_material3_MaterialTheme_Values$stableprop|#static{}androidx_compose_material3_MaterialTheme_Values$stableprop[0]
 final val androidx.compose.material3/androidx_compose_material3_MenuDefaults$stableprop // androidx.compose.material3/androidx_compose_material3_MenuDefaults$stableprop|#static{}androidx_compose_material3_MenuDefaults$stableprop[0]
 final val androidx.compose.material3/androidx_compose_material3_MenuGroupShapes$stableprop // androidx.compose.material3/androidx_compose_material3_MenuGroupShapes$stableprop|#static{}androidx_compose_material3_MenuGroupShapes$stableprop[0]
 final val androidx.compose.material3/androidx_compose_material3_MenuItemColors$stableprop // androidx.compose.material3/androidx_compose_material3_MenuItemColors$stableprop|#static{}androidx_compose_material3_MenuItemColors$stableprop[0]
@@ -4192,6 +4212,7 @@ final fun androidx.compose.material3/androidx_compose_material3_ListItemShapes$s
 final fun androidx.compose.material3/androidx_compose_material3_LoadingIndicatorDefaults$stableprop_getter(): kotlin/Int // androidx.compose.material3/androidx_compose_material3_LoadingIndicatorDefaults$stableprop_getter|androidx_compose_material3_LoadingIndicatorDefaults$stableprop_getter(){}[0]
 final fun androidx.compose.material3/androidx_compose_material3_MaterialShapes$stableprop_getter(): kotlin/Int // androidx.compose.material3/androidx_compose_material3_MaterialShapes$stableprop_getter|androidx_compose_material3_MaterialShapes$stableprop_getter(){}[0]
 final fun androidx.compose.material3/androidx_compose_material3_MaterialTheme$stableprop_getter(): kotlin/Int // androidx.compose.material3/androidx_compose_material3_MaterialTheme$stableprop_getter|androidx_compose_material3_MaterialTheme$stableprop_getter(){}[0]
+final fun androidx.compose.material3/androidx_compose_material3_MaterialTheme_Values$stableprop_getter(): kotlin/Int // androidx.compose.material3/androidx_compose_material3_MaterialTheme_Values$stableprop_getter|androidx_compose_material3_MaterialTheme_Values$stableprop_getter(){}[0]
 final fun androidx.compose.material3/androidx_compose_material3_MenuDefaults$stableprop_getter(): kotlin/Int // androidx.compose.material3/androidx_compose_material3_MenuDefaults$stableprop_getter|androidx_compose_material3_MenuDefaults$stableprop_getter(){}[0]
 final fun androidx.compose.material3/androidx_compose_material3_MenuGroupShapes$stableprop_getter(): kotlin/Int // androidx.compose.material3/androidx_compose_material3_MenuGroupShapes$stableprop_getter|androidx_compose_material3_MenuGroupShapes$stableprop_getter(){}[0]
 final fun androidx.compose.material3/androidx_compose_material3_MenuItemColors$stableprop_getter(): kotlin/Int // androidx.compose.material3/androidx_compose_material3_MenuItemColors$stableprop_getter|androidx_compose_material3_MenuItemColors$stableprop_getter(){}[0]
