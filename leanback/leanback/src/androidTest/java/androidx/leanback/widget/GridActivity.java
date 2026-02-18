@@ -57,6 +57,7 @@ public class GridActivity extends Activity {
     public static final String EXTRA_CONCAT_ADAPTER = "concatAdapter";
     public static final String EXTRA_ITEMS_FOCUSABLE = "itemsFocusable";
     public static final String EXTRA_STAGGERED = "staggered";
+    public static final String EXTRA_NEW_LAYOUT_PARAMS_ONBIND = "newLayoutParamsOnBind";
     public static final String EXTRA_COLUMN_WIDTH = "columnWidth";
     public static final String EXTRA_SPAN_SIZES = "spanSizes";
     public static final String EXTRA_REQUEST_LAYOUT_ONFOCUS = "requestLayoutOnFocus";
@@ -99,6 +100,7 @@ public class GridActivity extends Activity {
     int mNumItems;
     int mChildLayout;
     boolean mStaggered;
+    boolean mNewLayoutParamsOnBind;
     Map<Integer, Integer> mSpanSizes;
     boolean mRequestLayoutOnFocus;
     boolean mRequestFocusOnLayout;
@@ -155,6 +157,7 @@ public class GridActivity extends Activity {
         mLayoutId = intent.getIntExtra(EXTRA_LAYOUT_RESOURCE_ID, R.layout.horizontal_grid);
         mChildLayout = intent.getIntExtra(EXTRA_CHILD_LAYOUT_ID, -1);
         mStaggered = intent.getBooleanExtra(EXTRA_STAGGERED, DEFAULT_STAGGERED);
+        mNewLayoutParamsOnBind = intent.getBooleanExtra(EXTRA_NEW_LAYOUT_PARAMS_ONBIND, false);
         int[] spanSizesArray = intent.getIntArrayExtra(EXTRA_SPAN_SIZES);
         if (spanSizesArray != null) {
             mSpanSizes = new HashMap<>();
@@ -572,7 +575,7 @@ public class GridActivity extends Activity {
     }
 
     void updateSize(View view, int position) {
-        if (!mUpdateSize && !mUpdateSizeSecondary) {
+        if (!mNewLayoutParamsOnBind && !mUpdateSize && !mUpdateSizeSecondary) {
             return;
         }
         boolean multiSpan = false;
@@ -582,7 +585,7 @@ public class GridActivity extends Activity {
             multiSpan = spanSizeLookup != null && spanSizeLookup.getSpanSize(position) > 1;
         }
         ViewGroup.LayoutParams p = view.getLayoutParams();
-        if (p == null) {
+        if (p == null || mNewLayoutParamsOnBind) {
             p = new ViewGroup.LayoutParams(0, 0);
         }
         if (mOrientation == BaseGridView.HORIZONTAL) {
