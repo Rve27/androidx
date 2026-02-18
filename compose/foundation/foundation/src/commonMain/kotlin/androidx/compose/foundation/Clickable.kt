@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.util.fastAll
 import androidx.compose.ui.util.fastAny
+import androidx.compose.ui.util.fastForEach
 import kotlin.math.abs
 import kotlin.math.max
 import kotlinx.coroutines.Job
@@ -1063,9 +1064,14 @@ private class CombinedClickableNode(
                     // All pointers are up
                     handleUpEvent(pointerEvent.changes[0])
                 } else {
-                    // Other events need to be checked for consumption / bounds related
-                    // cancellation.
-                    handleNonUpEventIfNeeded(pointerEvent, bounds)
+                    // Once a long press has triggered, consume every event until pointers are up
+                    if (longPressTriggered) {
+                        pointerEvent.changes.fastForEach { it.consume() }
+                    } else {
+                        // Other events need to be checked for consumption / bounds related
+                        // cancellation.
+                        handleNonUpEventIfNeeded(pointerEvent, bounds)
+                    }
                 }
             }
         } else if (pass == PointerEventPass.Final) {
@@ -1148,21 +1154,17 @@ private class CombinedClickableNode(
 
     private fun handleNonUpEventIfNeeded(pointerEvent: PointerEvent, bounds: IntSize) {
         val touchPadding = getExtendedTouchPadding(bounds)
-        for (i in 0 until pointerEvent.changes.size) {
-            val change = pointerEvent.changes[i]
-            if (change.isConsumed || change.isOutOfBounds(bounds, touchPadding)) {
-                cancelPointerInput()
-                break
-            } else if (longPressTriggered) {
-                // Once a long press has triggered, consume all events until pointer is
-                // released
-                change.consume()
+        if (
+            pointerEvent.changes.fastAny { change ->
+                change.isConsumed || change.isOutOfBounds(bounds, touchPadding)
             }
+        ) {
+            cancelPointerInput()
         }
     }
 
     private fun handleDeepPress() {
-        if (enabled && onLongClick != null) {
+        if (!longPressTriggered && enabled && onLongClick != null) {
             longPressJob?.cancel()
             longPressJob = null
             onLongClick?.invoke()
