@@ -38,7 +38,9 @@ public class OpcodeRegistry {
     @SuppressLint("RestrictedApiAndroidX")
     public enum FieldType {
         BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, UTF8, BUFFER, BOOLEAN,
-        FLOAT_ARRAY, FLOAT_ARRAY_BASE64
+        FLOAT_ARRAY, FLOAT_ARRAY_BASE64,
+        INT_ARRAY, HEADER_BODY, GLYPH_ARRAY, KERNING_TABLE,
+        FLOAT_RPN, INT_RPN
     }
 
     @SuppressLint("RestrictedApiAndroidX")
@@ -90,7 +92,13 @@ public class OpcodeRegistry {
             for (FieldSpec f : fields) {
                 if (f.type == FieldType.UTF8 || f.type == FieldType.BUFFER
                         || f.type == FieldType.FLOAT_ARRAY
-                        || f.type == FieldType.FLOAT_ARRAY_BASE64) {
+                        || f.type == FieldType.FLOAT_ARRAY_BASE64
+                        || f.type == FieldType.INT_ARRAY
+                        || f.type == FieldType.HEADER_BODY
+                        || f.type == FieldType.GLYPH_ARRAY
+                        || f.type == FieldType.KERNING_TABLE
+                        || f.type == FieldType.FLOAT_RPN
+                        || f.type == FieldType.INT_RPN) {
                     return false;
                 }
             }
@@ -103,14 +111,12 @@ public class OpcodeRegistry {
 
     static {
         // Protocol & Data
-        reg(new OpSpec(Operations.HEADER, "HEADER", true,
+        reg(new OpSpec(Operations.HEADER, "HEADER", false, true,
                 new FieldSpec("major", FieldType.INT),
                 new FieldSpec("minor", FieldType.INT),
                 new FieldSpec("patch", FieldType.INT),
-                new FieldSpec("width", FieldType.INT),
-                new FieldSpec("height", FieldType.INT),
-                new FieldSpec("capabilities", FieldType.LONG)));
-        reg(new OpSpec(Operations.DATA_TEXT, "DATA_TEXT",
+                new FieldSpec("body", FieldType.HEADER_BODY)));
+        reg(new OpSpec(Operations.DATA_TEXT, "DATA_TEXT", false, true,
                 new FieldSpec("textId", FieldType.INT),
                 new FieldSpec("text", FieldType.UTF8)));
         reg(new OpSpec(Operations.DATA_FLOAT, "DATA_FLOAT",
@@ -118,9 +124,8 @@ public class OpcodeRegistry {
                 new FieldSpec("value", FieldType.FLOAT)));
         reg(new OpSpec(Operations.ANIMATED_FLOAT, "ANIMATED_FLOAT", false, true,
                 new FieldSpec("id", FieldType.INT),
-                new FieldSpec("animationLen", FieldType.SHORT),
-                new FieldSpec("expressionLen", FieldType.SHORT),
-                new FieldSpec("expression", FieldType.FLOAT_ARRAY),
+                new FieldSpec("packedLen", FieldType.INT),
+                new FieldSpec("expression", FieldType.FLOAT_RPN),
                 new FieldSpec("animation", FieldType.FLOAT_ARRAY_BASE64)));
         reg(new OpSpec(Operations.DATA_INT, "DATA_INT",
                 new FieldSpec("id", FieldType.INT),
@@ -131,14 +136,11 @@ public class OpcodeRegistry {
         reg(new OpSpec(Operations.DATA_BOOLEAN, "DATA_BOOLEAN",
                 new FieldSpec("id", FieldType.INT),
                 new FieldSpec("value", FieldType.BOOLEAN)));
-        reg(new OpSpec(Operations.DATA_BITMAP, "DATA_BITMAP",
+        reg(new OpSpec(Operations.DATA_BITMAP, "DATA_BITMAP", false, true,
                 new FieldSpec("imageId", FieldType.INT),
                 new FieldSpec("widthAndType", FieldType.INT),
                 new FieldSpec("heightAndEncoding", FieldType.INT),
                 new FieldSpec("bitmap", FieldType.BUFFER)));
-        reg(new OpSpec(Operations.DATA_BITMAP_FONT, "DATA_BITMAP_FONT", true,
-                new FieldSpec("id", FieldType.INT),
-                new FieldSpec("versionAndNumGlyphs", FieldType.INT)));
         reg(new OpSpec(Operations.THEME, "THEME",
                 new FieldSpec("theme", FieldType.INT)));
         reg(new OpSpec(Operations.CLICK_AREA, "CLICK_AREA",
@@ -151,7 +153,12 @@ public class OpcodeRegistry {
                 new FieldSpec("metadataId", FieldType.INT)));
         reg(new OpSpec(Operations.ROOT_CONTENT_DESCRIPTION, "ROOT_CONTENT_DESCRIPTION",
                 new FieldSpec("contentDescriptionId", FieldType.INT)));
-        reg(new OpSpec(Operations.NAMED_VARIABLE, "NAMED_VARIABLE",
+        reg(new OpSpec(Operations.ROOT_CONTENT_BEHAVIOR, "ROOT_CONTENT_BEHAVIOR",
+                new FieldSpec("scroll", FieldType.INT),
+                new FieldSpec("alignment", FieldType.INT),
+                new FieldSpec("sizing", FieldType.INT),
+                new FieldSpec("mode", FieldType.INT)));
+        reg(new OpSpec(Operations.NAMED_VARIABLE, "NAMED_VARIABLE", false, true,
                 new FieldSpec("varId", FieldType.INT),
                 new FieldSpec("varType", FieldType.INT),
                 new FieldSpec("name", FieldType.UTF8)));
@@ -237,7 +244,7 @@ public class OpcodeRegistry {
                 new FieldSpec("x", FieldType.FLOAT),
                 new FieldSpec("y", FieldType.FLOAT),
                 new FieldSpec("rtl", FieldType.BOOLEAN)));
-        reg(new OpSpec(Operations.DRAW_BITMAP_FONT_TEXT_RUN, "DRAW_BITMAP_FONT_TEXT_RUN", true,
+        reg(new OpSpec(Operations.DRAW_BITMAP_FONT_TEXT_RUN, "DRAW_BITMAP_FONT_TEXT_RUN",
                 new FieldSpec("textId", FieldType.INT)));
         reg(new OpSpec(Operations.DRAW_TEXT_ON_PATH, "DRAW_TEXT_ON_PATH",
                 new FieldSpec("textId", FieldType.INT),
@@ -275,8 +282,6 @@ public class OpcodeRegistry {
                 new FieldSpec("top", FieldType.FLOAT),
                 new FieldSpec("right", FieldType.FLOAT),
                 new FieldSpec("bottom", FieldType.FLOAT)));
-        reg(new OpSpec(Operations.PAINT_VALUES, "PAINT_VALUES", true,
-                new FieldSpec("length", FieldType.INT)));
 
         // Matrix
         reg(new OpSpec(Operations.MATRIX_TRANSLATE, "MATRIX_TRANSLATE",
@@ -437,7 +442,8 @@ public class OpcodeRegistry {
         reg(new OpSpec(Operations.VALUE_INTEGER_CHANGE_ACTION, "VALUE_INTEGER_CHANGE_ACTION",
                 new FieldSpec("targetValueId", FieldType.INT),
                 new FieldSpec("value", FieldType.INT)));
-        reg(new OpSpec(Operations.VALUE_STRING_CHANGE_ACTION, "VALUE_STRING_CHANGE_ACTION",
+        reg(new OpSpec(Operations.VALUE_STRING_CHANGE_ACTION,
+                "VALUE_STRING_CHANGE_ACTION", false, true,
                 new FieldSpec("targetValueId", FieldType.INT),
                 new FieldSpec("value", FieldType.UTF8)));
 
@@ -445,7 +451,7 @@ public class OpcodeRegistry {
         reg(new OpSpec(Operations.COLOR_CONSTANT, "COLOR_CONSTANT",
                 new FieldSpec("id", FieldType.INT),
                 new FieldSpec("color", FieldType.INT)));
-        reg(new OpSpec(Operations.COLOR_EXPRESSIONS, "COLOR_EXPRESSIONS", true,
+        reg(new OpSpec(Operations.COLOR_EXPRESSIONS, "COLOR_EXPRESSIONS", false, true,
                 new FieldSpec("id", FieldType.INT),
                 new FieldSpec("p1", FieldType.INT),
                 new FieldSpec("p2", FieldType.INT),
