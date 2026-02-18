@@ -216,7 +216,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         project.validateAllArchiveInputsRecognized()
         project.afterEvaluate {
             if (androidXExtension.shouldPublishSbom().get()) {
-                project.configureSbomPublishing(androidXExtension.isIsolatedProjectsEnabled())
+                project.configureSbomPublishing()
             }
             if (androidXExtension.shouldPublish.get()) {
                 project.validatePublishedMultiplatformHasDefault()
