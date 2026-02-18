@@ -381,8 +381,8 @@ package androidx.compose.material3 {
     method @InaccessibleFromKotlin @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues getSmallContentPadding();
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public float getSmallIconSize-D9Ej5fM();
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getSquareShape(androidx.compose.runtime.Composer?, int);
-    method @InaccessibleFromKotlin @Deprecated public androidx.compose.foundation.layout.PaddingValues getTextButtonContentPadding();
-    method @InaccessibleFromKotlin @Deprecated public androidx.compose.foundation.layout.PaddingValues getTextButtonWithIconContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getTextButtonContentPadding();
+    method @InaccessibleFromKotlin public androidx.compose.foundation.layout.PaddingValues getTextButtonWithIconContentPadding();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getTextShape(androidx.compose.runtime.Composer?, int);
     method @KotlinOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.unit.Dp iconSizeFor(androidx.compose.ui.unit.Dp buttonHeight);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public float iconSizeFor-5rwHm24(float);
@@ -430,8 +430,8 @@ package androidx.compose.material3 {
     property public androidx.compose.ui.unit.Dp MinWidth;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.foundation.layout.PaddingValues SmallContentPadding;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.unit.Dp SmallIconSize;
-    property @Deprecated public androidx.compose.foundation.layout.PaddingValues TextButtonContentPadding;
-    property @Deprecated public androidx.compose.foundation.layout.PaddingValues TextButtonWithIconContentPadding;
+    property public androidx.compose.foundation.layout.PaddingValues TextButtonContentPadding;
+    property public androidx.compose.foundation.layout.PaddingValues TextButtonWithIconContentPadding;
     property public androidx.compose.ui.graphics.Shape elevatedShape;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.graphics.Shape extraLargePressedShape;
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.ui.graphics.Shape extraSmallPressedShape;
