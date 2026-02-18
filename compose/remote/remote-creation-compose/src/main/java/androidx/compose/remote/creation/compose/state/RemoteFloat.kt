@@ -276,12 +276,12 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
                 OP_ADD -> {
                     val arrayCopy = array.clone()
                     arrayCopy[arrayCopy.size - 2] += v
-                    arrayCopy
+                    maybeTrimIfZero(arrayCopy)
                 }
                 OP_SUB -> {
                     val arrayCopy = array.clone()
                     arrayCopy[arrayCopy.size - 2] -= v
-                    arrayCopy
+                    maybeTrimIfZero(arrayCopy)
                 }
                 else -> null
             }
@@ -291,11 +291,11 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
     /** Returns a new [RemoteFloat] that evaluates to this [RemoteFloat] plus [v]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun plus(v: RemoteFloat): RemoteFloat {
-        if (v.constantValueOrNull != null && v.constantValueOrNull == 0f) {
-            return this
+        v.constantValueOrNull?.let {
+            return plus(it)
         }
-        if (constantValueOrNull != null && constantValueOrNull == 0f) {
-            return v
+        constantValueOrNull?.let {
+            return v.plus(it)
         }
         return binaryOp(this, v, AnimatedFloatExpression.ADD) { a, b -> a + b }
     }
@@ -311,12 +311,12 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
                 OP_ADD -> {
                     val arrayCopy = array.clone()
                     arrayCopy[arrayCopy.size - 2] -= v
-                    arrayCopy
+                    maybeTrimIfZero(arrayCopy)
                 }
                 OP_SUB -> {
                     val arrayCopy = array.clone()
                     arrayCopy[arrayCopy.size - 2] += v
-                    arrayCopy
+                    maybeTrimIfZero(arrayCopy)
                 }
                 else -> null
             }
@@ -326,8 +326,11 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
     /** Returns a new [RemoteFloat] that evaluates to this [RemoteFloat] minus [v]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun minus(v: RemoteFloat): RemoteFloat {
-        if (v.constantValueOrNull != null && v.constantValueOrNull == 0f) {
-            return this
+        v.constantValueOrNull?.let {
+            return minus(it)
+        }
+        constantValueOrNull?.let {
+            return (-v).plus(it)
         }
         return binaryOp(this, v, SUB) { a, b -> a - b }
     }
@@ -335,6 +338,9 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
     /** Returns a new [RemoteFloat] that evaluates to this [RemoteFloat] times [v]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun times(v: Float): RemoteFloat {
+        if (v == 0f) {
+            return RemoteFloat(0f)
+        }
         if (v == 1f) {
             return this
         }
@@ -346,12 +352,12 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
                 OP_MUL -> {
                     val arrayCopy = array.clone()
                     arrayCopy[arrayCopy.size - 2] *= v
-                    arrayCopy
+                    maybeTrimIfOne(arrayCopy)
                 }
                 OP_DIV -> {
                     val arrayCopy = array.clone()
                     arrayCopy[arrayCopy.size - 2] /= v
-                    arrayCopy
+                    maybeTrimIfOne(arrayCopy)
                 }
                 else -> null
             }
@@ -361,11 +367,11 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
     /** Returns a new [RemoteFloat] that evaluates to this [RemoteFloat] times [v]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun times(v: RemoteFloat): RemoteFloat {
-        if (v.constantValueOrNull != null && v.constantValueOrNull == 1f) {
-            return this
+        v.constantValueOrNull?.let {
+            return times(it)
         }
-        if (constantValueOrNull != null && constantValueOrNull == 1f) {
-            return v
+        constantValueOrNull?.let {
+            return v.times(it)
         }
         return binaryOp(this, v, AnimatedFloatExpression.MUL) { a, b -> a * b }
     }
@@ -373,6 +379,9 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
     /** Returns a new [RemoteFloat] that evaluates to this [RemoteFloat] div [v]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun div(v: Float): RemoteFloat {
+        if (constantValueOrNull != null && constantValueOrNull == 0f) {
+            return RemoteFloat(0f)
+        }
         if (v == 1f) {
             return this
         }
@@ -381,23 +390,40 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
                 OP_MUL -> {
                     val arrayCopy = array.clone()
                     arrayCopy[arrayCopy.size - 2] /= v
-                    arrayCopy
+                    maybeTrimIfOne(arrayCopy)
                 }
                 OP_DIV -> {
                     val arrayCopy = array.clone()
                     arrayCopy[arrayCopy.size - 2] *= v
-                    arrayCopy
+                    maybeTrimIfOne(arrayCopy)
                 }
                 else -> null
             }
         }
     }
 
+    private fun maybeTrimIfZero(array: FloatArray) =
+        if (array[array.size - 2] == 0f) {
+            array.copyOfRange(0, array.size - 2)
+        } else {
+            array
+        }
+
+    private fun maybeTrimIfOne(array: FloatArray) =
+        if (array[array.size - 2] == 1f) {
+            array.copyOfRange(0, array.size - 2)
+        } else {
+            array
+        }
+
     /** Returns a new [RemoteFloat] that evaluates to this [RemoteFloat] div [v]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun div(v: RemoteFloat): RemoteFloat {
-        if (v.constantValueOrNull != null && v.constantValueOrNull == 1f) {
-            return this
+        if (constantValueOrNull != null && constantValueOrNull == 0f) {
+            return RemoteFloat(0f)
+        }
+        v.constantValueOrNull?.let {
+            return div(it)
         }
         return binaryOp(this, v, AnimatedFloatExpression.DIV) { a, b -> a / b }
     }
