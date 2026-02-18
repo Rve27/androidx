@@ -68,6 +68,10 @@ class PokedexActivity : ComponentActivity() {
             PokedexFeatureFlags.UseLifecycleEffectForDataLoadingOnStartup = true
         }
 
+        if (intent.getBooleanExtra("useBackgroundTextPrewarming", false)) {
+            PokedexFeatureFlags.UseBackgroundTextPrewarming = true
+        }
+
         val startDestination =
             when (intent.getStringExtra("startDestination")) {
                 "home" -> PokedexScreen.Home
