@@ -217,7 +217,7 @@ class LayoutInspectorTree(anchorMap: AnchorMap) {
         override val semanticsMap = mutableIntObjectMapOf<List<RawParameter>>()
         override val unmergedSemanticsMap = mutableIntObjectMapOf<List<RawParameter>>()
         override val inlineClassConverter = InlineClassConverter()
-        override val parameterFactory = ParameterFactory()
+        override val parameterFactory = ParameterFactory(inlineClassConverter)
         override var generatedId = -1L
         override var hideSystemNodes = true
         override var includeAllParameters = true

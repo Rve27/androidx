@@ -49,10 +49,11 @@ dependencies {
     implementation(project(":compose:ui:ui-tooling-data"), {
         transitive = false
     })
-    compileOnly(libs.kotlinReflect)
+    implementation(libs.kotlinReflect, {
+        exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib"
+    })
     androidTestImplementation(libs.kotlinCoroutinesAndroid)
     androidTestImplementation(libs.testCore)
-    androidTestImplementation(libs.kotlinReflect)
     androidTestImplementation(project(":compose:foundation:foundation-layout"))
     androidTestImplementation(project(":compose:ui:ui-tooling"))
     androidTestImplementation(project(":compose:ui:ui-tooling-data"))
@@ -104,6 +105,9 @@ androidComponents {
 
 inspection {
     name = "compose-ui-inspection.jar"
+    allowedModules.addAll(
+            "org.jetbrains.kotlin:kotlin-reflect"
+    )
 }
 
 // TODO(b/407640608): Fix :compose:ui:ui-inspection:connectedCheck to work without this block
