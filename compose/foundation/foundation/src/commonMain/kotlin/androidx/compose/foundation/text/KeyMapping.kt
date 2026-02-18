@@ -113,6 +113,23 @@ internal val defaultKeyMapping: KeyMapping =
     commonKeyMapping(KeyModifiers.Ctrl).let { common ->
         object : KeyMapping {
             override fun map(event: KeyEvent): KeyCommand? {
+                val keyModifiers = event.modifiers
+                when (event.key) {
+                    Key.Backspace ->
+                        when (keyModifiers) {
+                            KeyModifiers.None,
+                            KeyModifiers.Shift,
+                            KeyModifiers.ShiftMeta -> KeyCommand.DELETE_PREV_CHAR
+                            KeyModifiers.Ctrl,
+                            KeyModifiers.CtrlShift -> KeyCommand.DELETE_PREV_WORD
+                            KeyModifiers.Alt -> KeyCommand.DELETE_FROM_LINE_START
+                            else -> null
+                        }
+                    else -> null
+                }?.let {
+                    return it
+                }
+
                 return when (event.modifiers) {
                     KeyModifiers.CtrlShift ->
                         when (event.key) {
@@ -138,7 +155,6 @@ internal val defaultKeyMapping: KeyMapping =
                             Key.NumPadDirectionDown -> KeyCommand.NEXT_PARAGRAPH
                             Key.H -> KeyCommand.DELETE_PREV_CHAR
                             Key.Delete -> KeyCommand.DELETE_NEXT_WORD
-                            Key.Backspace -> KeyCommand.DELETE_PREV_WORD
                             Key.Backslash -> KeyCommand.DESELECT
                             else -> null
                         }
@@ -152,7 +168,6 @@ internal val defaultKeyMapping: KeyMapping =
                         }
                     KeyModifiers.Alt ->
                         when (event.key) {
-                            Key.Backspace -> KeyCommand.DELETE_FROM_LINE_START
                             Key.Delete -> KeyCommand.DELETE_TO_LINE_END
                             else -> null
                         }
@@ -161,6 +176,3 @@ internal val defaultKeyMapping: KeyMapping =
             }
         }
     }
-
-private val KeyModifiers.Companion.CtrlShift: KeyModifiers
-    get() = KeyModifiers.Ctrl + KeyModifiers.Shift
