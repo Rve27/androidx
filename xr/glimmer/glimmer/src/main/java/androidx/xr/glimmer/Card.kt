@@ -552,7 +552,7 @@ public object CardDefaults {
      * container. Note that there is additional padding applied around the content / text / icons
      * inside a card, this only represents the outer padding for the entire content.
      */
-    public val ContentPadding: PaddingValues = PaddingValues(16.dp)
+    public val ContentPadding: PaddingValues = PaddingValues(Spacing.Medium)
 
     /** The default shape of [Card], which determines its corner radius. */
     public val shape: Shape
@@ -563,10 +563,10 @@ public object CardDefaults {
 private val MinimumHeight = 80.dp
 
 /** Spacing between icons and the text in a [Card] */
-private val IconSpacing = 12.dp
+private val IconSpacing = Spacing.Medium
 
 /** Padding around the internal content (text / icons), but not added around header images. */
-private val InnerPadding = 8.dp
+private val InnerPadding = Spacing.Small
 
 /** Spacing between title / subtitle / body text */
 private val TextVerticalSpacing = 3.dp
