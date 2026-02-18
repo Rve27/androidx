@@ -23,9 +23,9 @@ import androidx.glance.wear.proto.ActiveWearWidgetHandleProto
 import java.util.Objects
 
 /**
- * Identifies a unique instance of a widget that is active in the host.
+ * Identifies a unique instance of a widget or tile that is active in the host.
  *
- * A widget instance is active when it was added by the user to a widget surface.
+ * A widget or a tile instance is active when it was added by the user to a widget or tile surface.
  *
  * @property provider The name of the provider associated with the widget instance.
  * @property instanceId The id of the widget instance.
