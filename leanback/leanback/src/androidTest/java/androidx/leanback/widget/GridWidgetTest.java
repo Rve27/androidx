@@ -993,6 +993,37 @@ public class GridWidgetTest {
     }
 
     @Test
+    public void testFastRelayout_NewLayoutParams_NotLosingSpans() throws Throwable {
+        Intent intent = new Intent();
+        intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.vertical_grid);
+        intent.putExtra(GridActivity.EXTRA_NUM_ITEMS, 10);
+        intent.putExtra(GridActivity.EXTRA_STAGGERED, false);
+        intent.putExtra(GridActivity.EXTRA_NEW_LAYOUT_PARAMS_ONBIND, true);
+        intent.putExtra(GridActivity.EXTRA_SPAN_SIZES, new int[]{
+                0, 3, // 0th item span size is 3
+        });
+        initActivity(intent);
+        mOrientation = BaseGridView.VERTICAL;
+        mNumRows = 3;
+
+        int columnWidth = mGridView.mLayoutManager.mRowSizeSecondaryRequested;
+        int horizontalSpacing = mGridView.getHorizontalSpacing();
+        int expectedMultiSpanViewWidth = 3 * columnWidth + horizontalSpacing * 2;
+        assertSpansThreeAt(0, expectedMultiSpanViewWidth);
+        startWaitLayout();
+        mActivityTestRule.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mGridView.getAdapter().notifyItemRangeChanged(0, 1);
+            }
+        });
+        waitForLayout();
+        GridLayoutManager.LayoutParams lp = (GridLayoutManager.LayoutParams)
+                mGridView.findViewHolderForAdapterPosition(0).itemView.getLayoutParams();
+        assertEquals(3, lp.mSpanSize);
+    }
+
+    @Test
     public void testCalculatedColumnSize_ThreeSpans() throws Throwable {
         Intent intent = new Intent();
         intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.vertical_grid);
