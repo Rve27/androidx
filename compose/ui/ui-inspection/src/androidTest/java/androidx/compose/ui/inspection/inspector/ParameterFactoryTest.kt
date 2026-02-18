@@ -104,7 +104,7 @@ private const val MAX_ITERABLE_SIZE = 5
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 class ParameterFactoryTest {
-    private val factory = ParameterFactory()
+    private val factory = ParameterFactory(InlineClassConverter())
 
     @Before
     fun before() {
@@ -240,13 +240,13 @@ class ParameterFactoryTest {
                     parameter("y", ParameterType.DimensionDp, 0.25f)
                 }
                 parameter("tileMode", ParameterType.String, "Clamp", index = 5)
+                parameter("createdSize", ParameterType.String, "Unspecified", index = 6)
                 parameter(
                     "transform",
                     ParameterType.String,
                     Matrix::class.java.simpleName,
-                    index = 6,
+                    index = 8,
                 )
-                parameter("createdSize", ParameterType.String, "Unspecified", index = 7)
             }
         }
         // TODO: add tests for RadialGradient & ShaderBrush
