@@ -874,6 +874,14 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         mNumRowsRequested = numRows;
     }
 
+    int getNumRows() {
+        if (mNumRows != 0) {
+            // mNumRows has been calculated in layout pass.
+            return mNumRows;
+        }
+        return mNumRowsRequested;
+    }
+
     /**
      * Set the row height. May be WRAP_CONTENT, or a size in pixels.
      */
