@@ -89,7 +89,7 @@ fun cube3d(): RemoteComposeContext {
             0,
         ) // Bottom face
 
-    addHeaderParam(Header.DOC_CONTENT_DESCRIPTION, "Clock")
+    addHeaderParam(Header.DOC_CONTENT_DESCRIPTION, "Cube")
     addHeaderParam(Header.DOC_DESIRED_FPS, 120)
 
     return demo7 {
