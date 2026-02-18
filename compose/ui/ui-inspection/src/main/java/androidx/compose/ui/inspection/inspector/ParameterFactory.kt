@@ -23,6 +23,7 @@ import androidx.compose.runtime.internal.ComposableLambda
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
@@ -493,6 +494,7 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
                     createFromSequence(name, value, value.asSequence(), startIndex, maxElements)
                 value.javaClass.isArray -> createFromArray(name, value, startIndex, maxElements)
                 value is Offset -> createFromOffset(name, value)
+                value is Size -> createFromSize(name, value)
                 value is Shadow -> createFromShadow(name, value)
                 value is TextStyle -> createFromTextStyle(name, value)
                 else -> createFromKotlinReflection(name, value)
@@ -509,6 +511,7 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
                 value is Iterable<*> -> findFromSequence(value.asSequence(), index)
                 value.javaClass.isArray -> findFromArray(value, index)
                 value is Offset -> findFromOffset(value, index)
+                value is Size -> findFromSize(value, index)
                 value is Shadow -> findFromShadow(value, index)
                 value is TextStyle -> findFromTextStyle(value, index)
                 else -> findFromKotlinReflection(value, index)
@@ -853,6 +856,23 @@ internal class ParameterFactory(private val inlineClassConverter: InlineClassCon
             when (index) {
                 0 -> Pair("x", with(density) { value.x.toDp() })
                 1 -> Pair("y", with(density) { value.y.toDp() })
+                else -> null
+            }
+
+        private fun createFromSize(name: String, value: Size): NodeParameter {
+            val parameter = NodeParameter(name, ParameterType.String, Size::class.java.simpleName)
+            val elements = parameter.elements
+            val width = with(density) { value.width.toDp().value }
+            val height = with(density) { value.height.toDp().value }
+            elements.add(NodeParameter("width", DimensionDp, width))
+            elements.add(NodeParameter("height", DimensionDp, height).apply { index = 1 })
+            return parameter
+        }
+
+        private fun findFromSize(value: Size, index: Int): Pair<String, Any?>? =
+            when (index) {
+                0 -> Pair("width", with(density) { value.width.toDp() })
+                1 -> Pair("height", with(density) { value.height.toDp() })
                 else -> null
             }
 

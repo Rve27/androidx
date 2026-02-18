@@ -81,7 +81,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.packFloats
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
@@ -227,13 +226,8 @@ class ParameterFactoryTest {
                     parameter("y", ParameterType.DimensionDp, 5.0f)
                 }
                 parameter("intrinsicSize", ParameterType.String, Size::class.java.simpleName) {
-                    val width = 5.0f
-                    val height = 9.5f
-                    parameter("height", ParameterType.Float, height)
-                    parameter("maxDimension", ParameterType.Float, height)
-                    parameter("minDimension", ParameterType.Float, width)
-                    parameter("packedValue", ParameterType.Int64, packFloats(width, height))
-                    parameter("width", ParameterType.Float, width)
+                    parameter("width", ParameterType.DimensionDp, 2.5f)
+                    parameter("height", ParameterType.DimensionDp, 4.75f)
                 }
                 parameter("start", ParameterType.String, Offset::class.java.simpleName) {
                     parameter("x", ParameterType.DimensionDp, 0.0f)
@@ -644,11 +638,8 @@ class ParameterFactoryTest {
                         parameter("color", ParameterType.Color, Color.Red.toArgb())
                         parameter("height", ParameterType.Float, 20.0f)
                         parameter("intrinsicSize", ParameterType.String, "Size") {
-                            parameter("height", ParameterType.Float, 20.0f)
-                            parameter("maxDimension", ParameterType.Float, 20.0f)
-                            parameter("minDimension", ParameterType.Float, 10.0f)
-                            parameter("packedValue", ParameterType.Int64, 4692750812821061632L)
-                            parameter("width", ParameterType.Float, 10.0f)
+                            parameter("width", ParameterType.DimensionDp, 5.0f)
+                            parameter("height", ParameterType.DimensionDp, 10.0f)
                         }
                         parameter("width", ParameterType.Float, 10.0f)
                         parameter("alpha", ParameterType.Float, 1.0f)
