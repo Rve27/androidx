@@ -279,6 +279,30 @@ class LayoutScrollTest : BaseLayoutTest() {
     }
 
     @Test
+    fun testFillMaxFraction() {
+        val ops =
+            arrayListOf<TestOperation?>(
+                TestLayout {
+                    column(Modifier.fillMaxSize()) {
+                        // This box should be half the size of the document width (300)
+                        box(Modifier.fillMaxWidth(0.5f).height(100).background(Color.RED)) {
+                            text("Half Width")
+                        }
+                    }
+                },
+                CaptureComponentTree(),
+            )
+        checkLayout(
+            600,
+            600,
+            7,
+            RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL,
+            "FillMaxFraction",
+            ops,
+        )
+    }
+
+    @Test
     fun testFillParentMaxFraction() {
         val ops =
             arrayListOf<TestOperation?>(

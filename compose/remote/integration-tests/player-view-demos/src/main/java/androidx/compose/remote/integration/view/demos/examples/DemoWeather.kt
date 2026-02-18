@@ -81,7 +81,7 @@ fun WeatherDemo() {
                 RemoteCollapsibleColumn(
                     modifier =
                         RemoteModifier.fillMaxWidth()
-                            .widthIn(min = 180.dp)
+                            .widthIn(min = 50.dp)
                             .clip(RemoteRoundedCornerShape(24.rdp))
                             .background(Color(219, 247, 239))
                 ) {
@@ -127,8 +127,7 @@ fun WeatherHeader() {
     }
     RemoteRow(
         modifier =
-            RemoteModifier.widthIn(min = 180.dp)
-                .width(400.rdp)
+            RemoteModifier.widthIn(min = 100.dp)
                 .heightIn(min = rowHeightDp)
                 .padding(8.dp), // .background(Color.Red),
         verticalAlignment = RemoteAlignment.CenterVertically,

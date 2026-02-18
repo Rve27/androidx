@@ -450,6 +450,15 @@ public abstract class RemoteContext {
         return mTouchVersion;
     }
 
+    /**
+     * Return true if the provided feature is enabled in the document
+     * @param feature feature id
+     * @return
+     */
+    public boolean useFeature(short feature) {
+        return mDocument.useFeature(feature);
+    }
+
     /** The font information */
     public static class FontInfo {
         /** the id of the font */

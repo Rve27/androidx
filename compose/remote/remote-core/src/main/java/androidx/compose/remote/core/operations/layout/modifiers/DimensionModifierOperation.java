@@ -129,6 +129,10 @@ public abstract class DimensionModifierOperation extends Operation
         return mType == Type.FILL;
     }
 
+    public boolean isExact() {
+        return mType == Type.EXACT || mType == Type.EXACT_DP;
+    }
+
     public boolean isFillParentMaxWidth() {
         return mType == Type.FILL_PARENT_MAX_WIDTH;
     }

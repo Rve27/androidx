@@ -494,6 +494,17 @@ public class RecordingModifier {
     }
 
     /**
+     * Add a width modifier to fill the parent width
+     *
+     * @param fraction the fraction of the width to fill
+     * @return
+     */
+    public @NonNull RecordingModifier fillMaxWidth(float fraction) {
+        setWidthModifier(DimensionModifierOperation.Type.FILL, fraction);
+        return this;
+    }
+
+    /**
      * Add a height modifier to fill the parent height
      *
      * @return
@@ -504,12 +515,33 @@ public class RecordingModifier {
     }
 
     /**
+     * Add a height modifier to fill the parent height
+     *
+     * @param fraction the fraction of the height to fill
+     * @return
+     */
+    public @NonNull RecordingModifier fillMaxHeight(float fraction) {
+        setHeightModifier(DimensionModifierOperation.Type.FILL, fraction);
+        return this;
+    }
+
+    /**
      * Add a size modifier to fill the parent
      *
      * @return
      */
     public @NonNull RecordingModifier fillMaxSize() {
         return fillMaxWidth().fillMaxHeight();
+    }
+
+    /**
+     * Add a size modifier to fill the parent
+     *
+     * @param fraction the fraction of the size to fill
+     * @return
+     */
+    public @NonNull RecordingModifier fillMaxSize(float fraction) {
+        return fillMaxWidth(fraction).fillMaxHeight(fraction);
     }
 
     /**
