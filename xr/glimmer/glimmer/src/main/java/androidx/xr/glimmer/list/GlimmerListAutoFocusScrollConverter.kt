@@ -17,6 +17,7 @@
 package androidx.xr.glimmer.list
 
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 import kotlin.math.sqrt
 
 /**
@@ -35,11 +36,11 @@ internal sealed interface GlimmerListAutoFocusScrollConverter {
      * @param contentLength total content length (L).
      */
     fun convertUserScrollToContentScroll(
-        userScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float
+        userScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double
 
     /**
      * Converts Content scroll to User scroll (Sc -> Su).
@@ -50,11 +51,11 @@ internal sealed interface GlimmerListAutoFocusScrollConverter {
      * @param contentLength total content length (L).
      */
     fun convertContentScrollToUserScroll(
-        contentScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float
+        contentScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double
 }
 
 /**
@@ -67,11 +68,11 @@ internal sealed interface GlimmerListAutoFocusScrollConverter {
 internal object AutoFocusScrollConverter : GlimmerListAutoFocusScrollConverter {
 
     override fun convertUserScrollToContentScroll(
-        userScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float {
+        userScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double {
         val converter = getConverter(scrollThreshold, viewportSize, contentLength)
         return converter.convertUserScrollToContentScroll(
             userScroll = userScroll,
@@ -82,11 +83,11 @@ internal object AutoFocusScrollConverter : GlimmerListAutoFocusScrollConverter {
     }
 
     override fun convertContentScrollToUserScroll(
-        contentScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float {
+        contentScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double {
         val converter = getConverter(scrollThreshold, viewportSize, contentLength)
         return converter.convertContentScrollToUserScroll(
             contentScroll = contentScroll,
@@ -97,9 +98,9 @@ internal object AutoFocusScrollConverter : GlimmerListAutoFocusScrollConverter {
     }
 
     private fun getConverter(
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
     ): GlimmerListAutoFocusScrollConverter {
         return when {
             // The list is not scrollable, so there's no need for focus line or conversion.
@@ -123,20 +124,20 @@ internal object AutoFocusScrollConverter : GlimmerListAutoFocusScrollConverter {
  */
 private object NoConversion : GlimmerListAutoFocusScrollConverter {
     override fun convertUserScrollToContentScroll(
-        userScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float {
+        userScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double {
         return userScroll
     }
 
     override fun convertContentScrollToUserScroll(
-        contentScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float {
+        contentScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double {
         return contentScroll
     }
 }
@@ -148,20 +149,20 @@ private object NoConversion : GlimmerListAutoFocusScrollConverter {
  */
 private object LinearScrollConverter : GlimmerListAutoFocusScrollConverter {
     override fun convertUserScrollToContentScroll(
-        userScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float {
+        userScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double {
         return (contentLength - viewportSize) * userScroll / contentLength
     }
 
     override fun convertContentScrollToUserScroll(
-        contentScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float {
+        contentScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double {
         return contentScroll * contentLength / (contentLength - viewportSize)
     }
 }
@@ -171,11 +172,11 @@ private object LinearScrollConverter : GlimmerListAutoFocusScrollConverter {
  */
 private object AdaptiveScrollConverter : GlimmerListAutoFocusScrollConverter {
     override fun convertUserScrollToContentScroll(
-        userScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float {
+        userScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double {
         val x = userScroll
         val d = scrollThreshold
         val h = viewportSize
@@ -194,10 +195,10 @@ private object AdaptiveScrollConverter : GlimmerListAutoFocusScrollConverter {
         // themselves stay simple—just parabolas on the sides and a line in the middle.
         val y =
             when (x) {
-                0f -> return 0f
+                0.0 -> return 0.0
                 // Focus line is between the start and the center.
                 // Upward-opening parabola (y1 = ax^2 + bx).
-                in 0f..t -> h * x * x / 2 / t / t + (t - h) * x / t
+                in 0.0..t -> h * x * x / 2 / t / t + (t - h) * x / t
                 // Focus line is in the center. So, only content (y) moves.
                 // Straight line (y2 = kx + b).
                 in t..L - t -> x - h / 2
@@ -219,11 +220,11 @@ private object AdaptiveScrollConverter : GlimmerListAutoFocusScrollConverter {
     }
 
     override fun convertContentScrollToUserScroll(
-        contentScroll: Float,
-        scrollThreshold: Float,
-        viewportSize: Float,
-        contentLength: Float,
-    ): Float {
+        contentScroll: Double,
+        scrollThreshold: Double,
+        viewportSize: Double,
+        contentLength: Double,
+    ): Double {
         val y = contentScroll
         val d = scrollThreshold
         val h = viewportSize
@@ -236,14 +237,14 @@ private object AdaptiveScrollConverter : GlimmerListAutoFocusScrollConverter {
         val x =
             when (y) {
                 // Fast return.
-                0f -> return 0f
+                0.0 -> return 0.0
                 // Focus line is between the start and the center.
                 // Upward-opening parabola (y1 = ax^2 + bx).
-                in 0f..d -> {
+                in 0.0..d -> {
                     val a = h / 2 / t / t
                     val b = (t - h) / t
                     val c = -y
-                    solveQuadratic(a, b, c, 0f, t)
+                    solveQuadratic(a, b, c, 0.0, t)
                 }
                 // Focus line is in the center.
                 // Straight line (y2 = kx + b).
@@ -256,9 +257,9 @@ private object AdaptiveScrollConverter : GlimmerListAutoFocusScrollConverter {
                     val c = -h + h * L / t - h * L * L / 2 / t / t - y
                     solveQuadratic(a, b, c, L - t, L)
                 }
-                else -> -1f
+                else -> -1.0
             }
-        if (x == -1f) {
+        if (x == -1.0) {
             // Fallback to the linear if we are out of expected range.
             return LinearScrollConverter.convertContentScrollToUserScroll(
                 contentScroll = y,
@@ -272,50 +273,53 @@ private object AdaptiveScrollConverter : GlimmerListAutoFocusScrollConverter {
 
     /** Returns a single value within the given range or -1 if there's no solution. */
     private fun solveQuadratic(
-        a: Float,
-        b: Float,
-        c: Float,
-        fromRange: Float,
-        toRange: Float,
-    ): Float {
+        a: Double,
+        b: Double,
+        c: Double,
+        fromRange: Double,
+        toRange: Double,
+    ): Double {
         val discriminant = b * b - 4 * a * c
-        val floatTolerance = 1e-4
+        val doubleTolerance = 1e-4
+        val range = (fromRange - doubleTolerance)..(toRange + doubleTolerance)
         return when {
-            a == 0f -> -1f
-            discriminant < -floatTolerance -> -1f // D < 0
-            discriminant.absoluteValue <= floatTolerance -> -b / (2 * a) // D == 0
+            a == 0.0 -> -1.0
+            discriminant < -doubleTolerance -> -1.0 // D < 0
+            discriminant.absoluteValue <= doubleTolerance -> -b / (2 * a) // D == 0
             else -> {
+                // Use a numerically stable quadratic solver to avoid catastrophic cancellation.
                 val sqrtD = sqrt(discriminant)
-                val x1 = (-b + sqrtD) / (2 * a)
-                if (x1 in fromRange..toRange) return x1
-                val x2 = (-b - sqrtD) / (2 * a)
-                if (x2 in fromRange..toRange) return x2
-                return -1f
+                val q = (b + b.sign * sqrtD) / -2
+                val x1 = q / a
+                if (x1 in range) return x1
+                val x2 = c / q
+                if (x2 in range) return x2
+                return -1.0
             }
         }
     }
 }
 
 internal fun GlimmerListAutoFocusScrollConverter.convertUserScrollToContentScroll(
-    userScroll: Float,
+    userScroll: Double,
     properties: GlimmerListAutoFocusProperties,
-): Float {
+): Double {
     return convertUserScrollToContentScroll(
         userScroll = userScroll,
         scrollThreshold = properties.scrollThreshold,
-        viewportSize = properties.viewportSize,
+        viewportSize = properties.viewportSize.toDouble(),
         contentLength = properties.contentLength,
     )
 }
 
 internal fun GlimmerListAutoFocusScrollConverter.convertContentScrollToUserScroll(
-    contentScroll: Float,
+    contentScroll: Double,
     properties: GlimmerListAutoFocusProperties,
-): Float {
+): Double {
     return convertContentScrollToUserScroll(
         contentScroll = contentScroll,
         scrollThreshold = properties.scrollThreshold,
-        viewportSize = properties.viewportSize,
+        viewportSize = properties.viewportSize.toDouble(),
         contentLength = properties.contentLength,
     )
 }
