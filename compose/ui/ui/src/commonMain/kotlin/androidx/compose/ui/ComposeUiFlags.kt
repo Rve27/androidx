@@ -69,29 +69,6 @@ object ComposeUiFlags {
     @JvmField
     var isBypassUnfocusableComposeViewEnabled: Boolean = true
 
-    /**
-     * Enable WindowInsets rulers:
-     * * `SystemBarsRulers`
-     * * `ImeRulers`
-     * * `StatusBarsRulers`
-     * * `NavigationBarsRulers`
-     * * `CaptionBarRulers`
-     * * `MandatorySystemGesturesRulers`
-     * * `TappableElementRulers`
-     * * `WaterfallRulers`
-     * * `SafeDrawingRulers`
-     * * `SafeGesturesRulers`
-     * * `SafeContentRulers`
-     */
-    // off for b/410868572
-    @Deprecated(
-        "Use ComposeView.disableWindowInsetsRulers()",
-        replaceWith = ReplaceWith("ComposeView.disableWindowInsetsRulers()"),
-    )
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var areWindowInsetsRulersEnabled = true
-
     /** Enable initial focus when a focusable is added to a screen with no focusable content. */
     @field:Suppress("MutableBareField")
     @JvmField
