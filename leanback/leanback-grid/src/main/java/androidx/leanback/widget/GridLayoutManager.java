@@ -2061,8 +2061,12 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             LayoutParams lp = (LayoutParams) view.getLayoutParams();
             if (lp.viewNeedsUpdate()) {
                 mFlag |= PF_FAST_RELAYOUT_UPDATED_SELECTED_POSITION;
+                int spanSize = lp.mSpanSize;
                 detachAndScrapView(view, mRecycler);
                 view = getViewForPosition(position);
+                // App onBindViewHolder should reuse the same LayoutParams, but if it unexpectedly
+                // creates new LayoutParams, restore the spanSize.
+                ((LayoutParams) view.getLayoutParams()).mSpanSize = spanSize;
                 addView(view, index);
             }
 
