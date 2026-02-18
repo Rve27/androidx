@@ -85,4 +85,14 @@ object AndroidComposeUiFlags {
     @JvmField
     // To be removed b/479895130
     var isSharedClipboardManagerEnabled: Boolean = true
+
+    /**
+     * This flag enables support for walking up nested scrolling in response to
+     * android.R.id.accessibilityActionShowOnScreen from Accessibility.
+     *
+     * Enabled is correct nested scrolling behavior and it should be enabled in all apps.
+     */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isAccessibilityShowOnScreenNestedScrollingEnabled: Boolean = true
 }

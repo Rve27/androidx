@@ -127,16 +127,6 @@ object ComposeUiFlags {
     var isTraversableDelegatesFixEnabled: Boolean = true
 
     /**
-     * This flag enables support for walking up nested scrolling in response to
-     * android.R.id.accessibilityActionShowOnScreen from Accessibility.
-     *
-     * Enabled is correct nested scrolling behavior and it should be enabled in all apps.
-     */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isAccessibilityShowOnScreenNestedScrollingEnabled: Boolean = true
-
-    /**
      * Enables a change where off-screen children of the partially visible merging nodes (e.g. a
      * Text node of a Button) inside scrollable container are now also reported in the semantics
      * tree for Accessibility needs.

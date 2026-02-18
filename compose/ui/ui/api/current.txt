@@ -71,6 +71,7 @@ package androidx.compose.ui {
   }
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class AndroidComposeUiFlags {
+    property public boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     property public boolean isSharedAccessibilityManagerEnabled;
     property public boolean isSharedClipboardManagerEnabled;
     property public boolean isSharedComposeViewContextEnabled;
@@ -78,6 +79,7 @@ package androidx.compose.ui {
     property public boolean isSharedViewConfigurationEnabled;
     property public boolean isSharedWindowInfoEnabled;
     field public static final androidx.compose.ui.AndroidComposeUiFlags INSTANCE;
+    field public static boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     field public static boolean isSharedAccessibilityManagerEnabled;
     field public static boolean isSharedClipboardManagerEnabled;
     field public static boolean isSharedComposeViewContextEnabled;
@@ -158,7 +160,6 @@ package androidx.compose.ui {
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class ComposeUiFlags {
     property @Deprecated public boolean areWindowInsetsRulersEnabled;
     property public boolean isAccessibilityShouldIncludeOffscreenChildrenEnabled;
-    property public boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     property public boolean isBypassUnfocusableComposeViewEnabled;
     property public boolean isFocusRestorationEnabled;
     property public boolean isGraphicsLayerShapeSemanticsEnabled;
@@ -171,7 +172,6 @@ package androidx.compose.ui {
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
     field @Deprecated public static boolean areWindowInsetsRulersEnabled;
     field public static boolean isAccessibilityShouldIncludeOffscreenChildrenEnabled;
-    field public static boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     field public static boolean isBypassUnfocusableComposeViewEnabled;
     field public static boolean isFocusRestorationEnabled;
     field public static boolean isGraphicsLayerShapeSemanticsEnabled;

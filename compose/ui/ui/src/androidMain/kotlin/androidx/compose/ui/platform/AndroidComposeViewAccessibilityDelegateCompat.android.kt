@@ -59,6 +59,7 @@ import androidx.collection.mutableIntObjectMapOf
 import androidx.collection.mutableIntSetOf
 import androidx.collection.mutableObjectIntMapOf
 import androidx.collection.mutableScatterSetOf
+import androidx.compose.ui.AndroidComposeUiFlags
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.R
@@ -1688,7 +1689,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
                     ?: false
             }
             android.R.id.accessibilityActionShowOnScreen -> {
-                if (ComposeUiFlags.isAccessibilityShowOnScreenNestedScrollingEnabled) {
+                if (AndroidComposeUiFlags.isAccessibilityShowOnScreenNestedScrollingEnabled) {
                     return node.scrollOntoScreen()
                 } else {
                     @Suppress("DEPRECATION")
