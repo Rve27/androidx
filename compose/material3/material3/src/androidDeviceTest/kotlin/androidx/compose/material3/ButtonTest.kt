@@ -268,9 +268,112 @@ class ButtonTest {
         )
     }
 
+    @Test
+    fun text_button_baseline_positioning() {
+        rule.setMaterialContent(lightColorScheme()) {
+            TextButton(
+                onClick = { /* Do something! */ },
+                modifier = Modifier.testTag(ButtonTestTag),
+            ) {
+                Text(
+                    "Button",
+                    modifier = Modifier.testTag(TextTestTag).semantics(mergeDescendants = true) {},
+                )
+            }
+        }
+
+        val buttonBounds = rule.onNodeWithTag(ButtonTestTag).getUnclippedBoundsInRoot()
+        val textBounds = rule.onNodeWithTag(TextTestTag).getUnclippedBoundsInRoot()
+
+        (textBounds.left - buttonBounds.left).assertIsEqualTo(
+            12.dp,
+            "padding between the start of the button and the start of the text.",
+        )
+
+        (buttonBounds.right - textBounds.right).assertIsEqualTo(
+            12.dp,
+            "padding between the end of the text and the end of the button.",
+        )
+        buttonBounds.height.assertIsEqualTo(ButtonDefaults.MinHeight, "height of button.")
+    }
+
+    @Test
+    fun text_button_baseline_withIcon_positioning() {
+        rule.setMaterialContent(lightColorScheme()) {
+            TextButton(
+                onClick = { /* Do something! */ },
+                contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+                modifier = Modifier.testTag(ButtonTestTag),
+            ) {
+                Icon(
+                    Icons.Filled.Favorite,
+                    contentDescription = "Localized description",
+                    modifier =
+                        Modifier.size(ButtonDefaults.IconSize).testTag(IconTestTag).semantics(
+                            mergeDescendants = true
+                        ) {},
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(
+                    "Like",
+                    modifier = Modifier.testTag(TextTestTag).semantics(mergeDescendants = true) {},
+                )
+            }
+        }
+
+        val textBounds = rule.onNodeWithTag(TextTestTag).getUnclippedBoundsInRoot()
+        val iconBounds = rule.onNodeWithTag(IconTestTag).getUnclippedBoundsInRoot()
+        val buttonBounds = rule.onNodeWithTag(ButtonTestTag).getUnclippedBoundsInRoot()
+
+        (iconBounds.left - buttonBounds.left).assertIsEqualTo(
+            12.dp,
+            "Padding between start of text button and start of icon.",
+        )
+
+        (textBounds.left - iconBounds.right).assertIsEqualTo(
+            ButtonDefaults.IconSpacing,
+            "Padding between end of icon and start of text.",
+        )
+
+        (buttonBounds.right - textBounds.right).assertIsEqualTo(
+            16.dp,
+            "padding between end of text and end of text button.",
+        )
+    }
+
     @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Test
-    fun text_button_withIcon_positioning() {
+    fun text_button_shapesRequired_positioning() {
+        rule.setMaterialContent(lightColorScheme()) {
+            TextButton(
+                onClick = { /* Do something! */ },
+                shapes = ButtonDefaults.shapes(),
+                modifier = Modifier.testTag(ButtonTestTag),
+            ) {
+                Text(
+                    "Label",
+                    modifier = Modifier.testTag(TextTestTag).semantics(mergeDescendants = true) {},
+                )
+            }
+        }
+
+        val textBounds = rule.onNodeWithTag(TextTestTag).getUnclippedBoundsInRoot()
+        val buttonBounds = rule.onNodeWithTag(ButtonTestTag).getUnclippedBoundsInRoot()
+
+        (textBounds.left - buttonBounds.left).assertIsEqualTo(
+            16.dp,
+            "Padding between start of text button and start of icon.",
+        )
+
+        (buttonBounds.right - textBounds.right).assertIsEqualTo(
+            16.dp,
+            "padding between end of text and end of text button.",
+        )
+    }
+
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+    @Test
+    fun text_button_shapesRequired_withIcon_positioning() {
         rule.setMaterialContent(lightColorScheme()) {
             TextButton(
                 onClick = { /* Do something! */ },
