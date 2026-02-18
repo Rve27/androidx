@@ -128,6 +128,19 @@ public class FakeImpressApiImpl : ImpressApi {
         public fun clearMaterialOverride(nodeName: String, primitiveIndex: Int) {
             this.materialOverride = null
         }
+
+        /** Sets the material override for a specific mesh of a specific node */
+        public fun setGltfModelNodeMaterialOverride(
+            materialData: MaterialData,
+            primitiveIndex: Int,
+        ) {
+            nodeMaterialOverrides[primitiveIndex] = materialData
+        }
+
+        /** Clears a material override for a specific mesh of a specific node. */
+        public fun clearGltfModelNodeMaterialOverride(primitiveIndex: Int) {
+            nodeMaterialOverrides.remove(primitiveIndex)
+        }
     }
 
     // Non-functional resource manager.
@@ -161,6 +174,7 @@ public class FakeImpressApiImpl : ImpressApi {
     private var nextMaterialId: Long = 1
     private var currentEnvironmentLightId: Long = -1
     private val activeAnimations = mutableMapOf<ImpressNode, CompletableDeferred<Unit>>()
+    private val modelHierarchies = mutableMapOf<Long, List<String>>()
 
     override fun setup(view: View?) {}
 
@@ -230,7 +244,18 @@ public class FakeImpressApiImpl : ImpressApi {
         gltfModels[gltfToken]?.add(entityId)
         val gltfNodeData = GltfNodeData().apply { this.entityId = entityId }
         impressNodes[gltfNodeData] = null
-        return ImpressNode(entityId)
+        val rootNode = ImpressNode(entityId)
+        modelHierarchies[gltfToken]?.forEach { childName ->
+            val childId = nextNodeId++
+            val childNodeData =
+                GltfNodeData().apply {
+                    this.entityId = childId
+                    this.name = childName
+                }
+            impressNodes[childNodeData] = gltfNodeData
+            gltfNodeData.children.add(childNodeData)
+        }
+        return rootNode
     }
 
     override fun setGltfModelColliderEnabled(impressNode: ImpressNode, enableCollider: Boolean) {
@@ -563,18 +588,18 @@ public class FakeImpressApiImpl : ImpressApi {
         nativeMaterial: Long,
         primitiveIndex: Int,
     ) {
-        val nodeData =
+        val gltfNodeData =
             getGltfNodeData(impressNode) ?: throw IllegalArgumentException("Impress node not found")
         val materialData =
             materials[nativeMaterial] ?: throw IllegalArgumentException("Material not found")
-        nodeData.nodeMaterialOverrides[primitiveIndex] = materialData
+        gltfNodeData.setGltfModelNodeMaterialOverride(materialData, primitiveIndex)
     }
 
     /** Clears a material override for a specific primitive of a specific glTF model node. */
     override fun clearGltfModelNodeMaterialOverride(impressNode: ImpressNode, primitiveIndex: Int) {
-        val nodeData =
+        val gltfNodeData =
             getGltfNodeData(impressNode) ?: throw IllegalArgumentException("Impress node not found")
-        nodeData.nodeMaterialOverrides.remove(primitiveIndex)
+        gltfNodeData.clearGltfModelNodeMaterialOverride(primitiveIndex)
     }
 
     /** Gets the impress nodes for glTF models that match the given token. */
@@ -1244,6 +1269,10 @@ public class FakeImpressApiImpl : ImpressApi {
 
     public fun getStereoSurfaceEntities(): MutableMap<ImpressNode, StereoSurfaceEntityData> {
         return stereoSurfaceEntities
+    }
+
+    public fun registerModelHierarchy(gltfToken: Long, nodeNames: List<String>) {
+        modelHierarchies[gltfToken] = nodeNames
     }
 
     private fun getGltfNodeData(impressNode: ImpressNode): GltfNodeData? {
