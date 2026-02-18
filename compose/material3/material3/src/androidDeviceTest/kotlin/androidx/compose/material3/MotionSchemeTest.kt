@@ -68,10 +68,10 @@ class MotionSchemeTest {
         lateinit var nestedMotionScheme: MotionScheme
         rule.setContent {
             MaterialTheme {
-                mainMotionScheme = MaterialTheme.LocalMotionScheme.current
+                mainMotionScheme = MaterialTheme.motionScheme
 
                 MaterialTheme(motionScheme = MotionScheme.expressive()) {
-                    nestedMotionScheme = MaterialTheme.LocalMotionScheme.current
+                    nestedMotionScheme = MaterialTheme.motionScheme
                 }
             }
         }
