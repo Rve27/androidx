@@ -368,8 +368,7 @@ public interface IcingOptionsConfig {
                 .setEnableProtoLogNewHeaderFormat(
                         Flags.enableProtoLogNewHeaderFormat() || isVMEnabled)
                 .setEnableEmbeddingIteratorV2(true)
-                .setEnableReusableDecompressionBuffer(
-                        Flags.enableReusableDecompressionBuffer() || isVMEnabled)
+                .setEnableReusableDecompressionBuffer(true)
                 .setEmbeddingIndexNumShards(
                         Flags.enableShardedEmbeddingStorage()
                                 ? Math.max(1, getEmbeddingIndexNumShards()) : 1)
