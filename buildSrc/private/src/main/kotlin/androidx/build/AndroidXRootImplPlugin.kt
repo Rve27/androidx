@@ -36,10 +36,16 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import org.gradle.api.GradleException
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ArtifactView
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Category
 import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.file.Directory
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RelativePath
 import org.gradle.api.provider.Provider
@@ -99,22 +105,35 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
                 )
             } else null
 
+        val artifactCollection = configureArtifactConfigurations()
+        val distDir = getDistributionDirectory()
+
+        val createArchive =
+            tasks.register("createArchive", MergeZipsTask::class.java) { task ->
+                task.archiveFile.set(distDir.file("top-of-tree-m2repository-all.zip"))
+                task.zips.from(artifactCollection.releaseArtifacts)
+            }
+
+        tasks.register("createAllArchives", VerifyLicenseAndVersionFilesTask::class.java) { task ->
+            task.group = "Distribution"
+            task.description = "Builds all archives for publishing"
+            task.repositoryZips.from(createArchive.map { it.zips })
+            task.tmpDir.set(layout.buildDirectory.dir("androidx-verify"))
+        }
+
         val attestationManifest =
-            if (!buildFeatures.isIsolatedProjectsEnabled()) {
-                tasks.register(ATTESTATION_TASK_NAME, AttestationManifestTask::class.java) { task ->
-                    task.manifestFile.set(
-                        getDistributionDirectory().file("attestation_manifest.json")
-                    )
-                }
-            } else null
+            tasks.register(ATTESTATION_TASK_NAME, AttestationManifestTask::class.java) { task ->
+                task.manifestFile.set(distDir.file("attestation_manifest.json"))
+                task.zipMap.set(computeArtifactMap(artifactCollection.releaseIncoming, distDir))
+                task.sbomMap.set(computeArtifactMap(artifactCollection.sbomIncoming, distDir))
+            }
+
         tasks.register(BUILD_ON_SERVER_TASK, BuildOnServerTask::class.java) { task ->
             task.cacheEvenIfNoOutputs()
-            task.aggregateBuildInfoFile.set(
-                getDistributionDirectory().file(AGGREGATE_BUILD_INFO_FILE_NAME)
-            )
+            task.aggregateBuildInfoFile.set(distDir.file(AGGREGATE_BUILD_INFO_FILE_NAME))
+            task.dependsOn(attestationManifest)
             verifyPlayground?.let { task.dependsOn(it) }
             aggregateBuildInfo?.let { task.dependsOn(it) }
-            attestationManifest?.let { task.dependsOn(it) }
         }
 
         extra.set("projects", ConcurrentHashMap<String, String>())
@@ -307,5 +326,73 @@ private fun getOfflineErrorMsg(path: String) =
 """
         .trimIndent()
         .replace("\n", " ")
+
+private fun Project.configureArtifactConfigurations(): RootArtifactCollection {
+    val releaseProvider =
+        registerArtifactConfiguration("releaseArtifacts", "androidx-release-artifacts")
+    val sbomProvider = registerArtifactConfiguration("sbomArtifacts", "androidx-sbom-artifacts")
+
+    subprojects { sub ->
+        dependencies.add(releaseProvider.name, dependencies.create(sub))
+        dependencies.add(sbomProvider.name, dependencies.create(sub))
+    }
+
+    val releaseView =
+        releaseProvider.map { conf -> conf.incoming.artifactView { it.lenient(true) } }
+
+    val sbomView = sbomProvider.map { conf -> conf.incoming.artifactView { it.lenient(true) } }
+    val releaseFiles = objects.fileCollection().from(releaseView.map { it.files })
+
+    return RootArtifactCollection(
+        releaseArtifacts = releaseFiles,
+        releaseIncoming = releaseView,
+        sbomIncoming = sbomView,
+    )
+}
+
+private fun Project.registerArtifactConfiguration(
+    name: String,
+    categoryName: String,
+): NamedDomainObjectProvider<Configuration> =
+    configurations.register(name) { conf ->
+        conf.isCanBeResolved = true
+        conf.isCanBeConsumed = false
+        conf.isTransitive = false
+        conf.attributes { attrs ->
+            attrs.attribute(
+                Category.CATEGORY_ATTRIBUTE,
+                objects.named(Category::class.java, categoryName),
+            )
+        }
+    }
+
+/* Holds the lazy providers for artifact views and file collections. */
+private class RootArtifactCollection(
+    val releaseArtifacts: FileCollection,
+    val releaseIncoming: Provider<ArtifactView>,
+    val sbomIncoming: Provider<ArtifactView>,
+)
+
+/* Computes a map of projectPath to the artifact's path relative to the distDir. */
+private fun computeArtifactMap(
+    viewProvider: Provider<ArtifactView>,
+    distDir: Provider<Directory>,
+): Provider<Map<String, String>> {
+    return viewProvider
+        .flatMap { view -> view.artifacts.resolvedArtifacts }
+        .zip(distDir) { artifacts, distDirectory ->
+            artifacts
+                .mapNotNull { artifact ->
+                    val id = artifact.id.componentIdentifier
+                    if (id is ProjectComponentIdentifier) {
+                        val relativePath = artifact.file.relativeTo(distDirectory.asFile).path
+                        id.projectPath to relativePath
+                    } else {
+                        null
+                    }
+                }
+                .toMap()
+        }
+}
 
 internal const val AGGREGATE_BUILD_INFO_FILE_NAME = "androidx_aggregate_build_info.txt"

@@ -319,24 +319,6 @@
     <issue
         id="GradleProjectIsolation"
         message="Use isolated.rootProject instead of getRootProject"
-        errorLine1="    rootProject.tasks.named&lt;AttestationManifestTask>(ATTESTATION_TASK_NAME).configure { manifestTask"
-        errorLine2="    ~~~~~~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/AttestationManifestTask.kt"/>
-    </issue>
-
-    <issue
-        id="GradleProjectIsolation"
-        message="Use isolated.rootProject instead of getRootProject"
-        errorLine1="    rootProject.tasks.named&lt;AttestationManifestTask>(ATTESTATION_TASK_NAME).configure { manifestTask"
-        errorLine2="    ~~~~~~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/AttestationManifestTask.kt"/>
-    </issue>
-
-    <issue
-        id="GradleProjectIsolation"
-        message="Use isolated.rootProject instead of getRootProject"
         errorLine1="    rootProject.layout.buildDirectory.dir(&quot;app-apks-files&quot;)"
         errorLine2="    ~~~~~~~~~~~">
         <location
@@ -512,33 +494,6 @@
         errorLine2="                               ~~~~~~~~~~~">
         <location
             file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/metalava/RegenerateOldApisTask.kt"/>
-    </issue>
-
-    <issue
-        id="GradleProjectIsolation"
-        message="Use isolated.rootProject instead of getRootProject"
-        errorLine1="            project.rootProject.maybeRegister("
-        errorLine2="                    ~~~~~~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/Release.kt"/>
-    </issue>
-
-    <issue
-        id="GradleProjectIsolation"
-        message="Use isolated.rootProject instead of getRootProject"
-        errorLine1="                        project.rootProject.getRepositoryDirectory()"
-        errorLine2="                                ~~~~~~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/Release.kt"/>
-    </issue>
-
-    <issue
-        id="GradleProjectIsolation"
-        message="Use isolated.rootProject instead of getRootProject"
-        errorLine1="        return project.rootProject.maybeRegister("
-        errorLine2="                       ~~~~~~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/Release.kt"/>
     </issue>
 
     <issue
