@@ -610,6 +610,11 @@ public class CarContext extends ContextWrapper {
                                     rejected));
                         }
                     }
+
+                    @Override
+                    public int getInterfaceVersion() {
+                        return super.VERSION;
+                    }
                 }.asBinder());
         extras.putStringArray(EXTRA_PERMISSIONS_KEY, permissions.toArray(new String[0]));
         Intent intent =
