@@ -51,6 +51,7 @@ class RemoteIntTest {
             useCanvas(Canvas(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)))
         }
     val creationState = RemoteComposeCreationState(AndroidxRcPlatformServices(), Size(1f, 1f))
+    val time = RemoteInt.createNamedRemoteInt("time", 100).createReference()
 
     @Test
     fun addition() {
@@ -447,6 +448,193 @@ class RemoteIntTest {
         assertThat(10.ri.constantValue).isEqualTo(10)
         assertThat((-10).ri.constantValue).isEqualTo(-10)
     }
+
+    @Test
+    fun peepholeOptimization_plus() {
+        val expr = (time + 10) + 1
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly(
+                "VariableName[43] = \"USER:time\" type=4",
+                "IntegerConstant[43] = 100",
+                "IntegerExpression[44] = ([43] 11 +)",
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_minus() {
+        val expr = (time - 10) - 1
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly(
+                "VariableName[43] = \"USER:time\" type=4",
+                "IntegerConstant[43] = 100",
+                "IntegerExpression[44] = ([43] 11 -)",
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_minus2() {
+        val expr = (time + 10) - 1
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly(
+                "VariableName[43] = \"USER:time\" type=4",
+                "IntegerConstant[43] = 100",
+                "IntegerExpression[44] = ([43] 9 +)",
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_times() {
+        val expr = (time * 10) * 2
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly(
+                "VariableName[43] = \"USER:time\" type=4",
+                "IntegerConstant[43] = 100",
+                "IntegerExpression[44] = ([43] 20 *)",
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_div() {
+        val expr = (time / 10) / 2
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly(
+                "VariableName[43] = \"USER:time\" type=4",
+                "IntegerConstant[43] = 100",
+                "IntegerExpression[44] = ([43] 20 /)",
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_div2() {
+        val expr = (time * 10) / 2
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly(
+                "VariableName[43] = \"USER:time\" type=4",
+                "IntegerConstant[43] = 100",
+                "IntegerExpression[44] = ([43] 5 *)",
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_complex() {
+        val expr = (time + 10) - 5 + 2
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly(
+                "VariableName[43] = \"USER:time\" type=4",
+                "IntegerConstant[43] = 100",
+                "IntegerExpression[44] = ([43] 7 +)",
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_negative() {
+        val expr = (time * 10) + 2
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly(
+                "VariableName[43] = \"USER:time\" type=4",
+                "IntegerConstant[43] = 100",
+                "IntegerExpression[44] = ([43] 10 * 2 +)",
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_zeroDiv() {
+        val expr = RemoteInt(0) / time
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops).containsExactly("IntegerExpression[43] = (0)").inOrder()
+    }
+
+    @Test
+    fun peepholeOptimization_trimToIdentity_plusMinus() {
+        val expr = (time + 10) - 10
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly("VariableName[43] = \"USER:time\" type=4", "IntegerConstant[43] = 100")
+            .inOrder()
+        assertThat(expr.getIdForCreationState(creationState))
+            .isEqualTo(time.getIdForCreationState(creationState))
+    }
+
+    @Test
+    fun peepholeOptimization_trimToIdentity_minusPlus() {
+        val expr = (time - 10) + 10
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly("VariableName[43] = \"USER:time\" type=4", "IntegerConstant[43] = 100")
+            .inOrder()
+        assertThat(expr.getIdForCreationState(creationState))
+            .isEqualTo(time.getIdForCreationState(creationState))
+    }
+
+    @Test
+    fun peepholeOptimization_trimToIdentity_timesDiv() {
+        val expr = (time * 2) / 2
+        expr.getIdForCreationState(creationState)
+
+        val ops = getOperationsStrings()
+        assertThat(ops)
+            .containsExactly("VariableName[43] = \"USER:time\" type=4", "IntegerConstant[43] = 100")
+            .inOrder()
+        assertThat(expr.getIdForCreationState(creationState))
+            .isEqualTo(time.getIdForCreationState(creationState))
+    }
+
+    private fun getOperationsStrings(): List<String> =
+        CoreDocument().run {
+            val buffer = creationState.document.buffer
+            buffer.buffer.index = 0
+            initFromBuffer(buffer)
+            getOperations()
+                .onEach {
+                    if (it is VariableSupport) {
+                        it.updateVariables(context)
+                    }
+                }
+                .map { it.toString() }
+                .filter {
+                    !it.contains("HEADER") &&
+                        !it.contains("TextData") &&
+                        !it.contains("RootContentDescription")
+                }
+        }
 
     private fun makeAndPaintCoreDocument() =
         CoreDocument().apply {
