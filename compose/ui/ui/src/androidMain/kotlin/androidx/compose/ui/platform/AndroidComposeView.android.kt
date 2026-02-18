@@ -2323,7 +2323,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         if (SDK_INT < 30) {
             showLayoutBounds = getIsShowingLayoutBounds()
         }
-        if (ComposeUiFlags.areWindowInsetsRulersEnabled) {
+        if (areWindowInsetsRulersEnabled) {
             insetsListener.onViewAttachedToWindow(this)
         }
         addNotificationForSysPropsChange(this)
@@ -2452,7 +2452,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         isAttached = false
-        if (ComposeUiFlags.areWindowInsetsRulersEnabled) {
+        if (areWindowInsetsRulersEnabled) {
             insetsListener.onViewDetachedFromWindow(this)
         }
         val frameRateCategoryView = frameRateCategoryView
@@ -3545,7 +3545,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             previousGeneration = generation.intValue // just read the value so it is observed
             // When generation is 0, no updateInsets() has been called yet, so we don't need to
             // provide any insets.
-            if (previousGeneration > 0 && ComposeUiFlags.areWindowInsetsRulersEnabled) {
+            if (previousGeneration > 0 && areWindowInsetsRulersEnabled) {
                 provideWindowInsetsRulers(this@RootModifierNode)
             }
         }
