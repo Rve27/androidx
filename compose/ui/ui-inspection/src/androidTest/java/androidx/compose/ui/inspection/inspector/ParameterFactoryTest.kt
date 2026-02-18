@@ -48,7 +48,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.DefaultCameraDistance
 import androidx.compose.ui.graphics.DefaultShadowColor
-import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.SolidColor
@@ -133,6 +132,12 @@ class ParameterFactoryTest {
     }
 
     @Test
+    fun testSize() {
+        assertThat(lookup(Size.Zero)).isEqualTo(ParameterType.String to "Zero")
+        assertThat(lookup(Size.Unspecified)).isEqualTo(ParameterType.String to "Unspecified")
+    }
+
+    @Test
     fun testAlignment() {
         assertThat(lookup(Alignment.Top)).isEqualTo(ParameterType.String to "Top")
         assertThat(lookup(Alignment.Bottom)).isEqualTo(ParameterType.String to "Bottom")
@@ -196,8 +201,8 @@ class ParameterFactoryTest {
     fun testBorder() {
         validate(create("borderstroke", BorderStroke(2.0.dp, Color.Magenta))) {
             parameter("borderstroke", ParameterType.String, "BorderStroke") {
-                parameter("brush", ParameterType.Color, Color.Magenta.toArgb())
                 parameter("width", ParameterType.DimensionDp, 2.0f)
+                parameter("brush", ParameterType.Color, Color.Magenta.toArgb())
             }
         }
     }
@@ -210,9 +215,9 @@ class ParameterFactoryTest {
             create(
                 "brush",
                 Brush.linearGradient(
-                    colors = listOf(Color.Red, Color.Blue),
                     start = Offset(0.0f, 0.5f),
                     end = Offset(5.0f, 10.0f),
+                    colors = listOf(Color.Red, Color.Blue),
                 ),
             )
         ) {
@@ -221,26 +226,20 @@ class ParameterFactoryTest {
                     parameter("[0]", ParameterType.Color, Color.Red.toArgb())
                     parameter("[1]", ParameterType.Color, Color.Blue.toArgb())
                 }
+                parameter("start", ParameterType.String, Offset::class.java.simpleName, index = 2) {
+                    parameter("x", ParameterType.DimensionDp, 0.0f)
+                    parameter("y", ParameterType.DimensionDp, 0.25f)
+                }
                 parameter("end", ParameterType.String, Offset::class.java.simpleName) {
                     parameter("x", ParameterType.DimensionDp, 2.5f)
                     parameter("y", ParameterType.DimensionDp, 5.0f)
                 }
+                parameter("tileMode", ParameterType.String, "Clamp")
                 parameter("intrinsicSize", ParameterType.String, Size::class.java.simpleName) {
                     parameter("width", ParameterType.DimensionDp, 2.5f)
                     parameter("height", ParameterType.DimensionDp, 4.75f)
                 }
-                parameter("start", ParameterType.String, Offset::class.java.simpleName) {
-                    parameter("x", ParameterType.DimensionDp, 0.0f)
-                    parameter("y", ParameterType.DimensionDp, 0.25f)
-                }
-                parameter("tileMode", ParameterType.String, "Clamp", index = 5)
-                parameter("createdSize", ParameterType.String, "Unspecified", index = 6)
-                parameter(
-                    "transform",
-                    ParameterType.String,
-                    Matrix::class.java.simpleName,
-                    index = 8,
-                )
+                parameter("createdSize", ParameterType.String, "Unspecified", index = 7)
             }
         }
         // TODO: add tests for RadialGradient & ShaderBrush
@@ -271,26 +270,26 @@ class ParameterFactoryTest {
     fun testCornerBasedShape() {
         validate(create("corner", RoundedCornerShape(2.0.dp, 0.5.dp, 2.5.dp, 0.7.dp))) {
             parameter("corner", ParameterType.String, RoundedCornerShape::class.java.simpleName) {
+                parameter("topStart", ParameterType.DimensionDp, 2.0f)
+                parameter("topEnd", ParameterType.DimensionDp, 0.5f)
                 parameter("bottomEnd", ParameterType.DimensionDp, 2.5f)
                 parameter("bottomStart", ParameterType.DimensionDp, 0.7f)
-                parameter("topEnd", ParameterType.DimensionDp, 0.5f)
-                parameter("topStart", ParameterType.DimensionDp, 2.0f)
             }
         }
         validate(create("corner", CutCornerShape(2))) {
             parameter("corner", ParameterType.String, CutCornerShape::class.java.simpleName) {
+                parameter("topStart", ParameterType.String, "2.0%")
+                parameter("topEnd", ParameterType.String, "2.0%")
                 parameter("bottomEnd", ParameterType.String, "2.0%")
                 parameter("bottomStart", ParameterType.String, "2.0%")
-                parameter("topEnd", ParameterType.String, "2.0%")
-                parameter("topStart", ParameterType.String, "2.0%")
             }
         }
         validate(create("corner", RoundedCornerShape(1.0f, 10.0f, 2.0f, 3.5f))) {
             parameter("corner", ParameterType.String, RoundedCornerShape::class.java.simpleName) {
+                parameter("topStart", ParameterType.String, "1.0px")
+                parameter("topEnd", ParameterType.String, "10.0px")
                 parameter("bottomEnd", ParameterType.String, "2.0px")
                 parameter("bottomStart", ParameterType.String, "3.5px")
-                parameter("topEnd", ParameterType.String, "10.0px")
-                parameter("topStart", ParameterType.String, "1.0px")
             }
         }
     }
@@ -392,10 +391,10 @@ class ParameterFactoryTest {
     fun testPaddingValues() {
         validate(create("padding", PaddingValues(2.0.dp, 0.5.dp, 2.5.dp, 0.7.dp))) {
             parameter("padding", ParameterType.String, "PaddingValuesImpl") {
-                parameter("bottom", ParameterType.DimensionDp, 0.7f)
-                parameter("end", ParameterType.DimensionDp, 2.5f)
                 parameter("start", ParameterType.DimensionDp, 2.0f)
                 parameter("top", ParameterType.DimensionDp, 0.5f)
+                parameter("end", ParameterType.DimensionDp, 2.5f)
+                parameter("bottom", ParameterType.DimensionDp, 0.7f)
             }
         }
     }
@@ -635,17 +634,17 @@ class ParameterFactoryTest {
                 parameter("width", ParameterType.DimensionDp, 30.0f)
                 parameter("paint", ParameterType.String, "") {
                     parameter("painter", ParameterType.String, "TestPainter") {
-                        parameter("color", ParameterType.Color, Color.Red.toArgb())
+                        parameter("width", ParameterType.Float, 10.0f)
                         parameter("height", ParameterType.Float, 20.0f)
+                        parameter("color", ParameterType.Color, Color.Red.toArgb())
                         parameter("intrinsicSize", ParameterType.String, "Size") {
                             parameter("width", ParameterType.DimensionDp, 5.0f)
                             parameter("height", ParameterType.DimensionDp, 10.0f)
                         }
-                        parameter("width", ParameterType.Float, 10.0f)
-                        parameter("alpha", ParameterType.Float, 1.0f)
-                        parameter("drawLambda", ParameterType.Lambda, null, index = 6)
-                        parameter("layoutDirection", ParameterType.String, "Ltr", index = 8)
-                        parameter("useLayer", ParameterType.Boolean, false, index = 9)
+                        parameter("useLayer", ParameterType.Boolean, false, index = 5)
+                        parameter("alpha", ParameterType.Float, 1.0f, index = 7)
+                        parameter("layoutDirection", ParameterType.String, "Ltr")
+                        parameter("drawLambda", ParameterType.Lambda, null)
                     }
                     parameter("sizeToIntrinsics", ParameterType.Boolean, true)
                     parameter("alignment", ParameterType.String, "Center")
@@ -846,19 +845,19 @@ class ParameterFactoryTest {
         assertThat(lookup(Shadow.None)).isEqualTo(ParameterType.String to "None")
         validate(create("shadow", Shadow(Color.Cyan, Offset.Zero, 2.5f))) {
             parameter("shadow", ParameterType.String, Shadow::class.java.simpleName) {
-                parameter("blurRadius", ParameterType.DimensionDp, 1.25f)
                 parameter("color", ParameterType.Color, Color.Cyan.toArgb())
                 parameter("offset", ParameterType.String, "Zero")
+                parameter("blurRadius", ParameterType.DimensionDp, 1.25f)
             }
         }
         validate(create("shadow", Shadow(Color.Blue, Offset(1.0f, 4.0f), 1.5f))) {
             parameter("shadow", ParameterType.String, Shadow::class.java.simpleName) {
-                parameter("blurRadius", ParameterType.DimensionDp, 0.75f)
                 parameter("color", ParameterType.Color, Color.Blue.toArgb())
                 parameter("offset", ParameterType.String, Offset::class.java.simpleName) {
                     parameter("x", ParameterType.DimensionDp, 0.5f)
                     parameter("y", ParameterType.DimensionDp, 2.0f)
                 }
+                parameter("blurRadius", ParameterType.DimensionDp, 0.75f)
             }
         }
     }
@@ -1092,6 +1091,8 @@ class ParameterValidationReceiver(
     private val trace: String = "",
     private val startIndex: Int = 0,
 ) {
+    private var skips = 0
+
     fun parameter(
         name: String,
         type: ParameterType,
@@ -1101,8 +1102,9 @@ class ParameterValidationReceiver(
         childStartIndex: Int = 0,
         block: ParameterValidationReceiver.() -> Unit = {},
     ) {
-        val listIndex = startIndex + parameterIterator.nextIndex()
+        val listIndex = startIndex + parameterIterator.nextIndex() + skips
         val expectedIndex = if (index < 0) listIndex else index
+        skips += maxOf(0, expectedIndex - listIndex)
         assertWithMessage("No such element found: $name").that(parameterIterator.hasNext()).isTrue()
         val parameter = parameterIterator.next()
         assertThat(parameter.name).isEqualTo(name)
