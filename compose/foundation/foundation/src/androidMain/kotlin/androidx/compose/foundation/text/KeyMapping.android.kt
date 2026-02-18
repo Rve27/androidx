@@ -24,7 +24,7 @@ internal actual val platformDefaultKeyMapping =
     object : KeyMapping {
         override fun map(event: KeyEvent): KeyCommand? {
             return when (event.modifiers) {
-                KeyModifiers.ShiftAlt ->
+                KeyModifiers.AltShift ->
                     when (event.key) {
                         Key.DirectionLeft -> KeyCommand.SELECT_LINE_LEFT
                         Key.DirectionRight -> KeyCommand.SELECT_LINE_RIGHT
@@ -44,6 +44,3 @@ internal actual val platformDefaultKeyMapping =
             } ?: defaultKeyMapping.map(event)
         }
     }
-
-private val KeyModifiers.Companion.ShiftAlt: KeyModifiers
-    get() = KeyModifiers.Shift + KeyModifiers.Alt

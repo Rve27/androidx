@@ -87,6 +87,38 @@ internal value class KeyModifiers private constructor(private val flags: Int) {
 
         /** A [KeyModifiers] instance representing only the "Shift" key modifier being pressed. */
         @JvmStatic val Shift = KeyModifiers(SHIFT_FLAG)
+
+        /**
+         * A [KeyModifiers] instance representing the "Alt" and "Shift" key modifiers being pressed.
+         */
+        @JvmStatic val AltShift: KeyModifiers = Alt + Shift
+
+        /**
+         * A [KeyModifiers] instance representing the "Ctrl" and "Shift" key modifiers being
+         * pressed.
+         */
+        @JvmStatic val CtrlShift: KeyModifiers = Ctrl + Shift
+
+        /**
+         * A [KeyModifiers] instance representing the "Shift" and "Meta" key modifiers being
+         * pressed.
+         */
+        @JvmStatic val ShiftMeta: KeyModifiers = Meta + Shift
+
+        /**
+         * A [KeyModifiers] instance representing the "Ctrl" and "Alt" key modifiers being pressed.
+         */
+        @JvmStatic val CtrlAlt: KeyModifiers = Ctrl + Alt
+
+        /**
+         * A [KeyModifiers] instance representing the "Ctrl" and "Meta" key modifiers being pressed.
+         */
+        @JvmStatic val CtrlMeta: KeyModifiers = Ctrl + Meta
+
+        /**
+         * A [KeyModifiers] instance representing the "Alt" and "Meta" key modifiers being pressed.
+         */
+        @JvmStatic val AltMeta: KeyModifiers = Meta + Shift
     }
 }
 
