@@ -228,6 +228,8 @@ class WearWidgetProviderClientTest {
         ) {
             callback?.onSuccess()
         }
+
+        override fun getInterfaceVersion(): Int = VERSION
     }
 
     private companion object {

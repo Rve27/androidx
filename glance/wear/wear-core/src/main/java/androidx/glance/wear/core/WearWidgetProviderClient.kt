@@ -176,6 +176,8 @@ public class WearWidgetProviderClient(
 
         // This means the provider failed to handle the event. This client takes no action on error.
         override fun onError(errorCode: Int, message: String?) = continuation.resume(Unit)
+
+        override fun getInterfaceVersion(): Int = VERSION
     }
 
     private companion object {

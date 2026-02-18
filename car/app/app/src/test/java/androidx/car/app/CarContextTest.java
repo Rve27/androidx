@@ -130,6 +130,11 @@ public class CarContextTest {
             public Bundleable openMicrophone(Bundleable openMicrophoneRequest) {
                 return null;
             }
+
+            @Override
+            public int getInterfaceVersion() {
+                return super.VERSION;
+            }
         }.asBinder());
 
         TestStartCarAppStub startCarAppStub = new TestStartCarAppStub(mMockStartCarApp);
@@ -385,6 +390,11 @@ public class CarContextTest {
         @Override
         public void startCarApp(Intent startCarAppIntent) throws RemoteException {
             mMockableStub.startCarApp(startCarAppIntent);
+        }
+
+        @Override
+        public int getInterfaceVersion() {
+            return super.VERSION;
         }
     }
 

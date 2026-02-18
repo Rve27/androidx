@@ -26,13 +26,16 @@ package androidx.xr.projected.binding {
 package androidx.xr.projected.platform {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface IEngagementModeCallback extends android.os.IInterface {
+    method public int getInterfaceVersion() throws android.os.RemoteException;
     method public void onEngagementModeChanged(int) throws android.os.RemoteException;
     field public static final String DESCRIPTOR;
+    field public static final int VERSION = 1; // 0x1
   }
 
   public static class IEngagementModeCallback.Default implements androidx.xr.projected.platform.IEngagementModeCallback {
     ctor public IEngagementModeCallback.Default();
     method public android.os.IBinder! asBinder();
+    method public int getInterfaceVersion();
     method public void onEngagementModeChanged(int) throws android.os.RemoteException;
   }
 
@@ -44,16 +47,19 @@ package androidx.xr.projected.platform {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface IEngagementModeService extends android.os.IInterface {
+    method public int getInterfaceVersion() throws android.os.RemoteException;
     method public void registerCallback(androidx.xr.projected.platform.IEngagementModeCallback!) throws android.os.RemoteException;
     method public void unregisterCallback(androidx.xr.projected.platform.IEngagementModeCallback!) throws android.os.RemoteException;
     field public static final String DESCRIPTOR;
     field public static final int ENGAGEMENT_STATE_FLAG_AUDIO_ON = 2; // 0x2
     field public static final int ENGAGEMENT_STATE_FLAG_VISUALS_ON = 1; // 0x1
+    field public static final int VERSION = 1; // 0x1
   }
 
   public static class IEngagementModeService.Default implements androidx.xr.projected.platform.IEngagementModeService {
     ctor public IEngagementModeService.Default();
     method public android.os.IBinder! asBinder();
+    method public int getInterfaceVersion();
     method public void registerCallback(androidx.xr.projected.platform.IEngagementModeCallback!) throws android.os.RemoteException;
     method public void unregisterCallback(androidx.xr.projected.platform.IEngagementModeCallback!) throws android.os.RemoteException;
   }
@@ -66,13 +72,16 @@ package androidx.xr.projected.platform {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface IProjectedDeviceStateListener extends android.os.IInterface {
+    method public int getInterfaceVersion() throws android.os.RemoteException;
     method public void onProjectedDeviceStateChanged(int, android.os.Bundle!) throws android.os.RemoteException;
     field public static final String DESCRIPTOR;
+    field public static final int VERSION = 1; // 0x1
   }
 
   public static class IProjectedDeviceStateListener.Default implements androidx.xr.projected.platform.IProjectedDeviceStateListener {
     ctor public IProjectedDeviceStateListener.Default();
     method public android.os.IBinder! asBinder();
+    method public int getInterfaceVersion();
     method public void onProjectedDeviceStateChanged(int, android.os.Bundle!) throws android.os.RemoteException;
   }
 
@@ -84,13 +93,16 @@ package androidx.xr.projected.platform {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface IProjectedInputEventListener extends android.os.IInterface {
+    method public int getInterfaceVersion() throws android.os.RemoteException;
     method public void onProjectedInputEvent(androidx.xr.projected.platform.ProjectedInputEvent!) throws android.os.RemoteException;
     field public static final String DESCRIPTOR;
+    field public static final int VERSION = 1; // 0x1
   }
 
   public static class IProjectedInputEventListener.Default implements androidx.xr.projected.platform.IProjectedInputEventListener {
     ctor public IProjectedInputEventListener.Default();
     method public android.os.IBinder! asBinder();
+    method public int getInterfaceVersion();
     method public void onProjectedInputEvent(androidx.xr.projected.platform.ProjectedInputEvent!) throws android.os.RemoteException;
   }
 
@@ -104,12 +116,14 @@ package androidx.xr.projected.platform {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface IProjectedService extends android.os.IInterface {
     method public void addWindowFlags(int) throws android.os.RemoteException;
     method public void clearWindowFlags(int) throws android.os.RemoteException;
+    method public int getInterfaceVersion() throws android.os.RemoteException;
     method public boolean isDisplayCapable() throws android.os.RemoteException;
     method public void registerProjectedDeviceStateListener(androidx.xr.projected.platform.IProjectedDeviceStateListener!) throws android.os.RemoteException;
     method public void registerProjectedInputEventListener(androidx.xr.projected.platform.IProjectedInputEventListener!) throws android.os.RemoteException;
     method public void unregisterProjectedDeviceStateListener(androidx.xr.projected.platform.IProjectedDeviceStateListener!) throws android.os.RemoteException;
     method public void unregisterProjectedInputEventListener(androidx.xr.projected.platform.IProjectedInputEventListener!) throws android.os.RemoteException;
     field public static final String DESCRIPTOR;
+    field public static final int VERSION = 1; // 0x1
   }
 
   public static class IProjectedService.Default implements androidx.xr.projected.platform.IProjectedService {
@@ -117,6 +131,7 @@ package androidx.xr.projected.platform {
     method public void addWindowFlags(int) throws android.os.RemoteException;
     method public android.os.IBinder! asBinder();
     method public void clearWindowFlags(int) throws android.os.RemoteException;
+    method public int getInterfaceVersion();
     method public boolean isDisplayCapable() throws android.os.RemoteException;
     method public void registerProjectedDeviceStateListener(androidx.xr.projected.platform.IProjectedDeviceStateListener!) throws android.os.RemoteException;
     method public void registerProjectedInputEventListener(androidx.xr.projected.platform.IProjectedInputEventListener!) throws android.os.RemoteException;
