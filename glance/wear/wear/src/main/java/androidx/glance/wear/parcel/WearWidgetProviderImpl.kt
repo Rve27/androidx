@@ -187,6 +187,8 @@ internal class WearWidgetProviderImpl(
         }
     }
 
+    override fun getInterfaceVersion(): Int = VERSION
+
     private companion object {
         private const val TAG = "WearWidgetProviderImpl"
     }

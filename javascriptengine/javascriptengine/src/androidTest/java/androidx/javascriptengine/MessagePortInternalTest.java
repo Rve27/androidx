@@ -136,6 +136,11 @@ public class MessagePortInternalTest {
         public void assertClose() throws Throwable {
             assertNext(new Object[]{"close"});
         }
+
+        @Override
+        public int getInterfaceVersion() {
+            return super.VERSION;
+        }
     }
 
     // Used when a test is expected to never use the executor service.

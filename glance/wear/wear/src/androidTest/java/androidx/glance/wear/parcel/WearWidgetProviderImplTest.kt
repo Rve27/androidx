@@ -66,6 +66,8 @@ class WearWidgetProviderImplTest {
             override fun onError(errorCode: Int, message: String) {
                 isFailure = true
             }
+
+            override fun getInterfaceVersion(): Int = VERSION
         }
 
     private val testName = ComponentName("package.name", "class.name")
@@ -347,5 +349,7 @@ class WearWidgetProviderImplTest {
                 channel.close(IllegalStateException("null contentParcel"))
             }
         }
+
+        override fun getInterfaceVersion(): Int = VERSION
     }
 }
