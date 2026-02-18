@@ -32,13 +32,11 @@ import org.junit.rules.TestRule
 /**
  * Factory method to provide an implementation of [ComposeContentTestRule].
  *
- * This API differs from the deprecated API by using
- * [kotlinx.coroutines.test.StandardTestDispatcher] by default for running composition, instead of
- * [kotlinx.coroutines.test.UnconfinedTestDispatcher]. This ensures that the test behavior is
- * consistent with [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine
- * execution order. This means you may need to explicitly advance time or run current coroutines
- * when testing complex coroutine logic, as tasks are queued on the scheduler rather than running
- * eagerly.
+ * This implementation uses [kotlinx.coroutines.test.StandardTestDispatcher] by default for running
+ * composition. This ensures that the test behavior is consistent with
+ * [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine execution order.
+ * This means you may need to explicitly advance time or run current coroutines when testing complex
+ * coroutine logic, as tasks are queued on the scheduler rather than running eagerly.
  *
  * This method is useful for tests in compose libraries where it is irrelevant where the compose
  * content is hosted (e.g. an Activity on Android). Such tests typically set compose content
@@ -63,13 +61,11 @@ actual fun createComposeRule(effectContext: CoroutineContext): ComposeContentTes
  * Factory method to provide android specific implementation of [createComposeRule], for a given
  * activity class type [A].
  *
- * This API differs from the deprecated API by using
- * [kotlinx.coroutines.test.StandardTestDispatcher] by default for running composition, instead of
- * [kotlinx.coroutines.test.UnconfinedTestDispatcher]. This ensures that the test behavior is
- * consistent with [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine
- * execution order. This means you may need to explicitly advance time or run current coroutines
- * when testing complex coroutine logic, as tasks are queued on the scheduler rather than running
- * eagerly.
+ * This implementation uses [kotlinx.coroutines.test.StandardTestDispatcher] by default for running
+ * composition. This ensures that the test behavior is consistent with
+ * [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine execution order.
+ * This means you may need to explicitly advance time or run current coroutines when testing complex
+ * coroutine logic, as tasks are queued on the scheduler rather than running eagerly.
  *
  * This method is useful for tests that require a custom Activity. This is usually the case for
  * tests where the compose content is set by that Activity, instead of via the test rule's
@@ -98,13 +94,11 @@ inline fun <reified A : ComponentActivity> createAndroidComposeRule(
  * Factory method to provide android specific implementation of [createComposeRule], for a given
  * [activityClass].
  *
- * This API differs from the deprecated API by using
- * [kotlinx.coroutines.test.StandardTestDispatcher] by default for running composition, instead of
- * [kotlinx.coroutines.test.UnconfinedTestDispatcher]. This ensures that the test behavior is
- * consistent with [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine
- * execution order. This means you may need to explicitly advance time or run current coroutines
- * when testing complex coroutine logic, as tasks are queued on the scheduler rather than running
- * eagerly.
+ * This implementation uses [kotlinx.coroutines.test.StandardTestDispatcher] by default for running
+ * composition. This ensures that the test behavior is consistent with
+ * [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine execution order.
+ * This means you may need to explicitly advance time or run current coroutines when testing complex
+ * coroutine logic, as tasks are queued on the scheduler rather than running eagerly.
  *
  * This method is useful for tests that require a custom Activity. This is usually the case for
  * tests where the compose content is set by that Activity, instead of via the test rule's
@@ -139,13 +133,11 @@ fun <A : ComponentActivity> createAndroidComposeRule(
  * Factory method to provide an implementation of [ComposeTestRule] that doesn't create a compose
  * host for you in which you can set content.
  *
- * This API differs from the deprecated API by using
- * [kotlinx.coroutines.test.StandardTestDispatcher] by default for running composition, instead of
- * [kotlinx.coroutines.test.UnconfinedTestDispatcher]. This ensures that the test behavior is
- * consistent with [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine
- * execution order. This means you may need to explicitly advance time or run current coroutines
- * when testing complex coroutine logic, as tasks are queued on the scheduler rather than running
- * eagerly.
+ * This implementation uses [kotlinx.coroutines.test.StandardTestDispatcher] by default for running
+ * composition. This ensures that the test behavior is consistent with
+ * [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine execution order.
+ * This means you may need to explicitly advance time or run current coroutines when testing complex
+ * coroutine logic, as tasks are queued on the scheduler rather than running eagerly.
  *
  * This method is useful for tests that need to create their own compose host during the test. The
  * returned test rule will not create a host, and consequently does not provide a `setContent`
@@ -180,13 +172,11 @@ fun createEmptyComposeRule(
  * Factory method to provide an implementation of [AndroidComposeTestRule], where compose content is
  * hosted by an Activity.
  *
- * This API differs from the deprecated API by using
- * [kotlinx.coroutines.test.StandardTestDispatcher] by default for running composition, instead of
- * [kotlinx.coroutines.test.UnconfinedTestDispatcher]. This ensures that the test behavior is
- * consistent with [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine
- * execution order. This means you may need to explicitly advance time or run current coroutines
- * when testing complex coroutine logic, as tasks are queued on the scheduler rather than running
- * eagerly.
+ * This implementation uses [kotlinx.coroutines.test.StandardTestDispatcher] by default for running
+ * composition. This ensures that the test behavior is consistent with
+ * [kotlinx.coroutines.test.runTest] and provides explicit control over coroutine execution order.
+ * This means you may need to explicitly advance time or run current coroutines when testing complex
+ * coroutine logic, as tasks are queued on the scheduler rather than running eagerly.
  *
  * The Activity is normally launched by the given [activityRule] before the test starts, but it is
  * possible to pass a test rule that chooses to launch an Activity on a later time. The Activity is
