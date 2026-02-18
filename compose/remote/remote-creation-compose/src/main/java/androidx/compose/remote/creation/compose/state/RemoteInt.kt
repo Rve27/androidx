@@ -189,7 +189,21 @@ internal constructor(
         if (v == 0) {
             return this
         }
-        return binaryOp(this, v, OP_ADD) { a, b -> a + b }
+        return binaryOp(this, v, OP_ADD, { a, b -> a + b }) { array, opId ->
+            when (opId) {
+                OP_ADD -> {
+                    val arrayCopy = array.clone()
+                    arrayCopy[arrayCopy.size - 2] += v
+                    maybeTrimIfZero(arrayCopy)
+                }
+                OP_SUB -> {
+                    val arrayCopy = array.clone()
+                    arrayCopy[arrayCopy.size - 2] -= v
+                    maybeTrimIfZero(arrayCopy)
+                }
+                else -> null
+            }
+        }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -197,65 +211,143 @@ internal constructor(
         if (v == 0) {
             return this
         }
-        return binaryOp(this, v, OP_SUB) { a, b -> a - b }
+        return binaryOp(this, v, OP_SUB, { a, b -> a - b }) { array, opId ->
+            when (opId) {
+                OP_ADD -> {
+                    val arrayCopy = array.clone()
+                    arrayCopy[arrayCopy.size - 2] -= v
+                    maybeTrimIfZero(arrayCopy)
+                }
+                OP_SUB -> {
+                    val arrayCopy = array.clone()
+                    arrayCopy[arrayCopy.size - 2] += v
+                    maybeTrimIfZero(arrayCopy)
+                }
+                else -> null
+            }
+        }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun times(v: Int): RemoteInt {
+        if (v == 0) {
+            return RemoteInt(0)
+        }
         if (v == 1) {
             return this
         }
         if (constantValueOrNull != null && constantValueOrNull == 1) {
             return RemoteInt(v)
         }
-        return binaryOp(this, v, OP_MUL) { a, b -> a * b }
+        return binaryOp(this, v, OP_MUL, { a, b -> a * b }) { array, opId ->
+            when (opId) {
+                OP_MUL -> {
+                    val arrayCopy = array.clone()
+                    arrayCopy[arrayCopy.size - 2] *= v
+                    maybeTrimIfOne(arrayCopy)
+                }
+                OP_DIV -> {
+                    val arrayCopy = array.clone()
+                    arrayCopy[arrayCopy.size - 2] /= v
+                    maybeTrimIfOne(arrayCopy)
+                }
+                else -> null
+            }
+        }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun div(v: Int): RemoteInt {
+        if (constantValueOrNull != null && constantValueOrNull == 0) {
+            return RemoteInt(0)
+        }
         if (v == 1) {
             return this
         }
-        return binaryOp(this, v, OP_DIV) { a, b -> a / b }
+        return binaryOp(this, v, OP_DIV, { a, b -> a / b }) { array, opId ->
+            when (opId) {
+                OP_MUL -> {
+                    val arrayCopy = array.clone()
+                    if (arrayCopy[arrayCopy.size - 2] % v == 0L) {
+                        arrayCopy[arrayCopy.size - 2] /= v
+                        maybeTrimIfOne(arrayCopy)
+                    } else {
+                        null
+                    }
+                }
+                OP_DIV -> {
+                    val arrayCopy = array.clone()
+                    arrayCopy[arrayCopy.size - 2] *= v
+                    maybeTrimIfOne(arrayCopy)
+                }
+                else -> null
+            }
+        }
     }
+
+    private fun maybeTrimIfZero(array: LongArray) =
+        if (array.size >= 2 && array[array.size - 2] == 0L) {
+            array.copyOfRange(0, array.size - 2)
+        } else {
+            array
+        }
+
+    private fun maybeTrimIfOne(array: LongArray) =
+        if (array.size >= 2 && array[array.size - 2] == 1L) {
+            array.copyOfRange(0, array.size - 2)
+        } else {
+            array
+        }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun rem(v: Int): RemoteInt = binaryOp(this, v, OP_MOD) { a, b -> a % b }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun plus(v: RemoteInt): RemoteInt {
-        if (v.constantValueOrNull != null && v.constantValueOrNull == 0) {
-            return this
+        v.constantValueOrNull?.let {
+            return plus(it)
         }
-        if (constantValueOrNull != null && constantValueOrNull == 0) {
-            return v
+        constantValueOrNull?.let {
+            return v.plus(it)
         }
         return binaryOp(this, v, OP_ADD) { a, b -> a + b }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun minus(v: RemoteInt): RemoteInt {
-        if (v.constantValueOrNull != null && v.constantValueOrNull == 0) {
-            return this
+        v.constantValueOrNull?.let {
+            return minus(it)
+        }
+        constantValueOrNull?.let {
+            return (-v).plus(it)
         }
         return binaryOp(this, v, OP_SUB) { a, b -> a - b }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun times(v: RemoteInt): RemoteInt {
-        if (v.constantValueOrNull != null && v.constantValueOrNull == 1) {
-            return this
+        if (
+            (constantValueOrNull != null && constantValueOrNull == 0) ||
+                (v.constantValueOrNull != null && v.constantValueOrNull == 0)
+        ) {
+            return RemoteInt(0)
         }
-        if (constantValueOrNull != null && constantValueOrNull == 1) {
-            return v
+        v.constantValueOrNull?.let {
+            return times(it)
+        }
+        constantValueOrNull?.let {
+            return v.times(it)
         }
         return binaryOp(this, v, OP_MUL) { a, b -> a * b }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun div(v: RemoteInt): RemoteInt {
-        if (v.constantValueOrNull != null && v.constantValueOrNull == 1) {
-            return this
+        if (constantValueOrNull != null && constantValueOrNull == 0) {
+            return RemoteInt(0)
+        }
+        v.constantValueOrNull?.let {
+            return div(it)
         }
         return binaryOp(this, v, OP_DIV) { a, b -> a / b }
     }
@@ -513,6 +605,44 @@ internal fun combineToLongArray(
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun LongArray.isLiteral(): Boolean = size == 1 && RemoteInt.isLiteral(get(0))
+
+/**
+ * Boilerplate for implementing a binary operation.
+ *
+ * @param a The left hand side value of the binary operation
+ * @param b The right hand side value of the binary operation
+ * @param opCode The opcode to insert in the generated [LongArray] if both sources aren\'t a const
+ *   int.
+ * @param directEval When the source is a const int, this lambda will be called to evaluate the
+ *   result directly.
+ * @param peepHoleEval This allows the caller the option to apply a peephole optimization to a
+ *   previous operation. E.g. (x * 3) * 4 could be written as x * 12. If no optimization is possible
+ *   peepHoleEval should return null.
+ */
+private fun binaryOp(
+    a: RemoteInt,
+    b: Int,
+    opCode: Long,
+    directEval: (Int, Int) -> Int,
+    peepHoleEval: (LongArray, Long) -> LongArray?,
+): RemoteInt {
+    val aConst = a.constantValueOrNull
+    if (aConst != null) {
+        return RemoteInt(directEval(aConst, b))
+    }
+    return RemoteIntExpression(constantValueOrNull = null) { creationState ->
+        val aArray = a.arrayForCreationState(creationState)
+        val last = aArray.last()
+        if (aArray.size > 2 && last >= 0x100000000L && aArray[aArray.size - 2] < 0x100000000L) {
+            // If the last two elements of the array are a regular number and an operation, run
+            // peepHoleEval with combineToLongArray if that returned null.
+            peepHoleEval(aArray, last)
+                ?: combineToLongArray(creationState, arrayOf(a), b.toLong(), opCode)
+        } else {
+            combineToLongArray(creationState, arrayOf(a), b.toLong(), opCode)
+        }
+    }
+}
 
 /**
  * Boilerplate for implementing a binary operation.
