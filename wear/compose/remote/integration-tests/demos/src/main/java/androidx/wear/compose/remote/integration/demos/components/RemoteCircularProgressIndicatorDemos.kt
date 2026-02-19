@@ -31,6 +31,7 @@ import androidx.wear.compose.remote.material3.previews.RemoteCircularProgressEna
 import androidx.wear.compose.remote.material3.previews.RemoteCircularProgressIndicatorCustomColor
 import androidx.wear.compose.remote.material3.previews.RemoteCircularProgressIndicatorDisabled
 import androidx.wear.compose.remote.material3.previews.RemoteCircularProgressNoGapCustomAngle
+import androidx.wear.compose.remote.material3.samples.RemoteCircularProgressIndicatorAnimatedSample
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @Composable
@@ -59,6 +60,7 @@ fun RemoteCircularProgressIndicatorDemos(modifier: Modifier = Modifier) {
             item {
                 RemoteDemoItem("No Gap Custom Angle") { RemoteCircularProgressNoGapCustomAngle() }
             }
+            item { RemoteDemoItem("Animated") { RemoteCircularProgressIndicatorAnimatedSample() } }
         }
     }
 }

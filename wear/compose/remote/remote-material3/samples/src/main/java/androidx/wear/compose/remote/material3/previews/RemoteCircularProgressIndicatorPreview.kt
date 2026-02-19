@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.wear.compose.remote.material3.RemoteCircularProgressIndicator
 import androidx.wear.compose.remote.material3.RemoteProgressIndicatorDefaults
+import androidx.wear.compose.remote.material3.samples.RemoteCircularProgressIndicatorAnimatedSample
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @WearPreviewDevices
@@ -117,6 +118,12 @@ fun RemoteCircularProgressIndicatorDisabled() {
             enabled = false.rb,
         )
     }
+}
+
+@WearPreviewDevices
+@Composable
+public fun RemoteCircularProgressIndicatorAnimatedPreview() {
+    RemotePreview { Container { RemoteCircularProgressIndicatorAnimatedSample() } }
 }
 
 @Composable
