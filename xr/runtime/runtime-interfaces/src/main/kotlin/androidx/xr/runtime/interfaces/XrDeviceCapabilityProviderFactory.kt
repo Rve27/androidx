@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.internal
+package androidx.xr.runtime.interfaces
 
 import android.content.Context
 import androidx.annotation.RestrictTo
-import androidx.lifecycle.LifecycleOwner
+import kotlin.coroutines.CoroutineContext
 
-/** Provides capabilities of the XR device. */
+/** Factory for creating instances of an [XrDeviceCapabilityProvider]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface XrDeviceCapabilityProvider : LifecycleOwner {
-    public val context: Context
+public interface XrDeviceCapabilityProviderFactory : Service {
+
+    /**
+     * Creates an [XrDeviceCapabilityProvider].
+     *
+     * @param context The [Context] used to select an appropriate [XrDeviceCapabilityProvider].
+     * @param coroutineContext The [CoroutineContext] used to execute background operations.
+     */
+    public fun create(
+        context: Context,
+        coroutineContext: CoroutineContext,
+    ): XrDeviceCapabilityProvider
 }

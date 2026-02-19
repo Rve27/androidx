@@ -17,7 +17,7 @@
 package androidx.xr.scenecore.spatial.core
 
 import android.app.Activity
-import androidx.xr.runtime.internal.Feature
+import androidx.xr.runtime.interfaces.Feature
 import androidx.xr.runtime.internal.SceneRuntimeFactory
 import androidx.xr.scenecore.runtime.SceneRuntime
 import java.util.concurrent.Executors

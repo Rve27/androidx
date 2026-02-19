@@ -120,10 +120,10 @@ package androidx.xr.arcore.testing {
     ctor public FakePerceptionRuntimeFactory();
     method public androidx.xr.arcore.testing.FakePerceptionRuntime createRuntime(android.content.Context context);
     method public androidx.xr.arcore.testing.FakePerceptionRuntime createRuntime(android.content.Context context, kotlin.coroutines.CoroutineContext coroutineContext);
-    method @InaccessibleFromKotlin public java.util.Set<androidx.xr.runtime.internal.Feature> getRequirements();
+    method @InaccessibleFromKotlin public java.util.Set<androidx.xr.runtime.interfaces.Feature> getRequirements();
     method @InaccessibleFromKotlin public static boolean hasCreatePermission();
     method @InaccessibleFromKotlin public static void setHasCreatePermission(boolean);
-    property public java.util.Set<androidx.xr.runtime.internal.Feature> requirements;
+    property public java.util.Set<androidx.xr.runtime.interfaces.Feature> requirements;
     field public static final androidx.xr.arcore.testing.FakePerceptionRuntimeFactory.Companion Companion;
   }
 
