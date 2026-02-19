@@ -105,6 +105,7 @@ class HelloArPlaneActivity : ComponentActivity() {
     }
 
     @Composable
+    @Suppress("deprecation")
     fun HelloPlanes(session: Session) {
         val state by session.state.collectAsStateWithLifecycle()
         val perceptionState = state.perceptionState
