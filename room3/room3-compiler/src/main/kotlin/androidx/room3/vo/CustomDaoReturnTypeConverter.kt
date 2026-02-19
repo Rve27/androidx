@@ -30,6 +30,7 @@ data class CustomDaoReturnTypeConverter(
     val isProvidedConverter: Boolean,
     val hasNullableLambdaReturnType: Boolean,
     val rowAdapterTypeArgPosition: Int = -1,
+    val requiredFunctionParamTypes: List<XType>,
 ) {
     val className: XClassName by lazy { enclosingClass.asClassName() }
     val isStatic by lazy { function.isStatic() }

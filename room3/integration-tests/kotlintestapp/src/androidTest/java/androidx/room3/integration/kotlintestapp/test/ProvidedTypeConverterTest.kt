@@ -30,6 +30,7 @@ import androidx.room3.Room
 import androidx.room3.RoomDatabase
 import androidx.room3.TypeConverter
 import androidx.room3.TypeConverters
+import androidx.room3.guava.GuavaDaoReturnTypeConverter
 import androidx.room3.integration.kotlintestapp.TestDatabase
 import androidx.room3.integration.kotlintestapp.dao.PetDao
 import androidx.room3.integration.kotlintestapp.dao.RobotsDao
@@ -159,6 +160,7 @@ class ProvidedTypeConverterTest {
     @DaoReturnTypeConverters(
         LiveDataDaoReturnTypeConverter::class,
         Rx3DaoReturnTypeConverters::class,
+        GuavaDaoReturnTypeConverter::class,
     )
     @TypeConverters(TimeStampConverter::class, UUIDConverter::class)
     internal abstract class TestDatabaseWithConverterOne : RoomDatabase() {
