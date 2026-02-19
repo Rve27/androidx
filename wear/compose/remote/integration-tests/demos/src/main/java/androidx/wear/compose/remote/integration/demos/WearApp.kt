@@ -26,6 +26,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.compose.remote.integration.demos.components.RemoteButtonDemos
 import androidx.wear.compose.remote.integration.demos.components.RemoteButtonGroupDemos
 import androidx.wear.compose.remote.integration.demos.components.RemoteIconButtonDemos
+import androidx.wear.compose.remote.integration.demos.components.RemoteIconDemos
 import androidx.wear.compose.remote.integration.demos.components.RemoteTextButtonDemos
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
@@ -48,6 +49,7 @@ fun WearApp(
             composable(route = Screen.RemoteButtonGroupDemosScreen.route) {
                 RemoteButtonGroupDemos()
             }
+            composable(route = Screen.RemoteIconDemosScreen.route) { RemoteIconDemos() }
         }
     }
 }
