@@ -112,17 +112,6 @@ object ComposeFoundationFlags {
     var isAnchoredDraggableTargetValueCalculationFixEnabled = true
 
     /**
-     * If this flag is enabled, Clickable will detect if it should delay press by using the new
-     * GestureNode structure where nodes can indicate if they're interested in a given
-     * PointerInputEvent. Moreover, all containers where a drag gesture happens (e.g. scrollable,
-     * draggable, anchored draggable) will cause the presses to be delayed.
-     */
-    // TODO: b/485966702
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isDelayPressesUsingGestureConsumptionEnabled = true
-
-    /**
      * Enables support of trackpad gesture events in foundation components.
      *
      * This uses the additional trackpad gesture information enabled by

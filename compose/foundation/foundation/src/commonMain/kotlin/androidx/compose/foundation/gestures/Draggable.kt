@@ -16,7 +16,6 @@
 
 package androidx.compose.foundation.gestures
 
-import androidx.compose.foundation.ComposeFoundationFlags.isDelayPressesUsingGestureConsumptionEnabled
 import androidx.compose.foundation.ComposeFoundationFlags.isNestedDraggablesTouchConflictFixEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.GestureConnection
@@ -537,7 +536,6 @@ internal abstract class DragGestureNode(
     }
 
     protected fun initializeGestureCoordination() {
-        if (!isDelayPressesUsingGestureConsumptionEnabled) return
         if (gestureNode == null) {
             gestureNode = delegate(gestureNode(this))
         }
