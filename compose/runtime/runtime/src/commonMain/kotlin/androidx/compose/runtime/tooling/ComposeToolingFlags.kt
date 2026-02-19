@@ -58,6 +58,7 @@ public object ComposeToolingFlags {
      * The verbose trace blocks might have a negative impact on performance and thus should be
      * disabled by default.
      */
+    // TODO: b/485958933
     @field:Suppress("MutableBareField")
     @JvmField
     public var isVerboseTracingEnabled: Boolean = false
