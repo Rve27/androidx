@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,92 +16,93 @@
 
 package androidx.room3.solver.binderprovider
 
+import androidx.room3.OperationType
 import androidx.room3.compiler.processing.XNullability
 import androidx.room3.compiler.processing.XType
 import androidx.room3.compiler.processing.isVoidObject
+import androidx.room3.ext.KotlinTypeNames
 import androidx.room3.ext.isCollection
-import androidx.room3.parser.ParsedQuery
 import androidx.room3.processor.Context
 import androidx.room3.processor.ProcessorErrors
 import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_WITH_A_TYPE_PARAM_SHOULD_HAVE_RETURN_TYPE_WITH_ONLY_ONE_GENERIC_ARG
-import androidx.room3.solver.QueryResultBinderProvider
-import androidx.room3.solver.TypeAdapterExtras
-import androidx.room3.solver.query.result.DaoReturnTypeQueryResultBinder
-import androidx.room3.solver.query.result.QueryResultBinder
 import androidx.room3.solver.types.DaoReturnTypeConverter
 import com.google.common.base.Optional
 
-class DaoReturnTypeQueryResultBinderProvider(
+abstract class BaseDaoConverterBinderProvider(
     val context: Context,
-    val returnTypeConverter: DaoReturnTypeConverter,
-) : QueryResultBinderProvider {
-    val executeAndReturnLambda = returnTypeConverter.executeAndReturnLambda
+    val converter: DaoReturnTypeConverter,
+) {
+    val executeAndReturnLambda = converter.executeAndReturnLambda
 
-    override fun matches(declared: XType): Boolean {
-        if (!declared.rawType.isAssignableFrom(returnTypeConverter.to.rawType)) {
+    fun matchConverter(declared: XType, operationType: OperationType): Boolean {
+        // Check if the converter supports the operation type of this provider
+        if (operationType !in converter.operationTypes) {
             return false
         }
 
-        val convertFunctionReturnTypeArgs = returnTypeConverter.to.typeArguments
+        if (!declared.rawType.isAssignableFrom(converter.to.rawType)) {
+            return false
+        }
+
+        val convertFunctionReturnTypeArgs = converter.to.typeArguments
         val daoFunctionReturnTypeArgs = declared.typeArguments
 
+        // For side effect operation types (e.g. Rx's Completable, Coroutine's Job, etc).
+        if (convertFunctionReturnTypeArgs.isEmpty()) {
+            return true
+        }
         if (convertFunctionReturnTypeArgs.size != daoFunctionReturnTypeArgs.size) {
             return false
         }
 
         val allTypeArgsExceptRowAdapterPositionMatch =
             daoFunctionReturnTypeArgs.indices.all { pos ->
-                pos == executeAndReturnLambda.rowAdapterTypeArgPosition ||
+                if (pos == executeAndReturnLambda.rowAdapterTypeArgPosition) {
+                    true
+                } else {
                     convertFunctionReturnTypeArgs[pos].isAssignableFrom(
                         daoFunctionReturnTypeArgs[pos]
                     )
+                }
             }
 
         context.checker.check(
             predicate = allTypeArgsExceptRowAdapterPositionMatch,
-            element = returnTypeConverter.to.typeElement!!,
+            element = converter.to.typeElement!!,
             DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_WITH_A_TYPE_PARAM_SHOULD_HAVE_RETURN_TYPE_WITH_ONLY_ONE_GENERIC_ARG,
         )
 
         return allTypeArgsExceptRowAdapterPositionMatch
     }
 
-    override fun provide(
-        declared: XType,
-        query: ParsedQuery,
-        extras: TypeAdapterExtras,
-    ): QueryResultBinder {
-        fun isCollectionOrOptional(type: XType): Boolean {
-            return type.isCollection() ||
-                type.isTypeOf(Optional::class) ||
-                type.isTypeOf(Map::class)
+    fun extractTypeArg(declared: XType): XType {
+        if (converter.to.typeArguments.isEmpty()) {
+            return context.processingEnv.requireType(KotlinTypeNames.UNIT)
         }
 
         val initialTypeArg =
             if (declared.typeArguments.isEmpty()) {
-                    declared
+                declared
+            } else {
+                declared.typeArguments[executeAndReturnLambda.rowAdapterTypeArgPosition]
+            }
+
+        val finalTypeArg =
+            initialTypeArg.let {
+                if (executeAndReturnLambda.hasNullableReturnType && !isCollectionOrOptional(it)) {
+                    it.makeNullable()
                 } else {
-                    declared.typeArguments[executeAndReturnLambda.rowAdapterTypeArgPosition]
+                    it
                 }
-                .let {
-                    if (executeAndReturnLambda.hasNullableReturnType && !isCollectionOrOptional(it))
-                        it.makeNullable()
-                    else it
-                }
-        if (initialTypeArg.isVoidObject() && initialTypeArg.nullability == XNullability.NONNULL) {
+            }
+
+        if (finalTypeArg.isVoidObject() && finalTypeArg.nullability == XNullability.NONNULL) {
             context.logger.e(ProcessorErrors.NONNULL_VOID)
         }
+        return finalTypeArg
+    }
 
-        val typeArg = executeAndReturnLambda.adjustToResultAdapterType(initialTypeArg)
-        val adapter = context.typeAdapterStore.findQueryResultAdapter(typeArg, query, extras)
-        val tableNames =
-            ((adapter?.accessedTableNames() ?: emptyList()) + query.tables.map { it.name }).toSet()
-
-        return DaoReturnTypeQueryResultBinder(
-            typeArg = typeArg,
-            tableNames = tableNames,
-            adapter = adapter,
-            converter = returnTypeConverter,
-        )
+    private fun isCollectionOrOptional(type: XType): Boolean {
+        return type.isCollection() || type.isTypeOf(Optional::class) || type.isTypeOf(Map::class)
     }
 }

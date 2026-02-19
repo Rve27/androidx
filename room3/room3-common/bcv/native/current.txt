@@ -104,10 +104,10 @@ open annotation class androidx.room3/Dao : kotlin/Annotation { // androidx.room3
 }
 
 open annotation class androidx.room3/DaoReturnTypeConverter : kotlin/Annotation { // androidx.room3/DaoReturnTypeConverter|null[0]
-    constructor <init>(kotlin/Array<out androidx.room3/OperationType>...) // androidx.room3/DaoReturnTypeConverter.<init>|<init>(kotlin.Array<out|androidx.room3.OperationType>...){}[0]
+    constructor <init>(kotlin/Array<androidx.room3/OperationType>) // androidx.room3/DaoReturnTypeConverter.<init>|<init>(kotlin.Array<androidx.room3.OperationType>){}[0]
 
     final val operations // androidx.room3/DaoReturnTypeConverter.operations|{}operations[0]
-        final fun <get-operations>(): kotlin/Array<out androidx.room3/OperationType> // androidx.room3/DaoReturnTypeConverter.operations.<get-operations>|<get-operations>(){}[0]
+        final fun <get-operations>(): kotlin/Array<androidx.room3/OperationType> // androidx.room3/DaoReturnTypeConverter.operations.<get-operations>|<get-operations>(){}[0]
 }
 
 open annotation class androidx.room3/DaoReturnTypeConverters : kotlin/Annotation { // androidx.room3/DaoReturnTypeConverters|null[0]

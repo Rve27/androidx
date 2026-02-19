@@ -16,9 +16,7 @@
 
 package androidx.room3.solver.query.result
 
-import androidx.room3.compiler.codegen.CodeLanguage
 import androidx.room3.compiler.codegen.XCodeBlock
-import androidx.room3.compiler.codegen.XCodeBlock.Builder.Companion.applyTo
 import androidx.room3.compiler.codegen.XPropertySpec
 import androidx.room3.compiler.codegen.XTypeName
 import androidx.room3.compiler.processing.XType
@@ -35,8 +33,7 @@ import androidx.room3.ext.SQLiteDriverTypeNames
 import androidx.room3.solver.CodeGenScope
 import androidx.room3.solver.types.DaoReturnTypeConverter
 
-/** Converts the query into a DAO return type and returns it. No query is run until necessary. */
-class DaoReturnTypeQueryResultBinder(
+class DaoConverterQueryResultBinder(
     val typeArg: XType,
     val tableNames: Set<String>,
     adapter: QueryResultAdapter?,
@@ -97,8 +94,6 @@ class DaoReturnTypeQueryResultBinder(
 
         val lambdaType = converter.requiredFunctionParamTypes.last()
         val isParameterizedLambda = lambdaType.typeArguments.size > 1
-
-        val connectionVar = scope.getTmpVar("_connection")
         val limitQuery = scope.getTmpVar("_converterQuery")
         val convertBlock =
             InvokeWithLambdaParameter(
@@ -116,75 +111,81 @@ class DaoReturnTypeQueryResultBinder(
                         ) {
                         override fun XCodeBlock.Builder.body(scope: CodeGenScope) {
                             val converterQueryVar = if (isParameterizedLambda) limitQuery else null
-
-                            val performBlock =
-                                InvokeWithLambdaParameter(
-                                    scope = scope,
-                                    functionName = DB_UTIL_PERFORM_SUSPENDING,
-                                    argFormat = listOf("%N", "%L", "%L"),
-                                    args =
-                                        listOf(dbProperty, /* isReadOnly= */ true, inTransaction),
-                                    lambdaSpec =
-                                        object :
-                                            LambdaSpec(
-                                                parameterTypeName =
-                                                    SQLiteDriverTypeNames.CONNECTION,
-                                                parameterName = connectionVar,
-                                                returnTypeName = typeArg.asTypeName(),
-                                                javaLambdaSyntaxAvailable =
-                                                    scope.javaLambdaSyntaxAvailable,
-                                            ) {
-                                            override fun XCodeBlock.Builder.body(
-                                                scope: CodeGenScope
-                                            ) {
-                                                // Use the dynamic SQL if available (e.g. for
-                                                // Paging), else original SQL
-                                                val sqlSource =
-                                                    if (converterQueryVar != null)
-                                                        "$converterQueryVar.sql"
-                                                    else sqlQueryVar
-
-                                                addLocalVal(
-                                                    statementVar,
-                                                    SQLiteDriverTypeNames.STATEMENT,
-                                                    "%L.prepare(%L)",
-                                                    connectionVar,
-                                                    sqlSource,
-                                                )
-                                                beginControlFlow("try")
-                                                if (converterQueryVar != null) {
-                                                    addStatement(
-                                                        "%L.getBindingFunction().invoke(%L)",
-                                                        converterQueryVar,
-                                                        statementVar,
-                                                    )
-                                                } else {
-                                                    bindStatement?.invoke(scope, statementVar)
-                                                }
-
-                                                val outVar = scope.getTmpVar("_result")
-                                                adapter?.convert(outVar, statementVar, scope)
-                                                applyTo { language ->
-                                                    when (language) {
-                                                        CodeLanguage.JAVA ->
-                                                            addStatement("return %L", outVar)
-                                                        CodeLanguage.KOTLIN ->
-                                                            addStatement("%L", outVar)
-                                                    }
-                                                }
-                                                nextControlFlow("finally")
-                                                addStatement("%L.close()", statementVar)
-                                                endControlFlow()
-                                            }
-                                        },
-                                )
-                            when (scope.language) {
-                                CodeLanguage.JAVA -> scope.builder.add("return %L", performBlock)
-                                CodeLanguage.KOTLIN -> scope.builder.add("%L", performBlock)
-                            }
+                            scope.builder.add(
+                                "%L",
+                                setUpPerformBlock(
+                                    scope,
+                                    dbProperty,
+                                    typeArg,
+                                    converterQueryVar,
+                                    inTransaction,
+                                    bindStatement,
+                                    sqlQueryVar,
+                                    statementVar,
+                                ),
+                            )
                         }
                     },
             )
         scope.builder.add("return %L", convertBlock)
+    }
+
+    private fun setUpPerformBlock(
+        scope: CodeGenScope,
+        dbProperty: XPropertySpec,
+        typeArg: XType,
+        converterQueryVar: String?,
+        inTransaction: Boolean,
+        bindStatement: (CodeGenScope.(String) -> Unit)?,
+        sqlQueryVar: String,
+        statementVar: String,
+    ): XCodeBlock {
+        val connectionVar = scope.getTmpVar("_connection")
+        return InvokeWithLambdaParameter(
+            scope = scope,
+            functionName = DB_UTIL_PERFORM_SUSPENDING,
+            argFormat = listOf("%N", "%L", "%L"),
+            args = listOf(dbProperty, true, inTransaction),
+            lambdaSpec =
+                object :
+                    LambdaSpec(
+                        parameterTypeName = SQLiteDriverTypeNames.CONNECTION,
+                        parameterName = connectionVar,
+                        returnTypeName = typeArg.asTypeName(),
+                        javaLambdaSyntaxAvailable = scope.javaLambdaSyntaxAvailable,
+                    ) {
+                    override fun XCodeBlock.Builder.body(scope: CodeGenScope) {
+                        // Use the dynamic SQL if available (e.g. for
+                        // Paging), else original SQL
+                        val sqlSource =
+                            if (converterQueryVar != null) "$converterQueryVar.sql" else sqlQueryVar
+
+                        addLocalVal(
+                            statementVar,
+                            SQLiteDriverTypeNames.STATEMENT,
+                            "%L.prepare(%L)",
+                            connectionVar,
+                            sqlSource,
+                        )
+                        beginControlFlow("try")
+                        if (converterQueryVar != null) {
+                            addStatement(
+                                "%L.getBindingFunction().invoke(%L)",
+                                converterQueryVar,
+                                statementVar,
+                            )
+                        } else {
+                            bindStatement?.invoke(scope, statementVar)
+                        }
+
+                        val outVar = scope.getTmpVar("_result")
+                        adapter?.convert(outVar, statementVar, scope)
+                        addStatement("%L", outVar)
+                        nextControlFlow("finally")
+                        addStatement("%L.close()", statementVar)
+                        endControlFlow()
+                    }
+                },
+        )
     }
 }
