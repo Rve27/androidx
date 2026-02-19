@@ -40,7 +40,7 @@ import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @WearPreviewDevices
 @Composable
-fun RemoteCircularProgressIndicatorPreview(
+private fun RemoteCircularProgressIndicatorPreview(
     @PreviewParameter(ProfilePreviewParameterProvider::class) profile: Profile
 ) {
     RemotePreview(profile = profile) { RemoteCircularProgressEnabled() }
@@ -58,7 +58,7 @@ fun RemoteCircularProgressEnabled() {
 
 @WearPreviewDevices
 @Composable
-fun RemoteCircularProgressNoGapCustomAnglePreview(
+private fun RemoteCircularProgressNoGapCustomAnglePreview(
     @PreviewParameter(ProfilePreviewParameterProvider::class) profile: Profile
 ) {
     RemotePreview(profile = profile) { RemoteCircularProgressNoGapCustomAngle() }
@@ -79,7 +79,7 @@ fun RemoteCircularProgressNoGapCustomAngle() {
 
 @WearPreviewDevices
 @Composable
-fun RemoteCircularProgressIndicatorCustomColorPreview(
+private fun RemoteCircularProgressIndicatorCustomColorPreview(
     @PreviewParameter(ProfilePreviewParameterProvider::class) profile: Profile
 ) {
     RemotePreview(profile = profile) { RemoteCircularProgressIndicatorCustomColor() }
@@ -102,7 +102,7 @@ fun RemoteCircularProgressIndicatorCustomColor() {
 
 @WearPreviewDevices
 @Composable
-fun RemoteCircularProgressIndicatorDisabledPreview(
+private fun RemoteCircularProgressIndicatorDisabledPreview(
     @PreviewParameter(ProfilePreviewParameterProvider::class) profile: Profile
 ) {
     RemotePreview(profile = profile) { RemoteCircularProgressIndicatorDisabled() }
