@@ -78,7 +78,11 @@ public constructor(
 
     public companion object {
         /** Limit for the number of anchors that can be created. */
-        public const val ANCHOR_RESOURCE_LIMIT: Int = 6
+        @JvmStatic
+        public val anchorResourceLimit: Int
+            get() = ANCHOR_RESOURCE_LIMIT
+
+        private const val ANCHOR_RESOURCE_LIMIT: Int = 6
         /** The current number of anchors created. */
         @JvmStatic public var anchorsCreatedCount: Int = 0
     }
