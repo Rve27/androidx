@@ -595,19 +595,19 @@ package androidx.xr.runtime {
   }
 
   public final class XrDevice {
-    method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public static androidx.xr.runtime.XrDevice getCurrentDevice(android.content.Context context, androidx.xr.runtime.Session session);
-    method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public static androidx.xr.runtime.XrDevice getCurrentDevice(android.content.Context context, androidx.xr.runtime.Session session, optional kotlin.coroutines.CoroutineContext coroutineContext);
-    method public static androidx.xr.runtime.XrDevice getCurrentDevice(androidx.xr.runtime.Session session);
+    method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public static androidx.xr.runtime.XrDevice getCurrentDevice(android.content.Context context);
+    method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public static androidx.xr.runtime.XrDevice getCurrentDevice(android.content.Context context, optional kotlin.coroutines.CoroutineContext coroutineContext);
+    method @Deprecated public static androidx.xr.runtime.XrDevice getCurrentDevice(androidx.xr.runtime.Session session);
     method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public androidx.lifecycle.Lifecycle getLifecycle();
     method public androidx.xr.runtime.DisplayBlendMode getPreferredDisplayBlendMode();
     field public static final androidx.xr.runtime.XrDevice.Companion Companion;
   }
 
   public static final class XrDevice.Companion {
-    method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public androidx.xr.runtime.XrDevice getCurrentDevice(android.content.Context context, androidx.xr.runtime.Session session);
-    method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public androidx.xr.runtime.XrDevice getCurrentDevice(android.content.Context context, androidx.xr.runtime.Session session, optional kotlin.coroutines.CoroutineContext coroutineContext);
-    method public androidx.xr.runtime.XrDevice getCurrentDevice(androidx.xr.runtime.Session session);
-    method @BytecodeOnly @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public static androidx.xr.runtime.XrDevice! getCurrentDevice$default(androidx.xr.runtime.XrDevice.Companion!, android.content.Context!, androidx.xr.runtime.Session!, kotlin.coroutines.CoroutineContext!, int, Object!);
+    method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public androidx.xr.runtime.XrDevice getCurrentDevice(android.content.Context context);
+    method @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public androidx.xr.runtime.XrDevice getCurrentDevice(android.content.Context context, optional kotlin.coroutines.CoroutineContext coroutineContext);
+    method @Deprecated public androidx.xr.runtime.XrDevice getCurrentDevice(androidx.xr.runtime.Session session);
+    method @BytecodeOnly @SuppressCompatibility @androidx.xr.runtime.ExperimentalXrDeviceLifecycleApi public static androidx.xr.runtime.XrDevice! getCurrentDevice$default(androidx.xr.runtime.XrDevice.Companion!, android.content.Context!, kotlin.coroutines.CoroutineContext!, int, Object!);
   }
 
   @Deprecated public static final class XrDevice.DisplayBlendMode {
