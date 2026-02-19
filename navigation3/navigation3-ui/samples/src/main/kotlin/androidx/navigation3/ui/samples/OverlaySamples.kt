@@ -54,7 +54,7 @@ fun DialogSample() {
     NavDisplay(
         backStack,
         onBack = { backStack.removeLastOrNull() },
-        sceneStrategy = DialogSceneStrategy(),
+        sceneStrategies = listOf(DialogSceneStrategy()),
         entryProvider =
             entryProvider {
                 entry<OverlaidNavKey> {
