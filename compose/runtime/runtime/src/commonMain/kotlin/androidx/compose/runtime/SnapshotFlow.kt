@@ -74,13 +74,14 @@ public fun <T : R, R> Flow<T>.collectAsState(
     }
 
 /**
- * Orchestrates the observation of [Snapshot] state for [snapshotFlow] invocations.
+ * Orchestrates the observation of [Snapshot] state for [snapshotFlow]s that are collected on the
+ * same thread.
  *
  * Once a [SnapshotFlowManager] is no longer needed, its [dispose] method should be called.
  *
- * It is not safe to share a [SnapshotFlowManager] instance across [snapshotFlow]s running on
- * different threads, but it is not a problem for apply observers to run in parallel with
- * [SnapshotFlowManager] logic.
+ * It is not safe to share a [SnapshotFlowManager] instance across two [snapshotFlow]s that collect
+ * in parallel on two different threads, but it is not a problem for a thread to run apply observers
+ * in parallel with another thread collecting a [snapshotFlow].
  *
  * @see snapshotFlow
  */
@@ -537,11 +538,11 @@ public fun <T> snapshotFlow(block: () -> T): Flow<T> {
  *
  * [manager] controls how snapshot state is observed. When the [manager] argument is omitted, a
  * [SnapshotFlowManager] is instantiated under the hood, so by explicitly managing a
- * [SnapshotFlowManager] and passing it to multiple invocations of [snapshotFlow], you can improve
- * performance by sharing resources between those [snapshotFlow]s. It is not safe to share a
- * [SnapshotFlowManager] instance across [snapshotFlow]s running on different threads. Sharing a
- * [SnapshotFlowManager] across multiple [snapshotFlow]s running on the same thread is always
- * encouraged.
+ * [SnapshotFlowManager] and passing it to multiple [snapshotFlow]s that will be collected on the
+ * same thread, you can improve performance by sharing resources between those [snapshotFlow]s. It
+ * is not safe to share a [SnapshotFlowManager] instance across two [snapshotFlow]s that collect in
+ * parallel on two different threads. Sharing a [SnapshotFlowManager] across [snapshotFlow]s that
+ * cannot be collected in parallel to each other is always encouraged.
  *
  * @sample androidx.compose.runtime.samples.snapshotFlowSample
  *
