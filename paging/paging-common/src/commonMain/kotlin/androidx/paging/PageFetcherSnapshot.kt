@@ -59,7 +59,7 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
     private val config: PagingConfig,
     private val retryFlow: Flow<Unit>,
     val remoteMediatorConnection: RemoteMediatorConnection<Key, Value>? = null,
-    private val previousPagingState: PagingState<Key, Value>? = null,
+    private val cachedInitialState: PagingState<Key, Value>? = null,
     private val jumpCallback: () -> Unit = {},
 ) {
     init {
@@ -168,7 +168,7 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
                 // valid events from both.
                 remoteMediatorConnection?.let {
                     val pagingState =
-                        previousPagingState
+                        cachedInitialState
                             ?: stateHolder.withLock { state -> state.currentPagingState(null) }
                     it.requestRefreshIfAllowed(pagingState)
                 }

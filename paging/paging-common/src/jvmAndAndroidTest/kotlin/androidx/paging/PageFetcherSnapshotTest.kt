@@ -1246,7 +1246,7 @@ class PageFetcherSnapshotTest {
                     createRefresh(50..51),
                 )
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
             assertThat(fetcherState.newEvents())
                 .containsExactly(
@@ -1290,7 +1290,7 @@ class PageFetcherSnapshotTest {
                     createAppend(1, 52..52),
                 )
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertThat(fetcherState.newEvents())
@@ -2473,7 +2473,7 @@ class PageFetcherSnapshotTest {
                     initialLoadSize = 1,
                     maxSize = 5,
                 )
-            val pager =
+            val pageFetcher =
                 PageFetcher(
                     initialKey = 0,
                     pagingSourceFactory = { TestPagingSource(items = listOf(0)) },
@@ -2481,7 +2481,7 @@ class PageFetcherSnapshotTest {
                     remoteMediator = remoteMediator,
                 )
 
-            val state = collectFetcherState(pager)
+            val state = collectFetcherState(pageFetcher)
 
             // Let the initial page load; loaded data should be [0]
             advanceUntilIdle()
@@ -2501,7 +2501,7 @@ class PageFetcherSnapshotTest {
 
             // Explicit call to refresh, which should trigger remote refresh with cached
             // PagingState.
-            pager.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertThat(remoteMediator.newLoadEvents)
@@ -3398,7 +3398,7 @@ class PageFetcherSnapshotTest {
                         pagingSource = pagingSourceFactory(),
                         config = config,
                         retryFlow = retryBus.flow,
-                        previousPagingState = null,
+                        cachedInitialState = null,
                     ) {
                         didJump = true
                     }
@@ -3456,7 +3456,7 @@ class PageFetcherSnapshotTest {
                     pagingSource = pagingSourceFactory(),
                     config = config,
                     retryFlow = retryBus.flow,
-                    previousPagingState = null,
+                    cachedInitialState = null,
                 ) {
                     didJump++
                 }
@@ -3504,7 +3504,7 @@ class PageFetcherSnapshotTest {
                     pagingSource = pagingSourceFactory(),
                     config = config,
                     retryFlow = retryBus.flow,
-                    previousPagingState = null,
+                    cachedInitialState = null,
                 ) {
                     didJump++
                 }

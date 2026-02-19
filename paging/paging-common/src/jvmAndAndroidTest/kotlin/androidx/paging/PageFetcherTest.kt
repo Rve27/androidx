@@ -89,7 +89,7 @@ class PageFetcherTest {
             assertEquals(1, fetcherState.pagingDataList.size)
             assertTrue { fetcherState.pageEventLists[0].isNotEmpty() }
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -113,7 +113,7 @@ class PageFetcherTest {
             assertEquals(1, fetcherState.pagingDataList.size)
             assertTrue { fetcherState.pageEventLists[0].isNotEmpty() }
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -146,7 +146,7 @@ class PageFetcherTest {
             assertTrue { fetcherState.pageEventLists[0].isNotEmpty() }
             assertEquals(1, remoteMediator.loadEvents.size)
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -195,7 +195,7 @@ class PageFetcherTest {
             assertEquals(1, fetcherState.pagingDataList.size)
             assertTrue { fetcherState.pageEventLists[0].isNotEmpty() }
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -382,7 +382,7 @@ class PageFetcherTest {
 
             advanceUntilIdle()
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertEquals(2, pagingDataCount)
@@ -415,8 +415,8 @@ class PageFetcherTest {
 
             advanceUntilIdle()
 
-            pageFetcher.refresh()
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertEquals(3, pagingDatas.size)
@@ -469,7 +469,7 @@ class PageFetcherTest {
             assertThat(pagingSources[1].invalidateCallbackCount).isEqualTo(1)
 
             // Trigger new generation, should unregister from older PagingSource.
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
             assertThat(pagingSources).hasSize(3)
             assertThat(pagingSources[1].invalidateCallbackCount).isEqualTo(0)
@@ -678,7 +678,7 @@ class PageFetcherTest {
 
                 advanceUntilIdle()
 
-                pageFetcher.refresh()
+                pageFetcher.load(REFRESH)
                 advanceUntilIdle()
 
                 assertTrue { job.isCompleted }
@@ -830,7 +830,7 @@ class PageFetcherTest {
                 )
 
             // Trigger refresh, instantiating second generation.
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
 
             // Allow remote refresh to get triggered, but do not let paging source complete initial
             // load
@@ -875,7 +875,7 @@ class PageFetcherTest {
 
             // Trigger refresh instantiating third generation before second has a chance to complete
             // initial load.
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
 
             // Wait for all non-canceled loads to complete.
             advanceUntilIdle()
@@ -955,7 +955,7 @@ class PageFetcherTest {
                 )
 
             // Trigger refresh, instantiating second generation.
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
 
             // Allow remote refresh to get triggered, and let paging source load finish.
             advanceUntilIdle()
@@ -984,7 +984,7 @@ class PageFetcherTest {
 
             // Trigger refresh instantiating third generation before second has a chance to complete
             // initial load.
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
 
             // Wait for all non-canceled loads to complete.
             advanceUntilIdle()
@@ -1030,7 +1030,7 @@ class PageFetcherTest {
             assertThat(loadRequests).hasSize(1)
             assertThat(loadRequests[0].key).isEqualTo(0)
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
             assertThat(loadRequests).hasSize(2)
             assertThat(loadRequests[1].key).isEqualTo(null)
@@ -1189,7 +1189,7 @@ class PageFetcherTest {
                     EMPTY_SOURCE_REFRESH,
                 )
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -1238,7 +1238,7 @@ class PageFetcherTest {
                     EMPTY_REMOTE_REFRESH,
                 )
 
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertThat(fetcherState.newEvents())
@@ -1403,7 +1403,7 @@ class PageFetcherTest {
             )
 
         // Trigger remote + source refresh in a new generation.
-        pageFetcher.refresh()
+        pageFetcher.load(REFRESH)
 
         assertThat(fetcherState.newEvents())
             .containsExactly(
@@ -1434,7 +1434,7 @@ class PageFetcherTest {
             )
 
         // Trigger remote + source refresh in a third generation.
-        pageFetcher.refresh()
+        pageFetcher.load(REFRESH)
 
         // Start of third generation should have the exact same load states as before, so we
         // should only get new events for kicking off new loads.
@@ -1493,7 +1493,7 @@ class PageFetcherTest {
             val firstGenerationEventCount = fetcherState.pageEventLists[0].size
 
             // Let new generation and some new remote events emit.
-            pageFetcher.refresh()
+            pageFetcher.load(REFRESH)
             advanceUntilIdle()
 
             assertThat(firstGenerationEventCount).isEqualTo(fetcherState.pageEventLists[0].size)
