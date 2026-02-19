@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package androidx.wear.compose.remote.integration.demos
+package androidx.wear.compose.remote.integration.demos.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
-import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
+import androidx.wear.compose.remote.material3.previews.RemoteCircularProgressEnabled
+import androidx.wear.compose.remote.material3.previews.RemoteCircularProgressIndicatorCustomColor
+import androidx.wear.compose.remote.material3.previews.RemoteCircularProgressIndicatorDisabled
+import androidx.wear.compose.remote.material3.previews.RemoteCircularProgressNoGapCustomAngle
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @Composable
-fun MainScreen(navigateToRoute: (String) -> Unit, modifier: Modifier = Modifier) {
+fun RemoteCircularProgressIndicatorDemos(modifier: Modifier = Modifier) {
     val transformationSpec = rememberTransformationSpec()
     val columnState = rememberTransformingLazyColumnState()
 
@@ -48,60 +50,21 @@ fun MainScreen(navigateToRoute: (String) -> Unit, modifier: Modifier = Modifier)
                             ),
                     transformation = SurfaceTransformation(transformationSpec),
                 ) {
-                    Text("Remote Compose Wear Material3 Demos")
+                    Text("RemoteCircularProgressIndicator Demos")
                 }
             }
+            item { RemoteDemoItem("Enabled") { RemoteCircularProgressEnabled() } }
+            item { RemoteDemoItem("Disabled") { RemoteCircularProgressIndicatorDisabled() } }
+            item { RemoteDemoItem("Custom Color") { RemoteCircularProgressIndicatorCustomColor() } }
             item {
-                MenuButton(
-                    "RemoteButton",
-                    onClick = { navigateToRoute(Screen.RemoteButtonDemosScreen.route) },
-                )
-            }
-            item {
-                MenuButton(
-                    "RemoteIconButton",
-                    onClick = { navigateToRoute(Screen.RemoteIconButtonDemosScreen.route) },
-                )
-            }
-            item {
-                MenuButton(
-                    "RemoteTextButton",
-                    onClick = { navigateToRoute(Screen.RemoteTextButtonDemosScreen.route) },
-                )
-            }
-            item {
-                MenuButton(
-                    "RemoteButtonGroup",
-                    onClick = { navigateToRoute(Screen.RemoteButtonGroupDemosScreen.route) },
-                )
-            }
-            item {
-                MenuButton(
-                    "RemoteIcon",
-                    onClick = { navigateToRoute(Screen.RemoteIconDemosScreen.route) },
-                )
-            }
-            item {
-                MenuButton(
-                    "RemoteCircularProgressIndicator",
-                    onClick = {
-                        navigateToRoute(Screen.RemoteCircularProgressIndicatorDemosScreen.route)
-                    },
-                )
+                RemoteDemoItem("No Gap Custom Angle") { RemoteCircularProgressNoGapCustomAngle() }
             }
         }
     }
 }
 
-@Composable
-private fun MenuButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(onClick = onClick, modifier = modifier.fillMaxWidth()) {
-        Text(text, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-    }
-}
-
 @WearPreviewDevices
 @Composable
-private fun MainScreenPreview() {
-    MainScreen(navigateToRoute = {})
+private fun RemoteCircularProgressIndicatorDemosPreview() {
+    RemoteCircularProgressIndicatorDemos()
 }
