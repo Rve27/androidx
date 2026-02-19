@@ -231,7 +231,7 @@ class FaceTest {
         xrResourcesManager.syncTrackables(listOf(runtimeFace))
         val underTest = xrResourcesManager.trackablesMap.values.first() as Face
 
-        repeat(FakeRuntimeAnchor.ANCHOR_RESOURCE_LIMIT) {
+        repeat(FakeRuntimeAnchor.anchorResourceLimit) {
             val result = underTest.createAnchor(Pose())
         }
 
@@ -248,7 +248,7 @@ class FaceTest {
         xrResourcesManager.syncTrackables(listOf(runtimeFace))
         val underTest = xrResourcesManager.trackablesMap.values.first() as Face
 
-        repeat(FakeRuntimeAnchor.ANCHOR_RESOURCE_LIMIT) { underTest.createAnchor(Pose()) }
+        repeat(FakeRuntimeAnchor.anchorResourceLimit) { underTest.createAnchor(Pose()) }
 
         assertThat(underTest.createAnchor(Pose()))
             .isInstanceOf(AnchorCreateResourcesExhausted::class.java)

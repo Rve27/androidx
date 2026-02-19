@@ -143,7 +143,7 @@ class AugmentedObjectTest {
         xrResourcesManager.syncTrackables(listOf(runtimeObject))
         val underTest = xrResourcesManager.trackablesMap.values.first() as AugmentedObject
 
-        repeat(FakeRuntimeAnchor.ANCHOR_RESOURCE_LIMIT) {
+        repeat(FakeRuntimeAnchor.anchorResourceLimit) {
             val result = underTest.createAnchor(Pose())
         }
 
