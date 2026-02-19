@@ -936,6 +936,30 @@ public class GridWidgetTest {
         assertEquals(29, mGridView.getSelectedPosition());
     }
 
+    @Test
+    public void testNumRows() throws Throwable {
+        Intent intent = new Intent();
+        intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.horizontal_grid);
+        intent.putExtra(GridActivity.EXTRA_NUM_ITEMS, 150);
+        intent.putExtra(GridActivity.EXTRA_STAGGERED, false);
+        initActivity(intent);
+        mOrientation = BaseGridView.HORIZONTAL;
+        mNumRows = 3;
+        assertEquals(mNumRows, ((HorizontalGridView) mGridView).getNumRows());
+    }
+
+    @Test
+    public void testNumColumns() throws Throwable {
+        Intent intent = new Intent();
+        intent.putExtra(GridActivity.EXTRA_LAYOUT_RESOURCE_ID, R.layout.vertical_grid);
+        intent.putExtra(GridActivity.EXTRA_NUM_ITEMS, 150);
+        intent.putExtra(GridActivity.EXTRA_STAGGERED, false);
+        initActivity(intent);
+        mOrientation = BaseGridView.VERTICAL;
+        mNumRows = 3;
+        assertEquals(mNumRows, ((VerticalGridView) mGridView).getNumColumns());
+    }
+
     private void assertSpansThreeAt(int position, int expectedMultiSpanViewWidth) {
         int top0 = mGridView.findViewHolderForAdapterPosition(position).itemView.getTop();
         int left0 = mGridView.findViewHolderForAdapterPosition(position).itemView.getLeft();
