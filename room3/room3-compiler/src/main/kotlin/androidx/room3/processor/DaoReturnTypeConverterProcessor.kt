@@ -34,6 +34,7 @@ import androidx.room3.compiler.processing.isKotlinUnit
 import androidx.room3.compiler.processing.isSuspendFunction
 import androidx.room3.ext.KotlinTypeNames.NO_ARG_SUSPEND_LAMBDA
 import androidx.room3.ext.KotlinTypeNames.SINGLE_ARG_SUSPEND_LAMBDA
+import androidx.room3.ext.getRequiredFunctionParamTypes
 import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_EMPTY_CLASS
 import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_MUST_HAVE_AT_MOST_ONE_TYPE_PARAMETER
 import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_WITHOUT_TYPE_PARAM_SHOULD_RETURN_UNIT
@@ -103,7 +104,13 @@ class DaoReturnTypeConverterProcessor(
             )
             return null
         }
-        val suspendLambdaParam = findAndValidateLambdaParams(function, lambdaTypes)
+        val requiredFunctionNonLambdaParamTypes = function.getRequiredFunctionParamTypes()
+        val suspendLambdaParam =
+            findAndValidateLambdaParams(
+                function,
+                lambdaTypes,
+                requiredFunctionNonLambdaParamTypes.lastIndex + 1,
+            )
         if (suspendLambdaParam == null) {
             context.logger.e(
                 element = function,
@@ -138,6 +145,7 @@ class DaoReturnTypeConverterProcessor(
                     isProvidedConverter = false,
                     hasNullableLambdaReturnType = hasNullableLambdaReturnType,
                     rowAdapterTypeArgPosition = rowAdapterPosition,
+                    requiredFunctionParamTypes = requiredFunctionNonLambdaParamTypes,
                 )
             )
         }
@@ -146,6 +154,7 @@ class DaoReturnTypeConverterProcessor(
     private fun findAndValidateLambdaParams(
         function: XExecutableElement,
         lambdaTypes: LambdaTypeConstants,
+        expectedIndexOfLambdaParam: Int,
     ): XExecutableParameterElement? {
         fun XExecutableParameterElement.isSuspendFunction(): Boolean =
             lambdaTypes.noArgSuspendLambda.isAssignableFrom(this.type.rawType) ||
@@ -154,15 +163,11 @@ class DaoReturnTypeConverterProcessor(
         val suspendLambdaParamCandidates = function.parameters.filter { it.isSuspendFunction() }
         val suspendLambdaParam = suspendLambdaParamCandidates.singleOrNull()
 
-        val indexOfLastParam =
-            if (function.parameters.last().isContinuationParam()) {
-                function.parameters.lastIndex - 1
-            } else {
-                function.parameters.lastIndex
-            }
-        val indexOfLambdaParam = function.parameters.indexOf(suspendLambdaParam)
+        val actualIndexOfLambdaParam = function.parameters.indexOf(suspendLambdaParam)
         context.checker.check(
-            predicate = suspendLambdaParam == null || indexOfLambdaParam == indexOfLastParam,
+            predicate =
+                suspendLambdaParam == null ||
+                    actualIndexOfLambdaParam == (expectedIndexOfLambdaParam),
             element = function,
             errorMsg = DAO_RETURN_TYPE_CONVERTER_LAMBDA_MUST_BE_LAST_PARAM,
         )

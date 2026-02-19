@@ -48,7 +48,6 @@ import androidx.room3.processor.ProcessorErrors.invalidQueryForSingleColumnArray
 import androidx.room3.processor.PropertyProcessor
 import androidx.room3.solver.binderprovider.CoroutineFlowResultBinderProvider
 import androidx.room3.solver.binderprovider.DaoReturnTypeQueryResultBinderProvider
-import androidx.room3.solver.binderprovider.GuavaListenableFutureQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.InstantQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.ListenableFuturePagingSourceQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.PagingSourceQueryResultBinderProvider
@@ -218,7 +217,6 @@ private constructor(
 
     private val queryResultBinderProviders: List<QueryResultBinderProvider> =
         mutableListOf<QueryResultBinderProvider>().apply {
-            add(GuavaListenableFutureQueryResultBinderProvider(context))
             add(RxJava3PagingSourceQueryResultBinderProvider(context))
             add(ListenableFuturePagingSourceQueryResultBinderProvider(context))
             add(PagingSourceQueryResultBinderProvider(context))
