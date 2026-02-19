@@ -19,8 +19,8 @@ package androidx.xr.runtime
 import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.xr.runtime.internal.XrDeviceCapabilityProvider
-import androidx.xr.runtime.internal.XrDeviceCapabilityProviderFactory
+import androidx.xr.runtime.interfaces.XrDeviceCapabilityProvider
+import androidx.xr.runtime.interfaces.XrDeviceCapabilityProviderFactory
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
