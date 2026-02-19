@@ -101,7 +101,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -136,7 +136,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -155,7 +155,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -204,7 +204,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -239,7 +239,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -263,7 +263,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -364,7 +364,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -402,7 +402,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -448,7 +448,7 @@ class PageFetcherSnapshotTest {
 
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 0,
@@ -468,7 +468,7 @@ class PageFetcherSnapshotTest {
 
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = -1,
                             indexInPage = 0,
@@ -524,7 +524,7 @@ class PageFetcherSnapshotTest {
 
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 0,
@@ -573,7 +573,7 @@ class PageFetcherSnapshotTest {
 
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 0,
@@ -592,7 +592,7 @@ class PageFetcherSnapshotTest {
 
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = -1,
                             indexInPage = 0,
@@ -606,7 +606,7 @@ class PageFetcherSnapshotTest {
                 advanceTimeBy(500)
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 1,
@@ -657,7 +657,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -702,7 +702,7 @@ class PageFetcherSnapshotTest {
             // PREPEND a few pages.
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -723,7 +723,7 @@ class PageFetcherSnapshotTest {
             // APPEND a few pages causing PREPEND pages to drop
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 2,
@@ -756,7 +756,7 @@ class PageFetcherSnapshotTest {
             // PREPEND a page, this hint would normally be ignored, but has a newer generationId.
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -806,7 +806,7 @@ class PageFetcherSnapshotTest {
                 val receiver = fetcherState.pagingDataList[0].hintReceiver
                 // send a bunch of access hints while collection is paused
                 (0..9).forEach { pos ->
-                    receiver.accessHint(
+                    receiver.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = pos,
@@ -852,7 +852,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -895,7 +895,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 2,
@@ -944,7 +944,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -963,7 +963,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 1,
                         indexInPage = 1,
@@ -1017,7 +1017,7 @@ class PageFetcherSnapshotTest {
 
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 4,
@@ -1063,7 +1063,7 @@ class PageFetcherSnapshotTest {
 
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 1,
@@ -1083,7 +1083,7 @@ class PageFetcherSnapshotTest {
                 // Start hint processing until load starts, but hasn't finished.
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 1,
                             indexInPage = 1,
@@ -1096,7 +1096,7 @@ class PageFetcherSnapshotTest {
                 advanceTimeBy(500)
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 0,
@@ -1153,7 +1153,7 @@ class PageFetcherSnapshotTest {
             // APPEND a few pages.
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 2,
@@ -1174,7 +1174,7 @@ class PageFetcherSnapshotTest {
             // PREPEND a few pages causing APPEND pages to drop
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -1207,7 +1207,7 @@ class PageFetcherSnapshotTest {
             // APPEND a page, this hint would normally be ignored, but has a newer generationId.
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -1272,7 +1272,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -1346,7 +1346,7 @@ class PageFetcherSnapshotTest {
                         )
 
                     pageSource.errorNextLoad = true
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 1,
@@ -1389,7 +1389,7 @@ class PageFetcherSnapshotTest {
                             createRefresh(range = 50..51),
                         )
 
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 1,
@@ -1427,7 +1427,7 @@ class PageFetcherSnapshotTest {
                             createRefresh(range = 50..51),
                         )
                     pageSource.errorNextLoad = true
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 1,
@@ -1483,7 +1483,7 @@ class PageFetcherSnapshotTest {
 
                     // Failed APPEND
                     pageSource.errorNextLoad = true
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 1,
@@ -1502,7 +1502,7 @@ class PageFetcherSnapshotTest {
 
                     // Failed PREPEND
                     pageSource.errorNextLoad = true
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 0,
@@ -1590,7 +1590,7 @@ class PageFetcherSnapshotTest {
                         )
 
                     // Hint to trigger APPEND
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 1,
@@ -1618,7 +1618,7 @@ class PageFetcherSnapshotTest {
 
                     // This hint should be ignored even though in the non-error state it would
                     // re-emit for APPEND due to greater presenterIndex value.
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 2,
@@ -1632,7 +1632,7 @@ class PageFetcherSnapshotTest {
                     assertThat(pageEvents.newEvents()).isEmpty()
 
                     // Hint to trigger PREPEND
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 0,
@@ -1680,7 +1680,7 @@ class PageFetcherSnapshotTest {
 
                     // This hint should be ignored even though in the non-error state it would
                     // re-emit for PREPEND due to smaller presenterIndex value.
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = -1,
@@ -1739,7 +1739,7 @@ class PageFetcherSnapshotTest {
                             localLoadStateUpdate<Int>(refreshLocal = Loading),
                             localLoadStateUpdate<Int>(refreshLocal = Error(LOAD_ERROR)),
                         )
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 0,
@@ -1899,7 +1899,7 @@ class PageFetcherSnapshotTest {
                 )
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -1942,7 +1942,7 @@ class PageFetcherSnapshotTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -1984,7 +1984,7 @@ class PageFetcherSnapshotTest {
                 )
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 2,
@@ -2010,7 +2010,7 @@ class PageFetcherSnapshotTest {
             withContext(coroutineContext) {
                 val pagingSource = pagingSourceFactory()
                 val pager = PageFetcherSnapshot(50, pagingSource, config, retryFlow = retryBus.flow)
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -2046,7 +2046,7 @@ class PageFetcherSnapshotTest {
                     retryFlow = retryBus.flow,
                     remoteMediatorConnection = RemoteMediatorAccessor(testScope, remoteMediator),
                 )
-            pager.accessHint(
+            pager.processHint(
                 ViewportHint.Access(
                     pageOffset = 0,
                     indexInPage = 0,
@@ -2077,7 +2077,7 @@ class PageFetcherSnapshotTest {
                 collectSnapshotData(pager) { _, _ ->
                     advanceUntilIdle()
 
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = 1,
@@ -2130,7 +2130,7 @@ class PageFetcherSnapshotTest {
                 collectSnapshotData(pager) { _, _ ->
                     advanceUntilIdle()
 
-                    pager.accessHint(
+                    pager.processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             indexInPage = -40,
@@ -2257,7 +2257,7 @@ class PageFetcherSnapshotTest {
             // [hint], [50, 51], [52], [53], [54], [55]
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 4,
                         indexInPage = -6,
@@ -2307,7 +2307,7 @@ class PageFetcherSnapshotTest {
             // [46], [47], [48], [49], [50, 51], [hint]
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = -4,
                         indexInPage = 6,
@@ -3407,7 +3407,7 @@ class PageFetcherSnapshotTest {
 
                 advanceUntilIdle()
 
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = -50,
@@ -3466,7 +3466,7 @@ class PageFetcherSnapshotTest {
             advanceUntilIdle()
 
             // This would trigger both append and prepend because of processHint logic
-            pager.accessHint(
+            pager.processHint(
                 ViewportHint.Access(
                     pageOffset = 0,
                     indexInPage = -50,
@@ -3514,7 +3514,7 @@ class PageFetcherSnapshotTest {
             advanceUntilIdle()
 
             // This would trigger both append and prepend because of processHint logic
-            pager.accessHint(
+            pager.processHint(
                 ViewportHint.Access(
                     pageOffset = 0,
                     indexInPage = -50,
@@ -3526,7 +3526,7 @@ class PageFetcherSnapshotTest {
             )
 
             // send second jump hint as well
-            pager.accessHint(
+            pager.processHint(
                 ViewportHint.Access(
                     pageOffset = 0,
                     indexInPage = -50,
@@ -3584,7 +3584,7 @@ class PageFetcherSnapshotTest {
                 advanceUntilIdle()
 
                 // Trigger first prepend with key = 0
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -3597,7 +3597,7 @@ class PageFetcherSnapshotTest {
                 advanceUntilIdle()
 
                 // Trigger second prepend with key = 0
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -3646,7 +3646,7 @@ class PageFetcherSnapshotTest {
                 advanceUntilIdle()
 
                 // Trigger first prepend with key = 0
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -3659,7 +3659,7 @@ class PageFetcherSnapshotTest {
                 advanceUntilIdle()
 
                 // Trigger second prepend with key = 0
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -3711,7 +3711,7 @@ class PageFetcherSnapshotTest {
                 advanceUntilIdle()
 
                 // Trigger first prepend with key = 0
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -3724,7 +3724,7 @@ class PageFetcherSnapshotTest {
                 advanceUntilIdle()
 
                 // Trigger second prepend with key = 0
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 0,
@@ -3758,7 +3758,7 @@ class PageFetcherSnapshotTest {
                         createRefresh(range = 50..51),
                     )
 
-                pageFetcherSnapshot.accessHint(ViewportHint.Initial(0, 0, 0, 0))
+                pageFetcherSnapshot.processHint(ViewportHint.Initial(0, 0, 0, 0))
                 advanceUntilIdle()
                 assertThat(state.newEvents())
                     .containsExactly(
@@ -3944,7 +3944,7 @@ class PageFetcherSnapshotTest {
                         createRefresh(50..51),
                     )
                 // append a page
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -3983,7 +3983,7 @@ class PageFetcherSnapshotTest {
                         createRefresh(50..51),
                     )
                 // now prepend
-                pager.accessHint(
+                pager.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = -1,
@@ -4104,7 +4104,7 @@ class PageFetcherSnapshotTest {
         suspend fun stop()
 
         fun accessHint(viewportHint: ViewportHint) {
-            hintReceiver!!.accessHint(viewportHint)
+            hintReceiver!!.processHint(viewportHint)
         }
 
         fun retry() {

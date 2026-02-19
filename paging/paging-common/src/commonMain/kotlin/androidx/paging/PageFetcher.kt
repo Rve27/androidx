@@ -273,8 +273,8 @@ internal class PageFetcher<Key : Any, Value : Any>(
         @get:VisibleForTesting internal val pageFetcherSnapshot: PageFetcherSnapshot<Key, Value>
     ) : HintReceiver {
 
-        override fun accessHint(viewportHint: ViewportHint) {
-            pageFetcherSnapshot.accessHint(viewportHint)
+        override fun processHint(viewportHint: ViewportHint) {
+            pageFetcherSnapshot.processHint(viewportHint)
         }
     }
 

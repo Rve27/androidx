@@ -271,7 +271,7 @@ class PageFetcherTest {
             // append a page
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -327,7 +327,7 @@ class PageFetcherTest {
             // prepend a page
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = -1,
@@ -552,7 +552,7 @@ class PageFetcherTest {
 
             fetcherState.pagingDataList[0]
                 .hintReceiver
-                .accessHint(
+                .processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -604,7 +604,7 @@ class PageFetcherTest {
                 // Jump due to sufficiently large presentedItemsBefore
                 fetcherState.pagingDataList[0]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             // indexInPage value is incorrect, but should not be considered for
@@ -631,7 +631,7 @@ class PageFetcherTest {
                 // Jump due to sufficiently large presentedItemsAfter
                 fetcherState.pagingDataList[1]
                     .hintReceiver
-                    .accessHint(
+                    .processHint(
                         ViewportHint.Access(
                             pageOffset = 0,
                             // indexInPage value is incorrect, but should not be considered for
@@ -862,7 +862,7 @@ class PageFetcherTest {
             // Trigger a hint, which would normally populate anchorPosition. In real world scenario,
             // this would happen as a result of UI still presenting first generation since second
             // generation never finished loading yet.
-            receiver?.accessHint(
+            receiver?.processHint(
                 ViewportHint.Access(
                     pageOffset = 0,
                     indexInPage = 0,
@@ -928,7 +928,7 @@ class PageFetcherTest {
             // Trigger a hint to populate anchorPosition, this should cause PageFetcher to cache
             // this
             // PagingState and use it in next remoteRefresh
-            receiver?.accessHint(
+            receiver?.processHint(
                 ViewportHint.Access(
                     pageOffset = 0,
                     indexInPage = 0,
@@ -1071,7 +1071,7 @@ class PageFetcherTest {
                 advanceUntilIdle()
 
                 // Trigger access to allow PagingState to get populated for next generation.
-                pagingData.hintReceiver.accessHint(
+                pagingData.hintReceiver.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 1,
@@ -1133,7 +1133,7 @@ class PageFetcherTest {
 
                 advanceUntilIdle()
                 // Trigger APPEND in third generation.
-                pagingData.hintReceiver.accessHint(
+                pagingData.hintReceiver.processHint(
                     ViewportHint.Access(
                         pageOffset = 0,
                         indexInPage = 2,

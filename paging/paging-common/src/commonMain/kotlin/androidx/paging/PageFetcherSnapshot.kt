@@ -209,7 +209,8 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
         }
     }
 
-    fun accessHint(viewportHint: ViewportHint) {
+    // viewport Hint can be either Access or Initial
+    fun processHint(viewportHint: ViewportHint) {
         hintHandler.processHint(viewportHint)
     }
 
