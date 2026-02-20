@@ -28,6 +28,7 @@ import androidx.room3.PrimaryKey
 import androidx.room3.Query
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
+import androidx.room3.guava.GuavaDaoReturnTypeConverter
 import androidx.room3.integration.kotlintestapp.assumeKsp
 import androidx.room3.livedata.LiveDataDaoReturnTypeConverter
 import androidx.room3.rxjava3.Rx3DaoReturnTypeConverters
@@ -193,6 +194,7 @@ class BoxedNonNullTypesTest {
     @DaoReturnTypeConverters(
         LiveDataDaoReturnTypeConverter::class,
         Rx3DaoReturnTypeConverters::class,
+        GuavaDaoReturnTypeConverter::class,
     )
     abstract class MyDb : RoomDatabase() {
         abstract fun myDao(): MyDao
