@@ -17,6 +17,7 @@
 package androidx.xr.runtime
 
 import android.Manifest
+import android.content.Context
 import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
@@ -57,6 +58,7 @@ class SessionTest {
     private lateinit var underTest: Session
     private lateinit var activityController: ActivityController<ComponentActivity>
     private lateinit var activity: ComponentActivity
+    private lateinit var application: Context
     private lateinit var testDispatcher: TestDispatcher
 
     @Before
@@ -108,6 +110,17 @@ class SessionTest {
 
         val stateExtender = underTest.stateExtenders.last() as FakeStateExtender
         assertThat(stateExtender.isInitialized).isTrue()
+    }
+
+    @Test
+    fun create_withApplicationContext_returnsSuccessResultWithNonNullSession() {
+        activityController.create()
+
+        val context = activity.applicationContext
+        val result = Session.create(context, activity, testDispatcher)
+
+        assertThat(result).isInstanceOf(SessionCreateSuccess::class.java)
+        assertThat((result as SessionCreateSuccess).session).isNotNull()
     }
 
     @Test
@@ -174,7 +187,7 @@ class SessionTest {
         val exception = assertFailsWith<IllegalStateException> { Session.create(activity) }
         assertThat(exception)
             .hasMessageThat()
-            .isEqualTo("Cannot create a new session on a destroyed activity.")
+            .isEqualTo("Cannot create a new session on a destroyed lifecycleOwner.")
     }
 
     @Test

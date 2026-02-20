@@ -18,7 +18,6 @@ package androidx.xr.runtime
 
 import android.content.Context
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import androidx.xr.runtime.XrDevice.Companion.getCurrentDevice
 import androidx.xr.runtime.interfaces.XrDeviceCapabilityProvider
 import androidx.xr.runtime.interfaces.XrDeviceCapabilityProviderFactory
@@ -45,7 +44,7 @@ private constructor(
         // TODO(b/461561664) : Use XrDeviceCapabilityProvider.getLifecycle() once session
         // constructor is removed.
         xrDeviceCapabilityProvider?.lifecycle
-            ?: (session?.activity as? LifecycleOwner)?.lifecycle
+            ?: session?.lifecycleOwner?.lifecycle
             ?: throw IllegalStateException("No lifecycle associated with this XrDevice.")
 
     /** A device capability that determines how virtual content is added to the real world. */
