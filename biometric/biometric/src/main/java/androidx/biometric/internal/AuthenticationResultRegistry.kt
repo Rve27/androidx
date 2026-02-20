@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.biometric
+package androidx.biometric.internal
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.annotation.RestrictTo
+import androidx.biometric.AuthenticationRequest
 import androidx.biometric.AuthenticationRequest.Biometric
+import androidx.biometric.AuthenticationResult
+import androidx.biometric.AuthenticationResultCallback
+import androidx.biometric.AuthenticationResultLauncher
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.AuthenticationCallback
 import androidx.biometric.BiometricPrompt.CryptoObject
 import androidx.biometric.BiometricPrompt.LifecycleContainer
 import androidx.biometric.BiometricPrompt.PromptInfo
-import androidx.lifecycle.Lifecycle.Event.*
+import androidx.biometric.PromptContentViewWithMoreOptionsButton
+import androidx.biometric.PromptVerticalListContentView
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStoreOwner
@@ -33,13 +41,13 @@ import java.util.concurrent.Executor
 
 /**
  * A registry that stores [auth result callbacks][AuthenticationCallback] for
- * [registered calls][registerForAuthenticationResult].
+ * [registered calls][androidx.biometric.registerForAuthenticationResult].
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class AuthenticationResultRegistry {
     /**
      * Register a new callback with this registry. This is normally called by a higher level
-     * convenience methods like [registerForAuthenticationResult].
+     * convenience methods like [androidx.biometric.registerForAuthenticationResult].
      */
     public fun register(
         context: Context,
@@ -52,29 +60,27 @@ public class AuthenticationResultRegistry {
         val callback = createAuthenticationCallback(resultCallback)
         var biometricPrompt: BiometricPrompt? = null
         val lifecycleContainer = LifecycleContainer(lifecycleOwner.lifecycle)
+        val initPrompt = {
+            if (biometricPrompt == null) {
+                biometricPrompt =
+                    BiometricPrompt(
+                        context,
+                        lifecycleOwner,
+                        viewModelStoreOwner,
+                        confirmCredentialActivityLauncher,
+                        callbackExecutor,
+                        callback,
+                    )
+            }
+        }
 
         val lifecycleObserver = LifecycleEventObserver { _, event ->
-            when (event) {
-                ON_START -> {
-                    biometricPrompt =
-                        BiometricPrompt(
-                            context,
-                            lifecycleOwner,
-                            viewModelStoreOwner,
-                            confirmCredentialActivityLauncher,
-                            callbackExecutor,
-                            callback,
-                        )
-                }
-                ON_STOP -> {}
-                ON_DESTROY -> {
-                    // The authentication should not be canceled here using
-                    // cancelAuthentication().
-                    // Instead, rely on the app to manage cancellation through cancel() calls,
-                    // ensuring the authentication survives configuration changes.
-                    lifecycleContainer.clearObservers()
-                }
-                else -> {}
+            if (event == Lifecycle.Event.ON_START) {
+                initPrompt()
+                // The authentication should not be canceled in ON_DESTROY.
+                // Instead, rely on the app to manage cancellation through cancel() calls,
+                // ensuring the authentication survives configuration changes.
+                lifecycleContainer.clearObservers()
             }
         }
         lifecycleContainer.addObserver(lifecycleObserver)
@@ -93,7 +99,7 @@ public class AuthenticationResultRegistry {
 
 private fun onLaunch(input: AuthenticationRequest, biometricPrompt: BiometricPrompt) {
     when (input) {
-        is AuthenticationRequest.Biometric ->
+        is Biometric ->
             biometricPrompt.authInternal(
                 title = input.title,
                 subtitle = input.subtitle,
