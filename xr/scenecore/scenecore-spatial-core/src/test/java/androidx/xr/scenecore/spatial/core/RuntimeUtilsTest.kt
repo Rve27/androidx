@@ -19,7 +19,6 @@ import android.app.Activity
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider.Companion.testSpatialApiVersion
 import androidx.xr.runtime.testing.math.assertVector3
 import androidx.xr.scenecore.runtime.InputEvent as RuntimeInputEvent
 import androidx.xr.scenecore.runtime.PixelDimensions
@@ -45,9 +44,7 @@ import com.android.extensions.xr.space.ShadowSpatialCapabilities
 import com.android.extensions.xr.space.SpatialCapabilities
 import com.android.extensions.xr.space.VisibilityState
 import com.google.common.truth.Truth
-import org.junit.After
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -58,15 +55,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Config.TARGET_SDK])
 class RuntimeUtilsTest {
-    @Before
-    fun setUp() {
-        testSpatialApiVersion = 1
-    }
-
-    @After
-    fun tearDown() {
-        testSpatialApiVersion = null
-    }
 
     fun createSceneRuntime(entityManager: EntityManager): SpatialSceneRuntime {
         val activityController: ActivityController<Activity> =
