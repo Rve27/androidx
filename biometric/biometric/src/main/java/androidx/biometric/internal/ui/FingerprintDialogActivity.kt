@@ -36,7 +36,7 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.R
-import androidx.biometric.internal.CanceledFrom
+import androidx.biometric.internal.data.CanceledFrom
 import androidx.biometric.internal.isManagingDeviceCredentialButton
 import androidx.biometric.internal.viewmodel.AuthenticationViewModel
 import androidx.biometric.internal.viewmodel.AuthenticationViewModelFactory
