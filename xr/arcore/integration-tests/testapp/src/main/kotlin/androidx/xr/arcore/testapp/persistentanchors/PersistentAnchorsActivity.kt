@@ -68,10 +68,10 @@ import androidx.xr.arcore.testapp.ui.theme.GoogleYellow
 import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
-import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.XrLog
+import androidx.xr.runtime.math.FieldOfView
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
@@ -159,6 +159,9 @@ class PersistentAnchorsActivity : ComponentActivity() {
         }
     }
 
+    // TODO(b/494286565) - Remove deprecation suppression when androidx.xr.runtime.FieldOfView is
+    // removed.
+    @Suppress("DEPRECATION")
     private fun updatePanelInViewStatusUpdates(cameraStates: List<RenderViewpoint.State>) {
         val mainPanelEntity = session.scene.mainPanelEntity
         val panelPoseInActivitySpace = mainPanelEntity.getPose()
@@ -173,7 +176,13 @@ class PersistentAnchorsActivity : ComponentActivity() {
                 val isInView =
                     isPanelInView(
                         cameraPoseInPerceptionSpace = cameraState.pose,
-                        cameraFov = cameraState.fieldOfView,
+                        cameraFov =
+                            FieldOfView(
+                                cameraState.fieldOfView.angleLeft,
+                                cameraState.fieldOfView.angleRight,
+                                cameraState.fieldOfView.angleUp,
+                                cameraState.fieldOfView.angleDown,
+                            ),
                         panelPoseInPerceptionSpace = panelPoseInPerceptionSpace,
                         panelSizeInMeters = panelSizeInMeters,
                     )

@@ -472,7 +472,7 @@ package androidx.xr.scenecore.runtime {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface PanelEntity extends androidx.xr.scenecore.runtime.Entity {
     method @InaccessibleFromKotlin public float getCornerRadius();
-    method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.FieldOfView renderViewFov);
+    method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.math.FieldOfView renderViewFov);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Dimensions getSize();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.PixelDimensions getSizeInPixels();
     method @InaccessibleFromKotlin public void setCornerRadius(float);
@@ -1014,7 +1014,7 @@ package androidx.xr.scenecore.runtime {
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather getEdgeFeather();
     method @InaccessibleFromKotlin public int getMaxContentLightLevel();
     method @InaccessibleFromKotlin public int getMediaBlendingMode();
-    method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.FieldOfView renderViewFov);
+    method public androidx.xr.scenecore.runtime.PerceivedResolutionResult getPerceivedResolution(androidx.xr.scenecore.runtime.ScenePose renderViewScenePose, androidx.xr.runtime.math.FieldOfView renderViewFov);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.SurfaceEntity.Shape getShape();
     method @InaccessibleFromKotlin public int getStereoMode();
     method @InaccessibleFromKotlin public android.view.Surface getSurface();
