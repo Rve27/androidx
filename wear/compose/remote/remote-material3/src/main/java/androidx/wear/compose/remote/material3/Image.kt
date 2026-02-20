@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 @file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@file:Suppress("RestrictedApiAndroidX")
 
 package androidx.wear.compose.remote.material3
 
@@ -52,6 +51,7 @@ import androidx.compose.ui.layout.ContentScale
  */
 @Composable
 @RemoteComposable
+@Suppress("RestrictedApiAndroidX")
 public fun RemoteAvatarImage(
     avatar: RemoteBitmap,
     contentDescription: RemoteString?,
@@ -88,6 +88,7 @@ public fun RemoteAvatarImage(
  */
 @Composable
 @RemoteComposable
+@SuppressLint("RestrictedApiAndroidX")
 public fun RemoteBackgroundImage(
     background: RemoteBitmap,
     contentDescription: RemoteString?,
@@ -119,6 +120,7 @@ public fun RemoteBackgroundImage(
 
 @Composable
 @RemoteComposable
+@SuppressLint("RestrictedApiAndroidX")
 private fun FallbackBackground(
     background: RemoteBitmap,
     contentDescription: RemoteString?,
@@ -145,6 +147,7 @@ private fun FallbackBackground(
 
 @Composable
 @RemoteComposable
+@SuppressLint("RestrictedApiAndroidX")
 private fun FallbackAvatar(
     background: RemoteBitmap,
     contentDescription: RemoteString?,
@@ -176,24 +179,22 @@ private fun BackgroundOverlay(modifier: RemoteModifier, overlayColor: RemoteColo
 
 /** Contains default values for Image. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@SuppressLint("RestrictedApiAndroidX")
 public object ImageDefaults {
 
     internal val AVATAR_SIZE_DP = 24.rdp
     internal val BACKGROUND_CORNER_RADIUS_DP = 26.rdp
 
-    @RemoteComposable @Composable public fun avatarSize(): RemoteDp = AVATAR_SIZE_DP
+    public fun avatarSize(): RemoteDp = AVATAR_SIZE_DP
 
-    @Composable
     public fun avatarShape(): RemoteRoundedCornerShape = RemoteRoundedCornerShape(AVATAR_SIZE_DP)
 
-    @Suppress("RestrictedApiAndroidX")
     @RemoteComposable
     @Composable
     public fun backgroundOverlayColor(): RemoteColor {
         return RemoteMaterialTheme.colorScheme.background.copy(alpha = 0.6f.rf)
     }
 
-    @Composable
     public fun backgroundShape(): RemoteRoundedCornerShape =
         RemoteRoundedCornerShape(BACKGROUND_CORNER_RADIUS_DP)
 }

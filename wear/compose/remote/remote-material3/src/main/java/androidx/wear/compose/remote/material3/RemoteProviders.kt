@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("RestrictedApiAndroidX")
 
 package androidx.wear.compose.remote.material3
 
@@ -35,6 +34,7 @@ import androidx.wear.compose.material3.TextConfiguration
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
+@Suppress("RestrictedApiAndroidX")
 public fun ProvideRemoteTextStyle(
     value: RemoteTextStyle,
     content: @RemoteComposable @Composable () -> Unit,
@@ -43,6 +43,7 @@ public fun ProvideRemoteTextStyle(
     CompositionLocalProvider(LocalRemoteTextStyle provides mergedStyle, content = content)
 }
 
+@Suppress("RestrictedApiAndroidX")
 internal fun provideScopeContent(
     contentColor: RemoteColor,
     textStyle: RemoteTextStyle,
@@ -55,6 +56,7 @@ internal fun provideScopeContent(
     )
 }
 
+@Suppress("RestrictedApiAndroidX")
 internal fun <T> provideScopeContent(
     contentColor: RemoteColor,
     textStyle: RemoteTextStyle,
@@ -68,6 +70,7 @@ internal fun <T> provideScopeContent(
     }
 }
 
+@Suppress("RestrictedApiAndroidX")
 internal fun <T> provideScopeContent(
     contentColor: RemoteColor,
     textStyle: RemoteTextStyle,
@@ -83,6 +86,7 @@ internal fun <T> provideScopeContent(
     }
 }
 
+@Suppress("RestrictedApiAndroidX")
 internal fun <T> provideNullableScopeContent(
     contentColor: RemoteColor,
     textStyle: RemoteTextStyle,
