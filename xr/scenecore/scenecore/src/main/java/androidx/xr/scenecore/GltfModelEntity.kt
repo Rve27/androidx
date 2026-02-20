@@ -360,49 +360,6 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
     }
 
     /**
-     * Sets a material override for a primitive of a node within the glTF graph.
-     *
-     * This function searches for the first node in the glTF scene graph with a matching [nodeName].
-     * The override is then applied to a primitive of that node at the specified [primitiveIndex].
-     *
-     * @param material The new [Material] to apply to the primitive.
-     * @param nodeName The name of the node as defined in the glTF graph, containing the primitive
-     *   to override.
-     * @param primitiveIndex The zero-based index for the primitive of the specified node, as
-     *   defined in the glTF graph. Default is the first primitive of that node.
-     * @throws IllegalArgumentException if the provided [material] is invalid or if no node with the
-     *   given [nodeName] is found in the model.
-     * @throws IndexOutOfBoundsException if the [primitiveIndex] is out of bounds.
-     */
-    @JvmOverloads
-    @MainThread
-    public fun setMaterialOverride(material: Material, nodeName: String, primitiveIndex: Int = 0) {
-        checkNotDisposed()
-        rtEntity!!.setMaterialOverride(material.material!!, nodeName, primitiveIndex)
-    }
-
-    /**
-     * Clears a previously set material override for a specific primitive of a node within the glTF
-     * graph.
-     *
-     * If no override was previously set for that primitive, this call has no effect.
-     *
-     * @param nodeName The name of the node containing the primitive whose material override will be
-     *   cleared.
-     * @param primitiveIndex The zero-based index for the primitive of the specified node, as
-     *   defined in the glTF graph. Default is the first primitive of that node.
-     * @throws IllegalArgumentException if the provided [Material] is invalid or if no node with the
-     *   given [nodeName] is found in the model.
-     * @throws IndexOutOfBoundsException if the [primitiveIndex] is out of bounds.
-     */
-    @JvmOverloads
-    @MainThread
-    public fun clearMaterialOverride(nodeName: String, primitiveIndex: Int = 0) {
-        checkNotDisposed()
-        rtEntity!!.clearMaterialOverride(nodeName, primitiveIndex)
-    }
-
-    /**
      * Registers a listener to be invoked when the animation state of the GltfModelEntity changes.
      *
      * The only intended client is currently XR Compose. See b/457481325.
