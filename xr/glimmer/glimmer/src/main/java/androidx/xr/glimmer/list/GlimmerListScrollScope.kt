@@ -242,7 +242,7 @@ internal suspend fun GlimmerListScrollScope.animateScrollToItem(
                 val mainAxisHalfSizeForIndex = getItemSize(index) / 2f
                 // Calculate the scroll adjustment to make the item shown on the focus line
                 scrollOffset + mainAxisHalfSizeForIndex -
-                    (autofocusState.properties?.focusScroll ?: 0f)
+                    (autofocusState.properties?.focusScroll?.toFloat() ?: 0f)
             } else {
                 scrollOffset.toFloat()
             }
