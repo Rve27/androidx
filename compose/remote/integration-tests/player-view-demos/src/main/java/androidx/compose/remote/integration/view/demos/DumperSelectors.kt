@@ -56,7 +56,7 @@ enum class Duration(val label: String, val millis: Long) {
 
 enum class Fps(val value: Int) {
     FPS_1(1),
-    FPS_10(15),
+    FPS_10(10),
     FPS_30(30),
 }
 
