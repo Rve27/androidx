@@ -203,11 +203,11 @@ class ListStateTest(orientation: Orientation) : BaseListTestWithOrientation(orie
         }
 
         // Check the auto focus parameters were calculated correctly.
-        Truth.assertThat(state.autoFocusState.properties?.focusScroll).isEqualTo(200f)
+        Truth.assertThat(state.autoFocusState.properties?.focusScroll).isEqualTo(200.0)
         // TODO(b/462040962): Investigate how viewport adjustments reverses contentScroll by
         //  firstVisibleItemScrollOffset when TestList is focused.
         Truth.assertThat(state.autoFocusState.properties?.contentScroll)
-            .isEqualTo(if (orientation == Orientation.Vertical) 5042f else 5000f)
+            .isEqualTo(if (orientation == Orientation.Vertical) 5042.0 else 5000.0)
     }
 
     @Test
@@ -311,7 +311,7 @@ class ListStateTest(orientation: Orientation) : BaseListTestWithOrientation(orie
     /** Calculates the total consumed scroll of the list, including the carried-over part. */
     private val ListState.totalScroll: Float
         // Autofocus properties and scroll have opposite signs for the same direction.
-        get() = requireNotNull(autoFocusState.properties).userScroll - carryOverScroll
+        get() = requireNotNull(autoFocusState.properties).userScroll.toFloat() - carryOverScroll
 
     companion object {
         @JvmStatic
