@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import androidx.annotation.RestrictTo
@@ -260,7 +261,7 @@ internal constructor(
             pose: Pose = Pose.Identity,
         ): PanelEntity =
             PanelEntity.create(
-                session.activity,
+                session.context as Activity,
                 session.sceneRuntime,
                 session.scene.perceptionSpace,
                 session.scene.entityManager,
@@ -291,7 +292,7 @@ internal constructor(
             pose: Pose = Pose.Identity,
         ): PanelEntity =
             PanelEntity.create(
-                session.activity,
+                session.context as Activity,
                 session.sceneRuntime,
                 session.scene.perceptionSpace,
                 session.scene.entityManager,
@@ -328,7 +329,7 @@ internal constructor(
             parent: Entity? = session.scene.activitySpace,
         ): PanelEntity =
             PanelEntity.create(
-                session.activity,
+                session.context as Activity,
                 session.sceneRuntime,
                 session.scene.perceptionSpace,
                 session.scene.entityManager,
@@ -366,7 +367,7 @@ internal constructor(
             parent: Entity? = session.scene.activitySpace,
         ): PanelEntity =
             PanelEntity.create(
-                session.activity,
+                session.context as Activity,
                 session.sceneRuntime,
                 session.scene.perceptionSpace,
                 session.scene.entityManager,

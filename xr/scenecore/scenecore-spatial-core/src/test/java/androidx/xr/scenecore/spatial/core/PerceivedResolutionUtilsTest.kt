@@ -77,6 +77,7 @@ class PerceivedResolutionUtilsTest {
                 activity,
                 runtimes =
                     listOf(fakePerceptionRuntimeFactory.createRuntime(activity), fakeSceneRuntime),
+                lifecycleOwner = activity,
             )
     }
 
