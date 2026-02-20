@@ -32,7 +32,8 @@ import kotlinx.coroutines.flow.asStateFlow
  * An [Eye] instance provides the state of the eye (shut or gazing), as well as a [Pose] indicating
  * where the user is currently looking.
  */
-public class Eye internal constructor(internal val runtimeEye: RuntimeEye) : Updatable {
+public class Eye internal constructor(internal val runtimeEye: RuntimeEye) :
+    Trackable<Eye.State>, Updatable {
 
     public companion object {
         /**
@@ -88,14 +89,14 @@ public class Eye internal constructor(internal val runtimeEye: RuntimeEye) : Upd
         /** The eye's pose */
         public val pose: Pose,
         /** the tracking state of the eye */
-        public val trackingState: TrackingState,
-    ) {}
+        public override val trackingState: TrackingState,
+    ) : Trackable.State {}
 
     private var _state =
         MutableStateFlow(State(runtimeEye.isOpen, runtimeEye.pose, runtimeEye.trackingState))
 
     /** A [StateFlow] that contains the latest [State] of an [Eye]. */
-    public val state: StateFlow<State> = _state.asStateFlow()
+    public override val state: StateFlow<State> = _state.asStateFlow()
 
     /**
      * This function is used by the runtime to propagate internal state changes. It is not intended

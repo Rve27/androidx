@@ -21,7 +21,7 @@ import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 
 /** Fake implementation of [androidx.xr.arcore.runtime.Eye] for testing purposes. */
-public class FakeRuntimeEye : Eye {
+public class FakeRuntimeEye() : Eye {
     override var isOpen: Boolean = true
 
     override var pose: Pose = Pose()

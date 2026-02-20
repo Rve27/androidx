@@ -25,7 +25,7 @@ import java.nio.FloatBuffer
 
 /** Describes a hand. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface Hand {
+public interface Hand : Trackable {
 
     public companion object {
         /**
@@ -62,7 +62,7 @@ public interface Hand {
     }
 
     /** The current [androidx.xr.runtime.TrackingState] of the hand's data. */
-    public val trackingState: TrackingState
+    public override val trackingState: TrackingState
 
     /** The value describing the data of the hand, including trackingState and handJoints' poses. */
     public val handJointsBuffer: FloatBuffer
