@@ -28,6 +28,7 @@ import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EdgeEffect;
 import android.widget.FrameLayout;
 
@@ -100,6 +101,31 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
             postInvalidateOnAnimation();
         }
     };
+
+    private final ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener =
+            new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    updateOrigin();
+                }
+            };
+
+    private void updateOrigin() {
+        if (mDocument != null) {
+            int[] location = new int[2];
+            getLocationOnScreen(location);
+            mDocument.getDocument().setOrigin(location[0], location[1]);
+        }
+    }
+
+    private void updateGlobalLayoutListener() {
+        getViewTreeObserver().removeOnGlobalLayoutListener(mGlobalLayoutListener);
+        if (isAttachedToWindow() && mDocument != null
+                && mDocument.getDocument().useFeature(Header.FEATURE_LT_RESIZE)) {
+            getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
+            updateOrigin();
+        }
+    }
 
     /**
      * Constructor for RemoteComposeView.
@@ -227,6 +253,7 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
 
         mDocument.getDocument().setLayoutCallback(this);
 
+        updateGlobalLayoutListener();
         updateClickAreas();
         requestLayout();
         mARContext.loadFloat(RemoteContext.ID_TOUCH_EVENT_TIME, -Float.MAX_VALUE);
@@ -260,6 +287,7 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
             mChoreographer = Choreographer.getInstance();
             mChoreographer.postFrameCallback(mFrameCallback);
         }
+        updateGlobalLayoutListener();
         mDensity = getContext().getResources().getDisplayMetrics().density;
         mARContext.setDensity(mDensity);
         if (mDocument == null) {
@@ -306,6 +334,7 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
 
     @Override
     public void onViewDetachedFromWindow(@NonNull View view) {
+        updateGlobalLayoutListener();
         if (mChoreographer != null) {
             mChoreographer.removeFrameCallback(mFrameCallback);
             mChoreographer = null;
