@@ -385,15 +385,20 @@ class SpatialRenderingRuntimeTest {
     fun setMaterialOverrideGltfEntity_materialOverridesNode() {
         val gltfEntity = createGltfEntity()
         val material = createWaterMaterial()
-        val nodeName = "fake_node_name"
         val primitiveIndex = 0
+        val modelToken = fakeImpressApi.getGltfModels().keys.first()
+        val instanceId = fakeImpressApi.getGltfModels()[modelToken]!!.last()
+        val rootNode = ImpressNode(instanceId)
+        val childNode = fakeImpressApi.createImpressNode()
+        fakeImpressApi.setImpressNodeParent(childNode, rootNode)
 
-        gltfEntity.setMaterialOverride(material, nodeName, primitiveIndex)
+        gltfEntity.nodes.first().setMaterialOverride(material, primitiveIndex)
 
         val overriddenNodes =
             fakeImpressApi.getImpressNodes().keys.filter { node ->
-                node.materialOverride != null &&
-                    node.materialOverride?.type == FakeImpressApiImpl.MaterialData.Type.WATER
+                node.nodeMaterialOverrides.containsKey(primitiveIndex) &&
+                    node.nodeMaterialOverrides[primitiveIndex]?.type ==
+                        FakeImpressApiImpl.MaterialData.Type.WATER
             }
         assertThat(overriddenNodes).hasSize(1)
     }
@@ -402,14 +407,21 @@ class SpatialRenderingRuntimeTest {
     fun clearMaterialOverrideGltfEntity_clearsMaterialOverride() {
         val gltfEntity = createGltfEntity()
         val material = createWaterMaterial()
-        val nodeName = "fake_node_name"
         val primitiveIndex = 0
+        val modelToken = fakeImpressApi.getGltfModels().keys.first()
+        val instanceId = fakeImpressApi.getGltfModels()[modelToken]!!.last()
+        val rootNode = ImpressNode(instanceId)
+        val childNode = fakeImpressApi.createImpressNode()
+        fakeImpressApi.setImpressNodeParent(childNode, rootNode)
 
-        gltfEntity.setMaterialOverride(material, nodeName, primitiveIndex)
-        gltfEntity.clearMaterialOverride(nodeName, primitiveIndex)
+        val nodeFeature = gltfEntity.nodes.first()
+        nodeFeature.setMaterialOverride(material, primitiveIndex)
+        nodeFeature.clearMaterialOverride(primitiveIndex)
 
         val overriddenNodes =
-            fakeImpressApi.getImpressNodes().keys.filter { it.materialOverride != null }
+            fakeImpressApi.getImpressNodes().keys.filter {
+                it.nodeMaterialOverrides.containsKey(primitiveIndex)
+            }
         assertThat(overriddenNodes).isEmpty()
     }
 
