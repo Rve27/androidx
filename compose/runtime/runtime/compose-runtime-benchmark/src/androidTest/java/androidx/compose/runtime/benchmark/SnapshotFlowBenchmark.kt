@@ -18,6 +18,7 @@ package androidx.compose.runtime.benchmark
 
 import androidx.benchmark.junit4.BenchmarkRule
 import androidx.benchmark.junit4.measureRepeated
+import androidx.compose.runtime.ExperimentalComposeRuntimeApi
 import androidx.compose.runtime.SnapshotFlowManager
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
@@ -175,6 +176,7 @@ class SnapshotFlowBenchmark(
 
     companion object {
         // Like `snapshotFlow`, but with a nullable `manager` parameter.
+        @OptIn(ExperimentalComposeRuntimeApi::class)
         fun <T> snapshotFlowFactory(manager: SnapshotFlowManager?, block: () -> T): Flow<T> {
             return if (manager == null) {
                 snapshotFlow(block)

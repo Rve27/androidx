@@ -568,6 +568,7 @@ public fun <T> snapshotFlow(block: () -> T): Flow<T> {
  * produce the same result. It is valid for a state observer to both skip intermediate states as
  * well as run multiple times for the same state and the result should be the same.
  */
+@ExperimentalComposeRuntimeApi
 public fun <T> snapshotFlow(manager: SnapshotFlowManager, block: () -> T): Flow<T> {
     return snapshotFlowImpl(manager, block)
 }
