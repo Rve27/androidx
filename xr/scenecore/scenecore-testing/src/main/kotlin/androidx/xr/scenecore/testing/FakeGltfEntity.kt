@@ -74,6 +74,22 @@ public open class FakeGltfEntity(
     override val animations: List<GltfAnimationFeature>
         get() = (feature?.getAnimations(executor!!) ?: emptyList()) + _animations
 
+    override fun setColliderEnabled(enabled: Boolean) {
+        feature?.setColliderEnabled(enabled)
+    }
+
+    override fun addOnBoundsUpdateListener(listener: Consumer<BoundingBox>) {
+        feature?.addOnBoundsUpdateListener(listener)
+    }
+
+    override fun removeOnBoundsUpdateListener(listener: Consumer<BoundingBox>) {
+        feature?.removeOnBoundsUpdateListener(listener)
+    }
+
+    override fun setReformAffordanceEnabled(enabled: Boolean, systemMovable: Boolean) {
+        feature?.setReformAffordanceEnabled(this, enabled, executor!!, systemMovable)
+    }
+
     /**
      * Adds an animation to the list of animations.
      *

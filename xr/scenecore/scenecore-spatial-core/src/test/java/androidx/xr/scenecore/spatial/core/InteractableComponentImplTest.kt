@@ -19,6 +19,7 @@ import android.app.Activity
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.testing.FakeSpatialApiVersionProvider.Companion.testSpatialApiVersion
 import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.GltfEntity
 import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.InteractableComponent
 import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
@@ -168,7 +169,7 @@ class InteractableComponentImplTest {
 
     @Test
     fun interactableComponent_enablesColliderForGltfEntity() {
-        val gltfEntity = mock<GltfEntityImpl>()
+        val gltfEntity = mock<GltfEntity>()
         val executor = MoreExecutors.directExecutor()
         val mockInputEventListener = mock<InputEventListener>()
         val interactableComponent: InteractableComponent =
