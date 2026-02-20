@@ -1307,34 +1307,6 @@ public interface ImpressApi {
     public fun destroyNativeObject(nativeHandle: Long)
 
     /**
-     * Sets the material override for a specific mesh of a node.
-     *
-     * @param impressNode The object of the Impress node for the instance of the glTF model.
-     * @param nativeMaterial The native handle of the material to be used as the override.
-     * @param nodeName The name of the node containing the mesh to be overridden.
-     * @param primitiveIndex The zero-based index of the primitive to override within the mesh.
-     */
-    public fun setMaterialOverride(
-        impressNode: ImpressNode,
-        nativeMaterial: Long,
-        nodeName: String,
-        primitiveIndex: Int,
-    )
-
-    /**
-     * Clears a material override for a specific mesh of a node.
-     *
-     * @param impressNode The object of the Impress node for the instance of the glTF model.
-     * @param nodeName The name of the node containing the mesh for which to clear the override.
-     * @param primitiveIndex The zero-based index of the primitive to clear within the mesh.
-     */
-    public fun clearMaterialOverride(
-        impressNode: ImpressNode,
-        nodeName: String,
-        primitiveIndex: Int,
-    )
-
-    /**
      * Schedules reskinning of a glTF model. This should be called after modifying node transforms
      * that affect skinned meshes.
      *
