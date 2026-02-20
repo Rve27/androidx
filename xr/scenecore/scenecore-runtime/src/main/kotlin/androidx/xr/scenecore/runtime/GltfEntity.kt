@@ -50,6 +50,35 @@ public interface GltfEntity : Entity {
     public val animations: List<GltfAnimationFeature>
 
     /**
+     * Enable/disable the collider for the glTF entity.
+     *
+     * @param enabled Whether the collider should be enabled.
+     */
+    public fun setColliderEnabled(enabled: Boolean)
+
+    /**
+     * Adds a listener to observe the glTF entity's AA-bounds updates.
+     *
+     * @param listener The listener to add.
+     */
+    public fun addOnBoundsUpdateListener(listener: Consumer<BoundingBox>)
+
+    /**
+     * Removes provided listener from registered listeners of glTF entity's AA-bounds updates.
+     *
+     * @param listener The listener to remove.
+     */
+    public fun removeOnBoundsUpdateListener(listener: Consumer<BoundingBox>)
+
+    /**
+     * Enable/disable the reform affordances for glTF entity.
+     *
+     * @param enabled Whether the reform affordances should be enabled.
+     * @param systemMovable Whether the entity should be movable by the system.
+     */
+    public fun setReformAffordanceEnabled(enabled: Boolean, systemMovable: Boolean)
+
+    /**
      * Starts the animation with the given name.
      *
      * @param animationName The name of the animation to start. If null is supplied, will play the
