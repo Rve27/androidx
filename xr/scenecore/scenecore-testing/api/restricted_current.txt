@@ -174,6 +174,7 @@ package androidx.xr.scenecore.testing {
     ctor @BytecodeOnly public FakeGltfEntity(androidx.xr.scenecore.runtime.GltfFeature!, java.util.concurrent.Executor!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public final void addAnimation(androidx.xr.scenecore.runtime.GltfAnimationFeature animation);
     method public void addAnimationStateListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Integer> listener);
+    method public void addOnBoundsUpdateListener(java.util.function.Consumer<androidx.xr.runtime.math.BoundingBox> listener);
     method public void clearMaterialOverride(String nodeName, int primitiveIndex);
     method @InaccessibleFromKotlin public int getAnimationState();
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.runtime.GltfAnimationFeature> getAnimations();
@@ -185,9 +186,12 @@ package androidx.xr.scenecore.testing {
     method @InaccessibleFromKotlin public final boolean isLooping();
     method public void pauseAnimation();
     method public void removeAnimationStateListener(java.util.function.Consumer<java.lang.Integer> listener);
+    method public void removeOnBoundsUpdateListener(java.util.function.Consumer<androidx.xr.runtime.math.BoundingBox> listener);
     method public void resumeAnimation();
+    method public void setColliderEnabled(boolean enabled);
     method @InaccessibleFromKotlin public final void setLooping(boolean);
     method public void setMaterialOverride(androidx.xr.scenecore.runtime.MaterialResource material, String nodeName, int primitiveIndex);
+    method public void setReformAffordanceEnabled(boolean enabled, boolean systemMovable);
     method @InaccessibleFromKotlin public final void setSupportedAnimationNames(java.util.List<java.lang.String>);
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
