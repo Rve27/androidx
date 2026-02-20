@@ -16,6 +16,7 @@
 
 package androidx.compose.runtime.snapshots
 
+import androidx.compose.runtime.ExperimentalComposeRuntimeApi
 import androidx.compose.runtime.SnapshotFlowManager
 import androidx.compose.runtime.internal.AtomicBoolean
 import androidx.compose.runtime.mutableIntStateOf
@@ -206,6 +207,7 @@ class SnapshotFlowTestsJvm {
 
     companion object {
         // Like `snapshotFlow`, but with a nullable `manager` parameter.
+        @OptIn(ExperimentalComposeRuntimeApi::class)
         fun <T> snapshotFlowFactory(manager: SnapshotFlowManager?, block: () -> T): Flow<T> {
             return if (manager == null) {
                 snapshotFlow(block)
