@@ -295,6 +295,24 @@ class ParameterFactoryTest {
     }
 
     @Test
+    fun testCornerBasedShapeWithRecursionLimit() {
+        // This test will fail if the any of the 4 dimensions has a reference for expansion.
+        // An expansion reference can be used to dive deeper into an object structure.
+        // In this case there isn't anything that is not reported i.e. there should not be any
+        // references.
+        validate(
+            create("corner", RoundedCornerShape(2.0.dp, 0.5.dp, 2.5.dp, 0.7.dp), maxRecursions = 1)
+        ) {
+            parameter("corner", ParameterType.String, RoundedCornerShape::class.java.simpleName) {
+                parameter("topStart", ParameterType.DimensionDp, 2.0f)
+                parameter("topEnd", ParameterType.DimensionDp, 0.5f)
+                parameter("bottomEnd", ParameterType.DimensionDp, 2.5f)
+                parameter("bottomStart", ParameterType.DimensionDp, 0.7f)
+            }
+        }
+    }
+
+    @Test
     fun testCornerSize() {
         assertThat(lookup(ZeroCornerSize)).isEqualTo(ParameterType.String to "ZeroCornerSize")
         assertThat(lookup(CornerSize(2.4.dp))).isEqualTo(ParameterType.DimensionDp to 2.4f)

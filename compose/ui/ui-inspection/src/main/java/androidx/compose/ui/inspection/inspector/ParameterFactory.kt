@@ -627,11 +627,12 @@ internal class ParameterFactory(inlineClassConverter: InlineClassConverter) {
             val parameter =
                 createFromSimpleValue(parameterName, parameterValue)
                     ?: NodeParameter(parameterName, ParameterType.String, "")
-            if (!shouldRecurseDeeper()) {
+            val valueElements = value.inspectableElements.toList()
+            if (valueElements.isNotEmpty() && !shouldRecurseDeeper()) {
                 return parameter.withChildReference()
             }
             val elements = parameter.elements
-            value.inspectableElements.mapIndexedNotNullTo(elements) { index, element ->
+            valueElements.mapIndexedNotNullTo(elements) { index, element ->
                 createRecursively(element.name, element.value, value, index)
             }
             return parameter
