@@ -60,4 +60,7 @@ public interface GltfModelNodeFeature {
      *   node.
      */
     @MainThread public fun clearMaterialOverride(primitiveIndex: Int)
+
+    /** Clears a material override for a all primitive indices of this node. */
+    @MainThread public fun clearMaterialOverrides()
 }
