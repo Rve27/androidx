@@ -37,7 +37,7 @@ import androidx.biometric.BiometricManager.Authenticators;
 import androidx.biometric.internal.AuthenticationHandler;
 import androidx.biometric.internal.BiometricFragment;
 import androidx.biometric.internal.BiometricViewModel;
-import androidx.biometric.internal.CanceledFrom;
+import androidx.biometric.internal.data.CanceledFrom;
 import androidx.biometric.internal.viewmodel.AuthenticationViewModel;
 import androidx.biometric.internal.viewmodel.AuthenticationViewModelFactory;
 import androidx.biometric.utils.AuthenticatorUtils;
@@ -718,12 +718,12 @@ public class BiometricPrompt implements BiometricConstants {
         // Immutable fields for the prompt info object.
         @DrawableRes
         private int mLogoRes;
-        private @Nullable Bitmap mLogoBitmap;
-        private @Nullable String mLogoDescription;
+        private final @Nullable Bitmap mLogoBitmap;
+        private final @Nullable String mLogoDescription;
         private final @NonNull CharSequence mTitle;
         private final @Nullable CharSequence mSubtitle;
         private final @Nullable CharSequence mDescription;
-        private @Nullable PromptContentView mPromptContentView;
+        private final @Nullable PromptContentView mPromptContentView;
         private final @Nullable CharSequence mNegativeButtonText;
         private final boolean mIsConfirmationRequired;
         private final boolean mIsDeviceCredentialAllowed;
@@ -1114,11 +1114,15 @@ public class BiometricPrompt implements BiometricConstants {
      * @param confirmCredentialActivityLauncher The {@link Runnable} to launch KeyguardManager's
      *                                          ConfirmDeviceCredentialActivity.
      */
-    BiometricPrompt(Context context, LifecycleOwner lifecycleOwner,
-            ViewModelStoreOwner viewModelStoreOwner,
-            Runnable confirmCredentialActivityLauncher,
+    @SuppressLint("LambdaLast")
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public BiometricPrompt(
+            @NonNull Context context,
+            @NonNull LifecycleOwner lifecycleOwner,
+            @NonNull ViewModelStoreOwner viewModelStoreOwner,
+            @NonNull Runnable confirmCredentialActivityLauncher,
             @Nullable Executor executor,
-            AuthenticationCallback callback) {
+            @NonNull AuthenticationCallback callback) {
         init(context, lifecycleOwner, viewModelStoreOwner, confirmCredentialActivityLauncher,
                 executor, callback);
     }
@@ -1147,11 +1151,13 @@ public class BiometricPrompt implements BiometricConstants {
      * @param confirmCredentialActivityLauncher The {@link Runnable} to launch KeyguardManager's
      *                                          ConfirmDeviceCredentialActivity.
      */
-    private void init(Context context, LifecycleOwner lifecycleOwner,
-            ViewModelStoreOwner viewModelStoreOwner,
-            Runnable confirmCredentialActivityLauncher,
+    private void init(
+            @NonNull Context context,
+            @NonNull LifecycleOwner lifecycleOwner,
+            @NonNull ViewModelStoreOwner viewModelStoreOwner,
+            @NonNull Runnable confirmCredentialActivityLauncher,
             @Nullable Executor executor,
-            AuthenticationCallback callback) {
+            @NonNull AuthenticationCallback callback) {
         final AuthenticationViewModel viewModel = new ViewModelProvider(viewModelStoreOwner,
                 new AuthenticationViewModelFactory()).get(
                 AuthenticationViewModel.class);
