@@ -16,7 +16,6 @@
 package androidx.xr.runtime
 
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.arcore.testing.FakeLifecycleManager
 import androidx.xr.arcore.testing.FakePerceptionRuntime
@@ -71,8 +70,7 @@ class XrDeviceTest {
         val session = createSession()
         val xrDevice = XrDevice.getCurrentDevice(session)
 
-        assertThat(xrDevice.getLifecycle())
-            .isEqualTo((session.activity as LifecycleOwner).lifecycle)
+        assertThat(xrDevice.getLifecycle()).isEqualTo((session.lifecycleOwner.lifecycle))
     }
 
     private fun createSession(coroutineDispatcher: CoroutineDispatcher = testDispatcher): Session {
