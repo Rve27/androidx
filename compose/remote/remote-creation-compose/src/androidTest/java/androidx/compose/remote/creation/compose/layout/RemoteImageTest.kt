@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.wear.compose.remote.material3
+
+package androidx.compose.remote.creation.compose.layout
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import androidx.compose.remote.creation.CreationDisplayInfo
-import androidx.compose.remote.creation.compose.layout.RemoteImage as CreationRemoteImage
+import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rememberNamedRemoteBitmap
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.rs
+import androidx.compose.remote.creation.compose.test.R
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.remote.player.core.platform.BitmapLoader
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
-import androidx.wear.compose.remote.material3.test.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,13 +63,13 @@ class RemoteImageTest {
         remoteComposeTestRule.runScreenshotTest(
             creationDisplayInfo =
                 CreationDisplayInfo(size, size, context.resources.displayMetrics.densityDpi),
-            backgroundColor = androidx.compose.ui.graphics.Color.Black,
+            backgroundColor = Color.Black,
         ) {
             val avatarImage =
                 rememberNamedRemoteBitmap(name = "avatarImage") {
                     createImage(size, size).asImageBitmap()
                 }
-            CreationRemoteImage(
+            RemoteImage(
                 avatarImage,
                 contentDescription = "background".rs,
                 modifier = RemoteModifier.size(size.rdp),
@@ -84,13 +85,13 @@ class RemoteImageTest {
         remoteComposeTestRule.runScreenshotTest(
             creationDisplayInfo =
                 CreationDisplayInfo(size, size, context.resources.displayMetrics.densityDpi),
-            backgroundColor = androidx.compose.ui.graphics.Color.Black,
+            backgroundColor = Color.Black,
         ) {
             val backgroundImage =
                 rememberNamedRemoteBitmap(name = "backgroundImage") {
                     createImage(size, size).asImageBitmap()
                 }
-            CreationRemoteImage(
+            RemoteImage(
                 remoteBitmap = backgroundImage,
                 contentDescription = "background".rs,
                 modifier = RemoteModifier.size(size.rdp),
@@ -113,7 +114,7 @@ class RemoteImageTest {
                     name = "dummy",
                     url = "android.resource://androidx.compose.remote.foundation/drawable/dummy",
                 )
-            CreationRemoteImage(
+            RemoteImage(
                 dummyImage,
                 contentDescription = "background".rs,
                 modifier = RemoteModifier.size(size.rdp),
@@ -131,7 +132,7 @@ class RemoteImageTest {
                 CreationDisplayInfo(size, size, context.resources.displayMetrics.densityDpi)
         ) {
             val backgroundImage = createImage(size, size)
-            CreationRemoteImage(
+            RemoteImage(
                 bitmap = backgroundImage.asImageBitmap(),
                 contentDescription = "background".rs,
                 modifier = RemoteModifier.size(size.rdp),
@@ -148,7 +149,7 @@ class RemoteImageTest {
             val canvas = Canvas(image)
             paint.strokeWidth = 3f
             paint.isAntiAlias = true
-            paint.setColor(Color.RED)
+            paint.setColor(android.graphics.Color.RED)
             canvas.drawLine(0f, 0f, tw.toFloat(), th.toFloat(), paint)
             canvas.drawLine(0f, th.toFloat(), tw.toFloat(), 0f, paint)
             return image
