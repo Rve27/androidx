@@ -25,6 +25,7 @@ import androidx.build.getAndroidJar
 import androidx.build.getDistributionDirectory
 import androidx.build.getLibraryClasspath
 import androidx.build.getSupportRootFolder
+import androidx.build.isIsolatedProjectsEnabled
 import androidx.build.metalava.versionMetadataUsage
 import androidx.build.multiplatformExtension
 import androidx.build.sources.PROJECT_STRUCTURE_METADATA_FILENAME
@@ -53,6 +54,7 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.Directory
@@ -107,6 +109,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
     lateinit var kmpDependencyClasspathMap: MapProperty<String, FileCollection>
 
     @get:Inject abstract val archiveOperations: ArchiveOperations
+    @get:Inject abstract val buildFeatures: BuildFeatures
 
     override fun apply(project: Project) {
         val docsType = project.name.removePrefix("docs-")
@@ -737,9 +740,11 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         multiplatformExtension.linuxArm64()
         multiplatformExtension.linuxX64()
 
-        multiplatformExtension.js { browser() }
-        multiplatformExtension.wasmJs { browser() }
-        multiplatformExtension.wasmWasi { nodejs() }
+        if (!buildFeatures.isIsolatedProjectsEnabled()) { // KT-80311
+            multiplatformExtension.js { browser() }
+            multiplatformExtension.wasmJs { browser() }
+            multiplatformExtension.wasmWasi { nodejs() }
+        }
     }
 }
 
