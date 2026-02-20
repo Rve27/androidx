@@ -195,7 +195,7 @@ class SessionTest {
             lifecycleManager.config ==
                 Config(
                     planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                    augmentedObjectCategories = AugmentedObjectCategory.all(),
+                    augmentedObjectCategories = AugmentedObjectCategory.allSupported(),
                     handTracking = HandTrackingMode.BOTH,
                     deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                     depthEstimation = DepthEstimationMode.SMOOTH_AND_RAW,
