@@ -176,8 +176,7 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                         extensions.getXrSpatialAudioExtensions().getSoundPoolExtensions());
         mAudioTrackExtensionsWrapper =
                 new AudioTrackExtensionsWrapperImpl(
-                        extensions.getXrSpatialAudioExtensions().getAudioTrackExtensions(),
-                        entityManager);
+                        extensions.getXrSpatialAudioExtensions().getAudioTrackExtensions());
         mMediaPlayerExtensionsWrapper =
                 new MediaPlayerExtensionsWrapperImpl(
                         extensions.getXrSpatialAudioExtensions().getMediaPlayerExtensions());

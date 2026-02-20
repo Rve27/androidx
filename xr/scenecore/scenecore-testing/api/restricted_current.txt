@@ -46,6 +46,8 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeAudioTrackExtensionsWrapper implements androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper {
     ctor public FakeAudioTrackExtensionsWrapper();
+    method @InaccessibleFromKotlin public java.util.Map<android.media.AudioTrack.Builder,androidx.xr.scenecore.runtime.Entity?> getEntityBuilderMap();
+    method @InaccessibleFromKotlin public java.util.Map<android.media.AudioTrack,androidx.xr.scenecore.runtime.Entity?> getEntityMap();
     method @InaccessibleFromKotlin public Throwable? getFakeExtensionException();
     method public androidx.xr.scenecore.runtime.PointSourceParams? getPointSourceParams(android.media.AudioTrack track);
     method @InaccessibleFromKotlin public java.util.Map<android.media.AudioTrack.Builder,androidx.xr.scenecore.runtime.PointSourceParams?> getPointSourceParamsBuilderMap();
@@ -55,11 +57,13 @@ package androidx.xr.scenecore.testing {
     method @androidx.xr.scenecore.runtime.SpatializerConstants.SourceType public int getSpatialSourceType(android.media.AudioTrack track);
     method @InaccessibleFromKotlin public java.util.Map<android.media.AudioTrack,java.lang.Integer> getSpatialSourceTypeMap();
     method @InaccessibleFromKotlin public void setFakeExtensionException(Throwable?);
-    method public void setPointSourceParams(android.media.AudioTrack track, androidx.xr.scenecore.runtime.PointSourceParams params);
-    method public android.media.AudioTrack.Builder setPointSourceParams(android.media.AudioTrack.Builder builder, androidx.xr.scenecore.runtime.PointSourceParams params);
+    method public void setPointSourceParams(android.media.AudioTrack track, androidx.xr.scenecore.runtime.PointSourceParams params, androidx.xr.scenecore.runtime.Entity? entity);
+    method public android.media.AudioTrack.Builder setPointSourceParams(android.media.AudioTrack.Builder builder, androidx.xr.scenecore.runtime.PointSourceParams params, androidx.xr.scenecore.runtime.Entity? entity);
     method public void setSoundFieldAttributes(android.media.AudioTrack track, androidx.xr.scenecore.runtime.SoundFieldAttributes attributes);
     method public android.media.AudioTrack.Builder setSoundFieldAttributes(android.media.AudioTrack.Builder builder, androidx.xr.scenecore.runtime.SoundFieldAttributes attributes);
     method @InaccessibleFromKotlin public void setSpatialSourceTypeMap(java.util.Map<android.media.AudioTrack,java.lang.Integer>);
+    property public java.util.Map<android.media.AudioTrack.Builder,androidx.xr.scenecore.runtime.Entity?> entityBuilderMap;
+    property public java.util.Map<android.media.AudioTrack,androidx.xr.scenecore.runtime.Entity?> entityMap;
     property public Throwable? fakeExtensionException;
     property public java.util.Map<android.media.AudioTrack.Builder,androidx.xr.scenecore.runtime.PointSourceParams?> pointSourceParamsBuilderMap;
     property public java.util.Map<android.media.AudioTrack,androidx.xr.scenecore.runtime.PointSourceParams?> pointSourceParamsMap;
@@ -270,11 +274,11 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMediaPlayerExtensionsWrapper implements androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper {
     ctor public FakeMediaPlayerExtensionsWrapper();
-    method @InaccessibleFromKotlin public java.util.Map<android.media.MediaPlayer,androidx.xr.scenecore.runtime.PointSourceParams> getPointSourceParams();
+    method @InaccessibleFromKotlin public java.util.Map<android.media.MediaPlayer,kotlin.Pair<androidx.xr.scenecore.runtime.PointSourceParams,androidx.xr.scenecore.runtime.Entity>> getParamsWithEntity();
     method @InaccessibleFromKotlin public java.util.Map<android.media.MediaPlayer,androidx.xr.scenecore.runtime.SoundFieldAttributes> getSoundFieldAttributes();
-    method public void setPointSourceParams(android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.runtime.PointSourceParams params);
+    method public void setPointSourceParams(android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.runtime.PointSourceParams params, androidx.xr.scenecore.runtime.Entity entity);
     method public void setSoundFieldAttributes(android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.runtime.SoundFieldAttributes attributes);
-    property public java.util.Map<android.media.MediaPlayer,androidx.xr.scenecore.runtime.PointSourceParams> pointSourceParams;
+    property public java.util.Map<android.media.MediaPlayer,kotlin.Pair<androidx.xr.scenecore.runtime.PointSourceParams,androidx.xr.scenecore.runtime.Entity>> paramsWithEntity;
     property public java.util.Map<android.media.MediaPlayer,androidx.xr.scenecore.runtime.SoundFieldAttributes> soundFieldAttributes;
   }
 
@@ -782,7 +786,7 @@ package androidx.xr.scenecore.testing {
     ctor public FakeSoundPoolExtensionsWrapper();
     method @InaccessibleFromKotlin public int getSourceType();
     method @androidx.xr.scenecore.runtime.SpatializerConstants.SourceType public int getSpatialSourceType(android.media.SoundPool soundPool, int streamId);
-    method public int play(android.media.SoundPool soundPool, int soundId, androidx.xr.scenecore.runtime.PointSourceParams params, float volume, int priority, int loop, float rate);
+    method public int play(android.media.SoundPool soundPool, int soundId, androidx.xr.scenecore.runtime.PointSourceParams params, androidx.xr.scenecore.runtime.Entity? entity, float volume, int priority, int loop, float rate);
     method public int play(android.media.SoundPool soundPool, int soundId, androidx.xr.scenecore.runtime.SoundFieldAttributes attributes, float volume, int priority, int loop, float rate);
     method public void setPlayAsPointSourceResult(int result);
     method public void setPlayAsSoundFieldResult(int result);

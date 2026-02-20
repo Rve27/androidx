@@ -57,8 +57,8 @@ package androidx.xr.scenecore.runtime {
     method public androidx.xr.scenecore.runtime.PointSourceParams? getPointSourceParams(android.media.AudioTrack track);
     method public androidx.xr.scenecore.runtime.SoundFieldAttributes? getSoundFieldAttributes(android.media.AudioTrack track);
     method @androidx.xr.scenecore.runtime.SpatializerConstants.SourceType public int getSpatialSourceType(android.media.AudioTrack track);
-    method public void setPointSourceParams(android.media.AudioTrack track, androidx.xr.scenecore.runtime.PointSourceParams params);
-    method public android.media.AudioTrack.Builder setPointSourceParams(android.media.AudioTrack.Builder builder, androidx.xr.scenecore.runtime.PointSourceParams params);
+    method public void setPointSourceParams(android.media.AudioTrack track, androidx.xr.scenecore.runtime.PointSourceParams params, androidx.xr.scenecore.runtime.Entity? entity);
+    method public android.media.AudioTrack.Builder setPointSourceParams(android.media.AudioTrack.Builder builder, androidx.xr.scenecore.runtime.PointSourceParams params, androidx.xr.scenecore.runtime.Entity? entity);
     method public android.media.AudioTrack.Builder setSoundFieldAttributes(android.media.AudioTrack.Builder builder, androidx.xr.scenecore.runtime.SoundFieldAttributes attributes);
   }
 
@@ -404,7 +404,7 @@ package androidx.xr.scenecore.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MediaPlayerExtensionsWrapper {
-    method public void setPointSourceParams(android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.runtime.PointSourceParams params);
+    method public void setPointSourceParams(android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.runtime.PointSourceParams params, androidx.xr.scenecore.runtime.Entity entity);
     method public void setSoundFieldAttributes(android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.runtime.SoundFieldAttributes attributes);
   }
 
@@ -530,9 +530,7 @@ package androidx.xr.scenecore.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class PointSourceParams {
-    ctor public PointSourceParams(androidx.xr.scenecore.runtime.Entity entity);
-    method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.Entity getEntity();
-    property public androidx.xr.scenecore.runtime.Entity entity;
+    ctor public PointSourceParams();
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface PointerCaptureComponent extends androidx.xr.scenecore.runtime.Component {
@@ -767,7 +765,7 @@ package androidx.xr.scenecore.runtime {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SoundPoolExtensionsWrapper {
     method @androidx.xr.scenecore.runtime.SpatializerConstants.SourceType public int getSpatialSourceType(android.media.SoundPool soundPool, int streamId);
-    method public int play(android.media.SoundPool soundPool, int soundId, androidx.xr.scenecore.runtime.PointSourceParams params, float volume, int priority, int loop, float rate);
+    method public int play(android.media.SoundPool soundPool, int soundId, androidx.xr.scenecore.runtime.PointSourceParams params, androidx.xr.scenecore.runtime.Entity? entity, float volume, int priority, int loop, float rate);
     method public int play(android.media.SoundPool soundPool, int soundId, androidx.xr.scenecore.runtime.SoundFieldAttributes attributes, float volume, int priority, int loop, float rate);
   }
 
