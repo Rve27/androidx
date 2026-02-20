@@ -37,6 +37,39 @@ public class DisplayBlendMode private constructor(private val value: Int) {
     }
 }
 
+/** Contextual label describing the type of detected object. */
+public class AugmentedObjectCategory private constructor(private val value: Int) {
+    public companion object {
+        /** Category value indicating the tracked object is of unknown type. */
+        @JvmField public val UNKNOWN: AugmentedObjectCategory = AugmentedObjectCategory(0)
+        /** Category value indicating the tracked object is believed to be a keyboard. */
+        @JvmField public val KEYBOARD: AugmentedObjectCategory = AugmentedObjectCategory(1)
+        /** Category value indicating the tracked object is believed to be a mouse. */
+        @JvmField public val MOUSE: AugmentedObjectCategory = AugmentedObjectCategory(2)
+        /** Category value indicating the tracked object is believed to be a laptop. */
+        @JvmField public val LAPTOP: AugmentedObjectCategory = AugmentedObjectCategory(3)
+
+        @JvmStatic
+        @Deprecated("Use allSupported() instead.", ReplaceWith("allSupported()"))
+        /** Returns an array of all available [AugmentedObjectCategory] values. */
+        public fun all(): List<AugmentedObjectCategory> = listOf(KEYBOARD, MOUSE, LAPTOP)
+
+        /**
+         * Returns a list of all [AugmentedObjectCategories][AugmentedObjectCategory] supported by
+         * the device.
+         */
+        @JvmStatic
+        public fun allSupported(): List<AugmentedObjectCategory> =
+            listOf(
+                // TODO b/483728983 determine contents of this list dynamically based on device
+                // capability
+                KEYBOARD,
+                MOUSE,
+                LAPTOP,
+            )
+    }
+}
+
 /** Feature that allows tracking of and provides information about scene planes. */
 public class PlaneTrackingMode
 private constructor(@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int) :
