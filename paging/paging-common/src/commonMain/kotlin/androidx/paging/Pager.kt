@@ -65,6 +65,24 @@ constructor(
         pagingSourceFactory: () -> PagingSource<Key, Value>,
     ) : this(config, initialKey, null, pagingSourceFactory)
 
+    @OptIn(ExperimentalPagingApi::class)
+    private val pageFetcher =
+        PageFetcher(
+            pagingSourceFactory =
+                if ((pagingSourceFactory as Any) is SuspendingPagingSourceFactory<*, *>) {
+                    @Suppress("CAST_NEVER_SUCCEEDS")
+                    (pagingSourceFactory as SuspendingPagingSourceFactory<Key, Value>)::create
+                } else {
+                    // cannot pass it as is since it is not a suspend function. Hence, we wrap
+                    // it in {}
+                    // which means we are calling the original factory inside a suspend function
+                    { pagingSourceFactory() }
+                },
+            initialKey = initialKey,
+            config = config,
+            remoteMediator = remoteMediator,
+        )
+
     /**
      * A cold [Flow] of [PagingData], which emits new instances of [PagingData] once they become
      * invalidated by [PagingSource.invalidate] or calls to [AsyncPagingDataDiffer.refresh] or
@@ -81,21 +99,35 @@ constructor(
      * new instance of [PagingData] with cached data pre-loaded.
      */
     @OptIn(androidx.paging.ExperimentalPagingApi::class)
-    public val flow: Flow<PagingData<Value>> =
-        PageFetcher(
-                pagingSourceFactory =
-                    if ((pagingSourceFactory as Any) is SuspendingPagingSourceFactory<*, *>) {
-                        @Suppress("CAST_NEVER_SUCCEEDS")
-                        (pagingSourceFactory as SuspendingPagingSourceFactory<Key, Value>)::create
-                    } else {
-                        // cannot pass it as is since it is not a suspend function. Hence, we wrap
-                        // it in {}
-                        // which means we are calling the original factory inside a suspend function
-                        { pagingSourceFactory() }
-                    },
-                initialKey = initialKey,
-                config = config,
-                remoteMediator = remoteMediator,
-            )
-            .flow
+    public val flow: Flow<PagingData<Value>> = pageFetcher.flow
+
+    /**
+     * Loads a page at the end of current loaded data. Provides a way to manually trigger appends
+     * without scrolling.
+     *
+     * This function is no-op if there are no more data to be loaded from the datasource (i.e.
+     * append is [LoadState.NotLoading.Complete])
+     *
+     * Appends that are triggered by scrolling (i.e. if user scrolls to end of the list and triggers
+     * [PagingConfig.prefetchDistance]) takes precedence over this append. This ensures that items
+     * that are currently accessed gets loaded in first.
+     */
+    public fun append() {
+        pageFetcher.load(LoadType.APPEND)
+    }
+
+    /**
+     * Loads a page at the start of current loaded data. Provides a way to manually trigger prepends
+     * without scrolling.
+     *
+     * This function is no-op if there are no more data to be loaded from the datasource (i.e.
+     * prepend is [LoadState.NotLoading.Complete])
+     *
+     * Prepends that are triggered by scrolling (i.e. if user scrolls to start of the list and
+     * triggers [PagingConfig.prefetchDistance]) takes precedence over this prepend. This ensures
+     * that items that are currently accessed gets loaded in first.
+     */
+    public fun prepend() {
+        pageFetcher.load(LoadType.PREPEND)
+    }
 }
