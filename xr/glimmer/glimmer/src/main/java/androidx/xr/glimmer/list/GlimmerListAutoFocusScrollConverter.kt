@@ -204,9 +204,11 @@ private object AdaptiveScrollConverter : GlimmerListAutoFocusScrollConverter {
                 in t..L - t -> x - h / 2
                 // Focus line is between the center and the end.
                 // Downward-opening parabola (y3 = -ax^2 + bx + c).
-                in L - t..L ->
-                    -h * x * x / 2 / t / t + (1 + h * L / t / t - h / t) * x - h + h * L / t -
-                        h * L * L / 2 / t / t
+                in L - t..L -> {
+                    // Parabola is translated to the origin to improve numerical accuracy.
+                    val x_t = x - L
+                    -h * x_t * x_t / 2 / t / t + (t - h) * x_t / t + L - h
+                }
                 // Fallback to the linear if we are out of expected range.
                 else ->
                     LinearScrollConverter.convertUserScrollToContentScroll(
@@ -252,10 +254,11 @@ private object AdaptiveScrollConverter : GlimmerListAutoFocusScrollConverter {
                 // Focus line is between the center and the end.
                 // Downward-opening parabola (y3 = -ax^2 + bx + c).
                 in L - h - d..L - h -> {
+                    // Parabola is translated to the origin to improve numerical accuracy.
                     val a = -h / 2 / t / t
-                    val b = (1 + h * L / t / t - h / t)
-                    val c = -h + h * L / t - h * L * L / 2 / t / t - y
-                    solveQuadratic(a, b, c, L - t, L)
+                    val b = (t - h) / t
+                    val c = L - h - y
+                    solveQuadratic(a, b, c, -t, 0.0) + L
                 }
                 else -> -1.0
             }

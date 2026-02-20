@@ -121,6 +121,27 @@ internal class GlimmerListAutoFocusScrollConverterTest(
         @Parameterized.Parameters(name = "{index}-{0}")
         internal fun parameters(): Array<ScrollConverterTestCase> =
             arrayOf(
+                // Extra large list, L > 2d + h
+                ScrollConverterTestCase(
+                    scrollThreshold = 300.0,
+                    viewportSize = 500.0,
+                    contentLength = 500_000_000.0,
+                    xy =
+                        listOf(
+                            1.0 to 0.09,
+                            2.0 to 0.18,
+                            5.0 to 0.47,
+                            10.0 to 0.99,
+                            50.0 to 6.62,
+                            350.0 to 133.06,
+                            499_999_650.0 to 499_999_366.94,
+                            499_999_950.0 to 499_999_493.38,
+                            499_999_990.0 to 499_999_499.01,
+                            499_999_995.0 to 499_999_499.52,
+                            499_999_998.0 to 499_999_499.81,
+                            499_999_999.0 to 499_999_499.91,
+                        ),
+                ),
                 // Large list, L > 2d + h
                 ScrollConverterTestCase(
                     scrollThreshold = 100.0,
