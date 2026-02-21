@@ -38,8 +38,21 @@ open class BaseLayoutTest : LayoutTestPlayer() {
         apiLevel: Int,
         profile: Int,
         description: String,
-        ops: ArrayList<TestOperation?>,
+        ops: ArrayList<TestOperation>,
         testClock: RemoteClock = TestClock(1234),
+    ) {
+        checkLayout(w, h, apiLevel, profile, description, ops, testClock, false)
+    }
+
+    fun checkLayout(
+        w: Int,
+        h: Int,
+        apiLevel: Int,
+        profile: Int,
+        description: String,
+        ops: ArrayList<TestOperation>,
+        testClock: RemoteClock = TestClock(1234),
+        overridePlayerSize: Boolean = false,
     ) {
         if (ops.size == 0) {
             return
@@ -60,7 +73,11 @@ open class BaseLayoutTest : LayoutTestPlayer() {
                     { root { function.invoke(this) } },
                 )
                 .writer
-        play(writer, ops, testParameters)
+        if (overridePlayerSize) {
+            play(writer, ops as ArrayList<TestOperation>, testParameters, w, h, true)
+        } else {
+            play(writer, ops as ArrayList<TestOperation>, testParameters)
+        }
     }
 
     data class TestLayout(var layout: RemoteComposeContext.() -> Unit) : TestOperation() {
