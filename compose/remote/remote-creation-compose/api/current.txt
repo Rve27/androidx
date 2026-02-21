@@ -125,6 +125,11 @@ package androidx.compose.remote.creation.compose.layout {
     method public androidx.compose.remote.creation.compose.state.RemoteFloat componentWidth();
   }
 
+  public final class RemoteImageKt {
+    method @KotlinOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteImage(androidx.compose.remote.creation.compose.state.RemoteBitmap remoteBitmap, androidx.compose.remote.creation.compose.state.RemoteString? contentDescription, optional androidx.compose.remote.creation.compose.modifier.RemoteModifier modifier, optional androidx.compose.ui.layout.ContentScale contentScale, optional androidx.compose.remote.creation.compose.state.RemoteFloat alpha);
+    method @BytecodeOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteImage(androidx.compose.remote.creation.compose.state.RemoteBitmap, androidx.compose.remote.creation.compose.state.RemoteString?, androidx.compose.remote.creation.compose.modifier.RemoteModifier?, androidx.compose.ui.layout.ContentScale?, androidx.compose.remote.creation.compose.state.RemoteFloat?, androidx.compose.runtime.Composer?, int, int);
+  }
+
   public final class RemoteOffset {
     ctor public RemoteOffset(androidx.compose.remote.creation.compose.state.RemoteFloat x, androidx.compose.remote.creation.compose.state.RemoteFloat y);
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteFloat getMinDimension();
