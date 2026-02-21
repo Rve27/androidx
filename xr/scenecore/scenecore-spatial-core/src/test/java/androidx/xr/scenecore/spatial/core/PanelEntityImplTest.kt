@@ -66,13 +66,7 @@ class PanelEntityImplTest {
             "+w" + pixelDimensions.width + "dp-h" + pixelDimensions.height + "dp"
         RuntimeEnvironment.setQualifiers(widthAndHeightConfig)
         sceneRuntime =
-            SpatialSceneRuntime.create(
-                activity,
-                fakeExecutor,
-                xrExtensions!!,
-                entityManager,
-                /* unscaledGravityAlignedActivitySpace= */ false,
-            )
+            SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions!!, entityManager)
         renderViewScenePose.activitySpacePose = Pose(Vector3(0f, 0f, 0f), Quaternion.Identity)
         renderViewFov =
             FieldOfView(

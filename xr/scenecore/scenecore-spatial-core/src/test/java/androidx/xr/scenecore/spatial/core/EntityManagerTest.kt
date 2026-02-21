@@ -66,7 +66,6 @@ class EntityManagerTest {
                 fakeScheduledExecutorService,
                 xrExtensions,
                 entityManager,
-                false,
             )
         val taskNode = xrExtensions.createNode()
         activitySpace =
@@ -76,7 +75,6 @@ class EntityManagerTest {
                 xrExtensions,
                 entityManager,
                 { xrExtensions.getSpatialState(activity) },
-                /* unscaledGravityAlignedActivitySpace= */ false,
                 fakeScheduledExecutorService,
             )
         val currentTimeMillis = 1000000000L

@@ -64,13 +64,7 @@ class RuntimeUtilsTest {
         val fakeExecutor = FakeScheduledExecutorService()
         val xrExtensions = getXrExtensions()
         checkNotNull(xrExtensions) { "XrExtensions is null. Stop testing" }
-        return SpatialSceneRuntime.create(
-            activity,
-            fakeExecutor,
-            xrExtensions,
-            entityManager,
-            false,
-        )
+        return SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions, entityManager)
     }
 
     @Test

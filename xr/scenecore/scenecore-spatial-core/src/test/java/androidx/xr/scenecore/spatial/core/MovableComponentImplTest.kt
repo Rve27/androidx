@@ -94,13 +94,7 @@ class MovableComponentImplTest {
     @Before
     fun setUp() {
         sceneRuntime =
-            SpatialSceneRuntime.create(
-                activity,
-                fakeExecutor,
-                xrExtensions,
-                entityManager,
-                /* unscaledGravityAlignedActivitySpace= */ false,
-            )
+            SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions, entityManager)
         activitySpaceImpl = sceneRuntime.activitySpace as ActivitySpaceImpl
         activitySpaceNode = activitySpaceImpl.mNode
     }
