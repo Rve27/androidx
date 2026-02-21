@@ -3,7 +3,6 @@ import androidx.room3.EntityInsertAdapter
 import androidx.room3.EntityUpsertAdapter
 import androidx.room3.RoomDatabase
 import androidx.room3.guava.GuavaDaoReturnTypeConverter
-import androidx.room3.guava.createListenableFuture
 import androidx.room3.util.appendPlaceholders
 import androidx.room3.util.getColumnIndexOrThrow
 import androidx.room3.util.getLastInsertedRowId
@@ -195,34 +194,38 @@ internal class MyDao_Impl(
 
   public override fun insertListenableFuture(id: String, name: String): ListenableFuture<Long> {
     val _sql: String = "INSERT INTO MyEntity (pk, other) VALUES (?, ?)"
-    return createListenableFuture(__db, false, true) { _connection ->
-      val _stmt: SQLiteStatement = _connection.prepare(_sql)
-      try {
-        var _argIndex: Int = 1
-        _stmt.bindText(_argIndex, id)
-        _argIndex = 2
-        _stmt.bindText(_argIndex, name)
-        _stmt.step()
-        getLastInsertedRowId(_connection)
-      } finally {
-        _stmt.close()
+    return __guavaDaoReturnTypeConverter.convertAsync(__db, true) {
+      performSuspending(__db, false, true) { _connection ->
+        val _stmt: SQLiteStatement = _connection.prepare(_sql)
+        try {
+          var _argIndex: Int = 1
+          _stmt.bindText(_argIndex, id)
+          _argIndex = 2
+          _stmt.bindText(_argIndex, name)
+          _stmt.step()
+          getLastInsertedRowId(_connection)
+        } finally {
+          _stmt.close()
+        }
       }
     }
   }
 
   public override fun updateListenableFuture(id: String, name: String): ListenableFuture<Void?> {
     val _sql: String = "UPDATE MyEntity SET other = ? WHERE pk = ?"
-    return createListenableFuture(__db, false, true) { _connection ->
-      val _stmt: SQLiteStatement = _connection.prepare(_sql)
-      try {
-        var _argIndex: Int = 1
-        _stmt.bindText(_argIndex, name)
-        _argIndex = 2
-        _stmt.bindText(_argIndex, id)
-        _stmt.step()
-        null
-      } finally {
-        _stmt.close()
+    return __guavaDaoReturnTypeConverter.convertAsync(__db, true) {
+      performSuspending(__db, false, true) { _connection ->
+        val _stmt: SQLiteStatement = _connection.prepare(_sql)
+        try {
+          var _argIndex: Int = 1
+          _stmt.bindText(_argIndex, name)
+          _argIndex = 2
+          _stmt.bindText(_argIndex, id)
+          _stmt.step()
+          null
+        } finally {
+          _stmt.close()
+        }
       }
     }
   }

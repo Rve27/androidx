@@ -2466,11 +2466,10 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                     import androidx.room3.*
                     import io.reactivex.rxjava3.core.*
                     import com.google.common.base.Optional
+                    import androidx.room3.rxjava3.RxDaoReturnTypeConverters
 
                 @Database(entities = [MyEntity::class], version = 1, exportSchema = false)
-                @DaoReturnTypeConverters(
-                    androidx.room3.rxjava3.RxDaoReturnTypeConverters::class
-                )
+                @DaoReturnTypeConverters(RxDaoReturnTypeConverters::class)
                 abstract class MyDatabase : RoomDatabase() {
                     abstract fun getDao(): MyDao
                 }
@@ -2537,6 +2536,9 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 import io.reactivex.rxjava3.core.*
 
                 @Dao
+                @DaoReturnTypeConverters(
+                    androidx.room3.rxjava3.RxDaoReturnTypeConverters::class
+                )
                 interface MyDao {
                     @Query("INSERT INTO MyEntity (pk, other) VALUES (:id, :name)")
                     fun insertPublisherSingle(id: String, name: String): Single<Long>
