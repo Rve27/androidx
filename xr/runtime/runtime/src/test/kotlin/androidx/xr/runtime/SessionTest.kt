@@ -424,7 +424,9 @@ class SessionTest {
                 override val lifecycle: Lifecycle
                     get() = LifecycleRegistry(this)
             }
-        underTest = (Session.create(activity, lifecycleOwner) as SessionCreateSuccess).session
+        underTest =
+            (Session.create(activity, lifecycleOwner = lifecycleOwner) as SessionCreateSuccess)
+                .session
 
         activityController.destroy()
 

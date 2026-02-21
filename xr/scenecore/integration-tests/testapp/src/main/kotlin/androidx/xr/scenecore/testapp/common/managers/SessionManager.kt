@@ -47,14 +47,10 @@ class SessionManager(private val activity: AppCompatActivity) {
             }
         }
 
-    @Suppress("DEPRECATION")
     fun createSession(): Session? {
         var session: Session? = null
         try {
-            when (
-                val sessionCreateResult =
-                    Session.create(activity, unscaledGravityAlignedActivitySpace = true)
-            ) {
+            when (val sessionCreateResult = Session.create(activity)) {
                 is SessionCreateSuccess -> {
                     session = sessionCreateResult.session
                     obtainUserPermissions(activity)

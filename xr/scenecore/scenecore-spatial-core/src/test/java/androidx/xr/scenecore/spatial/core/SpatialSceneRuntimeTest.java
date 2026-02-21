@@ -165,7 +165,7 @@ public class SpatialSceneRuntimeTest {
                 .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
         mRuntime =
                 SpatialSceneRuntime.create(
-                        mActivity, mFakeExecutor, mXrExtensions, mEntityManager, false);
+                        mActivity, mFakeExecutor, mXrExtensions, mEntityManager);
     }
 
     @After
@@ -197,7 +197,7 @@ public class SpatialSceneRuntimeTest {
 
     private SpatialSceneRuntime createRuntime() {
         return SpatialSceneRuntime.create(
-                mActivity, mFakeExecutor, mXrExtensions, mEntityManager, false);
+                mActivity, mFakeExecutor, mXrExtensions, mEntityManager);
     }
 
     @Test
