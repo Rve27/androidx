@@ -94,7 +94,7 @@ class SpatialRenderingRuntimeTest {
         activity.setContentView(FrameLayout(activity))
         ShadowXrExtensions.extract(xrExtensions)
             .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE)
-        val fakeSceneRuntime = FakeSceneRuntime(false, fakeExecutor)
+        val fakeSceneRuntime = FakeSceneRuntime(fakeExecutor)
         sceneRuntime = fakeSceneRuntime
 
         assertThat(fakeSceneRuntime).isNotNull()

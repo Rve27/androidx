@@ -81,17 +81,10 @@ class ResizableComponentImplTest {
                 xrExtensions,
                 entityManager,
                 { xrExtensions.getSpatialState(activity) },
-                unscaledGravityAlignedActivitySpace = false,
                 fakeExecutor,
             )
         fakeSceneRuntime =
-            SpatialSceneRuntime.create(
-                activity,
-                fakeExecutor,
-                xrExtensions,
-                entityManager,
-                /* unscaledGravityAlignedActivitySpace= */ false,
-            )
+            SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions, entityManager)
     }
 
     @After

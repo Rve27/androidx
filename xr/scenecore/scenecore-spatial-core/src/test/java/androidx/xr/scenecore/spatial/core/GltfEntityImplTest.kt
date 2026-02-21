@@ -72,7 +72,6 @@ class GltfEntityImplTest {
                 xrExtensions,
                 entityManager,
                 { xrExtensions.getSpatialState(activity) },
-                unscaledGravityAlignedActivitySpace = false,
                 fakeScheduledExecutorService,
             )
         entityManager.addSystemSpaceActivityPose(PerceptionSpaceScenePoseImpl(activitySpace))

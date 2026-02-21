@@ -114,11 +114,7 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
             insets
         }
 
-        @Suppress("DEPRECATION")
-        session =
-            (Session.create(this, unscaledGravityAlignedActivitySpace = true)
-                    as SessionCreateSuccess)
-                .session
+        session = (Session.create(this) as SessionCreateSuccess).session
         scene = session.scene
         scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
         session.configure(
