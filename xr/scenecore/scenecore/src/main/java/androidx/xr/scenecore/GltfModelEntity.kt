@@ -45,6 +45,7 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
     BaseEntity<RtGltfEntity>(rtEntity, entityManager) {
     // TODO: b/417750821 - Add an OnAnimationEvent() Listener interface
 
+    @Suppress("DEPRECATION")
     private val mAnimationStateListeners: MutableMap<Consumer<AnimationState>, Executor> =
         Collections.synchronizedMap(mutableMapOf())
 
@@ -124,8 +125,15 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
         }
 
     /** Specifies the current animation state of the GltfModelEntity. */
+    @Deprecated(
+        message =
+            "Use GltfAnimation.AnimationState instead. Entity-level animation state is deprecated" +
+                " since multiple animations can now play simultaneously.",
+        replaceWith =
+            ReplaceWith("GltfAnimation.AnimationState", "androidx.xr.scenecore.GltfAnimation"),
+    )
     public class AnimationState private constructor(private val name: String) {
-
+        @Suppress("DEPRECATION")
         public companion object {
             /** The animation is currently playing. */
             @JvmField public val PLAYING: AnimationState = AnimationState("PLAYING")
@@ -145,6 +153,12 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      *
      * @return The current animation state.
      */
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message =
+            "Entity-level animation state is deprecated. Query the animationState property of" +
+                " individual GltfAnimation objects in the 'animations' list instead."
+    )
     public val animationState: AnimationState
         get() {
             checkNotDisposed()
@@ -286,6 +300,15 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      *   the given name.
      */
     @MainThread
+    @Deprecated(
+        message = "Use GltfAnimation.start() on the specific animation instead.",
+        replaceWith =
+            ReplaceWith(
+                "animations.find { it.name == animationName }?" +
+                    ".start(GltfAnimationStartOptions(shouldLoop = loop))",
+                "androidx.xr.scenecore.GltfAnimationStartOptions",
+            ),
+    )
     public fun startAnimation(loop: Boolean, animationName: String) {
         checkNotDisposed()
         try {
@@ -307,6 +330,14 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      */
     @MainThread
     @JvmOverloads
+    @Deprecated(
+        message = "Use GltfAnimation.start() on the specific animation instead.",
+        replaceWith =
+            ReplaceWith(
+                "animations.firstOrNull()?.start(GltfAnimationStartOptions(shouldLoop = loop))",
+                "androidx.xr.scenecore.GltfAnimationStartOptions",
+            ),
+    )
     public fun startAnimation(loop: Boolean = true) {
         checkNotDisposed()
         try {
@@ -323,6 +354,10 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      * https://developer.android.com/guide/components/processes-and-threads
      */
     @MainThread
+    @Deprecated(
+        message = "Use GltfAnimation.stop() on individual animations instead.",
+        replaceWith = ReplaceWith("animations.forEach { it.stop() }"),
+    )
     public fun stopAnimation() {
         checkNotDisposed()
         rtEntity!!.stopAnimation()
@@ -339,6 +374,10 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     @MainThread
+    @Deprecated(
+        message = "Use GltfAnimation.pause() on individual animations instead.",
+        replaceWith = ReplaceWith("animations.forEach { it.pause() }"),
+    )
     public fun pauseAnimation() {
         checkNotDisposed()
         rtEntity!!.pauseAnimation()
@@ -354,6 +393,10 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     @MainThread
+    @Deprecated(
+        message = "Use GltfAnimation.resume() on individual animations instead.",
+        replaceWith = ReplaceWith("animations.forEach { it.resume() }"),
+    )
     public fun resumeAnimation() {
         checkNotDisposed()
         rtEntity!!.resumeAnimation()
@@ -368,6 +411,13 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      * @param listener The listener to be invoked.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message =
+            "Entity-level animation listeners are deprecated. Use" +
+                " GltfAnimation.addAnimationStateListener() or removeAnimationStateListener()" +
+                " on individual animations instead."
+    )
     public fun addAnimationStateListener(executor: Executor, listener: Consumer<AnimationState>) {
         checkNotDisposed()
         if (mAnimationStateListeners.isEmpty()) {
@@ -388,6 +438,13 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      * @param listener The listener to be invoked.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message =
+            "Entity-level animation listeners are deprecated." +
+                " Use GltfAnimation.addAnimationStateListener() or" +
+                " removeAnimationStateListener() on individual animations instead."
+    )
     public fun addAnimationStateListener(listener: Consumer<AnimationState>) {
         addAnimationStateListener(executor = Dispatchers.Main.asExecutor(), listener = listener)
     }
@@ -400,6 +457,13 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      * @param listener The listener to be removed.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        message =
+            "Entity-level animation listeners are deprecated. Use" +
+                " GltfAnimation.addAnimationStateListener() or removeAnimationStateListener()" +
+                " on individual animations instead."
+    )
     public fun removeAnimationStateListener(listener: Consumer<AnimationState>) {
         mAnimationStateListeners.remove(listener)
         if (mAnimationStateListeners.isEmpty()) {
@@ -407,7 +471,9 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun onAnimationStateUpdated(@RtGltfEntity.AnimationStateValue animationState: Int) {
+        @Suppress("DEPRECATION")
         val result =
             when (animationState) {
                 RtGltfEntity.AnimationState.PLAYING -> AnimationState.PLAYING
