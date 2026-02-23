@@ -21,6 +21,7 @@ import android.graphics.Color
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
 import android.os.DeadObjectException
@@ -41,6 +42,7 @@ import androidx.pdf.content.PageSelection
 import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
+import androidx.pdf.service.PdfDocumentServiceImpl
 import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.toAndroidClass
 import androidx.pdf.utils.toContentClass
@@ -80,8 +82,9 @@ import kotlinx.coroutines.withContext
  *   I/O-bound tasks such as interacting with the PDF service. It is recommended to use a dispatcher
  *   appropriate for blocking I/O operations, such as `Dispatchers.IO`.
  * @param pageCount The total number of pages in the document.
- * @param isLinearized Indicates whether the document is linearized.
+ * @param linearizationStatus Indicates the linearization status of the document.
  * @param formType The type of form present in the document.
+ * @param isLinearized Indicates whether the document is linearized.
  * @constructor Creates a new [SandboxedPdfDocument] instance.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -92,10 +95,12 @@ public class SandboxedPdfDocument(
     private val fileDescriptor: ParcelFileDescriptor,
     private val coroutineContext: CoroutineContext,
     override val pageCount: Int,
-    override val isLinearized: Boolean,
+    override val linearizationStatus: Int,
     override val formType: Int,
     override val renderParams: RenderParams,
     private val batchPdfAnnotationsProcessor: BatchPdfAnnotationsProcessor,
+    @Deprecated("Deprecated in Java, Use getLinearizationStatus() instead")
+    override val isLinearized: Boolean,
 ) : EditablePdfDocument() {
 
     private val refCount = AtomicInteger(1)

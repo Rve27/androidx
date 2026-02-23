@@ -17,6 +17,7 @@
 package androidx.pdf
 
 import android.content.Context
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import androidx.annotation.RestrictTo
@@ -117,6 +118,14 @@ public class SandboxedPdfLoader(
             handlePdfLoadingError(pfd, status)
         }
 
+        val linearizationStatus =
+            try {
+                binder.linearizationStatus
+            } catch (_: UnsupportedOperationException) {
+                PdfDocument.LINEARIZATION_STATUS_UNKNOWN
+            }
+        val isPdfLinearized = linearizationStatus == PdfRenderer.DOCUMENT_LINEARIZED_TYPE_LINEARIZED
+
         return SandboxedPdfDocument(
             uri,
             connection,
@@ -124,10 +133,11 @@ public class SandboxedPdfLoader(
             pfd,
             coroutineContext,
             binder.numPages(),
-            binder.isPdfLinearized(),
+            linearizationStatus,
             binder.getFormType(),
             renderParams = renderParams,
             batchPdfAnnotationsProcessor = BatchPdfAnnotationsProcessor(binder),
+            isPdfLinearized,
         )
     }
 
