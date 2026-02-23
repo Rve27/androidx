@@ -19,6 +19,7 @@ package androidx.pdf
 import android.graphics.PointF
 import android.net.Uri
 import android.util.SparseArray
+import androidx.pdf.PdfDocument.Companion.LINEARIZATION_STATUS_UNKNOWN
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
@@ -37,9 +38,11 @@ import java.util.concurrent.Executor
 internal class FakeEditablePdfDocument(
     override val uri: Uri,
     override val pageCount: Int,
-    override val isLinearized: Boolean = false,
+    override val linearizationStatus: Int = LINEARIZATION_STATUS_UNKNOWN,
     override val renderParams: RenderParams = RenderParams(RenderParams.RENDER_MODE_FOR_DISPLAY),
     override val formType: Int = -1,
+    @Deprecated("Deprecated in Java, Use getLinearizationStatus() instead")
+    override val isLinearized: Boolean = false,
 ) : EditablePdfDocument() {
     private val annotationsByPage = mutableMapOf<Int, MutableList<PdfEditEntry<out PdfEdit>>>()
 

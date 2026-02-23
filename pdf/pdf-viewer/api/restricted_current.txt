@@ -15,6 +15,7 @@ package androidx.pdf {
     method @InaccessibleFromKotlin public int getFormType();
     method public suspend Object? getFormWidgetInfos(int pageNum, optional long types, kotlin.coroutines.Continuation<? super java.util.List<androidx.pdf.models.FormWidgetInfo>>);
     method @BytecodeOnly public static Object! getFormWidgetInfos$default(androidx.pdf.PdfDocument!, int, long, kotlin.coroutines.Continuation!, int, Object!);
+    method @InaccessibleFromKotlin public int getLinearizationStatus();
     method public androidx.pdf.PdfDocument.BitmapSource getPageBitmapSource(int pageNumber);
     method public suspend Object? getPageContent(int pageNumber, kotlin.coroutines.Continuation<? super androidx.pdf.PdfDocument.PdfPageContent?>);
     method @InaccessibleFromKotlin public int getPageCount();
@@ -28,11 +29,12 @@ package androidx.pdf {
     method @InaccessibleFromKotlin public androidx.pdf.RenderParams getRenderParams();
     method public suspend Object? getSelectionBounds(int pageNumber, android.graphics.PointF start, android.graphics.PointF stop, kotlin.coroutines.Continuation<? super androidx.pdf.content.PageSelection?>);
     method @InaccessibleFromKotlin public android.net.Uri getUri();
-    method @InaccessibleFromKotlin public boolean isLinearized();
+    method @InaccessibleFromKotlin @Deprecated public boolean isLinearized();
     method public void removeOnPdfContentInvalidatedListener(androidx.pdf.PdfDocument.OnPdfContentInvalidatedListener listener);
     method public suspend Object? searchDocument(String query, kotlin.ranges.IntRange pageRange, kotlin.coroutines.Continuation<? super android.util.SparseArray<java.util.List<androidx.pdf.content.PageMatchBounds>>>);
     property public abstract int formType;
-    property public abstract boolean isLinearized;
+    property @Deprecated public abstract boolean isLinearized;
+    property public abstract int linearizationStatus;
     property public abstract int pageCount;
     property public abstract androidx.pdf.RenderParams renderParams;
     property public abstract android.net.Uri uri;
@@ -46,6 +48,9 @@ package androidx.pdf {
     field public static final long FORM_WIDGET_INCLUDE_SIGNATURE_TYPE = 128L; // 0x80L
     field public static final long FORM_WIDGET_INCLUDE_TEXTFIELD_TYPE = 64L; // 0x40L
     field public static final long FORM_WIDGET_INCLUDE_UNKNOWN_TYPE = 1L; // 0x1L
+    field public static final int LINEARIZATION_STATUS_LINEARIZED = 1; // 0x1
+    field public static final int LINEARIZATION_STATUS_NOT_LINEARIZED = 0; // 0x0
+    field public static final int LINEARIZATION_STATUS_UNKNOWN = 2; // 0x2
     field public static final long PAGE_INFO_EXCLUDE_FORM_WIDGETS = 0L; // 0x0L
     field public static final long PAGE_INFO_INCLUDE_FORM_WIDGET = 1L; // 0x1L
     field public static final int PDF_FORM_TYPE_ACRO_FORM = 1; // 0x1
@@ -71,6 +76,9 @@ package androidx.pdf {
     property public static long FORM_WIDGET_INCLUDE_SIGNATURE_TYPE;
     property public static long FORM_WIDGET_INCLUDE_TEXTFIELD_TYPE;
     property public static long FORM_WIDGET_INCLUDE_UNKNOWN_TYPE;
+    property public static int LINEARIZATION_STATUS_LINEARIZED;
+    property public static int LINEARIZATION_STATUS_NOT_LINEARIZED;
+    property public static int LINEARIZATION_STATUS_UNKNOWN;
     property public static long PAGE_INFO_EXCLUDE_FORM_WIDGETS;
     property public static long PAGE_INFO_INCLUDE_FORM_WIDGET;
     property public static int PDF_FORM_TYPE_ACRO_FORM;
@@ -86,6 +94,9 @@ package androidx.pdf {
     field public static final long FORM_WIDGET_INCLUDE_SIGNATURE_TYPE = 128L; // 0x80L
     field public static final long FORM_WIDGET_INCLUDE_TEXTFIELD_TYPE = 64L; // 0x40L
     field public static final long FORM_WIDGET_INCLUDE_UNKNOWN_TYPE = 1L; // 0x1L
+    field public static final int LINEARIZATION_STATUS_LINEARIZED = 1; // 0x1
+    field public static final int LINEARIZATION_STATUS_NOT_LINEARIZED = 0; // 0x0
+    field public static final int LINEARIZATION_STATUS_UNKNOWN = 2; // 0x2
     field public static final long PAGE_INFO_EXCLUDE_FORM_WIDGETS = 0L; // 0x0L
     field public static final long PAGE_INFO_INCLUDE_FORM_WIDGET = 1L; // 0x1L
     field public static final int PDF_FORM_TYPE_ACRO_FORM = 1; // 0x1
