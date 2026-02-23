@@ -50,39 +50,40 @@ class RemoteBoxTest {
         composeTestRule.runScreenshotTest {
             val alignments =
                 listOf(
-                    RemoteAlignment.Start,
-                    RemoteAlignment.CenterHorizontally,
-                    RemoteAlignment.End,
+                    RemoteAlignment.TopStart,
+                    RemoteAlignment.TopCenter,
+                    RemoteAlignment.TopEnd,
+                    RemoteAlignment.CenterStart,
+                    RemoteAlignment.Center,
+                    RemoteAlignment.CenterEnd,
+                    RemoteAlignment.BottomStart,
+                    RemoteAlignment.BottomCenter,
+                    RemoteAlignment.BottomEnd,
                 )
-            val arrangements =
-                listOf(RemoteArrangement.Top, RemoteArrangement.Center, RemoteArrangement.Bottom)
 
             gridScreenshotUI.GridContent(
                 sequence {
-                        for (arrangement in arrangements) {
-                            for (alignment in alignments) {
-                                yield(
-                                    "${arrangement.propertyName()} ${alignment.propertyName()}" to
-                                        @RemoteComposable @Composable {
+                        for (alignment in alignments) {
+                            yield(
+                                alignment.propertyName() to
+                                    @RemoteComposable @Composable {
+                                        RemoteBox(
+                                            modifier = RemoteModifier.fillMaxSize(),
+                                            contentAlignment = alignment,
+                                        ) {
                                             RemoteBox(
-                                                modifier = RemoteModifier.fillMaxSize(),
-                                                horizontalAlignment = alignment,
-                                                verticalArrangement = arrangement,
-                                            ) {
-                                                RemoteBox(
-                                                    modifier =
-                                                        RemoteModifier.size(48.rdp)
-                                                            .background(Color(0xFF6200EE))
-                                                )
-                                                RemoteBox(
-                                                    modifier =
-                                                        RemoteModifier.size(24.rdp)
-                                                            .background(Color(0xFF03DAC6))
-                                                )
-                                            }
+                                                modifier =
+                                                    RemoteModifier.size(48.rdp)
+                                                        .background(Color(0xFF6200EE))
+                                            )
+                                            RemoteBox(
+                                                modifier =
+                                                    RemoteModifier.size(24.rdp)
+                                                        .background(Color(0xFF03DAC6))
+                                            )
                                         }
-                                )
-                            }
+                                    }
+                            )
                         }
                     }
                     .toList()

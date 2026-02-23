@@ -105,14 +105,14 @@ internal class RemoteRootNodeV2 : RemoteComposeNodeV2() {
 
 internal class RemoteBoxNodeV2 : RemoteComposeNodeV2() {
     var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start
-    var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top
+    var verticalAlignment: RemoteAlignment.Vertical = RemoteAlignment.Top
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startBox(
             recordingModifier,
             horizontalAlignment.toRemote(),
-            verticalArrangement.toRemote(),
+            verticalAlignment.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
         creationState.document.endBox()

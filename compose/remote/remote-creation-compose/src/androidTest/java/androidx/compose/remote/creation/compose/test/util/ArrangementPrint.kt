@@ -35,15 +35,22 @@ fun RemoteArrangement.Vertical.propertyName(): String {
 }
 
 fun RemoteAlignment.Horizontal.propertyName(): String {
-    return RemoteAlignment::class
+    return RemoteAlignment.Companion::class
         .declaredMemberProperties
-        .firstOrNull { it.get(RemoteAlignment) == this }
+        .firstOrNull { it.get(RemoteAlignment.Companion) == this }
         ?.name ?: "Unknown"
 }
 
 fun RemoteAlignment.Vertical.propertyName(): String {
-    return RemoteAlignment::class
+    return RemoteAlignment.Companion::class
         .declaredMemberProperties
-        .firstOrNull { it.get(RemoteAlignment) == this }
+        .firstOrNull { it.get(RemoteAlignment.Companion) == this }
+        ?.name ?: "Unknown"
+}
+
+fun RemoteAlignment.propertyName(): String {
+    return RemoteAlignment.Companion::class
+        .declaredMemberProperties
+        .firstOrNull { it.get(RemoteAlignment.Companion) == this }
         ?.name ?: "Unknown"
 }

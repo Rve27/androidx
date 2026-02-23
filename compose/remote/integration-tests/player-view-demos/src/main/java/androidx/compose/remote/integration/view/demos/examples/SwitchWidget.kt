@@ -62,8 +62,7 @@ fun SwitchWidgetOnState(modifier: RemoteModifier = RemoteModifier, id: Int = 0) 
                 .clip(RemoteRoundedCornerShape(20.rdp))
                 .background(Color(63, 81, 181, 255))
                 .padding(2.dp),
-        horizontalAlignment = RemoteAlignment.End,
-        verticalArrangement = RemoteArrangement.Center,
+        contentAlignment = RemoteAlignment.CenterEnd,
     ) {
         RemoteCanvas(modifier = RemoteModifier.size(32.rdp)) {
             val paint = RemotePaint().apply { color = Color(255, 255, 255).rc }
@@ -88,8 +87,7 @@ fun SwitchWidgetOffState(modifier: RemoteModifier = RemoteModifier) {
                 .background(Color(100, 100, 100))
                 .padding(8.dp)
                 .then(modifier),
-        horizontalAlignment = RemoteAlignment.Start,
-        verticalArrangement = RemoteArrangement.Center,
+        contentAlignment = RemoteAlignment.CenterStart,
     ) {
         RemoteCanvas(modifier = RemoteModifier.size(20.rdp)) {
             val paint = RemotePaint().apply { color = Color(220, 220, 220).rc }
@@ -128,7 +126,7 @@ fun SwitchWidget(value: MutableRemoteInt) {
 
     RemoteBox(
         modifier = RemoteModifier.padding(4.dp),
-        verticalArrangement = RemoteArrangement.Center,
+        contentAlignment = RemoteAlignment.CenterStart,
     ) {
         val modifierSize = RemoteModifier.size(60.rdp, 36.rdp)
         StateLayout(modifier = RemoteModifier.wrapContentSize(), stateMachine = fsm) { state ->

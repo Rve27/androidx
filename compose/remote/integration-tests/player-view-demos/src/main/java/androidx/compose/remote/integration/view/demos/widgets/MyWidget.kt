@@ -58,8 +58,7 @@ class MyWidget : RemoteComposeWidget() {
                 .background(Color.LightGray)
                 .padding(20.dp)
                 .onClick(onClick),
-            RemoteAlignment.CenterHorizontally,
-            RemoteArrangement.Center,
+            contentAlignment = RemoteAlignment.Center,
         ) {
             RemoteText(text, fontSize = 32.rsp, color = RemoteColor(Color.White))
         }
