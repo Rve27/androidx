@@ -189,6 +189,7 @@ internal class RectList {
             }
             i -= LongsPerItem
         }
+        throw IllegalStateException("Inserted child $value before its parent $parentId")
     }
 
     /**
@@ -250,6 +251,7 @@ internal class RectList {
             }
             i -= LongsPerItem
         }
+        throw IllegalStateException("Inserted child $value before its parent $parentId")
     }
 
     /**
@@ -383,6 +385,7 @@ internal class RectList {
             }
             i += LongsPerItem
         }
+        throw IllegalStateException("Didn't find the node with $value")
     }
 
     /**
@@ -440,9 +443,11 @@ internal class RectList {
                     }
                     i += LongsPerItem
                 }
+                throw IllegalStateException("Didn't find the node with $value")
             }
             i += LongsPerItem
         }
+        throw IllegalStateException("Didn't find the parent with $parentId")
     }
 
     fun updateSubhierarchy(id: Int, deltaX: Int, deltaY: Int) {
