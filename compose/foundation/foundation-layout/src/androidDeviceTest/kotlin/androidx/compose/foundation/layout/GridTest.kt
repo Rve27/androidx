@@ -19,6 +19,8 @@
 package androidx.compose.foundation.layout
 
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -2759,6 +2761,150 @@ class GridTest : LayoutTest() {
                 gridSize.value?.height,
             )
         }
+
+    @Test
+    fun testGrid_lazyColumn_inMinMaxTrack_doesNotCrash() =
+        with(density) {
+            val gridHeight = 200.dp
+            val fixedRowHeight = 50.dp
+            val expectedLazyHeight = (gridHeight - fixedRowHeight).roundToPx()
+
+            val latch = CountDownLatch(1)
+            val lazySize = Ref<IntSize>()
+
+            show {
+                Box(Modifier.height(gridHeight)) {
+                    Grid(
+                        config = {
+                            column(GridTrackSize.MinMax(0.dp, 1.fr))
+                            row(GridTrackSize.Fixed(fixedRowHeight))
+                            row(GridTrackSize.MinMax(0.dp, 1.fr))
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        // Row 1
+                        Box(Modifier.gridItem(row = 1, column = 1).fillMaxSize())
+
+                        // Row 2
+                        LazyColumn(
+                            modifier =
+                                Modifier.gridItem(row = 2, column = 1)
+                                    .fillMaxSize()
+                                    .onGloballyPositioned {
+                                        lazySize.value = it.size
+                                        latch.countDown()
+                                    }
+                        ) {
+                            items(10) { Box(Modifier.height(20.dp)) }
+                        }
+                    }
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "LazyColumn should take the remaining 150dp height",
+                expectedLazyHeight,
+                lazySize.value?.height,
+            )
+        }
+
+    @Test
+    fun testGrid_lazyRow_inMinMaxTrack_doesNotCrash() =
+        with(density) {
+            val gridWidth = 300.dp
+            val fixedColWidth = 100.dp
+            val expectedLazyWidth = (gridWidth - fixedColWidth).roundToPx()
+
+            val latch = CountDownLatch(1)
+            val lazySize = Ref<IntSize>()
+
+            show {
+                Box(Modifier.width(gridWidth)) {
+                    Grid(
+                        config = {
+                            column(GridTrackSize.MinMax(0.dp, 1.fr))
+                            column(GridTrackSize.Fixed(fixedColWidth))
+                            row(GridTrackSize.MinMax(0.dp, 1.fr))
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        // Col 1
+                        LazyRow(
+                            modifier =
+                                Modifier.gridItem(row = 1, column = 1)
+                                    .fillMaxSize()
+                                    .onGloballyPositioned {
+                                        lazySize.value = it.size
+                                        latch.countDown()
+                                    }
+                        ) {
+                            items(10) { Box(Modifier.width(20.dp)) }
+                        }
+
+                        // Col 2
+                        Box(Modifier.gridItem(row = 1, column = 2).fillMaxSize())
+                    }
+                }
+            }
+
+            assertTrue(latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "LazyRow should take the remaining 200dp width",
+                expectedLazyWidth,
+                lazySize.value?.width,
+            )
+        }
+
+    @Test
+    fun testGrid_lazyColumn_inFlexTrack_throwsHelpfulException() {
+        val latch = CountDownLatch(1)
+        var caughtException: Throwable? = null
+
+        show {
+            // We wrap the Grid in a custom Layout so we can catch the exception
+            // directly on the UI thread during the measurement phase.
+            Layout(
+                content = {
+                    Grid(
+                        config = {
+                            // Standard Flex queries intrinsics -> Crashes on SubcomposeLayout
+                            column(GridTrackSize.Flex(1.fr))
+                            row(GridTrackSize.Flex(1.fr))
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(10) { Box(Modifier.height(20.dp)) }
+                        }
+                    }
+                },
+                measurePolicy = { measurables, constraints ->
+                    try {
+                        // Trigger the Grid's measure pass. This is what triggers the
+                        // intrinsic query, and subsequently, our wrapped exception.
+                        measurables.firstOrNull()?.measure(constraints)
+                    } catch (e: Throwable) {
+                        // Catch the exception before it bubbles up and crashes the test runner!
+                        caughtException = e
+                    }
+
+                    latch.countDown()
+                    layout(100, 100) {} // Return dummy layout
+                },
+            )
+        }
+
+        assertTrue("Timed out waiting for layout", latch.await(1, TimeUnit.SECONDS))
+
+        val message = caughtException?.message
+        assertTrue(
+            "Expected helpful error message, but got: $message",
+            message?.contains(SubcomposeLayoutIntrinsicErrorMessage) == true,
+        )
+    }
 
     @Composable
     private fun IntrinsicItem(
