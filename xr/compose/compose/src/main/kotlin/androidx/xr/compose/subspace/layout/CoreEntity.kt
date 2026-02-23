@@ -545,8 +545,10 @@ internal class CoreModelEntity() : CoreEntity() {
 
     val animationStateFlow by lazy {
         callbackFlow {
-                onEntity { addAnimationStateListener(::trySend) }
-                awaitClose { onEntity { removeAnimationStateListener(::trySend) } }
+                onEntity { @Suppress("DEPRECATION") addAnimationStateListener(::trySend) }
+                awaitClose {
+                    onEntity { @Suppress("DEPRECATION") removeAnimationStateListener(::trySend) }
+                }
             }
             .shareIn(scope = scope, started = SharingStarted.WhileSubscribed(5000), replay = 1)
     }
@@ -581,6 +583,7 @@ internal class CoreModelEntity() : CoreEntity() {
             } ?: IntVolumeSize.Zero
 
     val isAnimating: Boolean
+        @Suppress("DEPRECATION")
         get() {
             return (entity as? GltfModelEntity)?.animationState ==
                 GltfModelEntity.AnimationState.PLAYING
@@ -591,6 +594,7 @@ internal class CoreModelEntity() : CoreEntity() {
         super.dispose()
     }
 
+    @Suppress("DEPRECATION")
     fun startAnimation(name: String? = null) {
         if (name == null) {
             onEntity { startAnimation(loop = false) }
@@ -599,6 +603,7 @@ internal class CoreModelEntity() : CoreEntity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     fun loopAnimation(name: String? = null) {
         if (name == null) {
             onEntity { startAnimation(loop = true) }
@@ -607,6 +612,7 @@ internal class CoreModelEntity() : CoreEntity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     fun stopAllAnimations() {
         onEntity { stopAnimation() }
     }

@@ -208,6 +208,7 @@ public class SpatialGltfModelState(internal val source: SpatialGltfModelSource) 
             .onFailure { exception -> _status.value = SpatialGltfModelStatus.Failed(exception) }
     }
 
+    @Suppress("DEPRECATION")
     internal suspend fun watchAnimationState() {
         val entity = suspendCancellableCoroutine { continuation ->
             coreEntityActionQueue.executeWhenAvailable { continuation.resume(it) }

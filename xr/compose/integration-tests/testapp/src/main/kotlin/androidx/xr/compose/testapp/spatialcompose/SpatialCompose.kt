@@ -414,12 +414,15 @@ class SpatialCompose : ComponentActivity() {
         val session = LocalSession.current ?: return
         val dragonModel = remember { mutableStateOf<GltfModel?>(null) }
         val dragonEntity = remember { mutableStateOf<GltfModelEntity?>(null) }
+
+        @Suppress("DEPRECATION")
         val dragonAnimationState = remember {
             androidx.compose.runtime.mutableStateOf(AnimationState.STOPPED)
         }
         var entitySize by remember { mutableStateOf(FloatSize3d(1f, 1f, 1f)) }
 
         // Actions to run once.
+        @Suppress("DEPRECATION")
         LaunchedEffect(Unit) {
             dragonModel.value =
                 GltfModel.create(session, Paths.get("models", "Dragon_Evolved.gltf"))
@@ -438,6 +441,7 @@ class SpatialCompose : ComponentActivity() {
         }
 
         // Actions to run continuously.
+        @Suppress("DEPRECATION")
         LaunchedEffect(dragonEntity.value) {
             val entity = dragonEntity.value
             if (entity != null) {
