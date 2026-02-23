@@ -902,12 +902,6 @@ final class androidx.compose.runtime/Recomposer : androidx.compose.runtime/Compo
     }
 }
 
-final class androidx.compose.runtime/SnapshotFlowManager { // androidx.compose.runtime/SnapshotFlowManager|null[0]
-    constructor <init>() // androidx.compose.runtime/SnapshotFlowManager.<init>|<init>(){}[0]
-
-    final fun dispose() // androidx.compose.runtime/SnapshotFlowManager.dispose|dispose(){}[0]
-}
-
 final value class <#A: kotlin/Any?> androidx.compose.runtime/SkippableUpdater { // androidx.compose.runtime/SkippableUpdater|null[0]
     constructor <init>(androidx.compose.runtime/Composer) // androidx.compose.runtime/SkippableUpdater.<init>|<init>(androidx.compose.runtime.Composer){}[0]
 
