@@ -55,35 +55,35 @@ object AndroidComposeUiFlags {
      * within the same hierarchy. With the flag disabled, ComposeViewContext will only be created
      * when explicitly provided to a ComposeView.
      */
-    // To be removed b/479834257
+    // TODO: b/479834257
     @field:Suppress("MutableBareField")
     @JvmField
     var isSharedComposeViewContextEnabled: Boolean = true
 
     /** This moves WindowInfo into the shared ComposeViewContext. */
-    // To be removed b/479837249
+    // TODO: b/479837249
     @field:Suppress("MutableBareField") @JvmField var isSharedWindowInfoEnabled: Boolean = true
 
     /** This moves AccessibilityManager into the shared ComposeViewContext. */
     @field:Suppress("MutableBareField")
     @JvmField
-    // To be removed b/479845566
+    // TODO: b/479845566
     var isSharedAccessibilityManagerEnabled: Boolean = true
 
     /** This moves DrawScope and CanvasHolder into the shared ComposeViewContext. */
-    // To be removed b/479849019
+    // TODO: b/479849019
     @field:Suppress("MutableBareField") @JvmField var isSharedDrawingEnabled: Boolean = true
 
     /** This moves ViewConfiguration into the shared ComposeViewContext. */
     @field:Suppress("MutableBareField")
     @JvmField
-    // To be removed b/479890645
+    // TODO: b/479890645
     var isSharedViewConfigurationEnabled: Boolean = true
 
     /** This moves Clipboard-related instances into the shared ComposeViewContext. */
     @field:Suppress("MutableBareField")
     @JvmField
-    // To be removed b/479895130
+    // TODO: b/479895130
     var isSharedClipboardManagerEnabled: Boolean = true
 
     /**
@@ -92,6 +92,7 @@ object AndroidComposeUiFlags {
      *
      * Enabled is correct nested scrolling behavior and it should be enabled in all apps.
      */
+    // TODO: b/474650559
     @field:Suppress("MutableBareField")
     @JvmField
     var isAccessibilityShowOnScreenNestedScrollingEnabled: Boolean = true

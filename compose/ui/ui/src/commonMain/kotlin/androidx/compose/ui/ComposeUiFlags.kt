@@ -59,17 +59,20 @@ object ComposeUiFlags {
      * This enables fixes for View focus. The changes are large enough to require a flag to allow
      * disabling them.
      */
+    // TODO: b/455588830
     @field:Suppress("MutableBareField") @JvmField var isViewFocusFixEnabled: Boolean = false
 
     /**
      * This flag enables an alternate approach to fixing the issues addressed by the
      * [isViewFocusFixEnabled] flag.
      */
+    // TODO: b/455592447
     @field:Suppress("MutableBareField")
     @JvmField
     var isBypassUnfocusableComposeViewEnabled: Boolean = true
 
     /** Enable initial focus when a focusable is added to a screen with no focusable content. */
+    // TODO: b/455601824
     @field:Suppress("MutableBareField")
     @JvmField
     var isInitialFocusOnFocusableAvailable: Boolean = false
@@ -78,19 +81,23 @@ object ComposeUiFlags {
      * Enable focus restoration, by always saving focus. This flag depends on
      * [isInitialFocusOnFocusableAvailable] also being true.
      */
+    // TODO: b/485962036
     @field:Suppress("MutableBareField") @JvmField var isFocusRestorationEnabled: Boolean = false
 
     /** Flag for enabling indirect pointer event navigation gestures in Compose. */
+    // TODO: b/455601135
     @field:Suppress("MutableBareField")
     @JvmField
     var isIndirectPointerNavigationGestureDetectorEnabled: Boolean = true
 
     /** Flag enables optimized focus change dispatching logic. */
+    // TODO: b/455603009
     @field:Suppress("MutableBareField")
     @JvmField
     var isOptimizedFocusEventDispatchEnabled: Boolean = true
 
     /** This flag enables setting the shape semantics property in the graphicsLayer modifiers. */
+    // TODO: b/455600081
     @field:Suppress("MutableBareField")
     @JvmField
     var isGraphicsLayerShapeSemanticsEnabled: Boolean = true
@@ -99,6 +106,7 @@ object ComposeUiFlags {
      * Enables a fix where [TraversableNode] traversal method [findNearestAncestor] will take into
      * consideration any delegates that might also be traversable.
      */
+    // TODO: b/485962494
     @field:Suppress("MutableBareField")
     @JvmField
     var isTraversableDelegatesFixEnabled: Boolean = true
@@ -110,6 +118,7 @@ object ComposeUiFlags {
      *
      * Enabled is correct, and it should be enabled in all apps.
      */
+    // TODO: b/484259656
     @field:Suppress("MutableBareField")
     @JvmField
     var isAccessibilityShouldIncludeOffscreenChildrenEnabled: Boolean = true
