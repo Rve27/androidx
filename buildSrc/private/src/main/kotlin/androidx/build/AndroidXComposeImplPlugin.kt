@@ -108,8 +108,6 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
                     disable.add("PrimitiveInCollection")
                 }
 
-                // Disable lambda creation in subcompose check in projects where we're less
-                // concerned about performance.
                 if (
                     type in
                         setOf(
@@ -120,7 +118,11 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
                             SoftwareType.UNSET,
                         )
                 ) {
+                    // Disable lambda creation in subcompose check in projects where we're less
+                    // concerned about performance.
                     disable.add("ComposableLambdaInMeasurePolicy")
+                    // Disable lint rule for feature flag development outside shipped libraries
+                    disable.add("FeatureFlagSetup")
                 }
             }
 
