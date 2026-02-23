@@ -22,6 +22,7 @@ import static androidx.compose.remote.integration.view.demos.examples.RcTickerKt
 
 import android.app.Activity;
 
+import androidx.compose.remote.integration.view.demos.examples.BadExamples.DemoMemorySkipKt;
 import androidx.compose.remote.integration.view.demos.examples.BadExamples.MemoryKt;
 import androidx.compose.remote.integration.view.demos.examples.ColorCheckKt;
 import androidx.compose.remote.integration.view.demos.examples.ColorThemeCheckKt;
@@ -90,6 +91,7 @@ public abstract class DemosCreation {
     public static @NonNull ArrayList<RCDoc> getDemos(@NonNull Activity activity) {
 
         return new ArrayList<>(Arrays.asList(
+                getp("0/0/skip", DemoMemorySkipKt::skip1),
                 getp("0/4/BitmapFontWatch", () -> BitmapFontWatch.watch1(activity)),
                 getp("0/4/Procedure__Version", BasicProceduralDemos::version),
                 getp("0/4/Procedure__centerText1", BasicProceduralDemos::centerText1),
