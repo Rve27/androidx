@@ -1129,6 +1129,7 @@ internal fun DropdownMenuItemContent(
     val itemShape = shapeByInteraction(shapes, selected, morphSpec)
 
     val hasLeadingIcon = leadingIcon != null || selectedLeadingIcon != null
+    val hasLeadingIconDisplayed = leadingIcon != null || (selectedLeadingIcon != null && selected)
     val hasTrailingIcon = trailingIcon != null
 
     Surface(
@@ -1208,7 +1209,8 @@ internal fun DropdownMenuItemContent(
                             Modifier.layoutId(TextLayoutId)
                                 .padding(
                                     start =
-                                        if (hasLeadingIcon) {
+                                        if (hasLeadingIconDisplayed) {
+                                            // Only add this padding if there's an icon displayed.
                                             DropdownMenuIconTextPadding
                                         } else {
                                             0.dp
