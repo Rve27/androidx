@@ -17,8 +17,6 @@
 package androidx.xr.arcore
 
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.runtime.Anchor
-import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException
 import androidx.xr.arcore.runtime.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.AugmentedObjectCategory as Category
 import androidx.xr.runtime.Config
@@ -140,27 +138,5 @@ internal constructor(
                 runtimeObject.extents,
             )
         )
-    }
-
-    /**
-     * Creates an [androidx.xr.arcore.runtime.Anchor] that is attached to this trackable, using the
-     * given initial [pose].
-     *
-     * @throws [IllegalStateException] if [Session.config.augmentedObjectCategories] is empty.
-     */
-    override fun createAnchor(pose: Pose): AnchorCreateResult {
-        check(!xrResourceManager.lifecycleManager.config.augmentedObjectCategories.isEmpty()) {
-            "Config.augmentedObjectCategories is empty."
-        }
-
-        val runtimeAnchor: Anchor
-        try {
-            runtimeAnchor = runtimeObject.createAnchor(pose)
-        } catch (e: AnchorResourcesExhaustedException) {
-            return AnchorCreateResourcesExhausted()
-        }
-        val anchor = Anchor(runtimeAnchor, xrResourceManager)
-        xrResourceManager.addUpdatable(anchor)
-        return AnchorCreateSuccess(anchor)
     }
 }

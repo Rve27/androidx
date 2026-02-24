@@ -21,7 +21,7 @@ import androidx.xr.runtime.math.Pose
 
 /** Describes a face. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface Face : Trackable {
+public interface Face : Anchorable {
     /** Flag indicating if the [Face] is valid */
     public val isValid: Boolean
 

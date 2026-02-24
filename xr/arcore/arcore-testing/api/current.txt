@@ -112,8 +112,6 @@ package androidx.xr.arcore.testing {
     ctor public FakeRuntimeAugmentedObject();
     ctor @BytecodeOnly public FakeRuntimeAugmentedObject(androidx.xr.runtime.math.Pose!, androidx.xr.runtime.math.FloatSize3d!, androidx.xr.runtime.AugmentedObjectCategory!, androidx.xr.runtime.TrackingState!, java.util.Collection!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor public FakeRuntimeAugmentedObject(optional androidx.xr.runtime.math.Pose centerPose, optional androidx.xr.runtime.math.FloatSize3d extents, optional androidx.xr.runtime.AugmentedObjectCategory category, optional androidx.xr.runtime.TrackingState trackingState, optional java.util.Collection<androidx.xr.arcore.runtime.Anchor> anchors);
-    method public androidx.xr.arcore.runtime.Anchor createAnchor(androidx.xr.runtime.math.Pose pose);
-    method public void detachAnchor(androidx.xr.arcore.runtime.Anchor anchor);
     method @InaccessibleFromKotlin public java.util.Collection<androidx.xr.arcore.runtime.Anchor> getAnchors();
     method @InaccessibleFromKotlin public androidx.xr.runtime.AugmentedObjectCategory getCategory();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getCenterPose();

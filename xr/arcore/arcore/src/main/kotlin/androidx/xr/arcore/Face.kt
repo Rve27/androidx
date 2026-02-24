@@ -38,7 +38,7 @@ public class Face
 internal constructor(
     internal val runtimeFace: RuntimeFace,
     internal val xrResourceManager: XrResourcesManager,
-) : Trackable<Face.State>, Updatable {
+) : Anchorable<Face.State>, Updatable {
 
     public companion object {
         /**

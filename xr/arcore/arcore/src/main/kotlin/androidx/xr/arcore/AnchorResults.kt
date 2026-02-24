@@ -55,3 +55,9 @@ public class AnchorCreateNotAuthorized() : AnchorCreateResult()
  * location.
  */
 public class AnchorCreateUnsupportedLocation() : AnchorCreateResult()
+
+/**
+ * Result of an unsuccessful [Anchor.create] call. The anchor was not created because the associated
+ * object does not support anchor creation.
+ */
+public class AnchorCreateUnsupportedObject() : AnchorCreateResult()
