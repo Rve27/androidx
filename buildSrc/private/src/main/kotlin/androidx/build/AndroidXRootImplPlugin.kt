@@ -27,8 +27,6 @@ import androidx.build.logging.TERMINAL_RED
 import androidx.build.logging.TERMINAL_RESET
 import androidx.build.playground.ValidateIntegrationPatches
 import androidx.build.playground.VerifyPlaygroundGradleConfigurationTask
-import androidx.build.sbom.AggregateSbomsTask
-import androidx.build.sbom.AggregateSbomsTask.Companion.AGGREGATE_SBOMS_TASK_NAME
 import androidx.build.studio.StudioTask.Companion.registerStudioTask
 import androidx.build.testConfiguration.registerOwnersServiceTasks
 import androidx.build.uptodatedness.TaskUpToDateValidator
@@ -123,35 +121,11 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
             task.tmpDir.set(layout.buildDirectory.dir("androidx-verify"))
         }
 
-        val aggregateSbom =
-            tasks.register(AGGREGATE_SBOMS_TASK_NAME, AggregateSbomsTask::class.java) { task ->
-                task.sbomFiles.from(artifactCollection.sbomIncoming.map { it.files })
-                task.aggregateSbomFile.set(
-                    getDistributionDirectory().file("sboms/top-of-tree-m2repository-all.spdx.json")
-                )
-            }
-
         val attestationManifest =
             tasks.register(ATTESTATION_TASK_NAME, AttestationManifestTask::class.java) { task ->
                 task.manifestFile.set(distDir.file("attestation_manifest.json"))
-                fun Provider<RegularFile>.mergeWith(
-                    incoming: Provider<ArtifactView>
-                ): Provider<Map<String, String>> {
-                    val aggregatePath = zip(distDir) { f, d -> f.asFile.relativeTo(d.asFile).path }
-                    return computeArtifactMap(incoming, distDir).zip(aggregatePath) { map, path ->
-                        map + ("aggregate" to path)
-                    }
-                }
-                task.zipMap.set(
-                    createArchive
-                        .flatMap { it.archiveFile }
-                        .mergeWith(artifactCollection.releaseIncoming)
-                )
-                task.sbomMap.set(
-                    aggregateSbom
-                        .flatMap { it.aggregateSbomFile }
-                        .mergeWith(artifactCollection.sbomIncoming)
-                )
+                task.zipMap.set(computeArtifactMap(artifactCollection.releaseIncoming, distDir))
+                task.sbomMap.set(computeArtifactMap(artifactCollection.sbomIncoming, distDir))
             }
 
         tasks.register(BUILD_ON_SERVER_TASK, BuildOnServerTask::class.java) { task ->
