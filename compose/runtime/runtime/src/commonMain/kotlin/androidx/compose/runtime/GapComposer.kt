@@ -1021,7 +1021,7 @@ internal class GapComposer(
     internal fun updateCachedValue(value: Any?) {
         val toStore =
             if (value is RememberObserver) {
-                val holder = RememberObserverHolder(value, rememberObserverGroupIndex())
+                val holder = GapRememberObserverHolder(value, rememberObserverGroupIndex())
                 if (inserting) {
                     changeListWriter.remember(holder)
                 }
@@ -1242,7 +1242,7 @@ internal class GapComposer(
         var observerHolder = nextSlot() as? RememberObserverHolder
         if (observerHolder == null) {
             observerHolder =
-                ReusableRememberObserverHolder(
+                ReusableGapRememberObserverHolder(
                     CompositionContextHolder(
                         CompositionContextImpl(
                             this@GapComposer.compositeKeyHashCode,
@@ -3137,6 +3137,20 @@ internal class GapComposer(
         (scope as? RecomposeScopeImpl)?.used = true
     }
 }
+
+internal open class GapRememberObserverHolder(
+    override var wrapped: RememberObserver,
+    var afterGroupIndex: Int,
+) : RememberObserverHolder
+
+internal class ReusableGapRememberObserverHolder(wrapped: RememberObserver, afterGroupIndex: Int) :
+    GapRememberObserverHolder(wrapped, afterGroupIndex), ReusableRememberObserverHolder
+
+internal fun RememberObserverHolder.asGapRememberObserverHolder() =
+    this as? GapRememberObserverHolder ?: composeRuntimeError("Inconsistent composition")
+
+internal fun ReusableGapRememberObserverHolder.asGapRememberObserverHolder() =
+    this as? ReusableGapRememberObserverHolder ?: composeRuntimeError("Inconsistent composition")
 
 internal class GapCompositionDataImpl(val composition: Composition) :
     CompositionData, CompositionInstance {
