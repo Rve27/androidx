@@ -58,10 +58,6 @@ dependencies {
     // json parser
     implementation(libs.gson)
 
-    // Used in AggregateSbomsTask
-    implementation(libs.spdxJavaLibrary)
-    implementation(libs.spdxJacksonStore)
-
     // XML parsers used in MavenUploadHelper.kt
     implementation(libs.dom4j) {
         // Optional dependency where Ivy fails to parse the POM file.
