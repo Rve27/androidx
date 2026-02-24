@@ -33,7 +33,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 
-/** Contains the tracking information of a detected human face. */
+/**
+ * Contains the tracking information of a detected human face.
+ *
+ * @property state the current [State] of this face
+ */
 public class Face
 internal constructor(
     internal val runtimeFace: RuntimeFace,
@@ -44,9 +48,9 @@ internal constructor(
         /**
          * Returns the Face object that corresponds to the user.
          *
-         * @param session the currently active [Session].
+         * @param session the currently active [Session]
          * @throws [IllegalStateException] if [FaceTrackingMode] is set to
-         *   [FaceTrackingMode.DISABLED].
+         *   [FaceTrackingMode.DISABLED]
          */
         @JvmStatic
         public fun getUserFace(session: Session): Face? {
@@ -61,7 +65,11 @@ internal constructor(
             return perceptionStateExtender.xrResourcesManager.userFace
         }
 
-        /** Emits the faces that are currently being tracked in the [Session]. */
+        /**
+         * Emits the faces that are currently being tracked in the [Session].
+         *
+         * @param session the [Session] to track faces from
+         */
         @JvmStatic
         public fun subscribe(session: Session): StateFlow<Collection<Face>> {
             check(session.config.faceTracking == FaceTrackingMode.MESHES) {
@@ -165,8 +173,8 @@ internal constructor(
     /**
      * The representation of the current state of [Face].
      *
-     * @param trackingState the current [TrackingState] of the face.
-     * @param centerPose the pose at the center of the face, defined to have the origin located
+     * @property trackingState the current [TrackingState] of the face.
+     * @property centerPose the pose at the center of the face, defined to have the origin located
      *   behind the nose and between the two cheek bones
      *
      *   Z+ is forward out of the nose, Y+ is upwards, and X+ is towards the left. The units are in
@@ -174,7 +182,7 @@ internal constructor(
      *
      *   [centerPose] will be null if the Session is not configured with [FaceTrackingMode.MESHES].
      *
-     * @param mesh the polygonal representation of the face as observed by the perception system
+     * @property mesh the polygonal representation of the face as observed by the perception system
      *
      *   [mesh] will be null if the Session is not configured with [FaceTrackingMode.MESHES].
      */
@@ -190,24 +198,17 @@ internal constructor(
         internal val foreheadRightPose: Pose? = null,
     ) : Trackable.State {
 
-        /**
-         * Represents the blend shapes of the face.
-         *
-         * @return a map of [FaceBlendShapeType] to the corresponding blend shape value in the range
-         *   `[0.0, 1.0]`. If the face does not provide blend shape values, this will be an empty
-         *   map.
-         */
         public val blendShapes: Map<FaceBlendShapeType, Float> =
             blendShapeMapKeys.zip(blendShapeValues?.toList() ?: emptyList()).toMap()
 
         /**
          * Gets the confidence value of the face tracker for the given region.
          *
-         * @param region the [FaceConfidenceRegion] to get the confidence value for.
+         * @param region the [FaceConfidenceRegion] to get the confidence value for
          * @return the confidence value in the range `[0.0, 1.0]` of the face tracker for the given
-         *   region.
-         * @throws IllegalArgumentException if the region does not exist.
-         * @throws IllegalStateException if the Face does not provide confidence values.
+         *   region
+         * @throws IllegalArgumentException if the region does not exist
+         * @throws IllegalStateException if the Face does not provide confidence values
          */
         @FloatRange(from = 0.0, to = 1.0, fromInclusive = true, toInclusive = true)
         public fun getConfidence(region: FaceConfidenceRegion): Float {

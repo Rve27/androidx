@@ -24,13 +24,9 @@ import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 
 /**
- * Fake implementation of [androidx.xr.arcore.runtime.AugmentedObject] for testing purposes.
+ * Fake implementation of [AugmentedObject][RuntimeObject] for testing purposes.
  *
- * @property centerPose The pose of the center of the augmented object.
- * @property extents The extents of the augmented object.
- * @property category The category of the augmented object.
- * @property trackingState The tracking state of the augmented object.
- * @property anchors The anchors attached to this object.
+ * @property anchors a [MutableCollection] of [Anchors][RuntimeAnchor] attached to this object
  */
 @SuppressWarnings("HiddenSuperclass")
 public class FakeRuntimeAugmentedObject(
