@@ -68,7 +68,9 @@ public class SessionConfigureSuccess() : SessionConfigureResult()
 @Suppress("MentionsGoogle")
 @Deprecated(
     "Use SessionConfigureLibraryNotLinked instead.",
-    ReplaceWith("SessionConfigureResult(\"com.google.android.gms:play-services-location\")"),
+    ReplaceWith(
+        "SessionConfigureLibraryNotLinked(\"com.google.android.gms:play-services-location\")"
+    ),
 )
 public class SessionConfigureGooglePlayServicesLocationLibraryNotLinked() : SessionConfigureResult()
 
