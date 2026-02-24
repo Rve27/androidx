@@ -517,6 +517,7 @@ package androidx.compose.foundation.layout {
     method @KotlinOnly public void gap(androidx.compose.ui.unit.Dp row, androidx.compose.ui.unit.Dp column);
     method @BytecodeOnly public void gap-0680j_4(float);
     method @BytecodeOnly public void gap-YgX7TsA(float, float);
+    method @BytecodeOnly public long getConstraints-msEJaDk();
     method @BytecodeOnly public int getFlow-ITJdzs4();
     method @BytecodeOnly public default float getFr-9P9H2UQ(double);
     method @BytecodeOnly public default float getFr-9P9H2UQ(float);
@@ -531,6 +532,7 @@ package androidx.compose.foundation.layout {
     method @KotlinOnly public void rowGap(androidx.compose.ui.unit.Dp gap);
     method @BytecodeOnly public void rowGap-0680j_4(float);
     method @BytecodeOnly public void setFlow-4t4_IgM(int);
+    property public abstract androidx.compose.ui.unit.Constraints constraints;
     property public abstract androidx.compose.foundation.layout.GridFlow flow;
     property @SuppressCompatibility @androidx.compose.foundation.layout.ExperimentalGridApi @androidx.compose.runtime.Stable public default androidx.compose.foundation.layout.Fr int.fr;
     property @SuppressCompatibility @androidx.compose.foundation.layout.ExperimentalGridApi @androidx.compose.runtime.Stable public default androidx.compose.foundation.layout.Fr float.fr;

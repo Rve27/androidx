@@ -39,6 +39,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Slider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -79,6 +80,9 @@ fun GridDemo() {
         MinContentSafetyDemo()
         Spacer(Modifier.height(32.dp))
         AutoSizingDemo()
+        Spacer(Modifier.height(32.dp))
+        ResponsiveConstraintsDemo()
+        Spacer(Modifier.height(32.dp))
     }
 }
 
@@ -405,6 +409,74 @@ private fun AutoSizingDemo() {
     ) {
         GridDemoItem(text = "MinContent crushes me", color = Color.Red, row = 1, column = 1)
         GridDemoItem(text = "Auto wraps me nicely", color = Color.Green, row = 1, column = 2)
+    }
+}
+
+@Composable
+private fun ResponsiveConstraintsDemo() {
+    DemoHeader("Responsive Layout (Constraints)")
+
+    Text(
+        "Resize the slider to change the container width.\n" +
+            "The Grid config reads 'constraints.maxWidth' to determine column count.",
+        fontSize = 12.sp,
+        fontStyle = FontStyle.Italic,
+        modifier = Modifier.padding(bottom = 8.dp),
+    )
+
+    var containerWidth by remember { mutableStateOf(300.dp) }
+
+    Column(Modifier.fillMaxWidth().border(1.dp, Color.LightGray).padding(8.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "Width: ${containerWidth.value.toInt()}dp",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Slider(
+                value = containerWidth.value,
+                onValueChange = { containerWidth = it.dp },
+                valueRange = 200f..500f,
+                modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
+            )
+        }
+
+        // 2. Responsive Container
+        Box(
+            modifier =
+                Modifier.width(containerWidth)
+                    .border(2.dp, Color.Blue.copy(alpha = 0.5f))
+                    .padding(4.dp)
+        ) {
+            Grid(
+                config = {
+                    // Accessing 'constraints' from GridConfigurationScope.
+                    val maxWidthDp = constraints.maxWidth.toDp()
+
+                    val columnCount =
+                        when {
+                            maxWidthDp < 300.dp -> 2 // Compact
+                            maxWidthDp < 400.dp -> 3 // Medium
+                            else -> 4 // Expanded
+                        }
+
+                    // Define columns based on calculation
+                    repeat(columnCount) { column(1.fr) }
+                    gap(4.dp)
+                }
+            ) {
+                // Populate plenty of items to show the flow
+                repeat(8) {
+                    val color =
+                        when {
+                            containerWidth < 300.dp -> Color.Red // Compact Theme
+                            containerWidth < 400.dp -> Color.Yellow // Medium Theme
+                            else -> Color.Green // Expanded Theme
+                        }
+                    GridDemoItem(text = "${it + 1}", color = color, measureSize = false)
+                }
+            }
+        }
     }
 }
 
