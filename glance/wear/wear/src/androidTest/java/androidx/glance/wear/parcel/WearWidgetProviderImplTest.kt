@@ -19,12 +19,15 @@ package androidx.glance.wear.parcel
 import android.content.ComponentName
 import android.content.Context
 import androidx.compose.remote.creation.compose.layout.RemoteText
+import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.glance.wear.GlanceWearWidget
+import androidx.glance.wear.WearWidgetBrush
 import androidx.glance.wear.WearWidgetData
 import androidx.glance.wear.WearWidgetDocument
+import androidx.glance.wear.color
 import androidx.glance.wear.core.ActiveWearWidgetHandle
 import androidx.glance.wear.core.ContainerInfo.Companion.CONTAINER_TYPE_FULLSCREEN
 import androidx.glance.wear.core.ContainerInfo.Companion.CONTAINER_TYPE_LARGE
@@ -313,7 +316,9 @@ class WearWidgetProviderImplTest {
             if (enableFailureMode) {
                 throw Exception("Test exception")
             }
-            return WearWidgetDocument(backgroundColor = Color.Transparent) { content() }
+            return WearWidgetDocument(background = WearWidgetBrush.color(Color.Transparent.rc)) {
+                content()
+            }
         }
 
         override suspend fun onAdded(context: Context, widgetHandle: ActiveWearWidgetHandle) {
