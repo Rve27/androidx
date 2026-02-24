@@ -649,12 +649,14 @@ package androidx.xr.runtime.math {
     method @InaccessibleFromKotlin public inline androidx.xr.runtime.math.Vector3 getBackward();
     method @InaccessibleFromKotlin public inline androidx.xr.runtime.math.Vector3 getDown();
     method @InaccessibleFromKotlin public inline androidx.xr.runtime.math.Vector3 getForward();
+    method public androidx.xr.runtime.math.Quaternion getForwardVectorToUpRotation(androidx.xr.runtime.math.Pose other);
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getInverse();
     method @InaccessibleFromKotlin public inline androidx.xr.runtime.math.Vector3 getLeft();
     method @InaccessibleFromKotlin public inline androidx.xr.runtime.math.Vector3 getRight();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Quaternion getRotation();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getTranslation();
     method @InaccessibleFromKotlin public inline androidx.xr.runtime.math.Vector3 getUp();
+    method public androidx.xr.runtime.math.Quaternion getUpVectorToUpRotation(androidx.xr.runtime.math.Pose other);
     method public static androidx.xr.runtime.math.Pose lerp(androidx.xr.runtime.math.Pose start, androidx.xr.runtime.math.Pose end, float ratio);
     method public androidx.xr.runtime.math.Pose rotate(androidx.xr.runtime.math.Quaternion rotation);
     method public infix androidx.xr.runtime.math.Vector3 transformPoint(androidx.xr.runtime.math.Vector3 point);
