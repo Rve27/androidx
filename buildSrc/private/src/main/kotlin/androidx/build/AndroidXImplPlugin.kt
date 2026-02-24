@@ -656,7 +656,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         @Suppress("UnstableApiUsage") // usage of minAgpVersion
         minAgpVersion.set(
             @Suppress(
-                "Deprecated"
+                "Deprecation"
             ) // TODO: use `minCompileSdkVersion` once http://ag/38072823 merged
             minCompileSdk.map { value ->
                 // Taken from
