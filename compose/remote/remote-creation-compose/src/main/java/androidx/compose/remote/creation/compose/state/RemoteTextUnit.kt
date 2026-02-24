@@ -19,9 +19,11 @@ package androidx.compose.remote.creation.compose.state
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RemoteDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
 
 /**
@@ -85,3 +87,17 @@ public val Int.rsp: RemoteTextUnit
 /** Extension function to convert a [TextUnit] to a [RemoteTextUnit]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun TextUnit.asRemoteTextUnit(): RemoteTextUnit = RemoteTextUnit(this.value.rf, this.type)
+
+/** Extension function to convert a [Dp] to a [RemoteTextUnit] in Sp. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun Dp.toRsp(): RemoteTextUnit {
+    check(isSpecified) { "Dp conversion not possible for unspecified Dp" }
+    return RemoteTextUnit(
+        value =
+            RemoteFloatExpression(constantValueOrNull = null) { creationState ->
+                val fontScale = creationState.remoteDensity.fontScale
+                (value.rf / fontScale).arrayForCreationState(creationState)
+            },
+        type = TextUnitType.Sp,
+    )
+}
