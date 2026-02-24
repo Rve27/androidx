@@ -34,7 +34,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** Contains the tracking information of one of the user's hands. */
-public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : Updatable {
+public class Hand internal constructor(internal val runtimeHand: RuntimeHand) :
+    Trackable<Hand.State>, Updatable {
     /** * Companion object holding info to the left and right hands. */
     public companion object {
 
@@ -115,9 +116,9 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
      */
     public class State
     internal constructor(
-        public val trackingState: TrackingState,
+        public override val trackingState: TrackingState,
         public val handJointsBuffer: FloatBuffer,
-    ) {
+    ) : Trackable.State {
 
         private class JointsMap(
             val trackingState: TrackingState,
@@ -215,7 +216,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
     private val _state =
         MutableStateFlow<State>(State(TrackingState.PAUSED, ByteBuffer.allocate(0).asFloatBuffer()))
     /** The current [State] of this hand. */
-    public val state: StateFlow<State> = _state.asStateFlow()
+    public override val state: StateFlow<State> = _state.asStateFlow()
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override suspend fun update() {
