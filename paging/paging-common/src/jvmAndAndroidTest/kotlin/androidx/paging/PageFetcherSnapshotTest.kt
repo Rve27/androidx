@@ -1246,7 +1246,7 @@ class PageFetcherSnapshotTest {
                     createRefresh(50..51),
                 )
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
             assertThat(fetcherState.newEvents())
                 .containsExactly(
@@ -1290,7 +1290,7 @@ class PageFetcherSnapshotTest {
                     createAppend(1, 52..52),
                 )
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertThat(fetcherState.newEvents())
@@ -2505,7 +2505,7 @@ class PageFetcherSnapshotTest {
 
             // Explicit call to refresh, which should trigger remote refresh with cached
             // PagingState.
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertThat(remoteMediator.newLoadEvents)
