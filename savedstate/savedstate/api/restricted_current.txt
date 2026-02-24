@@ -204,6 +204,11 @@ package androidx.savedstate {
     property public abstract androidx.savedstate.SavedStateRegistry savedStateRegistry;
   }
 
+  public final class SavedStateRegistryOwnerFactory {
+    method @KotlinOnly public static androidx.savedstate.SavedStateRegistryOwner SavedStateRegistryOwner(androidx.savedstate.SavedStateRegistry savedStateRegistry, androidx.lifecycle.Lifecycle lifecycle);
+    method @InaccessibleFromKotlin public static androidx.savedstate.SavedStateRegistryOwner create(androidx.savedstate.SavedStateRegistry savedStateRegistry, androidx.lifecycle.Lifecycle lifecycle);
+  }
+
   @kotlin.jvm.JvmInline public final value class SavedStateWriter {
     ctor @KotlinOnly @kotlin.PublishedApi internal SavedStateWriter(android.os.Bundle source);
     method @BytecodeOnly public static androidx.savedstate.SavedStateWriter! box-impl(android.os.Bundle!);
