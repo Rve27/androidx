@@ -39,6 +39,7 @@ public class Eye internal constructor(internal val runtimeEye: RuntimeEye) :
         /**
          * Returns the left eye, if available.
          *
+         * @param session the [Session] to retrieve the eye from
          * @sample androidx.xr.arcore.samples.getLeftEye
          */
         @JvmStatic
@@ -54,6 +55,7 @@ public class Eye internal constructor(internal val runtimeEye: RuntimeEye) :
         /**
          * Returns the right eye, if available.
          *
+         * @param session the [Session] to retrieve the eye from
          * @sample androidx.xr.arcore.samples.getRightEye
          */
         @JvmStatic
@@ -79,16 +81,14 @@ public class Eye internal constructor(internal val runtimeEye: RuntimeEye) :
      *
      * The [Pose]s provided are the position and rotation of the eye itself, relative to the head
      * pose.
+     *
+     * @property isOpen a flag indicating whether the eye is open
+     * @property pose the [Pose] of the eye
+     * @property trackingState the [TrackingState] of the eye
      */
     public class State(
-        /**
-         * a flag indicating whether or not the eye is open. It's set to true if it's open, false if
-         * it's closed. *
-         */
         public val isOpen: Boolean,
-        /** The eye's pose */
         public val pose: Pose,
-        /** the tracking state of the eye */
         public override val trackingState: TrackingState,
     ) : Trackable.State {}
 

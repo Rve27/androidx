@@ -33,6 +33,10 @@ import androidx.xr.scenecore.scene
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
+/**
+ * @param session the [Session] to create the anchor in
+ * @param pose the [Pose] of the anchor
+ */
 @Sampled
 fun callCreateAnchor(session: Session, pose: Pose) {
     // We need to first translate the pose from activity space to perception space.

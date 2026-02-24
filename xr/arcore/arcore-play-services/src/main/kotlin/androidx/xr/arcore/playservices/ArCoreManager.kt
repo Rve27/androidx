@@ -53,9 +53,10 @@ import kotlinx.coroutines.delay
 /**
  * Manages the lifecycle of an ARCore session.
  *
- * @property context The [Context] instance.
- * @property perceptionManager The [ArCorePerceptionManager] instance.
- * @property timeSource The [ArCoreTimeSource] instance.
+ * @property context The [Context] instance
+ * @property perceptionManager the [ArCorePerceptionManager] instance
+ * @property timeSource the [ArCoreTimeSource] instance
+ * @property config the current [Config] of the session
  */
 @Suppress("NotCloseable")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -72,6 +73,7 @@ internal constructor(
     /**
      * The underlying [Session] instance.
      *
+     * @return the underlying [Session] instance
      * @sample androidx.xr.arcore.samples.getARCoreSession
      */
     @UnsupportedArCoreCompatApi public fun session(): Session = _session

@@ -22,9 +22,12 @@ import kotlinx.coroutines.flow.StateFlow
 /** An object that ARCore for Jetpack XR can track. */
 public interface Trackable<out State> {
 
-    /** The subset of data that is common to the state of all [Trackable] instances. */
+    /**
+     * The subset of data that is common to the state of all [Trackable] instances.
+     *
+     * @property trackingState whether this trackable is being tracked or not
+     */
     public interface State {
-        /** Whether this trackable is being tracked or not. */
         public val trackingState: TrackingState
     }
 

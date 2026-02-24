@@ -26,14 +26,7 @@ import androidx.xr.runtime.math.Vector3
 import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
-/**
- * Fake implementation of [androidx.xr.arcore.runtime.Face] for testing purposes.
- *
- * @property trackingState The current tracking state of the face.
- * @property isValid Indicates whether the face is valid.
- * @property blendShapeValues The array of blend shape values.
- * @property confidenceValues The array of confidence values.
- */
+/** Fake implementation of [Face][RuntimeFace] for testing purposes. */
 public class FakeRuntimeFace(
     override var trackingState: TrackingState = TrackingState.PAUSED,
     override var isValid: Boolean = true,
@@ -73,11 +66,6 @@ public class FakeRuntimeFace(
         mesh.vertices!!.put(1f)
     }
 
-    /**
-     * Controls whether calling [createAnchor] will succeed or throw an [IllegalStateException].
-     *
-     * Defaults to `true`.
-     */
     override fun createAnchor(pose: Pose): Anchor {
         if (!canCreateAnchors) {
             throw IllegalStateException()

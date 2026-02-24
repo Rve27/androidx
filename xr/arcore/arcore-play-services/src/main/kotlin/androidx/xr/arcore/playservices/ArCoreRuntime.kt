@@ -32,8 +32,8 @@ import kotlin.time.ComparableTimeMark
 /**
  * Implementation of the [androidx.xr.arcore.runtime.PerceptionRuntime] interface using ARCore.
  *
- * @property lifecycleManager that manages the lifecycle of the ARCore session.
- * @property perceptionManager that manages the perception capabilities of a runtime using ARCore.
+ * @property lifecycleManager that manages the lifecycle of the ARCore session
+ * @property perceptionManager that manages the perception capabilities of a runtime using ARCore
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class ArCoreRuntime
