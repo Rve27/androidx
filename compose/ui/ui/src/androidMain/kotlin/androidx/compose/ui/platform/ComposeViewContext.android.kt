@@ -35,8 +35,12 @@ import androidx.compose.runtime.retain.RetainedValuesStore
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.tooling.CompositionData
 import androidx.compose.runtime.tooling.LocalInspectionTables
+import androidx.compose.ui.ComposeUiFlags.isMediaQueryIntegrationEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.ExperimentalMediaQueryApi
+import androidx.compose.ui.LocalUiMediaScope
 import androidx.compose.ui.R
+import androidx.compose.ui.adaptive.obtainUiMediaScope
 import androidx.compose.ui.graphics.CanvasHolder
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.PlatformHapticFeedback
@@ -263,7 +267,7 @@ internal class ComposeViewContext(
     }
 
     /** Provide common CompositionLocals. */
-    @OptIn(ExperimentalComposeUiApi::class)
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalMediaQueryApi::class)
     @Suppress("DEPRECATION")
     @Composable
     internal fun ProvideCompositionLocals(
@@ -302,7 +306,22 @@ internal class ComposeViewContext(
             LocalViewConfiguration provides owner.viewConfiguration,
             LocalHostDefaultProvider provides hostDefaultProvider,
         ) {
-            ProvideCommonCompositionLocals(owner, uriHandler, content)
+            if (isMediaQueryIntegrationEnabled) {
+                val mediaScope = obtainUiMediaScope(owner.context, owner.view, owner.windowInfo)
+                CompositionLocalProvider(LocalUiMediaScope provides mediaScope) {
+                    ProvideCommonCompositionLocals(
+                        owner = owner,
+                        uriHandler = uriHandler,
+                        content = content,
+                    )
+                }
+            } else {
+                ProvideCommonCompositionLocals(
+                    owner = owner,
+                    uriHandler = uriHandler,
+                    content = content,
+                )
+            }
         }
     }
 }

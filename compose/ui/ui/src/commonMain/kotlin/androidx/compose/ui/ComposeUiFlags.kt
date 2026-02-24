@@ -138,4 +138,15 @@ object ComposeUiFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isTrackpadGestureHandlingEnabled: Boolean = true
+
+    /**
+     * Enable the integration of [LocalUiMediaScope] at the root compose view which provides various
+     * signals for adapting the UI across different devices.
+     *
+     * This feature is experimental and is disabled by default.
+     */
+    // TODO: b/485160699 - Remove once the API goes stable
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isMediaQueryIntegrationEnabled: Boolean = false
 }
