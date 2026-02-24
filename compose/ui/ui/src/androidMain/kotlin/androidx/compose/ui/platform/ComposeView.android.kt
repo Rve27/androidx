@@ -135,7 +135,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
                     disposeComposition()
                 } else if (isNotEmpty()) {
                     val child = getChildAt(0) as? AndroidComposeView
-                    child?.composeViewContext = value
+                    if (child != null) {
+                        if (
+                            child.coroutineContext !==
+                                value.compositionContext.effectCoroutineContext
+                        ) {
+                            disposeComposition()
+                        }
+                        child.composeViewContext = value
+                    }
                 }
                 field = value
             }
@@ -383,6 +391,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         ) {
             // No changes
             return existingContext
+        }
+        if (
+            newContext.effectCoroutineContext !==
+                existingContext.compositionContext.effectCoroutineContext
+        ) {
+            disposeComposition()
         }
         val createdContext =
             ComposeViewContext(
