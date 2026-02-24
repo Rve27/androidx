@@ -111,7 +111,7 @@ internal class RemoteBoxNodeV2 : RemoteComposeNodeV2() {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startBox(
             recordingModifier,
-            horizontalAlignment.toRemote(),
+            horizontalAlignment.toRemote(creationState.layoutDirection),
             verticalAlignment.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -159,7 +159,7 @@ internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startColumn(
             recordingModifier,
-            horizontalAlignment.toRemote(),
+            horizontalAlignment.toRemote(creationState.layoutDirection),
             verticalArrangement.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -189,7 +189,7 @@ internal class RemoteFitBoxNodeV2 : RemoteComposeNodeV2() {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startFitBox(
             recordingModifier,
-            horizontalAlignment.toRemote(),
+            horizontalAlignment.toRemote(creationState.layoutDirection),
             verticalArrangement.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -205,7 +205,7 @@ internal class RemoteCollapsibleColumnNodeV2 : RemoteComposeNodeV2() {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startCollapsibleColumn(
             recordingModifier,
-            horizontalAlignment.toRemote(),
+            horizontalAlignment.toRemote(creationState.layoutDirection),
             verticalArrangement.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)

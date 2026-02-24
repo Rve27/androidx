@@ -28,6 +28,7 @@ import androidx.compose.remote.creation.compose.test.util.propertyName
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -62,8 +63,45 @@ class RemoteCollapsibleColumnTest {
             gridScreenshotUI.GridContent(getLayoutAlignmentUIs() + collapsibleUI.getUIs().toInput())
         }
 
-    private fun getLayoutAlignmentUIs():
-        List<Pair<String, @RemoteComposable @Composable () -> Unit>> =
+    @Test
+    fun rtl() =
+        composeTestRule.runScreenshotTest(layoutDirection = LayoutDirection.Rtl) {
+            val alignments =
+                listOf(
+                    RemoteAlignment.Start,
+                    RemoteAlignment.CenterHorizontally,
+                    RemoteAlignment.End,
+                )
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(alignments))
+        }
+
+    @Test
+    fun absoluteAlignment() =
+        composeTestRule.runScreenshotTest {
+            val alignments =
+                listOf(
+                    RemoteAbsoluteAlignment.Left,
+                    RemoteAlignment.CenterHorizontally,
+                    RemoteAbsoluteAlignment.Right,
+                )
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(alignments))
+        }
+
+    @Test
+    fun rtlAbsoluteAlignment() =
+        composeTestRule.runScreenshotTest(layoutDirection = LayoutDirection.Rtl) {
+            val alignments =
+                listOf(
+                    RemoteAbsoluteAlignment.Left,
+                    RemoteAlignment.CenterHorizontally,
+                    RemoteAbsoluteAlignment.Right,
+                )
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(alignments))
+        }
+
+    private fun getLayoutAlignmentUIs(
+        alignments: List<RemoteAlignment.Horizontal> = this.alignments
+    ): List<Pair<String, @RemoteComposable @Composable () -> Unit>> =
         sequence {
                 for (arrangement in arrangements) {
                     for (alignment in alignments) {

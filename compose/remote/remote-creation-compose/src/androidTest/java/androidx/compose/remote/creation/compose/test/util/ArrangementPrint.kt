@@ -16,8 +16,10 @@
 
 package androidx.compose.remote.creation.compose.test.util
 
+import androidx.compose.remote.creation.compose.layout.RemoteAbsoluteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
+import androidx.compose.remote.creation.compose.layout.RemoteBiasAbsoluteAlignment
 import kotlin.reflect.full.declaredMemberProperties
 
 fun RemoteArrangement.Horizontal.propertyName(): String {
@@ -35,10 +37,16 @@ fun RemoteArrangement.Vertical.propertyName(): String {
 }
 
 fun RemoteAlignment.Horizontal.propertyName(): String {
-    return RemoteAlignment.Companion::class
-        .declaredMemberProperties
-        .firstOrNull { it.get(RemoteAlignment.Companion) == this }
-        ?.name ?: "Unknown"
+    return if (this is RemoteBiasAbsoluteAlignment.Horizontal)
+        RemoteAbsoluteAlignment::class
+            .declaredMemberProperties
+            .firstOrNull { it.get(RemoteAbsoluteAlignment) == this }
+            ?.name ?: "Unknown"
+    else
+        RemoteAlignment.Companion::class
+            .declaredMemberProperties
+            .firstOrNull { it.get(RemoteAlignment.Companion) == this }
+            ?.name ?: "Unknown"
 }
 
 fun RemoteAlignment.Vertical.propertyName(): String {
@@ -49,8 +57,14 @@ fun RemoteAlignment.Vertical.propertyName(): String {
 }
 
 fun RemoteAlignment.propertyName(): String {
-    return RemoteAlignment.Companion::class
-        .declaredMemberProperties
-        .firstOrNull { it.get(RemoteAlignment.Companion) == this }
-        ?.name ?: "Unknown"
+    return if (this is RemoteBiasAbsoluteAlignment)
+        RemoteAbsoluteAlignment::class
+            .declaredMemberProperties
+            .firstOrNull { it.get(RemoteAbsoluteAlignment) == this }
+            ?.name ?: "Unknown"
+    else
+        RemoteAlignment.Companion::class
+            .declaredMemberProperties
+            .firstOrNull { it.get(RemoteAlignment.Companion) == this }
+            ?.name ?: "Unknown"
 }

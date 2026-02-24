@@ -36,7 +36,7 @@ internal class RemoteComposeBoxModifier(
         drawIntoRemoteCanvas { canvas ->
             canvas.document.startBox(
                 canvas.toRecordingModifier(modifier),
-                contentAlignment.horizontal.toRemote(),
+                contentAlignment.horizontal.toRemote(this.layoutDirection),
                 contentAlignment.vertical.toRemote(),
             )
             this@draw.drawContent()

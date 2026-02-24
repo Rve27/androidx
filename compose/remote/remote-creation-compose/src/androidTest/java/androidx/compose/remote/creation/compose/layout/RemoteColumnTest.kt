@@ -27,6 +27,7 @@ import androidx.compose.remote.creation.compose.test.util.propertyName
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -54,41 +55,80 @@ class RemoteColumnTest {
                     RemoteAlignment.CenterHorizontally,
                     RemoteAlignment.End,
                 )
-            val arrangements =
-                listOf(RemoteArrangement.Top, RemoteArrangement.Center, RemoteArrangement.Bottom)
-
-            gridScreenshotUI.GridContent(
-                sequence {
-                        for (arrangement in arrangements) {
-                            for (alignment in alignments) {
-                                yield(
-                                    "${arrangement.propertyName()} ${alignment.propertyName()}" to
-                                        @RemoteComposable @Composable {
-                                            // TODO(b/447100988): replace size by fillMaxSize in all
-                                            // those RemoteColumns
-                                            RemoteColumn(
-                                                modifier =
-                                                    RemoteModifier.size(DefaultContainerSize),
-                                                horizontalAlignment = alignment,
-                                                verticalArrangement = arrangement,
-                                            ) {
-                                                RemoteBox(
-                                                    modifier =
-                                                        RemoteModifier.size(48.rdp)
-                                                            .background(Color(0xFF6200EE))
-                                                )
-                                                RemoteBox(
-                                                    modifier =
-                                                        RemoteModifier.size(24.rdp)
-                                                            .background(Color(0xFF03DAC6))
-                                                )
-                                            }
-                                        }
-                                )
-                            }
-                        }
-                    }
-                    .toList()
-            )
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(alignments))
         }
+
+    @Test
+    fun rtl() =
+        composeTestRule.runScreenshotTest(layoutDirection = LayoutDirection.Rtl) {
+            val alignments =
+                listOf(
+                    RemoteAlignment.Start,
+                    RemoteAlignment.CenterHorizontally,
+                    RemoteAlignment.End,
+                )
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(alignments))
+        }
+
+    @Test
+    fun absoluteAlignment() =
+        composeTestRule.runScreenshotTest {
+            val alignments =
+                listOf(
+                    RemoteAbsoluteAlignment.Left,
+                    RemoteAlignment.CenterHorizontally,
+                    RemoteAbsoluteAlignment.Right,
+                )
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(alignments))
+        }
+
+    @Test
+    fun rtlAbsoluteAlignment() =
+        composeTestRule.runScreenshotTest(layoutDirection = LayoutDirection.Rtl) {
+            val alignments =
+                listOf(
+                    RemoteAbsoluteAlignment.Left,
+                    RemoteAlignment.CenterHorizontally,
+                    RemoteAbsoluteAlignment.Right,
+                )
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(alignments))
+        }
+
+    private fun getLayoutAlignmentUIs(
+        alignments: List<RemoteAlignment.Horizontal>
+    ): List<Pair<String, @RemoteComposable @Composable () -> Unit>> {
+        val arrangements =
+            listOf(RemoteArrangement.Top, RemoteArrangement.Center, RemoteArrangement.Bottom)
+
+        return sequence {
+                for (arrangement in arrangements) {
+                    for (alignment in alignments) {
+                        yield(
+                            "${arrangement.propertyName()} ${alignment.propertyName()}" to
+                                @RemoteComposable @Composable {
+                                    // TODO(b/447100988): replace size by fillMaxSize in all
+                                    // those RemoteColumns
+                                    RemoteColumn(
+                                        modifier = RemoteModifier.size(DefaultContainerSize),
+                                        horizontalAlignment = alignment,
+                                        verticalArrangement = arrangement,
+                                    ) {
+                                        RemoteBox(
+                                            modifier =
+                                                RemoteModifier.size(48.rdp)
+                                                    .background(Color(0xFF6200EE))
+                                        )
+                                        RemoteBox(
+                                            modifier =
+                                                RemoteModifier.size(24.rdp)
+                                                    .background(Color(0xFF03DAC6))
+                                        )
+                                    }
+                                }
+                        )
+                    }
+                }
+            }
+            .toList()
+    }
 }

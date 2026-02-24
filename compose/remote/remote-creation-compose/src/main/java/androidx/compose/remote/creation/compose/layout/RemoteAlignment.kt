@@ -24,6 +24,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteAlignment.Companion
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment.Companion.End
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment.Companion.Start
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment.Companion.Top
+import androidx.compose.ui.unit.LayoutDirection
 
 /**
  * A remote equivalent of [androidx.compose.ui.Alignment]. It is used to define how a layout's
@@ -50,7 +51,8 @@ public interface RemoteAlignment {
         public fun toComposeUi(): androidx.compose.ui.Alignment.Horizontal
 
         // TODO(b/471212869): add LayoutDirection as parameter.
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public fun toRemote(): Int
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun toRemote(layoutDirection: LayoutDirection): Int
     }
 
     /**
@@ -102,6 +104,30 @@ public interface RemoteAlignment {
     }
 }
 
+/** A collection of common [RemoteAlignment]s unaware of the layout direction. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public object RemoteAbsoluteAlignment {
+    // 2D AbsoluteAlignments.
+    public val TopLeft: RemoteAlignment =
+        RemoteBiasAbsoluteAlignment(ColumnLayout.START, ColumnLayout.TOP)
+    public val TopRight: RemoteAlignment =
+        RemoteBiasAbsoluteAlignment(ColumnLayout.END, ColumnLayout.TOP)
+    public val CenterLeft: RemoteAlignment =
+        RemoteBiasAbsoluteAlignment(ColumnLayout.START, ColumnLayout.CENTER)
+    public val CenterRight: RemoteAlignment =
+        RemoteBiasAbsoluteAlignment(ColumnLayout.END, ColumnLayout.CENTER)
+    public val BottomLeft: RemoteAlignment =
+        RemoteBiasAbsoluteAlignment(ColumnLayout.START, ColumnLayout.BOTTOM)
+    public val BottomRight: RemoteAlignment =
+        RemoteBiasAbsoluteAlignment(ColumnLayout.END, ColumnLayout.BOTTOM)
+
+    // 1D RemoteBiasAbsoluteAlignment.Horizontals.
+    public val Left: RemoteAlignment.Horizontal =
+        RemoteBiasAbsoluteAlignment.Horizontal(ColumnLayout.START)
+    public val Right: RemoteAlignment.Horizontal =
+        RemoteBiasAbsoluteAlignment.Horizontal(ColumnLayout.END)
+}
+
 /**
  * An [RemoteAlignment] specified by bias: [ColumnLayout.START] / [ColumnLayout.TOP],
  * [ColumnLayout.CENTER], [ColumnLayout.END] / [ColumnLayout.BOTTOM].
@@ -133,7 +159,15 @@ public data class RemoteBiasAlignment(val horizontalBias: Int, val verticalBias:
             }
         }
 
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) override fun toRemote(): Int = type
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        override fun toRemote(layoutDirection: LayoutDirection): Int =
+            when (type) {
+                ColumnLayout.START ->
+                    if (layoutDirection == LayoutDirection.Ltr) type else ColumnLayout.END
+                ColumnLayout.END ->
+                    if (layoutDirection == LayoutDirection.Ltr) type else ColumnLayout.START
+                else -> type
+            }
     }
 
     /**
@@ -155,5 +189,67 @@ public data class RemoteBiasAlignment(val horizontalBias: Int, val verticalBias:
         }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) override fun toRemote(): Int = type
+    }
+}
+
+/**
+ * An [RemoteAlignment] specified by bias: [ColumnLayout.START] / [ColumnLayout.TOP],
+ * * [ColumnLayout.CENTER], [ColumnLayout.END] / [ColumnLayout.BOTTOM].
+ *
+ * @see RemoteAbsoluteAlignment
+ * @see RemoteAlignment
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public data class RemoteBiasAbsoluteAlignment(val horizontalBias: Int, val verticalBias: Int) :
+    RemoteAlignment {
+    override val horizontal: RemoteAlignment.Horizontal =
+        RemoteBiasAbsoluteAlignment.Horizontal(horizontalBias)
+    override val vertical: RemoteAlignment.Vertical =
+        RemoteBiasAbsoluteAlignment.Vertical(verticalBias)
+
+    /**
+     * An [RemoteAlignment.Horizontal] specified by bias: [ColumnLayout.START],
+     * [ColumnLayout.CENTER], [ColumnLayout.END].
+     *
+     * @see RemoteBiasAlignment.Horizontal
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public data class Horizontal(val bias: Int) : RemoteAlignment.Horizontal {
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        override fun toComposeUi(): androidx.compose.ui.Alignment.Horizontal {
+            return when (bias) {
+                ColumnLayout.START -> androidx.compose.ui.AbsoluteAlignment.Left
+                ColumnLayout.CENTER -> androidx.compose.ui.Alignment.CenterHorizontally
+                ColumnLayout.END -> androidx.compose.ui.AbsoluteAlignment.Right
+                else -> androidx.compose.ui.AbsoluteAlignment.Left
+            }
+        }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        override fun toRemote(layoutDirection: LayoutDirection): Int = bias
+    }
+
+    /**
+     * An [RemoteAlignment.Vertical] specified by bias: [ColumnLayout.TOP], [ColumnLayout.CENTER],
+     * [ColumnLayout.BOTTOM].
+     *
+     * @see RemoteBiasAlignment.Horizontal
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public data class Vertical(val bias: Int) : RemoteAlignment.Vertical {
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        override fun toComposeUi(): androidx.compose.ui.Alignment.Vertical {
+            return when (bias) {
+                ColumnLayout.TOP -> androidx.compose.ui.Alignment.Top
+                ColumnLayout.CENTER -> androidx.compose.ui.Alignment.CenterVertically
+                ColumnLayout.BOTTOM -> androidx.compose.ui.Alignment.Bottom
+                else -> androidx.compose.ui.Alignment.Top
+            }
+        }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        override fun toRemote(): Int {
+            return bias
+        }
     }
 }
