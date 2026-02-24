@@ -102,9 +102,8 @@ package androidx.xr.arcore.runtime {
     property public abstract long nativePointer;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Eye {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Eye extends androidx.xr.arcore.runtime.Trackable {
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
     method @InaccessibleFromKotlin public boolean isOpen();
     property public abstract boolean isOpen;
     property public abstract androidx.xr.runtime.math.Pose pose;
@@ -207,10 +206,9 @@ package androidx.xr.arcore.runtime {
     ctor @BytecodeOnly public GeospatialPoseNotTrackingException(Throwable!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Hand {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Hand extends androidx.xr.arcore.runtime.Trackable {
     method @InaccessibleFromKotlin public default java.util.Map<androidx.xr.arcore.runtime.HandJointType,androidx.xr.runtime.math.Pose> getHandJoints();
     method @InaccessibleFromKotlin public java.nio.FloatBuffer getHandJointsBuffer();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
     method public static java.util.Map<androidx.xr.arcore.runtime.HandJointType,androidx.xr.runtime.math.Pose> parseHandJoint(androidx.xr.runtime.TrackingState trackingState, java.nio.FloatBuffer handJointsBuffer);
     property public default java.util.Map<androidx.xr.arcore.runtime.HandJointType,androidx.xr.runtime.math.Pose> handJoints;
     property public abstract java.nio.FloatBuffer handJointsBuffer;
