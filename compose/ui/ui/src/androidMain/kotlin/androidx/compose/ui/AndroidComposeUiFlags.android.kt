@@ -98,6 +98,6 @@ object AndroidComposeUiFlags {
     var isAccessibilityShowOnScreenNestedScrollingEnabled: Boolean = true
 
     /** This moves Haptics-related instances into the shared ComposeViewContext. */
-    // To be removed b/479895628
+    // TODO: b/479895628
     @field:Suppress("MutableBareField") @JvmField var isSharedHapticsEnabled: Boolean = true
 }
