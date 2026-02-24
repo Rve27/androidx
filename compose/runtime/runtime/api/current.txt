@@ -714,7 +714,7 @@ package androidx.compose.runtime {
     method public static inline operator void setValue(androidx.compose.runtime.MutableDoubleState, Object? thisObj, kotlin.reflect.KProperty<? extends java.lang.Object?> property, double value);
   }
 
-  public final class SnapshotFlowManager {
+  @SuppressCompatibility @androidx.compose.runtime.ExperimentalComposeRuntimeApi public final class SnapshotFlowManager {
     ctor public SnapshotFlowManager();
     method public void dispose();
   }
