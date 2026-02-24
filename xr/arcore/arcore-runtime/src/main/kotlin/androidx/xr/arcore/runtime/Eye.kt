@@ -22,7 +22,7 @@ import androidx.xr.runtime.math.Pose
 
 /** Describes a user's eye information with coarse and fine precision. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface Eye {
+public interface Eye : Trackable {
     /**
      * a flag indicating whether or not the eye is open. It's set to true if it's open, false if
      * it's closed. *
@@ -33,5 +33,5 @@ public interface Eye {
     public val pose: Pose
 
     /** the tracking state of the eye */
-    public val trackingState: TrackingState
+    public override val trackingState: TrackingState
 }

@@ -177,7 +177,7 @@ package androidx.xr.arcore {
   @SuppressCompatibility @kotlin.RequiresOptIn(message="This is an experimental API. It may be changed or removed in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalGesturesApi {
   }
 
-  public final class Eye {
+  public final class Eye implements androidx.xr.arcore.Trackable<androidx.xr.arcore.Eye.State> {
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Eye.State> getState();
     method public static androidx.xr.arcore.Eye? left(androidx.xr.runtime.Session session);
     method public static androidx.xr.arcore.Eye? right(androidx.xr.runtime.Session session);
@@ -191,7 +191,7 @@ package androidx.xr.arcore {
     method public androidx.xr.arcore.Eye? right(androidx.xr.runtime.Session session);
   }
 
-  public static final class Eye.State {
+  public static final class Eye.State implements androidx.xr.arcore.Trackable.State {
     ctor public Eye.State(boolean isOpen, androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.TrackingState trackingState);
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
     method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
@@ -445,7 +445,7 @@ package androidx.xr.arcore {
     property public androidx.xr.arcore.Geospatial.Surface TERRAIN;
   }
 
-  public final class Hand {
+  public final class Hand implements androidx.xr.arcore.Trackable<androidx.xr.arcore.Hand.State> {
     method public static androidx.xr.arcore.Hand.HandSide getPrimaryHandSide(android.content.ContentResolver resolver);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Hand.State> getState();
     method public static androidx.xr.arcore.Hand? left(androidx.xr.runtime.Session session);
@@ -467,7 +467,7 @@ package androidx.xr.arcore {
     enum_constant public static final androidx.xr.arcore.Hand.HandSide UNKNOWN;
   }
 
-  public static final class Hand.State {
+  public static final class Hand.State implements androidx.xr.arcore.Trackable.State {
     method @InaccessibleFromKotlin public java.util.Map<androidx.xr.arcore.HandJointType,androidx.xr.runtime.math.Pose> getHandJoints();
     method @InaccessibleFromKotlin public java.nio.FloatBuffer getHandJointsBuffer();
     method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
