@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,22 @@ package androidx.tracing
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.ThreadContextElement
 
-@Suppress("KmpSignatureClash") // also defined in desktop
-internal class DefaultThreadContextElement(
+internal class DefaultThreadContextElement<T : Tracer>(
+    override val tracer: T,
     override var category: String,
     override var name: String,
     override val flowIds: List<Long>,
     internal val updateThreadContextBlock: (context: CoroutineContext) -> Unit,
     internal val restoreThreadContextBlock: (context: CoroutineContext) -> Unit,
-    internal val close: (element: PlatformThreadContextElement<*>) -> Unit,
+    internal val close: (element: PlatformThreadContextElement<*, T>) -> Unit,
 ) :
     ThreadContextElement<Unit>,
-    PlatformThreadContextElement<Unit>(category = category, name = name, flowIds = flowIds) {
+    PlatformThreadContextElement<Unit, T>(
+        tracer = tracer,
+        category = category,
+        name = name,
+        flowIds = flowIds,
+    ) {
     /**
      * This method is called **before a coroutine is resumed** on a thread that belongs to a
      * dispatcher.
@@ -38,27 +43,28 @@ internal class DefaultThreadContextElement(
         restoreThreadContextBlock(context)
     }
 
-    /** This method is called **after** a coroutine is suspend on the current thread. */
+    /** This method is called **after** a coroutine is suspended on the current thread. */
     override fun updateThreadContext(context: CoroutineContext) {
         updateThreadContextBlock(context)
     }
 
     override fun close() {
         close(this)
-        owner = EmptyTraceContext.thread
     }
 }
 
 @PublishedApi
-internal actual fun buildThreadContextElement(
+internal actual fun <T : Tracer> buildThreadContextElement(
+    tracer: T,
     category: String,
     name: String,
     flowIds: List<Long>,
     updateThreadContextBlock: (context: CoroutineContext) -> Unit,
     restoreThreadContextBlock: (context: CoroutineContext) -> Unit,
-    close: (platformThreadContextElement: PlatformThreadContextElement<*>) -> Unit,
-): PlatformThreadContextElement<Unit> {
+    close: (platformThreadContextElement: PlatformThreadContextElement<*, T>) -> Unit,
+): PlatformThreadContextElement<Unit, T> {
     return DefaultThreadContextElement(
+        tracer = tracer,
         category = category,
         name = name,
         flowIds = flowIds,
