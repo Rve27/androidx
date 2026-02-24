@@ -17,6 +17,7 @@
 package androidx.compose.remote.creation.compose.layout
 
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
+import androidx.compose.remote.creation.compose.layout.RemoteArrangement.Absolute
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.alignByBaseline
 import androidx.compose.remote.creation.compose.modifier.background
@@ -32,6 +33,7 @@ import androidx.compose.remote.creation.compose.util.TestProfiles
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -48,58 +50,70 @@ class RemoteRowTest {
         RemoteComposeScreenshotTestRule(moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY)
     }
 
+    private val arrangements =
+        listOf(RemoteArrangement.Start, RemoteArrangement.Center, RemoteArrangement.End)
+    private val alignments =
+        listOf(RemoteAlignment.Top, RemoteAlignment.CenterVertically, RemoteAlignment.Bottom)
+
     private val gridScreenshotUI = GridScreenshotUI()
 
     @Test
     fun grid() =
-        composeTestRule.runScreenshotTest {
-            val arrangements =
-                listOf(
-                    RemoteArrangement.Start,
-                    RemoteArrangement.CenterHorizontally,
-                    RemoteArrangement.End,
-                )
-            val alignments =
-                listOf(
-                    RemoteAlignment.Top,
-                    RemoteAlignment.CenterVertically,
-                    RemoteAlignment.Bottom,
-                )
+        composeTestRule.runScreenshotTest { gridScreenshotUI.GridContent(getLayoutAlignmentUIs()) }
 
-            gridScreenshotUI.GridContent(
-                sequence {
-                        for (alignment in alignments) {
-                            for (arrangement in arrangements) {
-                                yield(
-                                    "${alignment.propertyName()} ${arrangement.propertyName()}" to
-                                        @RemoteComposable @Composable {
-                                            // TODO(b/447100988): replace size by fillMaxSize in all
-                                            // those RemoteRows
-                                            RemoteRow(
-                                                modifier =
-                                                    RemoteModifier.size(DefaultContainerSize),
-                                                horizontalArrangement = arrangement,
-                                                verticalAlignment = alignment,
-                                            ) {
-                                                RemoteBox(
-                                                    modifier =
-                                                        RemoteModifier.size(48.rdp)
-                                                            .background(Color(0xFF6200EE))
-                                                )
-                                                RemoteBox(
-                                                    modifier =
-                                                        RemoteModifier.size(24.rdp)
-                                                            .background(Color(0xFF03DAC6))
-                                                )
-                                            }
-                                        }
-                                )
-                            }
-                        }
-                    }
-                    .toList()
-            )
+    @Test
+    fun rtl() =
+        composeTestRule.runScreenshotTest(layoutDirection = LayoutDirection.Rtl) {
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs())
         }
+
+    @Test
+    fun absoluteArrangement() =
+        composeTestRule.runScreenshotTest {
+            val arrangements = listOf(Absolute.Left, Absolute.Center, Absolute.Right)
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(arrangements))
+        }
+
+    @Test
+    fun rtlAbsoluteArrangement() =
+        composeTestRule.runScreenshotTest(layoutDirection = LayoutDirection.Rtl) {
+            val arrangements = listOf(Absolute.Left, Absolute.Center, Absolute.Right)
+            gridScreenshotUI.GridContent(getLayoutAlignmentUIs(arrangements))
+        }
+
+    private fun getLayoutAlignmentUIs(
+        arrangements: List<RemoteArrangement.Horizontal> = this.arrangements
+    ): List<Pair<String, @RemoteComposable @Composable () -> Unit>> =
+        sequence {
+                for (alignment in alignments) {
+                    for (arrangement in arrangements) {
+                        yield(
+                            "${alignment.propertyName()} ${arrangement.propertyName()}" to
+                                @RemoteComposable @Composable {
+                                    // TODO(b/447100988): replace size by fillMaxSize in all
+                                    // those RemoteRows
+                                    RemoteRow(
+                                        modifier = RemoteModifier.size(DefaultContainerSize),
+                                        horizontalArrangement = arrangement,
+                                        verticalAlignment = alignment,
+                                    ) {
+                                        RemoteBox(
+                                            modifier =
+                                                RemoteModifier.size(48.rdp)
+                                                    .background(Color(0xFF6200EE))
+                                        )
+                                        RemoteBox(
+                                            modifier =
+                                                RemoteModifier.size(24.rdp)
+                                                    .background(Color(0xFF03DAC6))
+                                        )
+                                    }
+                                }
+                        )
+                    }
+                }
+            }
+            .toList()
 
     @Test
     fun alignByBaseline() {

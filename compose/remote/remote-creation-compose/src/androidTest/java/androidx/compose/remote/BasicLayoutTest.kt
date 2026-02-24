@@ -1297,7 +1297,7 @@ list:
         testLayoutAndPaint(layoutResult, paintResult) {
             RemoteRow(
                 modifier = RemoteModifier.background(Color.Yellow),
-                horizontalArrangement = RemoteArrangement.CenterHorizontally,
+                horizontalArrangement = RemoteArrangement.Center,
                 verticalAlignment = RemoteAlignment.CenterVertically,
             ) {
                 RemoteBox(

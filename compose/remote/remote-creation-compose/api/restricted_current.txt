@@ -103,8 +103,7 @@ package androidx.compose.remote.creation.compose.layout {
 
   public final class RemoteArrangement {
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical getBottom();
-    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical getCenter();
-    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal getCenterHorizontally();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical getCenter();
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal getEnd();
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical getSpaceAround();
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical getSpaceBetween();
@@ -112,8 +111,7 @@ package androidx.compose.remote.creation.compose.layout {
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal getStart();
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical getTop();
     property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical Bottom;
-    property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical Center;
-    property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal CenterHorizontally;
+    property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical Center;
     property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal End;
     property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical SpaceAround;
     property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical SpaceBetween;

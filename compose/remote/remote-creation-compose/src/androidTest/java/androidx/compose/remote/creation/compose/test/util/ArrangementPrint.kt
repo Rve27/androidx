@@ -19,6 +19,7 @@ package androidx.compose.remote.creation.compose.test.util
 import androidx.compose.remote.creation.compose.layout.RemoteAbsoluteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
+import androidx.compose.remote.creation.compose.layout.RemoteArrangement.Absolute
 import androidx.compose.remote.creation.compose.layout.RemoteBiasAbsoluteAlignment
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -26,7 +27,9 @@ fun RemoteArrangement.Horizontal.propertyName(): String {
     return RemoteArrangement::class
         .declaredMemberProperties
         .firstOrNull { it.get(RemoteArrangement) == this }
-        ?.name ?: "Unknown"
+        ?.name
+        ?: Absolute::class.declaredMemberProperties.firstOrNull { it.get(Absolute) == this }?.name
+        ?: "Unknown"
 }
 
 fun RemoteArrangement.Vertical.propertyName(): String {

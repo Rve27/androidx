@@ -476,7 +476,7 @@ private fun RemoteButtonImpl(
 
     RemoteRow(
         verticalAlignment = RemoteAlignment.CenterVertically,
-        horizontalArrangement = RemoteArrangement.CenterHorizontally,
+        horizontalArrangement = RemoteArrangement.Center,
         modifier =
             modifier
                 .drawWithContent {

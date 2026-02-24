@@ -70,7 +70,7 @@ class MyWidget : RemoteComposeWidget() {
         val counter = readCounter(context, widgetId)
         RemoteRow(
             RemoteModifier.background(Color.White).fillMaxSize(),
-            horizontalArrangement = RemoteArrangement.CenterHorizontally,
+            horizontalArrangement = RemoteArrangement.Center,
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {
             Button("-", RemoteModifier.weight(1f)) { writeCounter(context, widgetId, -1) }

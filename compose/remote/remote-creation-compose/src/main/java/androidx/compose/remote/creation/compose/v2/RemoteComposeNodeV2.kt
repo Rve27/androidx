@@ -127,7 +127,7 @@ internal class RemoteRowNodeV2 : RemoteComposeNodeV2() {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startRow(
             recordingModifier,
-            horizontalArrangement.toRemote(),
+            horizontalArrangement.toRemote(creationState.layoutDirection),
             verticalAlignment.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -143,7 +143,7 @@ internal class RemoteFlowRowNodeV2 : RemoteComposeNodeV2() {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startFlow(
             recordingModifier,
-            horizontalArrangement.toRemote(),
+            horizontalArrangement.toRemote(creationState.layoutDirection),
             verticalArrangement.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -221,7 +221,7 @@ internal class RemoteCollapsibleRowNodeV2 : RemoteComposeNodeV2() {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startCollapsibleRow(
             recordingModifier,
-            horizontalArrangement.toRemote(),
+            horizontalArrangement.toRemote(creationState.layoutDirection),
             verticalAlignment.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)

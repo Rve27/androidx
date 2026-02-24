@@ -199,7 +199,7 @@ fun SwitchWidgetDemo() {
         RowSwitch(checkedC, "State C")
         Row(
             modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
-            horizontalArrangement = RemoteArrangement.CenterHorizontally,
+            horizontalArrangement = RemoteArrangement.Center,
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {
             val visibilityModifierB = RemoteModifier.visibility(checkedB)
