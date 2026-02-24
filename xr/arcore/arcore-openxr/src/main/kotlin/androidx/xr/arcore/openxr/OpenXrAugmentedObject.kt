@@ -17,8 +17,6 @@
 package androidx.xr.arcore.openxr
 
 import androidx.annotation.RestrictTo
-import androidx.xr.arcore.runtime.Anchor
-import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException
 import androidx.xr.arcore.runtime.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.TrackingState
@@ -44,15 +42,6 @@ internal constructor(
     override var trackingState: TrackingState = TrackingState.PAUSED
         private set
 
-    override fun createAnchor(pose: Pose): Anchor {
-        val xrTime = timeSource.getXrTime(timeSource.markNow())
-        val anchorNativePointer = nativeCreateAnchorForObject(objectId, pose, xrTime)
-        checkNativeAnchorIsValid(anchorNativePointer)
-        val anchor: Anchor = OpenXrAnchor(anchorNativePointer, xrResources)
-        xrResources.addUpdatable(anchor as Updatable)
-        return anchor
-    }
-
     override fun update(xrTime: Long) {
         val objState = nativeGetAugmentedObjectState(objectId, xrTime)
         if (objState == null) {
@@ -66,23 +55,10 @@ internal constructor(
         extents = objState.extents
     }
 
-    private fun checkNativeAnchorIsValid(nativeAnchor: Long) {
-        when (nativeAnchor) {
-            -2L -> throw IllegalStateException("Failed to create anchor.") // kErrorRuntimeFailure
-            -10L -> throw AnchorResourcesExhaustedException() // kErrorLimitReached
-        }
-    }
-
     private external fun nativeGetAugmentedObjectState(
         objectId: Long,
         timestampNs: Long,
     ): AugmentedObjectState?
-
-    private external fun nativeCreateAnchorForObject(
-        objectId: Long,
-        pose: Pose,
-        timestampNs: Long,
-    ): Long
 }
 
 internal fun categoryFromNativeValue(value: Long): AugmentedObjectCategory {
