@@ -24,6 +24,7 @@ import androidx.xr.arcore.AnchorCreateResourcesExhausted
 import androidx.xr.arcore.AnchorCreateSuccess
 import androidx.xr.arcore.AnchorCreateTrackingUnavailable
 import androidx.xr.arcore.AnchorCreateUnsupportedLocation
+import androidx.xr.arcore.AnchorCreateUnsupportedObject
 import androidx.xr.arcore.AnchorLoadInvalidUuid
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
@@ -97,6 +98,10 @@ fun callCreateAnchor(session: Session, pose: Pose) {
         is AnchorLoadInvalidUuid -> {
             // This result only occurs when calling `Anchor.load()` to load a persistent anchor with
             // an invalid UUID.
+        }
+        is AnchorCreateUnsupportedObject -> {
+            // This result occurs when calling `createAnchor()` with a `HitResult` against a
+            // `Trackable` that doesn't implement `Anchorable`.
         }
     }
 }

@@ -45,7 +45,10 @@ internal constructor(
      *   [androidx.xr.runtime.PlaneTrackingMode.DISABLED]
      */
     public fun createAnchor(): AnchorCreateResult {
-        return trackable.createAnchor(hitPose)
+        if (trackable is Anchorable) {
+            return trackable.createAnchor(hitPose)
+        }
+        return AnchorCreateUnsupportedObject()
     }
 
     override fun equals(other: Any?): Boolean {

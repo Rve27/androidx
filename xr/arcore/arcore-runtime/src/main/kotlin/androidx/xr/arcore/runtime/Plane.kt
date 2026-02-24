@@ -23,7 +23,7 @@ import androidx.xr.runtime.math.Vector2
 
 /** Describes the current best knowledge of a real-world planar surface. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface Plane : Trackable {
+public interface Plane : Anchorable {
     /** The [Type] of the plane */
     public val type: Type
 

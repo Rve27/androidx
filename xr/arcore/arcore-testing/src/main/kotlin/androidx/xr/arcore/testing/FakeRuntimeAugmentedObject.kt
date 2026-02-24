@@ -16,7 +16,6 @@
 
 package androidx.xr.arcore.testing
 
-import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Anchor as RuntimeAnchor
 import androidx.xr.arcore.runtime.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.AugmentedObjectCategory
@@ -40,18 +39,4 @@ public class FakeRuntimeAugmentedObject(
     override var category: AugmentedObjectCategory = AugmentedObjectCategory.KEYBOARD,
     override var trackingState: TrackingState = TrackingState.TRACKING,
     public val anchors: MutableCollection<RuntimeAnchor> = mutableListOf(),
-) : RuntimeObject, AnchorHolder {
-
-    override fun createAnchor(pose: Pose): RuntimeAnchor {
-        val anchor = FakeRuntimeAnchor(pose, this)
-        anchors.add(anchor)
-        return anchor
-    }
-
-    override fun detachAnchor(anchor: RuntimeAnchor) {
-        anchors.remove(anchor)
-    }
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    override fun onAnchorPersisted(anchor: RuntimeAnchor) {}
-}
+) : RuntimeObject {}
