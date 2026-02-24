@@ -2436,17 +2436,17 @@ package androidx.compose.ui.input.pointer {
   }
 
   @androidx.compose.runtime.Immutable public final class HistoricalChange {
-    ctor @KotlinOnly public HistoricalChange(long uptimeMillis, androidx.compose.ui.geometry.Offset position, optional float scaleGestureFactor, optional androidx.compose.ui.geometry.Offset panGestureOffset);
+    ctor @KotlinOnly public HistoricalChange(long uptimeMillis, androidx.compose.ui.geometry.Offset position, optional float scaleFactor, optional androidx.compose.ui.geometry.Offset panOffset);
     ctor @BytecodeOnly public HistoricalChange(long, long, float, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public HistoricalChange(long, long, float, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly @Deprecated public HistoricalChange(long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method @BytecodeOnly public long getPanGestureOffset-F1C5BW0();
+    method @BytecodeOnly public long getPanOffset-F1C5BW0();
     method @BytecodeOnly public long getPosition-F1C5BW0();
-    method @InaccessibleFromKotlin public float getScaleGestureFactor();
+    method @InaccessibleFromKotlin public float getScaleFactor();
     method @InaccessibleFromKotlin public long getUptimeMillis();
-    property public androidx.compose.ui.geometry.Offset panGestureOffset;
+    property public androidx.compose.ui.geometry.Offset panOffset;
     property public androidx.compose.ui.geometry.Offset position;
-    property public float scaleGestureFactor;
+    property public float scaleFactor;
     property public long uptimeMillis;
   }
 
@@ -2517,19 +2517,27 @@ package androidx.compose.ui.input.pointer {
     method @BytecodeOnly public int getEnter-7fucELk();
     method @BytecodeOnly public int getExit-7fucELk();
     method @BytecodeOnly public int getMove-7fucELk();
-    method @BytecodeOnly public int getPan-7fucELk();
+    method @BytecodeOnly public int getPanEnd-7fucELk();
+    method @BytecodeOnly public int getPanMove-7fucELk();
+    method @BytecodeOnly public int getPanStart-7fucELk();
     method @BytecodeOnly public int getPress-7fucELk();
     method @BytecodeOnly public int getRelease-7fucELk();
-    method @BytecodeOnly public int getScale-7fucELk();
+    method @BytecodeOnly public int getScaleChange-7fucELk();
+    method @BytecodeOnly public int getScaleEnd-7fucELk();
+    method @BytecodeOnly public int getScaleStart-7fucELk();
     method @BytecodeOnly public int getScroll-7fucELk();
     method @BytecodeOnly public int getUnknown-7fucELk();
     property public androidx.compose.ui.input.pointer.PointerEventType Enter;
     property public androidx.compose.ui.input.pointer.PointerEventType Exit;
     property public androidx.compose.ui.input.pointer.PointerEventType Move;
-    property public androidx.compose.ui.input.pointer.PointerEventType Pan;
+    property public androidx.compose.ui.input.pointer.PointerEventType PanEnd;
+    property public androidx.compose.ui.input.pointer.PointerEventType PanMove;
+    property public androidx.compose.ui.input.pointer.PointerEventType PanStart;
     property public androidx.compose.ui.input.pointer.PointerEventType Press;
     property public androidx.compose.ui.input.pointer.PointerEventType Release;
-    property public androidx.compose.ui.input.pointer.PointerEventType Scale;
+    property public androidx.compose.ui.input.pointer.PointerEventType ScaleChange;
+    property public androidx.compose.ui.input.pointer.PointerEventType ScaleEnd;
+    property public androidx.compose.ui.input.pointer.PointerEventType ScaleStart;
     property public androidx.compose.ui.input.pointer.PointerEventType Scroll;
     property public androidx.compose.ui.input.pointer.PointerEventType Unknown;
   }
@@ -2612,7 +2620,7 @@ package androidx.compose.ui.input.pointer {
   }
 
   @androidx.compose.runtime.Immutable public final class PointerInputChange {
-    ctor @KotlinOnly public PointerInputChange(androidx.compose.ui.input.pointer.PointerId id, long uptimeMillis, androidx.compose.ui.geometry.Offset position, boolean pressed, float pressure, long previousUptimeMillis, androidx.compose.ui.geometry.Offset previousPosition, boolean previousPressed, boolean isInitiallyConsumed, optional androidx.compose.ui.input.pointer.PointerType type, optional androidx.compose.ui.geometry.Offset scrollDelta, optional float scaleGestureFactor, optional androidx.compose.ui.geometry.Offset panGestureOffset);
+    ctor @KotlinOnly public PointerInputChange(androidx.compose.ui.input.pointer.PointerId id, long uptimeMillis, androidx.compose.ui.geometry.Offset position, boolean pressed, float pressure, long previousUptimeMillis, androidx.compose.ui.geometry.Offset previousPosition, boolean previousPressed, boolean isInitiallyConsumed, optional androidx.compose.ui.input.pointer.PointerType type, optional androidx.compose.ui.geometry.Offset scrollDelta, optional float scaleFactor, optional androidx.compose.ui.geometry.Offset panOffset);
     ctor @KotlinOnly public PointerInputChange(androidx.compose.ui.input.pointer.PointerId id, long uptimeMillis, androidx.compose.ui.geometry.Offset position, boolean pressed, long previousUptimeMillis, androidx.compose.ui.geometry.Offset previousPosition, boolean previousPressed, boolean isInitiallyConsumed, optional androidx.compose.ui.input.pointer.PointerType type, optional androidx.compose.ui.geometry.Offset scrollDelta, optional float scaleGestureFactor, optional androidx.compose.ui.geometry.Offset panGestureOffset);
     ctor @BytecodeOnly public PointerInputChange(long, long, long, boolean, float, long, long, boolean, boolean, int, long, float, long, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public PointerInputChange(long, long, long, boolean, float, long, long, boolean, boolean, int, long, float, long, kotlin.jvm.internal.DefaultConstructorMarker!);
@@ -2648,14 +2656,14 @@ package androidx.compose.ui.input.pointer {
     method @InaccessibleFromKotlin @Deprecated public androidx.compose.ui.input.pointer.ConsumedData getConsumed();
     method @InaccessibleFromKotlin public java.util.List<androidx.compose.ui.input.pointer.HistoricalChange> getHistorical();
     method @BytecodeOnly public long getId-J3iCeTQ();
-    method @BytecodeOnly public long getPanGestureOffset-F1C5BW0();
+    method @BytecodeOnly public long getPanOffset-F1C5BW0();
     method @BytecodeOnly public long getPosition-F1C5BW0();
     method @InaccessibleFromKotlin public boolean getPressed();
     method @InaccessibleFromKotlin public float getPressure();
     method @BytecodeOnly public long getPreviousPosition-F1C5BW0();
     method @InaccessibleFromKotlin public boolean getPreviousPressed();
     method @InaccessibleFromKotlin public long getPreviousUptimeMillis();
-    method @InaccessibleFromKotlin public float getScaleGestureFactor();
+    method @InaccessibleFromKotlin public float getScaleFactor();
     method @BytecodeOnly public long getScrollDelta-F1C5BW0();
     method @BytecodeOnly public int getType-T8wyACA();
     method @InaccessibleFromKotlin public long getUptimeMillis();
@@ -2664,14 +2672,14 @@ package androidx.compose.ui.input.pointer {
     property public java.util.List<androidx.compose.ui.input.pointer.HistoricalChange> historical;
     property public androidx.compose.ui.input.pointer.PointerId id;
     property public boolean isConsumed;
-    property public androidx.compose.ui.geometry.Offset panGestureOffset;
+    property public androidx.compose.ui.geometry.Offset panOffset;
     property public androidx.compose.ui.geometry.Offset position;
     property public boolean pressed;
     property public float pressure;
     property public androidx.compose.ui.geometry.Offset previousPosition;
     property public boolean previousPressed;
     property public long previousUptimeMillis;
-    property public float scaleGestureFactor;
+    property public float scaleFactor;
     property public androidx.compose.ui.geometry.Offset scrollDelta;
     property public androidx.compose.ui.input.pointer.PointerType type;
     property public long uptimeMillis;
