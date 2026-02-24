@@ -71,6 +71,7 @@ class SnapshotFlowBenchmark(
      * A test in which there are [n] [snapshotFlow]s that each watch one of [n] distinct state
      * objects.
      */
+    @OptIn(ExperimentalComposeRuntimeApi::class)
     @Test
     fun eachSnapshotFlowWatchesOneStateObject() {
         benchmarkRule.measureRepeated {
@@ -119,6 +120,7 @@ class SnapshotFlowBenchmark(
      * A test with [n] [snapshotFlow]s and [n] distinct state objects, in which each [snapshotFlow]
      * watches 10 state objects, and each state object is watched by 10 [snapshotFlow]s.
      */
+    @OptIn(ExperimentalComposeRuntimeApi::class)
     @Test
     fun eachSnapshotFlowWatchesTenStateObjects() {
         benchmarkRule.measureRepeated {
