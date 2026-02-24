@@ -76,6 +76,9 @@ public class CoreDocument implements Serializable {
 
     // Internal version level
     public static final int DOCUMENT_API_LEVEL = 8;
+    static final int PROFILE_WIDGETS = 0x100;
+    static final int PROFILE_ANDROIDX = 0x200; // REMOVE IN PLATFORM
+    public static final int PROFILE = PROFILE_ANDROIDX;
 
     // We also keep a more fine-grained BUILD number, exposed as
     // ID_API_LEVEL = DOCUMENT_API_LEVEL + BUILD
