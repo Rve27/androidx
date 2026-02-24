@@ -47,6 +47,7 @@ import kotlin.jvm.JvmField
  *          public static int SomeFeatureEnabled return true
  *      }
  */
+@Suppress("FeatureFlagSetup") // These are not normal, temporary feature flags, so exempt them
 @ComposeToolingApi
 public object ComposeToolingFlags {
 
@@ -58,7 +59,6 @@ public object ComposeToolingFlags {
      * The verbose trace blocks might have a negative impact on performance and thus should be
      * disabled by default.
      */
-    // TODO: b/485958933
     @field:Suppress("MutableBareField")
     @JvmField
     public var isVerboseTracingEnabled: Boolean = false
