@@ -28,6 +28,7 @@ import androidx.paging.RemoteMediator.InitializeAction.LAUNCH_INITIAL_REFRESH
 import androidx.paging.internal.BUGANIZER_URL
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -145,11 +146,26 @@ internal class PageFetcher<Key : Any, Value : Any>(
                         job = Job(),
                     )
                 } else {
-                    // TODO implement APPEND/PRPEND
-                    throw IllegalStateException("Should not get here")
+                    requireNotNull(currentGeneration) {
+                        "Append or Prepend request should be sent after a Refresh. " +
+                            "This error indicates a bug in the Paging library. Please file a bug report in Buganizer."
+                    }
+                    // This forced load does not set lastAccessedIndex. This is so that we
+                    // can continue to support
+                    // refreshes based on scroll position even if there were forced loads just
+                    // before
+                    // the refresh.
+                    currentGeneration.snapshot.forceSetHint(loadRequest.loadType)
+                    // A new generation should only happen after Refreshes. So for append/prepends
+                    // we keep the same generation going.
+                    currentGeneration
                 }
             }
             .filterNotNull()
+            // append/prepends reuse the same generation, and only new Generations (refresh) should
+            // trigger
+            // a new PagingData
+            .distinctUntilChanged()
             .simpleMapLatest { generation ->
                 val downstreamFlow =
                     generation.snapshot
@@ -292,12 +308,12 @@ internal class PageFetcher<Key : Any, Value : Any>(
         val job: Job,
     )
 
-    private sealed class LoadRequest {
+    private sealed class LoadRequest(val loadType: LoadType) {
 
-        class Refresh(val triggerRemoteRefresh: Boolean) : LoadRequest()
+        class Refresh(val triggerRemoteRefresh: Boolean) : LoadRequest(REFRESH)
 
-        object Append : LoadRequest()
+        object Append : LoadRequest(APPEND)
 
-        object Prepend : LoadRequest()
+        object Prepend : LoadRequest(PREPEND)
     }
 }

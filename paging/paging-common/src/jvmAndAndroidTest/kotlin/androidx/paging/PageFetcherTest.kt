@@ -20,6 +20,7 @@ import androidx.kruth.assertThat
 import androidx.paging.LoadState.Loading
 import androidx.paging.LoadState.NotLoading
 import androidx.paging.LoadType.APPEND
+import androidx.paging.LoadType.PREPEND
 import androidx.paging.LoadType.REFRESH
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
@@ -1529,6 +1530,443 @@ class PageFetcherTest {
             advanceUntilIdle()
 
             assertThat(remoteMediator.newLoadEvents).isNotEmpty()
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun append() =
+        testScope.runTest {
+            val pageFetcher = PageFetcher(pagingSourceFactory, 50, config)
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+
+            pageFetcher.load(APPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    createAppend(1, 52..52),
+                )
+
+            pageFetcher.load(APPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    createAppend(2, 53..53),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun append_NoMoreDataNoOp() =
+        testScope.runTest {
+            val pageFetcher = PageFetcher(pagingSourceFactory, 98, config)
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(98..99, appendState = NotLoading.Complete),
+                )
+
+            pageFetcher.load(APPEND)
+            advanceUntilIdle()
+            assertThat(fetcherState.newEvents()).isEmpty()
+
+            pageFetcher.load(APPEND)
+            advanceUntilIdle()
+            assertThat(fetcherState.newEvents()).isEmpty()
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun prepend() =
+        testScope.runTest {
+            val pageFetcher = PageFetcher(pagingSourceFactory, 50, config)
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    createPrepend(-1, 49..49),
+                )
+
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    createPrepend(-2, 48..48),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun prepend_NoMoreDataNoOp() =
+        testScope.runTest {
+            val pageFetcher = PageFetcher(pagingSourceFactory, 0, config)
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(0..1, prependState = NotLoading.Complete),
+                )
+
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+            assertThat(fetcherState.newEvents()).isEmpty()
+
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+            assertThat(fetcherState.newEvents()).isEmpty()
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun appendPrepend() =
+        testScope.runTest {
+            val pageFetcher =
+                PageFetcher(
+                    pagingSourceFactory,
+                    50,
+                    PagingConfig(pageSize = 1, prefetchDistance = 1, initialLoadSize = 2),
+                )
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+
+            pageFetcher.load(APPEND)
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    localLoadStateUpdate<Int>(appendLocal = Loading, prependLocal = Loading),
+                    createAppend(1, 52..52, prependState = Loading),
+                    createPrepend(-1, 49..49),
+                )
+
+            pageFetcher.load(APPEND)
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    localLoadStateUpdate<Int>(appendLocal = Loading, prependLocal = Loading),
+                    createAppend(2, 53..53, prependState = Loading),
+                    createPrepend(-2, 48..48),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun appendRefresh() =
+        testScope.runTest {
+            val pageFetcher =
+                PageFetcher(
+                    pagingSourceFactory,
+                    50,
+                    PagingConfig(
+                        pageSize = 1,
+                        prefetchDistance = 1,
+                        enablePlaceholders = true,
+                        initialLoadSize = 2,
+                    ),
+                )
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                )
+
+            // hint is based on the very last loaded item which is 51
+            pageFetcher.load(APPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    createAppend(1, 52..52),
+                )
+
+            // forced appends don't set lastAccessedIndex, so the refresh should be
+            // generic (as if no access as happened yet)
+            pageFetcher.load(REFRESH)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(2)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(0..1, prependState = NotLoading.Complete),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun appendDoesNotOverrideAccessedIndex() =
+        testScope.runTest {
+            val pageFetcher =
+                PageFetcher(
+                    pagingSourceFactory,
+                    50,
+                    PagingConfig(
+                        pageSize = 2,
+                        prefetchDistance = 1,
+                        enablePlaceholders = true,
+                        initialLoadSize = 5,
+                    ),
+                )
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..54),
+                )
+
+            // access last item (54) to append a page
+            fetcherState.pagingDataList[0]
+                .hintReceiver
+                .processHint(
+                    ViewportHint.Access(
+                        pageOffset = 0,
+                        indexInPage = 4,
+                        presentedItemsBefore = 4,
+                        presentedItemsAfter = 0,
+                        originalPageOffsetFirst = 0,
+                        originalPageOffsetLast = 0,
+                    )
+                )
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    createAppend(1, 55..56),
+                )
+
+            // now force append another page
+            // hint is based on the very last loaded item which is 56
+            pageFetcher.load(APPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    createAppend(2, 57..58),
+                )
+
+            // forced appends don't set lastAccessedIndex, so a refresh based on
+            // last accessed index should be based on item 54
+            pageFetcher.load(REFRESH)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(2)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(54..58),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun prependRefresh() =
+        testScope.runTest {
+            val pageFetcher =
+                PageFetcher(
+                    pagingSourceFactory,
+                    50,
+                    PagingConfig(
+                        pageSize = 1,
+                        prefetchDistance = 1,
+                        enablePlaceholders = true,
+                        initialLoadSize = 2,
+                    ),
+                )
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                )
+
+            // hint is based on the very first loaded item which is 50
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    createPrepend(-1, 49..49),
+                )
+
+            // forced prepends don't set lastAccessedIndex, so the refresh should be
+            // generic (as if no access as happened yet)
+            pageFetcher.load(REFRESH)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(2)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(0..1, prependState = NotLoading.Complete),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun prependDoesNotOverrideAccessedIndex() =
+        testScope.runTest {
+            val pageFetcher =
+                PageFetcher(
+                    pagingSourceFactory,
+                    50,
+                    PagingConfig(
+                        pageSize = 2,
+                        prefetchDistance = 1,
+                        enablePlaceholders = true,
+                        initialLoadSize = 5,
+                    ),
+                )
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..54),
+                )
+
+            // access first item (50) to prepend a page
+            fetcherState.pagingDataList[0]
+                .hintReceiver
+                .processHint(
+                    ViewportHint.Access(
+                        pageOffset = 0,
+                        indexInPage = 0,
+                        presentedItemsBefore = 0,
+                        presentedItemsAfter = 4,
+                        originalPageOffsetFirst = 0,
+                        originalPageOffsetLast = 0,
+                    )
+                )
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    createPrepend(-1, 48..49),
+                )
+
+            // now force prepend another page
+            // hint is based on the very first loaded item which is 48
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    createPrepend(-2, 46..47),
+                )
+
+            // forced prepends don't set lastAccessedIndex, so a refresh based on
+            // last accessed index should be based on item 50
+            pageFetcher.load(REFRESH)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(2)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..54),
+                )
+
             fetcherState.job.cancel()
         }
 

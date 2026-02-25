@@ -115,7 +115,7 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(prependLocal = Loading),
-                    createPrepend(pageOffset = -1, range = 0..0, startState = NotLoading.Complete),
+                    createPrepend(pageOffset = -1, range = 0..0, prependState = NotLoading.Complete),
                 )
 
             fetcherState.job.cancel()
@@ -150,7 +150,7 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(prependLocal = Loading),
-                    createPrepend(pageOffset = -1, range = 0..0, startState = NotLoading.Complete),
+                    createPrepend(pageOffset = -1, range = 0..0, prependState = NotLoading.Complete),
                 )
 
             fetcherState.pagingDataList[0]
@@ -181,8 +181,8 @@ class PageFetcherSnapshotTest {
                     createAppend(
                         pageOffset = 1,
                         range = 3..3,
-                        startState = NotLoading.Incomplete,
-                        endState = NotLoading.Incomplete,
+                        prependState = NotLoading.Incomplete,
+                        appendState = NotLoading.Incomplete,
                     ),
                 )
 
@@ -218,7 +218,7 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(appendLocal = Loading),
-                    createAppend(pageOffset = 1, range = 99..99, endState = NotLoading.Complete),
+                    createAppend(pageOffset = 1, range = 99..99, appendState = NotLoading.Complete),
                 )
 
             fetcherState.job.cancel()
@@ -256,8 +256,8 @@ class PageFetcherSnapshotTest {
                     createAppend(
                         pageOffset = 1,
                         range = 99..99,
-                        startState = NotLoading.Incomplete,
-                        endState = NotLoading.Complete,
+                        prependState = NotLoading.Incomplete,
+                        appendState = NotLoading.Complete,
                     ),
                 )
 
@@ -289,8 +289,8 @@ class PageFetcherSnapshotTest {
                     createPrepend(
                         pageOffset = -1,
                         range = 96..96,
-                        startState = NotLoading.Incomplete,
-                        endState = NotLoading.Incomplete,
+                        prependState = NotLoading.Incomplete,
+                        appendState = NotLoading.Incomplete,
                     ),
                 )
 
@@ -310,8 +310,8 @@ class PageFetcherSnapshotTest {
                     localLoadStateUpdate<Int>(refreshLocal = Loading),
                     createRefresh(
                         range = 0..1,
-                        startState = NotLoading.Complete,
-                        endState = NotLoading.Incomplete,
+                        prependState = NotLoading.Complete,
+                        appendState = NotLoading.Incomplete,
                     ),
                 )
 
@@ -331,8 +331,8 @@ class PageFetcherSnapshotTest {
                     localLoadStateUpdate<Int>(refreshLocal = Loading),
                     createRefresh(
                         range = 98..99,
-                        startState = NotLoading.Incomplete,
-                        endState = NotLoading.Complete,
+                        prependState = NotLoading.Incomplete,
+                        appendState = NotLoading.Complete,
                     ),
                 )
 
@@ -538,7 +538,7 @@ class PageFetcherSnapshotTest {
                 assertThat(fetcherState.newEvents())
                     .containsExactly(
                         localLoadStateUpdate<Int>(prependLocal = Loading),
-                        createPrepend(pageOffset = -1, range = 49..49, startState = Loading),
+                        createPrepend(pageOffset = -1, range = 49..49, prependState = Loading),
                         createPrepend(pageOffset = -2, range = 48..48),
                     )
 
@@ -671,7 +671,7 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(prependLocal = Loading),
-                    createPrepend(pageOffset = -1, range = 49..49, startState = Loading),
+                    createPrepend(pageOffset = -1, range = 49..49, prependState = Loading),
                     createPrepend(pageOffset = -2, range = 48..48),
                 )
 
@@ -716,7 +716,7 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(prependLocal = Loading),
-                    createPrepend(pageOffset = -1, range = 49..49, startState = Loading),
+                    createPrepend(pageOffset = -1, range = 49..49, prependState = Loading),
                     createPrepend(pageOffset = -2, range = 48..48),
                 )
 
@@ -743,7 +743,7 @@ class PageFetcherSnapshotTest {
                         maxPageOffset = -2,
                         placeholdersRemaining = 49,
                     ),
-                    createAppend(pageOffset = 1, range = 53..53, endState = Loading),
+                    createAppend(pageOffset = 1, range = 53..53, appendState = Loading),
                     Drop<Int>(
                         loadType = PREPEND,
                         minPageOffset = -1,
@@ -800,7 +800,7 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(refreshLocal = Loading),
-                    createRefresh(0..9, startState = NotLoading.Complete),
+                    createRefresh(0..9, prependState = NotLoading.Complete),
                 )
             withContext(coroutineContext) {
                 val receiver = fetcherState.pagingDataList[0].hintReceiver
@@ -829,8 +829,8 @@ class PageFetcherSnapshotTest {
                     createAppend(
                         pageOffset = 1,
                         range = 10..19,
-                        startState = NotLoading.Complete,
-                        endState = NotLoading.Incomplete,
+                        prependState = NotLoading.Complete,
+                        appendState = NotLoading.Incomplete,
                     ),
                 )
 
@@ -912,8 +912,8 @@ class PageFetcherSnapshotTest {
                     createAppend(
                         pageOffset = 1,
                         range = 53..53,
-                        startState = NotLoading.Incomplete,
-                        endState = Loading,
+                        prependState = NotLoading.Incomplete,
+                        appendState = Loading,
                     ),
                     createAppend(2, 54..54),
                 )
@@ -1031,7 +1031,7 @@ class PageFetcherSnapshotTest {
                 assertThat(fetcherState.newEvents())
                     .containsExactly(
                         localLoadStateUpdate<Int>(appendLocal = Loading),
-                        createAppend(pageOffset = 1, range = 55..55, endState = Loading),
+                        createAppend(pageOffset = 1, range = 55..55, appendState = Loading),
                         createAppend(pageOffset = 2, range = 56..56),
                     )
 
@@ -1120,8 +1120,8 @@ class PageFetcherSnapshotTest {
                         createAppend(
                             pageOffset = 2,
                             range = 54..55,
-                            startState = NotLoading.Incomplete,
-                            endState = NotLoading.Incomplete,
+                            prependState = NotLoading.Incomplete,
+                            appendState = NotLoading.Incomplete,
                         ),
                     )
 
@@ -1167,7 +1167,7 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(appendLocal = Loading),
-                    createAppend(pageOffset = 1, range = 53..53, endState = Loading),
+                    createAppend(pageOffset = 1, range = 53..53, appendState = Loading),
                     createAppend(pageOffset = 2, range = 54..54),
                 )
 
@@ -1194,7 +1194,7 @@ class PageFetcherSnapshotTest {
                         maxPageOffset = 2,
                         placeholdersRemaining = 46,
                     ),
-                    createPrepend(pageOffset = -1, range = 49..49, startState = Loading),
+                    createPrepend(pageOffset = -1, range = 49..49, prependState = Loading),
                     Drop<Int>(
                         loadType = APPEND,
                         minPageOffset = 1,
@@ -1251,7 +1251,7 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(refreshLocal = Loading),
-                    createRefresh(range = 0..1, startState = NotLoading.Complete),
+                    createRefresh(range = 0..1, prependState = NotLoading.Complete),
                 )
 
             fetcherState.job.cancel()
@@ -1541,8 +1541,8 @@ class PageFetcherSnapshotTest {
                             createPrepend(
                                 pageOffset = -1,
                                 range = 49..49,
-                                startState = NotLoading.Incomplete,
-                                endState = Loading,
+                                prependState = NotLoading.Incomplete,
+                                appendState = Loading,
                             ),
                             createAppend(pageOffset = 1, range = 52..52),
                         )
@@ -2272,11 +2272,11 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(prependLocal = Loading),
-                    createPrepend(pageOffset = -1, range = 49..49, startState = Loading),
+                    createPrepend(pageOffset = -1, range = 49..49, prependState = Loading),
                     createPrepend(
                         pageOffset = -2,
                         range = 48..48,
-                        startState = NotLoading.Incomplete,
+                        prependState = NotLoading.Incomplete,
                     ),
                 )
 
@@ -2322,8 +2322,12 @@ class PageFetcherSnapshotTest {
             assertThat(fetcherState.newEvents())
                 .containsExactly(
                     localLoadStateUpdate<Int>(appendLocal = Loading),
-                    createAppend(pageOffset = 1, range = 52..52, endState = Loading),
-                    createAppend(pageOffset = 2, range = 53..53, endState = NotLoading.Incomplete),
+                    createAppend(pageOffset = 1, range = 52..52, appendState = Loading),
+                    createAppend(
+                        pageOffset = 2,
+                        range = 53..53,
+                        appendState = NotLoading.Incomplete,
+                    ),
                 )
 
             fetcherState.job.cancel()
@@ -3764,7 +3768,7 @@ class PageFetcherSnapshotTest {
                     .containsExactly(
                         localLoadStateUpdate<Int>(prependLocal = Loading),
                         localLoadStateUpdate<Int>(appendLocal = Loading, prependLocal = Loading),
-                        createPrepend(pageOffset = -1, range = 49..49, endState = Loading),
+                        createPrepend(pageOffset = -1, range = 49..49, appendState = Loading),
                         createAppend(pageOffset = 1, range = 52..52),
                     )
             }
