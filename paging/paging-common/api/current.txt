@@ -314,6 +314,8 @@ package androidx.paging {
     method public void append();
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.Flow<androidx.paging.PagingData<Value>> getFlow();
     method public void prepend();
+    method public void refresh();
+    method public void refresh(Value item);
     property public kotlinx.coroutines.flow.Flow<androidx.paging.PagingData<Value>> flow;
   }
 

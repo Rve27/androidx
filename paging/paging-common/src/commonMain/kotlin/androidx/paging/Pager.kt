@@ -130,4 +130,38 @@ constructor(
     public fun prepend() {
         pageFetcher.load(LoadType.PREPEND)
     }
+
+    /**
+     * Refresh all currently loaded data.
+     *
+     * The refresh key is the key that was used to load the current first loaded page, and the
+     * loadSize is the size of current loaded data.
+     *
+     * Note that this is a best-effort attempt to reload all current data. Actual loaded data may
+     * differ based on how [PagingSource.load] handles the same key for different [LoadType]. For
+     * example the current first page might have been a prepended page, and [PagingSource.load]
+     * could handle the same key in different ways for [LoadType.PREPEND] versus [LoadType.REFRESH]
+     */
+    public fun refresh() {
+        pageFetcher.refreshAll()
+    }
+
+    /**
+     * Refresh based on a given loaded item.
+     *
+     * The refresh key is the key that was originally used to the load the page that contains
+     * [item], and the loadSize is [PagingConfig.initialLoadSize].
+     *
+     * Note that this is a best-effort attempt to reload around the given loaded item. The requested
+     * [item] is expected to be in the first page of reloaded items but will likely not be the very
+     * first reloaded item. For example if two pages are currently loaded with loadKeys `MyKey1` and
+     * `MyKey2` respectively:
+     * - pg1: MyKey1 = items [0, 1, 2, 3]
+     * - pg2: MyKey2 = items [4, 5, 6, 7] If this method were called with item 5 - refresh(5) - then
+     *   the refreshKey will be `MyKey2`, which will theoretically refresh starting at (item 4)
+     *   until (item4 + initialLoadSize).
+     */
+    public fun refresh(item: Value) {
+        pageFetcher.refresh(item)
+    }
 }

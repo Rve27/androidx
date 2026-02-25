@@ -58,6 +58,7 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
     internal val pagingSource: PagingSource<Key, Value>,
     private val config: PagingConfig,
     private val retryFlow: Flow<Unit>,
+    private val initialLoadSize: Int = config.initialLoadSize,
     val remoteMediatorConnection: RemoteMediatorConnection<Key, Value>? = null,
     private val cachedInitialState: PagingState<Key, Value>? = null,
     private val jumpCallback: () -> Unit = {},
@@ -293,7 +294,7 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
         LoadParams.create(
             loadType = loadType,
             key = key,
-            loadSize = if (loadType == REFRESH) config.initialLoadSize else config.pageSize,
+            loadSize = if (loadType == REFRESH) initialLoadSize else config.pageSize,
             placeholdersEnabled = config.enablePlaceholders,
         )
 
@@ -650,6 +651,9 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
         close()
         pagingSource.invalidate()
     }
+
+    internal suspend fun getLoadKey(page: Page<Key, Value>) =
+        stateHolder.withLock { state -> state.getLoadKey(page) }
 }
 
 /**

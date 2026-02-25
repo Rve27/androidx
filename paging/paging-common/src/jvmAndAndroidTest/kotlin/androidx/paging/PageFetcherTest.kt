@@ -22,6 +22,7 @@ import androidx.paging.LoadState.NotLoading
 import androidx.paging.LoadType.APPEND
 import androidx.paging.LoadType.PREPEND
 import androidx.paging.LoadType.REFRESH
+import androidx.paging.PageEvent.Drop
 import androidx.paging.PagingSource.LoadParams
 import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingSource.LoadResult.Page
@@ -90,7 +91,7 @@ class PageFetcherTest {
             assertEquals(1, fetcherState.pagingDataList.size)
             assertTrue { fetcherState.pageEventLists[0].isNotEmpty() }
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -114,7 +115,7 @@ class PageFetcherTest {
             assertEquals(1, fetcherState.pagingDataList.size)
             assertTrue { fetcherState.pageEventLists[0].isNotEmpty() }
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -147,7 +148,7 @@ class PageFetcherTest {
             assertTrue { fetcherState.pageEventLists[0].isNotEmpty() }
             assertEquals(1, remoteMediator.loadEvents.size)
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -196,7 +197,7 @@ class PageFetcherTest {
             assertEquals(1, fetcherState.pagingDataList.size)
             assertTrue { fetcherState.pageEventLists[0].isNotEmpty() }
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -383,7 +384,7 @@ class PageFetcherTest {
 
             advanceUntilIdle()
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertEquals(2, pagingDataCount)
@@ -416,8 +417,8 @@ class PageFetcherTest {
 
             advanceUntilIdle()
 
-            pageFetcher.load(REFRESH)
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertEquals(3, pagingDatas.size)
@@ -470,7 +471,7 @@ class PageFetcherTest {
             assertThat(pagingSources[1].invalidateCallbackCount).isEqualTo(1)
 
             // Trigger new generation, should unregister from older PagingSource.
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
             assertThat(pagingSources).hasSize(3)
             assertThat(pagingSources[1].invalidateCallbackCount).isEqualTo(0)
@@ -679,7 +680,7 @@ class PageFetcherTest {
 
                 advanceUntilIdle()
 
-                pageFetcher.load(REFRESH)
+                pageFetcher.refresh()
                 advanceUntilIdle()
 
                 assertTrue { job.isCompleted }
@@ -831,7 +832,7 @@ class PageFetcherTest {
                 )
 
             // Trigger refresh, instantiating second generation.
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
 
             // Allow remote refresh to get triggered, but do not let paging source complete initial
             // load
@@ -876,7 +877,7 @@ class PageFetcherTest {
 
             // Trigger refresh instantiating third generation before second has a chance to complete
             // initial load.
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
 
             // Wait for all non-canceled loads to complete.
             advanceUntilIdle()
@@ -956,7 +957,7 @@ class PageFetcherTest {
                 )
 
             // Trigger refresh, instantiating second generation.
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
 
             // Allow remote refresh to get triggered, and let paging source load finish.
             advanceUntilIdle()
@@ -985,7 +986,7 @@ class PageFetcherTest {
 
             // Trigger refresh instantiating third generation before second has a chance to complete
             // initial load.
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
 
             // Wait for all non-canceled loads to complete.
             advanceUntilIdle()
@@ -1031,7 +1032,7 @@ class PageFetcherTest {
             assertThat(loadRequests).hasSize(1)
             assertThat(loadRequests[0].key).isEqualTo(0)
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
             assertThat(loadRequests).hasSize(2)
             assertThat(loadRequests[1].key).isEqualTo(null)
@@ -1190,7 +1191,7 @@ class PageFetcherTest {
                     EMPTY_SOURCE_REFRESH,
                 )
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertEquals(2, fetcherState.pagingDataList.size)
@@ -1239,7 +1240,7 @@ class PageFetcherTest {
                     EMPTY_REMOTE_REFRESH,
                 )
 
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertThat(fetcherState.newEvents())
@@ -1404,7 +1405,7 @@ class PageFetcherTest {
             )
 
         // Trigger remote + source refresh in a new generation.
-        pageFetcher.load(REFRESH)
+        pageFetcher.refresh()
 
         assertThat(fetcherState.newEvents())
             .containsExactly(
@@ -1435,7 +1436,7 @@ class PageFetcherTest {
             )
 
         // Trigger remote + source refresh in a third generation.
-        pageFetcher.load(REFRESH)
+        pageFetcher.refresh()
 
         // Start of third generation should have the exact same load states as before, so we
         // should only get new events for kicking off new loads.
@@ -1494,7 +1495,7 @@ class PageFetcherTest {
             val firstGenerationEventCount = fetcherState.pageEventLists[0].size
 
             // Let new generation and some new remote events emit.
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertThat(firstGenerationEventCount).isEqualTo(fetcherState.pageEventLists[0].size)
@@ -1746,7 +1747,7 @@ class PageFetcherTest {
 
             // forced appends don't set lastAccessedIndex, so the refresh should be
             // generic (as if no access as happened yet)
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
@@ -1824,7 +1825,7 @@ class PageFetcherTest {
 
             // forced appends don't set lastAccessedIndex, so a refresh based on
             // last accessed index should be based on item 54
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
@@ -1878,7 +1879,7 @@ class PageFetcherTest {
 
             // forced prepends don't set lastAccessedIndex, so the refresh should be
             // generic (as if no access as happened yet)
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
@@ -1956,7 +1957,7 @@ class PageFetcherTest {
 
             // forced prepends don't set lastAccessedIndex, so a refresh based on
             // last accessed index should be based on item 50
-            pageFetcher.load(REFRESH)
+            pageFetcher.refresh()
             advanceUntilIdle()
 
             assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
@@ -1969,6 +1970,177 @@ class PageFetcherTest {
 
             fetcherState.job.cancel()
         }
+
+    @Test
+    fun refreshAll() =
+        testScope.runTest {
+            val pageFetcher =
+                PageFetcher(
+                    pagingSourceFactory,
+                    50,
+                    PagingConfig(pageSize = 1, prefetchDistance = 1, initialLoadSize = 2),
+                )
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+
+            pageFetcher.load(APPEND)
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            // total loaded items 49-52
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    localLoadStateUpdate<Int>(appendLocal = Loading, prependLocal = Loading),
+                    createAppend(1, 52..52, prependState = Loading),
+                    createPrepend(-1, 49..49),
+                )
+
+            pageFetcher.refreshAll()
+            advanceUntilIdle()
+
+            // items 49-52 should be reloaded
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(2)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(49..52),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun refreshAllAfterDrop() =
+        testScope.runTest {
+            val pageFetcher =
+                PageFetcher(
+                    pagingSourceFactory,
+                    50,
+                    PagingConfig(
+                        pageSize = 2,
+                        prefetchDistance = 1,
+                        initialLoadSize = 3,
+                        maxSize = 5,
+                    ),
+                )
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    // loads 48-52
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..52),
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    createPrepend(-1, 48..49),
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    // reach max size, drops refresh page before prepending more
+                    Drop<Int>(
+                        loadType = APPEND,
+                        minPageOffset = 0,
+                        maxPageOffset = 0,
+                        placeholdersRemaining = 50,
+                    ),
+                    // final loaded items 46-49
+                    createPrepend(-2, 46..47),
+                )
+
+            // uses the same key that was used to load current first page
+            // `TestPagingSource` calculates final loading key backwards from the loadKey,
+            // in this case the loadKey was 47 so this is now the refresh key
+            pageFetcher.refreshAll()
+            advanceUntilIdle()
+
+            // dropped items should not be included
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(2)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(47..50),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun refreshItem() =
+        testScope.runTest {
+            val pageFetcher = PageFetcher(pagingSourceFactory, 50, config)
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+
+            pageFetcher.load(APPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    createAppend(1, 52..52),
+                )
+
+            pageFetcher.refresh(52)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
+            assertThat(fetcherState.pageEventLists.size).isEqualTo(2)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(52..53),
+                )
+
+            fetcherState.job.cancel()
+        }
+
+    @Test
+    fun refreshItemInvalid() {
+        assertFailsWith<IllegalArgumentException> {
+            testScope.runTest {
+                val pageFetcher = PageFetcher(pagingSourceFactory, 50, config)
+                val fetcherState = collectFetcherState(pageFetcher)
+
+                advanceUntilIdle()
+                assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+                assertThat(fetcherState.pageEventLists[0]).isNotEmpty()
+
+                pageFetcher.refresh(99)
+                advanceUntilIdle()
+
+                fetcherState.job.cancel()
+            }
+        }
+    }
 
     companion object {
         internal val EMPTY_SOURCE_REFRESH =
