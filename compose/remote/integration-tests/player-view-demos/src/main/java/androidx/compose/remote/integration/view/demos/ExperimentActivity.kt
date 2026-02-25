@@ -25,6 +25,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -104,6 +105,7 @@ import androidx.compose.remote.integration.view.demos.examples.RcTextDemo7
 import androidx.compose.remote.integration.view.demos.examples.RcTextDemo8
 import androidx.compose.remote.integration.view.demos.examples.RcTextDemo9
 import androidx.compose.remote.integration.view.demos.examples.RcTicker
+import androidx.compose.remote.integration.view.demos.examples.RideShare
 import androidx.compose.remote.integration.view.demos.examples.ScrollViewDemo
 import androidx.compose.remote.integration.view.demos.examples.ShaderCalendar
 import androidx.compose.remote.integration.view.demos.examples.SimplePath
@@ -297,6 +299,7 @@ class ExperimentActivity : ComponentActivity() {
     val showComposePlayerKey = "SHOW_COMPOSE_PLAYER"
     val showOrigamiKey = "SHOW_ORIGAMI"
     val debugComposeKey = "DEBUG_ORIGAMI"
+    val rideShare = RideShare()
 
     var cmap = listOf(get("Frontend...") {}, get("Procedural...") {}, get("Java...") {})
 
@@ -344,6 +347,7 @@ class ExperimentActivity : ComponentActivity() {
                     getpc("CountDown") { countDown() },
                     getpc("Cube 3D") { cube3d() },
                     getpc("Shader Calendar") { ShaderCalendar() },
+                    getpc("Ride Share") { rideShare.rideShare() },
                 ),
             "Java..." to listOf(getp("pathTest") { pathTest() }),
         )
@@ -437,6 +441,11 @@ class ExperimentActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val carLogo = BitmapFactory.decodeResource(getResources(), R.drawable.car_logo)
+        val carDriver = BitmapFactory.decodeResource(getResources(), R.drawable.car_driver)
+        val carIcon = BitmapFactory.decodeResource(getResources(), R.drawable.car_icon)
+        rideShare.setBitmaps(carLogo, carDriver, carIcon)
 
         val fullList = cmap.toMutableList()
         fullList.addAll(subMenus.values.flatten())
