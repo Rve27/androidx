@@ -310,7 +310,7 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
                 // remote state can race here and lead to confusing load states.
                 val insertApplied =
                     stateHolder.withLock { state ->
-                        val insertApplied = state.insert(0, REFRESH, result)
+                        val insertApplied = state.insert(0, REFRESH, result, initialKey)
 
                         // Update loadStates which are sent along with this load's Insert PageEvent.
                         state.sourceLoadStates.set(type = REFRESH, state = NotLoading.Incomplete)
@@ -456,7 +456,7 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
 
                     val insertApplied =
                         stateHolder.withLock { state ->
-                            state.insert(generationalHint.generationId, loadType, result)
+                            state.insert(generationalHint.generationId, loadType, result, loadKey)
                         }
 
                     // Break if insert was skipped due to cancellation
