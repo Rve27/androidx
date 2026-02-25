@@ -603,6 +603,48 @@ internal class PageFetcherSnapshot<Key : Any, Value : Any>(
         }
     }
 
+    /**
+     * Creates and sends a [ViewportHint.Access] for the loadType. Does not set lastAccessedIndex.
+     *
+     * Hint created is based on load type:
+     * - APPEND: hint created on the very last loaded item and makes it the anchorPosition
+     * - PREPEND: hint created on the very first loaded item and makes it the anchorPosition
+     */
+    suspend fun forceSetHint(loadType: LoadType) {
+        require(loadType != REFRESH) {
+            "Called for REFRESH but this should only be called for either APPEND or PREPEND loads. " +
+                "This error indicates a bug in the Paging library. Please file a bug report in Buganizer."
+        }
+        stateHolder.withLock { state ->
+            val hint =
+                with(state) {
+                    val originalPageOffsetFirst = -initialPageIndex
+                    val originalPageOffsetLast = pages.size - initialPageIndex - 1
+
+                    if (loadType == APPEND) {
+                        ViewportHint.Access(
+                            pageOffset = originalPageOffsetLast,
+                            indexInPage = pages.last().data.lastIndex,
+                            presentedItemsBefore = storageCount - 1,
+                            presentedItemsAfter = 0,
+                            originalPageOffsetFirst = originalPageOffsetFirst,
+                            originalPageOffsetLast = originalPageOffsetLast,
+                        )
+                    } else {
+                        ViewportHint.Access(
+                            pageOffset = originalPageOffsetFirst,
+                            indexInPage = 0,
+                            presentedItemsBefore = 0,
+                            presentedItemsAfter = storageCount - 1,
+                            originalPageOffsetFirst = originalPageOffsetFirst,
+                            originalPageOffsetLast = originalPageOffsetLast,
+                        )
+                    }
+                }
+            hintHandler.forceSetHint(loadType, hint)
+        }
+    }
+
     // the handler for LoadResult.Invalid for both doInitialLoad and doLoad
     private fun onInvalidLoad() {
         close()
