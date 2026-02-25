@@ -214,7 +214,9 @@ public class UseCaseCameraContext(
 
     public fun closeGraph() {
         if (_graph.isInitialized()) {
-            graph.close()
+            val initializedGraph = graph
+            initializedGraph.close()
+            cameraStateAdapter.onGraphClosed(initializedGraph)
         }
     }
 
