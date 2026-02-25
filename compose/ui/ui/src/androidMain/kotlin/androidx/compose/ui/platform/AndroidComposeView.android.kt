@@ -208,6 +208,7 @@ import androidx.compose.ui.semantics.EmptySemanticsModifier
 import androidx.compose.ui.semantics.SemanticsOwner
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.findClosestParentNode
+import androidx.compose.ui.spatial.ExecuteDelayed
 import androidx.compose.ui.spatial.RectManager
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -277,7 +278,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     ViewTreeObserver.OnGlobalLayoutListener,
     ViewTreeObserver.OnScrollChangedListener,
     ViewTreeObserver.OnTouchModeChangeListener,
-    FocusListener {
+    FocusListener,
+    ExecuteDelayed {
 
     private var _composeViewContext by mutableStateOf(composeViewContext)
     var composeViewContext: ComposeViewContext
@@ -615,7 +617,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     override val layoutNodes: MutableIntObjectMap<LayoutNode> = mutableIntObjectMapOf()
 
-    override val rectManager = RectManager(layoutNodes)
+    override val rectManager = RectManager(layoutNodes, this)
 
     override val rootForTest: RootForTest = this
     internal var uncaughtExceptionHandler: RootForTest.UncaughtExceptionHandler? = null
@@ -3417,6 +3419,17 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     // executed whenever the touch mode changes.
     override fun onTouchModeChanged(isInTouchMode: Boolean) {
         _inputModeManager.inputMode = if (isInTouchMode) Touch else Keyboard
+    }
+
+    override fun executeDelayed(delayMillis: Long, block: () -> Unit): Any {
+        val runnable = Runnable { block() }
+        postDelayed(runnable, delayMillis)
+        return runnable
+    }
+
+    override fun removeDelayedExecution(token: Any) {
+        val runnable = token as? Runnable ?: return
+        removeCallbacks(runnable)
     }
 
     companion object {
