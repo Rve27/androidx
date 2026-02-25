@@ -14,60 +14,49 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+package androidx.xr.scenecore.spatial.core
 
-import android.content.Context;
-
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.scenecore.runtime.RenderingFeature;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-
-import java.util.concurrent.ScheduledExecutorService;
+import android.content.Context
+import androidx.xr.runtime.TypeHolder.Companion.assertGetValue
+import androidx.xr.scenecore.runtime.RenderingFeature
+import com.android.extensions.xr.XrExtensions
+import com.android.extensions.xr.node.Node
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * A base class for entities that rely on a [RenderingFeature] for rendering functionality.
  *
- * <p>This class provides common logic for managing the lifecycle of a [RenderingFeature], which
+ * This class provides common logic for managing the lifecycle of a [RenderingFeature], which
  * supplies the underlying rendering implementation and provides a [Node] for initialization.
  */
-abstract class BaseRenderingEntity extends AndroidXrEntity {
-    private final RenderingFeature mFeature;
-    private final Node mSubspaceNode;
-
-    BaseRenderingEntity(
-            Context context,
-            RenderingFeature feature,
-            XrExtensions extensions,
-            EntityManager entityManager,
-            ScheduledExecutorService executor) {
-        super(
-                context,
-                NodeHolder.assertGetValue(feature.getNodeHolder(), Node.class),
-                extensions,
-                entityManager,
-                executor);
-        mFeature = feature;
-        NodeHolder<?> subspaceNodeHolder = feature.getSubspaceNodeHolder();
-        if (subspaceNodeHolder != null) {
+internal abstract class BaseRenderingEntity(
+    context: Context?,
+    private val renderingFeature: RenderingFeature,
+    xrExtensions: XrExtensions,
+    entityManager: EntityManager,
+    executor: ScheduledExecutorService,
+) :
+    AndroidXrEntity(
+        context,
+        assertGetValue(renderingFeature.getNodeHolder(), Node::class.java),
+        xrExtensions,
+        entityManager,
+        executor,
+    ) {
+    private val subspaceNode: Node? =
+        renderingFeature.getSubspaceNodeHolder()?.let { subspaceNodeHolder ->
             // Establish an alias from the primary node to the subspace node. This is crucial for
             // ensuring that input events, such as hit tests, which may be reported against the
             // subspace node, can be correctly resolved back to this entity. Without this alias,
             // getEntityForNode(subspaceNode) would fail.
-            mSubspaceNode = NodeHolder.assertGetValue(subspaceNodeHolder, Node.class);
-            entityManager.setEntityForNode(mSubspaceNode, this);
-        } else {
-            mSubspaceNode = null;
+            assertGetValue(subspaceNodeHolder, Node::class.java).also {
+                entityManager.setEntityForNode(it, this)
+            }
         }
-    }
 
-    @Override
-    public void dispose() {
-        if (mSubspaceNode != null) {
-            mEntityManager.removeEntityForNode(mSubspaceNode);
-        }
-        mFeature.dispose();
-        super.dispose();
+    override fun dispose() {
+        subspaceNode?.let { mEntityManager.removeEntityForNode(it) }
+        renderingFeature.dispose()
+        super.dispose()
     }
 }
