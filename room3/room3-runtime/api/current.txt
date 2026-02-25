@@ -203,7 +203,7 @@ package androidx.room3.migration {
   }
 
   public final class MigrationKt {
-    method public static androidx.room3.migration.Migration Migration(int startVersion, int endVersion, kotlin.jvm.functions.Function1<? super androidx.sqlite.SQLiteConnection,kotlin.Unit> migrate);
+    method public static androidx.room3.migration.Migration Migration(int startVersion, int endVersion, kotlin.jvm.functions.Function2<? super androidx.sqlite.SQLiteConnection,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> migrate);
   }
 
 }
