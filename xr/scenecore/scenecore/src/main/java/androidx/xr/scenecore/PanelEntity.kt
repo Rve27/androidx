@@ -21,8 +21,8 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.RenderViewpoint
-import androidx.xr.runtime.Log
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
@@ -196,7 +196,7 @@ internal constructor(
                     dimensions.toRtDimensions(),
                     name,
                     if (parent != null && parent !is BaseEntity<*>) {
-                        Log.warn(
+                        XrLog.warn(
                             "The provided parent is not a BaseEntity. The PanelEntity will be " +
                                 "created without a parent."
                         )
@@ -228,7 +228,7 @@ internal constructor(
                     pixelDimensions.toRtPixelDimensions(),
                     name,
                     if (parent != null && parent !is BaseEntity<*>) {
-                        Log.warn(
+                        XrLog.warn(
                             "The provided parent is not a BaseEntity. The PanelEntity will be " +
                                 "created without a parent."
                         )
