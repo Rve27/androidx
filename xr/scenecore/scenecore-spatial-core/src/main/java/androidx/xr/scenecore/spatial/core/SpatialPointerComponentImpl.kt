@@ -13,69 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.util.Log
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.SpatialPointerComponent
+import androidx.xr.scenecore.runtime.SpatialPointerIcon
+import androidx.xr.scenecore.runtime.SpatialPointerIconType
+import androidx.xr.scenecore.spatial.core.RuntimeUtils.convertSpatialPointerIconType
+import com.android.extensions.xr.XrExtensions
 
-import android.util.Log;
+internal class SpatialPointerComponentImpl(private val xrExtensions: XrExtensions) :
+    SpatialPointerComponent {
+    private var xrEntity: AndroidXrEntity? = null
 
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.SpatialPointerComponent;
-import androidx.xr.scenecore.runtime.SpatialPointerIcon;
-import androidx.xr.scenecore.runtime.SpatialPointerIconType;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.NodeTransaction;
-
-import org.jspecify.annotations.NonNull;
-
-class SpatialPointerComponentImpl implements SpatialPointerComponent {
-
-    private static final String TAG = "Runtime";
-
-    private final XrExtensions mExtensions;
-    private AndroidXrEntity mEntity;
-    @SpatialPointerIconType private int mSpatialPointerIconType = SpatialPointerIcon.TYPE_DEFAULT;
-
-    SpatialPointerComponentImpl(XrExtensions extensions) {
-        mExtensions = extensions;
-    }
-
-    @Override
-    public boolean onAttach(@NonNull Entity entity) {
-        if (mEntity != null) {
-            Log.e(TAG, "Already attached to entity " + mEntity);
-            return false;
+    override fun onAttach(entity: Entity): Boolean {
+        if (xrEntity != null) {
+            Log.e(TAG, "Already attached to entity $xrEntity")
+            return false
         }
-        if (!(entity instanceof AndroidXrEntity)) {
-            Log.e(TAG, "Entity is not an AndroidXrEntity.");
-            return false;
+        if (entity !is AndroidXrEntity) {
+            Log.e(TAG, "Entity is not an AndroidXrEntity.")
+            return false
         }
-        mEntity = (AndroidXrEntity) entity;
-        setSpatialPointerIcon(SpatialPointerIcon.TYPE_DEFAULT);
-        return true;
+        xrEntity = entity
+        spatialPointerIcon = SpatialPointerIcon.TYPE_DEFAULT
+        return true
     }
 
-    @Override
-    public void onDetach(@NonNull Entity entity) {
-        setSpatialPointerIcon(SpatialPointerIcon.TYPE_DEFAULT);
-        mEntity = null;
+    override fun onDetach(entity: Entity) {
+        spatialPointerIcon = SpatialPointerIcon.TYPE_DEFAULT
+        xrEntity = null
     }
 
-    @Override
     @SpatialPointerIconType
-    public int getSpatialPointerIcon() {
-        return mSpatialPointerIconType;
-    }
+    override var spatialPointerIcon = SpatialPointerIcon.TYPE_DEFAULT
+        set(value) {
+            field = value
 
-    @Override
-    public void setSpatialPointerIcon(@SpatialPointerIconType int icon) {
-        mSpatialPointerIconType = icon;
-
-        try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
-            transaction
-                    .setPointerIcon(
-                            mEntity.getNode(), RuntimeUtils.convertSpatialPointerIconType(icon))
-                    .apply();
+            xrExtensions.createNodeTransaction().use { transaction ->
+                transaction
+                    .setPointerIcon(xrEntity!!.getNode(), convertSpatialPointerIconType(value))
+                    .apply()
+            }
         }
+
+    companion object {
+        private const val TAG = "Runtime"
     }
 }

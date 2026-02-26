@@ -13,128 +13,112 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.app.Activity
+import android.hardware.display.DisplayManager
+import android.view.View
+import android.view.ViewGroup
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.SceneRuntime
+import androidx.xr.scenecore.runtime.SpatialPointerIcon
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.google.common.truth.Truth.assertThat
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
-
-import android.app.Activity;
-import android.content.Context;
-import android.hardware.display.DisplayManager;
-import android.view.Display;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-import androidx.xr.scenecore.runtime.SceneRuntime;
-import androidx.xr.scenecore.runtime.SpatialPointerIcon;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public final class SpatialPointerComponentImplTest {
-
-    private static final Dimensions sVgaResolutionPx = new Dimensions(640f, 480f, 0f);
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final ActivityController<Activity> mActivityController =
-            Robolectric.buildActivity(Activity.class);
-    private final Activity mActivity = mActivityController.create().start().get();
-    private final FakeScheduledExecutorService mMakeFakeExecutor =
-            new FakeScheduledExecutorService();
-    private final EntityManager mEntityManager = new EntityManager();
-    private SceneRuntime mRuntime;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class SpatialPointerComponentImplTest {
+    private val xrExtensions = requireNotNull(getXrExtensions())
+    private val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
+    private val fakeExecutor = FakeScheduledExecutorService()
+    private val entityManager = EntityManager()
+    private lateinit var runtime: SceneRuntime
 
     @Before
-    public void setUp() {
-        mRuntime =
-                SpatialSceneRuntime.create(
-                        mActivity,
-                        mMakeFakeExecutor,
-                        mXrExtensions,
-                        new EntityManager());
+    fun setUp() {
+        runtime = SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions, EntityManager())
     }
 
     @After
-    public void tearDown() {
+    fun tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
-        mRuntime.destroy();
+        runtime.destroy()
     }
 
-    private PanelEntityImpl createTestPanelEntity() {
-        Display display = mActivity.getSystemService(DisplayManager.class).getDisplays()[0];
-        Context displayContext = mActivity.createDisplayContext(display);
-        View view = new View(displayContext);
-        view.setLayoutParams(new LayoutParams(640, 480));
-        Node node = mXrExtensions.createNode();
+    private fun createTestPanelEntity(): PanelEntityImpl {
+        val display = activity.getSystemService(DisplayManager::class.java).displays[0]
+        val displayContext = activity.createDisplayContext(display!!)
+        val view = View(displayContext)
+        view.setLayoutParams(ViewGroup.LayoutParams(640, 480))
+        val node = xrExtensions.createNode()
 
-        PanelEntityImpl panelEntity =
-                new PanelEntityImpl(
-                        displayContext,
-                        node,
-                        view,
-                        mXrExtensions,
-                        mEntityManager,
-                        new PixelDimensions(
-                                (int) sVgaResolutionPx.width, (int) sVgaResolutionPx.height),
-                        "panel",
-                        mMakeFakeExecutor);
+        val panelEntity =
+            PanelEntityImpl(
+                displayContext,
+                node,
+                view,
+                xrExtensions,
+                entityManager,
+                PixelDimensions(sVgaResolutionPx.width.toInt(), sVgaResolutionPx.height.toInt()),
+                "panel",
+                fakeExecutor,
+            )
 
-        panelEntity.setParent(mRuntime.getActivitySpace());
-        return panelEntity;
-    }
-
-    @Test
-    public void addComponentToTwoEntity_fails() {
-        PanelEntityImpl entity1 = createTestPanelEntity();
-        PanelEntityImpl entity2 = createTestPanelEntity();
-        SpatialPointerComponentImpl component = new SpatialPointerComponentImpl(mXrExtensions);
-        assertThat(component).isNotNull();
-        assertThat(entity1.addComponent(component)).isTrue();
-        assertThat(entity2.addComponent(component)).isFalse();
+        panelEntity.parent = runtime.activitySpace
+        return panelEntity
     }
 
     @Test
-    public void onAttach_setsSpatialPointerIconToDefault() {
-        PanelEntityImpl entity = createTestPanelEntity();
-        SpatialPointerComponentImpl component = new SpatialPointerComponentImpl(mXrExtensions);
-        assertThat(component.onAttach(entity)).isTrue();
-        assertThat(component.getSpatialPointerIcon()).isEqualTo(SpatialPointerIcon.TYPE_DEFAULT);
+    fun addComponentToTwoEntity_fails() {
+        val entity1 = createTestPanelEntity()
+        val entity2 = createTestPanelEntity()
+        val component = SpatialPointerComponentImpl(xrExtensions)
+        assertThat(component).isNotNull()
+        assertThat(entity1.addComponent(component)).isTrue()
+        assertThat(entity2.addComponent(component)).isFalse()
     }
 
     @Test
-    public void onDetach_setsSpatialPointerIconToDefault() {
-        PanelEntityImpl entity = createTestPanelEntity();
-        SpatialPointerComponentImpl component = new SpatialPointerComponentImpl(mXrExtensions);
-        assertThat(component.onAttach(entity)).isTrue();
-        component.setSpatialPointerIcon(SpatialPointerIcon.TYPE_NONE);
-        component.onDetach(entity);
-        assertThat(component.getSpatialPointerIcon()).isEqualTo(SpatialPointerIcon.TYPE_DEFAULT);
+    fun onAttach_setsSpatialPointerIconToDefault() {
+        val entity = createTestPanelEntity()
+        val component = SpatialPointerComponentImpl(xrExtensions)
+        assertThat(component.onAttach(entity)).isTrue()
+        assertThat(component.spatialPointerIcon).isEqualTo(SpatialPointerIcon.TYPE_DEFAULT)
     }
 
     @Test
-    public void setSpatialPointerIcon_setsSpatialPointerIcon() {
-        PanelEntityImpl entity = createTestPanelEntity();
-        SpatialPointerComponentImpl component = new SpatialPointerComponentImpl(mXrExtensions);
-        assertThat(component.onAttach(entity)).isTrue();
-        component.setSpatialPointerIcon(SpatialPointerIcon.TYPE_NONE);
-        assertThat(component.getSpatialPointerIcon()).isEqualTo(SpatialPointerIcon.TYPE_NONE);
-        component.setSpatialPointerIcon(SpatialPointerIcon.TYPE_CIRCLE);
-        assertThat(component.getSpatialPointerIcon()).isEqualTo(SpatialPointerIcon.TYPE_CIRCLE);
-        component.setSpatialPointerIcon(SpatialPointerIcon.TYPE_DEFAULT);
-        assertThat(component.getSpatialPointerIcon()).isEqualTo(SpatialPointerIcon.TYPE_DEFAULT);
+    fun onDetach_setsSpatialPointerIconToDefault() {
+        val entity = createTestPanelEntity()
+        val component = SpatialPointerComponentImpl(xrExtensions)
+        assertThat(component.onAttach(entity)).isTrue()
+        component.spatialPointerIcon = SpatialPointerIcon.TYPE_NONE
+        component.onDetach(entity)
+        assertThat(component.spatialPointerIcon).isEqualTo(SpatialPointerIcon.TYPE_DEFAULT)
+    }
+
+    @Test
+    fun setSpatialPointerIcon_setsSpatialPointerIcon() {
+        val entity = createTestPanelEntity()
+        val component = SpatialPointerComponentImpl(xrExtensions)
+        assertThat(component.onAttach(entity)).isTrue()
+        component.spatialPointerIcon = SpatialPointerIcon.TYPE_NONE
+        assertThat(component.spatialPointerIcon).isEqualTo(SpatialPointerIcon.TYPE_NONE)
+        component.spatialPointerIcon = (SpatialPointerIcon.TYPE_CIRCLE)
+        assertThat(component.spatialPointerIcon).isEqualTo(SpatialPointerIcon.TYPE_CIRCLE)
+        component.spatialPointerIcon = (SpatialPointerIcon.TYPE_DEFAULT)
+        assertThat(component.spatialPointerIcon).isEqualTo(SpatialPointerIcon.TYPE_DEFAULT)
+    }
+
+    companion object {
+        private val sVgaResolutionPx = Dimensions(640f, 480f, 0f)
     }
 }
