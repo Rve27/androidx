@@ -1129,7 +1129,6 @@ internal fun DropdownMenuItemContent(
     val itemShape = shapeByInteraction(shapes, selected, morphSpec)
 
     val hasLeadingIcon = leadingIcon != null || selectedLeadingIcon != null
-    val hasLeadingIconDisplayed = leadingIcon != null || (selectedLeadingIcon != null && selected)
     val hasTrailingIcon = trailingIcon != null
 
     Surface(
@@ -1208,19 +1207,12 @@ internal fun DropdownMenuItemContent(
                         Box(
                             Modifier.layoutId(TextLayoutId)
                                 .padding(
-                                    start =
-                                        if (hasLeadingIconDisplayed) {
-                                            // Only add this padding if there's an icon displayed.
-                                            DropdownMenuIconTextPadding
-                                        } else {
-                                            0.dp
-                                        },
                                     end =
                                         if (hasTrailingIcon) {
                                             DropdownMenuIconTextPadding
                                         } else {
                                             0.dp
-                                        },
+                                        }
                                 ),
                             contentAlignment = Alignment.CenterStart,
                         ) {
@@ -1471,7 +1463,9 @@ private fun shapeByInteraction(
 @Composable
 private fun WrappedLeadingIcon(content: @Composable BoxScope.() -> Unit) {
     Box(
-        modifier = Modifier.defaultMinSize(minWidth = SegmentedMenuTokens.ItemLeadingIconSize),
+        modifier =
+            Modifier.defaultMinSize(minWidth = SegmentedMenuTokens.ItemLeadingIconSize)
+                .padding(end = DropdownMenuIconTextPadding),
         content = content,
     )
 }
