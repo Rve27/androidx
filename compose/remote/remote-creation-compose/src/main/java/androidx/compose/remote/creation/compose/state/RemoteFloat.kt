@@ -368,7 +368,6 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
     }
 
     /** Returns a new [RemoteFloat] that evaluates to this [RemoteFloat] times [v]. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun times(v: RemoteFloat): RemoteFloat {
         v.constantValueOrNull?.let {
             return times(it)

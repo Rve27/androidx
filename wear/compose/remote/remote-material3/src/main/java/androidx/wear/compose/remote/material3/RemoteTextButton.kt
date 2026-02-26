@@ -17,7 +17,6 @@
 
 package androidx.wear.compose.remote.material3
 
-import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.action.Action
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
@@ -194,13 +193,11 @@ public class RemoteTextButtonColors(
     public val disabledContentColor: RemoteColor,
 ) {
     @Stable
-    @SuppressLint("RestrictedApiAndroidX")
     internal fun contentColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(ifTrue = contentColor, ifFalse = disabledContentColor)
     }
 
     @Stable
-    @SuppressLint("RestrictedApiAndroidX")
     internal fun containerColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(ifTrue = containerColor, ifFalse = disabledContainerColor)
     }

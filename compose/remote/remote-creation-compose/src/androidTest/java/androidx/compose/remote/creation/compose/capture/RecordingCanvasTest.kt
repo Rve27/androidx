@@ -267,11 +267,11 @@ class RecordingCanvasTest {
     fun remotePaintSetColor_constantColor() {
         val paint = RemotePaint()
         paint.remoteColor =
-            RemoteColor.fromARGB(
-                RemoteFloat(1f),
-                RemoteFloat(0.8f),
-                RemoteFloat(0.7f),
-                RemoteFloat(0.5f),
+            RemoteColor.rgb(
+                red = RemoteFloat(0.8f),
+                green = RemoteFloat(0.7f),
+                blue = RemoteFloat(0.5f),
+                alpha = RemoteFloat(1f),
             )
 
         recordingCanvas.usePaint(paint)
@@ -309,11 +309,11 @@ class RecordingCanvasTest {
     fun remotePaintSetColor_colorExpression() {
         val paint = RemotePaint()
         paint.remoteColor =
-            RemoteColor.fromARGB(
-                RemoteFloat(1f),
+            RemoteColor.rgb(
                 RemoteFloat(0.8f),
                 RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
                 RemoteFloat(0.5f),
+                RemoteFloat(1f),
             )
 
         recordingCanvas.usePaint(paint)
@@ -328,11 +328,11 @@ class RecordingCanvasTest {
         val paint = RemotePaint()
         paint.remoteColorFilter =
             RemoteBlendModeColorFilter(
-                RemoteColor.fromARGB(
-                    RemoteFloat(1f),
+                RemoteColor.rgb(
                     RemoteFloat(0.8f),
                     RemoteFloat(0.7f),
                     RemoteFloat(0.5f),
+                    RemoteFloat(1f),
                 ),
                 BlendMode.MULTIPLY,
             )
@@ -350,11 +350,11 @@ class RecordingCanvasTest {
         val paint = RemotePaint()
         paint.remoteColorFilter =
             RemoteBlendModeColorFilter(
-                RemoteColor.fromARGB(
-                    RemoteFloat(1f),
+                RemoteColor.rgb(
                     RemoteFloat(0.8f),
                     RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
                     RemoteFloat(0.5f),
+                    RemoteFloat(1f),
                 ),
                 BlendMode.MULTIPLY,
             )
@@ -372,11 +372,11 @@ class RecordingCanvasTest {
         val paint = RemotePaint()
         paint.remoteColorFilter =
             RemoteBlendModeColorFilter(
-                RemoteColor.fromARGB(
-                    RemoteFloat(1f),
+                RemoteColor.rgb(
                     RemoteFloat(0.8f),
                     RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
                     RemoteFloat(0.5f),
+                    RemoteFloat(1f),
                 ),
                 BlendMode.MULTIPLY,
             )
@@ -393,19 +393,19 @@ class RecordingCanvasTest {
     fun remotePaintCopyConstructor() {
         val paint = RemotePaint()
         paint.remoteColor =
-            RemoteColor.fromARGB(
-                RemoteFloat(1f),
+            RemoteColor.rgb(
                 RemoteFloat(0.8f),
                 RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
                 RemoteFloat(0.5f),
+                RemoteFloat(1f),
             )
         paint.remoteColorFilter =
             RemoteBlendModeColorFilter(
-                RemoteColor.fromARGB(
-                    RemoteFloat(1f),
+                RemoteColor.rgb(
                     RemoteFloat(0.8f),
                     RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
                     RemoteFloat(0.5f),
+                    RemoteFloat(1f),
                 ),
                 BlendMode.MULTIPLY,
             )

@@ -220,13 +220,11 @@ public class RemoteIconButtonColors(
     public val disabledContentColor: RemoteColor,
 ) {
     @Stable
-    @SuppressLint("RestrictedApiAndroidX")
     internal fun contentColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(ifTrue = contentColor, ifFalse = disabledContentColor)
     }
 
     @Stable
-    @SuppressLint("RestrictedApiAndroidX")
     internal fun containerColor(enabled: RemoteBoolean = true.rb): RemoteColor {
         return enabled.select(ifTrue = containerColor, ifFalse = disabledContainerColor)
     }

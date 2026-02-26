@@ -125,7 +125,12 @@ internal constructor(
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public operator fun times(other: RemoteColor): RemoteColor =
-        fromARGB(alpha * other.alpha, red * other.red, green * other.green, blue * other.blue)
+        rgb(
+            red = red * other.red,
+            green = green * other.green,
+            blue = blue * other.blue,
+            alpha = alpha * other.alpha,
+        )
 
     /**
      * Creates a copy of this [RemoteColor] with the ability to override individual ARGB components.
@@ -138,7 +143,6 @@ internal constructor(
      * @param blue Optional [RemoteFloat] to override the blue component.
      * @return A new [RemoteColor] with the specified components overridden.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun copy(
         alpha: RemoteFloat? = null,
         red: RemoteFloat? = null,
@@ -149,11 +153,11 @@ internal constructor(
             return this
         }
 
-        return fromARGB(
-            alpha ?: this.alpha,
-            red ?: this.red,
-            green ?: this.green,
-            blue ?: this.blue,
+        return rgb(
+            red = red ?: this.red,
+            green = green ?: this.green,
+            blue = blue ?: this.blue,
+            alpha = alpha ?: this.alpha,
         )
     }
 
@@ -173,14 +177,12 @@ internal constructor(
      * Returns a [RemoteFloat] that evaluates to the alpha of this [RemoteColor] in the range
      * [0..1].
      */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val alpha: RemoteFloat
         get() = configuredAlpha ?: colorComponent(ColorAttribute.COLOR_ALPHA)
 
     /**
      * Returns a [RemoteFloat] that evaluates to the red of this [RemoteColor] in the range [0..1].
      */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val red: RemoteFloat
         get() = configuredRed ?: colorComponent(ColorAttribute.COLOR_RED)
 
@@ -188,21 +190,18 @@ internal constructor(
      * Returns a [RemoteFloat] that evaluates to the green of this [RemoteColor] in the range
      * [0..1].
      */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val green: RemoteFloat
         get() = configuredGreen ?: colorComponent(ColorAttribute.COLOR_GREEN)
 
     /**
      * Returns a [RemoteFloat] that evaluates to the blue of this [RemoteColor] in the range [0..1].
      */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val blue: RemoteFloat
         get() = configuredBlue ?: colorComponent(ColorAttribute.COLOR_BLUE)
 
     /**
      * Returns a [RemoteFloat] that evaluates to the hue of this [RemoteColor] in the range [0..1].
      */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val hue: RemoteFloat
         get() =
             constantValueOrNull?.let { Utils.getHue(it.toArgb()).rf }
@@ -212,7 +211,6 @@ internal constructor(
      * Returns a [RemoteFloat] that evaluates to the saturation of this [RemoteColor] in the range
      * [0..1].
      */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val saturation: RemoteFloat
         get() =
             constantValueOrNull?.let { Utils.getSaturation(it.toArgb()).rf }
@@ -222,13 +220,11 @@ internal constructor(
      * Returns a [RemoteFloat] that evaluates to the brightness of this [RemoteColor] in the range
      * [0..1].
      */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val brightness: RemoteFloat
         get() =
             constantValueOrNull?.let { Utils.getBrightness(it.toArgb()).rf }
                 ?: colorComponent(ColorAttribute.COLOR_BRIGHTNESS)
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
         /**
          * Creates a [RemoteColor] from a literal [Color] value.
@@ -282,25 +278,37 @@ internal constructor(
          * @param hue A [RemoteFloat] representing the hue in the range [0..1].
          * @param saturation A [RemoteFloat] representing the saturation in the range [0..1].
          * @param value A [RemoteFloat] representing the brightness in the range [0..1].
+         * @param alpha The fixed alpha value the range [0..1].
          * @return A new [RemoteColor] derived from the provided HSV components.
          */
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun fromHSV(
+        public fun hsv(
             hue: RemoteFloat,
             saturation: RemoteFloat,
             value: RemoteFloat,
+            alpha: RemoteFloat = 1.rf,
         ): RemoteColor {
             val constH = hue.constantValueOrNull
             val constS = saturation.constantValueOrNull
             val constV = value.constantValueOrNull
-            if (constH != null && constS != null && constV != null) {
-                return RemoteColor(Color(color = Utils.hsvToRgb(constH, constS, constV)))
+            val alphaV = alpha.constantValueOrNull
+            if (constH != null && constS != null && constV != null && alphaV != null) {
+                return RemoteColor(
+                    Color.hsv(
+                        hue = constH * 360f,
+                        saturation = constS,
+                        value = constV,
+                        alpha = alphaV,
+                    )
+                )
             }
+
+            // ColorExpression requires alpha to be constant in the range [0..255]
+            val fixedAlpha = ((alpha.constantValueOrNull ?: 1f) * 255f).toInt()
 
             val idFactory = Memorize { creationState ->
                 creationState.document
                     .addColorExpression(
-                        1f,
+                        fixedAlpha,
                         hue.getFloatIdForCreationState(creationState),
                         saturation.getFloatIdForCreationState(creationState),
                         value.getFloatIdForCreationState(creationState),
@@ -308,7 +316,14 @@ internal constructor(
                     .toInt()
             }
 
-            return RemoteColor(idProvider = { creationState -> idFactory.getId(creationState) })
+            val fullColor =
+                RemoteColor(idProvider = { creationState -> idFactory.getId(creationState) })
+
+            return if (alpha.hasConstantValue) {
+                fullColor
+            } else {
+                fullColor.copy(alpha = alpha)
+            }
         }
 
         /**
@@ -360,12 +375,11 @@ internal constructor(
          * @param blue A [RemoteFloat] representing blue in the range [0..1].
          * @return A new [RemoteColor] derived from the provided ARGB components.
          */
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun fromARGB(
-            alpha: RemoteFloat,
+        public fun rgb(
             red: RemoteFloat,
             green: RemoteFloat,
             blue: RemoteFloat,
+            alpha: RemoteFloat = 1.rf,
         ): RemoteColor {
             val constA = alpha.constantValueOrNull
             val constR = red.constantValueOrNull
@@ -389,7 +403,7 @@ internal constructor(
          * @return A new [RemoteColor] derived from the provided ARGB components.
          */
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun fromARGB(alpha: Float, red: Float, green: Float, blue: Float): RemoteColor =
+        public fun rgb(alpha: Float, red: Float, green: Float, blue: Float): RemoteColor =
             RemoteColor(Color(red = red, green = green, blue = blue, alpha = alpha))
     }
 }
@@ -492,7 +506,6 @@ public fun tween(@ColorInt from: Int, @ColorInt to: Int, tween: RemoteFloat): Re
  * @param tween A [RemoteFloat] representing the interpolation factor in range [0..1].
  * @return A new [RemoteColor] representing the tweened color.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun tween(from: RemoteColor, to: RemoteColor, tween: RemoteFloat): RemoteColor {
     val constFrom = from.constantValueOrNull
     val constTo = to.constantValueOrNull
