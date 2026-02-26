@@ -7,7 +7,7 @@ package androidx.room3 {
     field public static final androidx.room3.AmbiguousColumnResolver INSTANCE;
   }
 
-  @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.CLASS) public @interface AutoMigration {
+  @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={}) public @interface AutoMigration {
     ctor @KotlinOnly public AutoMigration(int from, int to, optional kotlin.reflect.KClass<? extends java.lang.Object?> spec);
     method @InaccessibleFromKotlin public abstract int from();
     method @InaccessibleFromKotlin public abstract Class<? extends java.lang.Object?> spec() default Any::class;

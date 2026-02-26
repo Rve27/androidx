@@ -25,8 +25,8 @@ package androidx.room3
 public open class RoomWarnings {
     public companion object {
         /**
-         * The warning dispatched by Room when the return value of a [Query] method does not exactly
-         * match the columns in the query result.
+         * The warning dispatched by Room when the return value of a [Query] function does not
+         * exactly match the columns in the query result.
          */
         public const val QUERY_MISMATCH: String = "ROOM_QUERY_MISMATCH"
 
@@ -38,8 +38,8 @@ public open class RoomWarnings {
         public const val CURSOR_MISMATCH: String = "ROOM_CURSOR_MISMATCH"
 
         /**
-         * The warning dispatched by Room when the object in the provided method's multimap return
-         * type does not implement equals() and hashCode().
+         * The warning dispatched by Room when the object type declared in a [Query] function's
+         * multimap return type does not implement `equals()` and `hashCode()`.
          */
         public const val DOES_NOT_IMPLEMENT_EQUALS_HASHCODE: String =
             "ROOM_TYPE_DOES_NOT_IMPLEMENT_EQUALS_HASHCODE"
@@ -60,16 +60,16 @@ public open class RoomWarnings {
             "ROOM_CANNOT_CREATE_VERIFICATION_DATABASE"
 
         /**
-         * Reported when an [Entity] field that is annotated with [Embedded] has a sub field which
-         * is annotated with [PrimaryKey] but the [PrimaryKey] is dropped while composing it into
-         * the parent object.
+         * Reported when an [Entity] property that is annotated with [Embedded] has a sub property
+         * which is annotated with [PrimaryKey] but the [PrimaryKey] is dropped while composing it
+         * into the parent object.
          */
         public const val PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED: String =
             "ROOM_EMBEDDED_PRIMARY_KEY_IS_DROPPED"
 
         /**
-         * Reported when an [Entity] field that is annotated with [Embedded] has a sub field which
-         * has a [ColumnInfo] annotation with `index = true`.
+         * Reported when an [Entity] property that is annotated with [Embedded] has a sub property
+         * which has a [ColumnInfo] annotation with `index = true`.
          *
          * You can re-define the index in the containing [Entity].
          */
@@ -77,8 +77,8 @@ public open class RoomWarnings {
             "ROOM_EMBEDDED_INDEX_IS_DROPPED"
 
         /**
-         * Reported when an [Entity] that has a [Embedded] field whose type is another [Entity] and
-         * that [Entity] has some indices defined. These indices will NOT be created in the
+         * Reported when an [Entity] that has a [Embedded] property whose type is another [Entity]
+         * and that [Entity] has some indices defined. These indices will NOT be created in the
          * containing [Entity]. If you want to preserve them, you can re-define them in the
          * containing [Entity].
          */
@@ -95,7 +95,7 @@ public open class RoomWarnings {
         public const val INDEX_FROM_PARENT_IS_DROPPED: String = "ROOM_PARENT_INDEX_IS_DROPPED"
 
         /**
-         * Reported when an [Entity] inherits a field from its super class and the field has a
+         * Reported when an [Entity] inherits a property from its super class and the property has a
          * [ColumnInfo] annotation with `index = true`.
          *
          * These indices are dropped for the [Entity] and you would need to re-declare them if you
@@ -130,8 +130,8 @@ public open class RoomWarnings {
             "ROOM_MISSING_FOREIGN_KEY_CHILD_INDEX"
 
         /**
-         * Reported when a junction entity whose column is used in a `@Relation` field with a
-         * `@Junction` does not contain an index. If the column is not covered by any index then a
+         * Reported when a junction entity whose column is used in a [Relation] property with a
+         * [Junction] does not contain an index. If the column is not covered by any index then a
          * full table scan might be performed when resolving the relationship.
          *
          * It is recommended that columns on entities used as junctions contain indices, otherwise
@@ -140,29 +140,30 @@ public open class RoomWarnings {
         public const val MISSING_INDEX_ON_JUNCTION: String = "MISSING_INDEX_ON_JUNCTION"
 
         /**
-         * Reported when a POJO has multiple constructors, one of which is a no-arg constructor.
-         * Room will pick that one by default but will print this warning in case the constructor
-         * choice is important. You can always guide Room to use the right constructor using
-         * the @Ignore annotation.
+         * Reported when a data class has multiple constructors, one of which is a no-arg
+         * constructor. Room will pick that one by default but will print this warning in case the
+         * constructor choice is important. You can always guide Room to use the right constructor
+         * using the `@Ignore` annotation.
          */
         public const val DEFAULT_CONSTRUCTOR: String = "ROOM_DEFAULT_CONSTRUCTOR"
 
         /**
-         * Reported when a @Query method returns a POJO that has relations but the method is not
-         * annotated with @Transaction. Relations are run as separate queries and if the query is
-         * not run inside a transaction, it might return inconsistent results from the database.
+         * Reported when a [Query] function returns a data object that has relations but the
+         * function is not annotated with [Transaction]. Relations are run as separate queries and
+         * if the query is not run inside a transaction, it might return inconsistent results from
+         * the database.
          */
         public const val RELATION_QUERY_WITHOUT_TRANSACTION: String =
             "ROOM_RELATION_QUERY_WITHOUT_TRANSACTION"
 
         /**
-         * Reported when an `@Entity` field's type do not exactly match the getter type. For
+         * Reported when an [Entity] property's type do not exactly match the getter type. For
          * instance, in the following class:
          * ```
          * @Entity
          * class Foo {
          *     ...
-         *     private val value: Boolean
+         *     private val value: Boolean?
          *     public fun getValue(): Boolean {
          *         return value == null ? false : value
          *     }
@@ -170,20 +171,20 @@ public open class RoomWarnings {
          * ```
          *
          * Trying to insert this entity into database will always set `value` column to `false` when
-         * `Foo.value` is `null` since Room will use the `getValue` method to read the value. So
+         * `Foo.value` is `null` since Room will use the `getValue` function to read the value. So
          * even thought the database column is nullable, it will never be inserted as `null` if
          * inserted as a `Foo` instance.
          */
         public const val MISMATCHED_GETTER: String = "ROOM_MISMATCHED_GETTER_TYPE"
 
         /**
-         * Reported when an `@Entity` field's type do not exactly match the setter type. For
+         * Reported when an [Entity] property's type do not exactly match the setter type. For
          * instance, in the following class:
          * ```
          * @Entity
          * class Foo {
          *     ...
-         *     private val value: Boolean
+         *     private val value: Boolean?
          *     public fun setValue(value: Boolean) {
          *         this.value = value
          *     }
@@ -191,8 +192,8 @@ public open class RoomWarnings {
          * ```
          *
          * If Room reads this entity from the database, it will always set `Foo.value` to `false`
-         * when the column value is `null` since Room will use the `setValue` method to write the
-         * value.
+         * when the column value is `null` since Room will use the `setValue` function to write the
+         * value which doesn't accept `null`.
          */
         public const val MISMATCHED_SETTER: String = "ROOM_MISMATCHED_SETTER_TYPE"
 
@@ -200,15 +201,16 @@ public open class RoomWarnings {
         public const val AMBIGUOUS_COLUMN_IN_RESULT: String = "ROOM_AMBIGUOUS_COLUMN_IN_RESULT"
 
         /**
-         * Reported when a nullable Collection, Array or Optional is returned from a DAO method.
-         * Room will return an empty Collection, Array or Optional respectively if no results are
-         * returned by such a query, hence using a nullable return type is unnecessary in this case.
+         * Reported when a nullable `Collection`, `Array` or `Optional` is returned from a DAO
+         * function. Room will return an empty `Collection`, `Array` or `Optional `respectively if
+         * no results are returned by such a query, hence using a nullable return type is
+         * unnecessary in this case.
          */
         public const val UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE: String =
             "ROOM_UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE"
     }
 
-    @Deprecated("This type should not be instantiated as it contains only static methods. ")
+    @Deprecated("This type should not be instantiated as it contains only static functions. ")
     @Suppress("PrivateConstructorForUtilityClass")
     public constructor()
 }
