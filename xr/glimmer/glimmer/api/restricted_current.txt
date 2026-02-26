@@ -377,6 +377,7 @@ package androidx.xr.glimmer.list {
     property public androidx.compose.foundation.interaction.InteractionSource interactionSource;
     property public boolean isScrollInProgress;
     property @androidx.compose.runtime.annotation.FrequentlyChangingValue public androidx.xr.glimmer.list.ListLayoutInfo layoutInfo;
+    property public androidx.compose.foundation.ScrollIndicatorState scrollIndicatorState;
     field public static final androidx.xr.glimmer.list.ListState.Companion Companion;
   }
 

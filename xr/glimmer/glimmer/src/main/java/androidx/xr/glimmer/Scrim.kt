@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.glimmer.list
+package androidx.xr.glimmer
 
+import androidx.compose.foundation.ScrollIndicatorState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -32,26 +33,29 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.util.fastCoerceAtMost
 
 /**
- * Applies a gradient scrim (a fade effect) to one side of the content. This scrim is not visible
+ * Applies a gradient scrim (a fade effect) to the edges of the content. This scrim is not visible
  * when the user reaches an edge and scales gradually as the user scrolls. In other words, the scrim
  * only appears when scrolling in that direction is possible.
  *
- * @param state The [ListState] associated with the layout where the scrim should be applied.
+ * @param state The [androidx.compose.foundation.ScrollIndicatorState] associated with the layout
+ *   receiving the scrim
  * @param maxScrimSize The maximum size of the scrim, in [Dp], from the edge in the specified
  *   orientation. The size of the scrim might be less at the beginning and end of the list, and the
  *   maximum size might be reduced if there's not enough space for the full size. If set to 0, no
  *   scrim will be applied. If this value is negative, an exception is thrown.
+ * @param orientation The main axis in which this container scrolls
  * @throws IllegalArgumentException if [maxScrimSize] is negative.
  */
 internal fun Modifier.edgeScrim(
-    state: ListState,
-    orientation: Orientation,
+    state: ScrollIndicatorState,
     maxScrimSize: Dp,
+    orientation: Orientation,
 ): Modifier {
-    require(maxScrimSize.value >= 0f) { "Scrim size can't be negative: $maxScrimSize." }
+    require(maxScrimSize.value >= 0f) { "Scrim size can't be negative: $maxScrimSize" }
     if (maxScrimSize.value == 0f) {
         return this
     }
+
     // Offscreen composition strategy is used because below scrim uses DstOut blend mode,
     // which cuts out the content of the list and keeps only the background behind.
     val modifier = graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
@@ -72,7 +76,7 @@ internal fun Modifier.edgeScrim(
 
 /** Please see [edgeScrim] for documentation. */
 private fun Modifier.drawVerticalScrim(
-    state: ListState,
+    state: ScrollIndicatorState,
     scrimHeight: Dp,
     gradientStops: Array<Pair<Float, Color>>,
 ): Modifier {
@@ -109,7 +113,7 @@ private fun Modifier.drawVerticalScrim(
 
 /** Please see [edgeScrim] for documentation. */
 private fun Modifier.drawHorizontalScrim(
-    state: ListState,
+    state: ScrollIndicatorState,
     scrimWidth: Dp,
     gradientStops: Array<Pair<Float, Color>>,
 ): Modifier {
@@ -146,7 +150,7 @@ private fun Modifier.drawHorizontalScrim(
 }
 
 private fun DrawScope.drawScrim(
-    state: ListState,
+    state: ScrollIndicatorState,
     orientation: Orientation,
     scrimMaxSizePx: Float,
     scrimSize: Size,
@@ -155,18 +159,9 @@ private fun DrawScope.drawScrim(
     endPivot: Offset,
     endOffset: Offset,
 ) {
-    val layoutInfo = state.layoutInfo
-    if (layoutInfo.totalItemsCount == 0) {
-        return
-    }
-    val averageSize = layoutInfo.visibleItemsAverageSize()
-    val startScrollOffsetPx = getScrollOffsetFromStart(state = state, averageSize = averageSize)
-    val endScrollOffsetPx =
-        getScrollOffsetFromEnd(
-            layoutInfo = layoutInfo,
-            averageSize = averageSize,
-            scrollOffsetFromStart = startScrollOffsetPx,
-        )
+    val startScrollOffsetPx = state.scrollOffset
+    val endScrollOffsetPx = state.contentSize - state.viewportSize - startScrollOffsetPx
+
     val startScrimScale = (startScrollOffsetPx / scrimMaxSizePx).fastCoerceAtMost(1f)
     val endScrimScale = (endScrollOffsetPx / scrimMaxSizePx).fastCoerceAtMost(1f)
 
@@ -198,26 +193,6 @@ private fun DrawScope.drawScrim(
             )
         }
     }
-}
-
-/** Distance between start of the content and start of the viewport. */
-private fun getScrollOffsetFromStart(state: ListState, averageSize: Int): Int {
-    return averageSize * state.firstVisibleItemIndex + state.firstVisibleItemScrollOffset
-}
-
-/**
- * Distance between end of the viewport and end of the content. We pass numerous parameters to
- * minimise repeated calculations and state readings inside draw phase.
- */
-private fun getScrollOffsetFromEnd(
-    layoutInfo: ListLayoutInfo,
-    averageSize: Int,
-    scrollOffsetFromStart: Int,
-): Int {
-    val paddings = layoutInfo.beforeContentPadding + layoutInfo.afterContentPadding
-    val viewPortSize = layoutInfo.singleAxisViewportSize - paddings
-    val contentSize = layoutInfo.totalItemsCount * averageSize - layoutInfo.mainAxisItemSpacing
-    return contentSize - scrollOffsetFromStart - viewPortSize
 }
 
 private val DefaultGradientStops: Array<Pair<Float, Color>> =
