@@ -676,6 +676,14 @@ public class AccessibilityNodeInfoCompatTest extends
                 + "ACTION_SET_EXTENDED_SELECTION");
     }
 
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @SmallTest
+    @Test
+    public void testActionArgumentSelectionParcelableValue() {
+        assertThat(AccessibilityNodeInfoCompat.ACTION_ARGUMENT_SELECTION_PARCELABLE)
+                .isEqualTo(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_PARCELABLE);
+    }
+
     private static class LabelNodeProviderTest extends AccessibilityNodeProvider {
         static final int LABELED_ID = 1;
         static final int LABEL_ONE_ID = 2;

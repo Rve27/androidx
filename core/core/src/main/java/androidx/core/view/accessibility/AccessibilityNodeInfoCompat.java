@@ -2327,8 +2327,9 @@ public class AccessibilityNodeInfoCompat {
      *
      * @see AccessibilityActionCompat#ACTION_SET_EXTENDED_SELECTION
      */
+    @SuppressLint("ActionValue")
     public static final String ACTION_ARGUMENT_SELECTION_PARCELABLE =
-            "androidx.core.view.accessibility.action.ARGUMENT_SELECTION_PARCELABLE";
+            "android.view.accessibility.action.ARGUMENT_SELECTION_PARCELABLE";
 
     /**
      * Argument for whether when moving at granularity to extend the selection
