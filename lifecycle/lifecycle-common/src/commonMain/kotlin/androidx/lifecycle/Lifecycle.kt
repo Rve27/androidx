@@ -364,7 +364,7 @@ internal class LifecycleCoroutineScopeImpl(
 public val Lifecycle.eventFlow: Flow<Lifecycle.Event>
     get() =
         callbackFlow {
-                val observer = LifecycleEventObserver { _, event ->
+                val observer = addObserver { _, event ->
                     trySend(event)
 
                     // Completes the producer if lifecycle is `DESTROYED`.
@@ -372,7 +372,29 @@ public val Lifecycle.eventFlow: Flow<Lifecycle.Event>
                         close()
                     }
                 }
-                addObserver(observer)
+
                 awaitClose { removeObserver(observer) }
             }
             .flowOn(Dispatchers.Main.immediate)
+
+/**
+ * Add a [LifecycleObserver] to this [Lifecycle] using the provided [action].
+ *
+ * @param action The action that will be invoked whenever a [Lifecycle.Event] occurs. It provides
+ *   the [LifecycleOwner] whose state has changed and the specific [Lifecycle.Event] that was
+ *   triggered.
+ * @return the [LifecycleObserver] added to the [Lifecycle]. This instance can be used to later
+ *   remove the observer.
+ */
+public inline fun Lifecycle.addObserver(
+    crossinline action: LifecycleObserver.(source: LifecycleOwner, event: Lifecycle.Event) -> Unit
+): LifecycleObserver {
+    val observer =
+        object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                action(this, source, event)
+            }
+        }
+    addObserver(observer)
+    return observer
+}
