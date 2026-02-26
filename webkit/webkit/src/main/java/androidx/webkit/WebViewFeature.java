@@ -137,7 +137,9 @@ public class WebViewFeature {
             ORIGIN_MATCHED_HEADERS,
             CUSTOM_REQUEST_HEADERS,
             ADD_QUIC_HINTS_V1,
-            PAGE_GET_URL
+            PAGE_GET_URL,
+            PREFETCH_CACHE_V1,
+            SET_MAX_PRERENDERS_V1
     })
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.PARAMETER, ElementType.METHOD})
@@ -718,6 +720,24 @@ public class WebViewFeature {
      */
     @Profile.ExperimentalUrlPrefetch
     public static final String SPECULATIVE_LOADING_CONFIG = "SPECULATIVE_LOADING_CONFIG_V2";
+
+    /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers
+     * {@link PrefetchCache#setMaxPrefetches(Integer)},{@link PrefetchCache#setPrefetchTtlSeconds(Integer)}
+     */
+    @Profile.ExperimentalUrlPrefetch
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public static final String PREFETCH_CACHE_V1 = "PREFETCH_CACHE_V1";
+
+    /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers
+     * {@link Profile#setMaxPrerenders(Integer)}
+     */
+    @Profile.ExperimentalUrlPrefetch
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public static final String SET_MAX_PRERENDERS_V1 = "SET_MAX_PRERENDERS_V1";
 
     /**
      * Feature for {@link #isFeatureSupported(String)}.
