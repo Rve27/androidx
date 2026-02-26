@@ -164,7 +164,7 @@ switch (cacheSetting) {
         if (uplinkLinux.exists() || uplinkMac.exists()) {
             logger.warn("\u001B[31m\nIt looks like you are a Googler running without remote build "
                     + "cache. Enable it for faster builds, see " +
-                    "http://go/androidx-dev#remote-build-cache\u001B[0m\n")
+                    "http://go/androidx-onboarding#remote-build-cache\u001B[0m\n")
         }
 }
 
