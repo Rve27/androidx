@@ -13,96 +13,89 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.app.Activity
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import com.android.extensions.xr.XrExtensions
+import com.google.common.truth.Truth
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
-
-import android.app.Activity;
-
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-
-import com.android.extensions.xr.XrExtensions;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public final class SubspaceNodeEntityImplTest {
-    private XrExtensions mXrExtensions;
-    private Activity mActivity;
-    private SubspaceNodeEntityImpl mSubspaceNodeEntity;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class SubspaceNodeEntityImplTest {
+    private lateinit var subspaceNodeEntity: SubspaceNodeEntityImpl
 
     @Before
-    public void setUp() {
-        mActivity = Robolectric.buildActivity(Activity.class).create().get();
-        mXrExtensions = XrExtensionsProvider.getXrExtensions();
-        EntityManager entityManager = new EntityManager();
-        FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
-        ActivitySpaceImpl activitySpace =
-                new ActivitySpaceImpl(
-                        mXrExtensions.createNode(),
-                        mActivity,
-                        mXrExtensions,
-                        entityManager,
-                        () -> mXrExtensions.getSpatialState(mActivity),
-                        executor);
+    fun setUp() {
+        val xrExtensions: XrExtensions = requireNotNull(getXrExtensions())
+        val activity = Robolectric.buildActivity(Activity::class.java).create().get()
+        val entityManager = EntityManager()
+        val executor = FakeScheduledExecutorService()
+        val activitySpace =
+            ActivitySpaceImpl(
+                xrExtensions.createNode(),
+                activity,
+                xrExtensions,
+                entityManager,
+                { xrExtensions.getSpatialState(activity) },
+                executor,
+            )
 
-        Dimensions size = new Dimensions(1.0f, 2.0f, 3.0f);
-
-        mSubspaceNodeEntity =
-                new SubspaceNodeEntityImpl(
-                        mActivity,
-                        mXrExtensions,
-                        mXrExtensions.createNode(),
-                        entityManager,
-                        executor);
-        mSubspaceNodeEntity.setParent(activitySpace);
+        subspaceNodeEntity =
+            SubspaceNodeEntityImpl(
+                activity,
+                xrExtensions,
+                xrExtensions.createNode(),
+                entityManager,
+                executor,
+            )
+        subspaceNodeEntity.parent = activitySpace
     }
 
     @Test
-    public void setSize_sizeIsUpdated() {
-        Dimensions size = new Dimensions(3.0f, 4.0f, 5.0f);
+    fun setSize_sizeIsUpdated() {
+        val size = Dimensions(3.0f, 4.0f, 5.0f)
 
-        mSubspaceNodeEntity.setSize(size);
+        subspaceNodeEntity.size = size
 
-        assertThat(mSubspaceNodeEntity.getSize()).isEqualTo(size);
+        Truth.assertThat(subspaceNodeEntity.size).isEqualTo(size)
     }
 
     @Test
-    public void setScale_scaleIsUpdated() {
-        Dimensions size = new Dimensions(3.0f, 4.0f, 5.0f);
-        Vector3 scale = new Vector3(1.0f, 2.0f, 3.0f);
+    fun setScale_scaleIsUpdated() {
+        val size = Dimensions(3.0f, 4.0f, 5.0f)
+        val scale = Vector3(1.0f, 2.0f, 3.0f)
 
-        mSubspaceNodeEntity.setSize(size);
-        mSubspaceNodeEntity.setScale(scale);
+        subspaceNodeEntity.size = size
+        subspaceNodeEntity.setScale(scale)
 
-        assertThat(mSubspaceNodeEntity.getScale()).isEqualTo(scale);
+        Truth.assertThat(subspaceNodeEntity.getScale()).isEqualTo(scale)
     }
 
     @Test
-    public void setAlpha_alphaIsUpdated() {
-        float alpha = 0.5f;
+    fun setAlpha_alphaIsUpdated() {
+        val alpha = 0.5f
 
-        mSubspaceNodeEntity.setAlpha(alpha);
+        subspaceNodeEntity.setAlpha(alpha)
 
-        assertThat(mSubspaceNodeEntity.getAlpha()).isEqualTo(alpha);
+        Truth.assertThat(subspaceNodeEntity.getAlpha()).isEqualTo(alpha)
     }
 
     @Test
-    public void setHidden_visibilityIsUpdated() {
-        boolean hidden = true;
+    fun setHidden_visibilityIsUpdated() {
+        val hidden = true
 
-        mSubspaceNodeEntity.setHidden(hidden);
+        subspaceNodeEntity.setHidden(hidden)
 
-        assertThat(mSubspaceNodeEntity.isHidden(false)).isEqualTo(hidden);
+        Truth.assertThat(subspaceNodeEntity.isHidden(false)).isEqualTo(hidden)
     }
 }
