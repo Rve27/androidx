@@ -30,11 +30,18 @@ import androidx.compose.foundation.text.selection.createHandleImage
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.CacheDrawModifierNode
+import androidx.compose.ui.draw.CacheDrawScope
+import androidx.compose.ui.draw.DrawResult
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
+import androidx.compose.ui.node.DelegatingNode
+import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.currentValueOf
+import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -84,23 +91,63 @@ private fun DefaultCursorHandle(modifier: Modifier = Modifier) {
     Spacer(modifier.size(CursorHandleWidth, CursorHandleHeight).drawCursorHandle())
 }
 
-private fun Modifier.drawCursorHandle() = composed {
-    val handleColor = LocalTextSelectionColors.current.handleColor
-    this.then(
-        Modifier.drawWithCache {
-            // Cursor handle is the same as a SelectionHandle rotated 45 degrees clockwise.
-            val radius = size.width / 2f
-            val imageBitmap = createHandleImage(radius = radius)
-            val colorFilter = ColorFilter.tint(handleColor)
-            onDrawWithContent {
-                drawContent()
-                withTransform({
-                    translate(left = radius)
-                    rotate(degrees = 45f, pivot = Offset.Zero)
-                }) {
-                    drawImage(image = imageBitmap, colorFilter = colorFilter)
-                }
+private fun Modifier.drawCursorHandle() = this then DrawCursorHandleElement()
+
+private class DrawCursorHandleElement : ModifierNodeElement<DrawCursorHandleModifierNode>() {
+    override fun create() = DrawCursorHandleModifierNode()
+
+    override fun update(node: DrawCursorHandleModifierNode) {}
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
+    }
+
+    override fun InspectorInfo.inspectableProperties() {
+        /* none */
+    }
+}
+
+private class DrawCursorHandleModifierNode :
+    DelegatingNode(), CompositionLocalConsumerModifierNode {
+    private var drawNode: DrawModifierNode? = null
+
+    private val buildDrawCache: CacheDrawScope.() -> DrawResult = {
+        // Cursor handle is the same as a SelectionHandle rotated 45 degrees clockwise.
+        val radius = size.width / 2f
+        val imageBitmap = createHandleImage(radius = radius)
+        // Note that the read of currentValueOf(LocalTextSelectionColors) is snapshot-backed and
+        //  will invalidate draw when changed.
+        val colorFilter = ColorFilter.tint(currentValueOf(LocalTextSelectionColors).handleColor)
+        onDrawWithContent {
+            drawContent()
+            withTransform({
+                translate(left = radius)
+                rotate(degrees = 45f, pivot = Offset.Zero)
+            }) {
+                drawImage(image = imageBitmap, colorFilter = colorFilter)
             }
         }
-    )
+    }
+
+    override val shouldAutoInvalidate = false
+
+    override fun onAttach() {
+        super.onAttach()
+        drawNode = delegate(CacheDrawModifierNode(buildDrawCache))
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+    }
+
+    override fun onReset() {
+        super.onReset()
+        drawNode = null
+    }
 }
