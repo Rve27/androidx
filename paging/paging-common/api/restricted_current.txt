@@ -320,6 +320,10 @@ package androidx.paging {
     property public kotlinx.coroutines.flow.Flow<androidx.paging.PagingData<Value>> flow;
   }
 
+  public final class PagerAsState {
+    method public static <T> kotlinx.coroutines.flow.Flow<androidx.paging.ItemSnapshotList<T>> asState(kotlinx.coroutines.flow.Flow<androidx.paging.PagingData<T>>);
+  }
+
   public final class PagingConfig {
     ctor public PagingConfig(int pageSize);
     ctor public PagingConfig(int pageSize, optional @IntRange(from=0L) int prefetchDistance);
