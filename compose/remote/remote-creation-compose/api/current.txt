@@ -192,6 +192,11 @@ package androidx.compose.remote.creation.compose.layout {
     property public androidx.compose.remote.creation.compose.layout.RemoteSize Zero;
   }
 
+  public final class RemoteTextKt {
+    method @KotlinOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteText(androidx.compose.remote.creation.compose.state.RemoteString text, optional androidx.compose.remote.creation.compose.modifier.RemoteModifier modifier, optional androidx.compose.remote.creation.compose.state.RemoteColor? color, optional androidx.compose.remote.creation.compose.state.RemoteTextUnit? fontSize, optional androidx.compose.ui.text.font.FontStyle? fontStyle, optional androidx.compose.ui.text.font.FontWeight? fontWeight, optional androidx.compose.ui.text.font.FontFamily? fontFamily, optional androidx.compose.ui.text.style.TextAlign? textAlign, optional androidx.compose.ui.text.style.TextOverflow overflow, optional int maxLines, optional androidx.compose.remote.creation.compose.text.RemoteTextStyle style, optional androidx.compose.ui.text.font.FontVariation.Settings? fontVariationSettings);
+    method @BytecodeOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteText-yT6CtNU(androidx.compose.remote.creation.compose.state.RemoteString, androidx.compose.remote.creation.compose.modifier.RemoteModifier?, androidx.compose.remote.creation.compose.state.RemoteColor?, androidx.compose.remote.creation.compose.state.RemoteTextUnit?, androidx.compose.ui.text.font.FontStyle?, androidx.compose.ui.text.font.FontWeight?, androidx.compose.ui.text.font.FontFamily?, androidx.compose.ui.text.style.TextAlign?, int, int, androidx.compose.remote.creation.compose.text.RemoteTextStyle?, androidx.compose.ui.text.font.FontVariation.Settings?, androidx.compose.runtime.Composer?, int, int, int);
+  }
+
 }
 
 package androidx.compose.remote.creation.compose.modifier {
@@ -552,6 +557,57 @@ package androidx.compose.remote.creation.compose.state {
     method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.compose.remote.creation.compose.state.RemoteString rememberNamedRemoteString(String name, String defaultValue, optional androidx.compose.remote.creation.compose.state.RemoteState.Domain domain);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.remote.creation.compose.layout.RemoteComposable") public static androidx.compose.remote.creation.compose.state.RemoteString rememberNamedRemoteString(String, String, androidx.compose.remote.creation.compose.state.RemoteState.Domain?, androidx.compose.runtime.Composer?, int, int);
     property public static androidx.compose.remote.creation.compose.state.RemoteString String.rs;
+  }
+
+  public final class RemoteTextUnit extends androidx.compose.remote.creation.compose.state.BaseRemoteState<androidx.compose.ui.unit.TextUnit> {
+    method @BytecodeOnly public long getType-UIouoOA();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteFloat getValue();
+    method public androidx.compose.remote.creation.compose.state.RemoteFloat toPx();
+    property public androidx.compose.ui.unit.TextUnit? constantValueOrNull;
+    property public androidx.compose.ui.unit.TextUnitType type;
+    property public androidx.compose.remote.creation.compose.state.RemoteFloat value;
+  }
+
+  public final class RemoteTextUnitKt {
+    method @InaccessibleFromKotlin public static androidx.compose.remote.creation.compose.state.RemoteTextUnit getRsp(int);
+    property public static androidx.compose.remote.creation.compose.state.RemoteTextUnit int.rsp;
+  }
+
+}
+
+package androidx.compose.remote.creation.compose.text {
+
+  public final class RemoteTextStyle {
+    ctor @BytecodeOnly public RemoteTextStyle(androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteTextUnit!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontFamily!, androidx.compose.remote.creation.compose.state.RemoteTextUnit!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.ui.text.style.TextAlign!, androidx.compose.remote.creation.compose.state.RemoteTextUnit!, androidx.compose.ui.text.style.TextDecoration!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @KotlinOnly public androidx.compose.remote.creation.compose.text.RemoteTextStyle copy(optional androidx.compose.remote.creation.compose.state.RemoteColor? color, optional androidx.compose.remote.creation.compose.state.RemoteTextUnit? fontSize, optional androidx.compose.ui.text.font.FontWeight? fontWeight, optional androidx.compose.ui.text.font.FontStyle? fontStyle, optional androidx.compose.ui.text.font.FontFamily? fontFamily, optional androidx.compose.remote.creation.compose.state.RemoteTextUnit? letterSpacing, optional androidx.compose.remote.creation.compose.state.RemoteColor? background, optional androidx.compose.ui.text.style.TextAlign? textAlign, optional androidx.compose.remote.creation.compose.state.RemoteTextUnit? lineHeight, optional androidx.compose.ui.text.style.TextDecoration? textDecoration);
+    method @BytecodeOnly public androidx.compose.remote.creation.compose.text.RemoteTextStyle copy-eECs4dY(androidx.compose.remote.creation.compose.state.RemoteColor?, androidx.compose.remote.creation.compose.state.RemoteTextUnit?, androidx.compose.ui.text.font.FontWeight?, androidx.compose.ui.text.font.FontStyle?, androidx.compose.ui.text.font.FontFamily?, androidx.compose.remote.creation.compose.state.RemoteTextUnit?, androidx.compose.remote.creation.compose.state.RemoteColor?, androidx.compose.ui.text.style.TextAlign?, androidx.compose.remote.creation.compose.state.RemoteTextUnit?, androidx.compose.ui.text.style.TextDecoration?);
+    method @BytecodeOnly public static androidx.compose.remote.creation.compose.text.RemoteTextStyle! copy-eECs4dY$default(androidx.compose.remote.creation.compose.text.RemoteTextStyle!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteTextUnit!, androidx.compose.ui.text.font.FontWeight!, androidx.compose.ui.text.font.FontStyle!, androidx.compose.ui.text.font.FontFamily!, androidx.compose.remote.creation.compose.state.RemoteTextUnit!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.ui.text.style.TextAlign!, androidx.compose.remote.creation.compose.state.RemoteTextUnit!, androidx.compose.ui.text.style.TextDecoration!, int, Object!);
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor? getBackground();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor? getColor();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.font.FontFamily? getFontFamily();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteTextUnit? getFontSize();
+    method @BytecodeOnly public androidx.compose.ui.text.font.FontStyle? getFontStyle-4Lr2A7w();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.font.FontWeight? getFontWeight();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteTextUnit? getLetterSpacing();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteTextUnit? getLineHeight();
+    method @BytecodeOnly public androidx.compose.ui.text.style.TextAlign? getTextAlign-buA522U();
+    method @InaccessibleFromKotlin public androidx.compose.ui.text.style.TextDecoration? getTextDecoration();
+    property public androidx.compose.remote.creation.compose.state.RemoteColor? background;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor? color;
+    property public androidx.compose.ui.text.font.FontFamily? fontFamily;
+    property public androidx.compose.remote.creation.compose.state.RemoteTextUnit? fontSize;
+    property public androidx.compose.ui.text.font.FontStyle? fontStyle;
+    property public androidx.compose.ui.text.font.FontWeight? fontWeight;
+    property public androidx.compose.remote.creation.compose.state.RemoteTextUnit? letterSpacing;
+    property public androidx.compose.remote.creation.compose.state.RemoteTextUnit? lineHeight;
+    property public androidx.compose.ui.text.style.TextAlign? textAlign;
+    property public androidx.compose.ui.text.style.TextDecoration? textDecoration;
+    field public static final androidx.compose.remote.creation.compose.text.RemoteTextStyle.Companion Companion;
+  }
+
+  public static final class RemoteTextStyle.Companion {
+    method public androidx.compose.remote.creation.compose.text.RemoteTextStyle fromTextStyle(androidx.compose.ui.text.TextStyle style);
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.text.RemoteTextStyle getDefault();
   }
 
 }
