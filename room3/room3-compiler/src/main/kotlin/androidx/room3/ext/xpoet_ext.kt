@@ -223,6 +223,7 @@ object RoomMemberNames {
         RoomTypeNames.DB_UTIL.packageMember("performInTransactionSuspending")
     val DB_UTIL_PERFORM_IN_TRANSACTION_BLOCKING =
         RoomTypeNames.DB_UTIL.packageMember("performInTransactionBlocking")
+    val DB_UTIL_PERFORM_CLEAR = RoomTypeNames.DB_UTIL.packageMember("performClear")
     val STATEMENT_UTIL_WRAP_MAPPED_COLUMNS =
         RoomTypeNames.STATEMENT_UTIL.packageMember("wrapMappedColumns")
     val ROOM_SQL_QUERY_ACQUIRE =
