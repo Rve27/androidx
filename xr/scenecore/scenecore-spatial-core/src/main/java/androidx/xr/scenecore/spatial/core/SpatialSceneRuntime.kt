@@ -661,12 +661,16 @@ private constructor(
             scaleInZ,
             userAnchorable,
             activitySpace,
-            EntityShadowRendererImpl(
-                activitySpace,
-                perceptionSpaceScenePose,
-                checkNotNull(activity),
-                xrExtensions,
-            ),
+            if (!userAnchorable) null
+            else
+                EntityShadowRendererImpl(
+                    activitySpace,
+                    perceptionSpaceScenePose,
+                    checkNotNull(activity),
+                    xrExtensions,
+                    sceneNodeRegistry,
+                    scheduledExecutorService,
+                ),
             scheduledExecutorService,
         )
     }
