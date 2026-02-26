@@ -64,6 +64,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.DefaultAlpha
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.wear.compose.material3.ButtonDefaults
@@ -382,7 +383,7 @@ public fun RemoteCompactButton(
     RemoteBox(
         modifier =
             modifier
-                .semantics(mergeDescendants = true) {}
+                .semantics(mergeDescendants = true) { role = Role.Button }
                 .compactButtonModifier()
                 .padding(tapPadding)
                 .clickable(onClick, enabled = enabled.constantValueOrNull ?: false)
@@ -473,7 +474,7 @@ private fun RemoteButtonImpl(
                 enabled = enabled.constantValueOrNull ?: false && onClick != null,
             )
             .padding(contentPadding)
-            .semantics(mergeDescendants = true) {}
+            .semantics(mergeDescendants = true) { role = Role.Button }
 
     RemoteRow(
         verticalAlignment = RemoteAlignment.CenterVertically,
