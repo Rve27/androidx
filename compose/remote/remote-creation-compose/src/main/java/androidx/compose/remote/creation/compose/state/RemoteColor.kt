@@ -22,12 +22,11 @@ import androidx.compose.remote.core.operations.ColorAttribute
 import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.state.RemoteColor.OperationKey
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import kotlin.math.pow
 
 /**
  * Represents a color that can be used with canvas APIs.
@@ -39,6 +38,7 @@ import kotlin.math.pow
 public open class RemoteColor
 internal constructor(
     @get:Suppress("AutoBoxing") public override val constantValueOrNull: Color?,
+    internal override val cacheKey: RemoteStateCacheKey,
     alpha: RemoteFloat?,
     red: RemoteFloat?,
     green: RemoteFloat?,
@@ -49,6 +49,16 @@ internal constructor(
     internal val configuredRed: RemoteFloat? = red
     internal val configuredGreen: RemoteFloat? = green
     internal val configuredBlue: RemoteFloat? = blue
+
+    internal enum class OperationKey {
+        FromHSV,
+        FromAHSV,
+        FromArgb,
+        Component,
+        Multiply,
+        Tween,
+        TweenInt,
+    }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public constructor(
@@ -62,22 +72,29 @@ internal constructor(
         red = red,
         green = green,
         blue = blue,
+        cacheKey = RemoteOperationCacheKey.create(OperationKey.FromArgb, alpha, red, green, blue),
         idProvider = { creationState ->
-            creationState.document
-                .addColorExpression(
-                    alpha.getFloatIdForCreationState(creationState),
-                    red.getFloatIdForCreationState(creationState),
-                    green.getFloatIdForCreationState(creationState),
-                    blue.getFloatIdForCreationState(creationState),
-                )
-                .toInt()
+            creationState.getOrPutVariableId(
+                RemoteOperationCacheKey.create(OperationKey.FromArgb, alpha, red, green, blue)
+            ) {
+                creationState.document
+                    .addColorExpression(
+                        alpha.getFloatIdForCreationState(creationState),
+                        red.getFloatIdForCreationState(creationState),
+                        green.getFloatIdForCreationState(creationState),
+                        blue.getFloatIdForCreationState(creationState),
+                    )
+                    .toInt()
+            }
         },
     )
 
     internal constructor(
-        idProvider: (creationState: RemoteComposeCreationState) -> Int
+        cacheKey: RemoteStateCacheKey,
+        idProvider: (creationState: RemoteComposeCreationState) -> Int,
     ) : this(
         constantValueOrNull = null,
+        cacheKey = cacheKey,
         alpha = null,
         red = null,
         green = null,
@@ -100,6 +117,7 @@ internal constructor(
         red = color.red.rf,
         green = color.green.rf,
         blue = color.blue.rf,
+        cacheKey = RemoteConstantCacheKey(color.toArgb()),
         idProvider = { creationState -> creationState.document.addColor(color.toArgb()) },
     )
 
@@ -166,7 +184,8 @@ internal constructor(
      * [0..1].
      */
     private fun colorComponent(component: Short): RemoteFloat {
-        return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
+        val key = RemoteOperationCacheKey.create(OperationKey.Component, this, component)
+        return RemoteFloatExpression(constantValueOrNull = null, cacheKey = key) { creationState ->
             floatArrayOf(
                 creationState.document.getColorAttribute(idProvider(creationState), component)
             )
@@ -240,7 +259,8 @@ internal constructor(
          * @param id The remote ID.
          * @return A [RemoteColor] referencing the ID.
          */
-        internal fun createForId(id: Int): RemoteColor = RemoteColor(idProvider = { id })
+        internal fun createForId(id: Int): RemoteColor =
+            RemoteColor(idProvider = { id }, cacheKey = RemoteStateIdKey(id))
 
         /**
          * Creates a named [RemoteColor] with an initial value.
@@ -260,12 +280,16 @@ internal constructor(
         ): RemoteColor {
             return RemoteColor(
                 constantValueOrNull = null,
+                cacheKey = RemoteNamedCacheKey(domain, name),
                 alpha = null,
                 red = null,
                 green = null,
                 blue = null,
                 idProvider = { creationState ->
-                    creationState.document.addNamedColor("$domain:$name", defaultValue.toArgb())
+                    creationState.document.addNamedColor(
+                        domain.prefixed(name),
+                        defaultValue.toArgb(),
+                    )
                 },
             )
         }
@@ -305,24 +329,40 @@ internal constructor(
             // ColorExpression requires alpha to be constant in the range [0..255]
             val fixedAlpha = ((alpha.constantValueOrNull ?: 1f) * 255f).toInt()
 
-            val idFactory = Memorize { creationState ->
-                creationState.document
-                    .addColorExpression(
-                        fixedAlpha,
-                        hue.getFloatIdForCreationState(creationState),
-                        saturation.getFloatIdForCreationState(creationState),
-                        value.getFloatIdForCreationState(creationState),
-                    )
-                    .toInt()
-            }
-
-            val fullColor =
-                RemoteColor(idProvider = { creationState -> idFactory.getId(creationState) })
+            val colorWithConstantAlpha =
+                RemoteColor(
+                    cacheKey =
+                        RemoteOperationCacheKey.create(
+                            OperationKey.FromHSV,
+                            hue,
+                            saturation,
+                            value,
+                        ),
+                    idProvider = { creationState ->
+                        creationState.getOrPutVariableId(
+                            RemoteOperationCacheKey.create(
+                                OperationKey.FromHSV,
+                                hue,
+                                saturation,
+                                value,
+                            )
+                        ) {
+                            creationState.document
+                                .addColorExpression(
+                                    fixedAlpha,
+                                    hue.getFloatIdForCreationState(creationState),
+                                    saturation.getFloatIdForCreationState(creationState),
+                                    value.getFloatIdForCreationState(creationState),
+                                )
+                                .toInt()
+                        }
+                    },
+                )
 
             return if (alpha.hasConstantValue) {
-                fullColor
+                colorWithConstantAlpha
             } else {
-                fullColor.copy(alpha = alpha)
+                colorWithConstantAlpha.copy(alpha = alpha)
             }
         }
 
@@ -352,18 +392,36 @@ internal constructor(
                 return RemoteColor(Color(color = argb))
             }
 
-            val idFactory = Memorize { creationState ->
-                creationState.document
-                    .addColorExpression(
-                        alpha.toFloat() / 255f,
-                        hue.getFloatIdForCreationState(creationState),
-                        saturation.getFloatIdForCreationState(creationState),
-                        value.getFloatIdForCreationState(creationState),
-                    )
-                    .toInt()
-            }
-
-            return RemoteColor(idProvider = { creationState -> idFactory.getId(creationState) })
+            return RemoteColor(
+                cacheKey =
+                    RemoteOperationCacheKey.create(
+                        OperationKey.FromAHSV,
+                        alpha,
+                        hue,
+                        saturation,
+                        value,
+                    ),
+                idProvider = { creationState ->
+                    creationState.getOrPutVariableId(
+                        RemoteOperationCacheKey.create(
+                            OperationKey.FromAHSV,
+                            alpha,
+                            hue,
+                            saturation,
+                            value,
+                        )
+                    ) {
+                        creationState.document
+                            .addColorExpression(
+                                alpha.toFloat() / 255f,
+                                hue.getFloatIdForCreationState(creationState),
+                                saturation.getFloatIdForCreationState(creationState),
+                                value.getFloatIdForCreationState(creationState),
+                            )
+                            .toInt()
+                    }
+                },
+            )
         }
 
         /**
@@ -423,15 +481,15 @@ public fun rememberNamedRemoteColor(
     initialValue: Color,
     domain: RemoteState.Domain = RemoteState.Domain.User,
 ): RemoteColor {
-    val idFactory =
-        remember(name, domain) {
-            Memorize { creationState ->
-                creationState.document.addNamedColor("$domain:$name", initialValue.toArgb())
-            }
-        }
-
     return rememberNamedState(name, domain) {
-        RemoteColor { creationState -> idFactory.getId(creationState) }
+        RemoteColor(
+            cacheKey = RemoteNamedCacheKey(domain, name),
+            idProvider = { cs ->
+                cs.getOrPutVariableId(RemoteNamedCacheKey(domain, name)) {
+                    cs.document.addNamedColor(domain.prefixed(name), initialValue.toArgb())
+                }
+            },
+        )
     }
 }
 
@@ -455,20 +513,6 @@ public fun rememberRemoteColor(
     return rememberNamedRemoteColor(name, value(), domain)
 }
 
-/** The same calculation as [Utils.interpolateColor]. */
-private fun interpolate(from: Int, to: Int, tween: RemoteFloat): RemoteFloat {
-    val c1 = (from.toDouble() / 255.0).pow(2.2).toFloat()
-    val c2 = (to.toDouble() / 255.0).pow(2.2).toFloat()
-    return clamp(0f, 1f, pow(lerp(c1, c2, tween), 1.0f / 2.2f))
-}
-
-/** The same calculation as [Utils.interpolateColor]. */
-private fun interpolate(from: RemoteFloat, to: RemoteFloat, tween: RemoteFloat): RemoteFloat {
-    val c1 = pow(from, 2.2f)
-    val c2 = pow(to, 2.2f)
-    return clamp(0f, 1f, pow(lerp(c1, c2, tween), 1.0f / 2.2f))
-}
-
 /**
  * Creates a remote color that interpolates between two integer ARGB colors based on a tween factor.
  *
@@ -484,15 +528,20 @@ public fun tween(@ColorInt from: Int, @ColorInt to: Int, tween: RemoteFloat): Re
     }
 
     return RemoteColor(
+        cacheKey = RemoteOperationCacheKey.create(OperationKey.TweenInt, from, to, tween),
         idProvider = { creationState ->
-            creationState.document
-                .addColorExpression(
-                    from,
-                    to,
-                    Utils.asNan(tween.getIdForCreationState(creationState)),
-                )
-                .toInt()
-        }
+            creationState.getOrPutVariableId(
+                RemoteOperationCacheKey.create(OperationKey.TweenInt, from, to, tween)
+            ) {
+                creationState.document
+                    .addColorExpression(
+                        from,
+                        to,
+                        Utils.asNan(tween.getIdForCreationState(creationState)),
+                    )
+                    .toInt()
+            }
+        },
     )
 }
 
@@ -514,30 +563,22 @@ public fun tween(from: RemoteColor, to: RemoteColor, tween: RemoteFloat): Remote
         return RemoteColor(Utils.interpolateColor(constFrom.toArgb(), constTo.toArgb(), constTween))
     }
 
-    val idFactory = Memorize { creationState ->
-        creationState.document
-            .addColorExpression(
-                from.getIdForCreationState(creationState).toShort(),
-                to.getIdForCreationState(creationState).toShort(),
-                Utils.asNan(tween.getIdForCreationState(creationState)),
-            )
-            .toInt()
-    }
-
-    return RemoteColor(idProvider = { creationState -> idFactory.getId(creationState) })
-}
-
-private class Memorize(val idProvider: (creationState: RemoteComposeCreationState) -> Int) {
-    var memorizedValue: Int? = null
-
-    fun getId(creationState: RemoteComposeCreationState): Int {
-        memorizedValue?.let {
-            return it
-        }
-        val result = idProvider(creationState)
-        memorizedValue = result
-        return result
-    }
+    return RemoteColor(
+        cacheKey = RemoteOperationCacheKey.create(OperationKey.Tween, from, to, tween),
+        idProvider = { creationState ->
+            creationState.getOrPutVariableId(
+                RemoteOperationCacheKey.create(OperationKey.Tween, from, to, tween)
+            ) {
+                creationState.document
+                    .addColorExpression(
+                        from.getIdForCreationState(creationState).toShort(),
+                        to.getIdForCreationState(creationState).toShort(),
+                        Utils.asNan(tween.getIdForCreationState(creationState)),
+                    )
+                    .toInt()
+            }
+        },
+    )
 }
 
 /** Extension property to convert a [Color] to a [RemoteColor]. */
