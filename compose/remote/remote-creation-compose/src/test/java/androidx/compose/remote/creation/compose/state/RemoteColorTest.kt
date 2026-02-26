@@ -32,9 +32,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-private val referenceColor = RemoteColor.fromARGB(0.1f.rf, 0.25f.rf, 0.5f.rf, 0.75f.rf)
+private val referenceColor =
+    RemoteColor.rgb(red = 0.25f.rf, green = 0.5f.rf, blue = 0.75f.rf, alpha = 0.1f.rf)
 
-private val referenceHsvColor = RemoteColor.fromHSV(0.75f.rf, 0.5f.rf, 0.25f.rf)
+private val referenceHsvColor =
+    RemoteColor.hsv(hue = 0.75f.rf, saturation = 0.5f.rf, value = 0.25f.rf)
 
 @RunWith(RobolectricTestRunner::class)
 @org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
@@ -48,11 +50,11 @@ class RemoteColorTest {
     val creationState = RemoteComposeCreationState(AndroidxRcPlatformServices(), Size(1f, 1f))
 
     @Test
-    fun fromHSV() {
+    fun fromHSV_constant() {
         val h = 0.75f.rf
         val s = 0.5f.rf
         val v = 0.25f.rf
-        val result = RemoteColor.fromHSV(h, s, v)
+        val result = RemoteColor.hsv(hue = h, saturation = s, value = v)
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -66,11 +68,35 @@ class RemoteColorTest {
     }
 
     @Test
+    fun fromHSV_references() {
+        val h = 0.75f.rf.createReference()
+        val s = 0.5f.rf.createReference()
+        val v = 0.25f.rf.createReference()
+        val result = RemoteColor.hsv(hue = h, saturation = s, value = v)
+        val resultId = result.getIdForCreationState(creationState)
+
+        val alphaId = result.alpha.getIdForCreationState(creationState)
+        val redId = result.red.getIdForCreationState(creationState)
+        val greenId = result.green.getIdForCreationState(creationState)
+        val blueId = result.blue.getIdForCreationState(creationState)
+
+        makeAndPaintCoreDocument()
+
+        val expectedColorInt = AndroidColor.argb(255, 48, 32, 64)
+        val expectedColor = AndroidColor.valueOf(expectedColorInt)
+        assertThat(context.getColor(resultId)).isEqualTo(expectedColorInt)
+        assertThat(context.getFloat(alphaId)).isWithin(1f / 255f).of(expectedColor.alpha())
+        assertThat(context.getFloat(redId)).isWithin(1f / 255f).of(expectedColor.red())
+        assertThat(context.getFloat(greenId)).isWithin(1f / 255f).of(expectedColor.green())
+        assertThat(context.getFloat(blueId)).isWithin(1f / 255f).of(expectedColor.blue())
+    }
+
+    @Test
     fun fromAHSV() {
         val h = 0.75f.rf
         val s = 0.5f.rf
         val v = 0.25f.rf
-        val result = RemoteColor.fromAHSV(127, h, s, v)
+        val result = RemoteColor.fromAHSV(alpha = 127, hue = h, saturation = s, value = v)
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -89,7 +115,7 @@ class RemoteColorTest {
         val r = 0.75f.rf
         val g = 0.5f.rf
         val b = 0.25f.rf
-        val result = RemoteColor.fromARGB(a, r, g, b)
+        val result = RemoteColor.rgb(red = r, green = g, blue = b, alpha = a)
         val resultId = result.getIdForCreationState(creationState)
         makeAndPaintCoreDocument()
 
@@ -250,18 +276,18 @@ class RemoteColorTest {
     @Test
     fun multiply() {
         val a =
-            RemoteColor.fromARGB(
-                RemoteFloat(1f),
-                RemoteFloat(0.8f),
-                RemoteFloat(0.8f),
-                RemoteFloat(0.5f),
+            RemoteColor.rgb(
+                red = RemoteFloat(0.8f),
+                green = RemoteFloat(0.8f),
+                blue = RemoteFloat(0.5f),
+                alpha = RemoteFloat(1f),
             )
         val b =
-            RemoteColor.fromARGB(
-                RemoteFloat(0.8f),
-                RemoteFloat(0.75f),
-                RemoteFloat(0.5f),
-                RemoteFloat(0.4f),
+            RemoteColor.rgb(
+                red = RemoteFloat(0.75f),
+                green = RemoteFloat(0.5f),
+                blue = RemoteFloat(0.4f),
+                alpha = RemoteFloat(0.8f),
             )
         val result = a * b
         val resultId = result.getIdForCreationState(creationState)
@@ -276,7 +302,7 @@ class RemoteColorTest {
 
     @Test
     fun copy() {
-        val a = RemoteColor.fromARGB(1f.rf, 1f.rf, 1f.rf, 1f.rf)
+        val a = RemoteColor.rgb(red = 1f.rf, green = 1f.rf, blue = 1f.rf, alpha = 1f.rf)
         val aAlpha = a.copy(alpha = 0f.rf)
         val aRed = a.copy(red = 0f.rf)
         val aGreen = a.copy(green = 0f.rf)
@@ -296,18 +322,18 @@ class RemoteColorTest {
     @Test
     fun constantValue_constant() {
         val a =
-            RemoteColor.fromARGB(
-                RemoteFloat(1f),
-                RemoteFloat(0.8f),
-                RemoteFloat(0.8f),
-                RemoteFloat(0.5f),
+            RemoteColor.rgb(
+                red = RemoteFloat(0.8f),
+                green = RemoteFloat(0.8f),
+                blue = RemoteFloat(0.5f),
+                alpha = RemoteFloat(1f),
             )
         val b =
-            RemoteColor.fromARGB(
-                RemoteFloat(0.8f),
-                RemoteFloat(0.75f),
-                RemoteFloat(0.5f),
-                RemoteFloat(0.4f),
+            RemoteColor.rgb(
+                red = RemoteFloat(0.75f),
+                green = RemoteFloat(0.5f),
+                blue = RemoteFloat(0.4f),
+                alpha = RemoteFloat(0.8f),
             )
         val result = a * b
 
@@ -317,18 +343,18 @@ class RemoteColorTest {
     @Test
     fun constantValue_notConstant() {
         val a =
-            RemoteColor.fromARGB(
-                RemoteFloat(1f),
-                RemoteFloat(0.8f),
-                RemoteFloat(0.8f),
-                RemoteFloat(0.5f),
+            RemoteColor.rgb(
+                red = RemoteFloat(0.8f),
+                green = RemoteFloat(0.8f),
+                blue = RemoteFloat(0.5f),
+                alpha = RemoteFloat(1f),
             )
         val b =
-            RemoteColor.fromARGB(
-                RemoteFloat(0.8f),
-                RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
-                RemoteFloat(0.5f),
-                RemoteFloat(0.4f),
+            RemoteColor.rgb(
+                red = RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC),
+                green = RemoteFloat(0.5f),
+                blue = RemoteFloat(0.4f),
+                alpha = RemoteFloat(0.8f),
             )
         val result = a * b
 
