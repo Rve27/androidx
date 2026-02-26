@@ -323,6 +323,9 @@ internal class LinkComposer(
     internal val insertTable: SlotTable
         get() = builder.table
 
+    internal val readerTable: SlotTable
+        get() = reader.table
+
     private var childrenComposing: Int = 0
     private var compositionToken: Int = 0
 
@@ -776,7 +779,7 @@ internal class LinkComposer(
             val builder = builder
             val targetParents =
                 MutableIntSet().apply {
-                    slotTable.traverseGroupAndParents(writerLocation) { parent -> add(parent) }
+                    readerTable.traverseGroupAndParents(writerLocation) { parent -> add(parent) }
                 }
 
             while (builder.parentGroup !in targetParents) {
@@ -796,7 +799,7 @@ internal class LinkComposer(
 
             val markerParents =
                 MutableIntSet().apply {
-                    slotTable.traverseGroupAndParents(marker) { parent -> add(parent) }
+                    readerTable.traverseGroupAndParents(marker) { parent -> add(parent) }
                 }
 
             val reader = reader
@@ -1316,7 +1319,7 @@ internal class LinkComposer(
                     it.apply {
                         changeListWriter.updateRememberOrdering(
                             holder = it.asLinkRememberObserverHolder(),
-                            after = reader.table.addressSpace.anchorOfAddress(lastPlacedChildGroup),
+                            after = readerTable.addressSpace.anchorOfAddress(lastPlacedChildGroup),
                         )
                     }
                 } else it
@@ -1605,7 +1608,7 @@ internal class LinkComposer(
             val removeIndex = nodeIndex
             var predecessor = reader.previousSibling
             // Remove nodes and release movableContent first. We'll delete the group data next.
-            slotTable.traverseSiblings(reader.currentGroup) { group ->
+            readerTable.traverseSiblings(reader.currentGroup) { group ->
                 reportFreeMovableContent(makeGroupHandle(reader.parentGroup, predecessor, group))
                 val nodesToRemove = reader.nodeCount(group)
                 changeListWriter.removeNode(removeIndex, nodesToRemove)
@@ -1640,7 +1643,7 @@ internal class LinkComposer(
                 val insertSrcAddress = builder.lastRoot()
                 recordInsert(insertSrcAddress)
                 this.inserting = false
-                if (!slotTable.isEmpty) {
+                if (!readerTable.isEmpty) {
                     val insertedGroup = insertSrcAddress.toInsertAddress()
                     updateChildNodeCount(insertedGroup, 0)
                     updateNodeCountOverrides(insertedGroup, expectedNodeCount)
@@ -2038,7 +2041,7 @@ internal class LinkComposer(
     private fun isGroupAfterCurrentReaderPosition(group: GroupHandle): Boolean {
         val readerPosition = reader.handle()
         if (readerPosition == NULL_GROUP_HANDLE) return true
-        return reader.table.firstGroupInTopologicalOrder(group, readerPosition) == readerPosition
+        return readerTable.firstGroupInTopologicalOrder(group, readerPosition) == readerPosition
     }
 
     /**
@@ -2251,13 +2254,13 @@ internal class LinkComposer(
             val movableContent = reader.groupObjectKey(group) as MovableContent<Any?>
             val parameter = reader.get(group, 0)
             val invalidations = reader.findInvalidations(group, invalidations)
-            val anchor = reader.table.addressSpace.anchorOfAddress(group)
+            val anchor = readerTable.addressSpace.anchorOfAddress(group)
             val reference =
                 MovableContentStateReference(
                     movableContent,
                     parameter,
                     composition,
-                    reader.table,
+                    readerTable,
                     anchor,
                     invalidations,
                     currentCompositionLocalScope(group),
@@ -2426,12 +2429,12 @@ internal class LinkComposer(
         val groupParent = reader.parentOf(group)
         val eldestSibling =
             if (groupParent < 0) {
-                slotTable.root
+                readerTable.root
             } else {
                 reader.firstChildOf(groupParent)
             }
 
-        slotTable.traverseSiblings(eldestSibling) { predecessor ->
+        readerTable.traverseSiblings(eldestSibling) { predecessor ->
             if (predecessor == group) return result
             if (!reader.hasObjectKey(predecessor)) result++
         }
@@ -2637,7 +2640,7 @@ internal class LinkComposer(
                 val holder =
                     LinkRememberObserverHolder(
                         wrapped = value,
-                        after = slotTable.addressSpace.anchorOfAddress(lastPlacedChildGroup),
+                        after = readerTable.addressSpace.anchorOfAddress(lastPlacedChildGroup),
                     )
                 if (inserting) changeListWriter.remember(holder)
                 abandonSet.add(value)
@@ -2704,7 +2707,7 @@ internal class LinkComposer(
                 if (current.isInsertHandle) {
                     current = reader.parentHandle
                 } else {
-                    val groups = reader.table.addressSpace.groups
+                    val groups = readerTable.addressSpace.groups
                     val group = current.group
                     if (IsNodeFlag in groups.groupFlags(group)) break
                     current = groups.groupParent(group).toGroupHandle()
@@ -2745,7 +2748,7 @@ internal class LinkComposer(
             val override = nodeCounts.getOrDefault(group, -1)
             if (override >= 0) return override
         }
-        return groupFlagsChildNodeCount(slotTable.addressSpace.groups.groupFlags(group))
+        return groupFlagsChildNodeCount(readerTable.addressSpace.groups.groupFlags(group))
     }
 
     private fun Any?.unwrapRememberObserverHolder(): Any? =
