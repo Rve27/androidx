@@ -4,10 +4,12 @@ package androidx.compose.material3 {
   public final class AlertDialogDefaults {
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getContainerColor(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getIconContentColor(androidx.compose.runtime.Composer?, int);
+    method @BytecodeOnly public float getIconSize-D9Ej5fM();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getTextContentColor(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getTitleContentColor(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly public float getTonalElevation-D9Ej5fM();
+    property public androidx.compose.ui.unit.Dp IconSize;
     property public androidx.compose.ui.unit.Dp TonalElevation;
     property public androidx.compose.ui.graphics.Color containerColor;
     property public androidx.compose.ui.graphics.Color iconContentColor;
