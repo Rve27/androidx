@@ -38,8 +38,8 @@ import kotlinx.coroutines.launch
 /**
  * Defines an object that has an Android Lifecycle. [Fragment][androidx.fragment.app.Fragment] and
  * [FragmentActivity][androidx.fragment.app.FragmentActivity] classes implement [LifecycleOwner]
- * interface which has the [ getLifecycle][LifecycleOwner.getLifecycle] method to access the
- * Lifecycle. You can also implement [LifecycleOwner] in your own classes.
+ * interface which has the [ getLifecycle][LifecycleOwner.lifecycle] method to access the Lifecycle.
+ * You can also implement [LifecycleOwner] in your own classes.
  *
  * [Event.ON_CREATE], [Event.ON_START], [Event.ON_RESUME] events in this class are dispatched
  * **after** the [LifecycleOwner]'s related method returns. [Event.ON_PAUSE], [Event.ON_STOP],
