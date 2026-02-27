@@ -104,7 +104,6 @@ import androidx.wear.compose.material3.TextConfiguration
 @Composable
 @RemoteComposable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Suppress("RestrictedApiAndroidX")
 public fun RemoteButton(
     onClick: Action,
     modifier: RemoteModifier = RemoteModifier,
@@ -947,7 +946,6 @@ private fun RemoteDrawScope.drawSolidColorShape(
 }
 
 // TODO(b/459724215): Constraint shouldn't be enforced when there is not enough space.
-@Suppress("RestrictedApiAndroidX")
 public fun RemoteModifier.buttonSizeModifier(): RemoteModifier =
     this.heightIn(min = RemoteButtonDefaults.Height).widthIn(min = RemoteButtonDefaults.Width)
 

@@ -51,7 +51,6 @@ import androidx.compose.ui.layout.ContentScale
  */
 @Composable
 @RemoteComposable
-@Suppress("RestrictedApiAndroidX")
 public fun RemoteAvatarImage(
     avatar: RemoteBitmap,
     contentDescription: RemoteString?,
@@ -88,7 +87,6 @@ public fun RemoteAvatarImage(
  */
 @Composable
 @RemoteComposable
-@SuppressLint("RestrictedApiAndroidX")
 public fun RemoteBackgroundImage(
     background: RemoteBitmap,
     contentDescription: RemoteString?,
@@ -179,7 +177,6 @@ private fun BackgroundOverlay(modifier: RemoteModifier, overlayColor: RemoteColo
 
 /** Contains default values for Image. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@SuppressLint("RestrictedApiAndroidX")
 public object ImageDefaults {
 
     internal val AVATAR_SIZE_DP = 24.rdp
@@ -191,6 +188,7 @@ public object ImageDefaults {
 
     @RemoteComposable
     @Composable
+    @Suppress("RestrictedApiAndroidX")
     public fun backgroundOverlayColor(): RemoteColor {
         return RemoteMaterialTheme.colorScheme.background.copy(alpha = 0.6f.rf)
     }

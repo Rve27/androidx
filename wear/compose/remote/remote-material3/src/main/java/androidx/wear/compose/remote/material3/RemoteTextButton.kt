@@ -70,7 +70,6 @@ import androidx.wear.compose.material3.TextButtonDefaults
 @Composable
 @RemoteComposable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Suppress("RestrictedApiAndroidX")
 public fun RemoteTextButton(
     onClick: Action,
     modifier: RemoteModifier = RemoteModifier,
@@ -102,7 +101,6 @@ public fun RemoteTextButton(
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RemoteTextButtonDefaults {
     /** Recommended [RemoteShape] for [RemoteTextButton]. */
-    @Suppress("RestrictedApiAndroidX")
     public val shape: RemoteRoundedCornerShape
         get() = RemoteCircleShape
 
