@@ -25,8 +25,8 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.DepthEstimationMode
 import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.HandTrackingMode
-import androidx.xr.runtime.Log
 import androidx.xr.runtime.PlaneTrackingMode
+import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
 import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
 import androidx.xr.runtime.internal.ApkNotInstalledException
@@ -214,7 +214,7 @@ internal constructor(
                 throw ApkNotInstalledException(ARCORE_PACKAGE_NAME)
             }
             Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE -> {
-                Log.error {
+                XrLog.error {
                     "Session cannot be created because ARCore is not supported on this device."
                 }
                 throw UnsupportedDeviceException()

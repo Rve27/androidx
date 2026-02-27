@@ -22,8 +22,8 @@ import androidx.annotation.FloatRange
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.RenderViewpoint
-import androidx.xr.runtime.Log
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
@@ -640,7 +640,7 @@ private constructor(
                         getRtSurfaceProtection(surfaceProtection),
                         getRtSuperSampling(superSampling),
                         if (parent != null && parent !is BaseEntity<*>) {
-                            Log.warn(
+                            XrLog.warn(
                                 "The provided parent is not a BaseEntity. The SurfaceEntity will " +
                                     "be created without a parent."
                             )
