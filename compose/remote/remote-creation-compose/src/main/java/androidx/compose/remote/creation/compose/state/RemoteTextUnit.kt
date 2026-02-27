@@ -19,6 +19,7 @@ package androidx.compose.remote.creation.compose.state
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RemoteDensity
+import androidx.compose.remote.creation.compose.state.RemoteTextUnit.OperationKey
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -35,6 +36,13 @@ import androidx.compose.ui.unit.sp
 public class RemoteTextUnit
 internal constructor(public val value: RemoteFloat, public val type: TextUnitType) :
     BaseRemoteState<TextUnit>() {
+    internal override val cacheKey: RemoteStateCacheKey
+        get() = toPx().cacheKey
+
+    internal enum class OperationKey {
+        ToPx,
+        DpToSp,
+    }
 
     init {
         require(type == TextUnitType.Sp || type == TextUnitType.Em) {
@@ -68,7 +76,10 @@ internal constructor(public val value: RemoteFloat, public val type: TextUnitTyp
     /** Converts this [RemoteTextUnit] to pixels using the screen's density. */
     public fun toPx(): RemoteFloat {
         checkTextUnit()
-        return RemoteFloatExpression(constantValueOrNull = null) { creationState ->
+        return RemoteFloatExpression(
+            constantValueOrNull = null,
+            cacheKey = RemoteOperationCacheKey.create(OperationKey.ToPx, value),
+        ) { creationState ->
             val density = creationState.remoteDensity
             (value * density.fontScale * density.density).arrayForCreationState(creationState)
         }
@@ -92,7 +103,10 @@ public fun Dp.toRsp(): RemoteTextUnit {
     check(isSpecified) { "Dp conversion not possible for unspecified Dp" }
     return RemoteTextUnit(
         value =
-            RemoteFloatExpression(constantValueOrNull = null) { creationState ->
+            RemoteFloatExpression(
+                constantValueOrNull = null,
+                cacheKey = RemoteOperationCacheKey.create(OperationKey.DpToSp, value),
+            ) { creationState ->
                 val fontScale = creationState.remoteDensity.fontScale
                 (value.rf / fontScale).arrayForCreationState(creationState)
             },

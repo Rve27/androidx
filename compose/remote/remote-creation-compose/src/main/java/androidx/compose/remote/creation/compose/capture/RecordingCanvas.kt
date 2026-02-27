@@ -34,7 +34,6 @@ import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.RcPlatformServices.RcPathArrayCreator
 import androidx.compose.remote.core.operations.ConditionalOperations
 import androidx.compose.remote.core.operations.DrawTextOnCircle
-import androidx.compose.remote.core.operations.Utils
 import androidx.compose.remote.core.operations.paint.PaintBundle
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemotePath
@@ -1499,14 +1498,8 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
         step: RemoteFloat,
         body: (index: RemoteFloat) -> Unit,
     ) {
-        val loopVariableId = document.createFloatId()
-        val loopVariable = MutableRemoteFloat(loopVariableId)
-        document.loop(
-            Utils.idFromNan(loopVariableId),
-            from.getFloatIdForCreationState(creationState),
-            step.getFloatIdForCreationState(creationState),
-            until.getFloatIdForCreationState(creationState),
-        ) {
+        val loopVariable = MutableRemoteFloat()
+        document.loop(loopVariable.id, from.floatId, step.floatId, until.floatId) {
             body(loopVariable)
         }
     }
@@ -1522,14 +1515,8 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
      * @param body Code that generates draw calls to run in a loop.
      */
     public fun loop(from: Int, until: RemoteInt, body: (index: RemoteInt) -> Unit) {
-        val loopVariableId = document.createFloatId()
-        val loopVariable = MutableRemoteFloat(loopVariableId)
-        document.loop(
-            Utils.idFromNan(loopVariableId),
-            from.toFloat(),
-            1f,
-            until.getFloatIdForCreationState(creationState),
-        ) {
+        val loopVariable = MutableRemoteFloat()
+        document.loop(loopVariable.id, from.toFloat(), 1f, until.floatId) {
             body(loopVariable.toRemoteInt())
         }
     }
