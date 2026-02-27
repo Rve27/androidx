@@ -86,6 +86,7 @@ internal actual fun BackgroundTextMeasurement(
                                 annotations = emptyList(),
                             )
                         intrinsics.maxIntrinsicWidth
+                        intrinsics.minIntrinsicWidth
                     }
                 }
             }
@@ -120,6 +121,7 @@ internal actual fun BackgroundTextMeasurement(
                                 fontFamilyResolver = fontFamilyResolver,
                             )
                         intrinsics.maxIntrinsicWidth
+                        intrinsics.minIntrinsicWidth
                     }
                 }
             }
