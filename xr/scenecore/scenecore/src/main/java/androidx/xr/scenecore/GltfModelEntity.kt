@@ -20,8 +20,8 @@ import android.os.Build
 import androidx.annotation.MainThread
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.Log
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.runtime.GltfEntity as RtGltfEntity
@@ -212,7 +212,7 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
                     pose,
                     model.model,
                     if (parent != null && parent !is BaseEntity<*>) {
-                        Log.warn(
+                        XrLog.warn(
                             "The provided parent is not a BaseEntity. The GltfModelEntity will " +
                                 "be created without a parent."
                         )

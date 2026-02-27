@@ -28,8 +28,8 @@ import androidx.xr.compose.subspace.node.currentValueOf
 import androidx.xr.compose.subspace.node.invalidatePlacement
 import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.runtime.DeviceTrackingMode
-import androidx.xr.runtime.Log
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
@@ -108,7 +108,7 @@ internal class RotateToLookAtUserNode(var upDirection: Vector3) :
             }
 
         if (session.config.deviceTracking == DeviceTrackingMode.DISABLED) {
-            Log.warn("Head tracking must be enabled in the Session config to use LookAtUser.")
+            XrLog.warn("Head tracking must be enabled in the Session config to use LookAtUser.")
             return
         }
         arDevice = ArDevice.getInstance(session)

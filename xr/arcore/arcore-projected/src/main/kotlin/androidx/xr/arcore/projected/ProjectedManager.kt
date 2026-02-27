@@ -28,8 +28,8 @@ import androidx.xr.arcore.runtime.Geospatial
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.GeospatialMode
-import androidx.xr.runtime.Log
 import androidx.xr.runtime.TrackingState
+import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -258,9 +258,9 @@ internal constructor(
                 serviceBinder?.unlinkToDeath(serviceDeathRecipient, /* flags= */ 0)
             }
         } catch (e: IllegalArgumentException) {
-            Log.warn(e) { "Tried to unbind service that was already unbound." }
+            XrLog.warn(e) { "Tried to unbind service that was already unbound." }
         } catch (e: NoSuchElementException) {
-            Log.warn(e) { "Tried to unbind service that was already unbound." }
+            XrLog.warn(e) { "Tried to unbind service that was already unbound." }
         }
         serviceBinder = null
     }
