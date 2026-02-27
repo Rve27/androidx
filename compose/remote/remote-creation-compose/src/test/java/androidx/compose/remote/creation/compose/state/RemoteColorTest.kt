@@ -31,6 +31,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 private val referenceColor =
     RemoteColor.rgb(red = 0.25f.rf, green = 0.5f.rf, blue = 0.75f.rf, alpha = 0.1f.rf)
@@ -39,7 +40,7 @@ private val referenceHsvColor =
     RemoteColor.hsv(hue = 0.75f.rf, saturation = 0.5f.rf, value = 0.25f.rf)
 
 @RunWith(RobolectricTestRunner::class)
-@org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
+@Config(sdk = [Config.TARGET_SDK])
 @SdkSuppress(minSdkVersion = 29)
 class RemoteColorTest {
     val context =
@@ -212,6 +213,7 @@ class RemoteColorTest {
                 red = RemoteFloat(AndroidColor.red(color).toFloat() / 255f),
                 green = RemoteFloat(AndroidColor.green(color).toFloat() / 255f),
                 blue = RemoteFloat(AndroidColor.blue(color).toFloat() / 255f),
+                cacheKey = RemoteStateInstanceKey(),
             ) { creationState ->
                 // This should only be created once
                 redCreated++
@@ -364,15 +366,27 @@ class RemoteColorTest {
     @Test
     fun remoteColorIsCached() {
         val red =
-            creationState.getOrCreateNamedState(RemoteColor::class.java, "red", "USER") {
+            creationState.getOrCreateNamedState(
+                RemoteColor::class.java,
+                "red",
+                RemoteState.Domain.User,
+            ) {
                 RemoteColor(Color(AndroidColor.RED))
             }
         val red2 =
-            creationState.getOrCreateNamedState(RemoteColor::class.java, "red", "USER") {
+            creationState.getOrCreateNamedState(
+                RemoteColor::class.java,
+                "red",
+                RemoteState.Domain.User,
+            ) {
                 RemoteColor(Color(AndroidColor.RED))
             }
         val green =
-            creationState.getOrCreateNamedState(RemoteColor::class.java, "green", "USER") {
+            creationState.getOrCreateNamedState(
+                RemoteColor::class.java,
+                "green",
+                RemoteState.Domain.User,
+            ) {
                 RemoteColor(Color(AndroidColor.GREEN))
             }
 
@@ -384,6 +398,12 @@ class RemoteColorTest {
     fun extensionFunctionMatches() {
         assertThat(Color.Black.rc.constantValue).isEqualTo(Color.Black)
         assertThat(Color.Transparent.rc.constantValue).isEqualTo(Color.Transparent)
+    }
+
+    @Test
+    fun cacheKeys() {
+        val constant = RemoteColor(Color.Red)
+        assertThat(constant.cacheKey).isEqualTo(RemoteConstantCacheKey(Color.Red.toArgb()))
     }
 
     private fun makeAndPaintCoreDocument() =

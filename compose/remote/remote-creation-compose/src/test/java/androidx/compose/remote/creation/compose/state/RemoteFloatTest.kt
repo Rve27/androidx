@@ -776,6 +776,22 @@ class RemoteFloatTest {
     }
 
     @Test
+    fun cacheKeys() {
+        val constant = RemoteFloat(10f)
+        assertThat(constant.cacheKey).isEqualTo(RemoteConstantCacheKey(10f))
+
+        val named = RemoteFloat.createNamedRemoteFloat("test", 1f)
+        assertThat(named.cacheKey).isEqualTo(RemoteNamedCacheKey(RemoteState.Domain.User, "test"))
+
+        val op = constant + named
+        // flipped because peephole
+        assertThat(op.cacheKey)
+            .isEqualTo(
+                RemoteOperationCacheKey.create(RemoteFloat.OperationKey.Plus, named, constant)
+            )
+    }
+
+    @Test
     fun peepholeOptimization_plus() {
         val expr = (time + 10f) + 1f
 
