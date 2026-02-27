@@ -903,7 +903,10 @@ internal class LayoutNode(
             }
             val layerCoordinator = _innerLayerCoordinator
             if (layerCoordinator != null) {
-                checkPreconditionNotNull(layerCoordinator.layer) { "layer was not set" }
+                checkPreconditionNotNull(layerCoordinator.layer) {
+                    "layer was not set. This error is usually caused by operating off of the UI " +
+                        "thread. Did you call invalidate() instead of postInvalidate()?"
+                }
             }
             return layerCoordinator
         }
