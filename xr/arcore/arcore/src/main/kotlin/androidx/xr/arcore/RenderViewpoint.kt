@@ -95,7 +95,7 @@ internal constructor(
      *
      * This value is the underlying [ArDevice]'s pose in the global coordinate system of the
      * [Session], plus the [localPose] offset. Its update behavior is determined by the current
-     * [DeviceTrackingMode]:
+     * [androidx.xr.runtime.DeviceTrackingMode]:
      * - **LAST_KNOWN:** The device pose is updated each frame with the latest valid tracking data,
      *   reflecting physical movement.
      * - **DISABLED:** The device pose is not updated. It remains at the origin (an identity pose)

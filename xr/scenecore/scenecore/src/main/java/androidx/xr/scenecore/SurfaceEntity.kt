@@ -214,7 +214,8 @@ private constructor(
      * [android.hardware.HardwareBuffer]s with the USAGE_PROTECTED_CONTENT flag set. These buffers
      * support hardware paths for decoding protected content.
      *
-     * @see https://developer.android.com/reference/android/media/MediaDrm for more details.
+     * See [MediaDrm](https://developer.android.com/reference/android/media/MediaDrm) for more
+     * details.
      */
     public class SurfaceProtection private constructor(private val name: String) {
         public companion object {
@@ -276,9 +277,8 @@ private constructor(
      * into the surface in accordance with what they provided here in order for the compositor to
      * correctly produce a stereoscopic view to the user.
      *
-     * Values here match values from [androidx.media3.common.C.StereoMode].
-     *
-     * @see https://developer.android.com/reference/androidx/media3/common/C.StereoMode
+     * Values here match values from
+     * [androidx.media3.common.C.StereoMode](https://developer.android.com/reference/androidx/media3/common/C.StereoMode).
      */
     public class StereoMode private constructor(private val name: String) {
         public companion object {
@@ -986,14 +986,14 @@ private constructor(
      *
      * @param renderViewpoint that provides the pose and field-of-view of the camera.
      * @return A [PerceivedResolutionResult] which encapsulates the outcome:
-     *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
-     *       is successful.
+     *     - [PerceivedResolutionResult.Success] containing the
+     *       [androidx.xr.scenecore.runtime.PixelDimensions] if the calculation is successful.
      *     - [PerceivedResolutionResult.EntityTooClose] if the entity is too close to the camera.
-     *     - [PerceivedResolutionResult.InvalidCameraView] if the camera information required for
-     *       the calculation is invalid or unavailable.
+     *     - [PerceivedResolutionResult.InvalidRenderViewpoint] if the camera information required
+     *       for the calculation is invalid or unavailable.
      *
      * @throws [IllegalStateException] if [Session.config] is not set to
-     *   [Config.DeviceTrackingMode.LAST_KNOWN].
+     *   [androidx.xr.runtime.Config.DeviceTrackingMode.LAST_KNOWN].
      * @see PerceivedResolutionResult
      */
     public fun getPerceivedResolution(renderViewpoint: RenderViewpoint): PerceivedResolutionResult {

@@ -378,8 +378,9 @@ public annotation class ExperimentalFollowingSubspaceApi
  * When the target parameter is specified to be [FollowTarget.Anchor], the content will be
  * positioned around an anchor. This is useful for placing UI elements on real-world surfaces or at
  * specific spatial locations. The visual stability of the anchored content depends on the
- * underlying system's ability to track the [AnchorEntity]. For Creating, loading, and persisting
- * anchors, please check [androidx.xr.scenecore.AnchorEntity] for more information
+ * underlying system's ability to track the [androidx.xr.scenecore.AnchorEntity]. For Creating,
+ * loading, and persisting anchors, please check [androidx.xr.scenecore.AnchorEntity] for more
+ * information
  *
  * This composable is a no-op in non-XR environments (i.e., Phone and Tablet).
  *
