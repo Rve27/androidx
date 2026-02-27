@@ -36,7 +36,7 @@ import java.util.WeakHashMap
 /**
  * Helper class for obtaining [Paint] from [BrushPaint].
  *
- * @param paintFlags Used to set [Paint.flags] for all [Paint] objects it creates.
+ * @param additionalPaintFlags Used to set [Paint.flags] for all [Paint] objects it creates.
  * @param applyColorFilterToTexture If true, the [BrushPaint] and the provided color are used to
  *   configure [Paint.colorFilter] to apply a color to the paint's shader. This should generally be
  *   set when using an API that expects a color to be uniformly applied by the Paint, instead of
@@ -340,7 +340,7 @@ internal class BrushPaintCache(
 
     /**
      * Obtains a [Paint] for the [BrushPaint] from the cache, creating it if necessary and updating
-     * its local transform. If [BrushPaint.TextureLayer.colorTextureId] can't be resolved to a
+     * its local transform. If [BrushPaint.TextureLayer.clientTextureId] can't be resolved to a
      * bitmap for any layer, that layer is ignored.
      *
      * @param brushPaint Used to configure [Paint.shader].

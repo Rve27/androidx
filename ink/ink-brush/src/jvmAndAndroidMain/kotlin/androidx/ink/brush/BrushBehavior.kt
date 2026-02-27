@@ -460,7 +460,8 @@ private constructor(
             /**
              * Time elapsed in seconds since the modeled stroke input. This continues to increase
              * even after all stroke inputs have completed, and can be used to drive stroke
-             * animations. This enumerators are only compatible with a [sourceOutOfRangeBehavior] of
+             * animations. This enumerators are only compatible with a
+             * [androidx.ink.brush.BrushBehavior.Builder.sourceOutOfRangeBehavior] of
              * [OutOfRange.CLAMP], to ensure that the animation will eventually end.
              */
             @JvmField
@@ -469,7 +470,8 @@ private constructor(
             /**
              * Time elapsed in milliseconds since the modeled stroke input. This continues to
              * increase even after all stroke inputs have completed, and can be used to drive stroke
-             * animations. This enumerators are only compatible with a [sourceOutOfRangeBehavior] of
+             * animations. This enumerators are only compatible with a
+             * [androidx.ink.brush.BrushBehavior.Builder.sourceOutOfRangeBehavior] of
              * [OutOfRange.CLAMP], to ensure that the animation will eventually end.
              */
             @JvmField
@@ -631,8 +633,9 @@ private constructor(
             /** Convenience enumerator to target both [WIDTH_MULTIPLIER] and [HEIGHT_MULTIPLIER]. */
             @JvmField public val SIZE_MULTIPLIER: Target = Target(2, "SIZE_MULTIPLIER")
             /**
-             * Adds the target modifier to [BrushTip.slant]. The final brush slant value is clamped
-             * to [-π/2, π/2]. If multiple behaviors have this target, they stack additively.
+             * Adds the target modifier to [BrushTip.slantDegrees]. The final brush slant value is
+             * clamped to [-π/2, π/2]. If multiple behaviors have this target, they stack
+             * additively.
              */
             @JvmField
             public val SLANT_OFFSET_IN_RADIANS: Target = Target(3, "SLANT_OFFSET_IN_RADIANS")
@@ -642,9 +645,9 @@ private constructor(
              */
             @JvmField public val PINCH_OFFSET: Target = Target(4, "PINCH_OFFSET")
             /**
-             * Adds the target modifier to [BrushTip.rotation]. The final brush rotation angle is
-             * effectively normalized (mod 2π). If multiple behaviors have this target, they stack
-             * additively.
+             * Adds the target modifier to [BrushTip.rotationDegrees]. The final brush rotation
+             * angle is effectively normalized (mod 2π). If multiple behaviors have this target,
+             * they stack additively.
              */
             @JvmField
             public val ROTATION_OFFSET_IN_RADIANS: Target = Target(5, "ROTATION_OFFSET_IN_RADIANS")
@@ -777,7 +780,8 @@ private constructor(
 
     /**
      * The desired behavior when an input value is outside the range defined by
-     * [sourceValueRangeStart] and [sourceValueRangeEnd].
+     * [androidx.ink.brush.BrushBehavior.Builder.sourceValueRangeStart] and
+     * [androidx.ink.brush.BrushBehavior.Builder.sourceValueRangeEnd].
      */
     public class OutOfRange
     private constructor(@JvmField internal val value: Int, private val name: String) {
@@ -804,14 +808,17 @@ private constructor(
              * within the bounds.
              *
              * In this case, the range will be treated as a half-open interval, with a value exactly
-             * at [sourceValueRangeEnd] being treated as though it was [sourceValueRangeStart].
+             * at [androidx.ink.brush.BrushBehavior.Builder.sourceValueRangeEnd] being treated as
+             * though it was [androidx.ink.brush.BrushBehavior.Builder.sourceValueRangeStart].
              */
             @JvmField public val REPEAT: OutOfRange = OutOfRange(1, "REPEAT")
             /**
-             * Similar to [Repeat], but every other repetition of the bounds will be mirrored, as
-             * though the two elements [sourceValueRangeStart] and [sourceValueRangeEnd] were
-             * swapped. This means the range does not need to be treated as a half-open interval
-             * like in the case of [Repeat].
+             * Similar to [REPEAT], but every other repetition of the bounds will be mirrored, as
+             * though the two elements
+             * [androidx.ink.brush.BrushBehavior.Builder.sourceValueRangeStart] and
+             * [androidx.ink.brush.BrushBehavior.Builder.sourceValueRangeEnd] were swapped. This
+             * means the range does not need to be treated as a half-open interval like in the case
+             * of [REPEAT].
              */
             @JvmField public val MIRROR: OutOfRange = OutOfRange(2, "MIRROR")
         }

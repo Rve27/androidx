@@ -57,7 +57,7 @@ public interface InProgressShape<in ShapeSpecT : Any, out CompletedShapeT : Any>
      * Prepare for this instance to be used for shape creation, by receiving inputs through
      * [enqueueInputs], applying those inputs during [update], and being rendered according to
      * [ShapeWorkflow.inProgressShapeRenderer]. The shape specified by these parameters will be
-     * valid until [prepareToReycle] is called.
+     * valid until [prepareToRecycle] is called.
      *
      * @param shapeSpec The [ShapeSpecT] to apply as stylus configuration to the upcoming inputs.
      * @param systemElapsedTimeMillis The system time in the [android.os.SystemClock] time base
@@ -152,7 +152,7 @@ public interface InProgressShape<in ShapeSpecT : Any, out CompletedShapeT : Any>
 
     /**
      * If this is called, a subsequent call to [getCompletedShape] must return a non-null
-     * [CompletedShape]. This can only ever be called after [finishInput] and [update].
+     * [CompletedShapeT]. This can only ever be called after [finishInput] and [update].
      */
     public fun forceCompletion()
 

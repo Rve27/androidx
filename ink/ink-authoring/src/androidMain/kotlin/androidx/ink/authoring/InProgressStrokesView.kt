@@ -511,8 +511,8 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
      * [requestHandoff] if you have set a non-zero value for [handoffDebounceTimeMs]. This function
      * is for situations where an immediate shutdown is necessary, such as
      * [android.app.Activity.onPause]. This must be called on the UI thread, and will block it for
-     * up to [timeoutMillis] milliseconds. Note that if this is called when the app is still visible
-     * on screen, then the visual behavior is undefined - the stroke content may flicker.
+     * up to [timeout] [timeoutUnit]s. Note that if this is called when the app is still visible on
+     * screen, then the visual behavior is undefined - the stroke content may flicker.
      *
      * @param cancelAllInProgress If `true`, treat any unfinished strokes as if you called
      *   [cancelStroke] with their [InProgressStrokeId], so they will not be visible and not

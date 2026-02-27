@@ -26,15 +26,16 @@ internal object BrushSerializationNative {
         NativeLoader.load()
     }
 
-    /**
-     * Internal callback for decoding a BrushFamily proto. The PNG bytes are kept as an
-     * implementation detail and are not exposed.
-     *
-     * @param clientTextureId The client-provided texture ID.
-     * @param pngBytes The PNG bytes of the texture bitmap, or null if none was encoded.
-     * @return The texture ID to use in the decoded BrushFamily.
-     */
+    /** @see onDecodeTexture */
     fun interface TextureDecodeCallback {
+        /**
+         * Internal callback for decoding a BrushFamily proto. The PNG bytes are kept as an
+         * implementation detail and are not exposed.
+         *
+         * @param clientTextureId The client-provided texture ID.
+         * @param pngBytes The PNG bytes of the texture bitmap, or null if none was encoded.
+         * @return The texture ID to use in the decoded BrushFamily.
+         */
         @UsedByNative fun onDecodeTexture(clientTextureId: String, pngBytes: ByteArray?): String
     }
 
@@ -54,8 +55,8 @@ internal object BrushSerializationNative {
         )
 
     /**
-     * Serializes a [BrushFamily] to a [ByteArray] using the provided texture map of keys (client
-     * texture IDs) to values (PNG bytes).
+     * Serializes a [androidx.ink.brush.BrushFamily] to a [ByteArray] using the provided texture map
+     * of keys (client texture IDs) to values (PNG bytes).
      */
     fun serializeBrushFamily(
         nativeBrushFamilyPointer: Long,
@@ -70,8 +71,8 @@ internal object BrushSerializationNative {
     @UsedByNative external fun serializeBrush(nativeBrushPointer: Long): ByteArray
 
     /**
-     * Serializes a [BrushFamily] to a [ByteArray] using the provided texture map represented in
-     * corresponding arrays of keys (client texture IDs) and values (PNG bytes).
+     * Serializes a [androidx.ink.brush.BrushFamily] to a [ByteArray] using the provided texture map
+     * represented in corresponding arrays of keys (client texture IDs) and values (PNG bytes).
      */
     @UsedByNative
     private external fun serializeBrushFamily(
