@@ -18,7 +18,7 @@ package androidx.room3
 /**
  * The list of warnings that are produced by Room.
  *
- * You can use these values inside a [SuppressWarnings] annotation to disable the warnings.
+ * You can use these values inside a [Suppress] annotation to disable the warnings.
  */
 // If you change this, don't forget to change androidx.room3.vo.Warning
 @Suppress("unused", "WeakerAccess")

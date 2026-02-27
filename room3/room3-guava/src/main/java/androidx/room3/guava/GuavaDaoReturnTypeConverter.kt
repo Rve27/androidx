@@ -27,7 +27,7 @@ import kotlinx.coroutines.guava.future
  */
 public class GuavaDaoReturnTypeConverter {
     /**
-     * This [convert] function will be called from Room generated code to convert a Room query
+     * This [convertAsync] function will be called from Room generated code to convert a Room query
      * result to the return type of this function.
      *
      * @param database RoomDatabase instance

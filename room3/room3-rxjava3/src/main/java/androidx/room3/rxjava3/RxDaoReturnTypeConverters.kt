@@ -42,8 +42,8 @@ import kotlinx.coroutines.rx3.rxSingle
  * `executeAndConvert` lambda must return `T?`, signaling Room to handle a null/empty result when
  * converting this DAO return type.
  *
- * You can register this converter via annotating a [Database] or [Dao] using the annotation
- * [DaoReturnTypeConverters]:
+ * You can register this converter via annotating a [androidx.room3.Database] or
+ * [androidx.room3.Dao] using the annotation [androidx.room3.DaoReturnTypeConverters]:
  * ```
  * @DaoReturnTypeConverters(
  *     Rx3DaoReturnTypeConverters::class
@@ -52,8 +52,8 @@ import kotlinx.coroutines.rx3.rxSingle
  */
 public class RxDaoReturnTypeConverters {
     /**
-     * This [convert] function will be called from Room generated code to convert a Room query
-     * result to the return type of this function.
+     * This [convertFlowable] function will be called from Room generated code to convert a Room
+     * query result to the return type of this function.
      *
      * @param database RoomDatabase instance
      * @param tableNames List of names of the tables of the RoomDatabase
@@ -75,8 +75,8 @@ public class RxDaoReturnTypeConverters {
     }
 
     /**
-     * This [convert] function will be called from Room generated code to convert a Room query
-     * result to the return type of this function.
+     * This [convertObservable] function will be called from Room generated code to convert a Room
+     * query result to the return type of this function.
      *
      * @param database RoomDatabase instance
      * @param tableNames List of names of the tables of the RoomDatabase
@@ -98,7 +98,7 @@ public class RxDaoReturnTypeConverters {
     }
 
     /**
-     * This [convert] function will be called from Room generated code to convert a Room query
+     * This [convertMaybe] function will be called from Room generated code to convert a Room query
      * result to the return type of this function.
      *
      * @param database RoomDatabase instance
@@ -114,8 +114,8 @@ public class RxDaoReturnTypeConverters {
     }
 
     /**
-     * This [convert] function will be called from Room generated code to convert a Room query
-     * result to the return type of this function.
+     * This [convertCompletable] function will be called from Room generated code to convert a Room
+     * query result to the return type of this function.
      *
      * @param database RoomDatabase instance
      * @param executeAndConvert A suspend lambda function that invokes the part of the generated
@@ -132,7 +132,7 @@ public class RxDaoReturnTypeConverters {
     }
 
     /**
-     * This [convert] function will be called from Room generated code to convert a Room query
+     * This [convertSingle] function will be called from Room generated code to convert a Room query
      * result to the return type of this function.
      *
      * @param database RoomDatabase instance

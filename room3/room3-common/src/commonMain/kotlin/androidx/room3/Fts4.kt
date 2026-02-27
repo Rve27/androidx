@@ -133,12 +133,13 @@ public annotation class Fts4(
     /**
      * The FTS version used to store text matching information.
      *
-     * The default value is [MatchInfo.FTS4]. Disk space consumption can be reduced by setting this
-     * option to FTS3, see
+     * The default value is [FtsOptions.MatchInfo.FTS4]. Disk space consumption can be reduced by
+     * setting this option to FTS3, see
      * [the matchinfo= option documentation](https://www.sqlite.org/fts3.html#the_matchinfo_option)
      * for details.
      *
-     * @return The match info version, either [MatchInfo.FTS4] or [MatchInfo.FTS3].
+     * @return The match info version, either [FtsOptions.MatchInfo.FTS4] or
+     *   [FtsOptions.MatchInfo.FTS3].
      */
     val matchInfo: FtsOptions.MatchInfo = FtsOptions.MatchInfo.FTS4,
 
@@ -165,12 +166,12 @@ public annotation class Fts4(
     /**
      * The preferred 'rowid' order of the FTS table.
      *
-     * The default value is [Order.ASC]. If many queries are run against the FTS table use `ORDER BY
-     * row DESC` then it may improve performance to set this option to [Order.DESC], enabling the
-     * FTS module to store its data in a way that optimizes returning results in descending order by
-     * `rowid`.
+     * The default value is [FtsOptions.Order.ASC]. If many queries are run against the FTS table
+     * use `ORDER BY row DESC` then it may improve performance to set this option to
+     * [FtsOptions.Order.DESC], enabling the FTS module to store its data in a way that optimizes
+     * returning results in descending order by `rowid`.
      *
-     * @return The preferred order, either [Order.ASC] or [Order.DESC].
+     * @return The preferred order, either [FtsOptions.Order.ASC] or [FtsOptions.Order.DESC].
      */
     val order: FtsOptions.Order = FtsOptions.Order.ASC,
 )
