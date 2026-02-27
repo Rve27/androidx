@@ -118,7 +118,6 @@ public fun RemoteBackgroundImage(
 
 @Composable
 @RemoteComposable
-@SuppressLint("RestrictedApiAndroidX")
 private fun FallbackBackground(
     background: RemoteBitmap,
     contentDescription: RemoteString?,
@@ -145,7 +144,6 @@ private fun FallbackBackground(
 
 @Composable
 @RemoteComposable
-@SuppressLint("RestrictedApiAndroidX")
 private fun FallbackAvatar(
     background: RemoteBitmap,
     contentDescription: RemoteString?,
@@ -188,7 +186,6 @@ public object ImageDefaults {
 
     @RemoteComposable
     @Composable
-    @Suppress("RestrictedApiAndroidX")
     public fun backgroundOverlayColor(): RemoteColor {
         return RemoteMaterialTheme.colorScheme.background.copy(alpha = 0.6f.rf)
     }

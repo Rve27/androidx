@@ -17,7 +17,6 @@
 
 package androidx.wear.compose.remote.material3
 
-import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
@@ -60,7 +59,6 @@ import androidx.wear.compose.material3.LocalTextConfiguration
  * @param maxLines An optional maximum number of lines for the text to span.
  * @param style Style configuration for the text such as color, font, line height etc.
  */
-@SuppressLint("RestrictedApiAndroidX")
 @Composable
 @RemoteComposable
 public fun RemoteText(
