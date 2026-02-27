@@ -2471,6 +2471,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         isAttached = false
+
         if (areWindowInsetsRulersEnabled) {
             insetsListener.onViewDetachedFromWindow(this)
         }
@@ -2514,7 +2515,10 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             focusOwner.listeners -= it
         }
 
+        rectManager.resetOffsets()
+        rectManager.dispatchCallbacks()
         rectManager.removeScheduledCallback()
+
         focusOwner.listeners -= this
     }
 
