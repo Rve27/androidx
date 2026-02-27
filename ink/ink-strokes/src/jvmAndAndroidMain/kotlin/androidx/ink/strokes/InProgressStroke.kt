@@ -305,8 +305,8 @@ public class InProgressStroke {
         InProgressStrokeNative.getBrushCoatCount(nativePointer).also { check(it >= 0) }
 
     /**
-     * Writes to [outBoxAccumulator] the bounding box of the vertex positions of the mesh for brush
-     * coat [coatIndex].
+     * Writes to [outMeshBounds] the bounding box of the vertex positions of the mesh for brush coat
+     * [coatIndex].
      *
      * Returns the passed in [BoxAccumulator] to make it easier to chain calls.
      *
@@ -711,6 +711,6 @@ private object InProgressStrokeNative {
         outPosition: MutableVec,
     )
 
-    /** Release the underlying memory allocated in [nativeCreateInProgressStroke]. */
+    /** Release the underlying memory allocated in [create]. */
     @UsedByNative external fun free(nativePointer: Long)
 }

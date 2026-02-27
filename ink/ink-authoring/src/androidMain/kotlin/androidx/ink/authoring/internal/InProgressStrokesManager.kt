@@ -408,8 +408,6 @@ internal class InProgressStrokesManager<
      *
      * @param input The first input in a stroke.
      * @param shapeSpec Specification for the shape being started.
-     * @param startTimeMillis Start time of the stroke, used to determine the relative timing of
-     *   later additions of the stroke.
      * @param strokeToViewTransform The [AndroidMatrix] that converts stroke coordinates as provided
      *   in [input] into the coordinate space of this view for rendering.
      * @return The Stroke ID of the stroke being built, later used to identify which stroke is being
@@ -822,8 +820,8 @@ internal class InProgressStrokesManager<
     /**
      * Request that the value passed to [setHandoffDebounceDurationMs] be temporarily ignored to
      * hand off rendering to the client's dry layer via
-     * [InProgressStrokesFinishedListener.onStrokesFinished]. Afterwards, handoff debouncing will
-     * resume as normal.
+     * [androidx.ink.authoring.InProgressStrokesFinishedListener.onStrokesFinished]. Afterwards,
+     * handoff debouncing will resume as normal.
      *
      * This API is experimental for now, as one approach to address start-of-stroke latency for fast
      * subsequent strokes.
@@ -931,7 +929,7 @@ internal class InProgressStrokesManager<
     }
 
     /**
-     * Queue the [inputAction] to the render thread, then request a frontbuffer redraw. Frontbuffer
+     * Queue the [input] to the render thread, then request a frontbuffer redraw. Frontbuffer
      * redraws consume all queued input actions.
      */
     @UiThread
@@ -1130,7 +1128,8 @@ internal class InProgressStrokesManager<
 
     /**
      * Queues an [AnimationFrameAction] to the render thread. This is the implementation for
-     * [uiThreadState.queueAnimationFrameActionOnce]; use that instead of calling this directly.
+     * `queueAnimationFrameActionOnce` in [uiThreadState]; use that instead of calling this
+     * directly.
      */
     @UiThread
     private fun queueAnimationFrameAction() {
@@ -1396,9 +1395,9 @@ internal class InProgressStrokesManager<
     }
 
     /**
-     * Fill [renderThreadState.updatedRegion] with the region that has been updated and must be
-     * redrawn, in stroke coordinates. Return `true` if and only if there is actually a region to be
-     * updated.
+     * Fill the `updatedRegion` of [renderThreadState] with the region that has been updated and
+     * must be redrawn, in stroke coordinates. Return `true` if and only if there is actually a
+     * region to be updated.
      */
     @WorkerThread
     private fun RenderThreadStrokeState<ShapeSpecT, InProgressShapeT, CompletedShapeT>
@@ -1494,9 +1493,9 @@ internal class InProgressStrokesManager<
     ) : InputAction
 
     /**
-     * Indicates that it's time to update the shape and/or appearance of
-     * [renderThreadState.dryingStrokes] and those where
-     * [InProgressShape.willTimeUpdatesAffectUpdatedRegion] is true.
+     * Indicates that it's time to update the shape and/or appearance of `dryingStrokes` of
+     * [renderThreadState] and those where [InProgressShape.willTimeUpdatesAffectUpdatedRegion] is
+     * true.
      */
     private object AnimationFrameAction : InputAction
 
