@@ -33,9 +33,9 @@ import kotlinx.coroutines.asExecutor
  * [GltfAnimation] represents an animation in a [GltfModelEntity].
  *
  * Multiple animations can play simultaneously. If multiple animations affect the same node, the
- * animation **processed last** takes precedence. Specifically, only the state of the last processed
- * animation is reflected in the scene for a given frame. Updates from other animations (such as
- * node transforms) for the same target will be overwritten.
+ * animation with the **highest index** in the glTF file takes precedence. Specifically, only the
+ * state of the highest-index animation is reflected in the scene for a given frame. Updates from
+ * other lower-index animations (such as node transforms) for the same target will be overwritten.
  *
  * A [GltfAnimation] cannot be used once its associated [GltfModelEntity] has been destroyed.
  *
