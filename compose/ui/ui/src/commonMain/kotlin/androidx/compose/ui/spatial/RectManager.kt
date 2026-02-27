@@ -83,6 +83,17 @@ internal class RectManager(
             ) || isScreenOrWindowDirty
     }
 
+    fun resetOffsets() {
+        isScreenOrWindowDirty =
+            throttledCallbacks.updateOffsets(
+                screen = IntOffset.Zero,
+                window = IntOffset.Zero,
+                matrix = null,
+                windowWidth = 0,
+                windowHeight = 0,
+            )
+    }
+
     // TODO: we need to make sure these are dispatched after draw if needed
     fun dispatchCallbacks() {
         // on every invalidation we schedule callback, and then in some cases we call this function
