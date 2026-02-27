@@ -96,7 +96,7 @@ object SemanticsProperties {
     /** @see SemanticsPropertyReceiver.isTraversalGroup */
     val IsTraversalGroup = SemanticsPropertyKey<Boolean>("IsTraversalGroup")
 
-    /** @see SemanticsPropertyReceiver.IsSensitiveData */
+    /** @see isSensitiveData */
     val IsSensitiveData = SemanticsPropertyKey<Boolean>("IsSensitiveData")
 
     /** @see SemanticsPropertyReceiver.invisibleToUser */
