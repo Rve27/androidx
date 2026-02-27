@@ -236,7 +236,7 @@ private constructor(
              * As multiples of the stroke "size". This has different meanings depending on the value
              * of [TextureMapping] for the given texture. For [TextureMapping.TILING] textures, the
              * stroke size is equal to the dimensions of the XY bounding rectangle of the mesh. For
-             * [TextureMapping.WINDING] textures, the stroke size components are given by x: stroke
+             * [TextureMapping.STAMPING] textures, the stroke size components are given by x: stroke
              * width, which may change over the course of the stroke if behaviors affect the tip
              * geometry. y: the total distance traveled by the stroke.
              */

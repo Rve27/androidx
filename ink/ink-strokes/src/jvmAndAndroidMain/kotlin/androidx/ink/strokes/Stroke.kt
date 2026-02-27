@@ -31,8 +31,8 @@ import androidx.ink.nativeloader.UsedByNative
  *
  * This can be constructed directly from a [StrokeInputBatch] that has already been completed. To
  * construct a stroke incrementally and render it as input events are received in real time, use
- * [InProgressStrokesView] or [InProgressStroke], which will ultimately return a [Stroke] when input
- * is completed.
+ * [androidx.ink.authoring.InProgressStrokesView] or [InProgressStroke], which will ultimately
+ * return a [Stroke] when input is completed.
  */
 @OptIn(ExperimentalInkCustomBrushApi::class)
 @Suppress("NotCloseable") // Finalize is only used to free the native peer.
@@ -44,7 +44,7 @@ private constructor(
      * [Stroke] object, it may be a copy of another `ink::Stroke`, where it has a copy of fairly
      * lightweight metadata but shares ownership of the more heavyweight `ink::Mesh` objects. This
      * class is responsible for freeing the `ink::Stroke`, usually through its [finalize] method but
-     * possibly by an explicit [close].
+     * possibly by an explicit [java.io.Closeable.close].
      */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val nativePointer: Long,
     /**

@@ -57,14 +57,14 @@ internal interface InProgressStrokesRenderHelper<
     val contentsPreservedBetweenDraws: Boolean
 
     /**
-     * Whether [InProgressStrokesView.handoffDebounceTimeMs] is supported. If not, then handoff
-     * should be initiated as soon as possible.
+     * Whether [androidx.ink.authoring.InProgressStrokesView.handoffDebounceTimeMs] is supported. If
+     * not, then handoff should be initiated as soon as possible.
      */
     val supportsDebounce: Boolean
 
     /**
-     * Whether [InProgressStrokesView.flush] is supported. If not, then that method will not be able
-     * to wait for strokes to be completed.
+     * Whether [androidx.ink.authoring.InProgressStrokesView.flush] is supported. If not, then that
+     * method will not be able to wait for strokes to be completed.
      */
     val supportsFlush: Boolean
 
