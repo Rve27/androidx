@@ -30,7 +30,7 @@ import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
 import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
 import androidx.xr.runtime.internal.ApkNotInstalledException
-import androidx.xr.runtime.internal.GooglePlayServicesLocationLibraryNotLinkedException
+import androidx.xr.runtime.internal.LibraryNotLinkedException
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.UnsupportedDeviceException
 import com.google.ar.core.ArCoreApk
@@ -163,7 +163,7 @@ internal constructor(
         } catch (e: FineLocationPermissionNotGrantedException) {
             throw SecurityException(e)
         } catch (e: ARCore1xGooglePlayServicesLocationLibraryNotLinkedException) {
-            throw GooglePlayServicesLocationLibraryNotLinkedException(e)
+            throw LibraryNotLinkedException("com.google.android.gms:play-services-location", e)
         } catch (e: UnsupportedConfigurationException) {
             throw UnsupportedOperationException(e)
         }
