@@ -220,6 +220,7 @@ package androidx.compose.remote.creation.compose.modifier {
   }
 
   public final class BackgroundModifierKt {
+    method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier background(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.remote.creation.compose.painter.RemotePainter remotePainter);
     method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier background(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.remote.creation.compose.state.RemoteColor color);
   }
 
@@ -332,6 +333,23 @@ package androidx.compose.remote.creation.compose.modifier {
 
   public final class ZIndexModifierKt {
     method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier zIndex(androidx.compose.remote.creation.compose.modifier.RemoteModifier, androidx.compose.remote.creation.compose.state.RemoteFloat zIndex);
+  }
+
+}
+
+package androidx.compose.remote.creation.compose.painter {
+
+  public final class RemoteBitmapPainterKt {
+    method public static androidx.compose.remote.creation.compose.painter.RemotePainter painterRemoteBitmap(androidx.compose.remote.creation.compose.state.RemoteBitmap image);
+  }
+
+  public final class RemoteColorPainterKt {
+    method public static androidx.compose.remote.creation.compose.painter.RemotePainter painterRemoteColor(androidx.compose.remote.creation.compose.state.RemoteColor color);
+  }
+
+  public abstract class RemotePainter {
+    method @InaccessibleFromKotlin public abstract androidx.compose.remote.creation.compose.layout.RemoteSize? getIntrinsicSize();
+    property public abstract androidx.compose.remote.creation.compose.layout.RemoteSize? intrinsicSize;
   }
 
 }
