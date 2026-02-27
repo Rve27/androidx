@@ -19,32 +19,39 @@ import android.app.ActivityOptions
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
+import android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM
 import android.os.LocaleList
 import android.view.textclassifier.TextClassificationManager
 import android.view.textclassifier.TextClassifier
+import androidx.annotation.RequiresApi
 import androidx.pdf.selection.model.TextSelection
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 
 internal class TextSelectionMenuProvider(private val context: Context) :
     SelectionMenuProvider<TextSelection> {
-    private var textClassificationManager: TextClassificationManager? = null
     private var textClassifier: TextClassifier? = null
 
     init {
-        textClassificationManager =
-            context.getSystemService(Context.TEXT_CLASSIFICATION_SERVICE)
-                as? TextClassificationManager?
-        textClassifier = textClassificationManager?.textClassifier
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val textClassificationManager =
+                context.getSystemService(Context.TEXT_CLASSIFICATION_SERVICE)
+                    as? TextClassificationManager?
+            textClassifier = textClassificationManager?.textClassifier
+        }
     }
 
     override suspend fun getMenuItems(selection: TextSelection): List<ContextMenuComponent> {
         val menuItems: MutableList<ContextMenuComponent> = mutableListOf()
-        menuItems += getSmartMenuItems(selection.text)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            menuItems += getSmartMenuItems(selection.text)
+        }
         menuItems += DefaultSelectionMenuProvider.getMenuItems(context)
         return menuItems
     }
 
+    // Text Classification actions are available on Android P+ (API Level 28 or above) devices
+    @RequiresApi(Build.VERSION_CODES.P)
     internal suspend fun getSmartMenuItems(text: CharSequence): List<ContextMenuComponent> =
         coroutineScope {
             val smartMenuItems: MutableList<ContextMenuComponent> = mutableListOf()
@@ -88,28 +95,24 @@ internal class TextSelectionMenuProvider(private val context: Context) :
             smartMenuItems
         }
 
-    @Suppress("DEPRECATION")
     private fun sendIntentAllowBackgroundActivityStart(pendingIntent: PendingIntent) {
-        if (Build.VERSION.SDK_INT >= 36) {
-            // For API 36+, MODE_BACKGROUND_ACTIVITY_START_ALLOWED is deprecated.
-            // Use MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS to grant background start privileges.
-            pendingIntent.send(
-                ActivityOptions.makeBasic()
-                    .setPendingIntentBackgroundActivityStartMode(
-                        ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS
-                    )
-                    .toBundle()
-            )
-        } else if (Build.VERSION.SDK_INT >= 34) {
-            // For API 34 & 35, use MODE_BACKGROUND_ACTIVITY_START_ALLOWED.
-            pendingIntent.send(
-                ActivityOptions.makeBasic()
-                    .setPendingIntentBackgroundActivityStartMode(
-                        ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
-                    )
-                    .toBundle()
-            )
-        }
+        if (Build.VERSION.SDK_INT < 34) return
+        val intent =
+            if (Build.VERSION.SDK_INT > VANILLA_ICE_CREAM) {
+                // For API 36 and above, MODE_BACKGROUND_ACTIVITY_START_ALLOWED is deprecated.
+                // Use MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS to grant background start
+                // privileges.
+                ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS
+            } else {
+                // For API 34 & 35, use MODE_BACKGROUND_ACTIVITY_START_ALLOWED.
+                @Suppress("DEPRECATION") ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
+            }
+
+        pendingIntent.send(
+            ActivityOptions.makeBasic()
+                .setPendingIntentBackgroundActivityStartMode(intent)
+                .toBundle()
+        )
     }
 
     private fun sendPendingIntent(pendingIntent: PendingIntent) {

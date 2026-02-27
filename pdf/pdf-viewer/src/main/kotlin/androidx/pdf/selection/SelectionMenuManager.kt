@@ -17,6 +17,7 @@
 package androidx.pdf.selection
 
 import android.content.Context
+import android.os.Build
 import androidx.pdf.selection.model.GoToLinkSelection
 import androidx.pdf.selection.model.HyperLinkSelection
 import androidx.pdf.selection.model.TextSelection
@@ -71,7 +72,9 @@ internal class SelectionMenuManager(private val context: Context) {
                 // We use the TextSelectionMenuProvider here because it's already designed to
                 // generate smart action items using the TextClassifier API, which is ideal for
                 // creating relevant menu options for a hyperlink's URL.
-                newMenuItems += textSelectionMenuProvider.getSmartMenuItems(link)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    newMenuItems += textSelectionMenuProvider.getSmartMenuItems(link)
+                }
                 newMenuItems += hyperLinkSelectionMenuProvider.getMenuItems(selection)
                 cachedSelection = SelectionCache(selection, newMenuItems)
                 newMenuItems
