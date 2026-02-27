@@ -667,12 +667,6 @@ package androidx.xr.runtime.internal {
     ctor public FaceTrackingNotCalibratedException();
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class GooglePlayServicesLocationLibraryNotLinkedException extends androidx.xr.runtime.internal.LifecycleException {
-    ctor public GooglePlayServicesLocationLibraryNotLinkedException();
-    ctor public GooglePlayServicesLocationLibraryNotLinkedException(optional Throwable? cause);
-    ctor @BytecodeOnly public GooglePlayServicesLocationLibraryNotLinkedException(Throwable!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface JxrRuntime {
     method public default void configure(androidx.xr.runtime.Config config);
     method public default void destroy();
@@ -682,6 +676,13 @@ package androidx.xr.runtime.internal {
     method public default void pause();
     method public default void resume();
     method public default suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.time.ComparableTimeMark?>);
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class LibraryNotLinkedException extends androidx.xr.runtime.internal.LifecycleException {
+    ctor public LibraryNotLinkedException(String libraryName, optional Throwable? cause);
+    ctor @BytecodeOnly public LibraryNotLinkedException(String!, Throwable!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @InaccessibleFromKotlin public String getLibraryName();
+    property public String libraryName;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class LifecycleException extends java.lang.Exception {
