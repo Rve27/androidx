@@ -36,7 +36,7 @@ internal class FrameGraphSessionImpl(
      * acquired.
      */
     override fun close() {
-        if (closed.compareAndSet(false, true)) {
+        if (closed.compareAndSet(expect = false, update = true)) {
             controller3A.reset3A(state3ASnapshot)
             frameGraphBuffers.flush(cameraGraphSession)
             cameraGraphSession.close()
