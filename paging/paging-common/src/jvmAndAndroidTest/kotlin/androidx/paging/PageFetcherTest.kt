@@ -2179,6 +2179,127 @@ class PageFetcherTest {
         }
     }
 
+    @Test
+    fun retry_refresh() {
+        val pagingSources = mutableListOf<TestPagingSource>()
+
+        val pagingSourceFactory = {
+            TestPagingSource(loadDelay = 500).also { pagingSources.add(it) }
+        }
+        val pageFetcher = PageFetcher(pagingSourceFactory, 50, config)
+        testScope.runTest {
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceTimeBy(100)
+
+            // make refresh return load error
+            pagingSources.first().errorNextLoad = true
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(
+                    (fetcherState.newEvents().last() as PageEvent.LoadStateUpdate).source.refresh
+                )
+                .isInstanceOf<LoadState.Error>()
+
+            // now retry
+            pageFetcher.retry()
+            advanceUntilIdle()
+            // retry should re-use the same generation and same key
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                )
+            fetcherState.job.cancel()
+        }
+    }
+
+    @Test
+    fun retry_append() {
+        val pagingSources = mutableListOf<TestPagingSource>()
+
+        val pagingSourceFactory = { TestPagingSource().also { pagingSources.add(it) } }
+        val pageFetcher = PageFetcher(pagingSourceFactory, 50, config)
+        testScope.runTest {
+            val fetcherState = collectFetcherState(pageFetcher)
+            advanceUntilIdle()
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                )
+
+            // now append and return load error
+            val exception = Exception()
+            pagingSources.first().nextLoadResult = LoadResult.Error(exception)
+            pageFetcher.load(APPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    localLoadStateUpdate<Int>(appendLocal = LoadState.Error(exception)),
+                )
+
+            // then retry, should re-use same generation and just retry append
+            pageFetcher.retry()
+            advanceUntilIdle()
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(appendLocal = Loading),
+                    createAppend(1, 52..52),
+                )
+
+            fetcherState.job.cancel()
+        }
+    }
+
+    @Test
+    fun retry_prepend() {
+        val pagingSources = mutableListOf<TestPagingSource>()
+
+        val pagingSourceFactory = { TestPagingSource().also { pagingSources.add(it) } }
+        val pageFetcher = PageFetcher(pagingSourceFactory, 50, config)
+        testScope.runTest {
+            val fetcherState = collectFetcherState(pageFetcher)
+            advanceUntilIdle()
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(50..51),
+                )
+
+            // now prepend and return load error
+            val exception = Exception()
+            pagingSources.first().nextLoadResult = LoadResult.Error(exception)
+            pageFetcher.load(PREPEND)
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    localLoadStateUpdate<Int>(prependLocal = LoadState.Error(exception)),
+                )
+
+            // then retry, should re-use same generation and just retry prepend
+            pageFetcher.retry()
+            advanceUntilIdle()
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(prependLocal = Loading),
+                    createPrepend(-1, 49..49),
+                )
+
+            fetcherState.job.cancel()
+        }
+    }
+
     companion object {
         internal val EMPTY_SOURCE_REFRESH =
             localRefresh<Int>(
