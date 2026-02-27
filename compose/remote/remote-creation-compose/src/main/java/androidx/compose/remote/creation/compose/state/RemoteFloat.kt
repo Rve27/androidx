@@ -1677,7 +1677,7 @@ public fun rememberNamedRemoteFloat(
             // and just a default. So override is of this named value, not the expression.
             val floatId =
                 state.document.floatExpression(*remoteFloat.arrayForCreationState(creationState))
-            state.document.addNamedFloat(domain.prefixed(name), floatId)
+            state.document.setFloatName(Utils.idFromNan(floatId), domain.prefixed(name))
             floatArrayOf(floatId)
         }
     }
