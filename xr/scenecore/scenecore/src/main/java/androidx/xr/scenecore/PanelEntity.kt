@@ -105,11 +105,11 @@ internal constructor(
      *
      * @param renderViewpoint that provides the pose and field-of-view of the camera.
      * @return A [PerceivedResolutionResult] which encapsulates the outcome:
-     *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
-     *       is successful.
+     *     - [PerceivedResolutionResult.Success] containing the
+     *       [androidx.xr.scenecore.runtime.PixelDimensions] if the calculation is successful.
      *     - [PerceivedResolutionResult.EntityTooClose] if the Entity is too close to the camera.
-     *     - [PerceivedResolutionResult.InvalidCameraView] if the camera information required for
-     *       the calculation is invalid or unavailable.
+     *     - [PerceivedResolutionResult.InvalidRenderViewpoint] if the camera information required
+     *       for the calculation is invalid or unavailable.
      *
      * @see PerceivedResolutionResult
      */

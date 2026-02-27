@@ -493,9 +493,10 @@ private fun ActionCardLayout(
 /**
  * Constrains the content's height to a maximum aspect ratio, based on the maximum width.
  *
- * This modifier is similar to [Modifier.aspectRatio], but it only enforces a maximum size, allowing
- * the content to be smaller than the bounds defined by the aspect ratio. It also only constrains
- * the height based on the width, it does not constrain the width based on the height.
+ * This modifier is similar to [androidx.compose.foundation.layout.aspectRatio], but it only
+ * enforces a maximum size, allowing the content to be smaller than the bounds defined by the aspect
+ * ratio. It also only constrains the height based on the width, it does not constrain the width
+ * based on the height.
  *
  * @param widthToHeightRatio the maximum aspect ratio allowed for the height. This is defined as the
  *   ratio of width / height
