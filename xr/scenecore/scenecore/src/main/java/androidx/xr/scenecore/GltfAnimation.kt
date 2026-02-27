@@ -63,12 +63,12 @@ internal constructor(
             @JvmField public val PLAYING: AnimationState = AnimationState("PLAYING")
             /**
              * The animation is currently stopped. When in this state, the animation playback time
-             * is reset to the beginning. The animation must be [started] to play again.
+             * is reset to the beginning. The animation must be [start]ed to play again.
              */
             @JvmField public val STOPPED: AnimationState = AnimationState("STOPPED")
             /**
              * The animation is currently paused. When in this state, the animation is frozen at the
-             * current frame. The animation can be [resumed] to continue playback from the paused
+             * current frame. The animation can be [resume]d to continue playback from the paused
              * point.
              */
             @JvmField public val PAUSED: AnimationState = AnimationState("PAUSED")
@@ -123,7 +123,8 @@ internal constructor(
      * [AnimationState.PAUSED]. Use [resume] to continue playback.
      *
      * Note: Calling [start] while in the [AnimationState.PAUSED] state will reset the playback time
-     * to [animationOptions.seekStartTime] and transition the state to [AnimationState.PLAYING].
+     * to [GltfAnimationStartOptions.seekStartTime] and transition the state to
+     * [AnimationState.PLAYING].
      */
     @MainThread
     public fun pause() {
