@@ -31,6 +31,7 @@ import android.graphics.Typeface
 import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.core.RcPlatformServices.RcPathArrayCreator
 import androidx.compose.remote.core.operations.ConditionalOperations
 import androidx.compose.remote.core.operations.DrawTextOnCircle
 import androidx.compose.remote.core.operations.Utils
@@ -39,6 +40,7 @@ import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.creation.compose.shaders.RemoteShader
 import androidx.compose.remote.creation.compose.shaders.colorFilterModeToInt
+import androidx.compose.remote.creation.compose.shapes.MorphTweenUtility
 import androidx.compose.remote.creation.compose.state.MutableRemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
 import androidx.compose.remote.creation.compose.state.RemoteBitmapFont
@@ -50,7 +52,6 @@ import androidx.compose.remote.creation.compose.state.RemoteInt
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.compose.state.RemoteString
-import androidx.compose.remote.creation.compose.state.getFloatIdForCreationState
 import androidx.compose.remote.creation.compose.state.pack
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.ui.graphics.ImageBitmap
@@ -60,6 +61,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.nativePaint
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.graphics.shapes.RoundedPolygon
 
 /**
  * This provides a recording canvas implementation. This is the main way we intercept the output of
@@ -686,6 +688,47 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
     public fun drawRPath(path: RemotePath, paint: Paint) {
         usePaint(paint)
         document.drawPath(path)
+    }
+
+    /**
+     * Draws a [RoundedPolygon] onto the canvas using the specified [Paint].
+     *
+     * @param roundedPolygon The [RoundedPolygon] to draw.
+     * @param paint The [Paint] object to use for drawing the polygon.
+     */
+    public fun drawRoundedPolygon(roundedPolygon: RoundedPolygon, paint: Paint) {
+        usePaint(paint)
+        val pathData = MorphTweenUtility.cubicsToPathData(roundedPolygon.cubics)
+        val id =
+            document.addPathData(
+                object : RcPathArrayCreator {
+                    override fun createFloatArray(): FloatArray = pathData
+                }
+            )
+        document.buffer.addDrawPath(id)
+    }
+
+    /**
+     * Draws a morph between two [RoundedPolygon]s onto the canvas using the specified [Paint].
+     *
+     * @param from The starting [RoundedPolygon].
+     * @param to The ending [RoundedPolygon].
+     * @param progress The morph progress [0..1].
+     * @param paint The [Paint] object to use for drawing the morph.
+     */
+    public fun drawRoundedPolygonMorph(
+        from: RoundedPolygon,
+        to: RoundedPolygon,
+        progress: RemoteFloat,
+        paint: Paint,
+    ) {
+        usePaint(paint)
+        MorphTweenUtility.emitMorphAsTweens(
+            document,
+            from,
+            to,
+            progress.getFloatIdForCreationState(creationState),
+        )
     }
 
     override fun save(): Int {
