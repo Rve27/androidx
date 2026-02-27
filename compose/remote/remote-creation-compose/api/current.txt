@@ -683,6 +683,7 @@ package androidx.compose.remote.creation.compose.text {
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteTextUnit? getLineHeight();
     method @BytecodeOnly public androidx.compose.ui.text.style.TextAlign? getTextAlign-buA522U();
     method @InaccessibleFromKotlin public androidx.compose.ui.text.style.TextDecoration? getTextDecoration();
+    method public androidx.compose.remote.creation.compose.text.RemoteTextStyle merge(androidx.compose.remote.creation.compose.text.RemoteTextStyle? other);
     property public androidx.compose.remote.creation.compose.state.RemoteColor? background;
     property public androidx.compose.remote.creation.compose.state.RemoteColor? color;
     property public androidx.compose.ui.text.font.FontFamily? fontFamily;
