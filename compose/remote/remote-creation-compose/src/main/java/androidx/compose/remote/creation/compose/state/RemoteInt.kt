@@ -120,8 +120,10 @@ internal constructor(
      * @return The [LongArray] representing this remote integer\'s expression.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    internal fun arrayForCreationState(creationState: RemoteComposeCreationState): LongArray {
-        return creationState.getOrPutLongArray(cacheKey) { arrayProvider(creationState) }
+    internal fun arrayForCreationState(stateScope: RemoteStateScope): LongArray {
+        return stateScope.creationState.getOrPutLongArray(cacheKey) {
+            arrayProvider(stateScope.creationState)
+        }
     }
 
     /**

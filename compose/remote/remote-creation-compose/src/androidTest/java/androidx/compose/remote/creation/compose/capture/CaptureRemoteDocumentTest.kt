@@ -102,8 +102,8 @@ class CaptureRemoteDocumentTest {
                             val bluePaint = RemotePaint { color = Color.Blue.rc }
                             drawCircle(
                                 paint = bluePaint,
-                                center = RemoteOffset(remoteWidth / 2f, remoteHeight / 2f),
-                                radius = remoteWidth / 4f,
+                                center = RemoteOffset(width / 2f, height / 2f),
+                                radius = width / 4f,
                             )
                             val textPaint = RemotePaint {
                                 isAntiAlias = true
@@ -113,9 +113,9 @@ class CaptureRemoteDocumentTest {
 
                             drawTextOnCircle(
                                 text = "10:09".rs,
-                                centerX = remoteWidth / 2f,
-                                centerY = remoteHeight / 2f,
-                                radius = remoteWidth / 2f,
+                                centerX = width / 2f,
+                                centerY = height / 2f,
+                                radius = width / 2f,
                                 startAngle = 0f.rf,
                                 warpRadiusOffset = 0f.rf,
                                 alignment = DrawTextOnCircle.Alignment.CENTER,

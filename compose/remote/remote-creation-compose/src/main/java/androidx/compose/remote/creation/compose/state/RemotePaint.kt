@@ -57,10 +57,7 @@ import androidx.compose.ui.graphics.toComposePathEffect
  * [androidx.compose.ui.graphics.Paint], or by a pure data implementation like
  * [StandardRemotePaint].
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public sealed interface RemotePaint {
-    /** Whether anti-aliasing is enabled when drawing with this paint. */
-    public var isAntiAlias: Boolean
 
     /** The [BlendMode] to use when drawing with this paint. */
     public var blendMode: BlendMode
@@ -77,33 +74,50 @@ public sealed interface RemotePaint {
     /** The [StrokeJoin] to use for the joints of lines and paths. */
     public var strokeJoin: StrokeJoin
 
-    /** The [FilterQuality] to use when scaling bitmaps. */
-    public var filterQuality: FilterQuality
-
-    /** The [Shader] to use for drawing gradients or other patterns. */
-    public var shader: Shader?
-
-    /** The [PathEffect] to apply to the stroke. */
-    public var pathEffect: PathEffect?
-
     /** The color to use for drawing. */
     public var color: RemoteColor
-
-    /** The color filter to apply to the drawn content. */
-    public var colorFilter: RemoteColorFilter?
 
     /** The size of the text to draw. */
     public var textSize: RemoteFloat
 
+    /** Whether anti-aliasing is enabled when drawing with this paint. */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var isAntiAlias: Boolean
+
+    /** The [FilterQuality] to use when scaling bitmaps. */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var filterQuality: FilterQuality
+
+    /** The [Shader] to use for drawing gradients or other patterns. */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var shader: Shader?
+
+    /** The [PathEffect] to apply to the stroke. */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var pathEffect: PathEffect?
+
+    /** The color filter to apply to the drawn content. */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var colorFilter: RemoteColorFilter?
+
     /** The [Typeface] to use for drawing text. */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var typeface: Typeface?
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
         /**
          * Creates a new [RemotePaint] instance using [StandardRemotePaint].
          *
          * @param init An optional initialization block to configure the paint.
          */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public operator fun invoke(init: StandardRemotePaint.() -> Unit = {}): RemotePaint =
             StandardRemotePaint().apply(init)
     }
