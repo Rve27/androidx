@@ -28,7 +28,7 @@ public interface RemoteShape {
      *
      * @param size the size of the shape boundary.
      * @param layoutDirection the current layout direction.
-     * @param density the remote density and font scaling.
+     * @param density the remote density to apply to the shape.
      * @return [Outline] of this shape for the given [size].
      */
     public fun createOutline(
