@@ -35,23 +35,20 @@ import androidx.glance.wear.parcel.WearWidgetCapture
  *
  * The provided composable content will be captured into a Remote Compose document for display
  * within a widget.
+ *
+ * @param background The [WearWidgetBrush] for the widget's background. The system draws this behind
+ *   the [content], applying host-defined clipping and padding.
+ * @param content The RemoteComposable content of the widget. This content is rendered in a padded
+ *   area on top of the background. See [WearWidgetParams.horizontalPaddingDp] and
+ *   [WearWidgetParams.verticalPaddingDp].
  */
-public class WearWidgetDocument
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public constructor(
+public class WearWidgetDocument(
     private val background: WearWidgetBrush,
     private val content: @RemoteComposable @Composable () -> Unit,
 ) : WearWidgetData {
 
-    /**
-     * Creates a [WearWidgetDocument].
-     *
-     * @param backgroundColor The [Color] for the widget's background. The system draws this color
-     *   behind the [content], applying clipping and host-defined padding.
-     * @param content The RemoteComposable content of the widget. This content is rendered in a
-     *   padded area on top of the background.
-     */
     // TODO: b/464273091 - Remove this after G3 drop.
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public constructor(
         backgroundColor: Color,
         content: @RemoteComposable @Composable () -> Unit,
