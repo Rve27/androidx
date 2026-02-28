@@ -858,8 +858,9 @@ package androidx.xr.scenecore.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialPointerComponent extends androidx.xr.scenecore.runtime.Component {
-    method @androidx.xr.scenecore.runtime.SpatialPointerIconType public int getSpatialPointerIcon();
-    method public void setSpatialPointerIcon(@androidx.xr.scenecore.runtime.SpatialPointerIconType int iconType);
+    method @InaccessibleFromKotlin public int getSpatialPointerIcon();
+    method @InaccessibleFromKotlin public void setSpatialPointerIcon(int);
+    property @androidx.xr.scenecore.runtime.SpatialPointerIconType public abstract int spatialPointerIcon;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialPointerIcon {
