@@ -837,8 +837,9 @@ package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSpatialPointerComponent extends androidx.xr.scenecore.testing.FakeComponent implements androidx.xr.scenecore.runtime.SpatialPointerComponent {
     ctor public FakeSpatialPointerComponent();
-    method @androidx.xr.scenecore.runtime.SpatialPointerIconType public int getSpatialPointerIcon();
-    method public void setSpatialPointerIcon(@androidx.xr.scenecore.runtime.SpatialPointerIconType int iconType);
+    method @InaccessibleFromKotlin public int getSpatialPointerIcon();
+    method @InaccessibleFromKotlin public void setSpatialPointerIcon(int);
+    property @androidx.xr.scenecore.runtime.SpatialPointerIconType public int spatialPointerIcon;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface FakeSubspaceNode {
