@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.TextUnit
 
 /**
  * A remote-aware text style that mirrors [androidx.compose.ui.text.TextStyle] but uses remote types
@@ -137,16 +138,27 @@ constructor(
         public fun fromTextStyle(style: TextStyle): RemoteTextStyle {
             // Maps unspecified color into null as it's not supported in remote compose.
             val color = if (style.color == Color.Unspecified) null else style.color.rc
+            val background =
+                if (style.background == Color.Unspecified) null else style.background.rc
+            val fontSize =
+                if (style.fontSize == TextUnit.Unspecified) null
+                else style.fontSize.asRemoteTextUnit()
+            val letterSpacing =
+                if (style.letterSpacing == TextUnit.Unspecified) null
+                else style.letterSpacing.asRemoteTextUnit()
+            val lineHeight =
+                if (style.lineHeight == TextUnit.Unspecified) null
+                else style.lineHeight.asRemoteTextUnit()
             return RemoteTextStyle(
                 color = color,
-                fontSize = style.fontSize.asRemoteTextUnit(),
+                fontSize = fontSize,
                 fontWeight = style.fontWeight,
                 fontStyle = style.fontStyle,
                 fontFamily = style.fontFamily,
-                letterSpacing = style.letterSpacing.asRemoteTextUnit(),
-                background = style.background.rc,
+                letterSpacing = letterSpacing,
+                background = background,
                 textAlign = style.textAlign,
-                lineHeight = style.lineHeight.asRemoteTextUnit(),
+                lineHeight = lineHeight,
                 textDecoration = style.textDecoration,
             )
         }
