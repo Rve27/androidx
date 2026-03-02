@@ -83,9 +83,9 @@ import kotlinx.coroutines.launch
  * @param scrimColor Color of the scrim that obscures content when the bottom sheet is open.
  * @param dragHandle Optional visual marker to swipe the bottom sheet.
  * @param contentWindowInsets callback which provides window insets to be passed to the bottom sheet
- *   content via [Modifier.windowInsetsPadding]. [ModalBottomSheet] will pre-emptively consume top
- *   insets based on it's current offset. This keeps content outside of the expected window insets
- *   at any position.
+ *   content via [androidx.compose.foundation.layout.windowInsetsPadding]. [ModalBottomSheet] will
+ *   pre-emptively consume top insets based on it's current offset. This keeps content outside of
+ *   the expected window insets at any position.
  * @param properties [ModalBottomSheetProperties] for further customization of this modal bottom
  *   sheet's window behavior.
  * @param content The content to be displayed inside the bottom sheet.
