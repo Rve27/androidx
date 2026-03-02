@@ -26,8 +26,8 @@ import androidx.room3.RoomRawQuery
  * A [DaoReturnTypeConverter] that allows Room to return Guava-based [ListenableFuturePagingSource]
  * types from `@Dao` functions.
  *
- * You can register this converter via annotating a [Database] or [Dao] using the annotation
- * [DaoReturnTypeConverters]:
+ * You can register this converter via annotating a [androidx.room3.Database] or
+ * [androidx.room3.Dao] using the annotation [androidx.room3.DaoReturnTypeConverters]:
  * ```
  * @DaoReturnTypeConverters(
  *     ListenableFuturePagingSourceDaoReturnTypeConverter::class
