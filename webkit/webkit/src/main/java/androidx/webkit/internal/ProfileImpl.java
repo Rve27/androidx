@@ -23,11 +23,11 @@ import android.webkit.ServiceWorkerController;
 import android.webkit.WebStorage;
 
 import androidx.webkit.CustomHeader;
-import androidx.webkit.OutcomeReceiverCompat;
 import androidx.webkit.PrefetchException;
 import androidx.webkit.Profile;
 import androidx.webkit.SpeculativeLoadingConfig;
 import androidx.webkit.SpeculativeLoadingParameters;
+import androidx.webkit.WebViewOutcomeReceiver;
 
 import org.chromium.support_lib_boundary.OriginMatchedHeaderBoundaryInterface;
 import org.chromium.support_lib_boundary.ProfileBoundaryInterface;
@@ -110,7 +110,7 @@ public class ProfileImpl implements Profile {
     public void prefetchUrlAsync(@NonNull String url,
             @Nullable CancellationSignal cancellationSignal, @NonNull Executor callbackExecutor,
             @NonNull SpeculativeLoadingParameters params,
-            @NonNull OutcomeReceiverCompat<Void, PrefetchException> callback) {
+            @NonNull WebViewOutcomeReceiver<Void, PrefetchException> callback) {
         ApiFeature.NoFramework feature = WebViewFeatureInternal.PROFILE_URL_PREFETCH;
         if (feature.isSupportedByWebView()) {
             InvocationHandler paramsBoundaryInterface =
@@ -130,7 +130,7 @@ public class ProfileImpl implements Profile {
     @Override
     public void prefetchUrlAsync(@NonNull String url,
             @Nullable CancellationSignal cancellationSignal, @NonNull Executor callbackExecutor,
-            @NonNull OutcomeReceiverCompat<Void, PrefetchException> callback) {
+            @NonNull WebViewOutcomeReceiver<Void, PrefetchException> callback) {
         ApiFeature.NoFramework feature = WebViewFeatureInternal.PROFILE_URL_PREFETCH;
         if (feature.isSupportedByWebView()) {
             mProfileImpl.prefetchUrl(url, cancellationSignal, callbackExecutor,
@@ -143,7 +143,7 @@ public class ProfileImpl implements Profile {
     @Profile.ExperimentalUrlPrefetch
     @Override
     public void clearPrefetchAsync(@NonNull String url, @NonNull Executor callbackExecutor,
-            @NonNull OutcomeReceiverCompat<Void, PrefetchException> callback) {
+            @NonNull WebViewOutcomeReceiver<Void, PrefetchException> callback) {
         ApiFeature.NoFramework feature = WebViewFeatureInternal.PROFILE_URL_PREFETCH;
         if (feature.isSupportedByWebView()) {
             mProfileImpl.clearPrefetch(url, callbackExecutor,
