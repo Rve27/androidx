@@ -15,8 +15,8 @@ Furthermore, all new PiP features will be delivered through the Jetpack library,
 
 This library depends on the latest `androidx.core` library, and it's recommended to use the `ComponentActivity` from the latest `androidx.activity` as well
 
-- androidx.core:1.18.0-alpha01+
-- androidx.activity:1.13.0-alpha01+ (optional, highly recommended)
+- androidx.core:1.18.0-rc01+
+- androidx.activity:1.13.0-rc01+ (optional, highly recommended)
 
 The code snippets below would assume the application references both.
 
@@ -149,9 +149,9 @@ class VideoPlaybackActivity :
     Example
     ```
     dependencies {
-        implementation("androidx.core:core:1.18.0")
-        implementation("androidx.activity:activity:1.13.0")
-        implementation("androidx.core:core-pip:1.0.0-alpha02")
+        implementation("androidx.core:core:1.18.0-rc01")
+        implementation("androidx.activity:activity:1.13.0-rc01")
+        implementation("androidx.core:core-pip:1.0.0-beta01")
     }
 
     ```
