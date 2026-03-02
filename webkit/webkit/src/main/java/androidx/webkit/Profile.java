@@ -170,7 +170,7 @@ public interface Profile {
     void prefetchUrlAsync(@NonNull String url,
             @Nullable CancellationSignal cancellationSignal,
             @NonNull Executor callbackExecutor,
-            @NonNull OutcomeReceiverCompat<Void, PrefetchException> operationCallback);
+            @NonNull WebViewOutcomeReceiver<Void, PrefetchException> operationCallback);
 
     /**
      * Starts a URL prefetch request.
@@ -215,7 +215,7 @@ public interface Profile {
             @Nullable CancellationSignal cancellationSignal,
             @NonNull Executor callbackExecutor,
             @NonNull SpeculativeLoadingParameters speculativeLoadingParameters,
-            @NonNull OutcomeReceiverCompat<Void, PrefetchException> operationCallback);
+            @NonNull WebViewOutcomeReceiver<Void, PrefetchException> operationCallback);
 
     /**
      * Removes a cached prefetch response for the provided url
@@ -238,7 +238,7 @@ public interface Profile {
     @ExperimentalUrlPrefetch
     void clearPrefetchAsync(@NonNull String url,
             @NonNull Executor callbackExecutor,
-            @NonNull OutcomeReceiverCompat<Void, PrefetchException> operationCallback);
+            @NonNull WebViewOutcomeReceiver<Void, PrefetchException> operationCallback);
 
     /**
      * Sets the {@link SpeculativeLoadingConfig} for the current profile session.
