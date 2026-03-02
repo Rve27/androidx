@@ -100,6 +100,43 @@ class PageFetcherTest {
         }
 
     @Test
+    fun refresh_initialRefreshError() {
+        val pagingSources = mutableListOf<TestPagingSource>()
+
+        val pagingSourceFactory = {
+            TestPagingSource(loadDelay = 500).also { pagingSources.add(it) }
+        }
+        val pageFetcher = PageFetcher(pagingSourceFactory, 50, config)
+        testScope.runTest {
+            val fetcherState = collectFetcherState(pageFetcher)
+
+            advanceTimeBy(100)
+
+            // make refresh return load error
+            pagingSources.first().errorNextLoad = true
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(1)
+            val event = fetcherState.newEvents().last()
+            assertThat(event).isInstanceOf<PageEvent.LoadStateUpdate<Int>>()
+            assertThat((event as PageEvent.LoadStateUpdate).source.refresh)
+                .isInstanceOf<LoadState.Error>()
+
+            // recover from refresh, uses key from getRefreshKey with anchorPos == null
+            pageFetcher.refresh()
+            advanceUntilIdle()
+
+            assertThat(fetcherState.pagingDataList.size).isEqualTo(2)
+            assertThat(fetcherState.newEvents())
+                .containsExactly(
+                    localLoadStateUpdate<Int>(refreshLocal = Loading),
+                    createRefresh(0..1, prependState = NotLoading.Complete),
+                )
+            fetcherState.job.cancel()
+        }
+    }
+
+    @Test
     fun refresh_sourceEndOfPaginationReached() =
         testScope.runTest {
             val pageFetcher =
