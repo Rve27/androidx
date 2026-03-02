@@ -50,7 +50,6 @@ public interface RemoteAlignment {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun toComposeUi(): androidx.compose.ui.Alignment.Horizontal
 
-        // TODO(b/471212869): add LayoutDirection as parameter.
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun toRemote(layoutDirection: LayoutDirection): Int
     }
@@ -150,14 +149,13 @@ public data class RemoteBiasAlignment(val horizontalBias: Int, val verticalBias:
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public data class Horizontal(val type: Int) : RemoteAlignment.Horizontal {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        override fun toComposeUi(): androidx.compose.ui.Alignment.Horizontal {
-            return when (type) {
+        override fun toComposeUi(): androidx.compose.ui.Alignment.Horizontal =
+            when (type) {
                 ColumnLayout.START -> androidx.compose.ui.Alignment.Start
                 ColumnLayout.CENTER -> androidx.compose.ui.Alignment.CenterHorizontally
                 ColumnLayout.END -> androidx.compose.ui.Alignment.End
                 else -> androidx.compose.ui.Alignment.Start
             }
-        }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         override fun toRemote(layoutDirection: LayoutDirection): Int =
@@ -179,14 +177,13 @@ public data class RemoteBiasAlignment(val horizontalBias: Int, val verticalBias:
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public data class Vertical(var type: Int) : RemoteAlignment.Vertical {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        override fun toComposeUi(): androidx.compose.ui.Alignment.Vertical {
+        override fun toComposeUi(): androidx.compose.ui.Alignment.Vertical =
             when (type) {
-                ColumnLayout.TOP -> return androidx.compose.ui.Alignment.Top
-                ColumnLayout.CENTER -> return androidx.compose.ui.Alignment.CenterVertically
-                ColumnLayout.BOTTOM -> return androidx.compose.ui.Alignment.Bottom
+                ColumnLayout.TOP -> androidx.compose.ui.Alignment.Top
+                ColumnLayout.CENTER -> androidx.compose.ui.Alignment.CenterVertically
+                ColumnLayout.BOTTOM -> androidx.compose.ui.Alignment.Bottom
+                else -> androidx.compose.ui.Alignment.Top
             }
-            return androidx.compose.ui.Alignment.Top
-        }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) override fun toRemote(): Int = type
     }
@@ -216,14 +213,13 @@ public data class RemoteBiasAbsoluteAlignment(val horizontalBias: Int, val verti
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public data class Horizontal(val bias: Int) : RemoteAlignment.Horizontal {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        override fun toComposeUi(): androidx.compose.ui.Alignment.Horizontal {
-            return when (bias) {
+        override fun toComposeUi(): androidx.compose.ui.Alignment.Horizontal =
+            when (bias) {
                 ColumnLayout.START -> androidx.compose.ui.AbsoluteAlignment.Left
                 ColumnLayout.CENTER -> androidx.compose.ui.Alignment.CenterHorizontally
                 ColumnLayout.END -> androidx.compose.ui.AbsoluteAlignment.Right
                 else -> androidx.compose.ui.AbsoluteAlignment.Left
             }
-        }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         override fun toRemote(layoutDirection: LayoutDirection): Int = bias
@@ -238,18 +234,14 @@ public data class RemoteBiasAbsoluteAlignment(val horizontalBias: Int, val verti
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public data class Vertical(val bias: Int) : RemoteAlignment.Vertical {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        override fun toComposeUi(): androidx.compose.ui.Alignment.Vertical {
-            return when (bias) {
+        override fun toComposeUi(): androidx.compose.ui.Alignment.Vertical =
+            when (bias) {
                 ColumnLayout.TOP -> androidx.compose.ui.Alignment.Top
                 ColumnLayout.CENTER -> androidx.compose.ui.Alignment.CenterVertically
                 ColumnLayout.BOTTOM -> androidx.compose.ui.Alignment.Bottom
                 else -> androidx.compose.ui.Alignment.Top
             }
-        }
 
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        override fun toRemote(): Int {
-            return bias
-        }
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) override fun toRemote(): Int = bias
     }
 }

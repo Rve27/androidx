@@ -26,6 +26,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteDrawWithContentScope
+import androidx.compose.remote.creation.compose.layout.RemoteSpaced
 import androidx.compose.remote.creation.compose.layout.encode
 import androidx.compose.remote.creation.compose.layout.find
 import androidx.compose.remote.creation.compose.layout.toImageScalingInt
@@ -125,6 +126,9 @@ internal class RemoteRowNodeV2 : RemoteComposeNodeV2() {
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
+        (horizontalArrangement as? RemoteSpaced)?.let {
+            recordingModifier.spacedBy(it.space.getFloatIdForCreationState(creationState))
+        }
         creationState.document.startRow(
             recordingModifier,
             horizontalArrangement.toRemote(creationState.layoutDirection),
@@ -141,6 +145,9 @@ internal class RemoteFlowRowNodeV2 : RemoteComposeNodeV2() {
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
+        (horizontalArrangement as? RemoteSpaced)?.let {
+            recordingModifier.spacedBy(it.space.getFloatIdForCreationState(creationState))
+        }
         creationState.document.startFlow(
             recordingModifier,
             horizontalArrangement.toRemote(creationState.layoutDirection),
@@ -157,6 +164,9 @@ internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
+        (verticalArrangement as? RemoteSpaced)?.let {
+            recordingModifier.spacedBy(it.space.getFloatIdForCreationState(creationState))
+        }
         creationState.document.startColumn(
             recordingModifier,
             horizontalAlignment.toRemote(creationState.layoutDirection),
@@ -203,6 +213,9 @@ internal class RemoteCollapsibleColumnNodeV2 : RemoteComposeNodeV2() {
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
+        (verticalArrangement as? RemoteSpaced)?.let {
+            recordingModifier.spacedBy(it.space.getFloatIdForCreationState(creationState))
+        }
         creationState.document.startCollapsibleColumn(
             recordingModifier,
             horizontalAlignment.toRemote(creationState.layoutDirection),
@@ -219,6 +232,9 @@ internal class RemoteCollapsibleRowNodeV2 : RemoteComposeNodeV2() {
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
+        (horizontalArrangement as? RemoteSpaced)?.let {
+            recordingModifier.spacedBy(it.space.getFloatIdForCreationState(creationState))
+        }
         creationState.document.startCollapsibleRow(
             recordingModifier,
             horizontalArrangement.toRemote(creationState.layoutDirection),

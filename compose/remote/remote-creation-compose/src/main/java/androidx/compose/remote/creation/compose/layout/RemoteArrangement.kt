@@ -18,6 +18,9 @@ package androidx.compose.remote.creation.compose.layout
 
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.operations.layout.managers.ColumnLayout
+import androidx.compose.remote.creation.compose.state.RemoteDp
+import androidx.compose.remote.creation.compose.state.RemoteFloat
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
@@ -94,6 +97,88 @@ public object RemoteArrangement {
     public val SpaceAround: RemoteArrangement.HorizontalOrVertical =
         HorizontalOrVerticalArrangement(ColumnLayout.SPACE_AROUND)
 
+    /**
+     * Place children such that each two adjacent ones are spaced by a fixed [space] distance across
+     * the main axis. The spacing will be subtracted from the available space that the children can
+     * occupy.
+     *
+     * @param space The space between adjacent children.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun spacedBy(space: RemoteDp): RemoteArrangement.HorizontalOrVertical =
+        RemoteSpacedArrangement(space.toPx())
+
+    /**
+     * Place children such that each two adjacent ones are spaced by a fixed [space] distance across
+     * the main axis. The spacing will be subtracted from the available space that the children can
+     * occupy.
+     *
+     * @param space The space between adjacent children.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun spacedBy(space: RemoteFloat): RemoteArrangement.HorizontalOrVertical =
+        RemoteSpacedArrangement(space)
+
+    /**
+     * Place children horizontally such that each two adjacent ones are spaced by a fixed [space]
+     * distance. The spacing will be subtracted from the available width that the children can
+     * occupy. An [alignment] can be specified to align the spaced children horizontally inside the
+     * parent, in case there is empty width remaining.
+     *
+     * @param space The space between adjacent children.
+     * @param alignment The alignment of the spaced children inside the parent.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun spacedBy(
+        space: RemoteDp,
+        alignment: RemoteAlignment.Horizontal,
+    ): RemoteArrangement.Horizontal = RemoteSpacedHorizontalArrangement(space.toPx(), alignment)
+
+    /**
+     * Place children horizontally such that each two adjacent ones are spaced by a fixed [space]
+     * distance. The spacing will be subtracted from the available width that the children can
+     * occupy. An [alignment] can be specified to align the spaced children horizontally inside the
+     * parent, in case there is empty width remaining.
+     *
+     * @param space The space between adjacent children.
+     * @param alignment The alignment of the spaced children inside the parent.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun spacedBy(
+        space: RemoteFloat,
+        alignment: RemoteAlignment.Horizontal,
+    ): RemoteArrangement.Horizontal = RemoteSpacedHorizontalArrangement(space, alignment)
+
+    /**
+     * Place children vertically such that each two adjacent ones are spaced by a fixed [space]
+     * distance. The spacing will be subtracted from the available height that the children can
+     * occupy. An [alignment] can be specified to align the spaced children vertically inside the
+     * parent, in case there is empty height remaining.
+     *
+     * @param space The space between adjacent children.
+     * @param alignment The alignment of the spaced children inside the parent.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun spacedBy(
+        space: RemoteDp,
+        alignment: RemoteAlignment.Vertical,
+    ): RemoteArrangement.Vertical = RemoteSpacedVerticalArrangement(space.toPx(), alignment)
+
+    /**
+     * Place children vertically such that each two adjacent ones are spaced by a fixed [space]
+     * distance. The spacing will be subtracted from the available height that the children can
+     * occupy. An [alignment] can be specified to align the spaced children vertically inside the
+     * parent, in case there is empty height remaining.
+     *
+     * @param space The space between adjacent children.
+     * @param alignment The alignment of the spaced children inside the parent.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun spacedBy(
+        space: RemoteFloat,
+        alignment: RemoteAlignment.Vertical,
+    ): RemoteArrangement.Vertical = RemoteSpacedVerticalArrangement(space, alignment)
+
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public object Absolute {
         /**
@@ -134,6 +219,90 @@ public object RemoteArrangement {
          */
         public val SpaceAround: RemoteArrangement.Horizontal =
             HorizontalArrangement(ColumnLayout.SPACE_AROUND)
+
+        /**
+         * Place children such that each two adjacent ones are spaced by a fixed [space] distance
+         * across the main axis. The spacing will be subtracted from the available space that the
+         * children can occupy.
+         *
+         * @param space The space between adjacent children.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun spacedBy(space: RemoteDp): RemoteArrangement.HorizontalOrVertical =
+            RemoteSpacedArrangement(space.toPx())
+
+        /**
+         * Place children such that each two adjacent ones are spaced by a fixed [space] distance
+         * across the main axis. The spacing will be subtracted from the available space that the
+         * children can occupy.
+         *
+         * @param space The space between adjacent children.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun spacedBy(space: RemoteFloat): RemoteArrangement.HorizontalOrVertical =
+            RemoteSpacedArrangement(space)
+
+        /**
+         * Place children horizontally such that each two adjacent ones are spaced by a fixed
+         * [space] distance. The spacing will be subtracted from the available width that the
+         * children can occupy. An [alignment] can be specified to align the spaced children
+         * horizontally inside the parent, in case there is empty width remaining.
+         *
+         * @param space The space between adjacent children.
+         * @param alignment The alignment of the spaced children inside the parent.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun spacedBy(
+            space: RemoteDp,
+            alignment: RemoteAlignment.Horizontal,
+        ): RemoteArrangement.Horizontal =
+            RemoteSpacedAbsoluteHorizontalArrangement(space.toPx(), alignment)
+
+        /**
+         * Place children horizontally such that each two adjacent ones are spaced by a fixed
+         * [space] distance. The spacing will be subtracted from the available width that the
+         * children can occupy. An [alignment] can be specified to align the spaced children
+         * horizontally inside the parent, in case there is empty width remaining.
+         *
+         * @param space The space between adjacent children.
+         * @param alignment The alignment of the spaced children inside the parent.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun spacedBy(
+            space: RemoteFloat,
+            alignment: RemoteAlignment.Horizontal,
+        ): RemoteArrangement.Horizontal =
+            RemoteSpacedAbsoluteHorizontalArrangement(space, alignment)
+
+        /**
+         * Place children horizontally such that each two adjacent ones are spaced by a fixed
+         * [space] distance. The spacing will be subtracted from the available width that the
+         * children can occupy. An [alignment] can be specified to align the spaced children
+         * horizontally inside the parent, in case there is empty width remaining.
+         *
+         * @param space The space between adjacent children.
+         * @param alignment The alignment of the spaced children inside the parent.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun spacedBy(
+            space: RemoteDp,
+            alignment: RemoteAlignment.Vertical,
+        ): RemoteArrangement.Vertical = RemoteSpacedVerticalArrangement(space.toPx(), alignment)
+
+        /**
+         * Place children horizontally such that each two adjacent ones are spaced by a fixed
+         * [space] distance. The spacing will be subtracted from the available width that the
+         * children can occupy. An [alignment] can be specified to align the spaced children
+         * horizontally inside the parent, in case there is empty width remaining.
+         *
+         * @param space The space between adjacent children.
+         * @param alignment The alignment of the spaced children inside the parent.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun spacedBy(
+            space: RemoteFloat,
+            alignment: RemoteAlignment.Vertical,
+        ): RemoteArrangement.Vertical = RemoteSpacedVerticalArrangement(space, alignment)
     }
 }
 
@@ -221,4 +390,72 @@ public data class HorizontalOrVerticalArrangement(var type: Int) :
             ColumnLayout.SPACE_AROUND -> type
             else -> ColumnLayout.START
         }
+}
+
+internal interface RemoteSpaced {
+    public val space: RemoteFloat
+}
+
+internal data class RemoteSpacedArrangement(override val space: RemoteFloat) :
+    RemoteArrangement.HorizontalOrVertical, RemoteSpaced {
+    override fun toComposeUi():
+        androidx.compose.foundation.layout.Arrangement.HorizontalOrVertical =
+        androidx.compose.foundation.layout.Arrangement.spacedBy(space.toDp())
+
+    override fun toRemote(layoutDirection: LayoutDirection): Int = ColumnLayout.START
+
+    override fun toRemote(): Int = ColumnLayout.TOP
+}
+
+internal data class RemoteSpacedHorizontalArrangement(
+    override val space: RemoteFloat,
+    val alignment: RemoteAlignment.Horizontal,
+) : RemoteArrangement.Horizontal, RemoteSpaced {
+    override fun toComposeUi(): androidx.compose.foundation.layout.Arrangement.Horizontal =
+        androidx.compose.foundation.layout.Arrangement.spacedBy(
+            space.toDp(),
+            alignment.toComposeUi(),
+        )
+
+    override fun toRemote(layoutDirection: LayoutDirection): Int =
+        alignment.toRemote(layoutDirection)
+}
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public data class RemoteSpacedAbsoluteHorizontalArrangement(
+    override val space: RemoteFloat,
+    val alignment: RemoteAlignment.Horizontal,
+) : RemoteArrangement.Horizontal, RemoteSpaced {
+    override fun toComposeUi(): androidx.compose.foundation.layout.Arrangement.Horizontal =
+        if (alignment is RemoteBiasAbsoluteAlignment.Horizontal) {
+            androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy(
+                space.toDp(),
+                alignment.toComposeUi(),
+            )
+        } else {
+            androidx.compose.foundation.layout.Arrangement.spacedBy(
+                space.toDp(),
+                alignment.toComposeUi(),
+            )
+        }
+
+    override fun toRemote(layoutDirection: LayoutDirection): Int =
+        alignment.toRemote(layoutDirection)
+}
+
+internal data class RemoteSpacedVerticalArrangement(
+    override val space: RemoteFloat,
+    val alignment: RemoteAlignment.Vertical,
+) : RemoteArrangement.Vertical, RemoteSpaced {
+    override fun toComposeUi(): androidx.compose.foundation.layout.Arrangement.Vertical =
+        androidx.compose.foundation.layout.Arrangement.spacedBy(
+            space.toDp(),
+            alignment.toComposeUi(),
+        )
+
+    override fun toRemote(): Int = alignment.toRemote()
+}
+
+private fun RemoteFloat.toDp(): Dp {
+    return this.constantValueOrNull?.dp ?: 0.dp
 }

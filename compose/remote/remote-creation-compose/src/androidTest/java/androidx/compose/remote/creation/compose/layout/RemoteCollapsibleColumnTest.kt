@@ -17,10 +17,14 @@
 package androidx.compose.remote.creation.compose.layout
 
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
+import androidx.compose.remote.creation.compose.layout.RemoteArrangement.spacedBy
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
+import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
+import androidx.compose.remote.creation.compose.modifier.height
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.rdp
+import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.test.base.GridScreenshotUI
 import androidx.compose.remote.creation.compose.test.base.GridScreenshotUI.Companion.DefaultContainerSize
 import androidx.compose.remote.creation.compose.test.base.GridScreenshotUI.Companion.toInput
@@ -99,6 +103,29 @@ class RemoteCollapsibleColumnTest {
             gridScreenshotUI.GridContent(getLayoutAlignmentUIs(alignments))
         }
 
+    @Test
+    fun spacedBy() =
+        composeTestRule.runScreenshotTest {
+            gridScreenshotUI.GridContent(
+                listOf(
+                    "rdp Top" to { TestSpacedByRemoteDp(alignment = RemoteAlignment.Top) },
+                    "rdp Center" to
+                        {
+                            TestSpacedByRemoteDp(alignment = RemoteAlignment.CenterVertically)
+                        },
+                    "rdp Bottom" to { TestSpacedByRemoteDp(alignment = RemoteAlignment.Bottom) },
+                    "rf Top" to { TestSpacedByRemoteFloat(alignment = RemoteAlignment.Top) },
+                    "rf Center" to
+                        {
+                            TestSpacedByRemoteFloat(alignment = RemoteAlignment.CenterVertically)
+                        },
+                    "rf Bottom" to { TestSpacedByRemoteFloat(alignment = RemoteAlignment.Bottom) },
+                    "rdp" to { TestSpacedByRemoteDp() },
+                    "rf" to { TestSpacedByRemoteFloat() },
+                )
+            )
+        }
+
     private fun getLayoutAlignmentUIs(
         alignments: List<RemoteAlignment.Horizontal> = this.alignments
     ): List<Pair<String, @RemoteComposable @Composable () -> Unit>> =
@@ -149,4 +176,68 @@ class RemoteCollapsibleColumnTest {
 
     private fun getPriorityModifier(priority: Float): RemoteModifier =
         with(RemoteCollapsibleColumnScope()) { RemoteModifier.priority(priority) }
+
+    @RemoteComposable
+    @Composable
+    private fun TestSpacedByRemoteDp() {
+        RemoteCollapsibleColumn(
+            // TODO(b/447100988): replace size by fillMaxSize
+            modifier = RemoteModifier.size(DefaultContainerSize),
+            horizontalAlignment = RemoteAlignment.CenterHorizontally,
+            verticalArrangement = spacedBy(5.rdp),
+        ) {
+            repeat(3) { index ->
+                val color = if (index % 2 == 0) Color(0xFF6200EE) else Color(0xFF03DAC6)
+                RemoteBox(modifier = RemoteModifier.height(20.rdp).fillMaxWidth().background(color))
+            }
+        }
+    }
+
+    @RemoteComposable
+    @Composable
+    private fun TestSpacedByRemoteFloat() {
+        RemoteCollapsibleColumn(
+            // TODO(b/447100988): replace size by fillMaxSize
+            modifier = RemoteModifier.size(DefaultContainerSize),
+            horizontalAlignment = RemoteAlignment.CenterHorizontally,
+            verticalArrangement = spacedBy(10f.rf),
+        ) {
+            repeat(3) { index ->
+                val color = if (index % 2 == 0) Color(0xFF6200EE) else Color(0xFF03DAC6)
+                RemoteBox(modifier = RemoteModifier.height(20.rdp).fillMaxWidth().background(color))
+            }
+        }
+    }
+
+    @RemoteComposable
+    @Composable
+    private fun TestSpacedByRemoteDp(alignment: RemoteAlignment.Vertical) {
+        RemoteCollapsibleColumn(
+            // TODO(b/447100988): replace size by fillMaxSize
+            modifier = RemoteModifier.size(DefaultContainerSize),
+            horizontalAlignment = RemoteAlignment.CenterHorizontally,
+            verticalArrangement = spacedBy(space = 5.rdp, alignment = alignment),
+        ) {
+            repeat(3) { index ->
+                val color = if (index % 2 == 0) Color(0xFF6200EE) else Color(0xFF03DAC6)
+                RemoteBox(modifier = RemoteModifier.height(20.rdp).fillMaxWidth().background(color))
+            }
+        }
+    }
+
+    @RemoteComposable
+    @Composable
+    private fun TestSpacedByRemoteFloat(alignment: RemoteAlignment.Vertical) {
+        RemoteCollapsibleColumn(
+            // TODO(b/447100988): replace size by fillMaxSize
+            modifier = RemoteModifier.size(DefaultContainerSize),
+            horizontalAlignment = RemoteAlignment.CenterHorizontally,
+            verticalArrangement = spacedBy(space = 10f.rf, alignment = alignment),
+        ) {
+            repeat(3) { index ->
+                val color = if (index % 2 == 0) Color(0xFF6200EE) else Color(0xFF03DAC6)
+                RemoteBox(modifier = RemoteModifier.height(20.rdp).fillMaxWidth().background(color))
+            }
+        }
+    }
 }
