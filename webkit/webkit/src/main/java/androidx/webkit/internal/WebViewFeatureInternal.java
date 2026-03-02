@@ -710,7 +710,6 @@ public class WebViewFeatureInternal {
      * This feature covers
      * {@link androidx.webkit.Profile#prefetchUrlAsync(String, CancellationSignal, Executor, SpeculativeLoadingParameters, WebViewOutcomeReceiver)}
      * {@link androidx.webkit.Profile#prefetchUrlAsync(String, CancellationSignal, Executor, WebViewOutcomeReceiver)}
-     * {@link androidx.webkit.Profile#clearPrefetchAsync(String, Executor, WebViewOutcomeReceiver)}
      */
     public static final ApiFeature.NoFramework PROFILE_URL_PREFETCH =
             new ApiFeature.NoFramework(WebViewFeature.PROFILE_URL_PREFETCH,
