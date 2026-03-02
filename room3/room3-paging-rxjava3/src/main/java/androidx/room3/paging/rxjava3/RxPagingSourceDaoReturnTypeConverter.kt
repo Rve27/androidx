@@ -18,6 +18,7 @@ package androidx.room3.paging.rxjava3
 
 import androidx.paging.rxjava3.RxPagingSource
 import androidx.room3.DaoReturnTypeConverter
+import androidx.room3.OperationType
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomRawQuery
 
@@ -34,8 +35,11 @@ import androidx.room3.RoomRawQuery
  * ```
  */
 public class RxPagingSourceDaoReturnTypeConverter {
+
     /**
      * Converts a Room query into an [RxPagingSource].
+     *
+     * This converter can be only be used for [OperationType.READ].
      *
      * @param database RoomDatabase instance
      * @param tableNames List of names of the tables of the RoomDatabase
@@ -46,7 +50,7 @@ public class RxPagingSourceDaoReturnTypeConverter {
      *   expected list of items.
      * @return An [RxPagingSource] that emits pages of type [T].
      */
-    @DaoReturnTypeConverter
+    @DaoReturnTypeConverter(operations = [OperationType.READ])
     public fun <T : Any> convert(
         database: RoomDatabase,
         tableNames: Array<String>,

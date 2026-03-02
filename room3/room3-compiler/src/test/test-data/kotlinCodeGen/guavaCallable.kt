@@ -31,14 +31,14 @@ internal class MyDao_Impl(
 
   private val __insertAdapterOfMyEntity: EntityInsertAdapter<MyEntity>
 
+  private val __guavaDaoReturnTypeConverter: GuavaDaoReturnTypeConverter =
+      GuavaDaoReturnTypeConverter()
+
   private val __deleteAdapterOfMyEntity: EntityDeleteOrUpdateAdapter<MyEntity>
 
   private val __updateAdapterOfMyEntity: EntityDeleteOrUpdateAdapter<MyEntity>
 
   private val __upsertAdapterOfMyEntity: EntityUpsertAdapter<MyEntity>
-
-  private val __guavaDaoReturnTypeConverter: GuavaDaoReturnTypeConverter =
-      GuavaDaoReturnTypeConverter()
   init {
     this.__db = __db
     this.__insertAdapterOfMyEntity = object : EntityInsertAdapter<MyEntity>() {
@@ -83,26 +83,34 @@ internal class MyDao_Impl(
     })
   }
 
-  public override fun insertListenableFuture(vararg entities: MyEntity): ListenableFuture<List<Long>> = createListenableFuture(__db, false, true) { _connection ->
-    val _result: List<Long> = __insertAdapterOfMyEntity.insertAndReturnIdsList(_connection, entities)
-    _result
+  public override fun insertListenableFuture(vararg entities: MyEntity): ListenableFuture<List<Long>> = __guavaDaoReturnTypeConverter.convertAsync(__db, true) {
+    performSuspending(__db, false, true) { _connection ->
+      val _result: List<Long> = __insertAdapterOfMyEntity.insertAndReturnIdsList(_connection, entities)
+      _result
+    }
   }
 
-  public override fun deleteListenableFuture(entity: MyEntity): ListenableFuture<Int> = createListenableFuture(__db, false, true) { _connection ->
-    var _result: Int = 0
-    _result += __deleteAdapterOfMyEntity.handle(_connection, entity)
-    _result
+  public override fun deleteListenableFuture(entity: MyEntity): ListenableFuture<Int> = __guavaDaoReturnTypeConverter.convertAsync(__db, true) {
+    performSuspending(__db, false, true) { _connection ->
+      var _result: Int = 0
+      _result += __deleteAdapterOfMyEntity.handle(_connection, entity)
+      _result
+    }
   }
 
-  public override fun updateListenableFuture(entity: MyEntity): ListenableFuture<Int> = createListenableFuture(__db, false, true) { _connection ->
-    var _result: Int = 0
-    _result += __updateAdapterOfMyEntity.handle(_connection, entity)
-    _result
+  public override fun updateListenableFuture(entity: MyEntity): ListenableFuture<Int> = __guavaDaoReturnTypeConverter.convertAsync(__db, true) {
+    performSuspending(__db, false, true) { _connection ->
+      var _result: Int = 0
+      _result += __updateAdapterOfMyEntity.handle(_connection, entity)
+      _result
+    }
   }
 
-  public override fun upsertListenableFuture(vararg entities: MyEntity): ListenableFuture<List<Long>> = createListenableFuture(__db, false, true) { _connection ->
-    val _result: List<Long> = __upsertAdapterOfMyEntity.upsertAndReturnIdsList(_connection, entities)
-    _result
+  public override fun upsertListenableFuture(vararg entities: MyEntity): ListenableFuture<List<Long>> = __guavaDaoReturnTypeConverter.convertAsync(__db, true) {
+    performSuspending(__db, false, true) { _connection ->
+      val _result: List<Long> = __upsertAdapterOfMyEntity.upsertAndReturnIdsList(_connection, entities)
+      _result
+    }
   }
 
   public override fun getListenableFuture(vararg arg: String?): ListenableFuture<MyEntity> {
