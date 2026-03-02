@@ -70,7 +70,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 class Foo<T>(data: T): Bar<T>(data)
 
                 class FooReturnTypeConverter {
-                    @DaoReturnTypeConverter
+                    @DaoReturnTypeConverter(operations = [OperationType.READ, OperationType.WRITE])
                     suspend fun <T> convert(
                         database: RoomDatabase,
                         tableNames: Array<String>,
@@ -116,7 +116,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 class Foo<T>(data: T): Bar<T>(data)
 
                 class FooReturnTypeConverter {
-                    @DaoReturnTypeConverter
+                    @DaoReturnTypeConverter(operations = [OperationType.READ, OperationType.WRITE])
                     suspend fun <T> convert(
                         database: RoomDatabase,
                         tableNames: Array<String>,
@@ -125,7 +125,7 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                         return Foo(executeAndConvert.invoke())
                     }
 
-                    @DaoReturnTypeConverter
+                    @DaoReturnTypeConverter(operations = [OperationType.READ, OperationType.WRITE])
                     fun <T> convertBlocking(
                         database: RoomDatabase,
                         tableNames: Array<String>,
@@ -172,14 +172,14 @@ class DaoKotlinCodeGenTest : BaseDaoKotlinCodeGenTest() {
                 class FooArray<T>(val data: Array<T>)
 
                 class FooReturnTypeConverter {
-                    @DaoReturnTypeConverter
+                    @DaoReturnTypeConverter(operations = [OperationType.READ, OperationType.WRITE])
                     suspend fun <T> convertArray(
                         executeAndConvert: suspend () -> Array<T>,
                     ): FooArray<T> {
                         return FooArray(executeAndConvert.invoke())
                     }
 
-                    @DaoReturnTypeConverter
+                    @DaoReturnTypeConverter(operations = [OperationType.READ, OperationType.WRITE])
                     suspend fun <T> convertList(
                         database: RoomDatabase,
                         tableNames: Array<String>,

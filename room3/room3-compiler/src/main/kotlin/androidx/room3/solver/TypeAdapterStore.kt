@@ -47,7 +47,9 @@ import androidx.room3.processor.ProcessorErrors.DO_NOT_USE_GENERIC_IMMUTABLE_MUL
 import androidx.room3.processor.ProcessorErrors.invalidQueryForSingleColumnArray
 import androidx.room3.processor.PropertyProcessor
 import androidx.room3.solver.binderprovider.CoroutineFlowResultBinderProvider
-import androidx.room3.solver.binderprovider.DaoReturnTypeQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.DaoConverterDeleteOrUpdateFunctionBinderProvider
+import androidx.room3.solver.binderprovider.DaoConverterInsertOrUpsertFunctionQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.DaoConverterQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.InstantQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.SuspendResultBinderProvider
 import androidx.room3.solver.prepared.binder.PreparedQueryResultBinder
@@ -85,13 +87,9 @@ import androidx.room3.solver.query.result.SingleNamedColumnRowAdapter
 import androidx.room3.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
 import androidx.room3.solver.shortcut.binder.InsertOrUpsertFunctionBinder
 import androidx.room3.solver.shortcut.binderprovider.DeleteOrUpdateFunctionBinderProvider
-import androidx.room3.solver.shortcut.binderprovider.GuavaListenableFutureDeleteOrUpdateFunctionBinderProvider
-import androidx.room3.solver.shortcut.binderprovider.GuavaListenableFutureInsertOrUpsertFunctionBinderProvider
 import androidx.room3.solver.shortcut.binderprovider.InsertOrUpsertFunctionBinderProvider
 import androidx.room3.solver.shortcut.binderprovider.InstantDeleteOrUpdateFunctionBinderProvider
 import androidx.room3.solver.shortcut.binderprovider.InstantInsertOrUpsertFunctionBinderProvider
-import androidx.room3.solver.shortcut.binderprovider.RxCallableDeleteOrUpdateFunctionBinderProvider
-import androidx.room3.solver.shortcut.binderprovider.RxCallableInsertOrUpsertFunctionBinderProvider
 import androidx.room3.solver.shortcut.result.DeleteOrUpdateFunctionAdapter
 import androidx.room3.solver.shortcut.result.InsertOrUpsertFunctionAdapter
 import androidx.room3.solver.types.BoxedBooleanToBoxedIntConverter
@@ -207,7 +205,7 @@ private constructor(
             addAll(
                 daoReturnTypeConverters
                     .filter { it.isSuspend }
-                    .map { DaoReturnTypeQueryResultBinderProvider(context, it) }
+                    .map { DaoConverterQueryResultBinderProvider(context, it) }
             )
             add(SuspendResultBinderProvider(context))
         }
@@ -218,7 +216,12 @@ private constructor(
             addAll(
                 daoReturnTypeConverters
                     .filterNot { it.isSuspend }
-                    .map { DaoReturnTypeQueryResultBinderProvider(context, it) }
+                    .map {
+                        DaoConverterQueryResultBinderProvider(
+                            context = context,
+                            returnTypeConverter = it,
+                        )
+                    }
             )
             add(InstantQueryResultBinderProvider(context))
         }
@@ -232,15 +235,27 @@ private constructor(
 
     private val insertOrUpsertBinderProviders: List<InsertOrUpsertFunctionBinderProvider> =
         mutableListOf<InsertOrUpsertFunctionBinderProvider>().apply {
-            addAll(RxCallableInsertOrUpsertFunctionBinderProvider.getAll(context))
-            add(GuavaListenableFutureInsertOrUpsertFunctionBinderProvider(context))
+            addAll(
+                daoReturnTypeConverters.map {
+                    DaoConverterInsertOrUpsertFunctionQueryResultBinderProvider(
+                        context = context,
+                        returnTypeConverter = it,
+                    )
+                }
+            )
             add(InstantInsertOrUpsertFunctionBinderProvider(context))
         }
 
     private val deleteOrUpdateBinderProvider: List<DeleteOrUpdateFunctionBinderProvider> =
         mutableListOf<DeleteOrUpdateFunctionBinderProvider>().apply {
-            addAll(RxCallableDeleteOrUpdateFunctionBinderProvider.getAll(context))
-            add(GuavaListenableFutureDeleteOrUpdateFunctionBinderProvider(context))
+            addAll(
+                daoReturnTypeConverters.map {
+                    DaoConverterDeleteOrUpdateFunctionBinderProvider(
+                        context = context,
+                        returnTypeConverter = it,
+                    )
+                }
+            )
             add(InstantDeleteOrUpdateFunctionBinderProvider(context))
         }
 

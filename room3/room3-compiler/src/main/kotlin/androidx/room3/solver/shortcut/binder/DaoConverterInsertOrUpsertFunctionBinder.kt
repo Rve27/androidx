@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,35 @@
 package androidx.room3.solver.shortcut.binder
 
 import androidx.room3.compiler.codegen.XPropertySpec
+import androidx.room3.compiler.processing.XType
 import androidx.room3.solver.CodeGenScope
 import androidx.room3.solver.shortcut.result.InsertOrUpsertFunctionAdapter
+import androidx.room3.solver.types.DaoReturnTypeConverter
 import androidx.room3.vo.ShortcutQueryParameter
 
-/** Connects the insert and upsert method, the database and the [InsertOrUpsertFunctionAdapter]. */
-interface InsertOrUpsertFunctionBinder {
-    val adapter: InsertOrUpsertFunctionAdapter?
-
-    /**
-     * Received an insert or upsert method parameters, their adapters and generations the code that
-     * runs the insert or upsert and returns the result.
-     */
-    fun convertAndReturn(
+class DaoConverterInsertOrUpsertFunctionBinder(
+    val typeArg: XType,
+    override val adapter: InsertOrUpsertFunctionAdapter?,
+    converter: DaoReturnTypeConverter,
+) : BaseDaoConverterShortcutBinder(converter), InsertOrUpsertFunctionBinder {
+    override fun convertAndReturn(
         parameters: List<ShortcutQueryParameter>,
         adapters: Map<String, Pair<XPropertySpec, Any>>,
         dbProperty: XPropertySpec,
         scope: CodeGenScope,
-    )
+    ) {
+        if (adapter == null) {
+            return
+        }
+        convertAndReturnShortcut(typeArg = typeArg, dbProperty = dbProperty, scope = scope) {
+            innerScope,
+            connectionVar ->
+            adapter.generateFunctionBody(
+                scope = innerScope,
+                parameters = parameters,
+                adapters = adapters,
+                connectionVar = connectionVar,
+            )
+        }
+    }
 }
