@@ -1294,7 +1294,7 @@ internal class LayoutNode(
      * Tracks whether another measure pass is needed for the LayoutNode. Mutation to
      * [measurePending] is confined to LayoutNodeLayoutDelegate. It can only be set true from
      * outside of LayoutNode via [markMeasurePending]. It is cleared (i.e. set false) during the
-     * measure pass ( i.e. in [LayoutNodeLayoutDelegate.performMeasure]).
+     * measure pass ( i.e. in [LayoutNodeLayoutDelegate.performLookaheadMeasure]).
      */
     internal val measurePending: Boolean
         get() = layoutDelegate.measurePending
