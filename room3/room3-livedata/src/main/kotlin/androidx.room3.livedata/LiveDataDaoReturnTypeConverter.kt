@@ -24,7 +24,8 @@ import androidx.room3.RoomDatabase
 import kotlinx.coroutines.flow.map
 
 /**
- * A [DaoReturnTypeConverter] container that allows Room to return [LiveData] from [Dao] functions.
+ * A [DaoReturnTypeConverter] container that allows Room to return [LiveData] from
+ * [androidx.room3.Dao] functions.
  */
 public class LiveDataDaoReturnTypeConverter {
     /**
