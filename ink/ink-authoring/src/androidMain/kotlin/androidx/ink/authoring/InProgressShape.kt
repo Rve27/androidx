@@ -101,7 +101,8 @@ public interface InProgressShape<in ShapeSpecT : Any, out CompletedShapeT : Any>
 
     /**
      * Update internal state of this shape based on the provided timestamps as well as any inputs
-     * passed to [enqueueInputs] since the last call to [update].
+     * passed to [enqueueInputs] since the last call to [update]. Will be called exactly once for
+     * each call to [InProgressShapeRenderer.draw].
      *
      * @param shapeDurationMillis The current timestamp that is directly comparable to those in the
      *   [StrokeInputBatch] objects provided to [enqueueInputs], which is the time since the first
@@ -122,9 +123,16 @@ public interface InProgressShape<in ShapeSpecT : Any, out CompletedShapeT : Any>
      * of a canceled shape must include the entire shape's bounding box, along with the locations of
      * any other content that had been removed before cancellation but after the last call to
      * [resetUpdatedRegion]. After [resetUpdatedRegion] has been called following [cancel], then
-     * further calls to [getUpdatedRegion] must return `null`.
+     * further calls to [getUpdatedRegion] must return `null` and [isCanceled] will return `false`
+     * until the next call to [start] or [prepareToRecycle].
      */
     public fun cancel()
+
+    /**
+     * Returns whether [cancel] has been called since the most recent call to [start] or
+     * [prepareToRecycle].
+     */
+    public fun isCanceled(): Boolean
 
     /**
      * Returns an axis-aligned bounding rectangle of parts of the shape added, removed, or changed

@@ -163,10 +163,6 @@ internal class BrushPaintCache(
                                 when (textureLayer.sizeUnit) {
                                     BrushPaint.TextureSizeUnit.BRUSH_SIZE ->
                                         it.preScale(brushSize, brushSize)
-                                    BrushPaint.TextureSizeUnit.STROKE_SIZE -> {
-                                        // TODO: b/336835642 - Implement BrushPaintCache support for
-                                        // TextureSizeUnit.STROKE_SIZE.
-                                    }
                                     BrushPaint.TextureSizeUnit.STROKE_COORDINATES -> {
                                         // Nothing to do, since stroke space and SizeUnit space are
                                         // identical.
