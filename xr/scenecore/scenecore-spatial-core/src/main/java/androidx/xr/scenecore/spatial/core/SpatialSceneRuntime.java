@@ -254,18 +254,12 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
         }
 
         return new SpatialSceneRuntime(
-                activity,
-                executor,
-                extensions,
-                entityManager,
-                sceneRootNode,
-                taskWindowLeashNode);
+                activity, executor, extensions, entityManager, sceneRootNode, taskWindowLeashNode);
     }
 
     /** Create a new @c SpatialSceneRuntime. */
     public static @NonNull SpatialSceneRuntime create(
-            @NonNull Activity activity,
-            @NonNull ScheduledExecutorService executor) {
+            @NonNull Activity activity, @NonNull ScheduledExecutorService executor) {
         return create(
                 activity,
                 executor,
