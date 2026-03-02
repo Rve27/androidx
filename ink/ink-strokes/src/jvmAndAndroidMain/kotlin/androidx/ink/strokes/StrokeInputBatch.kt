@@ -28,8 +28,8 @@ import androidx.ink.nativeloader.UsedByNative
  * guaranteed to be consistent with one another – for example, they all have the same
  * [StrokeInput.toolType] and the same set of optional fields like pressure/tilt/orientation, and
  * their timestamps are all monotonically non-decreasing. This can be an [ImmutableStrokeInputBatch]
- * for data that cannot change, and a [MutableStrokeInputBatch] for data that is meant to be
- * modified or incrementally built.
+ * for data that cannot change, or a [MutableStrokeInputBatch] for data that is meant to be modified
+ * or incrementally built.
  */
 @Suppress("NotCloseable") // Finalize is only used to free the native peer.
 public abstract class StrokeInputBatch internal constructor(nativePointer: Long) {

@@ -43,8 +43,7 @@ private constructor(
      * solely by this JVM [Stroke] object. Although the `ink::Stroke` is owned exclusively by this
      * [Stroke] object, it may be a copy of another `ink::Stroke`, where it has a copy of fairly
      * lightweight metadata but shares ownership of the more heavyweight `ink::Mesh` objects. This
-     * class is responsible for freeing the `ink::Stroke`, usually through its [finalize] method but
-     * possibly by an explicit [java.io.Closeable.close].
+     * class is responsible for freeing the `ink::Stroke`, usually through its [finalize] method.
      */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val nativePointer: Long,
     /**
