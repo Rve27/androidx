@@ -253,6 +253,10 @@ internal class PageFetcher<Key : Any, Value : Any>(
         loadRequests.send(LoadRequest.Refresh(triggerRemoteRefresh = true, type = refreshType))
     }
 
+    fun retry() {
+        retryEvents.send(Unit)
+    }
+
     private fun invalidate() {
         loadRequests.send(LoadRequest.Refresh(false, RefreshType.Anchor))
     }

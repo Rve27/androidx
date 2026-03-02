@@ -202,6 +202,7 @@ final class <#A: kotlin/Any, #B: kotlin/Any> androidx.paging/Pager { // androidx
     final fun prepend() // androidx.paging/Pager.prepend|prepend(){}[0]
     final fun refresh(#B) // androidx.paging/Pager.refresh|refresh(1:1){}[0]
     final fun refresh() // androidx.paging/Pager.refresh|refresh(){}[0]
+    final fun retry() // androidx.paging/Pager.retry|retry(){}[0]
 }
 
 final class <#A: kotlin/Any, #B: kotlin/Any> androidx.paging/PagingState { // androidx.paging/PagingState|null[0]
