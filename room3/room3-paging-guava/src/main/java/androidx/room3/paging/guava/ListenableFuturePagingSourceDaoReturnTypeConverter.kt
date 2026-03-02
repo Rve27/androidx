@@ -18,6 +18,7 @@ package androidx.room3.paging.guava
 
 import androidx.paging.ListenableFuturePagingSource
 import androidx.room3.DaoReturnTypeConverter
+import androidx.room3.OperationType
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomRawQuery
 
@@ -38,6 +39,8 @@ public class ListenableFuturePagingSourceDaoReturnTypeConverter {
     /**
      * Converts a Room query into a [ListenableFuturePagingSource].
      *
+     * This converter can be used for both [OperationType.READ] only.
+     *
      * @param database RoomDatabase instance.
      * @param tableNames List of names of the tables of the RoomDatabase to observe for
      *   invalidation.
@@ -47,7 +50,7 @@ public class ListenableFuturePagingSourceDaoReturnTypeConverter {
      *   limit/offset) and returns a [List] of [T].
      * @return A [ListenableFuturePagingSource] that emits pages of type [T].
      */
-    @DaoReturnTypeConverter
+    @DaoReturnTypeConverter(operations = [OperationType.READ])
     public fun <T : Any> convert(
         database: RoomDatabase,
         tableNames: Array<String>,

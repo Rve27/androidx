@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,29 +18,35 @@ package androidx.room3.solver.shortcut.binder
 
 import androidx.room3.compiler.codegen.XPropertySpec
 import androidx.room3.compiler.codegen.XTypeSpec
+import androidx.room3.compiler.processing.XType
 import androidx.room3.solver.CodeGenScope
 import androidx.room3.solver.shortcut.result.DeleteOrUpdateFunctionAdapter
+import androidx.room3.solver.types.DaoReturnTypeConverter
 import androidx.room3.vo.ShortcutQueryParameter
 
-/**
- * Connects the delete or update method, the database and the [DeleteOrUpdateFunctionAdapter].
- *
- * The default implementation is [InstantDeleteOrUpdateFunctionBinder] that executes the
- * delete/update synchronously. If the delete/update is deferred, rather than synchronously,
- * alternatives implementations can be implemented using this interface (e.g. RxJava, coroutines
- * etc).
- */
-interface DeleteOrUpdateFunctionBinder {
-    val adapter: DeleteOrUpdateFunctionAdapter?
-
-    /**
-     * Received the delete/update method parameters, the adapters and generates the code that runs
-     * the delete/update and returns the result.
-     */
-    fun convertAndReturn(
+class DaoConverterDeleteOrUpdateFunctionBinder(
+    val typeArg: XType,
+    override val adapter: DeleteOrUpdateFunctionAdapter?,
+    converter: DaoReturnTypeConverter,
+) : BaseDaoConverterShortcutBinder(converter), DeleteOrUpdateFunctionBinder {
+    override fun convertAndReturn(
         parameters: List<ShortcutQueryParameter>,
         adapters: Map<String, Pair<XPropertySpec, XTypeSpec>>,
         dbProperty: XPropertySpec,
         scope: CodeGenScope,
-    )
+    ) {
+        if (adapter == null) {
+            return
+        }
+        convertAndReturnShortcut(typeArg = typeArg, dbProperty = dbProperty, scope = scope) {
+            innerScope,
+            connectionVar ->
+            adapter.generateFunctionBody(
+                scope = innerScope,
+                parameters = parameters,
+                adapters = adapters,
+                connectionVar = connectionVar,
+            )
+        }
+    }
 }

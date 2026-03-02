@@ -106,7 +106,7 @@ package androidx.room3 {
   }
 
   @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.FUNCTION) public @interface DaoReturnTypeConverter {
-    ctor @KotlinOnly public DaoReturnTypeConverter(androidx.room3.OperationType... operations);
+    ctor @KotlinOnly public DaoReturnTypeConverter(androidx.room3.OperationType[] operations);
     method @InaccessibleFromKotlin public abstract androidx.room3.OperationType[] operations();
     property public abstract androidx.room3.OperationType[] operations;
   }
