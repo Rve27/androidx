@@ -111,7 +111,7 @@ import kotlin.math.min
  * The [content] of a [DropdownMenu] will typically be [DropdownMenuItem]s, as well as custom
  * content. Using [DropdownMenuItem]s will result in a menu that matches the Material specification
  * for menus. Also note that the [content] is placed inside a scrollable [Column], so using a
- * [LazyColumn] as the root layout inside [content] is unsupported.
+ * [androidx.compose.foundation.lazy.LazyColumn] as the root layout inside [content] is unsupported.
  *
  * [onDismissRequest] will be called when the menu should close - for example when there is a tap
  * outside the menu, or when the back key is pressed.
@@ -137,7 +137,8 @@ import kotlin.math.min
  *   outside the menu's bounds
  * @param modifier [Modifier] to be applied to the menu's content
  * @param offset [DpOffset] from the original position of the menu. The offset respects the
- *   [LayoutDirection], so the offset's x position will be added in LTR and subtracted in RTL.
+ *   [androidx.compose.ui.unit.LayoutDirection], so the offset's x position will be added in LTR and
+ *   subtracted in RTL.
  * @param scrollState a [ScrollState] to used by the menu's content for items vertical scrolling
  * @param properties [PopupProperties] for further customization of this popup's behavior
  * @param shape the shape of the menu
