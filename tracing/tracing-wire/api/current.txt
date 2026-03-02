@@ -1,7 +1,10 @@
 // Signature format: 4.0
 package androidx.tracing.wire {
 
-  public final class RingBufferTraceSink extends androidx.tracing.TraceSink {
+  @SuppressCompatibility @kotlin.RequiresOptIn(message="Marks APIs that are experimental for ring buffer tracing.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION}) public @interface ExperimentalRingBufferApi {
+  }
+
+  @SuppressCompatibility @androidx.tracing.wire.ExperimentalRingBufferApi public final class RingBufferTraceSink extends androidx.tracing.TraceSink {
     ctor public RingBufferTraceSink(@IntRange(from=1L) int sequenceId, long capacityInBytes, okio.BufferedSink bufferedSink);
     method public void close();
     method public void close(boolean flush);
