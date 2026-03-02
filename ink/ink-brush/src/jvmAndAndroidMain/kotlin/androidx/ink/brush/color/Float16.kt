@@ -202,7 +202,7 @@ internal value class Float16(val halfValue: Short) : Comparable<Float16> {
      * * `1.0` if the value is positive
      *
      * Special case:
-     * * `NaN.sign` is `NaN`
+     * * `NAN.sign` is `NAN`
      */
     val sign: Float16
         get() =

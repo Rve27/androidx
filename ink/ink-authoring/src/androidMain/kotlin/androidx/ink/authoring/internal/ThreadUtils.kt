@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright (C) 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@
 
 package androidx.ink.authoring.internal
 
-import android.graphics.Matrix
-import androidx.ink.authoring.InProgressStrokeId
+import android.os.Looper
 
-/**
- * Includes the [CompletedShapeT] along with a transform indicating where the stroke is on screen.
- */
-internal class FinishedStroke<CompletedShapeT : Any>(
-    val strokeId: InProgressStrokeId,
-    val stroke: CompletedShapeT,
-    val strokeToViewTransform: Matrix,
-)
+internal fun assertOnUiThread() {
+    check(Looper.myLooper() == Looper.getMainLooper()) {
+        "Should be running on the UI thread, but instead running on ${Thread.currentThread()}."
+    }
+}
