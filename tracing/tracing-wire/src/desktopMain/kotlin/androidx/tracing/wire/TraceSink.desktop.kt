@@ -52,6 +52,7 @@ public fun TraceSink(
 
 // StreamFiles is not relevant because the provided File represents a directory
 // in which new trace files are dynamically created, rather than a specific file to read/write.
+@ExperimentalRingBufferApi
 @Suppress("StreamFiles")
 @JvmOverloads
 public fun TraceSink(

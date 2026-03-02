@@ -35,6 +35,7 @@ import okio.BufferedSink
  * This implementation converts [androidx.tracing.TraceEvent]s into binary protos using
  * [the Wire library](https://square.github.io/wire/).
  */
+@ExperimentalRingBufferApi
 public class RingBufferTraceSink(
     /**
      * ID which uniquely identifies the trace capture system, within which uuids are guaranteed to
