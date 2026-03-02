@@ -21,7 +21,6 @@ import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.TestFile
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -112,7 +111,6 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 7: Replace with `int
             )
     }
 
-    @Ignore // b/487302018
     @Test
     fun testCompoundAssignAutoboxingProperty() {
         lint()
@@ -152,7 +150,6 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 7: Replace with `int
             )
     }
 
-    @Ignore // b/487302018
     @Test
     fun testCompoundAssignAutoboxingPropertyInExtensionReceiver() {
         lint()
