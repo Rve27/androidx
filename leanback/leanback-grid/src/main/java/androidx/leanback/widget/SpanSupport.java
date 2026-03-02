@@ -24,6 +24,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
  * the cache methods are package private.
  */
 final class SpanSupport {
+    static final int FILL_ALL_SPANS_AND_PADDING = -1;
+    static final int FILL_ALL_SPANS = -2;
+
     private final GridLayoutManager.SpanSizeLookup mSpanSizeLookup;
     private final SparseIntArray mSpanIndexCache = new SparseIntArray();
     private final SparseIntArray mSpanGroupIndexCache = new SparseIntArray();
@@ -70,13 +73,27 @@ final class SpanSupport {
         return value;
     }
 
-    public int getSpanSize(int position) {
-        return mSpanSizeLookup.getSpanSize(position);
+    // Returns FILL_ALL_SPANS_AND_PADDING or real span count.
+    // FILL_ALL_SPANS_AND_PADDING will have a special treatment in GridLayoutManager.
+    public int getSpanSize(int position, int spanCount) {
+        int size = mSpanSizeLookup.getSpanSize(position);
+        if (size == FILL_ALL_SPANS) {
+            size = spanCount;
+        }
+        return size;
+    }
+
+    private int getRealSpanSize(int position, int spanCount) {
+        int size = mSpanSizeLookup.getSpanSize(position);
+        if (size == FILL_ALL_SPANS_AND_PADDING || size == FILL_ALL_SPANS) {
+            return spanCount;
+        }
+        return size;
     }
 
     // Implementation using built-in cache.
     private int getSpanIndex(int position, int spanCount) {
-        int positionSpanSize = mSpanSizeLookup.getSpanSize(position);
+        int positionSpanSize = getRealSpanSize(position, spanCount);
         if (positionSpanSize == spanCount) {
             return 0; // quick return for full-span items
         }
@@ -84,11 +101,11 @@ final class SpanSupport {
         int startPos = 0;
         int prevKey = findFirstKeyLessThan(mSpanIndexCache, position);
         if (prevKey >= 0) {
-            span = mSpanIndexCache.get(prevKey) + mSpanSizeLookup.getSpanSize(prevKey);
+            span = mSpanIndexCache.get(prevKey) + getRealSpanSize(prevKey, spanCount);
             startPos = prevKey + 1;
         }
         for (int i = startPos; i < position; i++) {
-            int size = mSpanSizeLookup.getSpanSize(i);
+            int size = getRealSpanSize(i, spanCount);
             span += size;
             if (span == spanCount) {
                 span = 0;
@@ -136,15 +153,15 @@ final class SpanSupport {
             group = mSpanGroupIndexCache.get(prevKey);
             start = prevKey + 1;
             span = getCachedSpanIndex(prevKey, spanCount)
-                    + mSpanSizeLookup.getSpanSize(prevKey);
+                    + getRealSpanSize(prevKey, spanCount);
             if (span == spanCount) {
                 span = 0;
                 group++;
             }
         }
-        int positionSpanSize = mSpanSizeLookup.getSpanSize(adapterPosition);
+        int positionSpanSize = getRealSpanSize(adapterPosition, spanCount);
         for (int i = start; i < adapterPosition; i++) {
-            int size = mSpanSizeLookup.getSpanSize(i);
+            int size = getRealSpanSize(i, spanCount);
             span += size;
             if (span == spanCount) {
                 span = 0;
