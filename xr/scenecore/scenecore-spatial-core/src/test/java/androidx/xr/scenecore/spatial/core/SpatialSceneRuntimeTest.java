@@ -164,8 +164,7 @@ public class SpatialSceneRuntimeTest {
         ShadowXrExtensions.extract(mXrExtensions)
                 .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
         mRuntime =
-                SpatialSceneRuntime.create(
-                        mActivity, mFakeExecutor, mXrExtensions, mEntityManager);
+                SpatialSceneRuntime.create(mActivity, mFakeExecutor, mXrExtensions, mEntityManager);
     }
 
     @After
@@ -196,8 +195,7 @@ public class SpatialSceneRuntimeTest {
     }
 
     private SpatialSceneRuntime createRuntime() {
-        return SpatialSceneRuntime.create(
-                mActivity, mFakeExecutor, mXrExtensions, mEntityManager);
+        return SpatialSceneRuntime.create(mActivity, mFakeExecutor, mXrExtensions, mEntityManager);
     }
 
     @Test
@@ -626,7 +624,8 @@ public class SpatialSceneRuntimeTest {
         mRuntime.setSpatialModeChangeListener(mockSpatialModeChangeListener);
         ShadowSpatialState.extract(spatialState)
                 .setSpatialCapabilities(ShadowSpatialCapabilities.createAll());
-        ShadowSpatialState.extract(spatialState).setSceneParentTransform(new Mat4f(new float[16]));
+        ShadowSpatialState.extract(spatialState)
+                .setSceneParentTransform(new Mat4f(Matrix4.Identity.getData()));
         mRuntime.onSpatialStateChanged(spatialState);
 
         verify(mockSpatialModeChangeListener).onSpatialModeChanged(any(), any());
