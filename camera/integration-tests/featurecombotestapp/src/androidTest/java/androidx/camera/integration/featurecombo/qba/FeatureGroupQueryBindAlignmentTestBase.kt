@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,37 @@
  * limitations under the License.
  */
 
-package androidx.camera.integration.featurecombo
+package androidx.camera.integration.featurecombo.qba
 
 import android.util.Log
-import android.util.Range
-import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.featuregroup.GroupableFeature
-import androidx.camera.integration.featurecombo.FeatureGroupQueryBindAlignmentTest.VerificationScenario.PREFERRED_FEATURES
-import androidx.camera.integration.featurecombo.FeatureGroupQueryBindAlignmentTest.VerificationScenario.REQUIRED_FEATURES
-import androidx.camera.testing.impl.CameraUtil
-import androidx.test.filters.LargeTest
+import androidx.camera.integration.featurecombo.AppUseCase
+import androidx.camera.integration.featurecombo.FeatureGroupTestBase
+import androidx.camera.integration.featurecombo.qba.FeatureGroupQueryBindAlignmentTestBase.VerificationScenario.PREFERRED_FEATURES
+import androidx.camera.integration.featurecombo.qba.FeatureGroupQueryBindAlignmentTestBase.VerificationScenario.REQUIRED_FEATURES
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@LargeTest
-@RunWith(Parameterized::class)
-class FeatureGroupQueryBindAlignmentTest(
+/**
+ * Base class for testing the alignment between Feature Group query API results and actual bind
+ * behavior. This class provides the core test logic, while subclasses are expected to provide the
+ * parameterized data based on different camera and feature combinations.
+ *
+ * @property testName The name of the test configuration.
+ * @property cameraSelector The CameraSelector to be tested.
+ * @property implName The name of the CameraX implementation.
+ * @property cameraXConfig The CameraX configuration to use.
+ * @property featureGroup The set of features to be tested.
+ * @property useCasesToTest The list of use cases to bind.
+ */
+abstract class FeatureGroupQueryBindAlignmentTestBase(
     private val testName: String,
     private val cameraSelector: CameraSelector,
     private val implName: String,
@@ -46,6 +52,11 @@ class FeatureGroupQueryBindAlignmentTest(
     private val featureGroup: Set<GroupableFeature>,
     private val useCasesToTest: List<AppUseCase>,
 ) : FeatureGroupTestBase(cameraSelector, implName, cameraXConfig) {
+
+    /**
+     * Tests that the binding behavior of CameraX aligns with the results from the Feature Group
+     * query API. It checks both REQUIRED and PREFERRED feature group settings.
+     */
     @Test
     fun testFeatureBindingAsRequiredOrPreferred_alignsWithIsSupportedQuery(): Unit = runBlocking {
         val useCases = useCasesToTest.toUseCases()
@@ -95,6 +106,10 @@ class FeatureGroupQueryBindAlignmentTest(
     //  for adding FCQ-queryable config combinations supported in Baklava, as Android 15 doesn't
     //  support UHD PRIV for FCQ.
 
+    /**
+     * Binds the use cases with the given session config and verifies the outcome based on the
+     * expected support and verification scenario.
+     */
     private suspend fun bindAndVerify(
         sessionConfig: SessionConfig,
         isExpectedToBeSupported: Boolean,
@@ -145,15 +160,18 @@ class FeatureGroupQueryBindAlignmentTest(
         return camera
     }
 
+    /** Scenario to verify. */
     enum class VerificationScenario {
         REQUIRED_FEATURES,
         PREFERRED_FEATURES,
     }
 
+    /** Collection wrapper to add custom assertions. */
     class VerifiableCollection<out E>(
         private val base: Collection<E>,
         override val size: Int = base.size,
     ) : Collection<E> {
+        /** Asserts that the collection does not contain all elements in the given collection. */
         fun doesNotContainAllIn(fullCollection: Collection<@UnsafeVariance E>) {
             val intersection = base.intersect(fullCollection.toSet())
             assertThat(intersection.size).isLessThan(fullCollection.size)
@@ -175,72 +193,10 @@ class FeatureGroupQueryBindAlignmentTest(
     }
 
     companion object {
-        private const val TAG = "FeatureGroupQueryBindAlignmentTest"
+        private const val TAG = "FeatureGroupQueryBindAlignmentTestBase"
 
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun data() =
-            mutableListOf<Array<Any?>>().apply {
-                CameraUtil.getAvailableCameraSelectors().forEach { selector ->
-                    val lens = selector.lensFacing
-
-                    for (featureGroup in
-                    // Generates all non-empty subsets of the features to test all combinations
-                    allHighQualityFeatures.toPowerSet().filter {
-                            // Do not test more than 3 features at once to save time
-                            Range(1, 3).contains(it.size) && !it.containsSameTypeFeatures()
-                        }) {
-                        useCaseCombinationsToTest.forEach { useCases ->
-                            add(
-                                arrayOf(
-                                    "config=${Camera2Config::class.simpleName} lensFacing={$lens}" +
-                                        " featureGroup={$featureGroup} useCases = {$useCases}",
-                                    selector,
-                                    Camera2Config::class.simpleName,
-                                    Camera2Config.defaultConfig(),
-                                    featureGroup,
-                                    useCases,
-                                )
-                            )
-                        }
-                    }
-
-                    // Generate combinations of each use case matched with each feature
-                    for (feature in allFeatures) {
-                        AppUseCase.entries.forEach { useCase ->
-                            val featureGroup = setOf(feature)
-                            val useCases = listOf(useCase)
-
-                            add(
-                                arrayOf(
-                                    "config=${Camera2Config::class.simpleName} lensFacing={$lens}" +
-                                        " featureGroup={$featureGroup} useCases = {$useCases}",
-                                    selector,
-                                    Camera2Config::class.simpleName,
-                                    Camera2Config.defaultConfig(),
-                                    featureGroup,
-                                    useCases,
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-
-        /**
-         * Returns the power set of the receiver set.
-         *
-         * The power set of a set S is the set of all subsets of S, including the empty set and S
-         * itself.
-         *
-         * For example, the power set of `{A, B}` is `{{}, {A}, {B}, {A, B}}`.
-         *
-         * This function iteratively builds the power set. It starts with a set containing just the
-         * empty set. Then, for each element in the original set, it creates new subsets by adding
-         * the element to all existing subsets in the power set, and adds these new subsets to the
-         * power set.
-         */
-        private fun <T> Set<T>.toPowerSet(): Set<Set<T>> {
+        /** Returns the power set of the receiver set. */
+        internal fun <T> Set<T>.toPowerSet(): Set<Set<T>> {
             val sets = mutableSetOf<Set<T>>(emptySet())
             for (element in this) {
                 sets.addAll(sets.map { it + element })
@@ -248,7 +204,7 @@ class FeatureGroupQueryBindAlignmentTest(
             return sets
         }
 
-        private fun Set<GroupableFeature>.containsSameTypeFeatures(): Boolean {
+        internal fun Set<GroupableFeature>.containsSameTypeFeatures(): Boolean {
             val featureTypes = map { it.featureTypeInternal }.distinct()
 
             featureTypes.forEach { featureType ->
