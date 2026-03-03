@@ -60,7 +60,16 @@ constructor(
     public val textDecoration: TextDecoration? = null,
 ) {
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    /**
+     * Returns a new [RemoteTextStyle] that is a combination of this style and the given [other]
+     * style.
+     *
+     * If [other] is null, this style is returned. If [other] has any null properties, the values
+     * from this style are used for those properties.
+     *
+     * @param other The style to merge into this style.
+     * @return A new [RemoteTextStyle] with properties from [other] taking precedence.
+     */
     public fun merge(other: RemoteTextStyle?): RemoteTextStyle {
         if (other == null) return this
         return RemoteTextStyle(
