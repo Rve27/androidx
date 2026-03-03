@@ -16,7 +16,6 @@
 
 package androidx.compose.material3
 
-import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
@@ -37,7 +36,6 @@ import androidx.compose.material3.SheetValue.PartiallyExpanded
 import androidx.compose.material3.internal.Strings
 import androidx.compose.material3.internal.draggableAnchors
 import androidx.compose.material3.internal.getString
-import androidx.compose.material3.tokens.MotionSchemeKeyTokens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
@@ -235,15 +233,14 @@ private fun StandardBottomSheet(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     // TODO Load the motionScheme tokens from the component tokens file
-    val anchoredDraggableMotion: FiniteAnimationSpec<Float> =
-        MotionSchemeKeyTokens.DefaultSpatial.value()
-    val showMotion: FiniteAnimationSpec<Float> = MotionSchemeKeyTokens.DefaultSpatial.value()
-    val hideMotion: FiniteAnimationSpec<Float> = MotionSchemeKeyTokens.FastEffects.value()
+    val showMotion = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+    val hideMotion = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
+    val spatialFlingSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
 
     SideEffect {
         state.showMotionSpec = showMotion
         state.hideMotionSpec = hideMotion
-        state.anchoredDraggableMotionSpec = anchoredDraggableMotion
+        state.anchoredDraggableMotionSpec = spatialFlingSpec
     }
 
     val scope = rememberCoroutineScope()
@@ -253,7 +250,7 @@ private fun StandardBottomSheet(
         AnchoredDraggableDefaults.flingBehavior(
             state = state.anchoredDraggableState,
             positionalThreshold = { _ -> state.positionalThreshold.invoke() },
-            animationSpec = BottomSheetAnimationSpec,
+            animationSpec = spatialFlingSpec,
         )
 
     val nestedScroll =
