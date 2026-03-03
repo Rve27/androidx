@@ -993,7 +993,7 @@ private constructor(
      *       for the calculation is invalid or unavailable.
      *
      * @throws [IllegalStateException] if [Session.config] is not set to
-     *   [androidx.xr.runtime.Config.DeviceTrackingMode.LAST_KNOWN].
+     *   [androidx.xr.runtime.Config.DeviceTrackingMode.SPATIAL_LAST_KNOWN].
      * @see PerceivedResolutionResult
      */
     public fun getPerceivedResolution(renderViewpoint: RenderViewpoint): PerceivedResolutionResult {
