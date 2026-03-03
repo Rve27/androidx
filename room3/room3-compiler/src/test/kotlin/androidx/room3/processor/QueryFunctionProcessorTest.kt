@@ -1335,8 +1335,8 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
         ) { _, invocation ->
             invocation.assertCompilationResult {
                 hasErrorContaining(
-                    "Column specified in the provided @MapColumn " +
-                        "annotation must be present in the query."
+                    "Column specified in the declared @MapColumn " +
+                        "annotation must be present in the query result."
                 )
             }
         }
@@ -1559,12 +1559,12 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
                 )
                 hasErrorCount(2)
                 hasErrorContaining(
-                    "Column specified in the provided @MapColumn annotation must " +
-                        "be present in the query. Provided: cat."
+                    "Column specified in the declared @MapColumn annotation must " +
+                        "be present in the query result. Declared column name: cat."
                 )
                 hasErrorContaining(
-                    "Column specified in the provided @MapColumn annotation must " +
-                        "be present in the query. Provided: dog."
+                    "Column specified in the declared @MapColumn annotation must " +
+                        "be present in the query result. Declared column name: dog."
                 )
             }
         }

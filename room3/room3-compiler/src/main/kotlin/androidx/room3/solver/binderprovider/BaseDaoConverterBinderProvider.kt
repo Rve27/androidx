@@ -24,7 +24,7 @@ import androidx.room3.ext.KotlinTypeNames
 import androidx.room3.ext.isCollection
 import androidx.room3.processor.Context
 import androidx.room3.processor.ProcessorErrors
-import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_WITH_A_TYPE_PARAM_SHOULD_HAVE_RETURN_TYPE_WITH_ONLY_ONE_GENERIC_ARG
+import androidx.room3.processor.ProcessorErrors.DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_TYPE_PARAM_MISMATCH
 import androidx.room3.solver.types.DaoReturnTypeConverter
 import com.google.common.base.Optional
 
@@ -69,7 +69,7 @@ abstract class BaseDaoConverterBinderProvider(
         context.checker.check(
             predicate = allTypeArgsExceptRowAdapterPositionMatch,
             element = converter.to.typeElement!!,
-            DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_WITH_A_TYPE_PARAM_SHOULD_HAVE_RETURN_TYPE_WITH_ONLY_ONE_GENERIC_ARG,
+            DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_TYPE_PARAM_MISMATCH,
         )
 
         return allTypeArgsExceptRowAdapterPositionMatch
