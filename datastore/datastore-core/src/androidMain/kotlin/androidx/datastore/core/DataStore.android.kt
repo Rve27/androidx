@@ -19,7 +19,6 @@ package androidx.datastore.core
 import androidx.datastore.core.handlers.ReThrowCorruptionHandler
 import androidx.tracing.Tracer
 import kotlin.coroutines.CoroutineContext
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
 actual interface DataStore<T> {
@@ -81,7 +80,7 @@ actual interface DataStore<T> {
                 storage = storage,
                 corruptionHandler = corruptionHandler,
                 initTasksList = listOf(DataMigrationInitializer.getInitializer(migrations)),
-                scope = CoroutineScope(context),
+                context = context,
                 tracer = tracer,
             )
         }
