@@ -375,7 +375,7 @@ w: Language version 1\.9 is deprecated and its support will be removed in a futu
 # Remove when https://youtrack.jetbrains.com/issue/KT-70013 is fixed, o/w anytime a new entry is added to this list, this message will be printed.
 Calculating task graph as configuration cache cannot be reused because the set of paths ignored in file-system-check input tracking.*
 # b/414775532
-# > Task :compose-hero-benchmarks:poxedex-compose:app:kspReleaseKotlin
+# > Task :compose-hero-benchmarks:pokedex-compose:app:kspReleaseKotlin
 w: \[ksp\] LibraryGlideModules \[\] are included more than once, keeping only one\!
 # b/439568035
 WARNING: The option setting 'android\.newDsl=false' is deprecated\.
