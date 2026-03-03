@@ -223,10 +223,12 @@ interface TrackpadInjectionScope : InjectionScope {
      * offset sending the appropriate event in sequence.
      *
      * @param delta the incremental change in the pan offset.
+     * @param delayMillis The time between the last sent event and this event. [eventPeriodMillis]
+     *   by default.
      * @throws [IllegalStateException] if the trackpad is not in a pan gesture started by
      *   [panStart].
      */
-    fun panMoveBy(delta: Offset)
+    fun panMoveBy(delta: Offset, delayMillis: Long = eventPeriodMillis)
 
     /**
      * Ends a pan gesture. The [androidx.compose.ui.input.pointer.PointerEventType.PanEnd] will be
@@ -261,10 +263,15 @@ interface TrackpadInjectionScope : InjectionScope {
      * given factor sending the appropriate events in sequence.
      *
      * @param scaleFactor the incremental multiplicative change in the scale factor.
+     * @param delayMillis The time between the last sent event and this event. [eventPeriodMillis]
+     *   by default.
      * @throws [IllegalStateException] if the trackpad is not in a scale gesture started by
      *   [scaleStart].
      */
-    fun scaleChangeBy(@FloatRange(from = 0.0, fromInclusive = false) scaleFactor: Float)
+    fun scaleChangeBy(
+        @FloatRange(from = 0.0, fromInclusive = false) scaleFactor: Float,
+        delayMillis: Long = eventPeriodMillis,
+    )
 
     /**
      * Ends a scale gesture. The [androidx.compose.ui.input.pointer.PointerEventType.ScaleEnd] will
@@ -329,7 +336,8 @@ internal class TrackpadInjectionScopeImpl(private val baseScope: MultiModalInjec
         inputDispatcher.enqueueTrackpadPanStart()
     }
 
-    override fun panMoveBy(delta: Offset) {
+    override fun panMoveBy(delta: Offset, delayMillis: Long) {
+        advanceEventTime(delayMillis)
         inputDispatcher.enqueueTrackpadPanMove(delta)
     }
 
@@ -341,7 +349,8 @@ internal class TrackpadInjectionScopeImpl(private val baseScope: MultiModalInjec
         inputDispatcher.enqueueTrackpadScaleStart()
     }
 
-    override fun scaleChangeBy(scaleFactor: Float) {
+    override fun scaleChangeBy(scaleFactor: Float, delayMillis: Long) {
+        advanceEventTime(delayMillis)
         inputDispatcher.enqueueTrackpadScaleChange(scaleFactor)
     }
 
@@ -573,7 +582,6 @@ fun TrackpadInjectionScope.dragAndDrop(
  */
 fun TrackpadInjectionScope.pan(offset: Offset) {
     panStart()
-    advanceEventTime()
     panMoveBy(offset)
     advanceEventTime()
     panEnd()
@@ -638,8 +646,7 @@ fun TrackpadInjectionScope.pan(
 
             val delta = value - accmulatedDelta
             accmulatedDelta = value
-            advanceEventTime(t - tPrev)
-            panMoveBy(delta)
+            panMoveBy(delta = delta, delayMillis = t - tPrev)
             tPrev = t
         }
         currTime = tNext
@@ -710,7 +717,6 @@ fun TrackpadInjectionScope.scale(
     @FloatRange(from = 0.0, fromInclusive = false) scaleFactor: Float
 ) {
     scaleStart()
-    advanceEventTime()
     scaleChangeBy(scaleFactor)
     advanceEventTime()
     scaleEnd()
