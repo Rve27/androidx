@@ -67,22 +67,27 @@ class ProjectedTestAppActivity : ComponentActivity() {
     private val TAG = "ProjectedTestAppActivity"
     private val configs =
         listOf(
-            "Geospatial On, 3DoF On" to
+            "Geospatial On, 6DoF On" to
                 Config(
                     geospatial = GeospatialMode.VPS_AND_GPS,
-                    deviceTracking = DeviceTrackingMode.LAST_KNOWN,
+                    deviceTracking = DeviceTrackingMode.SPATIAL_LAST_KNOWN,
+                ),
+            "Geospatial Off, 6DoF On" to
+                Config(
+                    geospatial = GeospatialMode.DISABLED,
+                    deviceTracking = DeviceTrackingMode.SPATIAL_LAST_KNOWN,
                 ),
             "Geospatial Off, 3DoF On" to
                 Config(
                     geospatial = GeospatialMode.DISABLED,
-                    deviceTracking = DeviceTrackingMode.LAST_KNOWN,
+                    deviceTracking = DeviceTrackingMode.INERTIAL_LAST_KNOWN,
                 ),
-            "Geospatial Off, 3DoF Off" to
+            "Geospatial Off, Device Tracking Off" to
                 Config(
                     geospatial = GeospatialMode.DISABLED,
                     deviceTracking = DeviceTrackingMode.DISABLED,
                 ),
-            "Geospatial On, 3DoF Off" to
+            "Geospatial On, Device Tracking Off" to
                 Config(
                     geospatial = GeospatialMode.VPS_AND_GPS,
                     deviceTracking = DeviceTrackingMode.DISABLED,
@@ -205,7 +210,7 @@ class ProjectedTestAppActivity : ComponentActivity() {
         }
 
         val geoOn = currentConfig.geospatial == GeospatialMode.VPS_AND_GPS
-        val trackingOn = currentConfig.deviceTracking == DeviceTrackingMode.LAST_KNOWN
+        val trackingOn = currentConfig.deviceTracking != DeviceTrackingMode.DISABLED
 
         if (geoOn && trackingOn) {
             newText += getDevicePoseText()

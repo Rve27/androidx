@@ -171,7 +171,7 @@ internal constructor(
         }
 
         if (config.deviceTracking != this.config.deviceTracking) {
-            if (config.deviceTracking == DeviceTrackingMode.LAST_KNOWN) {
+            if (config.deviceTracking == DeviceTrackingMode.SPATIAL_LAST_KNOWN) {
                 perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.arDevice)
             } else {
                 perceptionManager.xrResources.removeUpdatable(
