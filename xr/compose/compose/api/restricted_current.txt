@@ -333,7 +333,7 @@ package androidx.xr.compose.subspace {
   @kotlin.PublishedApi internal final class SpatialColumnScopeInstance implements androidx.xr.compose.subspace.SpatialColumnScope {
     method public androidx.xr.compose.subspace.layout.SubspaceModifier align(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.compose.subspace.layout.SpatialAlignment.Depth alignment);
     method public androidx.xr.compose.subspace.layout.SubspaceModifier align(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.compose.subspace.layout.SpatialAlignment.Horizontal alignment);
-    method public androidx.xr.compose.subspace.layout.SubspaceModifier weight(androidx.xr.compose.subspace.layout.SubspaceModifier, float weight, boolean fill);
+    method public androidx.xr.compose.subspace.layout.SubspaceModifier weight(androidx.xr.compose.subspace.layout.SubspaceModifier, float weight, optional boolean fill);
   }
 
   public final class SpatialCurvedRowDefaults {
@@ -481,7 +481,7 @@ package androidx.xr.compose.subspace {
   @kotlin.PublishedApi internal final class SpatialRowScopeInstance implements androidx.xr.compose.subspace.SpatialRowScope {
     method public androidx.xr.compose.subspace.layout.SubspaceModifier align(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.compose.subspace.layout.SpatialAlignment.Depth alignment);
     method public androidx.xr.compose.subspace.layout.SubspaceModifier align(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.compose.subspace.layout.SpatialAlignment.Vertical alignment);
-    method public androidx.xr.compose.subspace.layout.SubspaceModifier weight(androidx.xr.compose.subspace.layout.SubspaceModifier, float weight, boolean fill);
+    method public androidx.xr.compose.subspace.layout.SubspaceModifier weight(androidx.xr.compose.subspace.layout.SubspaceModifier, float weight, optional boolean fill);
   }
 
   public final class SpatialSpacerKt {
