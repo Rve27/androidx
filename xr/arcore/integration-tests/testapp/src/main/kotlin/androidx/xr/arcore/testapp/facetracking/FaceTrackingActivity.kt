@@ -223,14 +223,12 @@ class FaceTrackingActivity : ComponentActivity() {
                         modifier = Modifier.padding(20.dp),
                     ) {
                         Text("Region Confidences: ")
+                        Text("LOWER: ${faceState.getConfidence(FaceConfidenceRegion.LOWER)}")
                         Text(
-                            "LOWER: ${faceState.getConfidence(FaceConfidenceRegion.FACE_CONFIDENCE_REGION_LOWER)}"
+                            "LEFT_UPPER: ${faceState.getConfidence(FaceConfidenceRegion.LEFT_UPPER)}"
                         )
                         Text(
-                            "LEFT_UPPER: ${faceState.getConfidence(FaceConfidenceRegion.FACE_CONFIDENCE_REGION_LEFT_UPPER)}"
-                        )
-                        Text(
-                            "RIGHT_UPPER: ${faceState.getConfidence(FaceConfidenceRegion.FACE_CONFIDENCE_REGION_RIGHT_UPPER)}"
+                            "RIGHT_UPPER: ${faceState.getConfidence(FaceConfidenceRegion.RIGHT_UPPER)}"
                         )
                     }
                     if (faceState.trackingState == TrackingState.TRACKING) {

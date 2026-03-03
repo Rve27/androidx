@@ -162,9 +162,9 @@ internal constructor(
 
         internal val confidenceRegions: List<FaceConfidenceRegion> =
             listOf(
-                FaceConfidenceRegion.FACE_CONFIDENCE_REGION_LOWER,
-                FaceConfidenceRegion.FACE_CONFIDENCE_REGION_LEFT_UPPER,
-                FaceConfidenceRegion.FACE_CONFIDENCE_REGION_RIGHT_UPPER,
+                FaceConfidenceRegion.LOWER,
+                FaceConfidenceRegion.LEFT_UPPER,
+                FaceConfidenceRegion.RIGHT_UPPER,
             )
     }
 
@@ -212,9 +212,9 @@ internal constructor(
         public fun getConfidence(region: FaceConfidenceRegion): Float {
             check(confidenceValues != null) { "The Face does not contain confidenceValues." }
             return when (region) {
-                FaceConfidenceRegion.FACE_CONFIDENCE_REGION_LOWER -> confidenceValues[0]
-                FaceConfidenceRegion.FACE_CONFIDENCE_REGION_LEFT_UPPER -> confidenceValues[1]
-                FaceConfidenceRegion.FACE_CONFIDENCE_REGION_RIGHT_UPPER -> confidenceValues[2]
+                FaceConfidenceRegion.LOWER -> confidenceValues[0]
+                FaceConfidenceRegion.LEFT_UPPER -> confidenceValues[1]
+                FaceConfidenceRegion.RIGHT_UPPER -> confidenceValues[2]
                 else -> throw IllegalArgumentException("Unknown confidence for region ${region}.")
             }
         }

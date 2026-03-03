@@ -365,15 +365,15 @@ package androidx.xr.arcore {
 
   public final class FaceConfidenceRegion {
     field public static final androidx.xr.arcore.FaceConfidenceRegion.Companion Companion;
-    field public static final androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LEFT_UPPER;
-    field public static final androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LOWER;
-    field public static final androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_RIGHT_UPPER;
+    field public static final androidx.xr.arcore.FaceConfidenceRegion LEFT_UPPER;
+    field public static final androidx.xr.arcore.FaceConfidenceRegion LOWER;
+    field public static final androidx.xr.arcore.FaceConfidenceRegion RIGHT_UPPER;
   }
 
   public static final class FaceConfidenceRegion.Companion {
-    property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LEFT_UPPER;
-    property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_LOWER;
-    property public androidx.xr.arcore.FaceConfidenceRegion FACE_CONFIDENCE_REGION_RIGHT_UPPER;
+    property public androidx.xr.arcore.FaceConfidenceRegion LEFT_UPPER;
+    property public androidx.xr.arcore.FaceConfidenceRegion LOWER;
+    property public androidx.xr.arcore.FaceConfidenceRegion RIGHT_UPPER;
   }
 
   public final class FaceMeshRegion {
