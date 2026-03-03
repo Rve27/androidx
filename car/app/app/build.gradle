@@ -144,7 +144,6 @@ abstract class ProtocolApiTask extends DefaultTask {
         MetalavaRunnerKt.runMetalavaWithArgs(
                 metalavaClasspath,
                 standardArgs,
-                /* k2UastEnabled= */ false,
                 kotlinSourceLevel.get(),
                 workerExecutor,
         )
