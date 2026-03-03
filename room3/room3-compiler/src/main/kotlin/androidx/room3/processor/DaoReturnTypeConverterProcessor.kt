@@ -379,11 +379,13 @@ private fun reportDuplicates(context: Context, converters: List<CustomDaoReturnT
                     }
 
                 if (duplicates.isNotEmpty()) {
+                    val converterNames =
+                        (listOf(converter) + duplicates).map {
+                            it.className.toString(context.codeLanguage) + "." + it.function.name
+                        }
                     context.logger.e(
                         converter.function,
-                        ProcessorErrors.duplicateDaoReturnTypeConverters(
-                            listOf(converter) + duplicates
-                        ),
+                        ProcessorErrors.duplicateDaoReturnTypeConverters(converterNames),
                     )
                 }
             }
