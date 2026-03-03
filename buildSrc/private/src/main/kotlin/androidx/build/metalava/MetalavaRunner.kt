@@ -368,7 +368,7 @@ fun getGenerateApiArgs(
         args += listOf("--compiled-sources", compiledSources.absolutePath)
     }
 
-    args += listOf("--format=v4", "--warnings-as-errors")
+    args += listOf("--format=4.0", "--warnings-as-errors")
 
     pathToManifest?.let { args += listOf("--manifest", pathToManifest) }
 
