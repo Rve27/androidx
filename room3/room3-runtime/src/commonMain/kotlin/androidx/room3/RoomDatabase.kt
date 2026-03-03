@@ -39,7 +39,7 @@ import kotlinx.coroutines.withContext
  * Base class for all Room databases. All classes that are annotated with [Database] must extend
  * this class.
  *
- * RoomDatabase provides direct access to the underlying database implementation but you should
+ * RoomDatabase provides direct access to the underlying database implementation, but you should
  * prefer using [Dao] classes.
  *
  * @see Database
