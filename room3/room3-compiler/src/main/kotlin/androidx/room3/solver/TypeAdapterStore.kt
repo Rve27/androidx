@@ -50,13 +50,12 @@ import androidx.room3.solver.binderprovider.CoroutineFlowResultBinderProvider
 import androidx.room3.solver.binderprovider.DaoConverterDeleteOrUpdateFunctionBinderProvider
 import androidx.room3.solver.binderprovider.DaoConverterInsertOrUpsertFunctionQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.DaoConverterQueryResultBinderProvider
+import androidx.room3.solver.binderprovider.DaoReturnTypePreparedQueryBinderProvider
 import androidx.room3.solver.binderprovider.InstantQueryResultBinderProvider
 import androidx.room3.solver.binderprovider.SuspendResultBinderProvider
 import androidx.room3.solver.prepared.binder.PreparedQueryResultBinder
-import androidx.room3.solver.prepared.binderprovider.GuavaListenableFuturePreparedQueryResultBinderProvider
 import androidx.room3.solver.prepared.binderprovider.InstantPreparedQueryResultBinderProvider
 import androidx.room3.solver.prepared.binderprovider.PreparedQueryResultBinderProvider
-import androidx.room3.solver.prepared.binderprovider.RxPreparedQueryResultBinderProvider
 import androidx.room3.solver.prepared.result.PreparedQueryResultAdapter
 import androidx.room3.solver.query.parameter.ArrayQueryParameterAdapter
 import androidx.room3.solver.query.parameter.BasicQueryParameterAdapter
@@ -228,8 +227,14 @@ private constructor(
 
     private val preparedQueryResultBinderProviders: List<PreparedQueryResultBinderProvider> =
         mutableListOf<PreparedQueryResultBinderProvider>().apply {
-            addAll(RxPreparedQueryResultBinderProvider.getAll(context))
-            add(GuavaListenableFuturePreparedQueryResultBinderProvider(context))
+            addAll(
+                daoReturnTypeConverters.map {
+                    DaoReturnTypePreparedQueryBinderProvider(
+                        context = context,
+                        returnTypeConverter = it,
+                    )
+                }
+            )
             add(InstantPreparedQueryResultBinderProvider(context))
         }
 
