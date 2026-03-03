@@ -101,7 +101,7 @@ package androidx.xr.scenecore.testing {
     method public void addChild(androidx.xr.scenecore.runtime.Entity child);
     method public void addChildren(java.util.List<? extends androidx.xr.scenecore.runtime.Entity> children);
     method public boolean addComponent(androidx.xr.scenecore.runtime.Component component);
-    method public void addInputEventListener(java.util.concurrent.Executor? executor, androidx.xr.scenecore.runtime.InputEventListener listener);
+    method public void addInputEventListener(optional java.util.concurrent.Executor? executor, androidx.xr.scenecore.runtime.InputEventListener listener);
     method public void dispose();
     method public float getAlpha(@androidx.xr.scenecore.runtime.SpaceValue int relativeTo);
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.runtime.Entity> getChildren();
