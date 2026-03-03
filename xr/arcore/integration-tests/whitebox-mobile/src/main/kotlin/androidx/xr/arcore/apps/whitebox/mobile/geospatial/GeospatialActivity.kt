@@ -100,7 +100,7 @@ class GeospatialActivity : ComponentActivity(), DefaultLifecycleObserver {
                 config =
                     Config(
                         planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                        deviceTracking = DeviceTrackingMode.LAST_KNOWN,
+                        deviceTracking = DeviceTrackingMode.SPATIAL_LAST_KNOWN,
                         geospatial = GeospatialMode.VPS_AND_GPS,
                     ),
                 onSessionAvailable = { session ->
