@@ -176,5 +176,5 @@ object ComposeFoundationFlags {
     // TODO: Remove this flag once it has soaked (b/487251541)
     @field:Suppress("MutableBareField")
     @JvmField
-    var isBasicTextFieldMinSizeOptimizationEnabled = true
+    var isBasicTextFieldMinSizeOptimizationEnabled = false
 }
