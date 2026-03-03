@@ -1343,7 +1343,7 @@ public class GridWidgetTest {
         scrollToBegin(mVerifyLayout);
 
         verifyBeginAligned();
-        assertTrue(((StandardGrid) mLayoutManager.mGrid).mSpanSupport == null);
+        assertTrue(((StandardGrid) mLayoutManager.mGrid).mSpanSizeLookup == null);
     }
 
     @Ignore // b/266757643

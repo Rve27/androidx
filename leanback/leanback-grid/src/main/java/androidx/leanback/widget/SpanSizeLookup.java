@@ -19,35 +19,33 @@ import android.util.SparseIntArray;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 
-/**
- * Wrapper around GridLayoutManager.SpanSizeLookUp, duplicates the cache implementation since
- * the cache methods are package private.
- */
-final class SpanSupport {
-    static final int FILL_ALL_SPANS_AND_PADDING = -1;
-    static final int FILL_ALL_SPANS = -2;
+import org.jspecify.annotations.NonNull;
 
-    private final GridLayoutManager.SpanSizeLookup mSpanSizeLookup;
+/**
+ * Extension of recyclerview GridLayoutManager.SpanSizeLookUp.  Supports FILL_ALL_SPANS_AND_PADDINGS
+ * and FILL_ALL_SPANS.
+ */
+public abstract class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+    /**
+     * Value returned by {@link #getSpanSize(int)}: fill all spans and padding area, it takes full
+     * width of a vertical grid view or full height of a horizontal grid view.
+     */
+    public static final int FILL_ALL_SPANS_AND_PADDINGS = -1;
+
+    /**
+     * Value returned by {@link #getSpanSize(int)}:  fill all spans.  It's equivalent of returning
+     * the spanCount.
+     */
+    public static final int FILL_ALL_SPANS = -2;
+
     private final SparseIntArray mSpanIndexCache = new SparseIntArray();
     private final SparseIntArray mSpanGroupIndexCache = new SparseIntArray();
 
-    SpanSupport(GridLayoutManager.SpanSizeLookup spanSizeLookup) {
-        mSpanSizeLookup = spanSizeLookup;
-    }
-
-    void invalidateSpanIndexCache() {
-        mSpanIndexCache.clear();
-    }
-
-    void invalidateSpanGroupIndexCache() {
-        mSpanGroupIndexCache.clear();
-    }
-
     int getCachedSpanIndex(int position, int spanCount) {
-        if (!mSpanSizeLookup.isSpanIndexCacheEnabled()) {
+        if (!isSpanIndexCacheEnabled()) {
             // If app supplied SpanSizeLookup declares the cache is not enabled.  Then it is
             // the app's responsibility to make getSpanIndex() efficient.
-            return mSpanSizeLookup.getSpanIndex(position, spanCount);
+            return getSpanIndex(position, spanCount);
         }
         final int existing = mSpanIndexCache.get(position, -1);
         if (existing != -1) {
@@ -59,10 +57,10 @@ final class SpanSupport {
     }
 
     int getCachedSpanGroupIndex(int position, int spanCount) {
-        if (!mSpanSizeLookup.isSpanGroupIndexCacheEnabled()) {
+        if (!isSpanGroupIndexCacheEnabled()) {
             // If app supplied SpanSizeLookup declares the cache is not enabled.  Then it is
             // the app's responsibility to make getSpanGroupIndex() efficient.
-            return mSpanSizeLookup.getSpanGroupIndex(position, spanCount);
+            return getSpanGroupIndex(position, spanCount);
         }
         final int existing = mSpanGroupIndexCache.get(position, -1);
         if (existing != -1) {
@@ -73,10 +71,26 @@ final class SpanSupport {
         return value;
     }
 
-    // Returns FILL_ALL_SPANS_AND_PADDING or real span count.
-    // FILL_ALL_SPANS_AND_PADDING will have a special treatment in GridLayoutManager.
+    /**
+     * Returns the number of spans this item will take, or {@link #FILL_ALL_SPANS_AND_PADDINGS},
+     * {@link #FILL_ALL_SPANS}.
+     * @param position The adapter position of the item.
+     * @return The number of spans this item will take, or {@link #FILL_ALL_SPANS_AND_PADDINGS},
+     * {@link #FILL_ALL_SPANS}.
+     */
+    @Override
+    public abstract int getSpanSize(int position);
+
+    /**
+     * Returns the number of spans this item will take, or {@link #FILL_ALL_SPANS_AND_PADDINGS}.
+     * Default implementation calls {@link #getSpanSize(int)} without spanCount. Subclass may
+     * override this method to return span size based on spanCount.
+     * @param position The adapter position of the item.
+     * @param spanCount The total available spans of the grid.
+     * @return The number of spans this item will take, or {@link #FILL_ALL_SPANS_AND_PADDINGS}.
+     */
     public int getSpanSize(int position, int spanCount) {
-        int size = mSpanSizeLookup.getSpanSize(position);
+        int size = getSpanSize(position);
         if (size == FILL_ALL_SPANS) {
             size = spanCount;
         }
@@ -84,25 +98,29 @@ final class SpanSupport {
     }
 
     private int getRealSpanSize(int position, int spanCount) {
-        int size = mSpanSizeLookup.getSpanSize(position);
-        if (size == FILL_ALL_SPANS_AND_PADDING || size == FILL_ALL_SPANS) {
+        int size = getSpanSize(position);
+        if (size == FILL_ALL_SPANS_AND_PADDINGS || size == FILL_ALL_SPANS) {
             return spanCount;
         }
         return size;
     }
 
     // Implementation using built-in cache.
-    private int getSpanIndex(int position, int spanCount) {
+    @Override
+    public int getSpanIndex(int position, int spanCount) {
         int positionSpanSize = getRealSpanSize(position, spanCount);
         if (positionSpanSize == spanCount) {
             return 0; // quick return for full-span items
         }
         int span = 0;
         int startPos = 0;
-        int prevKey = findFirstKeyLessThan(mSpanIndexCache, position);
-        if (prevKey >= 0) {
-            span = mSpanIndexCache.get(prevKey) + getRealSpanSize(prevKey, spanCount);
-            startPos = prevKey + 1;
+        // If caching is enabled, try to jump
+        if (isSpanIndexCacheEnabled()) {
+            int prevKey = findFirstKeyLessThan(mSpanIndexCache, position);
+            if (prevKey >= 0) {
+                span = mSpanIndexCache.get(prevKey) + getRealSpanSize(prevKey, spanCount);
+                startPos = prevKey + 1;
+            }
         }
         for (int i = startPos; i < position; i++) {
             int size = getRealSpanSize(i, spanCount);
@@ -142,21 +160,23 @@ final class SpanSupport {
         return -1;
     }
 
-    // Implementation using built-in cache.
-    private int getSpanGroupIndex(int adapterPosition, int spanCount) {
+    @Override
+    public int getSpanGroupIndex(int adapterPosition, int spanCount) {
         int span = 0;
         int group = 0;
         int start = 0;
-        // This finds the first non empty cached group cache key.
-        int prevKey = findFirstKeyLessThan(mSpanGroupIndexCache, adapterPosition);
-        if (prevKey != -1) {
-            group = mSpanGroupIndexCache.get(prevKey);
-            start = prevKey + 1;
-            span = getCachedSpanIndex(prevKey, spanCount)
-                    + getRealSpanSize(prevKey, spanCount);
-            if (span == spanCount) {
-                span = 0;
-                group++;
+        if (isSpanGroupIndexCacheEnabled()) {
+            // This finds the first non empty cached group cache key.
+            int prevKey = findFirstKeyLessThan(mSpanGroupIndexCache, adapterPosition);
+            if (prevKey != -1) {
+                group = mSpanGroupIndexCache.get(prevKey);
+                start = prevKey + 1;
+                span = getCachedSpanIndex(prevKey, spanCount)
+                        + getRealSpanSize(prevKey, spanCount);
+                if (span == spanCount) {
+                    span = 0;
+                    group++;
+                }
             }
         }
         int positionSpanSize = getRealSpanSize(adapterPosition, spanCount);
@@ -176,5 +196,20 @@ final class SpanSupport {
             group++;
         }
         return group;
+    }
+
+    /**
+     * The default SpanSizeLookup that has one span.
+     */
+    public static final class DefaultSpanSizeLookup extends SpanSizeLookup {
+        private DefaultSpanSizeLookup() {}
+
+        @Override
+        public int getSpanSize(int position) {
+            return 1;
+        }
+
+        @NonNull
+        public static final DefaultSpanSizeLookup INSTANCE = new DefaultSpanSizeLookup();
     }
 }
