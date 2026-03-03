@@ -32,11 +32,14 @@ import okio.BufferedSink
  * This buffer is designed to hold trace events temporarily before they are flushed. When the buffer
  * is full, it overwrites the oldest events.
  *
+ * A standard [flush] or [close] will simply clear the buffer and drop the events. To persist the
+ * trace data, you must provide a [BufferedSink] by calling [flushTo] or [closeAndFlushTo].
+ *
  * This implementation converts [androidx.tracing.TraceEvent]s into binary protos using
  * [the Wire library](https://square.github.io/wire/).
  */
 @ExperimentalRingBufferApi
-public class RingBufferTraceSink(
+public class InMemoryRingBufferTraceSink(
     /**
      * ID which uniquely identifies the trace capture system, within which uuids are guaranteed to
      * be unique.
@@ -52,8 +55,6 @@ public class RingBufferTraceSink(
      * is estimated based on an average event size of 1KB.
      */
     capacityInBytes: Long,
-    /** Output [BufferedSink] the trace will be written to. */
-    private val bufferedSink: BufferedSink,
 ) : TraceSink() {
     // Estimate 1KB per event
     private val countLimit = (capacityInBytes / 1024).toInt().coerceAtLeast(1)
@@ -74,8 +75,7 @@ public class RingBufferTraceSink(
         }
     }
 
-    private val wireTraceEventSerializer =
-        WireTraceEventSerializer(sequenceId, ProtoWriter(bufferedSink))
+    private val wireTraceEventSerializer = WireTraceEventSerializer(sequenceId)
 
     override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
         if (closed) return
@@ -111,7 +111,22 @@ public class RingBufferTraceSink(
         isDroppedTraceEvent = true
     }
 
+    /** Clears the current buffer and drops the events without writing them out. */
     override fun flush() {
+        flushInternal(null)
+    }
+
+    /**
+     * Flushes the current buffer to the provided [BufferedSink].
+     *
+     * This writes out the ring buffer's contents to the sink and then clears the ring buffer.
+     */
+    public fun flushTo(bufferedSink: BufferedSink) {
+        flushInternal(bufferedSink)
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun flushInternal(sink: BufferedSink?) {
         synchronized(lock) {
             var index = readIndex
 
@@ -119,15 +134,20 @@ public class RingBufferTraceSink(
             isDroppedTraceEvent = false
             var firstEventInFlush = true
 
+            val protoWriter = sink?.let { ProtoWriter(it) }
+
             repeat(count) {
                 val event = events[index]
                 val isDropped = if (firstEventInFlush) reportDroppedTraceEvent else false
                 firstEventInFlush = false
 
-                wireTraceEventSerializer.writeTraceEvent(
-                    event = event,
-                    reportDroppedTraceEvent = isDropped,
-                )
+                if (protoWriter != null) {
+                    wireTraceEventSerializer.writeTraceEvent(
+                        protoWriter = protoWriter,
+                        event = event,
+                        reportDroppedTraceEvent = isDropped,
+                    )
+                }
 
                 // Reset the event to free up memory (strings, arrays, etc.)
                 // since it's no longer logically in the ring buffer.
@@ -143,32 +163,27 @@ public class RingBufferTraceSink(
             writeIndex = 0
             readIndex = 0
 
-            bufferedSink.flush()
+            sink?.flush()
         }
     }
 
     /**
-     * Close the [RingBufferTraceSink].
-     *
-     * This function may be called from any thread.
-     *
-     * @param flush if true, any enqueued writes are flushed to the underlying buffer before
-     *   closing.
+     * Marks the [InMemoryRingBufferTraceSink] as closed and clears any remaining buffered events
+     * without writing them out.
      */
-    public fun close(flush: Boolean) {
+    override fun close() {
         if (closed) return
-
-        // Note: Closed only means that we will no longer enqueue() new items into the Queue.
-        // Flushing and closing of the underlying BufferedSink are still allowed.
         closed = true
-
-        if (flush) {
-            flush()
-        }
-        bufferedSink.close()
+        flushInternal(null)
     }
 
-    override fun close() {
-        close(flush = true)
+    /**
+     * Marks the [InMemoryRingBufferTraceSink] as closed and flushes the remaining buffered events
+     * to the provided [BufferedSink] but does not close it.
+     */
+    public fun closeAndFlushTo(bufferedSink: BufferedSink) {
+        if (closed) return
+        closed = true
+        flushInternal(bufferedSink)
     }
 }
