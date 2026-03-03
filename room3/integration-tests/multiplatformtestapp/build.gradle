@@ -129,7 +129,7 @@ dependencies {
         add("kspWatchosArm64Test", roomCompilerDependency)
         add("kspWatchosSimulatorArm64Test", roomCompilerDependency)
     }
-    if (!androidx.isIsolatedProjectsEnabled()) {
+    if (!androidx.isIsolatedProjectsEnabled()) { // KT-80311
         add("kspJsTest", roomCompilerDependency)
         add("kspWasmJsTest", roomCompilerDependency)
     }
