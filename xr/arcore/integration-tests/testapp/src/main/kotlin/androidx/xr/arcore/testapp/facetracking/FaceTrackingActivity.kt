@@ -277,93 +277,68 @@ class FaceTrackingActivity : ComponentActivity() {
 
         // smile
         if (
-            faceState.blendShapes[
-                    FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LIP_CORNER_PULLER_LEFT]!! >= .3f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LIP_CORNER_PULLER_RIGHT]!! >=
-                    .3f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LIP_PRESSOR_LEFT]!! >= .3f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LIP_PRESSOR_RIGHT]!! >= .3f
+            faceState.blendShapes[FaceBlendShapeType.LIP_CORNER_PULLER_LEFT]!! >= .3f ||
+                faceState.blendShapes[FaceBlendShapeType.LIP_CORNER_PULLER_RIGHT]!! >= .3f ||
+                faceState.blendShapes[FaceBlendShapeType.LIP_PRESSOR_LEFT]!! >= .3f ||
+                faceState.blendShapes[FaceBlendShapeType.LIP_PRESSOR_RIGHT]!! >= .3f
         ) {
             return Expression.SMILE
         }
 
         // blink
         if (
-            faceState.blendShapes[FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_EYES_CLOSED_LEFT]!! ==
-                1f &&
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_EYES_CLOSED_RIGHT]!! == 1f
+            faceState.blendShapes[FaceBlendShapeType.EYES_CLOSED_LEFT]!! == 1f &&
+                faceState.blendShapes[FaceBlendShapeType.EYES_CLOSED_RIGHT]!! == 1f
         ) {
             return Expression.BLINK
         }
 
         // frown
         if (
-            faceState.blendShapes[
-                    FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LIP_CORNER_DEPRESSOR_LEFT]!! >= .5f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LIP_CORNER_DEPRESSOR_RIGHT]!! >=
-                    .5f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LIP_STRETCHER_LEFT]!! >= .5f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LIP_STRETCHER_RIGHT]!! >= .5f ||
-                faceState.blendShapes[FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_JAW_THRUST]!! >=
-                    .5f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_CHIN_RAISER_BOTTOM]!! >= .7f
+            faceState.blendShapes[FaceBlendShapeType.LIP_CORNER_DEPRESSOR_LEFT]!! >= .5f ||
+                faceState.blendShapes[FaceBlendShapeType.LIP_CORNER_DEPRESSOR_RIGHT]!! >= .5f ||
+                faceState.blendShapes[FaceBlendShapeType.LIP_STRETCHER_LEFT]!! >= .5f ||
+                faceState.blendShapes[FaceBlendShapeType.LIP_STRETCHER_RIGHT]!! >= .5f ||
+                faceState.blendShapes[FaceBlendShapeType.JAW_THRUST]!! >= .5f ||
+                faceState.blendShapes[FaceBlendShapeType.CHIN_RAISER_BOTTOM]!! >= .7f
         ) {
             return Expression.FROWN
         }
 
         // wink
         if (
-            faceState.blendShapes[FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_EYES_CLOSED_LEFT]!! >=
-                .6f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_EYES_CLOSED_RIGHT]!! >= .6f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LID_TIGHTENER_LEFT]!! >= .6f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_LID_TIGHTENER_RIGHT]!! >= .6f
+            faceState.blendShapes[FaceBlendShapeType.EYES_CLOSED_LEFT]!! >= .6f ||
+                faceState.blendShapes[FaceBlendShapeType.EYES_CLOSED_RIGHT]!! >= .6f ||
+                faceState.blendShapes[FaceBlendShapeType.LID_TIGHTENER_LEFT]!! >= .6f ||
+                faceState.blendShapes[FaceBlendShapeType.LID_TIGHTENER_RIGHT]!! >= .6f
         ) {
             return Expression.WINK
         }
 
         // eyebrow(s) raised
         if (
-            faceState.blendShapes[
-                    FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_OUTER_BROW_RAISER_LEFT]!! >= .5f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_OUTER_BROW_RAISER_RIGHT]!! >=
-                    .5f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_INNER_BROW_RAISER_LEFT]!! >= .5f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_INNER_BROW_RAISER_RIGHT]!! >= .5f
+            faceState.blendShapes[FaceBlendShapeType.OUTER_BROW_RAISER_LEFT]!! >= .5f ||
+                faceState.blendShapes[FaceBlendShapeType.OUTER_BROW_RAISER_RIGHT]!! >= .5f ||
+                faceState.blendShapes[FaceBlendShapeType.INNER_BROW_RAISER_LEFT]!! >= .5f ||
+                faceState.blendShapes[FaceBlendShapeType.INNER_BROW_RAISER_RIGHT]!! >= .5f
         ) {
             return Expression.EYEBROW_RAISED
         }
 
         // mouth open
-        if (faceState.blendShapes[FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_JAW_DROP]!! >= .6f) {
+        if (faceState.blendShapes[FaceBlendShapeType.JAW_DROP]!! >= .6f) {
             return Expression.MOUTH_OPEN
         }
 
         // tongue out
-        if (faceState.blendShapes[FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_TONGUE_OUT]!! >= .8f) {
+        if (faceState.blendShapes[FaceBlendShapeType.TONGUE_OUT]!! >= .8f) {
             return Expression.TONGUE_OUT
         }
 
         // angry
         if (
-            faceState.blendShapes[FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_BROW_LOWERER_LEFT]!! >=
-                .2f ||
-                faceState.blendShapes[
-                        FaceBlendShapeType.FACE_BLEND_SHAPE_TYPE_BROW_LOWERER_RIGHT]!! >= .2f
+            faceState.blendShapes[FaceBlendShapeType.BROW_LOWERER_LEFT]!! >= .2f ||
+                faceState.blendShapes[FaceBlendShapeType.BROW_LOWERER_RIGHT]!! >= .2f
         ) {
             return Expression.ANGRY
         }
