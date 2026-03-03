@@ -440,11 +440,6 @@ package androidx.xr.compose.subspace {
     ctor public SpatialGltfModelStatus.Loading();
   }
 
-  public final class SpatialLayoutSpacerKt {
-    method @KotlinOnly @Deprecated @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialLayoutSpacer(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier);
-    method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialLayoutSpacer(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.compose.runtime.Composer?, int, int);
-  }
-
   public final class SpatialPanelDefaults {
     method @InaccessibleFromKotlin public androidx.xr.compose.subspace.layout.SpatialShape getShape();
     property public androidx.xr.compose.subspace.layout.SpatialShape shape;
