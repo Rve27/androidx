@@ -21,6 +21,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.input.InputManager
 import android.view.InputDevice
+import android.view.MotionEvent
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalMediaQueryApi
 import androidx.compose.ui.LocalUiMediaScope
@@ -192,9 +193,7 @@ class MediaQueryIntegrationTest {
 
     @Test
     fun mediaQuery_pointerPrecision_returnsFineForMouse() {
-        val device =
-            InputDeviceBuilder.newBuilder().setId(1).setSources(InputDevice.SOURCE_MOUSE).build()
-        shadowInputManager.addInputDevice(device)
+        addPointerDevice(id = 1, InputDevice.SOURCE_MOUSE)
 
         var result = false
         rule.setContent {
@@ -213,12 +212,7 @@ class MediaQueryIntegrationTest {
 
     @Test
     fun mediaQuery_pointerPrecision_returnsCoarseForTouchscreen() {
-        val device =
-            InputDeviceBuilder.newBuilder()
-                .setId(1)
-                .setSources(InputDevice.SOURCE_TOUCHSCREEN)
-                .build()
-        shadowInputManager.addInputDevice(device)
+        addPointerDevice(id = 1, InputDevice.SOURCE_TOUCHSCREEN)
 
         var result = false
         rule.setContent {
@@ -237,16 +231,8 @@ class MediaQueryIntegrationTest {
 
     @Test
     fun mediaQuery_pointerPrecision_prioritizesFineOverCoarse() {
-        val touchDevice =
-            InputDeviceBuilder.newBuilder()
-                .setId(1)
-                .setSources(InputDevice.SOURCE_TOUCHSCREEN)
-                .build()
-        shadowInputManager.addInputDevice(touchDevice)
-
-        val mouseDevice =
-            InputDeviceBuilder.newBuilder().setId(2).setSources(InputDevice.SOURCE_MOUSE).build()
-        shadowInputManager.addInputDevice(mouseDevice)
+        addPointerDevice(id = 1, InputDevice.SOURCE_TOUCHSCREEN)
+        addPointerDevice(id = 2, InputDevice.SOURCE_MOUSE)
 
         var result = false
         rule.setContent {
@@ -258,6 +244,27 @@ class MediaQueryIntegrationTest {
                 )
             CompositionLocalProvider(LocalUiMediaScope provides mediaScope) {
                 result = mediaQuery { pointerPrecision == PointerPrecision.Fine }
+            }
+        }
+        assertTrue(result)
+    }
+
+    @Test
+    fun mediaQuery_pointerPrecision_ignoresDeviceWithoutMotionRange() {
+        val fakeMouseDevice =
+            InputDeviceBuilder.newBuilder().setId(1).setSources(InputDevice.SOURCE_MOUSE).build()
+        shadowInputManager.addInputDevice(fakeMouseDevice)
+
+        var result = false
+        rule.setContent {
+            val mediaScope =
+                obtainUiMediaScope(
+                    context = LocalContext.current,
+                    view = LocalView.current,
+                    windowInfo = LocalWindowInfo.current,
+                )
+            CompositionLocalProvider(LocalUiMediaScope provides mediaScope) {
+                result = mediaQuery { pointerPrecision == PointerPrecision.None }
             }
         }
         assertTrue(result)
@@ -285,5 +292,23 @@ class MediaQueryIntegrationTest {
             }
         }
         assertTrue(result)
+    }
+
+    private fun addPointerDevice(id: Int, source: Int) {
+        val device =
+            InputDeviceBuilder.newBuilder()
+                .setId(id)
+                .setSources(source)
+                .addMotionRange(
+                    MotionEvent.AXIS_X,
+                    source,
+                    /* min= */ 0f,
+                    /* max= */ 1000f,
+                    /* flat= */ 1f,
+                    /* fuzz= */ 1f,
+                    /* resolution= */ 1f,
+                )
+                .build()
+        shadowInputManager.addInputDevice(device)
     }
 }
