@@ -13,6 +13,11 @@ package androidx.lifecycle.viewmodel.compose {
     property public static androidx.compose.runtime.HostDefaultKey<androidx.lifecycle.ViewModelStoreOwner?> ViewModelStoreOwnerHostDefaultKey;
   }
 
+  public final class RememberViewModelStoreProviderKt {
+    method @KotlinOnly @androidx.compose.runtime.Composable public static androidx.lifecycle.viewmodel.ViewModelStoreProvider rememberViewModelStoreProvider(optional androidx.lifecycle.ViewModelStoreOwner? parent, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras, optional androidx.lifecycle.ViewModelProvider.Factory defaultFactory);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.lifecycle.viewmodel.ViewModelStoreProvider rememberViewModelStoreProvider(androidx.lifecycle.ViewModelStoreOwner?, androidx.lifecycle.viewmodel.CreationExtras?, androidx.lifecycle.ViewModelProvider.Factory?, androidx.compose.runtime.Composer?, int, int);
+  }
+
   @SuppressCompatibility @kotlin.RequiresOptIn(level=kotlin.RequiresOptIn.Level.WARNING) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.FUNCTION) public @interface SavedStateHandleSaveableApi {
   }
 
