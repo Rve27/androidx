@@ -56,7 +56,6 @@ private class HelloWidget : GlanceWearWidget() {
 
 @RemoteComposable
 @Composable
-@Suppress("RestrictedApiAndroidX")
 private fun HelloWidgetContent() {
     RemoteBox(
         modifier = RemoteModifier.fillMaxSize(),
