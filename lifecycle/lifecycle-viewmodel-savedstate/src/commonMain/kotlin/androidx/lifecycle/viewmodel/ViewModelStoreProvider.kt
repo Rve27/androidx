@@ -20,6 +20,7 @@ import androidx.collection.MutableScatterMap
 import androidx.collection.ScatterMap
 import androidx.collection.emptyScatterMap
 import androidx.collection.mutableScatterMapOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -29,7 +30,9 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.defaultViewModelCreationExtras
 import androidx.lifecycle.defaultViewModelProviderFactory
 import androidx.lifecycle.get
+import androidx.savedstate.SavedState
 import androidx.savedstate.SavedStateRegistryOwner
+import androidx.savedstate.savedState
 import kotlin.jvm.JvmOverloads
 
 /**
@@ -49,6 +52,9 @@ import kotlin.jvm.JvmOverloads
  * changes; you must manually call [clearAllKeys] to clean it up.
  *
  * @param store The parent [ViewModelStore] to bind to, or `null` for an independent root provider.
+ * @param defaultArgs The default [SavedState] arguments to use for child stores. These arguments
+ *   are merged with any default arguments in [defaultCreationExtras]. If the same key exists in
+ *   both, the value from [defaultArgs] takes precedence.
  * @param defaultCreationExtras The default creation extras to use for child stores.
  * @param defaultFactory The default factory to use for child stores.
  */
@@ -56,6 +62,7 @@ public class ViewModelStoreProvider
 @JvmOverloads
 public constructor(
     private val store: ViewModelStore?,
+    private val defaultArgs: SavedState = savedState(),
     private val defaultCreationExtras: CreationExtras = CreationExtras.Empty,
     private val defaultFactory: Factory = SavedStateViewModelFactory(),
 ) {
@@ -65,6 +72,9 @@ public constructor(
      *
      * @param owner The parent [ViewModelStoreOwner] to bind to, or `null` for an independent root
      *   provider.
+     * @param defaultArgs The default [SavedState] arguments to use for child stores. These
+     *   arguments are merged with any default arguments in [defaultCreationExtras]. If the same key
+     *   exists in both, the value from [defaultArgs] takes precedence.
      * @param defaultCreationExtras The default creation extras to use for child stores. Defaults to
      *   resolving from the [owner].
      * @param defaultFactory The default factory to use for child stores. Defaults to resolving from
@@ -73,9 +83,10 @@ public constructor(
     @JvmOverloads
     public constructor(
         owner: ViewModelStoreOwner?,
+        defaultArgs: SavedState = savedState(),
         defaultCreationExtras: CreationExtras = owner.defaultViewModelCreationExtras,
         defaultFactory: Factory = owner.defaultViewModelProviderFactory,
-    ) : this(owner?.viewModelStore, defaultCreationExtras, defaultFactory)
+    ) : this(owner?.viewModelStore, defaultArgs, defaultCreationExtras, defaultFactory)
 
     private val stateHolder by lazy {
         // If store exists, delegate state persistence to it (survives config changes). If store is
@@ -132,13 +143,15 @@ public constructor(
      * **Saved State Support:** If a [savedStateRegistryOwner] is provided, the returned
      * [ViewModelStoreOwner] will also implement [SavedStateRegistryOwner], delegating state
      * resolution to the provided owner. This is required if ViewModels within this scope depend on
-     * [androidx.lifecycle.SavedStateHandle]. When saved state is enabled and [defaultFactory] is
-     * not explicitly overridden, it automatically upgrades to a [SavedStateViewModelFactory].
+     * [SavedStateHandle]. When saved state is enabled and [defaultFactory] is not explicitly
+     * overridden, it automatically upgrades to a [SavedStateViewModelFactory].
      *
      * @param key The unique identifier for the child scope.
      * @param savedStateRegistryOwner An optional parent registry owner to delegate saved state
-     *   operations to. If `null`, the returned owner will not support
-     *   [androidx.lifecycle.SavedStateHandle].
+     *   operations to. If `null`, the returned owner will not support [SavedStateHandle].
+     * @param defaultArgs The default [SavedState] arguments to use for child stores. These
+     *   arguments are merged with any default arguments in [defaultCreationExtras]. If the same key
+     *   exists in both, the value from [defaultArgs] takes precedence.
      * @param defaultFactory An optional override for the default [ViewModelProvider.Factory].
      * @param defaultCreationExtras An optional override for the default [CreationExtras].
      * @return A scoped [ViewModelStoreOwner], which optionally supports saved state.
@@ -149,6 +162,7 @@ public constructor(
     public fun getOrCreateOwner(
         key: Any?,
         savedStateRegistryOwner: SavedStateRegistryOwner? = null,
+        defaultArgs: SavedState = this.defaultArgs,
         defaultCreationExtras: CreationExtras = this.defaultCreationExtras,
         defaultFactory: Factory = this.defaultFactory,
     ): ViewModelStoreOwner {
@@ -157,6 +171,7 @@ public constructor(
             // If no saved state is required, return a basic owner.
             ViewModelStoreOwner(
                 viewModelStore = viewModelStore,
+                defaultArgs = defaultArgs,
                 defaultFactory = defaultFactory,
                 defaultCreationExtras = defaultCreationExtras,
             )
@@ -165,6 +180,7 @@ public constructor(
             ViewModelStoreOwner(
                 viewModelStore = viewModelStore,
                 savedStateRegistryOwner = savedStateRegistryOwner,
+                defaultArgs = defaultArgs,
                 defaultFactory = defaultFactory,
                 defaultCreationExtras = defaultCreationExtras,
             )
