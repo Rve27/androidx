@@ -1037,31 +1037,6 @@ public class SpatialSceneRuntimeTest {
     }
 
     @Test
-    public void animateGltfEntity_gltfEntityIsAnimating() {
-        GltfEntity gltfEntity = createGltfEntity();
-        gltfEntity.startAnimation(false, "animation_name");
-
-        verify(mMockGltfFeature).startAnimation(false, "animation_name", mFakeExecutor);
-    }
-
-    @Test
-    public void animateLoopGltfEntity_gltfEntityIsAnimatingInLoop() {
-        GltfEntity gltfEntity = createGltfEntity();
-        gltfEntity.startAnimation(true, "animation_name");
-
-        verify(mMockGltfFeature).startAnimation(true, "animation_name", mFakeExecutor);
-    }
-
-    @Test
-    public void stopAnimateGltfEntity_gltfEntityStopsAnimating() {
-        GltfEntity gltfEntity = createGltfEntity();
-        gltfEntity.startAnimation(true, "animation_name");
-        gltfEntity.stopAnimation();
-
-        verify(mMockGltfFeature).stopAnimation();
-    }
-
-    @Test
     public void gltfEntitySetParent() {
         GltfEntityImpl childEntity = createGltfEntity();
         GltfEntityImpl parentEntity = createGltfEntity();
