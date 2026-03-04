@@ -20,8 +20,8 @@ package androidx.xr.scenecore
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.xr.arcore.Plane
 import androidx.xr.arcore.PlaneLabel
+import androidx.xr.arcore.PlaneType
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
@@ -272,12 +272,13 @@ internal fun Set<AnchorPlacement>.toRtAnchorPlacement(
     return rtAnchorPlacementSet
 }
 
-/** Extension function that converts an ARCore [Plane.Type] to a Scene [PlaneOrientationValue] */
-internal fun Plane.Type.toSceneCoreOrientation(): @PlaneOrientationValue Int =
+/** Extension function that converts an ARCore [PlaneType] to a Scene [PlaneOrientationValue] */
+@Suppress("DEPRECATION")
+internal fun PlaneType.toSceneCoreOrientation(): @PlaneOrientationValue Int =
     when (this) {
-        Plane.Type.HORIZONTAL_UPWARD_FACING -> PlaneOrientation.HORIZONTAL
-        Plane.Type.HORIZONTAL_DOWNWARD_FACING -> PlaneOrientation.HORIZONTAL
-        Plane.Type.VERTICAL -> PlaneOrientation.VERTICAL
+        PlaneType.HORIZONTAL_UPWARD_FACING -> PlaneOrientation.HORIZONTAL
+        PlaneType.HORIZONTAL_DOWNWARD_FACING -> PlaneOrientation.HORIZONTAL
+        PlaneType.VERTICAL -> PlaneOrientation.VERTICAL
         else -> error("Unknown plane orientation: $this")
     }
 

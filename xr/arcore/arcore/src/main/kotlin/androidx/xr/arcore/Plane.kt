@@ -135,6 +135,8 @@ internal constructor(
     }
 
     /** A simple summary of the normal vector of a [Plane]. */
+    @Deprecated("Use PlaneType instead.", replaceWith = ReplaceWith("PlaneType"))
+    @Suppress("DEPRECATION")
     public class Type private constructor(private val value: Int) {
         public companion object {
             /** A horizontal plane facing upward (e.g. floor or tabletop). */
@@ -201,7 +203,9 @@ internal constructor(
 
     public override val state: StateFlow<Plane.State> = _state.asStateFlow()
 
-    public val type: Type
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @get:SuppressWarnings("ReferencesDeprecated")
+    public val type: PlaneType
         get() = typeFromRuntimeType()
 
     /**
@@ -243,12 +247,13 @@ internal constructor(
         )
     }
 
-    private fun typeFromRuntimeType(): Type =
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+    private fun typeFromRuntimeType(): PlaneType =
         when (runtimePlane.type) {
-            RuntimePlane.Type.HORIZONTAL_UPWARD_FACING -> Type.HORIZONTAL_UPWARD_FACING
-            RuntimePlane.Type.HORIZONTAL_DOWNWARD_FACING -> Type.HORIZONTAL_DOWNWARD_FACING
-            RuntimePlane.Type.VERTICAL -> Type.VERTICAL
-            else -> Type.HORIZONTAL_UPWARD_FACING
+            RuntimePlane.Type.HORIZONTAL_UPWARD_FACING -> PlaneType.HORIZONTAL_UPWARD_FACING
+            RuntimePlane.Type.HORIZONTAL_DOWNWARD_FACING -> PlaneType.HORIZONTAL_DOWNWARD_FACING
+            RuntimePlane.Type.VERTICAL -> PlaneType.VERTICAL
+            else -> PlaneType.HORIZONTAL_UPWARD_FACING
         }
 
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")

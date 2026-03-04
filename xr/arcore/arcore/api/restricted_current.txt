@@ -628,17 +628,17 @@ package androidx.xr.arcore {
     property public java.util.List<androidx.xr.runtime.math.Vector2> vertices;
   }
 
-  public static final class Plane.Type {
-    field public static final androidx.xr.arcore.Plane.Type.Companion Companion;
-    field public static final androidx.xr.arcore.Plane.Type HORIZONTAL_DOWNWARD_FACING;
-    field public static final androidx.xr.arcore.Plane.Type HORIZONTAL_UPWARD_FACING;
-    field public static final androidx.xr.arcore.Plane.Type VERTICAL;
+  @Deprecated public static final class Plane.Type {
+    field @Deprecated public static final androidx.xr.arcore.Plane.Type.Companion Companion;
+    field @Deprecated public static final androidx.xr.arcore.Plane.Type HORIZONTAL_DOWNWARD_FACING;
+    field @Deprecated public static final androidx.xr.arcore.Plane.Type HORIZONTAL_UPWARD_FACING;
+    field @Deprecated public static final androidx.xr.arcore.Plane.Type VERTICAL;
   }
 
-  public static final class Plane.Type.Companion {
-    property public androidx.xr.arcore.Plane.Type HORIZONTAL_DOWNWARD_FACING;
-    property public androidx.xr.arcore.Plane.Type HORIZONTAL_UPWARD_FACING;
-    property public androidx.xr.arcore.Plane.Type VERTICAL;
+  @Deprecated public static final class Plane.Type.Companion {
+    property @Deprecated public androidx.xr.arcore.Plane.Type HORIZONTAL_DOWNWARD_FACING;
+    property @Deprecated public androidx.xr.arcore.Plane.Type HORIZONTAL_UPWARD_FACING;
+    property @Deprecated public androidx.xr.arcore.Plane.Type VERTICAL;
   }
 
   public final class RenderViewpoint {
@@ -705,6 +705,8 @@ package androidx.xr.arcore {
   public typealias GeospatialState = androidx.xr.arcore.Geospatial.State;
 
   public typealias PlaneLabel = androidx.xr.arcore.Plane.Label;
+
+  public typealias PlaneType = androidx.xr.arcore.Plane.Type;
 
 }
 

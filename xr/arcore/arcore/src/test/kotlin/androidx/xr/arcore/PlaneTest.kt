@@ -85,6 +85,7 @@ class PlaneTest {
     }
 
     @Test
+    @Suppress("DEPRECATION")
     fun constructor_convertsRuntimePlaneType() {
         val plane1 =
             Plane(
@@ -98,9 +99,9 @@ class PlaneTest {
             )
         val plane3 = Plane(FakeRuntimePlane(type = RuntimePlane.Type.VERTICAL), xrResourcesManager)
 
-        assertThat(plane1.type).isEqualTo(Plane.Type.HORIZONTAL_UPWARD_FACING)
-        assertThat(plane2.type).isEqualTo(Plane.Type.HORIZONTAL_DOWNWARD_FACING)
-        assertThat(plane3.type).isEqualTo(Plane.Type.VERTICAL)
+        assertThat(plane1.type).isEqualTo(PlaneType.HORIZONTAL_UPWARD_FACING)
+        assertThat(plane2.type).isEqualTo(PlaneType.HORIZONTAL_DOWNWARD_FACING)
+        assertThat(plane3.type).isEqualTo(PlaneType.VERTICAL)
     }
 
     @Test
