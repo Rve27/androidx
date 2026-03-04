@@ -17,6 +17,8 @@
 package androidx.compose.remote.core
 
 import androidx.compose.remote.core.operations.Header
+import androidx.compose.remote.core.operations.layout.managers.CoreText
+import androidx.compose.remote.core.operations.layout.managers.TextStyle
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.remote.creation.profile.Profile
@@ -37,14 +39,57 @@ class RemoteComposeBufferTest {
     }
 
     @Test
+    fun testTextStyleInBuffer() {
+        val rcProfile =
+            Profile(7, RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL, rcPlatform)
+            /* factory= */ { creationDisplayInfo, profile, _ ->
+                RemoteComposeWriter(creationDisplayInfo, null, profile)
+            }
+
+        val writer =
+            RemoteComposeWriter(
+                rcProfile,
+                RemoteComposeBuffer(rcProfile.apiLevel),
+                RemoteComposeWriter.hTag(Header.DOC_WIDTH, 188),
+                RemoteComposeWriter.hTag(Header.DOC_HEIGHT, 200),
+                RemoteComposeWriter.hTag(Header.DOC_PROFILES, rcProfile.operationsProfiles),
+            )
+
+        writer.addTextStyle(
+            0xFFFF0000.toInt(),
+            -1,
+            30f,
+            -1f,
+            -1f,
+            0,
+            800f,
+            null,
+            CoreText.TEXT_ALIGN_CENTER,
+            1,
+            Int.MAX_VALUE,
+            0f,
+            0f,
+            1f,
+            0,
+            0,
+            0,
+            false,
+            false,
+            null,
+            null,
+            false,
+            -1,
+        )
+
+        val coreDoc = CoreDocument().apply { initFromBuffer(writer.buffer) }
+        val hasStyle = coreDoc.mOperations.any { it is TextStyle }
+        assertThat(hasStyle).isTrue()
+    }
+
+    @Test
     fun initCoreDocumentFromBuffer_withExperimentalFeatures() {
         val rcProfile =
-            Profile(
-                /* apiLevel= */ 7,
-                /* operationProfiles= */ RcProfiles.PROFILE_ANDROIDX or
-                    RcProfiles.PROFILE_EXPERIMENTAL,
-                /* platform= */ rcPlatform,
-            )
+            Profile(7, RcProfiles.PROFILE_ANDROIDX or RcProfiles.PROFILE_EXPERIMENTAL, rcPlatform)
             /* factory= */ { creationDisplayInfo, profile, _ ->
                 RemoteComposeWriter(creationDisplayInfo, null, profile)
             }
@@ -61,33 +106,12 @@ class RemoteComposeBufferTest {
         val hello = writer.textCreateId("Hello")
 
         writer.root {
-            // A CORE_TEXT component that is experimental and in api 7
+            // Use simplified startTextComponent
             writer.startTextComponent(
-                /*modifier=*/ RecordingModifier(),
-                /*textId=*/ hello,
-                /*color=*/ 0xFFD0BCFF.toInt(),
-                /*colorId=*/ -1,
-                /*fontSize-*/ 10f,
-                /*minFontSize=*/ 10f,
-                /*maxFontSize=*/ 15f,
-                /*fontStyle=*/ 0,
-                /*fontWeight=*/ 500f,
-                /*fontFamily=*/ null,
-                /*textAlign=*/ 0,
-                /*overflow*/ 0,
-                /*maxLines=*/ 1,
-                /*letterSpacing=*/ 0f,
-                /*lineHeightAdd-*/ 0f,
-                /*lineHeightMultiplier=*/ 1f,
-                /*lineBreakStrategy=*/ 0,
-                /*hyphenationFrequency=*/ 0,
-                /*justificationMode=*/ 0,
-                /*underline=*/ false,
-                /*strikethrough=*/ false,
-                /*fontAxis=*/ null,
-                /*fontAxisValues*/ null,
-                /*autosize=*/ true,
-                /*flags=*/ 0,
+                RecordingModifier(),
+                hello,
+                -1, // textStyleId
+                0, // flags
             )
             writer.endTextComponent()
         }
