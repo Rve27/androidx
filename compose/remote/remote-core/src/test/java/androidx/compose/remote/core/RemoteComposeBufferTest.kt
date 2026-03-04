@@ -16,9 +16,12 @@
 
 package androidx.compose.remote.core
 
+import androidx.compose.remote.core.operations.BitmapData
 import androidx.compose.remote.core.operations.Header
 import androidx.compose.remote.core.operations.layout.managers.CoreText
+import androidx.compose.remote.core.operations.layout.managers.ImageLayout
 import androidx.compose.remote.core.operations.layout.managers.TextStyle
+import androidx.compose.remote.core.operations.utilities.ImageScaling
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.modifiers.RecordingModifier
 import androidx.compose.remote.creation.profile.Profile
@@ -33,9 +36,22 @@ import org.mockito.kotlin.mock
 class RemoteComposeBufferTest {
     private lateinit var rcPlatform: RcPlatformServices
 
+    private lateinit var androidXProfile: Profile
+
     @Before
     fun setUp() {
         rcPlatform = mock<RcPlatformServices>()
+
+        androidXProfile =
+            Profile(
+                /* apiLevel= */ 7,
+                /* operationProfiles= */ RcProfiles.PROFILE_ANDROIDX or
+                    RcProfiles.PROFILE_EXPERIMENTAL,
+                /* platform= */ rcPlatform,
+            )
+            /* factory= */ { creationDisplayInfo, profile, _ ->
+                RemoteComposeWriter(creationDisplayInfo, null, profile)
+            }
     }
 
     @Test
@@ -120,5 +136,39 @@ class RemoteComposeBufferTest {
         val coreDoc = CoreDocument().apply { initFromBuffer(writer.buffer) }
         assertThat(coreDoc.mBuffer.mApiLevel).isEqualTo(7)
         assertThat(coreDoc.mHeader?.profiles ?: 0).isEqualTo(rcProfile.operationsProfiles)
+    }
+
+    @Test
+    fun imageComponent() {
+        val writer =
+            RemoteComposeWriter(
+                androidXProfile,
+                RemoteComposeBuffer(androidXProfile.apiLevel),
+                RemoteComposeWriter.hTag(Header.DOC_WIDTH, 188),
+                RemoteComposeWriter.hTag(Header.DOC_HEIGHT, 200),
+                RemoteComposeWriter.hTag(Header.DOC_PROFILES, androidXProfile.operationsProfiles),
+            )
+
+        writer.root {
+            val imageId = writer.addBitmapUrl("https://example.com/a.png")
+
+            writer.image(
+                /* modifier = */ RecordingModifier(),
+                /* imageId = */ imageId,
+                /* scaleType = */ ImageScaling.SCALE_FIT,
+                /* alpha = */ 1f,
+            )
+        }
+
+        // no crash; can read correct api level from buffer and init the core doc.
+        val coreDoc = CoreDocument().apply { initFromBuffer(writer.buffer) }
+
+        val components = coreDoc.mRootLayoutComponent!!.mList
+        assertThat(components).hasSize(2)
+
+        val bitmapId = (components[0] as BitmapData).mImageId
+        val imageLayout = components[1] as ImageLayout
+        assertThat(imageLayout.componentId).isEqualTo(-3)
+        assertThat(imageLayout.bitmapId).isEqualTo(bitmapId)
     }
 }
