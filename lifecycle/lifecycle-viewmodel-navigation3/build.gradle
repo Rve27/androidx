@@ -41,9 +41,9 @@ androidXMultiplatform {
 
     sourceSets {
         commonMain.dependencies {
-            api("androidx.lifecycle:lifecycle-viewmodel:2.9.3")
-            api("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3")
-            api("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.3")
+            api(project(":lifecycle:lifecycle-viewmodel"))
+            api(project(":lifecycle:lifecycle-viewmodel-compose"))
+            api(project(":lifecycle:lifecycle-viewmodel-savedstate"))
             api("androidx.compose.runtime:runtime:1.9.0")
             api("androidx.compose.runtime:runtime-saveable:1.9.0")
             api(project(":navigation3:navigation3-runtime"))
