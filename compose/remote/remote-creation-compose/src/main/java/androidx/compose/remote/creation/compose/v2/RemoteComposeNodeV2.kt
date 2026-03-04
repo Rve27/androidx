@@ -283,6 +283,7 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
             creationState.document.startTextComponent(
                 with(modifier) { creationState.toRecordingModifier() },
                 textIdValue,
+                -1,
                 colorInt,
                 colorId,
                 fontSizePx,
