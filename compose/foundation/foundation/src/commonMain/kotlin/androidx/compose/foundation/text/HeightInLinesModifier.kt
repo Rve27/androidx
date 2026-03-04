@@ -209,6 +209,7 @@ private class HeightInLinesNode(
     }
 
     override fun onLayoutDirectionChange() {
+        resolvedStyle = resolveDefaults(textStyle, requireLayoutDirection())
         dirty = true
         invalidateMeasurement()
     }
@@ -229,6 +230,7 @@ private class HeightInLinesNode(
             this.textStyle = textStyle
             this.minLines = minLines
             this.maxLines = maxLines
+            resolvedStyle = resolveDefaults(textStyle, requireLayoutDirection())
             dirty = true
             invalidateMeasurement()
         }
