@@ -26,6 +26,7 @@ import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.padding
 import androidx.compose.remote.creation.compose.state.RemoteDp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.glance.wear.WearWidgetBrush
 
@@ -43,12 +44,14 @@ internal fun WearWidgetContainer(
     background: WearWidgetBrush,
     content: @RemoteComposable @Composable () -> Unit,
 ) {
-    RemoteBox(
-        modifier =
-            RemoteModifier.fillMaxSize()
-                .clip(shape = RoundedCornerShape(size = cornerRadius))
-                .background(background.color)
-    ) {
+    val baseModifier =
+        RemoteModifier.fillMaxSize().clip(shape = RoundedCornerShape(size = cornerRadius))
+    val modifier =
+        remember(cornerRadius, background) {
+            background.foldIn(baseModifier) { modifier, brush -> modifier.background(brush.color) }
+        }
+
+    RemoteBox(modifier = modifier) {
         RemoteBox(
             modifier =
                 RemoteModifier.fillMaxSize()
