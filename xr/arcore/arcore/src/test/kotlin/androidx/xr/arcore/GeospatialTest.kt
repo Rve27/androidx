@@ -250,7 +250,7 @@ class GeospatialTest {
                         LONGITUDE,
                         ALTITUDE_ABOVE_SURFACE,
                         EUS_QUATERNION,
-                        Geospatial.Surface.TERRAIN,
+                        GeospatialSurface.TERRAIN,
                     )
 
                 assertThat(result).isInstanceOf(AnchorCreateSuccess::class.java)
@@ -274,7 +274,7 @@ class GeospatialTest {
                         LONGITUDE,
                         ALTITUDE_ABOVE_SURFACE,
                         EUS_QUATERNION,
-                        Geospatial.Surface.TERRAIN,
+                        GeospatialSurface.TERRAIN,
                     )
 
                 assertThat(result).isInstanceOf(AnchorCreateResourcesExhausted::class.java)
@@ -294,7 +294,7 @@ class GeospatialTest {
                         LONGITUDE,
                         ALTITUDE_ABOVE_SURFACE,
                         EUS_QUATERNION,
-                        Geospatial.Surface.TERRAIN,
+                        GeospatialSurface.TERRAIN,
                     )
 
                 assertThat(result).isInstanceOf(AnchorCreateNotAuthorized::class.java)
@@ -314,7 +314,7 @@ class GeospatialTest {
                         LONGITUDE,
                         ALTITUDE_ABOVE_SURFACE,
                         EUS_QUATERNION,
-                        Geospatial.Surface.TERRAIN,
+                        GeospatialSurface.TERRAIN,
                     )
 
                 assertThat(result).isInstanceOf(AnchorCreateUnsupportedLocation::class.java)
@@ -334,7 +334,7 @@ class GeospatialTest {
                         LONGITUDE,
                         ALTITUDE_ABOVE_SURFACE,
                         EUS_QUATERNION,
-                        Geospatial.Surface.TERRAIN,
+                        GeospatialSurface.TERRAIN,
                     )
                 }
             }

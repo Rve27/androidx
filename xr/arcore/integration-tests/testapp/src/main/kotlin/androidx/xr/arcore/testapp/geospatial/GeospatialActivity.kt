@@ -58,6 +58,7 @@ import androidx.xr.arcore.CreateGeospatialPoseFromPoseResult
 import androidx.xr.arcore.CreateGeospatialPoseFromPoseSuccess
 import androidx.xr.arcore.Geospatial
 import androidx.xr.arcore.GeospatialState
+import androidx.xr.arcore.GeospatialSurface
 import androidx.xr.arcore.Plane
 import androidx.xr.arcore.hitTest
 import androidx.xr.arcore.testapp.common.BackToMainActivityButton
@@ -367,7 +368,7 @@ class GeospatialActivity : ComponentActivity() {
                                     geospatialPose.longitude,
                                     0.0,
                                     geospatialPose.eastUpSouthQuaternion,
-                                    Geospatial.Surface.TERRAIN,
+                                    GeospatialSurface.TERRAIN,
                                 )
                             AnchorType.ROOFTOP ->
                                 geospatial.createAnchorOnSurface(
@@ -375,7 +376,7 @@ class GeospatialActivity : ComponentActivity() {
                                     geospatialPose.longitude,
                                     0.0,
                                     geospatialPose.eastUpSouthQuaternion,
-                                    Geospatial.Surface.ROOFTOP,
+                                    GeospatialSurface.ROOFTOP,
                                 )
                         }
 
@@ -437,7 +438,7 @@ class GeospatialActivity : ComponentActivity() {
                                     longitude,
                                     0.0,
                                     quaternion,
-                                    Geospatial.Surface.TERRAIN,
+                                    GeospatialSurface.TERRAIN,
                                 )
                             AnchorType.ROOFTOP ->
                                 geospatial.createAnchorOnSurface(
@@ -445,7 +446,7 @@ class GeospatialActivity : ComponentActivity() {
                                     longitude,
                                     0.0,
                                     quaternion,
-                                    Geospatial.Surface.ROOFTOP,
+                                    GeospatialSurface.ROOFTOP,
                                 )
                         }
                     if (result is AnchorCreateSuccess) {
