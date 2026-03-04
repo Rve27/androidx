@@ -774,6 +774,24 @@ public class WebViewFeatureInternal {
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
+     * This feature covers {@link Profile#setMaxPrefetches(Integer)},
+     * {@link Profile#setPrefetchTtlSeconds(Integer)}
+     */
+    public static final ApiFeature.NoFramework PREFETCH_CACHE =
+            new ApiFeature.NoFramework(WebViewFeature.PREFETCH_CACHE_V1,
+                    Features.PREFETCH_CACHE);
+
+
+    /**
+     * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
+     * This feature covers {@link Profile#setMaxPrerenders(Integer)}
+     */
+    public static final ApiFeature.NoFramework SET_MAX_PRERENDERS =
+            new ApiFeature.NoFramework(WebViewFeature.SET_MAX_PRERENDERS_V1,
+                    Features.SET_MAX_PRERENDERS);
+
+    /**
+     * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
      * This feature covers {@link WebViewCompat#saveState}.
      */
     public static final ApiFeature.NoFramework SAVE_STATE =
