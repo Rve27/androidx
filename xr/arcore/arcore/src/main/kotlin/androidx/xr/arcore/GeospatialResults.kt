@@ -17,9 +17,39 @@
 package androidx.xr.arcore
 
 import androidx.xr.runtime.math.GeospatialPose
+import androidx.xr.runtime.math.Pose
+
+/** Result of a call to [Geospatial.createPoseFromGeospatialPose]. */
+public sealed class CreatePoseFromGeospatialPoseResult
 
 /** Result of a [Geospatial.createGeospatialPoseFromPose] call. */
 public sealed class CreateGeospatialPoseFromPoseResult
+
+/**
+ * Result of a successful [Geospatial.createPoseFromGeospatialPose] call.
+ *
+ * @property pose the [Pose] that was created
+ */
+public class CreatePoseFromGeospatialPoseSuccess(public val pose: Pose) :
+    CreatePoseFromGeospatialPoseResult()
+
+/**
+ * Result of an unsuccessful [Geospatial.createPoseFromGeospatialPose] call.
+ *
+ * Geospatial is not yet tracking. Geospatial may need additional time to start tracking, or the
+ * device itself may not be tracking.
+ */
+public class CreatePoseFromGeospatialPoseNotTracking : CreatePoseFromGeospatialPoseResult()
+
+/**
+ * Result of an unsuccessful [Geospatial.createPoseFromGeospatialPose] call.
+ *
+ * Geospatial has encountered an internal error when trying to create the Pose.
+ *
+ * @property error a human-readable description of the error that occurred
+ */
+public class CreatePoseFromGeospatialPoseErrorInternal(public val error: String) :
+    CreatePoseFromGeospatialPoseResult()
 
 /**
  * Result of a successful [Geospatial.createGeospatialPoseFromPose] call.
@@ -74,3 +104,13 @@ internal constructor(
  * device itself may not be tracking.
  */
 public class CreateGeospatialPoseFromPoseNotTracking : CreateGeospatialPoseFromPoseResult()
+
+/**
+ * Result of an unsuccessful [Geospatial.createGeospatialPoseFromPose] call.
+ *
+ * Geospatial has encountered an internal error when trying to create the GeospatialPose.
+ *
+ * @property error a human-readable description of the error that occurred
+ */
+public class CreateGeospatialPoseFromPoseErrorInternal(public val error: String) :
+    CreateGeospatialPoseFromPoseResult()
