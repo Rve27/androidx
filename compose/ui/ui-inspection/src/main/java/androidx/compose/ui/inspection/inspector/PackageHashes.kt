@@ -107,4 +107,7 @@ val systemPackages =
         packageNameHash("androidx.xr.compose.subspace"),
         packageNameHash("androidx.xr.compose.subspace.animation"),
         packageNameHash("androidx.xr.compose.subspace.layout"),
+        packageNameHash("androidx.xr.glimmer"),
+        packageNameHash("androidx.xr.glimmer.list"),
+        packageNameHash("androidx.xr.glimmer.stack"),
     )

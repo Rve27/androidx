@@ -94,3 +94,6 @@ androidx.xr.compose.spatial
 androidx.xr.compose.subspace
 androidx.xr.compose.subspace.animation
 androidx.xr.compose.subspace.layout
+androidx.xr.glimmer
+androidx.xr.glimmer.list
+androidx.xr.glimmer.stack
