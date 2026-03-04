@@ -104,6 +104,8 @@ internal constructor(
     public class State
     internal constructor(
         public override val trackingState: TrackingState,
+        @Suppress("DEPRECATION")
+        @get:SuppressWarnings("ReferencesDeprecated")
         public val label: Label,
         public val centerPose: Pose,
         public val extents: FloatSize2d,
@@ -155,6 +157,8 @@ internal constructor(
     }
 
     /** A semantic description of a [Plane]. */
+    @Deprecated("Use PlaneLabel instead.", replaceWith = ReplaceWith("PlaneLabel"))
+    @Suppress("DEPRECATION")
     public class Label private constructor(private val value: Int) {
         public companion object {
             /** The plane represents an unknown type. */
@@ -247,14 +251,15 @@ internal constructor(
             else -> Type.HORIZONTAL_UPWARD_FACING
         }
 
-    private fun labelFromRuntimeType(): Label =
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+    private fun labelFromRuntimeType(): PlaneLabel =
         when (runtimePlane.label) {
-            RuntimePlane.Label.UNKNOWN -> Label.UNKNOWN
-            RuntimePlane.Label.WALL -> Label.WALL
-            RuntimePlane.Label.FLOOR -> Label.FLOOR
-            RuntimePlane.Label.CEILING -> Label.CEILING
-            RuntimePlane.Label.TABLE -> Label.TABLE
-            else -> Label.UNKNOWN
+            RuntimePlane.Label.UNKNOWN -> PlaneLabel.UNKNOWN
+            RuntimePlane.Label.WALL -> PlaneLabel.WALL
+            RuntimePlane.Label.FLOOR -> PlaneLabel.FLOOR
+            RuntimePlane.Label.CEILING -> PlaneLabel.CEILING
+            RuntimePlane.Label.TABLE -> PlaneLabel.TABLE
+            else -> PlaneLabel.UNKNOWN
         }
 
     private fun subsumedByFromRuntimePlane(): Plane? =

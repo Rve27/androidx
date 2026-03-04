@@ -60,6 +60,7 @@ import androidx.xr.arcore.Geospatial
 import androidx.xr.arcore.GeospatialState
 import androidx.xr.arcore.GeospatialSurface
 import androidx.xr.arcore.Plane
+import androidx.xr.arcore.PlaneLabel
 import androidx.xr.arcore.hitTest
 import androidx.xr.arcore.testapp.common.BackToMainActivityButton
 import androidx.xr.arcore.testapp.common.SessionLifecycleHelper
@@ -323,7 +324,7 @@ class GeospatialActivity : ComponentActivity() {
                                     hitTest(session, perceptionRay)
                                         .firstOrNull {
                                             (it.trackable as? Plane)?.state?.value?.label !=
-                                                Plane.Label.UNKNOWN
+                                                PlaneLabel.UNKNOWN
                                         }
                                         ?.let { hitResult -> createAnchor(hitResult.hitPose) }
                                 }
