@@ -72,6 +72,8 @@ internal constructor(
      * functionality. If Geospatial has entered an error state other than [PAUSED], Geospatial must
      * be disabled and re-enabled to use Geospatial again.
      */
+    @Deprecated("Use GeospatialState instead.", replaceWith = ReplaceWith("GeospatialState"))
+    @Suppress("DEPRECATION")
     public class State private constructor(private val value: Int) {
         public companion object {
             /**
@@ -139,9 +141,11 @@ internal constructor(
         }
     }
 
-    private val _state = MutableStateFlow(State.NOT_RUNNING)
+    @Suppress("DEPRECATION") private val _state = MutableStateFlow(GeospatialState.NOT_RUNNING)
 
-    public val state: StateFlow<Geospatial.State> = _state.asStateFlow()
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @get:SuppressWarnings("ReferencesDeprecated")
+    public val state: StateFlow<GeospatialState> = _state.asStateFlow()
 
     /**
      * Gets the availability of the Visual Positioning System (VPS) at a specified horizontal
@@ -373,14 +377,16 @@ internal constructor(
         }
     }
 
-    private fun runtimeStateToState(runtimeState: RuntimeGeospatial.State): State {
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+    private fun runtimeStateToState(runtimeState: RuntimeGeospatial.State): GeospatialState {
         return when (runtimeState) {
-            RuntimeGeospatial.State.RUNNING -> State.RUNNING
-            RuntimeGeospatial.State.NOT_RUNNING -> State.NOT_RUNNING
-            RuntimeGeospatial.State.ERROR_INTERNAL -> State.ERROR_INTERNAL
-            RuntimeGeospatial.State.ERROR_NOT_AUTHORIZED -> State.ERROR_NOT_AUTHORIZED
-            RuntimeGeospatial.State.ERROR_RESOURCE_EXHAUSTED -> State.ERROR_RESOURCE_EXHAUSTED
-            RuntimeGeospatial.State.PAUSED -> State.PAUSED
+            RuntimeGeospatial.State.RUNNING -> GeospatialState.RUNNING
+            RuntimeGeospatial.State.NOT_RUNNING -> GeospatialState.NOT_RUNNING
+            RuntimeGeospatial.State.ERROR_INTERNAL -> GeospatialState.ERROR_INTERNAL
+            RuntimeGeospatial.State.ERROR_NOT_AUTHORIZED -> GeospatialState.ERROR_NOT_AUTHORIZED
+            RuntimeGeospatial.State.ERROR_RESOURCE_EXHAUSTED ->
+                GeospatialState.ERROR_RESOURCE_EXHAUSTED
+            RuntimeGeospatial.State.PAUSED -> GeospatialState.PAUSED
             else -> throw IllegalStateException("Unknown State: $runtimeState")
         }
     }
