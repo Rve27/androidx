@@ -304,7 +304,7 @@ internal class LinkComposer(
     private var providersInvalid = false
     private val providersInvalidStack = IntStack()
     private var reusing = false
-    private var reusingGroup = -1
+    private var reusingGroup = NULL_ADDRESS
     private var providerCache: PersistentCompositionLocalMap? = null
 
     internal var reader: SlotTableReader = slotTable.openReader().also { it.close() }
@@ -718,8 +718,9 @@ internal class LinkComposer(
                 scope.resuming = false
                 changeListWriter.endResumingScope(scope)
                 scope.reusing = false
-                if (scope.resetReusing) {
+                if (scope.resetReusing && reusingGroup == reader.parentGroup) {
                     scope.resetReusing = false
+                    reusingGroup = NULL_ADDRESS
                     reusing = false
                 }
             }
@@ -1401,6 +1402,7 @@ internal class LinkComposer(
                 changeListWriter.startResumingScope(scope)
                 if (!reusing && scope.reusing) {
                     reusing = true
+                    reusingGroup = reader.parentGroup
                     scope.resetReusing = true
                 }
             }
