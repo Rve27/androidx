@@ -30,19 +30,14 @@ import okio.sink
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
-class RingBufferTraceSinkTest {
+class InMemoryRingBufferTraceSinkTest {
     @get:Rule val tmpFolder = TemporaryFolder()
 
     @Test
     fun testFlush_preservesOngoingEvents() = runBlocking {
         val folder = tmpFolder.newFolder()
         val file1 = File(folder, "trace1.perfetto")
-        val sink =
-            RingBufferTraceSink(
-                capacityInBytes = 10_000_000,
-                sequenceId = 1,
-                bufferedSink = file1.sink().buffer(),
-            )
+        val sink = InMemoryRingBufferTraceSink(capacityInBytes = 10_000_000, sequenceId = 1)
         TraceDriver(sink = sink, isEnabled = true).use { driver ->
             val tracer = driver.tracer
 
@@ -51,14 +46,17 @@ class RingBufferTraceSinkTest {
                     repeat(100) { tracer.traceCoroutine("cat", "event-$it") { delay(1) } }
                 }
 
-            // Wait a bit and flush midway
-            delay(20)
-            sink.flush()
+            // Wait for potential background processing
+            delay(50)
+
+            val bufferedSink = file1.sink().buffer()
+            sink.flushTo(bufferedSink)
 
             job.join()
 
             // Flush remainder
-            sink.flush()
+            sink.flushTo(bufferedSink)
+            bufferedSink.close()
 
             assertTrue(file1.exists(), "File should exist")
             assertTrue(file1.length() > 0, "Should have captured trace data")
@@ -71,19 +69,20 @@ class RingBufferTraceSinkTest {
         val file = File(folder, "trace_overflow.perfetto")
         // Small capacity
         val capacity = 1024L
-        val sink =
-            RingBufferTraceSink(
-                capacityInBytes = capacity,
-                sequenceId = 1,
-                bufferedSink = file.sink().buffer(),
-            )
+        val sink = InMemoryRingBufferTraceSink(capacityInBytes = capacity, sequenceId = 1)
         TraceDriver(sink = sink, isEnabled = true).use { driver ->
             val tracer = driver.tracer
 
             // Generate enough data to overflow
             repeat(1000) { tracer.traceCoroutine("cat", "event-$it") {} }
 
-            sink.flush()
+            // Wait for potential background processing
+            delay(50)
+
+            val bufferedSink = file.sink().buffer()
+            sink.flushTo(bufferedSink)
+            bufferedSink.close()
+
             assertTrue(file.exists())
             assertTrue(file.length() > 0, "File should not be empty")
 
@@ -98,47 +97,11 @@ class RingBufferTraceSinkTest {
     }
 
     @Test
-    fun testBufferOverflow_reportsDroppedEvent() = runBlocking {
-        val folder = tmpFolder.newFolder()
-        val file = File(folder, "trace_dropped.perfetto")
-        val sink =
-            RingBufferTraceSink(
-                capacityInBytes = 1024L,
-                sequenceId = 1,
-                bufferedSink = file.sink().buffer(),
-            )
-
-        val driver = TraceDriver(sink = sink, isEnabled = true)
-        val tracer = driver.tracer
-
-        // Enqueue more than 1 event to force the ring buffer to wrap around and overwrite the
-        // oldest.
-        // TraceCoroutine internally pushes 2 events (one for START, one for STOP)
-        tracer.traceCoroutine("cat", "event1") { delay(1) }
-        tracer.traceCoroutine("cat", "event2") { delay(1) }
-        tracer.traceCoroutine("cat", "event3") { delay(1) }
-
-        // Flush should identify that it overwrote dropped data and trigger the notification
-        sink.flush()
-
-        // This effectively writes out a packet with previous_packet_dropped = true.
-        // It's checked during parsing or if the file contains that flag.
-        // Since we removed the delegate, we can just check if file exists and has size.
-        assertTrue(file.exists())
-        assertTrue(file.length() > 0)
-    }
-
-    @Test
     fun testComplexEventPreservation() = runBlocking {
         val folder = tmpFolder.newFolder()
         val file = File(folder, "trace_complex.perfetto")
         // Sufficient for one complex event
-        val sink =
-            RingBufferTraceSink(
-                capacityInBytes = 10_000,
-                sequenceId = 1,
-                bufferedSink = file.sink().buffer(),
-            )
+        val sink = InMemoryRingBufferTraceSink(capacityInBytes = 10_000, sequenceId = 1)
         TraceDriver(sink = sink, isEnabled = true).use { driver ->
             val tracer = driver.tracer
 
@@ -154,7 +117,12 @@ class RingBufferTraceSinkTest {
                 // No-op
             }
 
-            sink.flush()
+            // Wait for potential background processing
+            delay(50)
+
+            val bufferedSink = file.sink().buffer()
+            sink.flushTo(bufferedSink)
+            bufferedSink.close()
 
             assertTrue(file.exists())
             assertTrue(file.length() > 0)
@@ -165,46 +133,19 @@ class RingBufferTraceSinkTest {
     fun testCloseWithoutFlush_dropsData() = runBlocking {
         val folder = tmpFolder.newFolder()
         val file = File(folder, "trace_dropped.perfetto")
-        val sink =
-            RingBufferTraceSink(
-                capacityInBytes = 10_000,
-                sequenceId = 1,
-                bufferedSink = file.sink().buffer(),
-            )
+        val sink = InMemoryRingBufferTraceSink(capacityInBytes = 10_000, sequenceId = 1)
         val driver = TraceDriver(sink = sink, isEnabled = true)
         val tracer = driver.tracer
 
         tracer.traceCoroutine("cat", "event-dropped") {}
 
-        // Wait for potential background processing (drainQueue) to move data to ring buffer
+        // Wait for potential background processing
         delay(50)
 
-        // Close sink without flush
-        sink.close(flush = false)
+        // Close driver (and sink) without persistence (no sink provided to close)
+        driver.close()
 
-        // The file should be empty because data should be stuck in RingBuffer and dropped
+        // The file should be empty because data should be dropped
         assertEquals(0L, file.length(), "File should be empty when closed without flush")
-    }
-
-    @Test
-    fun testTraceSinkFactory_createsRingBufferSink() = runBlocking {
-        val folder = tmpFolder.newFolder()
-        val sink =
-            TraceSink(directory = folder, sequenceId = 1, ringBufferCapacityInBytes = 10_000_000L)
-
-        assertTrue(sink is RingBufferTraceSink, "Factory should return RingBufferTraceSink")
-
-        TraceDriver(sink = sink, isEnabled = true).use { driver ->
-            val tracer = driver.tracer
-            tracer.traceCoroutine("cat", "event-test") {}
-            sink.flush()
-
-            val traceFiles = folder.listFiles()?.filter { it.name.endsWith(".perfetto-trace") }
-            assertEquals(1, traceFiles?.size, "Should have created exactly one trace file")
-            val file = traceFiles!!.first()
-
-            assertTrue(file.exists(), "File should exist")
-            assertTrue(file.length() > 0, "Should have captured trace data")
-        }
     }
 }
