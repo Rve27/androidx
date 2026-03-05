@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package androidx.compose.animation.core
 
+import android.os.Looper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateObserver
+import androidx.compose.ui.platform.LocalView
 
-internal expect class AtomicReference<V>(value: V) {
-    fun get(): V
-
-    fun set(value: V)
-
-    fun getAndSet(value: V): V
-
-    fun compareAndSet(expect: V, newValue: V): Boolean
+@Composable
+internal actual fun createSnapshotStateObserver(): SnapshotStateObserver {
+    val view = LocalView.current
+    return SnapshotStateObserver {
+        if (Looper.myLooper() === view.handler.looper) {
+            it()
+        } else {
+            view.handler.post(it)
+        }
+    }
 }
-
-// TODO(mount): b/490176913 remove this and use something common like CompositionLocal
-@Composable internal expect fun createSnapshotStateObserver(): SnapshotStateObserver
