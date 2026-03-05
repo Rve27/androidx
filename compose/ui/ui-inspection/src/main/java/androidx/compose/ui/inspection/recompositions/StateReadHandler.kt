@@ -104,7 +104,7 @@ class StateReadHandler(artTooling: ArtTooling, anchorMap: AnchorMap) :
                 synchronized(lock) {
                     val anchor = (scope as? IdentifiableRecomposeScope)?.identity ?: return
                     // Again: filter by the composable.
-                    if (anchorsObserved.isNotEmpty() && !anchorsObserved.contains(anchor)) {
+                    if (!isObserving(anchor)) {
                         return
                     }
                     cache.addInvalidation(anchor, value)
@@ -156,6 +156,16 @@ class StateReadHandler(artTooling: ArtTooling, anchorMap: AnchorMap) :
         }
     }
 
+    override fun incrementRecompositionCount(anchor: Any): RecompositionDataWithStateReads? {
+        synchronized(lock) {
+            val data = super.incrementRecompositionCount(anchor) ?: return null
+            if (isObserving(anchor)) {
+                data.expectStateReads()
+            }
+            return data
+        }
+    }
+
     override fun dispose() {
         super.dispose()
         scope.cancel()
@@ -190,6 +200,9 @@ class StateReadHandler(artTooling: ArtTooling, anchorMap: AnchorMap) :
 
     /** Return the number of state reads purged from the state read cache. */
     fun getPurgedStateReadCount(): Long = cache.purgedStateReads
+
+    private fun isObserving(anchor: Any): Boolean =
+        observerJob != null && (anchorsObserved.isEmpty() || anchorsObserved.contains(anchor))
 
     @OptIn(ExperimentalComposeRuntimeApi::class)
     private fun startObservingStateReads() {
