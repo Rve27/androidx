@@ -25,6 +25,8 @@ import androidx.compose.animation.core.TargetBasedAnimation
 import androidx.compose.animation.core.Transition
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.ui.tooling.AnimationDebugMutableState
+import androidx.compose.ui.tooling.animation.TriggerComposeAnimation.Companion.parse
 import androidx.compose.ui.tooling.animation.search.AnimateXAsStateSearchInfo
 import androidx.compose.ui.tooling.animation.search.AnimatedContentSearchInfo
 import androidx.compose.ui.tooling.animation.search.AnimatedVisibilitySearchInfo
@@ -465,6 +467,33 @@ internal class AnimationSearch(private val clock: () -> PreviewAnimationClock) {
                         updateTransitionCall.name == UPDATE_TRANSITION
                     }
                 }
+        }
+    }
+
+    /** Search for [AnimationDebugMutableState]s. */
+    class TriggerSearch(track: (TriggerComposeAnimation<*>) -> Unit) :
+        Search<TriggerComposeAnimation<*>>(track) {
+        override fun hasAnimation(group: Group): Boolean {
+            return group.data.contains { element: Any? -> element is AnimationDebugMutableState<*> }
+        }
+
+        override fun addAnimations(groups: Collection<Group>) {
+            val groupsWithState =
+                groups
+                    .filter { it.name == REMEMBER }
+                    .filter { it.data.any { data -> data is AnimationDebugMutableState<*> } }
+
+            val triggers =
+                groupsWithState
+                    .flatMap { group ->
+                        group.data.filterIsInstance<AnimationDebugMutableState<*>>().map {
+                            it.parse()
+                        }
+                    }
+                    .filterNotNull()
+                    .distinctBy { it.animationObject }
+
+            animations.addAll(triggers)
         }
     }
 }
