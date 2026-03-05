@@ -136,7 +136,7 @@ interface TrackpadInjectionScope : InjectionScope {
      * @param button The button that is pressed. By default the primary button.
      * @throws [IllegalStateException] if the [button] is already pressed.
      */
-    fun press(button: MouseButton = MouseButton.Primary)
+    fun press(button: TrackpadButton = TrackpadButton.Primary)
 
     /**
      * Sends a button released and up event for the given [button] on the associated node. If this
@@ -148,7 +148,7 @@ interface TrackpadInjectionScope : InjectionScope {
      * @param button The button that is released. By default the primary button.
      * @throws [IllegalStateException] if the [button] is not pressed.
      */
-    fun release(button: MouseButton = MouseButton.Primary)
+    fun release(button: TrackpadButton = TrackpadButton.Primary)
 
     /**
      * Sends a cancel event [delayMillis] after the last sent event to cancel a stream of trackpad
@@ -300,11 +300,11 @@ internal class TrackpadInjectionScopeImpl(private val baseScope: MultiModalInjec
         inputDispatcher.updateTrackpadPosition(positionInRoot)
     }
 
-    override fun press(button: MouseButton) {
+    override fun press(button: TrackpadButton) {
         inputDispatcher.enqueueTrackpadPress(button.buttonId)
     }
 
-    override fun release(button: MouseButton) {
+    override fun release(button: TrackpadButton) {
         inputDispatcher.enqueueTrackpadRelease(button.buttonId)
     }
 
@@ -354,16 +354,16 @@ internal class TrackpadInjectionScopeImpl(private val baseScope: MultiModalInjec
  * Use [button] to click on [position], or on the current cursor position if [position] is
  * [unspecified][Offset.Unspecified]. The [position] is in the node's local coordinate system, where
  * (0, 0) is the top left corner of the node. The default [button] is the
- * [primary][MouseButton.Primary] button.
+ * [primary][TrackpadButton.Primary] button.
  *
  * @param position The position where to click, in the node's local coordinate system. If omitted,
  *   the [center] of the node will be used. If [unspecified][Offset.Unspecified], clicks on the
  *   current trackpad position.
- * @param button The button to click with. Uses the [primary][MouseButton.Primary] by default.
+ * @param button The button to click with. Uses the [primary][TrackpadButton.Primary] by default.
  */
 fun TrackpadInjectionScope.click(
     position: Offset = center,
-    button: MouseButton = MouseButton.Primary,
+    button: TrackpadButton = TrackpadButton.Primary,
 ) {
     if (position.isSpecified) {
         updatePointerTo(position)
@@ -384,7 +384,7 @@ fun TrackpadInjectionScope.click(
  *   current trackpad position.
  */
 fun TrackpadInjectionScope.rightClick(position: Offset = center) =
-    click(position, MouseButton.Secondary)
+    click(position, TrackpadButton.Secondary)
 
 // The average of min and max is a safe default
 private val ViewConfiguration.defaultDoubleTapDelayMillis: Long
@@ -394,16 +394,16 @@ private val ViewConfiguration.defaultDoubleTapDelayMillis: Long
  * Use [button] to double-click on [position], or on the current trackpad position if [position] is
  * [unspecified][Offset.Unspecified]. The [position] is in the node's local coordinate system, where
  * (0, 0) is the top left corner of the node. The default [button] is the
- * [primary][MouseButton.Primary] button.
+ * [primary][TrackpadButton.Primary] button.
  *
  * @param position The position where to click, in the node's local coordinate system. If omitted,
  *   the [center] of the node will be used. If [unspecified][Offset.Unspecified], clicks on the
  *   current trackpad position.
- * @param button The button to click with. Uses the [primary][MouseButton.Primary] by default.
+ * @param button The button to click with. Uses the [primary][TrackpadButton.Primary] by default.
  */
 fun TrackpadInjectionScope.doubleClick(
     position: Offset = center,
-    button: MouseButton = MouseButton.Primary,
+    button: TrackpadButton = TrackpadButton.Primary,
 ) {
     click(position, button)
     advanceEventTime(viewConfiguration.defaultDoubleTapDelayMillis)
@@ -414,16 +414,16 @@ fun TrackpadInjectionScope.doubleClick(
  * Use [button] to triple-click on [position], or on the current trackpad position if [position] is
  * [unspecified][Offset.Unspecified]. The [position] is in the node's local coordinate system, where
  * (0, 0) is the top left corner of the node. The default [button] is the
- * [primary][MouseButton.Primary] button.
+ * [primary][TrackpadButton.Primary] button.
  *
  * @param position The position where to click, in the node's local coordinate system. If omitted,
  *   the [center] of the node will be used. If [unspecified][Offset.Unspecified], clicks on the
  *   current trackpad position.
- * @param button The button to click with. Uses the [primary][MouseButton.Primary] by default.
+ * @param button The button to click with. Uses the [primary][TrackpadButton.Primary] by default.
  */
 fun TrackpadInjectionScope.tripleClick(
     position: Offset = center,
-    button: MouseButton = MouseButton.Primary,
+    button: TrackpadButton = TrackpadButton.Primary,
 ) {
     click(position, button)
     advanceEventTime(viewConfiguration.defaultDoubleTapDelayMillis)
@@ -436,16 +436,16 @@ fun TrackpadInjectionScope.tripleClick(
  * Use [button] to long-click on [position], or on the current trackpad position if [position] is
  * [unspecified][Offset.Unspecified]. The [position] is in the node's local coordinate system, where
  * (0, 0) is the top left corner of the node. The default [button] is the
- * [primary][MouseButton.Primary] button.
+ * [primary][TrackpadButton.Primary] button.
  *
  * @param position The position where to click, in the node's local coordinate system. If omitted,
  *   the [center] of the node will be used. If [unspecified][Offset.Unspecified], clicks on the
  *   current trackpad position.
- * @param button The button to click with. Uses the [primary][MouseButton.Primary] by default.
+ * @param button The button to click with. Uses the [primary][TrackpadButton.Primary] by default.
  */
 fun TrackpadInjectionScope.longClick(
     position: Offset = center,
-    button: MouseButton = MouseButton.Primary,
+    button: TrackpadButton = TrackpadButton.Primary,
 ) {
     if (position.isSpecified) {
         updatePointerTo(position)
@@ -547,13 +547,13 @@ fun TrackpadInjectionScope.animateMoveAlong(
  *   local coordinate system.
  * @param end The position where to release the primary button and end the drag, in the node's local
  *   coordinate system.
- * @param button The button to drag with. Uses the [primary][MouseButton.Primary] by default.
+ * @param button The button to drag with. Uses the [primary][TrackpadButton.Primary] by default.
  * @param durationMillis The duration of the gesture. By default 300 milliseconds.
  */
 fun TrackpadInjectionScope.dragAndDrop(
     start: Offset,
     end: Offset,
-    button: MouseButton = MouseButton.Primary,
+    button: TrackpadButton = TrackpadButton.Primary,
     durationMillis: Long = DefaultTrackpadGestureDurationMillis,
 ) {
     updatePointerTo(start)
