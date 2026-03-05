@@ -138,12 +138,14 @@ class StateReadHandler(artTooling: ArtTooling, anchorMap: AnchorMap) :
             }
             if (!observingStateReads || settings.methodCase == MethodCase.ALL) {
                 anchorsObserved.clear()
-            } else if (settings.byId.composableToObserveList != anchorsObserved) {
-                anchorsObserved.clear()
-                anchorsObserved.addAll(
+            } else {
+                val anchorsToObserve =
                     settings.byId.composableToObserveList.mapNotNull { anchorMap[it] }
-                )
-                cache.removeAllExcept(anchorsObserved)
+                if (anchorsToObserve != anchorsObserved) {
+                    anchorsObserved.clear()
+                    anchorsObserved.addAll(anchorsToObserve)
+                    cache.removeAllExcept(anchorsObserved)
+                }
             }
             cache.maxStateReads =
                 when (settings.methodCase) {
