@@ -11,6 +11,11 @@
       </key-servers>
       <trusted-artifacts>
          <trust file="apiLevels.json" reason="We do not sign this metadata"/>
+         <trust group="com.android.extensions.xr" name="extensions-xr" version="1.0.0" reason="old version, before signing"/>
+         <trust group="com.android.extensions.xr" name="extensions-xr" version="1.1.0" reason="old version, before signing"/>
+         <trust group="com.android.extensions.xr" name="extensions-xr" version="1.2.0" reason="old version, before signing"/>
+         <trust group="com.android.extensions.xr" name="extensions-xr" version="1.3.0-alpha01" reason="old version, before signing"/>
+         <trust group="com.android.extensions.xr" name="extensions-xr" version="1.3.0-alpha02" reason="old version, before signing"/>
          <trust group="com.android.ndk.thirdparty" reason="b/215430394"/>
          <trust group="com.android.tools" name="desugar_jdk_libs" reason="b/215430394"/>
          <trust group="com.android.tools" name="desugar_jdk_libs_configuration" reason="b/215430394"/>
