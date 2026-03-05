@@ -22,8 +22,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -378,7 +376,6 @@ class LiveEditApiTests : BaseComposeTest() {
         val recompositionErrors =
             mutableMapOf<RecomposerInfo, MutableList<RecomposerErrorInformation?>>()
         val shouldThrow = mutableStateOf(false)
-        var latch = CountDownLatch(1)
         activity.show {
             LaunchedEffect(Unit) {
                 Recomposer.runningRecomposers.collect { recomposerInfos ->
@@ -386,24 +383,18 @@ class LiveEditApiTests : BaseComposeTest() {
                         if (info !in recompositionErrors) {
                             recompositionErrors[info] = mutableListOf()
                         }
-                        info.errorState.collect { error ->
-                            recompositionErrors[info]!!.add(error)
-                            latch.countDown()
-                        }
+                        info.errorState.collect { error -> recompositionErrors[info]!!.add(error) }
                     }
                 }
             }
             TestError { shouldThrow.value }
         }
 
-        // Await initial state
-        assertTrue("Expected error state change", latch.await(1, TimeUnit.SECONDS))
+        activity.waitForAFrame()
 
         run {
             shouldThrow.value = true
-            // Await until the error is reported
-            latch = CountDownLatch(1)
-            assertTrue("Expected error state change", latch.await(1, TimeUnit.SECONDS))
+            activity.waitForAFrame()
 
             shouldThrow.value = false
             invalidateGroup(errorKey)
@@ -411,9 +402,9 @@ class LiveEditApiTests : BaseComposeTest() {
 
             assertTrue("TestError should be invoked!", errorInvoked > start)
 
-            // Await until the invalidation is settled
-            latch = CountDownLatch(1)
-            assertTrue("Expected error state change", latch.await(1, TimeUnit.SECONDS))
+            // Wait for two more frames for coroutines to settle.
+            activity.waitForAFrame()
+            activity.waitForAFrame()
         }
 
         assertThat(recompositionErrors).hasSize(1)
