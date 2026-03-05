@@ -850,8 +850,9 @@ package androidx.compose.ui.test {
     method @BytecodeOnly public void moveTo-3MmeM6k(long, long);
     method @BytecodeOnly public static void moveTo-3MmeM6k$default(androidx.compose.ui.test.TrackpadInjectionScope!, long, long, int, Object!);
     method public void panEnd();
-    method @KotlinOnly public void panMoveBy(androidx.compose.ui.geometry.Offset delta);
-    method @BytecodeOnly public void panMoveBy-k-4lQ0M(long);
+    method @KotlinOnly public void panMoveBy(androidx.compose.ui.geometry.Offset delta, optional long delayMillis);
+    method @BytecodeOnly public void panMoveBy-3MmeM6k(long, long);
+    method @BytecodeOnly public static void panMoveBy-3MmeM6k$default(androidx.compose.ui.test.TrackpadInjectionScope!, long, long, int, Object!);
     method public void panStart();
     method @KotlinOnly public void press(optional androidx.compose.ui.test.TrackpadButton button);
     method @BytecodeOnly public void press-QiXdzRk(int);
@@ -859,7 +860,8 @@ package androidx.compose.ui.test {
     method @KotlinOnly public void release(optional androidx.compose.ui.test.TrackpadButton button);
     method @BytecodeOnly public void release-QiXdzRk(int);
     method @BytecodeOnly public static void release-QiXdzRk$default(androidx.compose.ui.test.TrackpadInjectionScope!, int, int, Object!);
-    method public void scaleChangeBy(@FloatRange(from=0.0, fromInclusive=false) float scaleFactor);
+    method public void scaleChangeBy(@FloatRange(from=0.0, fromInclusive=false) float scaleFactor, optional long delayMillis);
+    method @BytecodeOnly public static void scaleChangeBy$default(androidx.compose.ui.test.TrackpadInjectionScope!, float, long, int, Object!);
     method public void scaleEnd();
     method public void scaleStart();
     method @KotlinOnly public default void updatePointerBy(androidx.compose.ui.geometry.Offset delta);
