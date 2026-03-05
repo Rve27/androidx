@@ -299,6 +299,7 @@ internal class ViewModelStoreProviderTest {
     }
 
     @Test
+    @IgnoreAndroidHostTarget
     fun getViewModelStoreOwner_withSavedStateOwner_injectsSavedStateCreationExtras() {
         val owner = TestViewModelStoreOwner()
         val provider = ViewModelStoreProvider(owner)
