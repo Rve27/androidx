@@ -135,7 +135,7 @@ internal open class FakePdfDocument(
 
     override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> {
         if (exceptionToThrow != null) throw exceptionToThrow
-        return annotationsPerPage.getOrDefault(pageNum, emptyList())
+        return annotationsPerPage[pageNum] ?: emptyList()
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)

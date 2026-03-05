@@ -43,6 +43,7 @@ import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.models.ListItem
 import java.util.concurrent.Executor
+import kotlin.collections.emptyList
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -157,7 +158,7 @@ internal open class FakePdfDocument(
 
     override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> {
         if (exceptionToThrow != null) throw exceptionToThrow
-        return annotationsPerPage.getOrDefault(pageNum, emptyList())
+        return annotationsPerPage[pageNum] ?: emptyList()
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)

@@ -266,7 +266,7 @@ internal class PageManager(
 
     /** Draws the [Page] at [pageNum] to the canvas at [locationInView] */
     fun drawPage(pageNum: Int, canvas: Canvas, locationInView: RectF) {
-        val highlightsForPage = highlights.getOrDefault(pageNum, EMPTY_HIGHLIGHTS)
+        val highlightsForPage = highlights[pageNum] ?: EMPTY_HIGHLIGHTS
         pages.get(pageNum)?.draw(canvas, locationInView, highlightsForPage)
     }
 
