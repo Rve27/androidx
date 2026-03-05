@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.data.Group
 import androidx.compose.ui.tooling.data.UiToolingDataApi
 import androidx.compose.ui.tooling.findAll
 import androidx.compose.ui.tooling.firstOrNull
+import androidx.compose.ui.tooling.isAnimationPreviewEnabled
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
 
@@ -81,6 +82,11 @@ private inline fun <reified T> Group.findData(includeGrandchildren: Boolean = fa
 /** Contains tree parsers for different animation types. */
 @OptIn(UiToolingDataApi::class)
 internal class AnimationSearch(private val clock: () -> PreviewAnimationClock) {
+
+    private val triggerSearch =
+        if (isAnimationPreviewEnabled) listOf(TriggerSearch { clock().trackTrigger(it) })
+        else emptyList()
+
     private val transitionSearch = TransitionSearch { clock().trackComposeAnimation(it) }
     private val animatedContentSearch = AnimatedContentSearch { clock().trackComposeAnimation(it) }
     private val animatedVisibilitySearch = AnimatedVisibilitySearch {
@@ -102,6 +108,7 @@ internal class AnimationSearch(private val clock: () -> PreviewAnimationClock) {
         setOf(transitionSearch, animatedVisibilitySearch) +
             animateXAsStateSearch() +
             infiniteTransitionSearch() +
+            triggerSearch +
             (if (AnimatedContentComposeAnimation.apiAvailable) setOf(animatedContentSearch)
             else emptySet())
 
