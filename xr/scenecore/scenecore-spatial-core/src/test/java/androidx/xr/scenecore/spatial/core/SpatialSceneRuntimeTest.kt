@@ -13,1369 +13,1356 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.hardware.display.DisplayManager
+import android.net.Uri
+import android.os.Bundle
+import android.os.Looper
+import android.provider.Settings
+import android.view.View
+import android.view.ViewGroup
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.runtime.math.Matrix4
+import androidx.xr.runtime.math.Matrix4.Companion.fromTrs
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion
+import androidx.xr.runtime.math.Quaternion.Companion.fromAxisAngle
+import androidx.xr.runtime.math.Quaternion.Companion.fromEulerAngles
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.runtime.testing.math.assertPose
+import androidx.xr.runtime.testing.math.assertRotation
+import androidx.xr.runtime.testing.math.assertVector3
+import androidx.xr.scenecore.runtime.ActivitySpace
+import androidx.xr.scenecore.runtime.AnchorEntity
+import androidx.xr.scenecore.runtime.Component
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.GltfEntity
+import androidx.xr.scenecore.runtime.GltfFeature
+import androidx.xr.scenecore.runtime.InputEvent
+import androidx.xr.scenecore.runtime.InputEventListener
+import androidx.xr.scenecore.runtime.PanelEntity
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.PlaneSemantic
+import androidx.xr.scenecore.runtime.PlaneType
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.SpatialModeChangeListener
+import androidx.xr.scenecore.runtime.SpatialVisibility
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeComponent
+import androidx.xr.scenecore.testing.FakeGltfFeature.Companion.createWithMockFeature
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import androidx.xr.scenecore.testing.FakeSurfaceFeature
+import com.android.extensions.xr.ShadowXrExtensions
+import com.android.extensions.xr.environment.EnvironmentVisibilityState
+import com.android.extensions.xr.environment.PassthroughVisibilityState
+import com.android.extensions.xr.environment.ShadowEnvironmentVisibilityState
+import com.android.extensions.xr.environment.ShadowPassthroughVisibilityState
+import com.android.extensions.xr.node.FakeCloseable
+import com.android.extensions.xr.node.Mat4f
+import com.android.extensions.xr.node.Node
+import com.android.extensions.xr.node.NodeRepository
+import com.android.extensions.xr.node.ReformOptions
+import com.android.extensions.xr.node.ShadowInputEvent
+import com.android.extensions.xr.node.ShadowNode
+import com.android.extensions.xr.node.ShadowNodeTransform
+import com.android.extensions.xr.node.Vec3
+import com.android.extensions.xr.space.PerceivedResolution
+import com.android.extensions.xr.space.ShadowSpatialCapabilities
+import com.android.extensions.xr.space.ShadowSpatialState
+import com.android.extensions.xr.space.SpatialCapabilities
+import com.android.extensions.xr.space.VisibilityState
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableSet
+import com.google.common.truth.Truth.assertThat
+import com.google.common.util.concurrent.MoreExecutors
+import java.util.function.Consumer
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.clearInvocations
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
+import org.robolectric.annotation.Config
 
-import static androidx.xr.runtime.testing.math.MathAssertions.assertPose;
-import static androidx.xr.runtime.testing.math.MathAssertions.assertRotation;
-import static androidx.xr.runtime.testing.math.MathAssertions.assertVector3;
-
-import static com.android.extensions.xr.node.ReformOptions.ALLOW_MOVE;
-import static com.android.extensions.xr.node.ReformOptions.ALLOW_RESIZE;
-
-import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.robolectric.Shadows.shadowOf;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.hardware.display.DisplayManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Looper;
-import android.provider.Settings;
-import android.view.Display;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.runtime.math.Matrix4;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.ActivitySpace;
-import androidx.xr.scenecore.runtime.AnchorEntity;
-import androidx.xr.scenecore.runtime.AnchorEntity.State;
-import androidx.xr.scenecore.runtime.AnchorPlacement;
-import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper;
-import androidx.xr.scenecore.runtime.Component;
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.GltfEntity;
-import androidx.xr.scenecore.runtime.GltfFeature;
-import androidx.xr.scenecore.runtime.InputEvent;
-import androidx.xr.scenecore.runtime.InputEventListener;
-import androidx.xr.scenecore.runtime.InteractableComponent;
-import androidx.xr.scenecore.runtime.LoggingEntity;
-import androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper;
-import androidx.xr.scenecore.runtime.MovableComponent;
-import androidx.xr.scenecore.runtime.PanelEntity;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-import androidx.xr.scenecore.runtime.PlaneSemantic;
-import androidx.xr.scenecore.runtime.PlaneType;
-import androidx.xr.scenecore.runtime.PointerCaptureComponent;
-import androidx.xr.scenecore.runtime.ResizableComponent;
-import androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.runtime.SpatialCapabilities;
-import androidx.xr.scenecore.runtime.SpatialEnvironment;
-import androidx.xr.scenecore.runtime.SpatialModeChangeListener;
-import androidx.xr.scenecore.runtime.SpatialPointerComponent;
-import androidx.xr.scenecore.runtime.SpatialVisibility;
-import androidx.xr.scenecore.runtime.SubspaceNodeEntity;
-import androidx.xr.scenecore.runtime.SurfaceEntity;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeComponent;
-import androidx.xr.scenecore.testing.FakeGltfFeature;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-import androidx.xr.scenecore.testing.FakeSurfaceFeature;
-
-import com.android.extensions.xr.ShadowXrExtensions;
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.environment.EnvironmentVisibilityState;
-import com.android.extensions.xr.environment.PassthroughVisibilityState;
-import com.android.extensions.xr.environment.ShadowEnvironmentVisibilityState;
-import com.android.extensions.xr.environment.ShadowPassthroughVisibilityState;
-import com.android.extensions.xr.node.FakeCloseable;
-import com.android.extensions.xr.node.InputEvent.HitInfo;
-import com.android.extensions.xr.node.Mat4f;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.node.NodeRepository;
-import com.android.extensions.xr.node.ReformOptions;
-import com.android.extensions.xr.node.ShadowInputEvent;
-import com.android.extensions.xr.node.ShadowNode;
-import com.android.extensions.xr.node.ShadowNodeTransform;
-import com.android.extensions.xr.node.Vec3;
-import com.android.extensions.xr.space.PerceivedResolution;
-import com.android.extensions.xr.space.ShadowSpatialCapabilities;
-import com.android.extensions.xr.space.ShadowSpatialState;
-import com.android.extensions.xr.space.SpatialState;
-import com.android.extensions.xr.space.VisibilityState;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import org.jspecify.annotations.NonNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowContentResolver;
-
-import java.io.Closeable;
-import java.util.Objects;
-import java.util.concurrent.Executor;
-import java.util.function.Consumer;
-
-/** Tests for {@link SpatialSceneRuntimeFactory}. */
+/** Tests for [SpatialSceneRuntimeFactory]. */
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public class SpatialSceneRuntimeTest {
-    private static final int OPEN_XR_REFERENCE_SPACE_TYPE = 1;
-    private static final String GUARDIAN_CONSENT_GRANTED = "guardian_consent_granted";
-    private static final String TOGGLE_GUARDIAN = "toggle_guardian";
-    private static final Uri IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI =
-            Settings.Secure.getUriFor(GUARDIAN_CONSENT_GRANTED);
-    private static final Uri IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI =
-            Settings.System.getUriFor(TOGGLE_GUARDIAN);
-    private final EntityManager mEntityManager = new EntityManager();
-    private final NodeRepository mNodeRepository = NodeRepository.getInstance();
-    private final @NonNull XrExtensions mXrExtensions =
-            Objects.requireNonNull(XrExtensionsProvider.getXrExtensions());
-    private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
-    private final GltfFeature mMockGltfFeature = Mockito.mock(GltfFeature.class);
-    Activity mActivity;
-    private SpatialSceneRuntime mRuntime;
-    private ContentResolver mContentResolver;
-    private ShadowContentResolver mShadowContentResolver;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class SpatialSceneRuntimeTest {
+    private val entityManager = EntityManager()
+    private val nodeRepository = NodeRepository.getInstance()
+    private val xrExtensions = requireNotNull(getXrExtensions())
+    private val fakeExecutor = FakeScheduledExecutorService()
+    private val mockGltfFeature = mock<GltfFeature>()
+    private val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
+    private val contentResolver = activity.contentResolver
+    private val shadowContentResolver = Shadows.shadowOf(activity.contentResolver)
+    private lateinit var testRuntime: SpatialSceneRuntime
 
     @Before
-    public void setUp() {
-        mActivity = Robolectric.buildActivity(Activity.class).create().start().get();
-        mShadowContentResolver = shadowOf(mActivity.getContentResolver());
-        mContentResolver = mActivity.getContentResolver();
-        ShadowXrExtensions.extract(mXrExtensions).setApiVersion(1);
-        ShadowXrExtensions.extract(mXrExtensions)
-                .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
-        mRuntime =
-                SpatialSceneRuntime.create(mActivity, mFakeExecutor, mXrExtensions, mEntityManager);
+    fun setUp() {
+        ShadowXrExtensions.extract(xrExtensions).setApiVersion(1)
+        ShadowXrExtensions.extract(xrExtensions)
+            .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE)
+        testRuntime =
+            SpatialSceneRuntime.create(activity!!, fakeExecutor, xrExtensions, entityManager)
     }
 
     @After
-    public void tearDown() {
+    fun tearDown() {
         // Destroy the runtime between test cases to clean up lingering references.
-        mRuntime.destroy();
-        mRuntime = null;
+        testRuntime.destroy()
     }
 
-    private GltfEntityImpl createGltfEntity() {
-        NodeHolder<?> nodeHolder = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
-        GltfFeature fakeGltfFeature =
-                FakeGltfFeature.Companion.createWithMockFeature(mMockGltfFeature, nodeHolder);
-
-        return new GltfEntityImpl(
-                mActivity,
-                fakeGltfFeature,
-                mRuntime.getActivitySpace(),
-                mXrExtensions,
-                mEntityManager,
-                mFakeExecutor);
+    private fun createGltfEntity(): GltfEntityImpl {
+        val nodeHolder: NodeHolder<*> =
+            NodeHolder<Node>(xrExtensions.createNode(), Node::class.java)
+        val fakeGltfFeature = createWithMockFeature(mockGltfFeature, nodeHolder)
+        return GltfEntityImpl(
+            activity!!,
+            fakeGltfFeature,
+            testRuntime.activitySpace,
+            xrExtensions,
+            entityManager,
+            fakeExecutor,
+        )
     }
 
-    GltfEntity createGltfEntity(Pose pose) throws Exception {
-        GltfEntity gltfEntity = createGltfEntity();
-        gltfEntity.setPose(pose);
-        return gltfEntity;
+    @Throws(Exception::class)
+    fun createGltfEntity(pose: Pose): GltfEntity {
+        val gltfEntity: GltfEntity = createGltfEntity()
+        gltfEntity.setPose(pose)
+        return gltfEntity
     }
 
-    private SpatialSceneRuntime createRuntime() {
-        return SpatialSceneRuntime.create(mActivity, mFakeExecutor, mXrExtensions, mEntityManager);
-    }
-
-    @Test
-    public void sceneRuntime_setUpSceneRootAndTaskLeashNodes() {
-        Node rootNode = mRuntime.getSceneRootNode();
-        Node taskWindowLeashNode = mRuntime.getTaskWindowLeashNode();
-
-        assertThat(mNodeRepository.getName(rootNode))
-                .isEqualTo("SpatialSceneAndActivitySpaceRootNode");
-        assertThat(mNodeRepository.getName(taskWindowLeashNode))
-                .isEqualTo("MainPanelAndTaskWindowLeashNode");
-        assertThat(mNodeRepository.getParent(taskWindowLeashNode)).isEqualTo(rootNode);
+    private fun createRuntime(): SpatialSceneRuntime {
+        return SpatialSceneRuntime.create(activity!!, fakeExecutor, xrExtensions, entityManager)
     }
 
     @Test
-    public void getEnvironment_returnsEnvironment() {
-        SpatialEnvironment environment = mRuntime.getSpatialEnvironment();
-        assertThat(environment).isNotNull();
+    fun sceneRuntime_setUpSceneRootAndTaskLeashNodes() {
+        val rootNode: Node = testRuntime.sceneRootNode
+        val taskWindowLeashNode: Node = testRuntime.taskWindowLeashNode
+
+        assertThat(nodeRepository.getName(rootNode))
+            .isEqualTo("SpatialSceneAndActivitySpaceRootNode")
+        assertThat(nodeRepository.getName(taskWindowLeashNode))
+            .isEqualTo("MainPanelAndTaskWindowLeashNode")
+        assertThat(nodeRepository.getParent(taskWindowLeashNode)).isEqualTo(rootNode)
     }
 
     @Test
-    public void getActivitySpace_returnsEntity() {
-        ActivitySpace activitySpace = mRuntime.getActivitySpace();
+    fun getEnvironment_returnsEnvironment() {
+        val environment = testRuntime.spatialEnvironment
+        assertThat(environment).isNotNull()
+    }
 
-        assertThat(activitySpace).isNotNull();
+    @Test
+    fun getActivitySpace_returnsEntity() {
+        val activitySpaceImpl = testRuntime.activitySpace
+
+        assertThat(activitySpaceImpl).isNotNull()
         // Verify that there is an underlying extension node.
-        ActivitySpaceImpl activitySpaceImpl = (ActivitySpaceImpl) activitySpace;
-        assertThat(activitySpaceImpl.getNode()).isNotNull();
+        assertThat(activitySpaceImpl.getNode()).isNotNull()
     }
 
     @Test
-    public void onSpatialStateChanged_setsSpatialCapabilities() {
-        SpatialState spatialState = ShadowSpatialState.create();
+    fun onSpatialStateChanged_setsSpatialCapabilities() {
+        val spatialState = ShadowSpatialState.create()
         ShadowSpatialState.extract(spatialState)
-                .setSpatialCapabilities(
-                        ShadowSpatialCapabilities.create(
-                                com.android.extensions.xr.space.SpatialCapabilities
-                                        .SPATIAL_UI_CAPABLE));
-        mRuntime.onSpatialStateChanged(spatialState);
+            .setSpatialCapabilities(
+                ShadowSpatialCapabilities.create(SpatialCapabilities.SPATIAL_UI_CAPABLE)
+            )
+        testRuntime.onSpatialStateChanged(spatialState)
 
-        SpatialCapabilities caps = mRuntime.getSpatialCapabilities();
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_UI)).isTrue();
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT)).isFalse();
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL))
-                .isFalse();
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_APP_ENVIRONMENT))
-                .isFalse();
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO))
-                .isFalse();
-        assertThat(caps.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY))
-                .isFalse();
+        val caps = testRuntime.spatialCapabilities
+        assertThat(
+                caps.hasCapability(
+                    androidx.xr.scenecore.runtime.SpatialCapabilities.SPATIAL_CAPABILITY_UI
+                )
+            )
+            .isTrue()
+        assertThat(
+                caps.hasCapability(
+                    androidx.xr.scenecore.runtime.SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT
+                )
+            )
+            .isFalse()
+        assertThat(
+                caps.hasCapability(
+                    androidx.xr.scenecore.runtime.SpatialCapabilities
+                        .SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
+                )
+            )
+            .isFalse()
+        assertThat(
+                caps.hasCapability(
+                    androidx.xr.scenecore.runtime.SpatialCapabilities
+                        .SPATIAL_CAPABILITY_APP_ENVIRONMENT
+                )
+            )
+            .isFalse()
+        assertThat(
+                caps.hasCapability(
+                    androidx.xr.scenecore.runtime.SpatialCapabilities
+                        .SPATIAL_CAPABILITY_SPATIAL_AUDIO
+                )
+            )
+            .isFalse()
+        assertThat(
+                caps.hasCapability(
+                    androidx.xr.scenecore.runtime.SpatialCapabilities
+                        .SPATIAL_CAPABILITY_EMBED_ACTIVITY
+                )
+            )
+            .isFalse()
     }
 
     @Test
-    public void onSpatialStateChanged_setsEnvironmentVisibility() {
-        SpatialEnvironment environment = mRuntime.getSpatialEnvironment();
-        assertThat(environment.isPreferredSpatialEnvironmentActive()).isFalse();
+    fun onSpatialStateChanged_setsEnvironmentVisibility() {
+        val environment = testRuntime.spatialEnvironment
+        assertThat(environment.isPreferredSpatialEnvironmentActive).isFalse()
 
-        SpatialState state = ShadowSpatialState.create();
+        var state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setEnvironmentVisibilityState(
-                        ShadowEnvironmentVisibilityState.create(
-                                EnvironmentVisibilityState.APP_VISIBLE));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.isPreferredSpatialEnvironmentActive()).isTrue();
+            .setEnvironmentVisibilityState(
+                ShadowEnvironmentVisibilityState.create(EnvironmentVisibilityState.APP_VISIBLE)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.isPreferredSpatialEnvironmentActive).isTrue()
 
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setEnvironmentVisibilityState(
-                        ShadowEnvironmentVisibilityState.create(
-                                EnvironmentVisibilityState.INVISIBLE));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.isPreferredSpatialEnvironmentActive()).isFalse();
+            .setEnvironmentVisibilityState(
+                ShadowEnvironmentVisibilityState.create(EnvironmentVisibilityState.INVISIBLE)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.isPreferredSpatialEnvironmentActive).isFalse()
 
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setEnvironmentVisibilityState(
-                        ShadowEnvironmentVisibilityState.create(
-                                EnvironmentVisibilityState.HOME_VISIBLE));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.isPreferredSpatialEnvironmentActive()).isFalse();
+            .setEnvironmentVisibilityState(
+                ShadowEnvironmentVisibilityState.create(EnvironmentVisibilityState.HOME_VISIBLE)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.isPreferredSpatialEnvironmentActive).isFalse()
     }
 
     @Test
-    public void onSpatialStateChanged_callsEnvironmentListenerOnlyForChanges() {
-        SpatialEnvironment environment = mRuntime.getSpatialEnvironment();
-        @SuppressWarnings(value = "unchecked")
-        Consumer<Boolean> listener = (Consumer<Boolean>) mock(Consumer.class);
+    fun onSpatialStateChanged_callsEnvironmentListenerOnlyForChanges() {
+        val environment = testRuntime.spatialEnvironment
+        val listener = mock<Consumer<Boolean>>()
+        environment.addOnSpatialEnvironmentChangedListener(MoreExecutors.directExecutor(), listener)
 
-        environment.addOnSpatialEnvironmentChangedListener(directExecutor(), listener);
-
-        assertThat(environment.isPreferredSpatialEnvironmentActive()).isFalse();
+        assertThat(environment.isPreferredSpatialEnvironmentActive).isFalse()
 
         // The first spatial state should always fire the listener
-        SpatialState state = ShadowSpatialState.create();
+        var state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setEnvironmentVisibilityState(
-                        ShadowEnvironmentVisibilityState.create(
-                                EnvironmentVisibilityState.APP_VISIBLE));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        verify(listener).accept(true);
+            .setEnvironmentVisibilityState(
+                ShadowEnvironmentVisibilityState.create(EnvironmentVisibilityState.APP_VISIBLE)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        verify(listener).accept(true)
 
         // The second spatial state should also fire the listener since it's a different state
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setEnvironmentVisibilityState(
-                        ShadowEnvironmentVisibilityState.create(
-                                EnvironmentVisibilityState.INVISIBLE));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.isPreferredSpatialEnvironmentActive()).isFalse();
-        verify(listener).accept(false);
+            .setEnvironmentVisibilityState(
+                ShadowEnvironmentVisibilityState.create(EnvironmentVisibilityState.INVISIBLE)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.isPreferredSpatialEnvironmentActive).isFalse()
+        verify(listener).accept(false)
 
         // The third spatial state should not fire the listener since it is the same as the last
         // state.
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setEnvironmentVisibilityState(
-                        ShadowEnvironmentVisibilityState.create(
-                                EnvironmentVisibilityState.INVISIBLE));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.isPreferredSpatialEnvironmentActive()).isFalse();
-        verify(listener, times(2))
-                .accept(any()); // Verify the listener was not called a third time.
+            .setEnvironmentVisibilityState(
+                ShadowEnvironmentVisibilityState.create(EnvironmentVisibilityState.INVISIBLE)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.isPreferredSpatialEnvironmentActive).isFalse()
+        verify(listener, times(2)).accept(any()) // Verify the listener was not called a third time.
     }
 
     @Test
-    public void onSpatialStateChanged_setsPassthroughOpacity() {
-        SpatialEnvironment environment = mRuntime.getSpatialEnvironment();
-        assertThat(environment.getCurrentPassthroughOpacity()).isZero();
+    fun onSpatialStateChanged_setsPassthroughOpacity() {
+        val environment = testRuntime.spatialEnvironment
+        assertThat(environment.currentPassthroughOpacity).isZero()
 
-        SpatialState state = ShadowSpatialState.create();
+        var state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.APP, 0.4f));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.getCurrentPassthroughOpacity()).isEqualTo(0.4f);
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.APP, 0.4f)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.currentPassthroughOpacity).isEqualTo(0.4f)
 
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.HOME, 0.5f));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.getCurrentPassthroughOpacity()).isEqualTo(0.5f);
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.HOME, 0.5f)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.currentPassthroughOpacity).isEqualTo(0.5f)
 
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.SYSTEM, 0.9f));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.getCurrentPassthroughOpacity()).isEqualTo(0.9f);
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.SYSTEM, 0.9f)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.currentPassthroughOpacity).isEqualTo(0.9f)
 
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.DISABLED, 0.0f));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.getCurrentPassthroughOpacity()).isZero();
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.DISABLED, 0.0f)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.currentPassthroughOpacity).isZero()
     }
 
     @Test
-    public void onSpatialStateChanged_callsPassthroughListenerOnlyForChanges() {
-        SpatialEnvironment environment = mRuntime.getSpatialEnvironment();
-        @SuppressWarnings(value = "unchecked")
-        Consumer<Float> listener = (Consumer<Float>) mock(Consumer.class);
+    fun onSpatialStateChanged_callsPassthroughListenerOnlyForChanges() {
+        val environment = testRuntime.spatialEnvironment
+        val listener = mock<Consumer<Float>>()
 
-        environment.addOnPassthroughOpacityChangedListener(directExecutor(), listener);
+        environment.addOnPassthroughOpacityChangedListener(MoreExecutors.directExecutor(), listener)
 
-        assertThat(environment.getCurrentPassthroughOpacity()).isZero();
+        assertThat(environment.currentPassthroughOpacity).isZero()
 
         // The first spatial state should always fire the listener
-        SpatialState state = ShadowSpatialState.create();
+        var state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.APP, 1.0f));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        verify(listener).accept(1.0f);
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.APP, 1.0f)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        verify(listener).accept(1.0f)
 
         // The second spatial state should also fire the listener even if only the opacity changes
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.APP, 0.5f));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.getCurrentPassthroughOpacity()).isEqualTo(0.5f);
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.APP, 0.5f)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.currentPassthroughOpacity).isEqualTo(0.5f)
 
         // The third spatial state should also fire the listener even if only the visibility state
         // changes, but getCurrentPassthroughOpacity() returns the same value as the last state.
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.HOME, 0.5f));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.getCurrentPassthroughOpacity()).isEqualTo(0.5f);
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.HOME, 0.5f)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.currentPassthroughOpacity).isEqualTo(0.5f)
         verify(listener, times(2))
-                .accept(0.5f); // Verify it was called a second time with this value.
+            .accept(0.5f) // Verify it was called a second time with this value.
 
         // The fourth spatial state should not fire the listener since it is the same as the last
         // state.
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.HOME, 0.5f));
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        assertThat(environment.getCurrentPassthroughOpacity()).isEqualTo(0.5f);
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.HOME, 0.5f)
+            )
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        assertThat(environment.currentPassthroughOpacity).isEqualTo(0.5f)
         verify(listener, times(3))
-                .accept(any()); // Verify the listener was not called a fourth time.
+            .accept(any()) // Verify the listener was not called a fourth time.
     }
 
     @Test
-    public void currentPassthroughOpacity_isSetDuringRuntimeCreation() {
-        ShadowSpatialState.extract(mXrExtensions.getSpatialState(mActivity))
-                .setPassthroughVisibilityState(
-                        ShadowPassthroughVisibilityState.create(
-                                PassthroughVisibilityState.APP, 0.5f));
+    fun currentPassthroughOpacity_isSetDuringRuntimeCreation() {
+        ShadowSpatialState.extract(xrExtensions.getSpatialState(activity))
+            .setPassthroughVisibilityState(
+                ShadowPassthroughVisibilityState.create(PassthroughVisibilityState.APP, 0.5f)
+            )
 
-        SpatialEnvironment newEnvironment = mRuntime.getSpatialEnvironment();
-        assertThat(newEnvironment.getCurrentPassthroughOpacity()).isEqualTo(0.5f);
+        val newEnvironment = testRuntime.spatialEnvironment
+        assertThat(newEnvironment.currentPassthroughOpacity).isEqualTo(0.5f)
     }
 
     @Test
-    public void onSpatialStateChanged_firesSpatialCapabilitiesChangedListener() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<SpatialCapabilities> listener1 =
-                (Consumer<SpatialCapabilities>) mock(Consumer.class);
-        @SuppressWarnings(value = "unchecked")
-        Consumer<SpatialCapabilities> listener2 =
-                (Consumer<SpatialCapabilities>) mock(Consumer.class);
+    fun onSpatialStateChanged_firesSpatialCapabilitiesChangedListener() {
+        val listener1 = mock<Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities>>()
+        val listener2 = mock<Consumer<androidx.xr.scenecore.runtime.SpatialCapabilities>>()
 
-        mRuntime.addSpatialCapabilitiesChangedListener(directExecutor(), listener1);
-        mRuntime.addSpatialCapabilitiesChangedListener(directExecutor(), listener2);
+        testRuntime.addSpatialCapabilitiesChangedListener(MoreExecutors.directExecutor(), listener1)
+        testRuntime.addSpatialCapabilitiesChangedListener(MoreExecutors.directExecutor(), listener2)
 
-        SpatialState state = ShadowSpatialState.create();
+        var state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setSpatialCapabilities(ShadowSpatialCapabilities.createAll());
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        verify(listener1).accept(any());
-        verify(listener2).accept(any());
+            .setSpatialCapabilities(ShadowSpatialCapabilities.createAll())
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        verify(listener1).accept(any())
+        verify(listener2).accept(any())
 
-        state = ShadowSpatialState.create();
+        state = ShadowSpatialState.create()
         ShadowSpatialState.extract(state)
-                .setSpatialCapabilities(ShadowSpatialCapabilities.create());
-        mRuntime.removeSpatialCapabilitiesChangedListener(listener1);
-        ShadowXrExtensions.extract(mXrExtensions).sendSpatialState(mActivity, state);
-        verify(listener1).accept(any()); // Verify the removed listener was called exactly once
-        verify(listener2, times(2)).accept(any()); // Verify the active listener was called twice
+            .setSpatialCapabilities(ShadowSpatialCapabilities.create(0))
+        testRuntime.removeSpatialCapabilitiesChangedListener(listener1)
+        ShadowXrExtensions.extract(xrExtensions).sendSpatialState(activity, state)
+        verify(listener1)
+            .accept(
+                any<androidx.xr.scenecore.runtime.SpatialCapabilities>()
+            ) // Verify the removed listener was called exactly once
+        verify(listener2, times(2))
+            .accept(
+                any<androidx.xr.scenecore.runtime.SpatialCapabilities>()
+            ) // Verify the active listener was called twice
     }
 
-    private Node getNode(Entity entity) {
-        return ((AndroidXrEntity) entity).getNode();
+    private fun getNode(entity: Entity): Node {
+        return (entity as AndroidXrEntity).getNode()
     }
 
     @Test
-    public void createSubspaceNodeEntity_returnSubspaceNodeEntity() {
-        Dimensions size = new Dimensions(1.0f, 2.0f, 3.0f);
+    fun createSubspaceNodeEntity_returnSubspaceNodeEntity() {
+        val size = Dimensions(1.0f, 2.0f, 3.0f)
 
-        SubspaceNodeEntity entity =
-                mRuntime.createSubspaceNodeEntity(mXrExtensions.createNode(), size);
-        entity.setSize(size);
+        val entity = testRuntime.createSubspaceNodeEntity(xrExtensions.createNode(), size)
+        entity.size = size
 
-        assertThat(entity).isNotNull();
-        assertThat(entity.getSize()).isEqualTo(size);
-    }
-
-    private PanelEntity createPanelEntity() {
-        return createPanelEntity(new Pose());
+        assertThat(entity).isNotNull()
+        assertThat(entity.size).isEqualTo(size)
     }
 
     /**
      * Creates a generic panel entity instance for testing by creating a dummy view to insert into
      * the panel, and setting the activity space as parent.
      */
-    private PanelEntity createPanelEntity(Pose pose) {
-        Display display = mActivity.getSystemService(DisplayManager.class).getDisplays()[0];
-        Context displayContext = mActivity.createDisplayContext(display);
-        View view = new View(displayContext);
-        view.setLayoutParams(new ViewGroup.LayoutParams(640, 480));
-        return mRuntime.createPanelEntity(
-                displayContext,
-                pose,
-                view,
-                new PixelDimensions(640, 480),
-                "testPanel",
-                mRuntime.getActivitySpace());
+    private fun createPanelEntity(pose: Pose = Pose()): PanelEntity {
+        val display = activity!!.getSystemService(DisplayManager::class.java).displays[0]
+        val displayContext = activity.createDisplayContext(display!!)
+        val view = View(displayContext)
+        view.layoutParams = ViewGroup.LayoutParams(640, 480)
+        return testRuntime.createPanelEntity(
+            displayContext,
+            pose,
+            view,
+            PixelDimensions(640, 480),
+            "testPanel",
+            testRuntime.activitySpace,
+        )
     }
 
-    private Entity createEntity() {
-        return createEntity(new Pose());
-    }
-
-    private Entity createEntity(Pose pose) {
-        return mRuntime.createEntity(pose, "test", mRuntime.getActivitySpace());
+    private fun createEntity(pose: Pose = Pose()): Entity {
+        return testRuntime.createEntity(pose, "test", testRuntime.activitySpace)
     }
 
     @Test
-    public void createEntity_returnsEntity() throws Exception {
-        assertThat(createEntity()).isNotNull();
+    @Throws(Exception::class)
+    fun createEntity_returnsEntity() {
+        assertThat(createEntity()).isNotNull()
     }
 
     @Test
-    public void entity_hasActivitySpaceRootImplAsParentByDefault() throws Exception {
-        Entity entity = createEntity();
-        assertThat(entity.getParent()).isEqualTo(mRuntime.getActivitySpace());
+    @Throws(Exception::class)
+    fun entity_hasActivitySpaceRootImplAsParentByDefault() {
+        val entity = createEntity()
+        assertThat(entity.parent).isEqualTo(testRuntime.activitySpace)
     }
 
     @Test
-    public void entityAddChildren_addsChildren() throws Exception {
-        Entity childEntity1 = createEntity();
-        Entity childEntity2 = createEntity();
-        Entity parentEntity = createEntity();
+    @Throws(Exception::class)
+    fun entityAddChildren_addsChildren() {
+        val childEntity1 = createEntity()
+        val childEntity2 = createEntity()
+        val parentEntity = createEntity()
 
-        parentEntity.addChild(childEntity1);
+        parentEntity.addChild(childEntity1)
 
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1);
+        assertThat(parentEntity.children).containsExactly(childEntity1)
 
-        parentEntity.addChildren(ImmutableList.of(childEntity2));
+        parentEntity.addChildren(ImmutableList.of(childEntity2))
 
-        assertThat(childEntity1.getParent()).isEqualTo(parentEntity);
-        assertThat(childEntity2.getParent()).isEqualTo(parentEntity);
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1, childEntity2);
+        assertThat(childEntity1.parent).isEqualTo(parentEntity)
+        assertThat(childEntity2.parent).isEqualTo(parentEntity)
+        assertThat(parentEntity.children).containsExactly(childEntity1, childEntity2)
 
-        Node childNode1 = getNode(childEntity1);
-        assertThat(mNodeRepository.getParent(childNode1)).isEqualTo(getNode(parentEntity));
-        Node childNode2 = getNode(childEntity2);
-        assertThat(mNodeRepository.getParent(childNode2)).isEqualTo(getNode(parentEntity));
+        val childNode1 = getNode(childEntity1)
+        assertThat(nodeRepository.getParent(childNode1)).isEqualTo(getNode(parentEntity))
+        val childNode2 = getNode(childEntity2)
+        assertThat(nodeRepository.getParent(childNode2)).isEqualTo(getNode(parentEntity))
     }
 
     @Test
-    public void createLoggingEntity_returnsEntity() {
-        Pose pose = new Pose();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(pose);
-        Pose updatedPose =
-                new Pose(
-                        new Vector3(1f, pose.getTranslation().getY(), pose.getTranslation().getZ()),
-                        pose.getRotation());
-        loggingEntity.setPose(updatedPose);
+    fun createLoggingEntity_returnsEntity() {
+        val pose = Pose()
+        val loggingEntity = testRuntime.createLoggingEntity(pose)
+        val updatedPose = Pose(Vector3(1f, pose.translation.y, pose.translation.z), pose.rotation)
+        loggingEntity.setPose(updatedPose)
     }
 
     @Test
-    public void loggingEntitySetParent() {
-        Pose pose = new Pose();
-        LoggingEntity childEntity = mRuntime.createLoggingEntity(pose);
-        LoggingEntity parentEntity = mRuntime.createLoggingEntity(pose);
+    fun loggingEntitySetParent() {
+        val pose = Pose()
+        val childEntity = testRuntime.createLoggingEntity(pose)
+        val parentEntity = testRuntime.createLoggingEntity(pose)
 
-        childEntity.setParent(parentEntity);
-        parentEntity.addChild(childEntity);
+        childEntity.parent = parentEntity
+        parentEntity.addChild(childEntity)
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity);
-        assertThat(parentEntity.getParent()).isEqualTo(null);
-        assertThat(childEntity.getChildren()).isEmpty();
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity);
+        assertThat(childEntity.parent).isEqualTo(parentEntity)
+        assertThat(parentEntity.parent).isEqualTo(null)
+        assertThat(childEntity.children).isEmpty()
+        assertThat(parentEntity.children).containsExactly(childEntity)
     }
 
     @Test
-    public void loggingEntityUpdateParent() {
-        Pose pose = new Pose();
-        LoggingEntity childEntity = mRuntime.createLoggingEntity(pose);
-        LoggingEntity parentEntity1 = mRuntime.createLoggingEntity(pose);
-        LoggingEntity parentEntity2 = mRuntime.createLoggingEntity(pose);
+    fun loggingEntityUpdateParent() {
+        val pose = Pose()
+        val childEntity = testRuntime.createLoggingEntity(pose)
+        val parentEntity1 = testRuntime.createLoggingEntity(pose)
+        val parentEntity2 = testRuntime.createLoggingEntity(pose)
 
-        childEntity.setParent(parentEntity1);
+        childEntity.parent = parentEntity1
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity1);
-        assertThat(parentEntity1.getChildren()).containsExactly(childEntity);
-        assertThat(parentEntity2.getChildren()).isEmpty();
+        assertThat(childEntity.parent).isEqualTo(parentEntity1)
+        assertThat(parentEntity1.children).containsExactly(childEntity)
+        assertThat(parentEntity2.children).isEmpty()
 
-        childEntity.setParent(parentEntity2);
+        childEntity.parent = parentEntity2
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity2);
-        assertThat(parentEntity2.getChildren()).containsExactly(childEntity);
-        assertThat(parentEntity1.getChildren()).isEmpty();
+        assertThat(childEntity.parent).isEqualTo(parentEntity2)
+        assertThat(parentEntity2.children).containsExactly(childEntity)
+        assertThat(parentEntity1.children).isEmpty()
     }
 
     @Test
-    public void loggingEntity_getActivitySpacePose_returnsIdentityPose() {
-        Pose identityPose = new Pose();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(identityPose);
-        assertPose(loggingEntity.getActivitySpacePose(), identityPose);
+    fun loggingEntity_getActivitySpacePose_returnsIdentityPose() {
+        val identityPose = Pose()
+        val loggingEntity = testRuntime.createLoggingEntity(identityPose)
+        assertPose(loggingEntity.activitySpacePose, identityPose)
     }
 
     @Test
-    public void loggingEntity_transformPoseTo_returnsIdentityPose() {
-        Pose identityPose = new Pose();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(identityPose);
-        assertPose(loggingEntity.transformPoseTo(identityPose, loggingEntity), identityPose);
+    fun loggingEntity_transformPoseTo_returnsIdentityPose() {
+        val identityPose = Pose()
+        val loggingEntity = testRuntime.createLoggingEntity(identityPose)
+        assertPose(loggingEntity.transformPoseTo(identityPose, loggingEntity), identityPose)
     }
 
     @Test
-    public void loggingEntityAddChildren() {
-        Pose pose = new Pose();
-        LoggingEntity childEntity1 = mRuntime.createLoggingEntity(pose);
-        LoggingEntity childEntity2 = mRuntime.createLoggingEntity(pose);
-        LoggingEntity parentEntity = mRuntime.createLoggingEntity(pose);
+    fun loggingEntityAddChildren() {
+        val pose = Pose()
+        val childEntity1 = testRuntime.createLoggingEntity(pose)
+        val childEntity2 = testRuntime.createLoggingEntity(pose)
+        val parentEntity = testRuntime.createLoggingEntity(pose)
 
-        parentEntity.addChild(childEntity1);
+        parentEntity.addChild(childEntity1)
 
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1);
+        assertThat(parentEntity.children).containsExactly(childEntity1)
 
-        parentEntity.addChildren(ImmutableList.of(childEntity2));
+        parentEntity.addChildren(ImmutableList.of(childEntity2))
 
-        assertThat(childEntity1.getParent()).isEqualTo(parentEntity);
-        assertThat(childEntity2.getParent()).isEqualTo(parentEntity);
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1, childEntity2);
+        assertThat(childEntity1.parent).isEqualTo(parentEntity)
+        assertThat(childEntity2.parent).isEqualTo(parentEntity)
+        assertThat(parentEntity.children).containsExactly(childEntity1, childEntity2)
     }
 
     @Test
-    public void createAnchorEntity_returnsUnanchoredAnchorEntity() {
-        AnchorEntity anchorEntity = mRuntime.createAnchorEntity();
+    fun createAnchorEntity_returnsUnanchoredAnchorEntity() {
+        val anchorEntity = testRuntime.createAnchorEntity()
 
-        assertThat(anchorEntity).isNotNull();
-        assertThat(anchorEntity.getState()).isEqualTo(State.UNANCHORED);
+        assertThat(anchorEntity).isNotNull()
+        assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.UNANCHORED)
     }
 
     @Test
-    public void spatialStateChangeHandler_invokedWhenSpatialStateChangesToFSM() {
-        SpatialState spatialState = ShadowSpatialState.create();
-        SpatialModeChangeListener mockSpatialModeChangeListener =
-                mock(SpatialModeChangeListener.class);
-        mRuntime.setSpatialModeChangeListener(mockSpatialModeChangeListener);
+    fun spatialStateChangeHandler_invokedWhenSpatialStateChangesToFSM() {
+        val spatialState = ShadowSpatialState.create()
+        val mockSpatialModeChangeListener = mock<SpatialModeChangeListener>()
+        testRuntime.spatialModeChangeListener = mockSpatialModeChangeListener
         ShadowSpatialState.extract(spatialState)
-                .setSpatialCapabilities(ShadowSpatialCapabilities.createAll());
+            .setSpatialCapabilities(ShadowSpatialCapabilities.createAll())
         ShadowSpatialState.extract(spatialState)
-                .setSceneParentTransform(new Mat4f(Matrix4.Identity.getData()));
-        mRuntime.onSpatialStateChanged(spatialState);
+            .setSceneParentTransform(Mat4f(Matrix4.Identity.data))
+        testRuntime.onSpatialStateChanged(spatialState)
 
-        verify(mockSpatialModeChangeListener).onSpatialModeChanged(any(), any());
+        verify(mockSpatialModeChangeListener).onSpatialModeChanged(any(), any())
     }
 
-    private void sendVisibilityState(ShadowXrExtensions shadowXrExtensions, int visibilityState) {
-        sendVisibilityState(shadowXrExtensions, visibilityState, 1, 1);
+    private fun sendVisibilityState(
+        shadowXrExtensions: ShadowXrExtensions,
+        width: Int,
+        height: Int,
+    ) {
+        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE, width, height)
     }
 
-    private void sendVisibilityState(ShadowXrExtensions shadowXrExtensions, int width, int height) {
-        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE, width, height);
-    }
-
-    private void sendVisibilityState(
-            ShadowXrExtensions shadowXrExtensions, int visibilityState, int width, int height) {
+    private fun sendVisibilityState(
+        shadowXrExtensions: ShadowXrExtensions,
+        visibilityState: Int,
+        width: Int = 1,
+        height: Int = 1,
+    ) {
         shadowXrExtensions.sendVisibilityState(
-                mActivity,
-                new VisibilityState(visibilityState, new PerceivedResolution(width, height)));
+            activity,
+            VisibilityState(visibilityState, PerceivedResolution(width, height)),
+        )
     }
 
     @Test
-    public void setSpatialVisibilityChangedListener_callsExtensions() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<SpatialVisibility> mockListener =
-                (Consumer<SpatialVisibility>) mock(Consumer.class);
-        mRuntime.setSpatialVisibilityChangedListener(directExecutor(), mockListener);
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
+    fun setSpatialVisibilityChangedListener_callsExtensions() {
+        val mockListener = mock<Consumer<SpatialVisibility>>()
+        testRuntime.setSpatialVisibilityChangedListener(
+            MoreExecutors.directExecutor(),
+            mockListener,
+        )
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
 
         // VISIBLE
-        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE);
-        verify(mockListener).accept(new SpatialVisibility(SpatialVisibility.WITHIN_FOV));
+        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE)
+        verify(mockListener).accept(SpatialVisibility(SpatialVisibility.WITHIN_FOV))
 
         // PARTIALLY_VISIBLE
-        sendVisibilityState(shadowXrExtensions, VisibilityState.PARTIALLY_VISIBLE);
-        verify(mockListener).accept(new SpatialVisibility(SpatialVisibility.PARTIALLY_WITHIN_FOV));
+        sendVisibilityState(shadowXrExtensions, VisibilityState.PARTIALLY_VISIBLE)
+        verify(mockListener).accept(SpatialVisibility(SpatialVisibility.PARTIALLY_WITHIN_FOV))
 
         // OUTSIDE_OF_FOV
-        sendVisibilityState(shadowXrExtensions, VisibilityState.NOT_VISIBLE);
-        verify(mockListener).accept(new SpatialVisibility(SpatialVisibility.OUTSIDE_FOV));
+        sendVisibilityState(shadowXrExtensions, VisibilityState.NOT_VISIBLE)
+        verify(mockListener).accept(SpatialVisibility(SpatialVisibility.OUTSIDE_FOV))
 
         // UNKNOWN
-        sendVisibilityState(shadowXrExtensions, VisibilityState.UNKNOWN);
-        verify(mockListener).accept(new SpatialVisibility(SpatialVisibility.UNKNOWN));
+        sendVisibilityState(shadowXrExtensions, VisibilityState.UNKNOWN)
+        verify(mockListener).accept(SpatialVisibility(SpatialVisibility.UNKNOWN))
     }
 
     @Test
-    public void setSpatialVisibilityChangedListener_replacesExistingListenerOnSecondCall() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<SpatialVisibility> mockListener1 =
-                (Consumer<SpatialVisibility>) mock(Consumer.class);
-        @SuppressWarnings(value = "unchecked")
-        Consumer<SpatialVisibility> mockListener2 =
-                (Consumer<SpatialVisibility>) mock(Consumer.class);
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
+    fun setSpatialVisibilityChangedListener_replacesExistingListenerOnSecondCall() {
+        val mockListener1 = mock<Consumer<SpatialVisibility>>()
+        val mockListener2 = mock<Consumer<SpatialVisibility>>()
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
 
         // Listener 1 is set and called once.
-        mRuntime.setSpatialVisibilityChangedListener(directExecutor(), mockListener1);
-        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE);
-        verify(mockListener1).accept(new SpatialVisibility(SpatialVisibility.WITHIN_FOV));
-        verify(mockListener2, never()).accept(new SpatialVisibility(SpatialVisibility.WITHIN_FOV));
+        testRuntime.setSpatialVisibilityChangedListener(
+            MoreExecutors.directExecutor(),
+            mockListener1,
+        )
+        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE)
+        verify(mockListener1).accept(SpatialVisibility(SpatialVisibility.WITHIN_FOV))
+        verify(mockListener2, never()).accept(SpatialVisibility(SpatialVisibility.WITHIN_FOV))
 
         // Listener 2 is set and called once. Listener 1 is not called again.
-        mRuntime.setSpatialVisibilityChangedListener(directExecutor(), mockListener2);
-        sendVisibilityState(shadowXrExtensions, VisibilityState.NOT_VISIBLE);
-        verify(mockListener2).accept(new SpatialVisibility(SpatialVisibility.OUTSIDE_FOV));
-        verify(mockListener1, never()).accept(new SpatialVisibility(SpatialVisibility.OUTSIDE_FOV));
+        testRuntime.setSpatialVisibilityChangedListener(
+            MoreExecutors.directExecutor(),
+            mockListener2,
+        )
+        sendVisibilityState(shadowXrExtensions, VisibilityState.NOT_VISIBLE)
+        verify(mockListener2).accept(SpatialVisibility(SpatialVisibility.OUTSIDE_FOV))
+        verify(mockListener1, never()).accept(SpatialVisibility(SpatialVisibility.OUTSIDE_FOV))
     }
 
     @Test
-    public void setSpatialVisibilityChangedListener_handlesException() {
-        // the subscription method throws an exception if the executor or listener are null.
-        // No assert needed, the test will fail if the exception is not handled.
-        mRuntime.setSpatialVisibilityChangedListener(null, null);
-    }
+    fun clearSpatialVisibilityChangedListener_stopsSpatialVisibilityCallbacks() {
+        val mockListener = mock<Consumer<SpatialVisibility>>()
+        testRuntime.setSpatialVisibilityChangedListener(
+            MoreExecutors.directExecutor(),
+            mockListener,
+        )
 
-    @Test
-    public void clearSpatialVisibilityChangedListener_stopsSpatialVisibilityCallbacks() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<SpatialVisibility> mockListener =
-                (Consumer<SpatialVisibility>) mock(Consumer.class);
-        mRuntime.setSpatialVisibilityChangedListener(directExecutor(), mockListener);
-
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
         // Verify that the callback is called once when the visibility changes.
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
-        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE);
-        verify(mockListener).accept(any());
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
+        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE)
+        verify(mockListener).accept(any<SpatialVisibility>())
 
         // Clear the listener and verify that the callback is not called a second time.
-        mRuntime.clearSpatialVisibilityChangedListener();
-        sendVisibilityState(shadowXrExtensions, VisibilityState.NOT_VISIBLE);
-        sendVisibilityState(shadowXrExtensions, VisibilityState.PARTIALLY_VISIBLE);
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isFalse();
-        verify(mockListener).accept(any());
+        testRuntime.clearSpatialVisibilityChangedListener()
+        sendVisibilityState(shadowXrExtensions, VisibilityState.NOT_VISIBLE)
+        sendVisibilityState(shadowXrExtensions, VisibilityState.PARTIALLY_VISIBLE)
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isFalse()
+        verify(mockListener).accept(any<SpatialVisibility>())
     }
 
     @Test
-    public void
-            clearSpatialVisibilityChangedListener_handlesThrowWhenCalledWithoutSettingListener() {
+    fun clearSpatialVisibilityChangedListener_handlesThrowWhenCalledWithoutSettingListener() {
         // No assert needed, the test will fail if an unhandled exception is thrown.
-        mRuntime.clearSpatialVisibilityChangedListener();
+        testRuntime.clearSpatialVisibilityChangedListener()
     }
 
     @Test
-    public void destroy_closesSpatialVisibilityAndPerceivedResolutionSubscription() {
-        @SuppressWarnings(value = "unchecked")
-        Consumer<SpatialVisibility> mockSpatialVisListener =
-                (Consumer<SpatialVisibility>) mock(Consumer.class);
-        @SuppressWarnings(value = "unchecked")
-        Consumer<PixelDimensions> mockPerceivedResListener =
-                (Consumer<PixelDimensions>) mock(Consumer.class);
+    fun destroy_closesSpatialVisibilityAndPerceivedResolutionSubscription() {
+        val mockSpatialVisListener = mock<Consumer<SpatialVisibility>>()
+        val mockPerceivedResListener = mock<Consumer<PixelDimensions>>()
 
-        mRuntime.setSpatialVisibilityChangedListener(directExecutor(), mockSpatialVisListener);
-        mRuntime.addPerceivedResolutionChangedListener(directExecutor(), mockPerceivedResListener);
+        testRuntime.setSpatialVisibilityChangedListener(
+            MoreExecutors.directExecutor(),
+            mockSpatialVisListener,
+        )
+        testRuntime.addPerceivedResolutionChangedListener(
+            MoreExecutors.directExecutor(),
+            mockPerceivedResListener,
+        )
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
         // Verify that the callback is called once when the visibility changes.
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
-        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE);
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
+        sendVisibilityState(shadowXrExtensions, VisibilityState.FULLY_VISIBLE)
 
-        verify(mockSpatialVisListener).accept(any());
-        verify(mockPerceivedResListener).accept(any());
+        verify(mockSpatialVisListener).accept(any<SpatialVisibility>())
+        verify(mockPerceivedResListener).accept(any<PixelDimensions>())
 
         // Ensure destroy() clears the listener that the callbacks are not called a second time.
-        mRuntime.destroy();
+        testRuntime.destroy()
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isFalse();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isFalse()
 
-        sendVisibilityState(shadowXrExtensions, VisibilityState.NOT_VISIBLE);
-        sendVisibilityState(shadowXrExtensions, VisibilityState.PARTIALLY_VISIBLE);
+        sendVisibilityState(shadowXrExtensions, VisibilityState.NOT_VISIBLE)
+        sendVisibilityState(shadowXrExtensions, VisibilityState.PARTIALLY_VISIBLE)
 
-        verify(mockSpatialVisListener).accept(any());
-        verify(mockPerceivedResListener).accept(any());
+        verify(mockSpatialVisListener).accept(any<SpatialVisibility>())
+        verify(mockPerceivedResListener).accept(any<PixelDimensions>())
     }
 
     @Test
-    public void clearSpatialVisibilityChangedListener_doesNotStopPerceivedResolutionListener() {
-        @SuppressWarnings("unchecked")
-        Consumer<SpatialVisibility> mockSpatialListener =
-                (Consumer<SpatialVisibility>) mock(Consumer.class);
-        @SuppressWarnings("unchecked")
-        Consumer<PixelDimensions> mockPerceivedResListener =
-                (Consumer<PixelDimensions>) mock(Consumer.class);
+    fun clearSpatialVisibilityChangedListener_doesNotStopPerceivedResolutionListener() {
+        val mockSpatialListener = mock<Consumer<SpatialVisibility>>()
+        val mockPerceivedResListener = mock<Consumer<PixelDimensions>>()
 
-        mRuntime.setSpatialVisibilityChangedListener(directExecutor(), mockSpatialListener);
-        mRuntime.addPerceivedResolutionChangedListener(directExecutor(), mockPerceivedResListener);
+        testRuntime.setSpatialVisibilityChangedListener(
+            MoreExecutors.directExecutor(),
+            mockSpatialListener,
+        )
+        testRuntime.addPerceivedResolutionChangedListener(
+            MoreExecutors.directExecutor(),
+            mockPerceivedResListener,
+        )
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
-        mRuntime.clearSpatialVisibilityChangedListener();
+        testRuntime.clearSpatialVisibilityChangedListener()
 
         // Perceived resolution listener is still active, so callback should remain registered.
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
-        sendVisibilityState(shadowXrExtensions, SpatialVisibility.WITHIN_FOV, 10, 20);
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
+        sendVisibilityState(shadowXrExtensions, SpatialVisibility.WITHIN_FOV, 10, 20)
 
-        verify(mockSpatialListener, never()).accept(any());
-        verify(mockPerceivedResListener).accept(any());
+        verify(mockSpatialListener, never()).accept(any())
+
+        verify(mockPerceivedResListener).accept(any())
     }
 
     @Test
-    public void addPerceivedResolutionChangedListener_registersCombinedCallbackFirstTime() {
-        @SuppressWarnings("unchecked")
-        Consumer<PixelDimensions> mockListener = (Consumer<PixelDimensions>) mock(Consumer.class);
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
+    fun addPerceivedResolutionChangedListener_registersCombinedCallbackFirstTime() {
+        val mockListener = mock<Consumer<PixelDimensions>>()
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isFalse();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isFalse()
 
-        mRuntime.addPerceivedResolutionChangedListener(directExecutor(), mockListener);
+        testRuntime.addPerceivedResolutionChangedListener(
+            MoreExecutors.directExecutor(),
+            mockListener,
+        )
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
-        verify(mockListener, never()).accept(any());
+        verify(mockListener, never()).accept(any<PixelDimensions>())
 
-        sendVisibilityState(shadowXrExtensions, 10, 20);
+        sendVisibilityState(shadowXrExtensions, 10, 20)
 
-        verify(mockListener).accept(new PixelDimensions(10, 20));
+        verify(mockListener).accept(PixelDimensions(10, 20))
     }
 
     @Test
-    public void removePerceivedResolutionChangedListener_clearsCombinedCallbackIfLastListener() {
-        @SuppressWarnings("unchecked")
-        Consumer<PixelDimensions> mockListener = (Consumer<PixelDimensions>) mock(Consumer.class);
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
+    fun removePerceivedResolutionChangedListener_clearsCombinedCallbackIfLastListener() {
+        val mockListener = mock<Consumer<PixelDimensions>>()
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
 
-        mRuntime.addPerceivedResolutionChangedListener(directExecutor(), mockListener);
+        testRuntime.addPerceivedResolutionChangedListener(
+            MoreExecutors.directExecutor(),
+            mockListener,
+        )
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
-        sendVisibilityState(shadowXrExtensions, 10, 20);
+        sendVisibilityState(shadowXrExtensions, 10, 20)
 
-        verify(mockListener).accept(new PixelDimensions(10, 20));
+        verify(mockListener).accept(PixelDimensions(10, 20))
 
-        mRuntime.removePerceivedResolutionChangedListener(mockListener);
+        testRuntime.removePerceivedResolutionChangedListener(mockListener)
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isFalse();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isFalse()
 
         // It shouldn't be called a second time
-        sendVisibilityState(shadowXrExtensions, 10, 20);
+        sendVisibilityState(shadowXrExtensions, 10, 20)
 
-        verify(mockListener, times(1)).accept(new PixelDimensions(10, 20));
+        verify(mockListener, times(1)).accept(PixelDimensions(10, 20))
     }
 
     @Test
-    public void removePerceivedResolutionChangedListener_doesNotStopSpatialListener() {
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
-        @SuppressWarnings("unchecked")
-        Consumer<SpatialVisibility> mockSpatialListener =
-                (Consumer<SpatialVisibility>) mock(Consumer.class);
-        @SuppressWarnings("unchecked")
-        Consumer<PixelDimensions> mockPerceivedResListener =
-                (Consumer<PixelDimensions>) mock(Consumer.class);
+    fun removePerceivedResolutionChangedListener_doesNotStopSpatialListener() {
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
+        val mockSpatialListener = mock<Consumer<SpatialVisibility>>()
+        val mockPerceivedResListener = mock<Consumer<PixelDimensions>>()
 
-        mRuntime.setSpatialVisibilityChangedListener(directExecutor(), mockSpatialListener);
-        mRuntime.addPerceivedResolutionChangedListener(directExecutor(), mockPerceivedResListener);
+        testRuntime.setSpatialVisibilityChangedListener(
+            MoreExecutors.directExecutor(),
+            mockSpatialListener,
+        )
+        testRuntime.addPerceivedResolutionChangedListener(
+            MoreExecutors.directExecutor(),
+            mockPerceivedResListener,
+        )
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
-        mRuntime.removePerceivedResolutionChangedListener(mockPerceivedResListener);
+        testRuntime.removePerceivedResolutionChangedListener(mockPerceivedResListener)
 
         // Spatial listener still active, so callback should remain registered.
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
-        sendVisibilityState(shadowXrExtensions, SpatialVisibility.WITHIN_FOV, 10, 20);
+        sendVisibilityState(shadowXrExtensions, SpatialVisibility.WITHIN_FOV, 10, 20)
 
-        verify(mockSpatialListener).accept(any());
-        verify(mockPerceivedResListener, never()).accept(any());
+        verify(mockSpatialListener).accept(any())
+
+        verify(mockPerceivedResListener, never()).accept(any())
     }
 
     @Test
-    public void removePerceivedResolutionChangedListener_doesNotStopAnotherPerceivedResListener() {
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
-        @SuppressWarnings("unchecked")
-        Consumer<PixelDimensions> mockListener1 = (Consumer<PixelDimensions>) mock(Consumer.class);
-        @SuppressWarnings("unchecked")
-        Consumer<PixelDimensions> mockListener2 = (Consumer<PixelDimensions>) mock(Consumer.class);
+    fun removePerceivedResolutionChangedListener_doesNotStopAnotherPerceivedResListener() {
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
+        val mockListener1 = mock<Consumer<PixelDimensions>>()
+        val mockListener2 = mock<Consumer<PixelDimensions>>()
 
-        mRuntime.addPerceivedResolutionChangedListener(directExecutor(), mockListener1);
-        mRuntime.addPerceivedResolutionChangedListener(directExecutor(), mockListener2);
+        testRuntime.addPerceivedResolutionChangedListener(
+            MoreExecutors.directExecutor(),
+            mockListener1,
+        )
+        testRuntime.addPerceivedResolutionChangedListener(
+            MoreExecutors.directExecutor(),
+            mockListener2,
+        )
 
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
-        mRuntime.removePerceivedResolutionChangedListener(mockListener1);
+        testRuntime.removePerceivedResolutionChangedListener(mockListener1)
 
         // mockListener2 still active, so callback should remain registered.
-        assertThat(mRuntime.mIsExtensionVisibilityStateCallbackRegistered).isTrue();
+        assertThat(testRuntime.isExtensionVisibilityStateCallbackRegistered).isTrue()
 
-        sendVisibilityState(shadowXrExtensions, 10, 20);
+        sendVisibilityState(shadowXrExtensions, 10, 20)
 
-        verify(mockListener2).accept(any());
-        verify(mockListener1, never()).accept(any());
+        verify(mockListener2).accept(any<PixelDimensions>())
+        verify(mockListener1, never()).accept(any<PixelDimensions>())
     }
 
     @Test
-    public void combinedCallback_dispatchesToBothListenersCorrectly() {
-        @SuppressWarnings("unchecked")
-        Consumer<SpatialVisibility> mockSpatialListener =
-                (Consumer<SpatialVisibility>) mock(Consumer.class);
-        @SuppressWarnings("unchecked")
-        Consumer<PixelDimensions> mockPerceivedResListener =
-                (Consumer<PixelDimensions>) mock(Consumer.class);
+    fun combinedCallback_dispatchesToBothListenersCorrectly() {
+        val mockSpatialListener = mock<Consumer<SpatialVisibility>>()
+        val mockPerceivedResListener = mock<Consumer<PixelDimensions>>()
 
-        mRuntime.setSpatialVisibilityChangedListener(directExecutor(), mockSpatialListener);
-        mRuntime.addPerceivedResolutionChangedListener(directExecutor(), mockPerceivedResListener);
+        testRuntime.setSpatialVisibilityChangedListener(
+            MoreExecutors.directExecutor(),
+            mockSpatialListener,
+        )
+        testRuntime.addPerceivedResolutionChangedListener(
+            MoreExecutors.directExecutor(),
+            mockPerceivedResListener,
+        )
 
-        ShadowXrExtensions shadowXrExtensions = ShadowXrExtensions.extract(mXrExtensions);
-        sendVisibilityState(shadowXrExtensions, SpatialVisibility.OUTSIDE_FOV, 30, 40);
+        val shadowXrExtensions = ShadowXrExtensions.extract(xrExtensions)
+        sendVisibilityState(shadowXrExtensions, SpatialVisibility.OUTSIDE_FOV, 30, 40)
 
-        verify(mockSpatialListener)
-                .accept(eq(new SpatialVisibility(SpatialVisibility.OUTSIDE_FOV)));
-        verify(mockPerceivedResListener).accept(eq(new PixelDimensions(30, 40)));
+        verify(mockSpatialListener).accept((SpatialVisibility(SpatialVisibility.OUTSIDE_FOV)))
+
+        verify(mockPerceivedResListener).accept((PixelDimensions(30, 40)))
     }
 
     @Test
-    public void requestHomeSpaceMode_callsExtensions() {
-        mRuntime.requestHomeSpaceMode();
+    fun requestHomeSpaceMode_callsExtensions() {
+        testRuntime.requestHomeSpaceMode()
 
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getSpaceMode(mActivity))
-                .isEqualTo(ShadowXrExtensions.SpaceMode.HOME_SPACE);
+        assertThat<ShadowXrExtensions.SpaceMode>(
+                ShadowXrExtensions.extract(xrExtensions).getSpaceMode(activity)
+            )
+            .isEqualTo(ShadowXrExtensions.SpaceMode.HOME_SPACE)
     }
 
     @Test
-    public void requestFullSpaceMode_callsExtensions() {
-        mRuntime.requestFullSpaceMode();
+    fun requestFullSpaceMode_callsExtensions() {
+        testRuntime.requestFullSpaceMode()
 
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getSpaceMode(mActivity))
-                .isEqualTo(ShadowXrExtensions.SpaceMode.FULL_SPACE);
+        assertThat<ShadowXrExtensions.SpaceMode>(
+                ShadowXrExtensions.extract(xrExtensions).getSpaceMode(activity)
+            )
+            .isEqualTo(ShadowXrExtensions.SpaceMode.FULL_SPACE)
     }
 
     @Test
-    public void setFullSpaceMode_callsExtensions() {
-        Bundle bundle = Bundle.EMPTY;
-        bundle = mRuntime.setFullSpaceMode(bundle);
+    fun setFullSpaceMode_callsExtensions() {
+        var bundle = Bundle.EMPTY
+        bundle = testRuntime.setFullSpaceMode(bundle)
 
         // TODO: b/440191514 - Change to assertThat(bundle).isNotEqualTo(Bundle.EMPTY);
-        assertThat(bundle).isNotNull();
+        assertThat(bundle).isNotNull()
     }
 
     @Test
-    public void setFullSpaceModeWithEnvironmentInherited_callsExtensions() {
-        Bundle bundle = Bundle.EMPTY;
-        bundle = mRuntime.setFullSpaceModeWithEnvironmentInherited(bundle);
+    fun setFullSpaceModeWithEnvironmentInherited_callsExtensions() {
+        var bundle = Bundle.EMPTY
+        bundle = testRuntime.setFullSpaceModeWithEnvironmentInherited(bundle)
 
         // TODO: b/440191514 - Change to assertThat(bundle).isNotEqualTo(Bundle.EMPTY);
-        assertThat(bundle).isNotNull();
+        assertThat(bundle).isNotNull()
     }
 
     @Test
-    public void enablePanelDepthTest_callsExtensions() {
-        Node rootNode = mRuntime.getSceneRootNode();
+    fun enablePanelDepthTest_callsExtensions() {
+        val rootNode: Node = testRuntime.sceneRootNode
 
-        mRuntime.enablePanelDepthTest(true);
+        testRuntime.enablePanelDepthTest(true)
 
-        assertThat(mNodeRepository.isEnablePanelDepthTest(rootNode)).isTrue();
+        assertThat(nodeRepository.isEnablePanelDepthTest(rootNode)).isTrue()
 
-        mRuntime.enablePanelDepthTest(false);
+        testRuntime.enablePanelDepthTest(false)
 
-        assertThat(mNodeRepository.isEnablePanelDepthTest(rootNode)).isFalse();
+        assertThat(nodeRepository.isEnablePanelDepthTest(rootNode)).isFalse()
     }
 
     @Test
-    public void setPreferredAspectRatio_callsExtensions() {
-        mRuntime.setPreferredAspectRatio(mActivity, 1.23f);
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getPreferredAspectRatio(mActivity))
-                .isEqualTo(1.23f);
+    fun setPreferredAspectRatio_callsExtensions() {
+        testRuntime.setPreferredAspectRatio(activity!!, 1.23f)
+        assertThat(ShadowXrExtensions.extract(xrExtensions).getPreferredAspectRatio(activity))
+            .isEqualTo(1.23f)
     }
 
     @Test
-    public void sceneRuntime_getSoundPoolExtensionsWrapper() {
-        SoundPoolExtensionsWrapper extensions = mRuntime.getSoundPoolExtensionsWrapper();
+    fun sceneRuntime_getSoundPoolExtensionsWrapper() {
+        val extensions = testRuntime.soundPoolExtensionsWrapper
 
-        assertThat(extensions).isNotNull();
+        assertThat(extensions).isNotNull()
     }
 
     @Test
-    public void sceneRuntime_getAudioTrackExtensionsWrapper() {
-        AudioTrackExtensionsWrapper extensions = mRuntime.getAudioTrackExtensionsWrapper();
+    fun sceneRuntime_getAudioTrackExtensionsWrapper() {
+        val extensions = testRuntime.audioTrackExtensionsWrapper
 
-        assertThat(extensions).isNotNull();
+        assertThat(extensions).isNotNull()
     }
 
     @Test
-    public void sceneRuntime_getMediaPlayerExtensionsWrapper() {
-        MediaPlayerExtensionsWrapper extensions = mRuntime.getMediaPlayerExtensionsWrapper();
+    fun sceneRuntime_getMediaPlayerExtensionsWrapper() {
+        val extensions = testRuntime.mediaPlayerExtensionsWrapper
 
-        assertThat(extensions).isNotNull();
+        assertThat(extensions).isNotNull()
     }
 
     @Test
-    public void createAnchorPlacement_returnsAnchorPlacement() {
-        AnchorPlacement anchorPlacement =
-                mRuntime.createAnchorPlacementForPlanes(
-                        ImmutableSet.of(PlaneType.ANY), ImmutableSet.of(PlaneSemantic.ANY));
+    fun createAnchorPlacement_returnsAnchorPlacement() {
+        val anchorPlacement =
+            testRuntime.createAnchorPlacementForPlanes(
+                ImmutableSet.of<@JvmSuppressWildcards PlaneType>(PlaneType.ANY),
+                ImmutableSet.of<@JvmSuppressWildcards PlaneSemantic>(PlaneSemantic.ANY),
+            )
 
-        assertThat(anchorPlacement).isNotNull();
+        assertThat(anchorPlacement).isNotNull()
     }
 
     @Test
-    public void createMovableComponent_returnsComponent() {
-        MovableComponent movableComponent = mRuntime.createMovableComponent(true, true, false);
+    fun createMovableComponent_returnsComponent() {
+        val movableComponent =
+            testRuntime.createMovableComponent(
+                systemMovable = true,
+                scaleInZ = true,
+                userAnchorable = false,
+            )
 
-        assertThat(movableComponent).isNotNull();
+        assertThat(movableComponent).isNotNull()
     }
 
     @Test
-    public void createResizableComponent_returnsComponent() {
-        ResizableComponent resizableComponent =
-                mRuntime.createResizableComponent(
-                        new Dimensions(0f, 0f, 0f), new Dimensions(5f, 5f, 5f));
+    fun createResizableComponent_returnsComponent() {
+        val resizableComponent =
+            testRuntime.createResizableComponent(Dimensions(0f, 0f, 0f), Dimensions(5f, 5f, 5f))
 
-        assertThat(resizableComponent).isNotNull();
+        assertThat(resizableComponent).isNotNull()
     }
 
     @Test
-    public void createPointerCaptureComponent_returnsComponent() {
-        PointerCaptureComponent pointerCaptureComponent =
-                mRuntime.createPointerCaptureComponent(
-                        mFakeExecutor, (inputEvent) -> {}, (state) -> {});
+    fun createPointerCaptureComponent_returnsComponent() {
+        val pointerCaptureComponent =
+            testRuntime.createPointerCaptureComponent(
+                fakeExecutor,
+                { _: Int -> },
+                { _: InputEvent -> },
+            )
 
-        assertThat(pointerCaptureComponent).isNotNull();
+        assertThat(pointerCaptureComponent).isNotNull()
     }
 
     @Test
-    public void createSpatialPointerComponent_returnsComponent() {
-        SpatialPointerComponent pointerComponent = mRuntime.createSpatialPointerComponent();
+    fun createSpatialPointerComponent_returnsComponent() {
+        val pointerComponent = testRuntime.createSpatialPointerComponent()
 
-        assertThat(pointerComponent).isNotNull();
+        assertThat(pointerComponent).isNotNull()
     }
 
     @Test
-    public void createSurfaceEntity_returnsSurfaceEntity() {
-        NodeHolder<?> nodeHolder = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
-        SurfaceEntity surfaceEntity =
-                mRuntime.createSurfaceEntity(
-                        new FakeSurfaceFeature(nodeHolder),
-                        new Pose(),
-                        mRuntime.getActivitySpace());
+    fun createSurfaceEntity_returnsSurfaceEntity() {
+        val nodeHolder = NodeHolder<Node>(xrExtensions.createNode(), Node::class.java)
+        val surfaceEntity =
+            testRuntime.createSurfaceEntity(
+                FakeSurfaceFeature(nodeHolder),
+                Pose(),
+                testRuntime.activitySpace,
+            )
 
-        assertThat(surfaceEntity).isNotNull();
-        assertThat(surfaceEntity).isInstanceOf(SurfaceEntityImpl.class);
+        assertThat(surfaceEntity).isNotNull()
+        assertThat(surfaceEntity).isInstanceOf(SurfaceEntityImpl::class.java)
     }
 
     @Test
-    public void createGltfEntity_returnsEntity() {
-        assertThat(createGltfEntity()).isNotNull();
+    fun createGltfEntity_returnsEntity() {
+        assertThat(createGltfEntity()).isNotNull()
     }
 
     @Test
-    public void gltfEntitySetParent() {
-        GltfEntityImpl childEntity = createGltfEntity();
-        GltfEntityImpl parentEntity = createGltfEntity();
+    fun gltfEntitySetParent() {
+        val childEntity = createGltfEntity()
+        val parentEntity = createGltfEntity()
 
-        childEntity.setParent(parentEntity);
+        childEntity.parent = parentEntity
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity);
-        assertThat(parentEntity.getParent()).isEqualTo(mRuntime.getActivitySpace());
-        assertThat(childEntity.getChildren()).isEmpty();
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity);
+        assertThat(childEntity.parent).isEqualTo(parentEntity)
+        assertThat(parentEntity.parent).isEqualTo(testRuntime.activitySpace)
+        assertThat(childEntity.children).isEmpty()
+        assertThat(parentEntity.children).containsExactly(childEntity)
 
         // Verify that there is an underlying extension node relationship.
-        Node childNode = childEntity.getNode();
+        val childNode = childEntity.getNode()
 
-        assertThat(mNodeRepository.getParent(childNode)).isEqualTo(parentEntity.getNode());
+        assertThat(nodeRepository.getParent(childNode)).isEqualTo(parentEntity.getNode())
     }
 
     @Test
-    public void gltfEntityUpdateParent() {
-        GltfEntityImpl childEntity = createGltfEntity();
-        GltfEntityImpl parentEntity1 = createGltfEntity();
-        GltfEntityImpl parentEntity2 = createGltfEntity();
+    fun gltfEntityUpdateParent() {
+        val childEntity = createGltfEntity()
+        val parentEntity1 = createGltfEntity()
+        val parentEntity2 = createGltfEntity()
 
-        childEntity.setParent(parentEntity1);
+        childEntity.parent = parentEntity1
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity1);
-        assertThat(parentEntity1.getChildren()).containsExactly(childEntity);
-        assertThat(parentEntity2.getChildren()).isEmpty();
+        assertThat(childEntity.parent).isEqualTo(parentEntity1)
+        assertThat(parentEntity1.children).containsExactly(childEntity)
+        assertThat(parentEntity2.children).isEmpty()
 
-        Node childNode = childEntity.getNode();
+        val childNode = childEntity.getNode()
 
-        assertThat(mNodeRepository.getParent(childNode)).isEqualTo(parentEntity1.getNode());
+        assertThat(nodeRepository.getParent(childNode)).isEqualTo(parentEntity1.getNode())
 
-        childEntity.setParent(parentEntity2);
+        childEntity.parent = parentEntity2
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity2);
-        assertThat(parentEntity2.getChildren()).containsExactly(childEntity);
-        assertThat(parentEntity1.getChildren()).isEmpty();
-        assertThat(mNodeRepository.getParent(childNode)).isEqualTo(parentEntity2.getNode());
+        assertThat(childEntity.parent).isEqualTo(parentEntity2)
+        assertThat(parentEntity2.children).containsExactly(childEntity)
+        assertThat(parentEntity1.children).isEmpty()
+        assertThat(nodeRepository.getParent(childNode)).isEqualTo(parentEntity2.getNode())
     }
 
     @Test
-    public void gltfEntityAddChildren() {
-        GltfEntityImpl childEntity1 = createGltfEntity();
-        GltfEntityImpl childEntity2 = createGltfEntity();
-        GltfEntityImpl parentEntity = createGltfEntity();
+    fun gltfEntityAddChildren() {
+        val childEntity1 = createGltfEntity()
+        val childEntity2 = createGltfEntity()
+        val parentEntity = createGltfEntity()
 
-        parentEntity.addChild(childEntity1);
+        parentEntity.addChild(childEntity1)
 
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1);
+        assertThat(parentEntity.children).containsExactly(childEntity1)
 
-        parentEntity.addChildren(ImmutableList.of(childEntity2));
+        parentEntity.addChildren(ImmutableList.of(childEntity2))
 
-        assertThat(childEntity1.getParent()).isEqualTo(parentEntity);
-        assertThat(childEntity2.getParent()).isEqualTo(parentEntity);
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1, childEntity2);
+        assertThat(childEntity1.parent).isEqualTo(parentEntity)
+        assertThat(childEntity2.parent).isEqualTo(parentEntity)
+        assertThat(parentEntity.children).containsExactly(childEntity1, childEntity2)
 
-        Node childNode1 = childEntity1.getNode();
+        val childNode1 = childEntity1.getNode()
 
-        assertThat(mNodeRepository.getParent(childNode1)).isEqualTo(parentEntity.getNode());
+        assertThat(nodeRepository.getParent(childNode1)).isEqualTo(parentEntity.getNode())
 
-        Node childNode2 = childEntity2.getNode();
+        val childNode2 = childEntity2.getNode()
 
-        assertThat(mNodeRepository.getParent(childNode2)).isEqualTo(parentEntity.getNode());
+        assertThat(nodeRepository.getParent(childNode2)).isEqualTo(parentEntity.getNode())
     }
 
     @Test
-    public void createPanelEntity_returnsEntity() {
-        assertThat(createPanelEntity()).isNotNull();
+    fun createPanelEntity_returnsEntity() {
+        assertThat(createPanelEntity()).isNotNull()
     }
 
     @Test
-    public void allPanelEntities_haveActivitySpaceRootImplAsParentByDefault() {
-        PanelEntity panelEntity = createPanelEntity();
+    fun allPanelEntities_haveActivitySpaceRootImplAsParentByDefault() {
+        val panelEntity = createPanelEntity()
 
-        assertThat(panelEntity.getParent()).isEqualTo(mRuntime.getActivitySpace());
+        assertThat(panelEntity.parent).isEqualTo(testRuntime.activitySpace)
     }
 
     @Test
-    public void panelEntitySetParent_setsParent() {
-        PanelEntity childEntity = createPanelEntity();
-        PanelEntity parentEntity = createPanelEntity();
+    fun panelEntitySetParent_setsParent() {
+        val childEntity = createPanelEntity()
+        val parentEntity = createPanelEntity()
 
-        childEntity.setParent(parentEntity);
+        childEntity.parent = parentEntity
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity);
-        assertThat(childEntity.getChildren()).isEmpty();
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity);
+        assertThat(childEntity.parent).isEqualTo(parentEntity)
+        assertThat(childEntity.children).isEmpty()
+        assertThat(parentEntity.children).containsExactly(childEntity)
 
         // Verify that there is an underlying extension node relationship.
-        Node childNode = getNode(childEntity);
+        val childNode = getNode(childEntity)
 
-        assertThat(mNodeRepository.getParent(childNode)).isEqualTo(getNode(parentEntity));
+        assertThat(nodeRepository.getParent(childNode)).isEqualTo(getNode(parentEntity))
     }
 
     @Test
-    public void panelEntityUpdateParent_updatesParent() {
-        PanelEntity childEntity = createPanelEntity();
-        PanelEntity parentEntity1 = createPanelEntity();
-        PanelEntity parentEntity2 = createPanelEntity();
+    fun panelEntityUpdateParent_updatesParent() {
+        val childEntity = createPanelEntity()
+        val parentEntity1 = createPanelEntity()
+        val parentEntity2 = createPanelEntity()
 
-        childEntity.setParent(parentEntity1);
+        childEntity.parent = parentEntity1
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity1);
-        assertThat(parentEntity1.getChildren()).containsExactly(childEntity);
-        assertThat(parentEntity2.getChildren()).isEmpty();
+        assertThat(childEntity.parent).isEqualTo(parentEntity1)
+        assertThat(parentEntity1.children).containsExactly(childEntity)
+        assertThat(parentEntity2.children).isEmpty()
 
-        Node childNode = getNode(childEntity);
+        val childNode = getNode(childEntity)
 
-        assertThat(mNodeRepository.getParent(childNode)).isEqualTo(getNode(parentEntity1));
+        assertThat(nodeRepository.getParent(childNode)).isEqualTo(getNode(parentEntity1))
 
-        childEntity.setParent(parentEntity2);
+        childEntity.parent = parentEntity2
 
-        assertThat(childEntity.getParent()).isEqualTo(parentEntity2);
-        assertThat(parentEntity2.getChildren()).containsExactly(childEntity);
-        assertThat(parentEntity1.getChildren()).isEmpty();
-        assertThat(mNodeRepository.getParent(childNode)).isEqualTo(getNode(parentEntity2));
+        assertThat(childEntity.parent).isEqualTo(parentEntity2)
+        assertThat(parentEntity2.children).containsExactly(childEntity)
+        assertThat(parentEntity1.children).isEmpty()
+        assertThat(nodeRepository.getParent(childNode)).isEqualTo(getNode(parentEntity2))
     }
 
     @Test
-    public void panelEntityAddChildren_addsChildren() {
-        PanelEntity childEntity1 = createPanelEntity();
-        PanelEntity childEntity2 = createPanelEntity();
-        PanelEntity parentEntity = createPanelEntity();
+    fun panelEntityAddChildren_addsChildren() {
+        val childEntity1 = createPanelEntity()
+        val childEntity2 = createPanelEntity()
+        val parentEntity = createPanelEntity()
 
-        parentEntity.addChild(childEntity1);
+        parentEntity.addChild(childEntity1)
 
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1);
+        assertThat(parentEntity.children).containsExactly(childEntity1)
 
-        parentEntity.addChildren(ImmutableList.of(childEntity2));
+        parentEntity.addChildren(ImmutableList.of(childEntity2))
 
-        assertThat(childEntity1.getParent()).isEqualTo(parentEntity);
-        assertThat(childEntity2.getParent()).isEqualTo(parentEntity);
-        assertThat(parentEntity.getChildren()).containsExactly(childEntity1, childEntity2);
+        assertThat(childEntity1.parent).isEqualTo(parentEntity)
+        assertThat(childEntity2.parent).isEqualTo(parentEntity)
+        assertThat(parentEntity.children).containsExactly(childEntity1, childEntity2)
 
-        Node childNode1 = getNode(childEntity1);
+        val childNode1 = getNode(childEntity1)
 
-        assertThat(mNodeRepository.getParent(childNode1)).isEqualTo(getNode(parentEntity));
+        assertThat(nodeRepository.getParent(childNode1)).isEqualTo(getNode(parentEntity))
 
-        Node childNode2 = getNode(childEntity2);
+        val childNode2 = getNode(childEntity2)
 
-        assertThat(mNodeRepository.getParent(childNode2)).isEqualTo(getNode(parentEntity));
+        assertThat(nodeRepository.getParent(childNode2)).isEqualTo(getNode(parentEntity))
     }
 
     @Test
-    public void getMainPanelEntity_returnsPanelEntity() {
-        assertThat(mRuntime.getMainPanelEntity()).isNotNull();
+    fun getMainPanelEntity_returnsPanelEntity() {
+        assertThat(testRuntime.mainPanelEntity).isNotNull()
     }
 
     @Test
-    public void getMainPanelEntity_usesWindowLeashNode() {
-        PanelEntity mainPanel = mRuntime.getMainPanelEntity();
+    fun getMainPanelEntity_usesWindowLeashNode() {
+        val mainPanel = testRuntime.mainPanelEntity
 
-        assertThat(((MainPanelEntityImpl) mainPanel).getNode())
-                .isEqualTo(ShadowXrExtensions.extract(mXrExtensions).getMainWindowNode(mActivity));
+        assertThat((mainPanel as MainPanelEntityImpl).getNode())
+            .isEqualTo(ShadowXrExtensions.extract(xrExtensions).getMainWindowNode(activity))
     }
 
     @Test
-    public void getPose_returnsSetPose() {
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), new Quaternion(1f, 2f, 3f, 4f));
-        Pose identityPose = new Pose();
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(identityPose);
-        Entity entity = createEntity();
+    fun getPose_returnsSetPose() {
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion(1f, 2f, 3f, 4f))
+        val identityPose = Pose()
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(identityPose)
+        val entity = createEntity()
 
-        assertPose(panelEntity.getPose(), identityPose);
-        assertPose(gltfEntity.getPose(), identityPose);
-        assertPose(loggingEntity.getPose(), identityPose);
-        assertPose(entity.getPose(), identityPose);
+        assertPose(panelEntity.getPose(), identityPose)
+        assertPose(gltfEntity.getPose(), identityPose)
+        assertPose(loggingEntity.getPose(), identityPose)
+        assertPose(entity.getPose(), identityPose)
 
-        panelEntity.setPose(pose);
-        gltfEntity.setPose(pose);
-        loggingEntity.setPose(pose);
-        entity.setPose(pose);
+        panelEntity.setPose(pose)
+        gltfEntity.setPose(pose)
+        loggingEntity.setPose(pose)
+        entity.setPose(pose)
 
-        assertPose(panelEntity.getPose(), pose);
-        assertPose(gltfEntity.getPose(), pose);
-        assertPose(loggingEntity.getPose(), pose);
-        assertPose(entity.getPose(), pose);
+        assertPose(panelEntity.getPose(), pose)
+        assertPose(gltfEntity.getPose(), pose)
+        assertPose(loggingEntity.getPose(), pose)
+        assertPose(entity.getPose(), pose)
     }
 
     @Test
-    public void getPose_returnsFactoryMethodPose() throws Exception {
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), new Quaternion(1f, 2f, 3f, 4f));
-        PanelEntity panelEntity = createPanelEntity(pose);
-        GltfEntity gltfEntity = createGltfEntity(pose);
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(pose);
-        Entity entity = createEntity(pose);
+    @Throws(Exception::class)
+    fun getPose_returnsFactoryMethodPose() {
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion(1f, 2f, 3f, 4f))
+        val panelEntity = createPanelEntity(pose)
+        val gltfEntity = createGltfEntity(pose)
+        val loggingEntity = testRuntime.createLoggingEntity(pose)
+        val entity = createEntity(pose)
 
-        assertPose(panelEntity.getPose(), pose);
-        assertPose(gltfEntity.getPose(), pose);
-        assertPose(loggingEntity.getPose(), pose);
-        assertPose(entity.getPose(), pose);
+        assertPose(panelEntity.getPose(), pose)
+        assertPose(gltfEntity.getPose(), pose)
+        assertPose(loggingEntity.getPose(), pose)
+        assertPose(entity.getPose(), pose)
     }
 
     @Test
-    public void getPoseInActivitySpace_withParentChainTranslation_returnsOffsetPositionFromRoot() {
+    fun getPoseInActivitySpace_withParentChainTranslation_returnsOffsetPositionFromRoot() {
         // Create a simple pose with only a small translation on all axes
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), Quaternion.Identity);
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion.Identity)
 
-        // Set the activity space as the root of this entity hierarchy..
-        AndroidXrEntity parentEntity =
-                (AndroidXrEntity)
-                        mRuntime.createEntity(pose, "parent", mRuntime.getActivitySpace());
-        AndroidXrEntity childEntity1 =
-                (AndroidXrEntity) mRuntime.createEntity(pose, "child1", parentEntity);
-        AndroidXrEntity childEntity2 =
-                (AndroidXrEntity) mRuntime.createEntity(pose, "child2", childEntity1);
+        // Set the activity space as the root of this entity hierarchy.
+        val parentEntity =
+            testRuntime.createEntity(pose, "parent", testRuntime.activitySpace) as AndroidXrEntity
+        val childEntity1 = testRuntime.createEntity(pose, "child1", parentEntity) as AndroidXrEntity
+        val childEntity2 = testRuntime.createEntity(pose, "child2", childEntity1) as AndroidXrEntity
 
-        assertVector3(
-                parentEntity.getPoseInActivitySpace().getTranslation(), new Vector3(1f, 2f, 3f));
-        assertVector3(
-                childEntity1.getPoseInActivitySpace().getTranslation(), new Vector3(2f, 4f, 6f));
-        assertVector3(
-                childEntity2.getPoseInActivitySpace().getTranslation(), new Vector3(3f, 6f, 9f));
+        assertVector3(parentEntity.poseInActivitySpace.translation, Vector3(1f, 2f, 3f))
+        assertVector3(childEntity1.poseInActivitySpace.translation, Vector3(2f, 4f, 6f))
+        assertVector3(childEntity2.poseInActivitySpace.translation, Vector3(3f, 6f, 9f))
     }
 
     @Test
-    public void getPoseInActivitySpace_withParentChainRotation_returnsOffsetRotationFromRoot() {
-        // Create a pose with a translation and one with 90 degree rotation around the y axis.
-        Vector3 parentTranslation = new Vector3(1f, 2f, 3f);
-        Pose translatedPose = new Pose(parentTranslation, Quaternion.Identity);
-        Quaternion quaternion = Quaternion.fromAxisAngle(new Vector3(0f, 1f, 0f), 90f);
-        Pose rotatedPose = new Pose(new Vector3(0f, 0f, 0f), quaternion);
+    fun getPoseInActivitySpace_withParentChainRotation_returnsOffsetRotationFromRoot() {
+        // Create a pose with a translation and one with 90-degree rotation around the y-axis.
+        val parentTranslation = Vector3(1f, 2f, 3f)
+        val translatedPose = Pose(parentTranslation, Quaternion.Identity)
+        val quaternion = fromAxisAngle(Vector3(0f, 1f, 0f), 90f)
+        val rotatedPose = Pose(Vector3(0f, 0f, 0f), quaternion)
 
         // The parent has a translation and no rotation.
-        AndroidXrEntity parentEntity =
-                (AndroidXrEntity)
-                        mRuntime.createEntity(
-                                translatedPose, "parent", mRuntime.getActivitySpace());
+        val parentEntity =
+            testRuntime.createEntity(translatedPose, "parent", testRuntime.activitySpace)
+                as AndroidXrEntity
 
         // Each child adds a rotation, but no translation.
-        AndroidXrEntity childEntity1 =
-                (AndroidXrEntity) mRuntime.createEntity(rotatedPose, "child1", parentEntity);
-        AndroidXrEntity childEntity2 =
-                (AndroidXrEntity) mRuntime.createEntity(rotatedPose, "child2", childEntity1);
+        val childEntity1 =
+            testRuntime.createEntity(rotatedPose, "child1", parentEntity) as AndroidXrEntity
+        val childEntity2 =
+            testRuntime.createEntity(rotatedPose, "child2", childEntity1) as AndroidXrEntity
 
         // There should be no translation offset from the root, only changes in rotation.
-        assertPose(parentEntity.getPoseInActivitySpace(), translatedPose);
-        assertPose(childEntity1.getPoseInActivitySpace(), new Pose(parentTranslation, quaternion));
+        assertPose(parentEntity.poseInActivitySpace, translatedPose)
+        assertPose(childEntity1.poseInActivitySpace, Pose(parentTranslation, quaternion))
         assertPose(
-                childEntity2.getPoseInActivitySpace(),
-                new Pose(
-                        parentTranslation,
-                        Quaternion.fromAxisAngle(new Vector3(0f, 1f, 0f), 180f)));
+            childEntity2.poseInActivitySpace,
+            Pose(parentTranslation, fromAxisAngle(Vector3(0f, 1f, 0f), 180f)),
+        )
     }
 
     @Test
-    public void getPoseInActivitySpace_withParentChainPoseOffsets_returnsOffsetPoseFromRoot() {
-        // Create a pose with a 1D translation and a 90 degree rotation around the z axis.
-        Vector3 parentTranslation = new Vector3(1f, 0f, 0f);
-        Quaternion quaternion = Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 90f);
-        Pose pose = new Pose(parentTranslation, quaternion);
+    fun getPoseInActivitySpace_withParentChainPoseOffsets_returnsOffsetPoseFromRoot() {
+        // Create a pose with a 1D translation and a 90-degree rotation around the z axis.
+        val parentTranslation = Vector3(1f, 0f, 0f)
+        val quaternion = fromAxisAngle(Vector3(0f, 0f, 1f), 90f)
+        val pose = Pose(parentTranslation, quaternion)
 
         // Each entity adds a translation and a rotation.
-        AndroidXrEntity parentEntity =
-                (AndroidXrEntity)
-                        mRuntime.createEntity(pose, "parent", mRuntime.getActivitySpace());
-        AndroidXrEntity childEntity1 =
-                (AndroidXrEntity) mRuntime.createEntity(pose, "child1", parentEntity);
-        AndroidXrEntity childEntity2 =
-                (AndroidXrEntity) mRuntime.createEntity(pose, "child2", childEntity1);
+        val parentEntity =
+            testRuntime.createEntity(pose, "parent", testRuntime.activitySpace) as AndroidXrEntity
+        val childEntity1 = testRuntime.createEntity(pose, "child1", parentEntity) as AndroidXrEntity
+        val childEntity2 = testRuntime.createEntity(pose, "child2", childEntity1) as AndroidXrEntity
 
         // Local pose of ActivitySpace's direct child must be the same as child's ActivitySpace
         // pose.
-        assertPose(parentEntity.getPoseInActivitySpace(), parentEntity.getPose());
+        assertPose(parentEntity.poseInActivitySpace, parentEntity.getPose())
 
         // Each child should be positioned one unit away at 90 degrees from its parent's position.
         // Since our coordinate system is right-handed, a +ve rotation around the z axis is a
         // counter-clockwise rotation of the XY plane.
         // First child should be 1 unit in the ActivitySpace's positive y direction from its parent
         assertPose(
-                childEntity1.getPoseInActivitySpace(),
-                new Pose(
-                        new Vector3(1f, 1f, 0f),
-                        Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 180f)));
+            childEntity1.poseInActivitySpace,
+            Pose(Vector3(1f, 1f, 0f), fromAxisAngle(Vector3(0f, 0f, 1f), 180f)),
+        )
         // Second child should be 1 unit in the ActivitySpace's negative x direction from its parent
         assertPose(
-                childEntity2.getPoseInActivitySpace(),
-                new Pose(
-                        new Vector3(0f, 1f, 0f),
-                        Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 270f)));
+            childEntity2.poseInActivitySpace,
+            Pose(Vector3(0f, 1f, 0f), fromAxisAngle(Vector3(0f, 0f, 1f), 270f)),
+        )
     }
 
     @Test
-    public void getPoseInActivitySpace_withScaledActivitySpaceParent_returnsPose()
-            throws Exception {
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), new Quaternion(1f, 2f, 3f, 4f));
+    @Throws(Exception::class)
+    fun getPoseInActivitySpace_withScaledActivitySpaceParent_returnsPose() {
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion(1f, 2f, 3f, 4f))
 
         // Set the parent as the activity space so these entities' activitySpacePose should match
         // their
         // local pose relative to their parent regardless of the activity space
         // scale/position/rotation.
-        PanelEntityImpl panelEntity = (PanelEntityImpl) createPanelEntity(pose);
-        GltfEntityImpl gltfEntity = (GltfEntityImpl) createGltfEntity(pose);
-        AndroidXrEntity entity = (AndroidXrEntity) createEntity(pose);
-        ActivitySpace activitySpace = mRuntime.getActivitySpace();
-        ((ActivitySpaceImpl) activitySpace)
-                .setOpenXrReferenceSpaceTransform(
-                        Matrix4.fromTrs(
-                                new Vector3(5f, 6f, 7f),
-                                Quaternion.fromEulerAngles(22f, 33f, 44f),
-                                new Vector3(2f, 2f, 2f)));
-        panelEntity.setParent(activitySpace);
-        gltfEntity.setParent(activitySpace);
-        entity.setParent(activitySpace);
+        val panelEntity = createPanelEntity(pose) as PanelEntityImpl
+        val gltfEntity = createGltfEntity(pose) as GltfEntityImpl
+        val entity = createEntity(pose) as AndroidXrEntity
+        val activitySpace: ActivitySpace = testRuntime.activitySpace
+        (activitySpace as ActivitySpaceImpl).setOpenXrReferenceSpaceTransform(
+            fromTrs(Vector3(5f, 6f, 7f), fromEulerAngles(22f, 33f, 44f), Vector3(2f, 2f, 2f))
+        )
+        panelEntity.parent = activitySpace
+        gltfEntity.parent = activitySpace
+        entity.parent = activitySpace
 
-        assertPose(panelEntity.getPoseInActivitySpace(), pose);
-        assertPose(gltfEntity.getPoseInActivitySpace(), pose);
-        assertPose(entity.getPoseInActivitySpace(), pose);
+        assertPose(panelEntity.poseInActivitySpace, pose)
+        assertPose(gltfEntity.poseInActivitySpace, pose)
+        assertPose(entity.poseInActivitySpace, pose)
     }
 
     @Test
-    public void getPoseInActivitySpace_withScale_returnsPose() throws Exception {
-        Pose localPose = new Pose(new Vector3(1f, 2f, 1f), Quaternion.Identity);
+    @Throws(Exception::class)
+    fun getPoseInActivitySpace_withScale_returnsPose() {
+        val localPose = Pose(Vector3(1f, 2f, 1f), Quaternion.Identity)
 
         // Create a hierarchy of entities each translated from their parent by (1,2,1) in parent
         // space.
-        GltfEntityImpl child1 = (GltfEntityImpl) createGltfEntity(localPose);
-        GltfEntityImpl child2 = (GltfEntityImpl) createGltfEntity(localPose);
-        GltfEntityImpl child3 = (GltfEntityImpl) createGltfEntity(localPose);
-        ActivitySpace activitySpace = mRuntime.getActivitySpace();
-        ((ActivitySpaceImpl) activitySpace)
-                .setOpenXrReferenceSpaceTransform(
-                        Matrix4.fromTrs(
-                                new Vector3(5f, 6f, 7f),
-                                Quaternion.fromEulerAngles(22f, 33, 44),
-                                new Vector3(2f, 2f, 2f)));
+        val child1 = createGltfEntity(localPose) as GltfEntityImpl
+        val child2 = createGltfEntity(localPose) as GltfEntityImpl
+        val child3 = createGltfEntity(localPose) as GltfEntityImpl
+        val activitySpace: ActivitySpace = testRuntime.activitySpace
+        (activitySpace as ActivitySpaceImpl).setOpenXrReferenceSpaceTransform(
+            fromTrs(Vector3(5f, 6f, 7f), fromEulerAngles(22f, 33f, 44f), Vector3(2f, 2f, 2f))
+        )
 
         // Set a non-unit local scale to each child.
-        child1.setParent(activitySpace);
-        child1.setScale(new Vector3(2f, 2f, 2f));
+        child1.parent = activitySpace
+        child1.setScale(Vector3(2f, 2f, 2f))
 
-        child2.setParent(child1);
-        child2.setScale(new Vector3(3f, 2f, 3f));
+        child2.parent = child1
+        child2.setScale(Vector3(3f, 2f, 3f))
 
-        child3.setParent(child2);
-        child3.setScale(new Vector3(1f, 1f, 2f));
+        child3.parent = child2
+        child3.setScale(Vector3(1f, 1f, 2f))
 
         // The position (in ActivitySpace) should be:
         // child's local position * parent's scale in AS + parent's position since there's no
@@ -1384,366 +1371,338 @@ public class SpatialSceneRuntimeTest {
         // Assuming c1 = child1, c2 = child2, c3 = child3, AS = activitySpace.
         // c1.posInAS = c1.localPos * AS.scaleInAS + AS.posInAS = (1,2,1) * (1,1,1) + (0,0,0) =
         // (1,2,1)
-        assertPose(
-                child1.getPoseInActivitySpace(),
-                new Pose(new Vector3(1f, 2f, 1f), Quaternion.Identity));
+        assertPose(child1.poseInActivitySpace, Pose(Vector3(1f, 2f, 1f), Quaternion.Identity))
 
         // c2.posInAS = c2.localPos * c1.scaleInAS + c1.posInAS = (1,2,1) * (2,2,2) + (1,2,1) =
         // (3,6,3)
-        assertPose(
-                child2.getPoseInActivitySpace(),
-                new Pose(new Vector3(3f, 6f, 3f), Quaternion.Identity));
+        assertPose(child2.poseInActivitySpace, Pose(Vector3(3f, 6f, 3f), Quaternion.Identity))
 
         // c2.scaleInA = c2.localScale * c1.scaleInAS * AS.scale = (3,2,3) * (2,2,2) * (1,1,1) =
         // (6,4,6)
         // c3.posInAS = c3.localPos * c2.scaleInAS + c2.posInAS = (1,2,1) * (6,4,6) + (3,6,3) =
         // (9,14,9)
-        assertPose(
-                child3.getPoseInActivitySpace(),
-                new Pose(new Vector3(9f, 14f, 9f), Quaternion.Identity));
+        assertPose(child3.poseInActivitySpace, Pose(Vector3(9f, 14f, 9f), Quaternion.Identity))
     }
 
     @Test
-    public void getActivitySpacePose_withParentChainTranslation_returnsOffsetPositionFromRoot() {
+    fun getActivitySpacePose_withParentChainTranslation_returnsOffsetPositionFromRoot() {
         // Create a simple pose with only a small translation on all axes
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), Quaternion.Identity);
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion.Identity)
 
         // Set the ActivitySpace as the root of this entity hierarchy.
-        Entity parentEntity =
-                mRuntime.createEntity(pose, "parent", mRuntime.getActivitySpace());
-        Entity childEntity1 = mRuntime.createEntity(pose, "child1", parentEntity);
-        Entity childEntity2 = mRuntime.createEntity(pose, "child2", childEntity1);
+        val parentEntity = testRuntime.createEntity(pose, "parent", testRuntime.activitySpace)
+        val childEntity1 = testRuntime.createEntity(pose, "child1", parentEntity)
+        val childEntity2 = testRuntime.createEntity(pose, "child2", childEntity1)
 
         // The translations should accumulate with each child, but there should be no rotation.
-        assertVector3(
-                parentEntity.getActivitySpacePose().getTranslation(), new Vector3(1f, 2f, 3f));
-        assertVector3(
-                childEntity1.getActivitySpacePose().getTranslation(), new Vector3(2f, 4f, 6f));
-        assertVector3(
-                childEntity2.getActivitySpacePose().getTranslation(), new Vector3(3f, 6f, 9f));
-        assertRotation(childEntity2.getActivitySpacePose().getRotation(), Quaternion.Identity);
+        assertVector3(parentEntity.activitySpacePose.translation, Vector3(1f, 2f, 3f))
+        assertVector3(childEntity1.activitySpacePose.translation, Vector3(2f, 4f, 6f))
+        assertVector3(childEntity2.activitySpacePose.translation, Vector3(3f, 6f, 9f))
+        assertRotation(childEntity2.activitySpacePose.rotation, Quaternion.Identity)
     }
 
     @Test
-    public void getActivitySpacePose_withParentChainRotation_returnsOffsetRotationFromRoot() {
-        // Create a pose with a translation and one with 90 degree rotation around the y axis.
-        Vector3 parentTranslation = new Vector3(1f, 0f, 0f);
-        Pose translatedPose = new Pose(parentTranslation, Quaternion.Identity);
-        Quaternion quaternion = Quaternion.fromAxisAngle(new Vector3(0f, 1f, 0f), 90f);
-        Pose rotatedPose = new Pose(new Vector3(0f, 0f, 0f), quaternion);
+    fun getActivitySpacePose_withParentChainRotation_returnsOffsetRotationFromRoot() {
+        // Create a pose with a translation and one with 90-degree rotation around the y-axis.
+        val parentTranslation = Vector3(1f, 0f, 0f)
+        val translatedPose = Pose(parentTranslation, Quaternion.Identity)
+        val quaternion = fromAxisAngle(Vector3(0f, 1f, 0f), 90f)
+        val rotatedPose = Pose(Vector3(0f, 0f, 0f), quaternion)
 
         // The parent has a translation and no rotation and each child adds a rotation.
-        Entity parentEntity =
-                mRuntime.createEntity(translatedPose, "parent", mRuntime.getActivitySpace());
-        Entity childEntity1 = mRuntime.createEntity(rotatedPose, "child1", parentEntity);
-        Entity childEntity2 = mRuntime.createEntity(rotatedPose, "child2", childEntity1);
+        val parentEntity =
+            testRuntime.createEntity(translatedPose, "parent", testRuntime.activitySpace)
+        val childEntity1 = testRuntime.createEntity(rotatedPose, "child1", parentEntity)
+        val childEntity2 = testRuntime.createEntity(rotatedPose, "child2", childEntity1)
 
         // There should be no translation offset from the parent, but rotations should accumulate.
-        assertPose(parentEntity.getActivitySpacePose(), translatedPose);
-        assertPose(childEntity1.getActivitySpacePose(), new Pose(parentTranslation, quaternion));
+        assertPose(parentEntity.activitySpacePose, translatedPose)
+        assertPose(childEntity1.activitySpacePose, Pose(parentTranslation, quaternion))
         assertPose(
-                childEntity2.getActivitySpacePose(),
-                new Pose(
-                        parentTranslation,
-                        Quaternion.fromAxisAngle(new Vector3(0f, 1f, 0f), 180f)));
+            childEntity2.activitySpacePose,
+            Pose(parentTranslation, fromAxisAngle(Vector3(0f, 1f, 0f), 180f)),
+        )
     }
 
     @Test
-    public void getActivitySpacePose_withParentChainPoseOffsets_returnsOffsetPoseFromRoot() {
-        // Create a pose with a 1D translation and a 90 degree rotation around the z axis.
-        Vector3 parentTranslation = new Vector3(1f, 0f, 0f);
-        Quaternion quaternion = Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 90f);
-        Pose pose = new Pose(parentTranslation, quaternion);
+    fun getActivitySpacePose_withParentChainPoseOffsets_returnsOffsetPoseFromRoot() {
+        // Create a pose with a 1D translation and a 90-degree rotation around the z axis.
+        val parentTranslation = Vector3(1f, 0f, 0f)
+        val quaternion = fromAxisAngle(Vector3(0f, 0f, 1f), 90f)
+        val pose = Pose(parentTranslation, quaternion)
 
         // Each entity adds a translation and a rotation.
-        Entity parentEntity =
-                mRuntime.createEntity(pose, "parent", mRuntime.getActivitySpace());
-        Entity childEntity1 = mRuntime.createEntity(pose, "child1", parentEntity);
-        Entity childEntity2 = mRuntime.createEntity(pose, "child2", childEntity1);
+        val parentEntity = testRuntime.createEntity(pose, "parent", testRuntime.activitySpace)
+        val childEntity1 = testRuntime.createEntity(pose, "child1", parentEntity)
+        val childEntity2 = testRuntime.createEntity(pose, "child2", childEntity1)
 
         // Local pose of ActivitySpace's direct child must be the same as child's ActivitySpace
         // pose.
-        assertPose(parentEntity.getActivitySpacePose(), parentEntity.getPose());
+        assertPose(parentEntity.activitySpacePose, parentEntity.getPose())
 
         // Each child should be positioned one unit away at 90 degrees from its parent's position.
         // Since our coordinate system is right-handed, a +ve rotation around the z axis is a
         // counter-clockwise rotation of the XY plane.
         // First child should be 1 unit in the ActivitySpace's positive y direction from its parent
         assertPose(
-                childEntity1.getActivitySpacePose(),
-                new Pose(
-                        new Vector3(1f, 1f, 0f),
-                        Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 180f)));
+            childEntity1.activitySpacePose,
+            Pose(Vector3(1f, 1f, 0f), fromAxisAngle(Vector3(0f, 0f, 1f), 180f)),
+        )
         // Second child should be 1 unit in the ActivitySpace's negative x direction from its parent
         assertPose(
-                childEntity2.getActivitySpacePose(),
-                new Pose(
-                        new Vector3(0f, 1f, 0f),
-                        Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 270f)));
+            childEntity2.activitySpacePose,
+            Pose(Vector3(0f, 1f, 0f), fromAxisAngle(Vector3(0f, 0f, 1f), 270f)),
+        )
     }
 
     @Test
-    public void getActivitySpacePose_withDefaultParent_returnsPose() throws Exception {
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), new Quaternion(1f, 2f, 3f, 4f));
+    @Throws(Exception::class)
+    fun getActivitySpacePose_withDefaultParent_returnsPose() {
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion(1f, 2f, 3f, 4f))
 
         // All these entities should have the ActivitySpaceRootImpl as their parent by default.
-        PanelEntity panelEntity = createPanelEntity(pose);
-        GltfEntity gltfEntity = createGltfEntity(pose);
-        Entity entity = createEntity(pose);
+        val panelEntity = createPanelEntity(pose)
+        val gltfEntity = createGltfEntity(pose)
+        val entity = createEntity(pose)
 
-        assertPose(panelEntity.getActivitySpacePose(), pose);
-        assertPose(gltfEntity.getActivitySpacePose(), pose);
-        assertPose(entity.getActivitySpacePose(), pose);
+        assertPose(panelEntity.activitySpacePose, pose)
+        assertPose(gltfEntity.activitySpacePose, pose)
+        assertPose(entity.activitySpacePose, pose)
     }
 
     @Test
-    public void getPoseInActivitySpace_withScale_returnsScaledPose() throws Exception {
-        Pose localPose = new Pose(new Vector3(1f, 2f, 1f), Quaternion.Identity);
+    @Throws(Exception::class)
+    fun getPoseInActivitySpace_withScale_returnsScaledPose() {
+        val localPose = Pose(Vector3(1f, 2f, 1f), Quaternion.Identity)
 
         // Create a hierarchy of entities each translated from their parent by (1,1,1) in parent
         // space.
-        GltfEntityImpl child1 = (GltfEntityImpl) createGltfEntity(localPose);
-        GltfEntityImpl child2 = (GltfEntityImpl) createGltfEntity(localPose);
-        GltfEntityImpl child3 = (GltfEntityImpl) createGltfEntity(localPose);
+        val child1 = createGltfEntity(localPose) as GltfEntityImpl
+        val child2 = createGltfEntity(localPose) as GltfEntityImpl
+        val child3 = createGltfEntity(localPose) as GltfEntityImpl
 
-        assertVector3(
-                mRuntime.getActivitySpace().getScale(Space.ACTIVITY), new Vector3(1f, 1f, 1f));
+        assertVector3(testRuntime.activitySpace.getScale(Space.ACTIVITY), Vector3(1f, 1f, 1f))
 
         // Set a non-unit local scale to each child.
-        child1.setParent(mRuntime.getActivitySpace());
-        child1.setScale(new Vector3(2f, 2f, 2f));
+        child1.parent = testRuntime.activitySpace
+        child1.setScale(Vector3(2f, 2f, 2f))
 
-        child2.setParent(child1);
-        child2.setScale(new Vector3(3f, 2f, 3f));
+        child2.parent = child1
+        child2.setScale(Vector3(3f, 2f, 3f))
 
-        child3.setParent(child2);
-        child3.setScale(new Vector3(1f, 1f, 2f));
+        child3.parent = child2
+        child3.setScale(Vector3(1f, 1f, 2f))
 
         // See getPoseInActivitySpace_withScale_returnsScaledPose for more detailed comments.
         // The position should be (parent's scale * child's position) + parent's position
         // since there's no rotation.
-        assertPose(
-                child1.getActivitySpacePose(),
-                new Pose(new Vector3(1f, 2f, 1f), Quaternion.Identity));
-        assertPose(
-                child2.getActivitySpacePose(),
-                new Pose(new Vector3(3f, 6f, 3f), Quaternion.Identity));
-        assertPose(
-                child3.getActivitySpacePose(),
-                new Pose(new Vector3(9f, 14f, 9f), Quaternion.Identity));
+        assertPose(child1.activitySpacePose, Pose(Vector3(1f, 2f, 1f), Quaternion.Identity))
+        assertPose(child2.activitySpacePose, Pose(Vector3(3f, 6f, 3f), Quaternion.Identity))
+        assertPose(child3.activitySpacePose, Pose(Vector3(9f, 14f, 9f), Quaternion.Identity))
     }
 
     @Test
-    public void transformPoseTo_sameDestAndSourceEntity_returnsUnchangedPose() throws Exception {
-        Pose pose = new Pose(new Vector3(1f, 2f, 3f), new Quaternion(1f, 2f, 3f, 4f));
-        Pose identity = new Pose();
+    @Throws(Exception::class)
+    fun transformPoseTo_sameDestAndSourceEntity_returnsUnchangedPose() {
+        val pose = Pose(Vector3(1f, 2f, 3f), Quaternion(1f, 2f, 3f, 4f))
+        val identity = Pose()
 
-        PanelEntity panelEntity = createPanelEntity(pose);
-        GltfEntity gltfEntity = createGltfEntity(pose);
-        Entity entity = createEntity(pose);
+        val panelEntity = createPanelEntity(pose)
+        val gltfEntity = createGltfEntity(pose)
+        val entity = createEntity(pose)
 
-        assertPose(panelEntity.transformPoseTo(pose, panelEntity), pose);
-        assertPose(gltfEntity.transformPoseTo(pose, gltfEntity), pose);
-        assertPose(entity.transformPoseTo(pose, entity), pose);
-        assertPose(panelEntity.transformPoseTo(identity, panelEntity), identity);
-        assertPose(gltfEntity.transformPoseTo(identity, gltfEntity), identity);
-        assertPose(entity.transformPoseTo(identity, entity), identity);
+        assertPose(panelEntity.transformPoseTo(pose, panelEntity), pose)
+        assertPose(gltfEntity.transformPoseTo(pose, gltfEntity), pose)
+        assertPose(entity.transformPoseTo(pose, entity), pose)
+        assertPose(panelEntity.transformPoseTo(identity, panelEntity), identity)
+        assertPose(gltfEntity.transformPoseTo(identity, gltfEntity), identity)
+        assertPose(entity.transformPoseTo(identity, entity), identity)
     }
 
     @Test
-    public void transformPoseTo_withOnlyTranslationOffset_returnsTranslationDifference() {
-        PanelEntityImpl sourceEntity = (PanelEntityImpl) createPanelEntity();
-        GltfEntityImpl destinationEntity = createGltfEntity();
-        sourceEntity.setPose(
-                new Pose(new Vector3(1f, 2f, 3f), sourceEntity.getPose().getRotation()));
-        destinationEntity.setPose(
-                new Pose(new Vector3(4f, 5f, 6f), destinationEntity.getPose().getRotation()));
-        Pose offsetFromSource = new Pose(new Vector3(7f, 8f, 9f), Quaternion.Identity);
+    fun transformPoseTo_withOnlyTranslationOffset_returnsTranslationDifference() {
+        val sourceEntity = createPanelEntity() as PanelEntityImpl
+        val destinationEntity = createGltfEntity()
+        sourceEntity.setPose(Pose(Vector3(1f, 2f, 3f), sourceEntity.getPose().rotation))
+        destinationEntity.setPose(Pose(Vector3(4f, 5f, 6f), destinationEntity.getPose().rotation))
+        val offsetFromSource = Pose(Vector3(7f, 8f, 9f), Quaternion.Identity)
 
         // The expected translation is destOffset = (sourceOrigin + sourceOffset) - destOrigin
         // since there's no rotation and the entities are in the same coordinate space.
         // So ((1,2,3) + (7,8,9)) - (4,5,6) = (4, 5, 6)
-        Pose offsetInDestinationSpace =
-                sourceEntity.transformPoseTo(offsetFromSource, destinationEntity);
-        Pose expectedPose = new Pose(new Vector3(4f, 5f, 6f), Quaternion.Identity);
+        val offsetInDestinationSpace =
+            sourceEntity.transformPoseTo(offsetFromSource, destinationEntity)
+        val expectedPose = Pose(Vector3(4f, 5f, 6f), Quaternion.Identity)
 
-        assertPose(offsetInDestinationSpace, expectedPose);
+        assertPose(offsetInDestinationSpace, expectedPose)
     }
 
     @Test
-    public void transformPoseTo_withOnlyRotationOffset_returnsRotationDifference() {
-        PanelEntityImpl sourceEntity = (PanelEntityImpl) createPanelEntity();
-        GltfEntityImpl destinationEntity = createGltfEntity();
+    fun transformPoseTo_withOnlyRotationOffset_returnsRotationDifference() {
+        val sourceEntity = createPanelEntity() as PanelEntityImpl
+        val destinationEntity = createGltfEntity()
 
         sourceEntity.setPose(
-                new Pose(
-                        sourceEntity.getPose().getTranslation(),
-                        Quaternion.fromEulerAngles(new Vector3(1f, 2f, 3f))));
+            Pose(sourceEntity.getPose().translation, fromEulerAngles(Vector3(1f, 2f, 3f)))
+        )
         destinationEntity.setPose(
-                new Pose(
-                        destinationEntity.getPose().getTranslation(),
-                        Quaternion.fromEulerAngles(new Vector3(4f, 5f, 6f))));
+            Pose(destinationEntity.getPose().translation, fromEulerAngles(Vector3(4f, 5f, 6f)))
+        )
 
-        Pose offsetFromSource =
-                new Pose(new Vector3(), Quaternion.fromEulerAngles(new Vector3(7f, 8f, 9f)));
+        val offsetFromSource = Pose(Vector3(), fromEulerAngles(Vector3(7f, 8f, 9f)))
 
         // The expected rotation is (source + sourceOffset) - destination since the source and
         // destination are in the same coordinate space: ((1,2,3) + (7,8,9)) - (4,5,6) = (4, 5, 6)
-        Pose offsetInDestinationSpace =
-                sourceEntity.transformPoseTo(offsetFromSource, destinationEntity);
-        Pose expectedPose =
-                new Pose(new Vector3(), Quaternion.fromEulerAngles(new Vector3(4f, 5f, 6f)));
+        val offsetInDestinationSpace =
+            sourceEntity.transformPoseTo(offsetFromSource, destinationEntity)
+        val expectedPose = Pose(Vector3(), fromEulerAngles(Vector3(4f, 5f, 6f)))
 
-        assertPose(offsetInDestinationSpace, expectedPose);
+        assertPose(offsetInDestinationSpace, expectedPose)
     }
 
     @Test
-    public void transformPoseTo_withDifferentTranslationAndRotation_returnsTransformedPose() {
+    fun transformPoseTo_withDifferentTranslationAndRotation_returnsTransformedPose() {
         // Assume the source and destination entities are in the same coordinate space.
-        Vector3 sourceVector = new Vector3(1f, 2f, 3f);
-        Quaternion sourceQuaternion = Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), -90f);
-        Vector3 destinationVector = new Vector3(10f, 20f, 30f);
-        Quaternion destinationQuaternion = Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 90f);
-        Pose identity = new Pose();
+        val sourceVector = Vector3(1f, 2f, 3f)
+        val sourceQuaternion = fromAxisAngle(Vector3(0f, 0f, 1f), -90f)
+        val destinationVector = Vector3(10f, 20f, 30f)
+        val destinationQuaternion = fromAxisAngle(Vector3(0f, 0f, 1f), 90f)
+        val identity = Pose()
 
-        AndroidXrEntity sourceEntity =
-                (AndroidXrEntity) createEntity(new Pose(sourceVector, sourceQuaternion));
-        AndroidXrEntity destinationEntity =
-                (AndroidXrEntity)
-                        createEntity(new Pose(destinationVector, destinationQuaternion));
+        val sourceEntity = createEntity(Pose(sourceVector, sourceQuaternion)) as AndroidXrEntity
+        val destinationEntity =
+            createEntity(Pose(destinationVector, destinationQuaternion)) as AndroidXrEntity
 
-        //// Transform an identity pose from the source to the destination space. ////
-        Pose sourceToDestinationPose = sourceEntity.transformPoseTo(identity, destinationEntity);
+        // Transform an identity pose from the source to the destination space.
+        val sourceToDestinationPose = sourceEntity.transformPoseTo(identity, destinationEntity)
 
         // The expected rotation is the difference between the quaternions -90 - 90 = -180.
-        Quaternion expectedQuaternion = Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), -180f);
-        assertRotation(sourceToDestinationPose.getRotation(), expectedQuaternion);
+        val expectedQuaternion = fromAxisAngle(Vector3(0f, 0f, 1f), -180f)
+        assertRotation(sourceToDestinationPose.rotation, expectedQuaternion)
 
         // The expected translation is the difference between the source and destination vectors
         // rotated
         // by the inverse of the destination quaternion.
-        Vector3 expectedVector =
-                destinationQuaternion.getInverse().times(sourceVector.minus(destinationVector));
+        val expectedVector =
+            destinationQuaternion.inverse.times(sourceVector.minus(destinationVector))
 
         // So difference is (1,2,3) - (10,20,30) = (-9,-18,-27) then rotate CCW by -90 degrees
         // around
-        // the z axis (ie. swap x and y, set x positive and y negative since we're rotating from 3rd
+        // the z axis (i.e. swap x and y, set x positive and y negative since we're rotating from
+        // 3rd
         // quadrant to the 2nd quadrant of XY plane) => (-18, 9, -27)
-        assertVector3(expectedVector, new Vector3(-18f, 9f, -27f));
-        assertVector3(sourceToDestinationPose.getTranslation(), expectedVector);
+        assertVector3(expectedVector, Vector3(-18f, 9f, -27f))
+        assertVector3(sourceToDestinationPose.translation, expectedVector)
 
-        //// Transform an offset pose from the source to the destination. ////
-        Pose offsetPose =
-                new Pose(
-                        new Vector3(1f, 0f, 0f),
-                        Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), 20f));
-        Pose newSourceToDestinationPose =
-                sourceEntity.transformPoseTo(offsetPose, destinationEntity);
+        // Transform an offset pose from the source to the destination.
+        val offsetPose = Pose(Vector3(1f, 0f, 0f), fromAxisAngle(Vector3(0f, 0f, 1f), 20f))
+        val newSourceToDestinationPose = sourceEntity.transformPoseTo(offsetPose, destinationEntity)
 
         // The expected rotation is the difference between the quaternions (20-90) - 90 = -160.
-        Quaternion newExpectedQuaternion = Quaternion.fromAxisAngle(new Vector3(0f, 0f, 1f), -160f);
-        assertRotation(newSourceToDestinationPose.getRotation(), newExpectedQuaternion);
+        val newExpectedQuaternion = fromAxisAngle(Vector3(0f, 0f, 1f), -160f)
+        assertRotation(newSourceToDestinationPose.rotation, newExpectedQuaternion)
 
         // The expected translation is expected to be the same as the previous one but with the
         // offset
         // vector added to it in the destination space.
-        Vector3 offsetInActivitySpace = sourceQuaternion.times(offsetPose.getTranslation());
-        Vector3 offsetInDestinationSpace =
-                destinationQuaternion.getInverse().times(offsetInActivitySpace);
-        Vector3 newExpectedVector = expectedVector.plus(offsetInDestinationSpace);
+        val offsetInActivitySpace = sourceQuaternion.times(offsetPose.translation)
+        val offsetInDestinationSpace = destinationQuaternion.inverse.times(offsetInActivitySpace)
+        val newExpectedVector = expectedVector.plus(offsetInDestinationSpace)
 
         // So (1, 0, 0) rotated by -90 degrees around the z axis is (0, 1, 0) in activity space then
         // add to the difference from source to destination vector (-9,-18,-27) to get (-9, -19,
         // -27)
         // and finally rotate by the inverse of the destination quaternion to get (-19, 9, -27).
-        assertVector3(newExpectedVector, new Vector3(-19f, 9f, -27f));
-        assertVector3(newSourceToDestinationPose.getTranslation(), newExpectedVector);
+        assertVector3(newExpectedVector, Vector3(-19f, 9f, -27f))
+        assertVector3(newSourceToDestinationPose.translation, newExpectedVector)
     }
 
     @Test
-    public void getAlpha_returnsSetAlpha() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        Entity entity = createEntity();
+    fun getAlpha_returnsSetAlpha() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val entity = createEntity()
 
-        assertThat(panelEntity.getAlpha()).isEqualTo(1.0f);
-        assertThat(gltfEntity.getAlpha()).isEqualTo(1.0f);
-        assertThat(entity.getAlpha()).isEqualTo(1.0f);
+        assertThat(panelEntity.getAlpha()).isEqualTo(1.0f)
+        assertThat(gltfEntity.getAlpha()).isEqualTo(1.0f)
+        assertThat(entity.getAlpha()).isEqualTo(1.0f)
 
-        panelEntity.setAlpha(0.5f);
-        gltfEntity.setAlpha(0.5f);
-        entity.setAlpha(0.5f);
+        panelEntity.setAlpha(0.5f)
+        gltfEntity.setAlpha(0.5f)
+        entity.setAlpha(0.5f)
 
-        assertThat(panelEntity.getAlpha()).isEqualTo(0.5f);
-        assertThat(gltfEntity.getAlpha()).isEqualTo(0.5f);
-        assertThat(entity.getAlpha()).isEqualTo(0.5f);
-        assertThat(mNodeRepository.map(NodeRepository.NodeMetadata::getAlpha))
-                .containsAtLeast(0.5f, 0.5f, 0.5f);
+        assertThat(panelEntity.getAlpha()).isEqualTo(0.5f)
+        assertThat(gltfEntity.getAlpha()).isEqualTo(0.5f)
+        assertThat(entity.getAlpha()).isEqualTo(0.5f)
+        assertThat(nodeRepository.map(NodeRepository.NodeMetadata::getAlpha))
+            .containsAtLeast(0.5f, 0.5f, 0.5f)
     }
 
     @Test
-    public void getActivitySpaceAlpha_returnsTotalAncestorAlpha() {
-        PanelEntity grandparent = createPanelEntity();
-        GltfEntity parent = createGltfEntity();
-        Entity entity = createEntity();
+    fun getActivitySpaceAlpha_returnsTotalAncestorAlpha() {
+        val grandparent = createPanelEntity()
+        val parent: GltfEntity = createGltfEntity()
+        val entity = createEntity()
 
-        assertThat(grandparent.getAlpha(Space.ACTIVITY)).isEqualTo(1.0f);
-        assertThat(parent.getAlpha(Space.ACTIVITY)).isEqualTo(1.0f);
-        assertThat(entity.getAlpha(Space.ACTIVITY)).isEqualTo(1.0f);
+        assertThat(grandparent.getAlpha(Space.ACTIVITY)).isEqualTo(1.0f)
+        assertThat(parent.getAlpha(Space.ACTIVITY)).isEqualTo(1.0f)
+        assertThat(entity.getAlpha(Space.ACTIVITY)).isEqualTo(1.0f)
 
-        grandparent.setAlpha(0.5f);
-        parent.setParent(grandparent);
-        parent.setAlpha(0.5f);
-        entity.setParent(parent);
-        entity.setAlpha(0.5f);
+        grandparent.setAlpha(0.5f)
+        parent.parent = grandparent
+        parent.setAlpha(0.5f)
+        entity.parent = parent
+        entity.setAlpha(0.5f)
 
-        assertThat(grandparent.getAlpha(Space.ACTIVITY)).isEqualTo(0.5f);
-        assertThat(parent.getAlpha(Space.ACTIVITY)).isEqualTo(0.25f);
-        assertThat(entity.getAlpha(Space.ACTIVITY)).isEqualTo(0.125f);
-        assertThat(mNodeRepository.map(NodeRepository.NodeMetadata::getAlpha))
-                .containsAtLeast(0.5f, 0.5f, 0.5f);
+        assertThat(grandparent.getAlpha(Space.ACTIVITY)).isEqualTo(0.5f)
+        assertThat(parent.getAlpha(Space.ACTIVITY)).isEqualTo(0.25f)
+        assertThat(entity.getAlpha(Space.ACTIVITY)).isEqualTo(0.125f)
+        assertThat(nodeRepository.map(NodeRepository.NodeMetadata::getAlpha))
+            .containsAtLeast(0.5f, 0.5f, 0.5f)
     }
 
     @Test
-    public void transformPoseTo_withScaleAndNoOffset_returnsPose() {
-        PanelEntityImpl sourceEntity = (PanelEntityImpl) createPanelEntity();
-        GltfEntityImpl destinationEntity = createGltfEntity();
-        sourceEntity.setPose(new Pose(new Vector3(0f, 0f, 1f), Quaternion.Identity));
-        sourceEntity.setScale(new Vector3(2f, 2f, 2f));
-        destinationEntity.setPose(new Pose(new Vector3(1f, 0f, 0f), Quaternion.Identity));
-        destinationEntity.setScale(new Vector3(3f, 3f, 3f));
+    fun transformPoseTo_withScaleAndNoOffset_returnsPose() {
+        val sourceEntity = createPanelEntity() as PanelEntityImpl
+        val destinationEntity = createGltfEntity()
+        sourceEntity.setPose(Pose(Vector3(0f, 0f, 1f), Quaternion.Identity))
+        sourceEntity.setScale(Vector3(2f, 2f, 2f))
+        destinationEntity.setPose(Pose(Vector3(1f, 0f, 0f), Quaternion.Identity))
+        destinationEntity.setScale(Vector3(3f, 3f, 3f))
 
         assertPose(
-                sourceEntity.transformPoseTo(Pose.Identity, destinationEntity),
-                new Pose(new Vector3(-1 / 3f, 0f, 1 / 3f), Quaternion.Identity));
+            sourceEntity.transformPoseTo(Pose.Identity, destinationEntity),
+            Pose(Vector3(-1 / 3f, 0f, 1 / 3f), Quaternion.Identity),
+        )
     }
 
     @Test
-    public void transformPoseTo_withScale_returnsPose() {
-        PanelEntityImpl sourceEntity = (PanelEntityImpl) createPanelEntity();
-        GltfEntityImpl destinationEntity = createGltfEntity();
-        sourceEntity.setPose(new Pose(new Vector3(0f, 0f, 1f), Quaternion.Identity));
-        sourceEntity.setScale(new Vector3(2f, 2f, 2f));
-        destinationEntity.setPose(new Pose(new Vector3(1f, 0f, 0f), Quaternion.Identity));
-        destinationEntity.setScale(new Vector3(3f, 3f, 3f));
+    fun transformPoseTo_withScale_returnsPose() {
+        val sourceEntity = createPanelEntity() as PanelEntityImpl
+        val destinationEntity = createGltfEntity()
+        sourceEntity.setPose(Pose(Vector3(0f, 0f, 1f), Quaternion.Identity))
+        sourceEntity.setScale(Vector3(2f, 2f, 2f))
+        destinationEntity.setPose(Pose(Vector3(1f, 0f, 0f), Quaternion.Identity))
+        destinationEntity.setScale(Vector3(3f, 3f, 3f))
 
-        Pose offsetFromSource = new Pose(new Vector3(0f, 0f, 1f), Quaternion.Identity);
+        val offsetFromSource = Pose(Vector3(0f, 0f, 1f), Quaternion.Identity)
 
         assertPose(
-                sourceEntity.transformPoseTo(offsetFromSource, destinationEntity),
-                new Pose(new Vector3(-1 / 3f, 0f, 1f), Quaternion.Identity));
+            sourceEntity.transformPoseTo(offsetFromSource, destinationEntity),
+            Pose(Vector3(-1 / 3f, 0f, 1f), Quaternion.Identity),
+        )
     }
 
     @Test
-    public void transformPoseTo_withNonUniformScalesAndTranslations_returnsPose() {
-        PanelEntityImpl sourceEntity = (PanelEntityImpl) createPanelEntity();
-        GltfEntityImpl destinationEntity = createGltfEntity();
-        sourceEntity.setPose(new Pose(new Vector3(0f, 0f, 1f), Quaternion.Identity));
-        sourceEntity.setScale(new Vector3(0.5f, 2f, -3f));
-        destinationEntity.setPose(new Pose(new Vector3(1f, 1f, 0f), Quaternion.Identity));
-        destinationEntity.setScale(new Vector3(4f, 5f, 6f));
+    fun transformPoseTo_withNonUniformScalesAndTranslations_returnsPose() {
+        val sourceEntity = createPanelEntity() as PanelEntityImpl
+        val destinationEntity = createGltfEntity()
+        sourceEntity.setPose(Pose(Vector3(0f, 0f, 1f), Quaternion.Identity))
+        sourceEntity.setScale(Vector3(0.5f, 2f, -3f))
+        destinationEntity.setPose(Pose(Vector3(1f, 1f, 0f), Quaternion.Identity))
+        destinationEntity.setScale(Vector3(4f, 5f, 6f))
 
-        Pose offsetFromSource = new Pose(new Vector3(1f, 3f, 1f), Quaternion.Identity);
+        val offsetFromSource = Pose(Vector3(1f, 3f, 1f), Quaternion.Identity)
 
         // translation is:
         //  ((localOffsetFromSource * scale of source) + sourceTranslation - destinationTranslation)
@@ -1754,833 +1713,878 @@ public class SpatialSceneRuntimeTest {
         //                                       (-1/2, 5, -2) * (1/4, 1/5, 1/6) =
         //                                                     (-1/8, 1, -2/6) = (-1/8, 1, -1/3)
         assertPose(
-                sourceEntity.transformPoseTo(offsetFromSource, destinationEntity),
-                new Pose(new Vector3(-1 / 8f, 1f, -1 / 3f), Quaternion.Identity));
+            sourceEntity.transformPoseTo(offsetFromSource, destinationEntity),
+            Pose(Vector3(-1 / 8f, 1f, -1 / 3f), Quaternion.Identity),
+        )
     }
 
     @Test
-    public void addComponent_callsOnAttach() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(new Pose());
-        Component component = mock(Component.class);
-        when(component.onAttach(any())).thenReturn(true);
+    fun addComponent_callsOnAttach() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(Pose())
+        val component = mock<Component>()
+        whenever(component.onAttach(any<Entity>())).thenReturn(true)
 
-        assertThat(panelEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(panelEntity);
+        assertThat(panelEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(panelEntity)
 
-        assertThat(gltfEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(gltfEntity);
+        assertThat(gltfEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(gltfEntity)
 
-        assertThat(loggingEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(loggingEntity);
+        assertThat(loggingEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(loggingEntity)
     }
 
     @Test
-    public void addComponent_failsIfOnAttachFails() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(new Pose());
-        Component component = mock(Component.class);
-        when(component.onAttach(any())).thenReturn(false);
+    fun addComponent_failsIfOnAttachFails() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(Pose())
+        val component = mock<Component>()
+        whenever(component.onAttach(any<Entity>())).thenReturn(false)
 
-        assertThat(panelEntity.addComponent(component)).isFalse();
-        verify(component).onAttach(panelEntity);
+        assertThat(panelEntity.addComponent(component)).isFalse()
+        verify(component).onAttach(panelEntity)
 
-        assertThat(gltfEntity.addComponent(component)).isFalse();
-        verify(component).onAttach(gltfEntity);
+        assertThat(gltfEntity.addComponent(component)).isFalse()
+        verify(component).onAttach(gltfEntity)
 
-        assertThat(loggingEntity.addComponent(component)).isFalse();
-        verify(component).onAttach(loggingEntity);
+        assertThat(loggingEntity.addComponent(component)).isFalse()
+        verify(component).onAttach(loggingEntity)
     }
 
     @Test
-    public void removeComponent_callsOnDetach() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(new Pose());
-        Component component = mock(Component.class);
-        when(component.onAttach(any())).thenReturn(true);
+    fun removeComponent_callsOnDetach() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(Pose())
+        val component = mock<Component>()
+        whenever(component.onAttach(any<Entity>())).thenReturn(true)
 
-        assertThat(panelEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(panelEntity);
+        assertThat(panelEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(panelEntity)
 
-        panelEntity.removeComponent(component);
+        panelEntity.removeComponent(component)
 
-        verify(component).onDetach(panelEntity);
+        verify(component).onDetach(panelEntity)
 
-        assertThat(gltfEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(gltfEntity);
+        assertThat(gltfEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(gltfEntity)
 
-        gltfEntity.removeComponent(component);
+        gltfEntity.removeComponent(component)
 
-        verify(component).onDetach(gltfEntity);
+        verify(component).onDetach(gltfEntity)
 
-        assertThat(loggingEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(loggingEntity);
+        assertThat(loggingEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(loggingEntity)
 
-        loggingEntity.removeComponent(component);
+        loggingEntity.removeComponent(component)
 
-        verify(component).onDetach(loggingEntity);
+        verify(component).onDetach(loggingEntity)
     }
 
     @Test
-    public void addingSameComponentTypeAgain_addsComponent() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(new Pose());
-        Component component1 = mock(Component.class);
-        Component component2 = mock(Component.class);
-        when(component1.onAttach(any())).thenReturn(true);
-        when(component2.onAttach(any())).thenReturn(true);
+    fun addingSameComponentTypeAgain_addsComponent() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(Pose())
+        val component1 = mock<Component>()
+        val component2 = mock<Component>()
+        whenever(component1.onAttach(any<Entity>())).thenReturn(true)
+        whenever(component2.onAttach(any<Entity>())).thenReturn(true)
 
-        assertThat(panelEntity.addComponent(component1)).isTrue();
-        assertThat(panelEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(panelEntity);
-        verify(component2).onAttach(panelEntity);
+        assertThat(panelEntity.addComponent(component1)).isTrue()
+        assertThat(panelEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(panelEntity)
+        verify(component2).onAttach(panelEntity)
 
-        assertThat(gltfEntity.addComponent(component1)).isTrue();
-        assertThat(gltfEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(gltfEntity);
-        verify(component2).onAttach(panelEntity);
+        assertThat(gltfEntity.addComponent(component1)).isTrue()
+        assertThat(gltfEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(gltfEntity)
+        verify(component2).onAttach(gltfEntity)
 
-        assertThat(loggingEntity.addComponent(component1)).isTrue();
-        assertThat(loggingEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(loggingEntity);
-        verify(component2).onAttach(panelEntity);
+        assertThat(loggingEntity.addComponent(component1)).isTrue()
+        assertThat(loggingEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(loggingEntity)
+        verify(component2).onAttach(loggingEntity)
     }
 
     @Test
-    public void addingDifferentComponentType_addComponentSucceeds() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(new Pose());
-        Component component1 = mock(Component.class);
-        Component component2 = mock(FakeComponent.class);
-        when(component1.onAttach(any())).thenReturn(true);
-        when(component2.onAttach(any())).thenReturn(true);
+    fun addingDifferentComponentType_addComponentSucceeds() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(Pose())
+        val component1 = mock<Component>()
+        val component2: Component = mock<FakeComponent>()
+        whenever(component1.onAttach(any<Entity>())).thenReturn(true)
+        whenever(component2.onAttach(any<Entity>())).thenReturn(true)
 
-        assertThat(panelEntity.addComponent(component1)).isTrue();
-        assertThat(panelEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(panelEntity);
-        verify(component2).onAttach(panelEntity);
+        assertThat(panelEntity.addComponent(component1)).isTrue()
+        assertThat(panelEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(panelEntity)
+        verify(component2).onAttach(panelEntity)
 
-        assertThat(gltfEntity.addComponent(component1)).isTrue();
-        assertThat(gltfEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(gltfEntity);
-        verify(component2).onAttach(gltfEntity);
+        assertThat(gltfEntity.addComponent(component1)).isTrue()
+        assertThat(gltfEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(gltfEntity)
+        verify(component2).onAttach(gltfEntity)
 
-        assertThat(loggingEntity.addComponent(component1)).isTrue();
-        assertThat(loggingEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(loggingEntity);
-        verify(component2).onAttach(loggingEntity);
+        assertThat(loggingEntity.addComponent(component1)).isTrue()
+        assertThat(loggingEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(loggingEntity)
+        verify(component2).onAttach(loggingEntity)
     }
 
     @Test
-    public void removeAll_callsOnDetachOnAll() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(new Pose());
-        Component component1 = mock(Component.class);
-        Component component2 = mock(FakeComponent.class);
-        when(component1.onAttach(any())).thenReturn(true);
-        when(component2.onAttach(any())).thenReturn(true);
+    fun removeAll_callsOnDetachOnAll() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(Pose())
+        val component1 = mock<Component>()
+        val component2: Component = mock<FakeComponent>()
+        whenever(component1.onAttach(any<Entity>())).thenReturn(true)
+        whenever(component2.onAttach(any<Entity>())).thenReturn(true)
 
-        assertThat(panelEntity.addComponent(component1)).isTrue();
-        assertThat(panelEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(panelEntity);
-        verify(component2).onAttach(panelEntity);
+        assertThat(panelEntity.addComponent(component1)).isTrue()
+        assertThat(panelEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(panelEntity)
+        verify(component2).onAttach(panelEntity)
 
-        panelEntity.removeAllComponents();
+        panelEntity.removeAllComponents()
 
-        verify(component1).onDetach(panelEntity);
-        verify(component2).onDetach(panelEntity);
+        verify(component1).onDetach(panelEntity)
+        verify(component2).onDetach(panelEntity)
 
-        assertThat(gltfEntity.addComponent(component1)).isTrue();
-        assertThat(gltfEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(gltfEntity);
-        verify(component2).onAttach(gltfEntity);
+        assertThat(gltfEntity.addComponent(component1)).isTrue()
+        assertThat(gltfEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(gltfEntity)
+        verify(component2).onAttach(gltfEntity)
 
-        gltfEntity.removeAllComponents();
+        gltfEntity.removeAllComponents()
 
-        verify(component1).onDetach(gltfEntity);
-        verify(component2).onDetach(gltfEntity);
+        verify(component1).onDetach(gltfEntity)
+        verify(component2).onDetach(gltfEntity)
 
-        assertThat(loggingEntity.addComponent(component1)).isTrue();
-        assertThat(loggingEntity.addComponent(component2)).isTrue();
-        verify(component1).onAttach(loggingEntity);
-        verify(component2).onAttach(loggingEntity);
+        assertThat(loggingEntity.addComponent(component1)).isTrue()
+        assertThat(loggingEntity.addComponent(component2)).isTrue()
+        verify(component1).onAttach(loggingEntity)
+        verify(component2).onAttach(loggingEntity)
 
-        loggingEntity.removeAllComponents();
+        loggingEntity.removeAllComponents()
 
-        verify(component1).onDetach(loggingEntity);
-        verify(component2).onDetach(loggingEntity);
+        verify(component1).onDetach(loggingEntity)
+        verify(component2).onDetach(loggingEntity)
     }
 
     @Test
-    public void addSameComponentTwice_callsOnAttachTwice() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(new Pose());
-        Component component = mock(Component.class);
-        when(component.onAttach(any())).thenReturn(true);
+    fun addSameComponentTwice_callsOnAttachTwice() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(Pose())
+        val component = mock<Component>()
+        whenever(component.onAttach(any<Entity>())).thenReturn(true)
 
-        assertThat(panelEntity.addComponent(component)).isTrue();
-        assertThat(panelEntity.addComponent(component)).isTrue();
+        assertThat(panelEntity.addComponent(component)).isTrue()
+        assertThat(panelEntity.addComponent(component)).isTrue()
 
-        verify(component, times(2)).onAttach(panelEntity);
-        assertThat(gltfEntity.addComponent(component)).isTrue();
-        assertThat(gltfEntity.addComponent(component)).isTrue();
-        verify(component, times(2)).onAttach(gltfEntity);
-        assertThat(loggingEntity.addComponent(component)).isTrue();
-        assertThat(loggingEntity.addComponent(component)).isTrue();
-        verify(component, times(2)).onAttach(loggingEntity);
+        verify(component, times(2)).onAttach(panelEntity)
+        assertThat(gltfEntity.addComponent(component)).isTrue()
+        assertThat(gltfEntity.addComponent(component)).isTrue()
+        verify(component, times(2)).onAttach(gltfEntity)
+        assertThat(loggingEntity.addComponent(component)).isTrue()
+        assertThat(loggingEntity.addComponent(component)).isTrue()
+        verify(component, times(2)).onAttach(loggingEntity)
     }
 
     @Test
-    public void removeSameComponentTwice_callsOnDetachOnce() {
-        PanelEntity panelEntity = createPanelEntity();
-        GltfEntity gltfEntity = createGltfEntity();
-        LoggingEntity loggingEntity = mRuntime.createLoggingEntity(new Pose());
-        Component component = mock(Component.class);
-        when(component.onAttach(any())).thenReturn(true);
+    fun removeSameComponentTwice_callsOnDetachOnce() {
+        val panelEntity = createPanelEntity()
+        val gltfEntity: GltfEntity = createGltfEntity()
+        val loggingEntity = testRuntime.createLoggingEntity(Pose())
+        val component = mock<Component>()
+        whenever(component.onAttach(any<Entity>())).thenReturn(true)
 
-        assertThat(panelEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(panelEntity);
+        assertThat(panelEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(panelEntity)
 
-        panelEntity.removeComponent(component);
-        panelEntity.removeComponent(component);
+        panelEntity.removeComponent(component)
+        panelEntity.removeComponent(component)
 
-        verify(component).onDetach(panelEntity);
-        assertThat(gltfEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(gltfEntity);
+        verify(component).onDetach(panelEntity)
+        assertThat(gltfEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(gltfEntity)
 
-        gltfEntity.removeComponent(component);
-        gltfEntity.removeComponent(component);
+        gltfEntity.removeComponent(component)
+        gltfEntity.removeComponent(component)
 
-        verify(component).onDetach(gltfEntity);
-        assertThat(loggingEntity.addComponent(component)).isTrue();
-        verify(component).onAttach(loggingEntity);
+        verify(component).onDetach(gltfEntity)
+        assertThat(loggingEntity.addComponent(component)).isTrue()
+        verify(component).onAttach(loggingEntity)
 
-        loggingEntity.removeComponent(component);
-        loggingEntity.removeComponent(component);
+        loggingEntity.removeComponent(component)
+        loggingEntity.removeComponent(component)
 
-        verify(component).onDetach(loggingEntity);
+        verify(component).onDetach(loggingEntity)
     }
 
     @Test
-    public void createInteractableComponent_returnsComponent() {
-        InputEventListener mockConsumer = mock(InputEventListener.class);
-        InteractableComponent interactableComponent =
-                mRuntime.createInteractableComponent(directExecutor(), mockConsumer);
+    fun createInteractableComponent_returnsComponent() {
+        val mockInputEventListener = mock<InputEventListener>()
+        val interactableComponent =
+            testRuntime.createInteractableComponent(
+                MoreExecutors.directExecutor(),
+                mockInputEventListener,
+            )
 
-        assertThat(interactableComponent).isNotNull();
+        assertThat(interactableComponent).isNotNull()
     }
 
-    private void sendInputEvent(Node node, com.android.extensions.xr.node.InputEvent inputEvent) {
-        ShadowNode shadowNode = ShadowNode.extract(node);
-        shadowNode
-                .getInputExecutor()
-                .execute(() -> shadowNode.getInputListener().accept(inputEvent));
-    }
-
-    @Test
-    public void addInputEventConsumerToEntity_setsUpNodeListener() {
-        InputEventListener mockConsumer = mock(InputEventListener.class);
-        PanelEntity panelEntity = createPanelEntity();
-        Executor executor = directExecutor();
-        panelEntity.addInputEventListener(executor, mockConsumer);
-        ShadowNode shadowNode = ShadowNode.extract(getNode(panelEntity));
-
-        assertThat(shadowNode.getInputListener()).isNotNull();
-        assertThat(shadowNode.getInputExecutor()).isEqualTo(mFakeExecutor);
-
-        com.android.extensions.xr.node.InputEvent inputEvent =
-                ShadowInputEvent.create(
-                        /* origin= */ new Vec3(0, 0, 0), /* direction= */ new Vec3(1, 1, 1));
-        sendInputEvent(getNode(panelEntity), inputEvent);
-        mFakeExecutor.runAll();
-
-        verify(mockConsumer).onInputEvent(any());
+    private fun sendInputEvent(node: Node, inputEvent: com.android.extensions.xr.node.InputEvent) {
+        val shadowNode = ShadowNode.extract(node)
+        shadowNode.inputExecutor.execute { shadowNode.inputListener.accept(inputEvent) }
     }
 
     @Test
-    public void inputEvent_hasHitInfo() {
-        InputEventListener mockConsumer = mock(InputEventListener.class);
-        PanelEntity panelEntity = createPanelEntity();
-        Executor executor = directExecutor();
-        panelEntity.addInputEventListener(executor, mockConsumer);
-        Node node = getNode(panelEntity);
-        com.android.extensions.xr.node.InputEvent inputEvent =
-                ShadowInputEvent.create(
-                        /* origin= */ new Vec3(0, 0, 0),
-                        /* direction= */ new Vec3(1, 1, 1),
-                        /* histInfo= */ new HitInfo(
-                                /* subspaceImpressNodeId= */ 0,
-                                /* inputNode= */ node,
-                                /* transform= */ new Mat4f(new float[16]),
-                                /* hitPosition= */ new Vec3(1, 2, 3)),
-                        /* secondaryHitInfo= */ null);
-        sendInputEvent(node, inputEvent);
-        mFakeExecutor.runAll();
+    fun addInputEventConsumerToEntity_setsUpNodeListener() {
+        val mockInputEventListener = mock<InputEventListener>()
+        val panelEntity = createPanelEntity()
+        val executor = MoreExecutors.directExecutor()
+        panelEntity.addInputEventListener(executor, mockInputEventListener)
+        val shadowNode = ShadowNode.extract(getNode(panelEntity))
 
-        ArgumentCaptor<InputEvent> inputEventCaptor = ArgumentCaptor.forClass(InputEvent.class);
+        assertThat(shadowNode.inputListener).isNotNull()
+        assertThat(shadowNode.inputExecutor).isEqualTo(fakeExecutor)
 
-        verify(mockConsumer).onInputEvent(inputEventCaptor.capture());
+        val inputEvent =
+            ShadowInputEvent.create(
+                /* origin= */ Vec3(0f, 0f, 0f),
+                /* direction= */ Vec3(1f, 1f, 1f),
+            )
+        sendInputEvent(getNode(panelEntity), inputEvent)
+        fakeExecutor.runAll()
 
-        InputEvent capturedEvent = inputEventCaptor.getValue();
-
-        assertThat(capturedEvent.getHitInfoList()).isNotEmpty();
-
-        InputEvent.HitInfo hitInfo = capturedEvent.getHitInfoList().get(0);
-
-        assertThat(hitInfo.getInputEntity()).isEqualTo(panelEntity);
-        assertThat(hitInfo.getHitPosition()).isEqualTo(new Vector3(1, 2, 3));
+        verify(mockInputEventListener).onInputEvent(any())
     }
 
     @Test
-    public void passingNoExecutorWhenAddingConsumer_usesInternalExecutor() {
-        InputEventListener mockConsumer = mock(InputEventListener.class);
-        PanelEntity panelEntity = createPanelEntity();
-        panelEntity.addInputEventListener(null, mockConsumer);
-        ShadowNode shadowNode = ShadowNode.extract(getNode(panelEntity));
+    fun inputEvent_hasHitInfo() {
+        val mockInputEventListener = mock<InputEventListener>()
+        val panelEntity = createPanelEntity()
+        val executor = MoreExecutors.directExecutor()
+        panelEntity.addInputEventListener(executor, mockInputEventListener)
+        val node = getNode(panelEntity)
+        val inputEvent =
+            ShadowInputEvent.create(
+                /* origin= */ Vec3(0f, 0f, 0f),
+                /* direction= */ Vec3(1f, 1f, 1f),
+                /* hitInfo= */ com.android.extensions.xr.node.InputEvent.HitInfo(
+                    /* subspaceImpressNodeId= */ 0,
+                    /* inputNode= */ node,
+                    /* transform= */ Mat4f(FloatArray(16)),
+                    /* hitPosition= */ Vec3(1f, 2f, 3f),
+                ),
+                /* secondaryHitInfo= */ null,
+            )
+        sendInputEvent(node, inputEvent)
+        fakeExecutor.runAll()
 
-        assertThat(shadowNode.getInputListener()).isNotNull();
-        assertThat(shadowNode.getInputExecutor()).isNotNull();
+        val inputEventCaptor = argumentCaptor<InputEvent>()
+
+        verify(mockInputEventListener).onInputEvent(inputEventCaptor.capture())
+
+        val capturedEvent = inputEventCaptor.lastValue
+
+        assertThat(capturedEvent.hitInfoList).isNotEmpty()
+
+        val hitInfo = capturedEvent.hitInfoList[0]
+
+        assertThat(hitInfo.inputEntity).isEqualTo(panelEntity)
+        assertThat(hitInfo.hitPosition).isEqualTo(Vector3(1f, 2f, 3f))
     }
 
     @Test
-    public void addMultipleInputEventConsumerToEntity_setsUpInputCallbacksForAll() {
-        InputEventListener mockConsumer1 = mock(InputEventListener.class);
-        InputEventListener mockConsumer2 = mock(InputEventListener.class);
-        PanelEntity panelEntity = createPanelEntity();
-        Executor executor = directExecutor();
-        panelEntity.addInputEventListener(executor, mockConsumer1);
-        panelEntity.addInputEventListener(executor, mockConsumer2);
-        com.android.extensions.xr.node.InputEvent inputEvent =
-                ShadowInputEvent.create(
-                        /* origin= */ new Vec3(0, 0, 0), /* direction= */ new Vec3(1, 1, 1));
-        sendInputEvent(getNode(panelEntity), inputEvent);
-        mFakeExecutor.runAll();
+    fun passingNoExecutorWhenAddingConsumer_usesInternalExecutor() {
+        val mockInputEventListener = mock<InputEventListener>()
+        val panelEntity = createPanelEntity()
+        panelEntity.addInputEventListener(null, mockInputEventListener)
+        val shadowNode = ShadowNode.extract(getNode(panelEntity))
 
-        verify(mockConsumer1).onInputEvent(any());
-        verify(mockConsumer2).onInputEvent(any());
+        assertThat(shadowNode.inputListener).isNotNull()
+        assertThat(shadowNode.inputExecutor).isNotNull()
     }
 
     @Test
-    public void addMultipleInputEventConsumersToEntity_setsUpInputCallbacksOnGivenExecutors() {
-        InputEventListener mockConsumer1 = mock(InputEventListener.class);
-        InputEventListener mockConsumer2 = mock(InputEventListener.class);
-        PanelEntity panelEntity = createPanelEntity();
-        FakeScheduledExecutorService executor1 = new FakeScheduledExecutorService();
-        FakeScheduledExecutorService executor2 = new FakeScheduledExecutorService();
-        panelEntity.addInputEventListener(executor1, mockConsumer1);
-        panelEntity.addInputEventListener(executor2, mockConsumer2);
-        com.android.extensions.xr.node.InputEvent inputEvent =
-                ShadowInputEvent.create(
-                        /* origin= */ new Vec3(0, 0, 0), /* direction= */ new Vec3(1, 1, 1));
+    fun addMultipleInputEventConsumerToEntity_setsUpInputCallbacksForAll() {
+        val mockInputEventListener1 = mock<InputEventListener>()
+        val mockInputEventListener2 = mock<InputEventListener>()
+        val panelEntity = createPanelEntity()
+        val executor = MoreExecutors.directExecutor()
+        panelEntity.addInputEventListener(executor, mockInputEventListener1)
+        panelEntity.addInputEventListener(executor, mockInputEventListener2)
+        val inputEvent =
+            ShadowInputEvent.create(
+                /* origin= */ Vec3(0f, 0f, 0f),
+                /* direction= */ Vec3(1f, 1f, 1f),
+            )
+        sendInputEvent(getNode(panelEntity), inputEvent)
+        fakeExecutor.runAll()
 
-        sendInputEvent(getNode(panelEntity), inputEvent);
-        mFakeExecutor.runAll();
+        verify(mockInputEventListener1).onInputEvent(any())
 
-        assertThat(executor1.hasNext()).isTrue();
-        assertThat(executor2.hasNext()).isTrue();
-
-        executor1.runAll();
-        executor2.runAll();
-
-        verify(mockConsumer1).onInputEvent(any());
-        verify(mockConsumer2).onInputEvent(any());
+        verify(mockInputEventListener2).onInputEvent(any())
     }
 
     @Test
-    public void removeInputEventConsumerToEntity_removesFromCallbacks() {
-        InputEventListener mockConsumer1 = mock(InputEventListener.class);
-        InputEventListener mockConsumer2 = mock(InputEventListener.class);
-        PanelEntity panelEntity = createPanelEntity();
-        Executor executor = directExecutor();
-        panelEntity.addInputEventListener(executor, mockConsumer1);
-        panelEntity.addInputEventListener(executor, mockConsumer2);
-        com.android.extensions.xr.node.InputEvent inputEvent =
-                ShadowInputEvent.create(
-                        /* origin= */ new Vec3(0, 0, 0), /* direction= */ new Vec3(1, 1, 1));
+    fun addMultipleInputEventConsumersToEntity_setsUpInputCallbacksOnGivenExecutors() {
+        val mockInputEventListener1 = mock<InputEventListener>()
+        val mockInputEventListener2 = mock<InputEventListener>()
+        val panelEntity = createPanelEntity()
+        val executor1 = FakeScheduledExecutorService()
+        val executor2 = FakeScheduledExecutorService()
+        panelEntity.addInputEventListener(executor1, mockInputEventListener1)
+        panelEntity.addInputEventListener(executor2, mockInputEventListener2)
+        val inputEvent =
+            ShadowInputEvent.create(
+                /* origin= */ Vec3(0f, 0f, 0f),
+                /* direction= */ Vec3(1f, 1f, 1f),
+            )
 
-        sendInputEvent(getNode(panelEntity), inputEvent);
-        mFakeExecutor.runAll();
+        sendInputEvent(getNode(panelEntity), inputEvent)
+        fakeExecutor.runAll()
 
-        panelEntity.removeInputEventListener(mockConsumer1);
+        assertThat(executor1.hasNext()).isTrue()
+        assertThat(executor2.hasNext()).isTrue()
 
-        sendInputEvent(getNode(panelEntity), inputEvent);
-        mFakeExecutor.runAll();
+        executor1.runAll()
+        executor2.runAll()
 
-        verify(mockConsumer2, times(2)).onInputEvent(any());
-        verify(mockConsumer1).onInputEvent(any());
+        verify(mockInputEventListener1).onInputEvent(any())
+
+        verify(mockInputEventListener2).onInputEvent(any())
     }
 
     @Test
-    public void removeAllInputEventConsumers_stopsInputListening() {
-        InputEventListener mockConsumer1 = mock(InputEventListener.class);
-        InputEventListener mockConsumer2 = mock(InputEventListener.class);
-        PanelEntity panelEntity = createPanelEntity();
-        Executor executor = directExecutor();
-        panelEntity.addInputEventListener(executor, mockConsumer1);
-        panelEntity.addInputEventListener(executor, mockConsumer2);
-        ShadowNode shadowNode = ShadowNode.extract(getNode(panelEntity));
-        com.android.extensions.xr.node.InputEvent inputEvent =
-                ShadowInputEvent.create(
-                        /* origin= */ new Vec3(0, 0, 0), /* direction= */ new Vec3(1, 1, 1));
+    fun removeInputEventConsumerToEntity_removesFromCallbacks() {
+        val mockInputEventListener1 = mock<InputEventListener>()
+        val mockInputEventListener2 = mock<InputEventListener>()
+        val panelEntity = createPanelEntity()
+        val executor = MoreExecutors.directExecutor()
+        panelEntity.addInputEventListener(executor, mockInputEventListener1)
+        panelEntity.addInputEventListener(executor, mockInputEventListener2)
+        val inputEvent =
+            ShadowInputEvent.create(
+                /* origin= */ Vec3(0f, 0f, 0f),
+                /* direction= */ Vec3(1f, 1f, 1f),
+            )
 
-        sendInputEvent(getNode(panelEntity), inputEvent);
-        mFakeExecutor.runAll();
+        sendInputEvent(getNode(panelEntity), inputEvent)
+        fakeExecutor.runAll()
 
-        verify(mockConsumer1).onInputEvent(any());
-        verify(mockConsumer2).onInputEvent(any());
+        verify(mockInputEventListener1).onInputEvent(any())
+        verify(mockInputEventListener2).onInputEvent(any())
+        clearInvocations(mockInputEventListener1, mockInputEventListener2)
 
-        panelEntity.removeInputEventListener(mockConsumer1);
-        panelEntity.removeInputEventListener(mockConsumer2);
+        panelEntity.removeInputEventListener(mockInputEventListener1)
 
-        assertThat(((PanelEntityImpl) panelEntity).getReformEventConsumerMap()).isEmpty();
-        assertThat(shadowNode.getInputListener()).isNull();
-        assertThat(shadowNode.getInputExecutor()).isNull();
+        sendInputEvent(getNode(panelEntity), inputEvent)
+        fakeExecutor.runAll()
+
+        verify(mockInputEventListener1, never()).onInputEvent(any())
+        verify(mockInputEventListener2).onInputEvent(any())
     }
 
     @Test
-    public void dispose_stopsInputListening() {
-        InputEventListener mockConsumer1 = mock(InputEventListener.class);
-        InputEventListener mockConsumer2 = mock(InputEventListener.class);
-        PanelEntity panelEntity = createPanelEntity();
-        Executor executor = directExecutor();
-        panelEntity.addInputEventListener(executor, mockConsumer1);
-        panelEntity.addInputEventListener(executor, mockConsumer2);
-        ShadowNode shadowNode = ShadowNode.extract(getNode(panelEntity));
-        com.android.extensions.xr.node.InputEvent inputEvent =
-                ShadowInputEvent.create(
-                        /* origin= */ new Vec3(0, 0, 0), /* direction= */ new Vec3(1, 1, 1));
+    fun removeAllInputEventConsumers_stopsInputListening() {
+        val mockInputEventListener1 = mock<InputEventListener>()
+        val mockInputEventListener2 = mock<InputEventListener>()
+        val panelEntity = createPanelEntity()
+        val executor = MoreExecutors.directExecutor()
+        panelEntity.addInputEventListener(executor, mockInputEventListener1)
+        panelEntity.addInputEventListener(executor, mockInputEventListener2)
+        val shadowNode = ShadowNode.extract(getNode(panelEntity))
+        val inputEvent =
+            ShadowInputEvent.create(
+                /* origin= */ Vec3(0f, 0f, 0f),
+                /* direction= */ Vec3(1f, 1f, 1f),
+            )
 
-        sendInputEvent(getNode(panelEntity), inputEvent);
-        mFakeExecutor.runAll();
+        sendInputEvent(getNode(panelEntity), inputEvent)
+        fakeExecutor.runAll()
 
-        verify(mockConsumer1).onInputEvent(any());
-        verify(mockConsumer2).onInputEvent(any());
+        verify(mockInputEventListener1).onInputEvent(any())
 
-        panelEntity.dispose();
+        verify(mockInputEventListener2).onInputEvent(any())
 
-        assertThat(((PanelEntityImpl) panelEntity).getReformEventConsumerMap()).isEmpty();
-        assertThat(shadowNode.getInputListener()).isNull();
-        assertThat(shadowNode.getInputExecutor()).isNull();
+        panelEntity.removeInputEventListener(mockInputEventListener1)
+        panelEntity.removeInputEventListener(mockInputEventListener2)
+
+        assertThat((panelEntity as PanelEntityImpl).reformEventConsumerMap).isEmpty()
+        assertThat(shadowNode.inputListener).isNull()
+        assertThat(shadowNode.inputExecutor).isNull()
     }
 
     @Test
-    public void isHidden_returnsSetHidden() {
-        PanelEntity parentEntity = createPanelEntity();
+    fun dispose_stopsInputListening() {
+        val mockInputEventListener1 = mock<InputEventListener>()
+        val mockInputEventListener2 = mock<InputEventListener>()
+        val panelEntity = createPanelEntity()
+        val executor = MoreExecutors.directExecutor()
+        panelEntity.addInputEventListener(executor, mockInputEventListener1)
+        panelEntity.addInputEventListener(executor, mockInputEventListener2)
+        val shadowNode = ShadowNode.extract(getNode(panelEntity))
+        val inputEvent =
+            ShadowInputEvent.create(
+                /* origin= */ Vec3(0f, 0f, 0f),
+                /* direction= */ Vec3(1f, 1f, 1f),
+            )
 
-        assertThat(parentEntity.isHidden(true)).isFalse();
-        assertThat(parentEntity.isHidden(false)).isFalse();
+        sendInputEvent(getNode(panelEntity), inputEvent)
+        fakeExecutor.runAll()
 
-        PanelEntity childEntity1 = createPanelEntity();
-        PanelEntity childEntity2 = createPanelEntity();
-        childEntity1.setParent(parentEntity);
-        childEntity2.setParent(childEntity1);
+        verify(mockInputEventListener1).onInputEvent(any())
 
-        assertThat(childEntity1.isHidden(true)).isFalse();
-        assertThat(childEntity1.isHidden(false)).isFalse();
+        verify(mockInputEventListener2).onInputEvent(any())
 
-        parentEntity.setHidden(true);
+        panelEntity.dispose()
 
-        assertThat(parentEntity.isHidden(true)).isTrue();
-        assertThat(parentEntity.isHidden(false)).isTrue();
-        assertThat(childEntity1.isHidden(true)).isTrue();
-        assertThat(childEntity1.isHidden(false)).isFalse();
-        assertThat(childEntity2.isHidden(true)).isTrue();
-        assertThat(childEntity2.isHidden(false)).isFalse();
-
-        parentEntity.setHidden(false);
-
-        assertThat(parentEntity.isHidden(true)).isFalse();
-        assertThat(parentEntity.isHidden(false)).isFalse();
-        assertThat(childEntity1.isHidden(true)).isFalse();
-        assertThat(childEntity1.isHidden(false)).isFalse();
-        assertThat(childEntity2.isHidden(true)).isFalse();
-        assertThat(childEntity2.isHidden(false)).isFalse();
-
-        childEntity1.setHidden(true);
-
-        assertThat(parentEntity.isHidden(true)).isFalse();
-        assertThat(parentEntity.isHidden(false)).isFalse();
-        assertThat(childEntity1.isHidden(true)).isTrue();
-        assertThat(childEntity1.isHidden(false)).isTrue();
-        assertThat(childEntity2.isHidden(true)).isTrue();
-        assertThat(childEntity2.isHidden(false)).isFalse();
+        assertThat((panelEntity as PanelEntityImpl).reformEventConsumerMap).isEmpty()
+        assertThat(shadowNode.inputListener).isNull()
+        assertThat(shadowNode.inputExecutor).isNull()
     }
 
     @Test
-    public void setHidden_modifiesReforms() {
-        PanelEntity testEntity = createPanelEntity();
+    fun isHidden_returnsSetHidden() {
+        val parentEntity = createPanelEntity()
+
+        assertThat(parentEntity.isHidden(true)).isFalse()
+        assertThat(parentEntity.isHidden(false)).isFalse()
+
+        val childEntity1 = createPanelEntity()
+        val childEntity2 = createPanelEntity()
+        childEntity1.parent = parentEntity
+        childEntity2.parent = childEntity1
+
+        assertThat(childEntity1.isHidden(true)).isFalse()
+        assertThat(childEntity1.isHidden(false)).isFalse()
+
+        parentEntity.setHidden(true)
+
+        assertThat(parentEntity.isHidden(true)).isTrue()
+        assertThat(parentEntity.isHidden(false)).isTrue()
+        assertThat(childEntity1.isHidden(true)).isTrue()
+        assertThat(childEntity1.isHidden(false)).isFalse()
+        assertThat(childEntity2.isHidden(true)).isTrue()
+        assertThat(childEntity2.isHidden(false)).isFalse()
+
+        parentEntity.setHidden(false)
+
+        assertThat(parentEntity.isHidden(true)).isFalse()
+        assertThat(parentEntity.isHidden(false)).isFalse()
+        assertThat(childEntity1.isHidden(true)).isFalse()
+        assertThat(childEntity1.isHidden(false)).isFalse()
+        assertThat(childEntity2.isHidden(true)).isFalse()
+        assertThat(childEntity2.isHidden(false)).isFalse()
+
+        childEntity1.setHidden(true)
+
+        assertThat(parentEntity.isHidden(true)).isFalse()
+        assertThat(parentEntity.isHidden(false)).isFalse()
+        assertThat(childEntity1.isHidden(true)).isTrue()
+        assertThat(childEntity1.isHidden(false)).isTrue()
+        assertThat(childEntity2.isHidden(true)).isTrue()
+        assertThat(childEntity2.isHidden(false)).isFalse()
+    }
+
+    @Test
+    fun setHidden_modifiesReforms() {
+        val testEntity = createPanelEntity()
 
         assertThat(
-                        testEntity.addComponent(
-                                mRuntime.createMovableComponent(
-                                        /* systemMovable= */ true,
-                                        /* scaleInZ= */ true,
-                                        /* userAnchorable */ false)))
-                .isTrue();
+                testEntity.addComponent(
+                    testRuntime.createMovableComponent(
+                        systemMovable = true,
+                        scaleInZ = true,
+                        userAnchorable = false,
+                    )
+                )
+            )
+            .isTrue()
 
-        testEntity.setHidden(true);
+        testEntity.setHidden(true)
 
-        assertThat(mNodeRepository.getReformOptions(getNode(testEntity))).isNull();
+        assertThat(nodeRepository.getReformOptions(getNode(testEntity))).isNull()
 
-        testEntity.setHidden(false);
+        testEntity.setHidden(false)
 
-        assertThat(mNodeRepository.getReformOptions(getNode(testEntity)).getEnabledReform())
-                .isEqualTo(ALLOW_MOVE);
+        assertThat(nodeRepository.getReformOptions(getNode(testEntity)).enabledReform)
+            .isEqualTo(ReformOptions.ALLOW_MOVE)
     }
 
     @Test
-    public void constructor_initializesBoundaryConsentCacheCorrectly() {
-        mRuntime.destroy();
-        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 1);
-        mRuntime = createRuntime();
+    fun constructor_initializesBoundaryConsentCacheCorrectly() {
+        testRuntime.destroy()
+        Settings.System.putInt(contentResolver, TOGGLE_GUARDIAN, 1)
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 1)
+        testRuntime = createRuntime()
 
-        boolean result = mRuntime.isBoundaryConsentGranted();
+        var result = testRuntime.isBoundaryConsentGranted
 
-        assertThat(result).isTrue();
+        assertThat(result).isTrue()
 
-        mRuntime.destroy();
-        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 0);
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 1);
-        mRuntime = createRuntime();
+        testRuntime.destroy()
+        Settings.System.putInt(contentResolver, TOGGLE_GUARDIAN, 0)
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 1)
+        testRuntime = createRuntime()
 
-        result = mRuntime.isBoundaryConsentGranted();
+        result = testRuntime.isBoundaryConsentGranted
 
-        assertThat(result).isTrue();
+        assertThat(result).isTrue()
 
-        mRuntime.destroy();
-        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 0);
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
-        mRuntime = createRuntime();
+        testRuntime.destroy()
+        Settings.System.putInt(contentResolver, TOGGLE_GUARDIAN, 0)
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 0)
+        testRuntime = createRuntime()
 
-        result = mRuntime.isBoundaryConsentGranted();
+        result = testRuntime.isBoundaryConsentGranted
 
-        assertThat(result).isTrue();
+        assertThat(result).isTrue()
 
-        mRuntime.destroy();
-        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
-        mRuntime = createRuntime();
+        testRuntime.destroy()
+        Settings.System.putInt(contentResolver, TOGGLE_GUARDIAN, 1)
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 0)
+        testRuntime = createRuntime()
 
-        result = mRuntime.isBoundaryConsentGranted();
+        result = testRuntime.isBoundaryConsentGranted
 
-        assertThat(result).isFalse();
+        assertThat(result).isFalse()
     }
 
     @Test
-    public void constructor_registerBoundaryConsentStateListener() {
+    fun constructor_registerBoundaryConsentStateListener() {
         assertThat(
-                        mShadowContentResolver.getContentObservers(
-                                IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI))
-                .hasSize(1);
+                shadowContentResolver!!.getContentObservers(
+                    IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI
+                )
+            )
+            .hasSize(1)
         assertThat(
-                        mShadowContentResolver.getContentObservers(
-                                IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI))
-                .hasSize(1);
+                shadowContentResolver.getContentObservers(
+                    IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI
+                )
+            )
+            .hasSize(1)
     }
 
     @Test
-    public void isBoundaryConsentGranted_returnsCachedValue() {
+    fun isBoundaryConsentGranted_returnsCachedValue() {
         // Set initial state to GRANTED = false
-        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
+        Settings.System.putInt(contentResolver, TOGGLE_GUARDIAN, 1)
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 0)
         // Recreate runtime to pick up the new initial state
-        mRuntime.destroy();
-        mRuntime = createRuntime();
-        assertThat(mRuntime.isBoundaryConsentGranted()).isFalse();
+        testRuntime.destroy()
+        testRuntime = createRuntime()
+        assertThat(testRuntime.isBoundaryConsentGranted).isFalse()
 
         // Directly change the underlying setting without notifying the observer
         // This simulates a situation where the cache should NOT be updated.
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 1);
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 1)
 
         // The method should still return the old, cached value.
-        assertThat(mRuntime.isBoundaryConsentGranted()).isFalse();
+        assertThat(testRuntime.isBoundaryConsentGranted).isFalse()
     }
 
     @Test
-    @SuppressWarnings(value = "unchecked")
-    public void addOnBoundaryConsentChangedListener_contentResolverChange_notifiesListeners() {
-        Consumer<Boolean> listener1 = (Consumer<Boolean>) mock(Consumer.class);
-        Consumer<Boolean> listener2 = (Consumer<Boolean>) mock(Consumer.class);
-        mRuntime.addOnBoundaryConsentChangedListener(directExecutor(), listener1);
-        mRuntime.addOnBoundaryConsentChangedListener(directExecutor(), listener2);
+    fun addOnBoundaryConsentChangedListener_contentResolverChange_notifiesListeners() {
+        val listener1 = mock<Consumer<Boolean>>()
+        val listener2 = mock<Consumer<Boolean>>()
+        testRuntime.addOnBoundaryConsentChangedListener(MoreExecutors.directExecutor(), listener1)
+        testRuntime.addOnBoundaryConsentChangedListener(MoreExecutors.directExecutor(), listener2)
 
         // Simulate initial state of system settings
-        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
-        shadowOf(Looper.getMainLooper()).idle();
-        mFakeExecutor.runAll();
+        Settings.System.putInt(contentResolver, TOGGLE_GUARDIAN, 1)
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 0)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        fakeExecutor.runAll()
 
         // Change setting
-        Settings.Secure.putInt(mActivity.getContentResolver(), GUARDIAN_CONSENT_GRANTED, 1);
-        shadowOf(Looper.getMainLooper()).idle();
-        mFakeExecutor.runAll();
+        Settings.Secure.putInt(activity!!.contentResolver, GUARDIAN_CONSENT_GRANTED, 1)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        fakeExecutor.runAll()
 
-        verify(listener1, times(1)).accept(true);
-        verify(listener2, times(1)).accept(true);
+        verify(listener1, times(1)).accept(true)
+        verify(listener2, times(1)).accept(true)
 
-        Mockito.clearInvocations(listener1, listener2);
+        clearInvocations(listener1, listener2)
         // Change setting again
-        Settings.Secure.putInt(mActivity.getContentResolver(), GUARDIAN_CONSENT_GRANTED, 0);
-        shadowOf(Looper.getMainLooper()).idle();
-        mFakeExecutor.runAll();
-        verify(listener1, times(1)).accept(false);
-        verify(listener2, times(1)).accept(false);
+        Settings.Secure.putInt(activity.contentResolver, GUARDIAN_CONSENT_GRANTED, 0)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        fakeExecutor.runAll()
+        verify(listener1, times(1)).accept(false)
+        verify(listener2, times(1)).accept(false)
     }
 
     @Test
-    @SuppressWarnings(value = "unchecked")
-    public void removeOnBoundaryConsentChangedListener_stopsReceivingEvents() {
+    fun removeOnBoundaryConsentChangedListener_stopsReceivingEvents() {
         // Recreate the runtime to ensure a clean initial state.
-        mRuntime.destroy();
+        testRuntime.destroy()
         // Set an explicit initial state (GRANTED = false).
-        Settings.System.putInt(mContentResolver, TOGGLE_GUARDIAN, 1);
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 0);
-        mRuntime = createRuntime(); // Recreate the runtime to ensure a clean state for the test.
+        Settings.System.putInt(contentResolver, TOGGLE_GUARDIAN, 1)
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 0)
+        testRuntime = createRuntime() // Recreate the runtime to ensure a clean state for the test.
 
-        Consumer<Boolean> listener1 = (Consumer<Boolean>) mock(Consumer.class);
-        Consumer<Boolean> listener2 = (Consumer<Boolean>) mock(Consumer.class);
-        mRuntime.addOnBoundaryConsentChangedListener(directExecutor(), listener1);
-        mRuntime.addOnBoundaryConsentChangedListener(directExecutor(), listener2);
+        val listener1 = mock<Consumer<Boolean>>()
+        val listener2 = mock<Consumer<Boolean>>()
+        testRuntime.addOnBoundaryConsentChangedListener(MoreExecutors.directExecutor(), listener1)
+        testRuntime.addOnBoundaryConsentChangedListener(MoreExecutors.directExecutor(), listener2)
 
-        mRuntime.removeOnBoundaryConsentChangedListener(listener1);
+        testRuntime.removeOnBoundaryConsentChangedListener(listener1)
 
         // Trigger a state change (from false to true).
-        Settings.Secure.putInt(mContentResolver, GUARDIAN_CONSENT_GRANTED, 1);
-        shadowOf(Looper.getMainLooper()).idle();
-        mFakeExecutor.runAll();
+        Settings.Secure.putInt(contentResolver, GUARDIAN_CONSENT_GRANTED, 1)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        fakeExecutor.runAll()
 
-        verify(listener2).accept(true);
-        verify(listener1, never()).accept(any());
+        verify(listener2).accept(true)
+        verify(listener1, never()).accept(any<Boolean>())
     }
 
     @Test
-    public void destroy_unregisterBoundaryConsentStateListener() {
+    fun destroy_unregisterBoundaryConsentStateListener() {
         // A runtime is created in setUp(), which registers the observer.
         assertThat(
-                        mShadowContentResolver.getContentObservers(
-                                IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI))
-                .isNotEmpty();
+                shadowContentResolver!!.getContentObservers(
+                    IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI
+                )
+            )
+            .isNotEmpty()
         assertThat(
-                        mShadowContentResolver.getContentObservers(
-                                IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI))
-                .isNotEmpty();
+                shadowContentResolver.getContentObservers(
+                    IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI
+                )
+            )
+            .isNotEmpty()
 
-        mRuntime.destroy();
+        testRuntime.destroy()
 
         assertThat(
-                        mShadowContentResolver.getContentObservers(
-                                IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI))
-                .isEmpty();
+                shadowContentResolver.getContentObservers(
+                    IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI
+                )
+            )
+            .isEmpty()
         assertThat(
-                        mShadowContentResolver.getContentObservers(
-                                IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI))
-                .isEmpty();
+                shadowContentResolver.getContentObservers(
+                    IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI
+                )
+            )
+            .isEmpty()
     }
 
     @Test
-    public void dispose_clearsReformOptions() {
-        AndroidXrEntity entity = (AndroidXrEntity) createEntity();
-        ReformOptions reformOptions = entity.getReformOptions();
+    fun dispose_clearsReformOptions() {
+        val entity = createEntity() as AndroidXrEntity
+        val reformOptions = entity.getReformOptions()
 
-        assertThat(reformOptions).isNotNull();
+        assertThat(reformOptions).isNotNull()
 
-        reformOptions.setEnabledReform(ALLOW_MOVE | ALLOW_RESIZE);
-        entity.dispose();
+        reformOptions.enabledReform = ReformOptions.ALLOW_MOVE or ReformOptions.ALLOW_RESIZE
+        entity.dispose()
 
-        assertThat(mNodeRepository.getReformOptions(entity.getNode())).isNull();
+        assertThat(nodeRepository.getReformOptions(entity.getNode())).isNull()
     }
 
     @Test
-    public void dispose_clearsParents() {
-        AndroidXrEntity entity = (AndroidXrEntity) createEntity();
-        entity.setParent(mRuntime.getActivitySpace());
+    fun dispose_clearsParents() {
+        val entity = createEntity() as AndroidXrEntity
+        entity.parent = testRuntime.activitySpace
 
-        assertThat(entity.getParent()).isNotNull();
+        assertThat(entity.parent).isNotNull()
 
-        entity.dispose();
+        entity.dispose()
 
-        assertThat(entity.getParent()).isNull();
+        assertThat(entity.parent).isNull()
     }
 
     @Test
-    public void destroy_clearsResources() {
-        AndroidXrEntity entity = (AndroidXrEntity) createEntity();
-        assertThat(entity.getNode()).isNotNull();
-        assertThat(mNodeRepository.getParent(entity.getNode())).isNotNull();
+    fun destroy_clearsResources() {
+        val entity = createEntity() as AndroidXrEntity
+        assertThat(entity.getNode()).isNotNull()
+        assertThat(nodeRepository.getParent(entity.getNode())).isNotNull()
 
-        mRuntime.destroy();
+        testRuntime.destroy()
 
-        assertThat(mNodeRepository.getParent(entity.getNode())).isNull();
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getSpatialStateCallback(mActivity))
-                .isNull();
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getMainWindowNode(mActivity)).isNull();
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getTaskNode(mActivity)).isNull();
+        assertThat(nodeRepository.getParent(entity.getNode())).isNull()
+        assertThat(ShadowXrExtensions.extract(xrExtensions).getSpatialStateCallback(activity))
+            .isNull()
+        assertThat(ShadowXrExtensions.extract(xrExtensions).getMainWindowNode(activity)).isNull()
+        assertThat(ShadowXrExtensions.extract(xrExtensions).getTaskNode(activity)).isNull()
     }
 
     @Test
-    public void destroy_disposeInvoked() {
-        AndroidXrEntity entity = (AndroidXrEntity) createEntity();
-        assertThat(entity.getNode()).isNotNull();
-        assertThat(mNodeRepository.getParent(entity.getNode())).isNotNull();
+    fun destroy_disposeInvoked() {
+        val entity = createEntity() as AndroidXrEntity
+        assertThat(entity.getNode()).isNotNull()
+        assertThat(nodeRepository.getParent(entity.getNode())).isNotNull()
 
-        mRuntime.destroy();
+        testRuntime.destroy()
 
-        assertThat(mNodeRepository.getParent(entity.getNode())).isNull();
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getSpatialStateCallback(mActivity))
-                .isNull();
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getMainWindowNode(mActivity)).isNull();
-        assertThat(ShadowXrExtensions.extract(mXrExtensions).getTaskNode(mActivity)).isNull();
+        assertThat(nodeRepository.getParent(entity.getNode())).isNull()
+        assertThat(ShadowXrExtensions.extract(xrExtensions).getSpatialStateCallback(activity))
+            .isNull()
+        assertThat(ShadowXrExtensions.extract(xrExtensions).getMainWindowNode(activity)).isNull()
+        assertThat(ShadowXrExtensions.extract(xrExtensions).getTaskNode(activity)).isNull()
     }
 
     @Test
-    public void setKeyEntity_setsKeyEntity() {
-        Entity entity = createEntity();
-        mRuntime.setKeyEntity(entity);
-        assertThat(mRuntime.getKeyEntity()).isEqualTo(entity);
+    fun setKeyEntity_setsKeyEntity() {
+        val entity = createEntity()
+        testRuntime.keyEntity = entity
+        assertThat(testRuntime.keyEntity).isEqualTo(entity)
     }
 
     @Test
-    public void setKeyEntity_apiV1_doesNotSubscribe() {
-        mRuntime.destroy();
-        ShadowXrExtensions.extract(mXrExtensions).setApiVersion(1);
-        mRuntime = createRuntime();
+    fun setKeyEntity_apiV1_doesNotSubscribe() {
+        testRuntime.destroy()
+        ShadowXrExtensions.extract(xrExtensions).setApiVersion(1)
+        testRuntime = createRuntime()
 
-        Entity entity = createEntity();
-        ShadowNode node = ShadowNode.extract(((AndroidXrEntity) entity).getNode());
+        val entity = createEntity()
+        val node = ShadowNode.extract((entity as AndroidXrEntity).getNode())
 
-        mRuntime.setKeyEntity(entity);
+        testRuntime.keyEntity = entity
 
-        assertThat(node.getTransformListener()).isNull();
-        assertThat(mRuntime.mKeyEntityTransformCloseable).isNull();
+        assertThat(node.transformListener).isNull()
+        assertThat(testRuntime.keyEntityTransformCloseable).isNull()
     }
 
     @Test
-    public void setKeyEntity_apiV2_subscribesToTransformAndUpdatesHint() {
-        mRuntime.destroy();
-        ShadowXrExtensions.extract(mXrExtensions).setApiVersion(2);
-        mRuntime = createRuntime();
+    fun setKeyEntity_apiV2_subscribesToTransformAndUpdatesHint() {
+        testRuntime.destroy()
+        ShadowXrExtensions.extract(xrExtensions).setApiVersion(2)
+        testRuntime = createRuntime()
 
-        Entity entity = createEntity();
-        ShadowNode node = ShadowNode.extract(((AndroidXrEntity) entity).getNode());
+        val entity = createEntity()
+        val node = ShadowNode.extract((entity as AndroidXrEntity).getNode())
 
-        mRuntime.setKeyEntity(entity);
+        testRuntime.keyEntity = entity
 
-        assertThat(node.getTransformListener()).isNotNull();
-        assertThat(node.getTransformExecutor()).isEqualTo(mFakeExecutor);
-        assertThat(mRuntime.mKeyEntityTransformCloseable).isNotNull();
+        assertThat(node.transformListener).isNotNull()
+        assertThat(node.transformExecutor).isEqualTo(fakeExecutor)
+        assertThat(testRuntime.keyEntityTransformCloseable).isNotNull()
 
         // Trigger callback
-        node.getTransformExecutor()
-                .execute(
-                        () ->
-                                node.getTransformListener()
-                                        .accept(
-                                                ShadowNodeTransform.create(
-                                                        new Mat4f(new float[16]))));
+        node.transformExecutor.execute {
+            node.transformListener.accept(ShadowNodeTransform.create(Mat4f(FloatArray(16))))
+        }
 
-        assertThat(mFakeExecutor.hasNext()).isTrue();
-        mFakeExecutor.runAll();
+        assertThat(fakeExecutor.hasNext()).isTrue()
+        fakeExecutor.runAll()
         // Since we cannot verify the extension call directly, we just ensure it doesn't crash.
     }
 
     @Test
-    public void setKeyEntity_apiV2_null_unsubscribes() throws Exception {
-        mRuntime.destroy();
-        ShadowXrExtensions.extract(mXrExtensions).setApiVersion(2);
-        mRuntime = createRuntime();
+    @Throws(Exception::class)
+    fun setKeyEntity_apiV2_null_unsubscribes() {
+        testRuntime.destroy()
+        ShadowXrExtensions.extract(xrExtensions).setApiVersion(2)
+        testRuntime = createRuntime()
 
-        Entity entity = createEntity();
-        ShadowNode node = ShadowNode.extract(((AndroidXrEntity) entity).getNode());
+        val entity = createEntity()
+        val node = ShadowNode.extract((entity as AndroidXrEntity).getNode())
 
-        mRuntime.setKeyEntity(entity);
+        testRuntime.keyEntity = entity
 
-        assertThat(mRuntime.mKeyEntityTransformCloseable).isNotNull();
+        assertThat(testRuntime.keyEntityTransformCloseable).isNotNull()
 
-        FakeCloseable keyEntityTransformCloseable =
-                (FakeCloseable) mRuntime.mKeyEntityTransformCloseable;
+        val keyEntityTransformCloseable = testRuntime.keyEntityTransformCloseable as FakeCloseable
 
-        assertThat(node.getTransformListener()).isNotNull();
-        assertThat(node.getTransformExecutor()).isEqualTo(mFakeExecutor);
-        assertThat(keyEntityTransformCloseable.isClosed()).isFalse();
+        assertThat(node.transformListener).isNotNull()
+        assertThat(node.transformExecutor).isEqualTo(fakeExecutor)
+        assertThat(keyEntityTransformCloseable.isClosed).isFalse()
 
-        mRuntime.setKeyEntity(null);
+        testRuntime.keyEntity = null
 
-        assertThat(mRuntime.getKeyEntity()).isNull();
-        assertThat(keyEntityTransformCloseable.isClosed()).isTrue();
-        assertThat(mRuntime.mKeyEntityTransformCloseable).isNull();
+        assertThat(testRuntime.keyEntity).isNull()
+        assertThat(keyEntityTransformCloseable.isClosed).isTrue()
+        assertThat(testRuntime.keyEntityTransformCloseable).isNull()
     }
 
     @Test
-    public void setKeyEntity_apiV2_sameEntity_doesNotResubscribe() {
-        mRuntime.destroy();
-        ShadowXrExtensions.extract(mXrExtensions).setApiVersion(2);
-        mRuntime = createRuntime();
+    fun setKeyEntity_apiV2_sameEntity_doesNotResubscribe() {
+        testRuntime.destroy()
+        ShadowXrExtensions.extract(xrExtensions).setApiVersion(2)
+        testRuntime = createRuntime()
 
-        Entity entity = createEntity();
-        mRuntime.setKeyEntity(entity);
-        Closeable closeable1 = mRuntime.mKeyEntityTransformCloseable;
+        val entity = createEntity()
+        testRuntime.keyEntity = entity
+        val closeable1 = testRuntime.keyEntityTransformCloseable
 
-        mRuntime.setKeyEntity(entity);
-        Closeable closeable2 = mRuntime.mKeyEntityTransformCloseable;
+        testRuntime.keyEntity = entity
+        val closeable2 = testRuntime.keyEntityTransformCloseable
 
-        assertThat(closeable1).isSameInstanceAs(closeable2);
+        assertThat(closeable1).isSameInstanceAs(closeable2)
     }
 
     @Test
-    public void setKeyEntity_apiV2_differentEntity_resubscribes() throws Exception {
-        mRuntime.destroy();
-        ShadowXrExtensions.extract(mXrExtensions).setApiVersion(2);
-        mRuntime = createRuntime();
+    @Throws(Exception::class)
+    fun setKeyEntity_apiV2_differentEntity_resubscribes() {
+        testRuntime.destroy()
+        ShadowXrExtensions.extract(xrExtensions).setApiVersion(2)
+        testRuntime = createRuntime()
 
-        Entity entity1 = createEntity();
-        Entity entity2 = createEntity();
-        ShadowNode node1 = ShadowNode.extract(((AndroidXrEntity) entity1).getNode());
-        ShadowNode node2 = ShadowNode.extract(((AndroidXrEntity) entity2).getNode());
+        val entity1 = createEntity()
+        val entity2 = createEntity()
+        val node1 = ShadowNode.extract((entity1 as AndroidXrEntity).getNode())
+        val node2 = ShadowNode.extract((entity2 as AndroidXrEntity).getNode())
 
-        mRuntime.setKeyEntity(entity1);
-        FakeCloseable closeable1 = (FakeCloseable) mRuntime.mKeyEntityTransformCloseable;
-        assertThat(closeable1.isClosed()).isFalse();
-        assertThat(node1.getTransformListener()).isNotNull();
+        testRuntime.keyEntity = entity1
+        val closeable1 = testRuntime.keyEntityTransformCloseable as FakeCloseable
+        assertThat(closeable1.isClosed).isFalse()
+        assertThat(node1.transformListener).isNotNull()
 
-        mRuntime.setKeyEntity(entity2);
-        FakeCloseable closeable2 = (FakeCloseable) mRuntime.mKeyEntityTransformCloseable;
+        testRuntime.keyEntity = entity2
+        val closeable2 = testRuntime.keyEntityTransformCloseable as FakeCloseable
 
-        assertThat(closeable1.isClosed()).isTrue();
-        assertThat(closeable2).isNotSameInstanceAs(closeable1);
-        assertThat(closeable2.isClosed()).isFalse();
-        assertThat(node2.getTransformListener()).isNotNull();
-        assertThat(mRuntime.getKeyEntity()).isEqualTo(entity2);
+        assertThat(closeable1.isClosed).isTrue()
+        assertThat(closeable2).isNotSameInstanceAs(closeable1)
+        assertThat(closeable2.isClosed).isFalse()
+        assertThat(node2.transformListener).isNotNull()
+        assertThat(testRuntime.keyEntity).isEqualTo(entity2)
     }
 
     @Test
-    public void setKeyEntity_nullWhenAlreadyNull_doesNothing() {
-        mRuntime.setKeyEntity(null);
-        assertThat(mRuntime.getKeyEntity()).isNull();
-        assertThat(mRuntime.mKeyEntityTransformCloseable).isNull();
+    fun setKeyEntity_nullWhenAlreadyNull_doesNothing() {
+        testRuntime.keyEntity = null
+        assertThat(testRuntime.keyEntity).isNull()
+        assertThat(testRuntime.keyEntityTransformCloseable).isNull()
     }
 
     @Test
-    public void destroy_apiV2_unsubscribesKeyEntity() throws Exception {
-        mRuntime.destroy();
-        ShadowXrExtensions.extract(mXrExtensions).setApiVersion(2);
-        mRuntime = createRuntime();
+    @Throws(Exception::class)
+    fun destroy_apiV2_unsubscribesKeyEntity() {
+        testRuntime.destroy()
+        ShadowXrExtensions.extract(xrExtensions).setApiVersion(2)
+        testRuntime = createRuntime()
 
-        Entity entity = createEntity();
-        mRuntime.setKeyEntity(entity);
-        FakeCloseable closeable = (FakeCloseable) mRuntime.mKeyEntityTransformCloseable;
-        assertThat(closeable.isClosed()).isFalse();
+        val entity = createEntity()
+        testRuntime.keyEntity = entity
+        val closeable = testRuntime.keyEntityTransformCloseable as FakeCloseable
+        assertThat(closeable.isClosed).isFalse()
 
-        mRuntime.destroy();
+        testRuntime.destroy()
 
-        assertThat(closeable.isClosed()).isTrue();
-        assertThat(mRuntime.mKeyEntityTransformCloseable).isNull();
+        assertThat(closeable.isClosed).isTrue()
+        assertThat(testRuntime.keyEntityTransformCloseable).isNull()
+    }
+
+    companion object {
+        private const val OPEN_XR_REFERENCE_SPACE_TYPE = 1
+        private const val GUARDIAN_CONSENT_GRANTED = "guardian_consent_granted"
+        private const val TOGGLE_GUARDIAN = "toggle_guardian"
+        private val IS_EXPLICITLY_BOUNDARY_CONSENT_GRANTED_URI: Uri =
+            Settings.Secure.getUriFor(GUARDIAN_CONSENT_GRANTED)
+        private val IS_BOUNDARY_ENABLED_IN_DEVELOPER_OPTIONS_URI: Uri =
+            Settings.System.getUriFor(TOGGLE_GUARDIAN)
     }
 }
