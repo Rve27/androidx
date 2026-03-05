@@ -33,8 +33,8 @@ import androidx.compose.ui.node.requireGraphicsContext
 import androidx.compose.ui.platform.InspectorInfo
 
 /**
- * Depth establishes a sense of hierarchy by using shadows to occlude content underneath. Depth
- * consists of two shadow layers, [layer1] and [layer2]. [layer2] is drawn on top of [layer1]:
+ * The depth effect establishes a sense of hierarchy by using shadows to occlude content underneath.
+ * It consists of two shadow layers, [layer1] and [layer2]. [layer2] is drawn on top of [layer1]:
  *
  *     _________________
  *    |    _________    |
@@ -48,21 +48,21 @@ import androidx.compose.ui.platform.InspectorInfo
  *    | |_____________| |
  *    |_________________|
  *
- * [GlimmerTheme.depthLevels] provides theme defined levels of depth that should be used to add
- * depth to surfaces.
+ * [GlimmerTheme.depthEffectLevels] provides theme defined depth effect levels that should be used
+ * to add depth to surfaces.
  *
- * Higher level components apply depth automatically when needed, and depth can also be configured
- * through [surface]. To manually render depth shadows for advanced use-cases, see the [depth]
- * [Modifier].
+ * Higher level components apply the depth effect automatically when needed. The depth effect can
+ * also be configured through [surface]. To manually render depth shadows for advanced use-cases,
+ * see the [depthEffect] [Modifier].
  *
- * @param layer1 the 'base' [Shadow] layer, drawn first
- * @param layer2 the second [Shadow] layer, drawn on top of [layer1]
+ * @property layer1 the 'base' [Shadow] layer, drawn first
+ * @property layer2 the second [Shadow] layer, drawn on top of [layer1]
  */
 @Immutable
-public class Depth(internal val layer1: Shadow, internal val layer2: Shadow) {
+public class DepthEffect(public val layer1: Shadow, public val layer2: Shadow) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Depth) return false
+        if (other !is DepthEffect) return false
 
         if (layer1 != other.layer1) return false
         if (layer2 != other.layer2) return false
@@ -78,30 +78,31 @@ public class Depth(internal val layer1: Shadow, internal val layer2: Shadow) {
 }
 
 /**
- * Renders shadows for the provided [depth].
+ * Renders shadows for the provided [depthEffect].
  *
- * @param depth Depth to render shadows for. If `null`, no shadows will be rendered.
+ * @param depthEffect Depth effect to render shadows for. If `null`, no shadows will be rendered.
  * @param shape [Shape] of the shadows
  */
-public fun Modifier.depth(depth: Depth?, shape: Shape): Modifier {
-    if (depth == null) return this
-    return this then DepthElement(depth, shape)
+public fun Modifier.depthEffect(depthEffect: DepthEffect?, shape: Shape): Modifier {
+    if (depthEffect == null) return this
+    return this then DepthEffectElement(depthEffect, shape)
 }
 
 /**
- * Renders depth shadows by lerping between the provided [from] and [to] depths using [progress].
- * This allows for efficient animation - to render a static depth, see the other overload.
+ * Renders depth effect shadows by lerping between the provided [from] and [to] depth effects using
+ * [progress]. This allows for efficient animation - to render a static depth effect, see the other
+ * overload.
  *
- * @param from Depth to render shadows for when [progress] is 0.
- * @param to Depth to render shadows for when [progress] is 1.
+ * @param from Depth effect to render shadows for when [progress] is 0.
+ * @param to Depth effect to render shadows for when [progress] is 1.
  * @param shape [Shape] of the shadows
  * @param progress progress of the animation between [from] and [to], from 0 to 1. Values may go
  *   outside these bounds for overshoot / undershoot.
  */
 // TODO: can be simplified with style API in the future
-internal fun Modifier.depth(
-    from: Depth?,
-    to: Depth?,
+internal fun Modifier.depthEffect(
+    from: DepthEffect?,
+    to: DepthEffect?,
     shape: Shape,
     progress: () -> Float,
 ): Modifier {
@@ -133,67 +134,67 @@ private fun ShadowScope.updateFrom(shadow: Shadow) {
     this.blendMode = shadow.blendMode
 }
 
-private class DepthElement(private val depth: Depth, private val shape: Shape) :
-    ModifierNodeElement<DepthNode>() {
+private class DepthEffectElement(private val depthEffect: DepthEffect, private val shape: Shape) :
+    ModifierNodeElement<DepthEffectNode>() {
 
-    override fun create(): DepthNode = DepthNode(depth, shape)
+    override fun create(): DepthEffectNode = DepthEffectNode(depthEffect, shape)
 
-    override fun update(node: DepthNode) {
-        node.update(depth, shape)
+    override fun update(node: DepthEffectNode) {
+        node.update(depthEffect, shape)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is DepthElement) return false
+        if (other !is DepthEffectElement) return false
 
-        if (depth != other.depth) return false
+        if (depthEffect != other.depthEffect) return false
         if (shape != other.shape) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = depth.hashCode()
+        var result = depthEffect.hashCode()
         result = 31 * result + shape.hashCode()
         return result
     }
 
     override fun InspectorInfo.inspectableProperties() {
-        name = "depth"
-        properties["depth"] = depth
+        name = "depthEffect"
+        properties["depthEffect"] = depthEffect
         properties["shape"] = shape
     }
 }
 
 /**
- * Renders shadows for the provided [shape] and [depth].
+ * Renders shadows for the provided [shape] and [depthEffect].
  *
- * @param depth Depth to render shadows for.
+ * @param depthEffect Depth effect to render shadows for.
  * @param shape [Shape] of the shadows.
  */
-internal class DepthNode(private var depth: Depth, private var shape: Shape) :
+internal class DepthEffectNode(private var depthEffect: DepthEffect, private var shape: Shape) :
     Modifier.Node(), DrawModifierNode {
 
     private var layer1ShadowPainter: DropShadowPainter? = null
     private var layer2ShadowPainter: DropShadowPainter? = null
 
-    fun update(depth: Depth, shape: Shape) {
-        if (this.depth.layer1 != depth.layer1) layer1ShadowPainter = null
-        if (this.depth.layer2 != depth.layer2) layer2ShadowPainter = null
+    fun update(depthEffect: DepthEffect, shape: Shape) {
+        if (this.depthEffect.layer1 != depthEffect.layer1) layer1ShadowPainter = null
+        if (this.depthEffect.layer2 != depthEffect.layer2) layer2ShadowPainter = null
         if (this.shape != shape) {
             layer1ShadowPainter = null
             layer2ShadowPainter = null
         }
         this.shape = shape
-        this.depth = depth
+        this.depthEffect = depthEffect
     }
 
     override fun ContentDrawScope.draw() {
-        drawDepth()
+        drawDepthEffect()
         drawContent()
     }
 
-    internal fun ContentDrawScope.drawDepth(alpha: Float = DefaultAlpha) {
+    internal fun ContentDrawScope.drawDepthEffect(alpha: Float = DefaultAlpha) {
         // In order to get layer2 to render on top of layer1, we draw layer1 first.
         with(obtainLayer1ShadowPainter()) { draw(size, alpha = alpha) }
         with(obtainLayer2ShadowPainter()) { draw(size, alpha = alpha) }
@@ -203,13 +204,13 @@ internal class DepthNode(private var depth: Depth, private var shape: Shape) :
         layer1ShadowPainter
             ?: requireGraphicsContext()
                 .shadowContext
-                .createDropShadowPainter(shape, depth.layer1)
+                .createDropShadowPainter(shape, depthEffect.layer1)
                 .also { layer1ShadowPainter = it }
 
     private fun obtainLayer2ShadowPainter(): DropShadowPainter =
         layer2ShadowPainter
             ?: requireGraphicsContext()
                 .shadowContext
-                .createDropShadowPainter(shape, depth.layer2)
+                .createDropShadowPainter(shape, depthEffect.layer2)
                 .also { layer2ShadowPainter = it }
 }

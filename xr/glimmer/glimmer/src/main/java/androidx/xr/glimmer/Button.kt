@@ -107,7 +107,11 @@ public fun Button(
             LargeMinimumHeight
         }
 
-    val depth = SurfaceDepth(depth = null, focusedDepth = GlimmerTheme.depthLevels.level1)
+    val depth =
+        SurfaceDepthEffect(
+            depthEffect = null,
+            focusedDepthEffect = GlimmerTheme.depthEffectLevels.level1,
+        )
 
     CompositionLocalProvider(LocalTextStyle provides GlimmerTheme.typography.bodySmall) {
         Row(
@@ -118,7 +122,7 @@ public fun Button(
                     shape = shape,
                     color = color,
                     contentColor = contentColor,
-                    depth = depth,
+                    depthEffect = depth,
                     border = border,
                     interactionSource = interactionSource,
                     onClick = onClick,

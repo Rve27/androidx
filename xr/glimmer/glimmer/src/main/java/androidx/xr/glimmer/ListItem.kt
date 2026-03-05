@@ -195,7 +195,11 @@ private fun ListItemImpl(
     val colors = GlimmerTheme.colors
     val iconSize = GlimmerTheme.iconSizes.large
     val typography = GlimmerTheme.typography
-    val depth = SurfaceDepth(depth = null, focusedDepth = GlimmerTheme.depthLevels.level4)
+    val depthEffect =
+        SurfaceDepthEffect(
+            depthEffect = null,
+            focusedDepthEffect = GlimmerTheme.depthEffectLevels.level4,
+        )
 
     val surfaceModifier =
         if (onClick != null) {
@@ -204,7 +208,7 @@ private fun ListItemImpl(
                 shape = shape,
                 color = color,
                 contentColor = contentColor,
-                depth = depth,
+                depthEffect = depthEffect,
                 border = border,
                 interactionSource = interactionSource,
             )
@@ -213,7 +217,7 @@ private fun ListItemImpl(
                 shape = shape,
                 color = color,
                 contentColor = contentColor,
-                depth = depth,
+                depthEffect = depthEffect,
                 border = border,
                 interactionSource = interactionSource,
             )
