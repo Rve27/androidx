@@ -606,6 +606,35 @@ package androidx.compose.remote.creation.compose.state {
     property public static androidx.compose.remote.creation.compose.state.RemoteFloat float.rf;
   }
 
+  public final class RemoteFloatOperations {
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat abs(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat acos(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat asin(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat atan(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat atan2(androidx.compose.remote.creation.compose.state.RemoteFloat a, androidx.compose.remote.creation.compose.state.RemoteFloat b);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat cbrt(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat ceil(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat clamp(androidx.compose.remote.creation.compose.state.RemoteFloat value, androidx.compose.remote.creation.compose.state.RemoteFloat min, androidx.compose.remote.creation.compose.state.RemoteFloat max);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat copySign(androidx.compose.remote.creation.compose.state.RemoteFloat a, androidx.compose.remote.creation.compose.state.RemoteFloat b);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat cos(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat exp(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat floor(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat lerp(androidx.compose.remote.creation.compose.state.RemoteFloat from, androidx.compose.remote.creation.compose.state.RemoteFloat to, androidx.compose.remote.creation.compose.state.RemoteFloat tween);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat ln(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat log(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat mad(androidx.compose.remote.creation.compose.state.RemoteFloat a, androidx.compose.remote.creation.compose.state.RemoteFloat b, androidx.compose.remote.creation.compose.state.RemoteFloat c);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat max(androidx.compose.remote.creation.compose.state.RemoteFloat a, androidx.compose.remote.creation.compose.state.RemoteFloat b);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat min(androidx.compose.remote.creation.compose.state.RemoteFloat a, androidx.compose.remote.creation.compose.state.RemoteFloat b);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat pow(androidx.compose.remote.creation.compose.state.RemoteFloat a, androidx.compose.remote.creation.compose.state.RemoteFloat b);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat round(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat sign(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat sin(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat sqrt(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat tan(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat toDeg(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+    method public static androidx.compose.remote.creation.compose.state.RemoteFloat toRad(androidx.compose.remote.creation.compose.state.RemoteFloat a);
+  }
+
   @androidx.compose.runtime.Stable public abstract class RemoteInt extends androidx.compose.remote.creation.compose.state.BaseRemoteState<java.lang.Integer> {
     method @InaccessibleFromKotlin public Integer? getConstantValueOrNull();
     property public Integer? constantValueOrNull;
