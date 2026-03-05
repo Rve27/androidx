@@ -17,7 +17,7 @@
 package androidx.wear.compose.remote.integration.demos.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.remote.creation.compose.capture.RememberRemoteDocumentInline
+import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
@@ -28,11 +28,13 @@ import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
@@ -51,27 +53,21 @@ fun RemoteDemoItem(
 ) {
     var documentState by remember { mutableStateOf<RemoteDocument?>(null) }
 
-    Column(modifier = modifier) {
-        ListSubHeader { Text(label) }
-
-        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/481422057
-        RememberRemoteDocumentInline(
-            onDocument = { doc ->
-                println("Document generated: $doc")
-                if (documentState == null) {
-                    // Generate seems to get called again with a partial document
-                    // Essentially re-recording but with existing state, so document is incomplete
-                    documentState = RemoteDocument(doc)
-                }
-            },
-            content = {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        val captured =
+            captureSingleRemoteDocument(context = context) {
                 RemoteBox(
                     modifier = RemoteModifier.fillMaxWidth().padding(horizontal = 8.rdp),
                     contentAlignment = RemoteAlignment.Center,
                     content = content,
                 )
-            },
-        )
+            }
+        documentState = RemoteDocument(captured.bytes)
+    }
+
+    Column(modifier = modifier) {
+        ListSubHeader { Text(label) }
 
         if (documentState != null) {
             val windowInfo = LocalWindowInfo.current
