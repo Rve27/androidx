@@ -124,11 +124,21 @@ private constructor(viewModelStoreProvider: ViewModelStoreProvider) :
     public constructor(
         viewModelStore: ViewModelStore,
         removeViewModelStoreOnPop: () -> Boolean,
-    ) : this(ViewModelStoreProvider(viewModelStore))
+    ) : this(
+        ViewModelStoreProvider(
+            parentKey = "androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator",
+            parentStore = viewModelStore,
+        )
+    )
 
     public constructor(
         viewModelStore: ViewModelStore
-    ) : this(ViewModelStoreProvider(viewModelStore))
+    ) : this(
+        ViewModelStoreProvider(
+            parentKey = "androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator",
+            viewModelStore,
+        )
+    )
 }
 
 /** Holds the default functions for the [ViewModelStoreNavEntryDecorator]. */

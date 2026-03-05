@@ -133,4 +133,39 @@ class RememberViewModelStoreProviderTest {
         val actualArgs = owner.defaultViewModelCreationExtras[DEFAULT_ARGS_KEY]
         assertThat(actualArgs!!.read { contentDeepEquals(expectedArgs) }).isTrue()
     }
+
+    @Test
+    fun rememberViewModelStoreProvider_onDispose_doesNotAffectSiblingStores() {
+        lateinit var providerA: ViewModelStoreProvider
+        lateinit var providerB: ViewModelStoreProvider
+        var showA by mutableStateOf(true)
+
+        rule.setContent {
+            if (showA) {
+                providerA = rememberViewModelStoreProvider()
+            }
+            // Sibling provider that stays in the composition
+            providerB = rememberViewModelStoreProvider()
+        }
+        rule.waitForIdle()
+
+        val storeABeforeDisposal = providerA.getOrCreate("test_key")
+        val storeBBeforeDisposal = providerB.getOrCreate("test_key")
+
+        // We remove providerA from the tree. Its 'onDispose' will run.
+        // Because it was keyed by its unique composition hash, it should
+        // only clean up its own separated store, leaving the parent and
+        // sibling stores untouched.
+        showA = false
+        rule.waitForIdle()
+
+        val storeAAfterDisposal = providerA.getOrCreate("test_key")
+        val storeBAfterDisposal = providerB.getOrCreate("test_key")
+
+        // Verify that ProviderA's store has been destroyed.
+        assertThat(storeAAfterDisposal).isNotSameInstanceAs(storeABeforeDisposal)
+
+        // Verify that providerB's store survived providerA's destruction.
+        assertThat(storeBAfterDisposal).isSameInstanceAs(storeBBeforeDisposal)
+    }
 }

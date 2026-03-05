@@ -84,16 +84,16 @@ package androidx.lifecycle.viewmodel {
   }
 
   public final class ViewModelStoreProvider {
-    ctor public ViewModelStoreProvider(androidx.lifecycle.ViewModelStore? store);
-    ctor public ViewModelStoreProvider(androidx.lifecycle.ViewModelStore? store, optional android.os.Bundle defaultArgs);
-    ctor public ViewModelStoreProvider(androidx.lifecycle.ViewModelStore? store, optional android.os.Bundle defaultArgs, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras);
-    ctor public ViewModelStoreProvider(androidx.lifecycle.ViewModelStore? store, optional android.os.Bundle defaultArgs, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras, optional androidx.lifecycle.ViewModelProvider.Factory defaultFactory);
-    ctor @BytecodeOnly public ViewModelStoreProvider(androidx.lifecycle.ViewModelStore!, android.os.Bundle!, androidx.lifecycle.viewmodel.CreationExtras!, androidx.lifecycle.ViewModelProvider.Factory!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    ctor public ViewModelStoreProvider(androidx.lifecycle.ViewModelStoreOwner? owner);
-    ctor public ViewModelStoreProvider(androidx.lifecycle.ViewModelStoreOwner? owner, optional android.os.Bundle defaultArgs);
-    ctor public ViewModelStoreProvider(androidx.lifecycle.ViewModelStoreOwner? owner, optional android.os.Bundle defaultArgs, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras);
-    ctor public ViewModelStoreProvider(androidx.lifecycle.ViewModelStoreOwner? owner, optional android.os.Bundle defaultArgs, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras, optional androidx.lifecycle.ViewModelProvider.Factory defaultFactory);
-    ctor @BytecodeOnly public ViewModelStoreProvider(androidx.lifecycle.ViewModelStoreOwner!, android.os.Bundle!, androidx.lifecycle.viewmodel.CreationExtras!, androidx.lifecycle.ViewModelProvider.Factory!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor public ViewModelStoreProvider(Object? parentKey, androidx.lifecycle.ViewModelStore? parentStore);
+    ctor public ViewModelStoreProvider(Object? parentKey, androidx.lifecycle.ViewModelStore? parentStore, optional android.os.Bundle defaultArgs);
+    ctor public ViewModelStoreProvider(Object? parentKey, androidx.lifecycle.ViewModelStore? parentStore, optional android.os.Bundle defaultArgs, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras);
+    ctor public ViewModelStoreProvider(Object? parentKey, androidx.lifecycle.ViewModelStore? parentStore, optional android.os.Bundle defaultArgs, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras, optional androidx.lifecycle.ViewModelProvider.Factory defaultFactory);
+    ctor @BytecodeOnly public ViewModelStoreProvider(Object!, androidx.lifecycle.ViewModelStore!, android.os.Bundle!, androidx.lifecycle.viewmodel.CreationExtras!, androidx.lifecycle.ViewModelProvider.Factory!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor public ViewModelStoreProvider(Object? parentKey, androidx.lifecycle.ViewModelStoreOwner? parentOwner);
+    ctor public ViewModelStoreProvider(Object? parentKey, androidx.lifecycle.ViewModelStoreOwner? parentOwner, optional android.os.Bundle defaultArgs);
+    ctor public ViewModelStoreProvider(Object? parentKey, androidx.lifecycle.ViewModelStoreOwner? parentOwner, optional android.os.Bundle defaultArgs, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras);
+    ctor public ViewModelStoreProvider(Object? parentKey, androidx.lifecycle.ViewModelStoreOwner? parentOwner, optional android.os.Bundle defaultArgs, optional androidx.lifecycle.viewmodel.CreationExtras defaultCreationExtras, optional androidx.lifecycle.ViewModelProvider.Factory defaultFactory);
+    ctor @BytecodeOnly public ViewModelStoreProvider(Object!, androidx.lifecycle.ViewModelStoreOwner!, android.os.Bundle!, androidx.lifecycle.viewmodel.CreationExtras!, androidx.lifecycle.ViewModelProvider.Factory!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.lifecycle.viewmodel.ViewModelStoreProvider.ReferenceToken acquireToken(Object? key);
     method public void clearAllKeys();
     method public void clearKey(Object? key);

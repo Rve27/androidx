@@ -74,10 +74,18 @@ public fun rememberViewModelStoreOwner(
     defaultCreationExtras: CreationExtras = parent.defaultViewModelCreationExtras,
     defaultFactory: ViewModelProvider.Factory = parent.defaultViewModelProviderFactory,
 ): ViewModelStoreOwner {
+    val key = currentCompositeKeyHashCode
     val provider =
-        rememberViewModelStoreProvider(parent, defaultArgs, defaultCreationExtras, defaultFactory)
+        rememberViewModelStoreProvider(
+            parent,
+            key,
+            defaultArgs,
+            defaultCreationExtras,
+            defaultFactory,
+        )
     return rememberViewModelStoreOwner(
         provider = provider,
+        key = key,
         savedStateRegistryOwner = savedStateRegistryOwner,
     )
 }

@@ -18,6 +18,7 @@ package androidx.lifecycle.viewmodel.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.remember
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -50,6 +51,9 @@ import androidx.savedstate.savedState
  *
  * @param parent The [ViewModelStoreOwner] to use as the parent, or `null` if it is a root. Defaults
  *   to the owner from [LocalViewModelStoreOwner].
+ * @param key A unique identifier for this call site to isolate its provider from others. Defaults
+ *   to [currentCompositeKeyHashCode]. If called multiple times in the same scope or loop, provide a
+ *   custom key to ensure each instance gets its own [ViewModelStoreProvider].
  * @param defaultArgs The [SavedState] containing default arguments to be passed to ViewModels
  *   created in this scope. These arguments are merged with any default arguments in
  *   [defaultCreationExtras]. If the same key exists in both, the value from [defaultArgs] takes
@@ -66,13 +70,14 @@ public fun rememberViewModelStoreProvider(
         checkNotNull(LocalViewModelStoreOwner.current) {
             "CompositionLocal LocalViewModelStoreOwner not present"
         },
+    key: Any? = currentCompositeKeyHashCode,
     defaultArgs: SavedState = savedState(),
     defaultCreationExtras: CreationExtras = parent.defaultViewModelCreationExtras,
     defaultFactory: ViewModelProvider.Factory = parent.defaultViewModelProviderFactory,
 ): ViewModelStoreProvider {
     val provider =
-        remember(parent, defaultFactory, defaultCreationExtras) {
-            ViewModelStoreProvider(parent, defaultArgs, defaultCreationExtras, defaultFactory)
+        remember(parent, key, defaultFactory, defaultCreationExtras) {
+            ViewModelStoreProvider(key, parent, defaultArgs, defaultCreationExtras, defaultFactory)
         }
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
