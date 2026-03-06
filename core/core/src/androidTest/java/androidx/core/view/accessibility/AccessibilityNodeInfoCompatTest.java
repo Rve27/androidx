@@ -27,6 +27,7 @@ import static org.mockito.Mockito.verify;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.app.UiAutomation;
+import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.Build;
@@ -35,6 +36,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityNodeProvider;
+import android.widget.TextView;
 
 import androidx.core.view.ViewCompatActivity;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
@@ -682,6 +684,32 @@ public class AccessibilityNodeInfoCompatTest extends
     public void testActionArgumentSelectionParcelableValue() {
         assertThat(AccessibilityNodeInfoCompat.ACTION_ARGUMENT_SELECTION_PARCELABLE)
                 .isEqualTo(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_PARCELABLE);
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @Test
+    public void testSelectionPositionCompat_getViewAndVirtualDescendantId() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        TextView textView = new TextView(context);
+        AccessibilityNodeInfoCompat.SelectionPositionCompat selectionPositionCompat =
+                new AccessibilityNodeInfoCompat.SelectionPositionCompat(textView, 0);
+
+        assertThat(selectionPositionCompat.getView()).isEqualTo(textView);
+        assertThat(selectionPositionCompat.getVirtualDescendantId()).isEqualTo(
+                AccessibilityNodeProviderCompat.HOST_VIEW_ID);
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @Test
+    public void testSelectionPositionCompat_getViewAndVirtualDescendantId_withVirtualId() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        TextView textView = new TextView(context);
+        int virtualId = 1;
+        AccessibilityNodeInfoCompat.SelectionPositionCompat selectionPositionCompat =
+                new AccessibilityNodeInfoCompat.SelectionPositionCompat(textView, virtualId, 0);
+
+        assertThat(selectionPositionCompat.getView()).isEqualTo(textView);
+        assertThat(selectionPositionCompat.getVirtualDescendantId()).isEqualTo(virtualId);
     }
 
     private static class LabelNodeProviderTest extends AccessibilityNodeProvider {

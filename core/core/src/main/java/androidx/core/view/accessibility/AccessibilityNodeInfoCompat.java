@@ -48,9 +48,11 @@ import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.OptIn;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresFlag;
 import androidx.annotation.RestrictTo;
 import androidx.core.R;
 import androidx.core.accessibilityservice.AccessibilityServiceInfoCompat;
+import androidx.core.flagging.Flags;
 import androidx.core.os.BuildCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityViewCommand.CommandArguments;
@@ -1831,6 +1833,46 @@ public class AccessibilityNodeInfoCompat {
         public int getOffset() {
             if (BuildCompat.isAtLeastB_1()) {
                 return mPosition.getOffset();
+            } else {
+                return -1;
+            }
+        }
+
+        /**
+         * @return The view associated with {@code this} {@link SelectionPositionCompat}.
+         *     Will return null if the view is not attached to a window.
+         *
+         * Compatibility:
+         * <ul>
+         *     <li>API &lt: 36.1: Always returns {@code null}</li>
+         * </ul>
+         */
+        public @Nullable View getView() {
+            if (BuildCompat.isAtLeastB_1()
+                    && Flags.getBooleanFlagValue(
+                            "android.view.accessibility",
+                            "a11y_selection_position_app_getters_api")) {
+                return FlagA11ySelectionPositionAppGettersApiImpl.getView(mPosition);
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * @return A value representing the virtual descendant id of the
+         *     {@link SelectionPositionCompat}
+         *
+         * Compatibility:
+         * <ul>
+         *     <li>API &lt: 36.1: Always returns {@code -1}</li>
+         * </ul>
+         */
+        public int getVirtualDescendantId() {
+            if (BuildCompat.isAtLeastB_1()
+                    && Flags.getBooleanFlagValue(
+                            "android.view.accessibility",
+                            "a11y_selection_position_app_getters_api")) {
+                return FlagA11ySelectionPositionAppGettersApiImpl.getVirtualDescendantId(mPosition);
             } else {
                 return -1;
             }
@@ -6341,6 +6383,22 @@ public class AccessibilityNodeInfoCompat {
 
         public static AccessibilityNodeInfo.AccessibilityAction getActionSetExtendedSelection() {
             return AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_EXTENDED_SELECTION;
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @RequiresFlag("android.view.accessibility.a11y_selection_position_app_getters_api")
+    private static class FlagA11ySelectionPositionAppGettersApiImpl {
+        private FlagA11ySelectionPositionAppGettersApiImpl() {
+            // This class is non instantiable.
+        }
+
+        static View getView(SelectionPosition selectionPosition) {
+            return selectionPosition.getView();
+        }
+
+        static int getVirtualDescendantId(SelectionPosition selectionPosition) {
+            return selectionPosition.getVirtualDescendantId();
         }
     }
 }
