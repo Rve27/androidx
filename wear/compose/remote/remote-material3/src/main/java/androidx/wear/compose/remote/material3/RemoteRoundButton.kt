@@ -18,7 +18,6 @@ package androidx.wear.compose.remote.material3
 
 import androidx.compose.remote.creation.compose.action.Action
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
-import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
@@ -47,8 +46,7 @@ internal fun RemoteRoundButton(
     content: @Composable @RemoteComposable () -> Unit,
 ) {
     RemoteBox(
-        horizontalAlignment = RemoteAlignment.CenterHorizontally,
-        verticalArrangement = RemoteArrangement.Center,
+        contentAlignment = RemoteAlignment.Center,
         modifier =
             modifier
                 .drawWithContent {

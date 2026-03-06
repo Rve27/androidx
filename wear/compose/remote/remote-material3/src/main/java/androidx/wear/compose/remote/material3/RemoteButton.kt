@@ -434,8 +434,7 @@ public fun RemoteCompactButton(
             ) {
                 RemoteBox(
                     modifier = RemoteModifier.fillMaxSize().wrapContentSize(),
-                    horizontalAlignment = RemoteAlignment.CenterHorizontally,
-                    verticalArrangement = RemoteArrangement.Center,
+                    contentAlignment = RemoteAlignment.Center,
                 ) {
                     if (icon != null) {
                         icon()
@@ -477,7 +476,7 @@ private fun RemoteButtonImpl(
 
     RemoteRow(
         verticalAlignment = RemoteAlignment.CenterVertically,
-        horizontalArrangement = RemoteArrangement.CenterHorizontally,
+        horizontalArrangement = RemoteArrangement.Center,
         modifier =
             modifier
                 .drawWithContent {
@@ -536,8 +535,7 @@ private fun RemoteButtonImpl(
         if (icon != null) {
             RemoteBox(
                 modifier = RemoteModifier.wrapContentSize(),
-                horizontalAlignment = RemoteAlignment.CenterHorizontally,
-                verticalArrangement = RemoteArrangement.Center,
+                contentAlignment = RemoteAlignment.Center,
                 content = icon,
             )
             RemoteBox(RemoteModifier.size(RemoteButtonDefaults.IconSpacing))
