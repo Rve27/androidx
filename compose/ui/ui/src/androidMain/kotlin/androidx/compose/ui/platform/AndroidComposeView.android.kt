@@ -1036,6 +1036,40 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                 }
             }
         }
+        layoutChildViewsIfNeeded()
+    }
+
+    /**
+     * There is a difference in how Views and Compose handle dirty flags:
+     * * In views when you need to "relayout" you call requestLayout() which would always trigger
+     *   both onMeasure() and onLayout(). And isLayoutRequested() flag will only be cleared after
+     *   onLayout().
+     * * In Compose we have separate dirty flags for each stage, so you can separately call
+     *   requestRemeasure() (which includes relayout as well) or requestRelayout().
+     * * But another important difference is that in Compose it is possible to do remeasure, but
+     *   skip relayout, if this node is not placed yet. It could be placed again at some point in
+     *   future without triggering remeasure again.
+     * * It was causing an issue for the interop, as some View might have its isLayoutRequested()
+     *   flag set to true. But then Compose system will only onMeasure() it without onLayout(), so
+     *   isLayoutRequested() is still true. Then something changes in the View, and it needs another
+     *   remeasure, but requestRemeasure() call is ignored, as the flag is true already. Then, when
+     *   Compose finally decides to place this View, it only called onLayout on it, as it wasn't
+     *   notified that measurement is dirty.
+     * * After calling measureAndLayout(), if a child View hasn't been laid out, we now force the
+     *   View to be laid out so that a subsequent requestLayout() call will trigger remeasurement.
+     */
+    private val layoutChildViewsIfNeeded: () -> Unit = {
+        @OptIn(ExperimentalComposeUiApi::class)
+        if (AndroidComposeUiFlags.isForceChildLayoutAfterMeasurementEnabled) {
+            _androidViewsHandler?.let { viewsHandler ->
+                for (i in 0 until viewsHandler.childCount) {
+                    val child = viewsHandler.getChildAt(i) as? AndroidViewHolder ?: continue
+                    if (child.isLayoutRequested) {
+                        child.layout(child.left, child.top, child.right, child.bottom)
+                    }
+                }
+            }
+        }
     }
 
     private val matrixToWindow =
@@ -1856,7 +1890,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                 measureAndLayoutDelegate.hasPendingOnPositionedCallbacks
         ) {
             trace("AndroidOwner:measureAndLayout") {
-                val resend = if (sendPointerUpdate) resendMotionEventOnLayout else null
+                val resend =
+                    if (sendPointerUpdate) resendMotionEventOnLayout else layoutChildViewsIfNeeded
                 val rootNodeResized = measureAndLayoutDelegate.measureAndLayout(resend)
                 if (rootNodeResized) {
                     requestLayout()
@@ -1877,6 +1912,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             if (!measureAndLayoutDelegate.hasPendingMeasureOrLayout) {
                 measureAndLayoutDelegate.dispatchOnPositionedCallbacks()
                 rectManager.dispatchCallbacks()
+                layoutChildViewsIfNeeded()
                 dispatchPendingInteropLayoutCallbacks()
             }
         }
