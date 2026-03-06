@@ -369,7 +369,7 @@ internal class IntIntervalTree<T>(source: IntIntervalTree<T>? = null) {
      * exposed for advanced usages where the caller wants to modify the tree directly, but it's the
      * caller's responsibility to not break any red-black tree properties.
      */
-    inline fun forEachNodeInRange(start: Int, end: Int = start, block: (Int) -> Unit) {
+    private inline fun forEachNodeInRange(start: Int, end: Int = start, block: (Int) -> Unit) {
         forEachNodeMinMaxInRange(start, end) {
             val node = Node(it)
             if (node.overlaps(start, end)) {
@@ -388,7 +388,11 @@ internal class IntIntervalTree<T>(source: IntIntervalTree<T>? = null) {
      * exposed for advance usages where the caller wants to modify the tree directly, but it's
      * caller's responsibility to not break any red-black tree properties.
      */
-    inline fun forEachNodeMinMaxInRange(start: Int, end: Int = start, block: (Int) -> Unit) {
+    private inline fun forEachNodeMinMaxInRange(
+        start: Int,
+        end: Int = start,
+        block: (Int) -> Unit,
+    ) {
         if (root == terminator || root.max < start || root.min > end) return
         var visitedState = Unvisited
         var node = root
@@ -432,6 +436,52 @@ internal class IntIntervalTree<T>(source: IntIntervalTree<T>? = null) {
                 node = node.parent
             }
         }
+    }
+
+    /**
+     * Map the start, end values of all intervals overlapping with the given [start] and [end] using
+     * the [mapper] function.
+     *
+     * If an interval's end becomes less than or equal to its start after mapping, it is removed
+     * from the tree.
+     *
+     * This operation assumes that after the mapping the order of the intervals is preserved.
+     *
+     * It's the caller's responsibility to ensure that:
+     * 1. The [mapper] function is pure, has no side effects, and returns the same value for the
+     *    same input.
+     * 2. [mapper] is a monotonic function. If `x1 <= x2` then `mapper(x1) <= mapper(x2)`.
+     * 3. After the mapping, the order of the intervals (sorted by start) is preserved.
+     *
+     * e.g. For an IntIntervalTree that stores the following intervals: `[0, 5], [10, 15], [20, 25],
+     * [30, 35]`
+     *
+     * Calling `mapIntervals(10, 25) { it + 5 }` is safe because the order of the intervals is
+     * preserved: `[0, 5], `**`[15, 20], [25, 30]`**`, [30, 35]`
+     *
+     * Calling `mapIntervals(10, 25) { it + 20 }` is not safe: `[0, 5], `**`[30, 35], [40, 45]`**`,
+     * [30, 35]` Because after [20, 25] is mapped to [40, 45] its start is larger than 30.
+     */
+    inline fun mapIntervals(start: Int, end: Int, mapper: (Int) -> Int) {
+        val toRemove = tempArray
+        forEachNodeMinMaxInRange(start, end) {
+            val node = Node(it)
+            node.start = mapper(node.start)
+            node.end = mapper(node.end)
+            node.min = mapper(node.min)
+            node.max = mapper(node.max)
+
+            if (node.end <= node.start) {
+                toRemove.add(node)
+            }
+        }
+
+        // Cautious: we need to call removeNode with cleanUp == false, and do a cleanup manually.
+        // Because the Node indices will change after clean up, making the following removeNode
+        // incorrect.
+        toRemove.forEach { removeNode(Node(it), cleanUp = false) }
+        toRemove.clear()
+        cleanDeletedNodesIfNeeded()
     }
 
     /**
@@ -535,12 +585,14 @@ internal class IntIntervalTree<T>(source: IntIntervalTree<T>? = null) {
     }
 
     /**
-     * Remove the given [target] from the tree maintaining the tree's properties and mark it as
-     * deleted.
+     * Removes the given [target] from the tree while maintaining the tree's properties, and marks
+     * it as deleted. Be aware that this method might clean up [Node]s that are marked as deleted,
+     * which will change the indices of existing [Node]s.
      *
-     * @param target The node to be removed. It can't be the terminator.
+     * @param target The node to be removed. It cannot be the terminator.
+     * @param cleanUp Whether to perform clean up for the removed node.
      */
-    private fun removeNode(target: Node) {
+    private fun removeNode(target: Node, cleanUp: Boolean = true) {
         // [spliced] is the node to be "spliced out" of its original structural position.
         // If [target] has two children, [spliced] is its inorder successor (which will
         // be moved to [target]'s position). Otherwise, [spliced] is [target] itself.
@@ -611,7 +663,7 @@ internal class IntIntervalTree<T>(source: IntIntervalTree<T>? = null) {
             // We've deleted a black node, we need to rebalance it.
             rebalanceAfterDeletion(replacement, replacementParent)
         }
-        deleteNode(target)
+        deleteNode(target, cleanUp)
     }
 
     /**
@@ -640,10 +692,21 @@ internal class IntIntervalTree<T>(source: IntIntervalTree<T>? = null) {
         }
     }
 
-    /** Mark the given [node] as deleted. */
-    private fun deleteNode(node: Node) {
+    /**
+     * Mark the given [node] as deleted. This method does **NOT** remove the [node] from tree, see
+     * [removeNode] if you want to remove the [node] from the tree.
+     *
+     * @param cleanUp Whether to perform clean up after marking the [node] as deleted.
+     */
+    private fun deleteNode(node: Node, cleanUp: Boolean) {
         node.color = TreeColorDeleted
         deletedNodeCount++
+        if (cleanUp) {
+            cleanDeletedNodesIfNeeded()
+        }
+    }
+
+    private fun cleanDeletedNodesIfNeeded() {
         if (
             totalNodeCount > NODE_CLEANUP_SIZE_THRESHOLD && deletedNodeCount >= totalNodeCount / 2
         ) {
@@ -911,6 +974,10 @@ internal class IntIntervalTree<T>(source: IntIntervalTree<T>? = null) {
         // Always cleanup the deleted node before clone to save memory.
         cleanDeletedNodes()
         return IntIntervalTree(this)
+    }
+
+    fun isEmpty(): Boolean {
+        return root == terminator
     }
 
     /** Helper method that add the node to the list */

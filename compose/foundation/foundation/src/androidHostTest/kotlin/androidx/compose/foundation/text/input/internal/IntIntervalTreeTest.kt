@@ -302,6 +302,45 @@ class IntIntervalTreeTest {
         assertThat(tree.getAllStyles()).isEqualTo(reference.getAllStyles())
     }
 
+    @Test
+    fun mapIntervals_basic() {
+        val buffer = IntIntervalTree<String>()
+        buffer.addIntervalAndVerifyIntegrity("a", 0, 5)
+        buffer.addIntervalAndVerifyIntegrity("b", 10, 15)
+        buffer.addIntervalAndVerifyIntegrity("c", 20, 30)
+        buffer.addIntervalAndVerifyIntegrity("d", 30, 35)
+
+        // Mapping only elements overlapping with [10, 25] (which covers "b" and "c")
+        buffer.mapIntervals(10, 25) { if (it in 10 until 25) it + 5 else it }
+
+        assertThat(buffer.getAllStyles())
+            .containsExactly(
+                AnnotatedString.Range("a", 0, 5),
+                AnnotatedString.Range("b", 15, 20),
+                AnnotatedString.Range("c", 25, 30),
+                AnnotatedString.Range("d", 30, 35),
+            )
+            .inOrder()
+        // We didn't change the order of the intervals, the tree properties should remain.
+        verifyIntegrity(buffer)
+    }
+
+    @Test
+    fun mapIntervals_removeCollapsed() {
+        val buffer = IntIntervalTree<String>()
+        buffer.addIntervalAndVerifyIntegrity("a", 0, 10)
+        buffer.addIntervalAndVerifyIntegrity("b", 10, 20)
+        buffer.addIntervalAndVerifyIntegrity("c", 20, 30)
+
+        // Map "b" so that it becomes collapsed (e.g. start=10, end=20 -> start=10, end=10)
+        buffer.mapIntervals(10, 20) { if (it == 20) 10 else it }
+
+        assertThat(buffer.getAllStyles())
+            .containsExactly(AnnotatedString.Range("a", 0, 10), AnnotatedString.Range("c", 10, 30))
+            .inOrder()
+        verifyIntegrity(buffer)
+    }
+
     /**
      * A simple implementation of the interval buffer that's inefficient but easy to ensure
      * correctness. Used as a reference for testing [IntIntervalTree].
