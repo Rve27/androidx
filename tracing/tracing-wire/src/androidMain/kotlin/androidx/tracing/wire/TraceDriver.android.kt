@@ -23,7 +23,8 @@ import android.app.Application
 import android.content.Context
 import android.os.Build
 import android.os.Process
-import androidx.tracing.TraceDriver
+import androidx.tracing.AbstractTraceDriver
+import androidx.tracing.AbstractTraceSink
 
 /**
  * Constructs a [TraceDriver] instance on Android based on the provided [Context] instance.
@@ -34,8 +35,12 @@ import androidx.tracing.TraceDriver
  *   overhead.
  */
 @JvmOverloads
-public fun TraceDriver(context: Context, sink: TraceSink, isEnabled: Boolean = true): TraceDriver {
-    val driver = TraceDriver(sink = sink, isEnabled = isEnabled)
+public fun TraceDriver(
+    context: Context,
+    sink: AbstractTraceSink,
+    isEnabled: Boolean = true,
+): AbstractTraceDriver {
+    val driver = AbstractTraceDriver(sink = sink, isEnabled = isEnabled)
     val pid = Process.myPid()
     val processName = getProcessName(context = context)
     // Eagerly populate a process track
@@ -70,7 +75,7 @@ internal fun getProcessName(context: Context): String {
             Class.forName(
                 /* name = */ "android.app.ActivityThread",
                 /* initialize = */ false,
-                /* loader = */ TraceDriver::class.java.classLoader,
+                /* loader = */ AbstractTraceDriver::class.java.classLoader,
             )
         val currentProcessName = activityThread.getDeclaredMethod(/* name= */ "currentProcessName")
         currentProcessName.isAccessible = true
