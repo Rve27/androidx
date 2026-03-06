@@ -22,10 +22,10 @@ package androidx.tracing
  *
  * Note that while serialized trace events are typically written as [Perfetto TracePacket protos] so
  * that they may be read by [ui.perfetto.dev](https://ui.perfetto.dev/) and queried with the
- * corresponding `TraceProcessor` tools, the final serialization format is up to the TraceSink's
- * implementation.
+ * corresponding `TraceProcessor` tools, the final serialization format is up to the
+ * AbstractTraceSink's implementation.
  */
-public abstract class TraceSink : AutoCloseable {
+public abstract class AbstractTraceSink : AutoCloseable {
     /**
      * Enqueue a [PooledTracePacketArray] to be written to the trace.
      *
@@ -34,21 +34,21 @@ public abstract class TraceSink : AutoCloseable {
     public abstract fun enqueue(pooledPacketArray: PooledTracePacketArray)
 
     /**
-     * Called when the [TraceSink] cannot keep up with incoming trace events from [Track]s.
+     * Called when the [AbstractTraceSink] cannot keep up with incoming trace events from [Track]s.
      *
      * This function may be called from any thread.
      */
     public abstract fun onDroppedTraceEvent()
 
     /**
-     * Flush any enqueued trace events to the [TraceSink].
+     * Flush any enqueued trace events to the [AbstractTraceSink].
      *
      * This function may be called from any thread.
      */
     public abstract fun flush()
 
     /**
-     * Close the [TraceSink], completing any enqueued writes.
+     * Close the [AbstractTraceSink], completing any enqueued writes.
      *
      * This function may be called from any thread.
      */
@@ -56,7 +56,7 @@ public abstract class TraceSink : AutoCloseable {
 }
 
 /** An empty trace sink that writes nowhere. */
-internal class EmptyTraceSink : TraceSink() {
+internal class EmptyTraceSink : AbstractTraceSink() {
     override fun enqueue(pooledPacketArray: PooledTracePacketArray) {
         pooledPacketArray.recycle()
     }

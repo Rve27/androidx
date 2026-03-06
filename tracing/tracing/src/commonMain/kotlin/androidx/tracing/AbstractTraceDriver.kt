@@ -20,15 +20,15 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope
 
 /** The entry point for the tracing API. */
-public open class TraceDriver
+public open class AbstractTraceDriver
 internal constructor(@get:RestrictTo(Scope.LIBRARY_GROUP) public val context: TraceContext) :
     AutoCloseable {
     /**
-     * Builds an instance of [TraceDriver] using the provided [TraceSink] if `isEnabled` is `true`.
-     * Otherwise, you get an instance of a no-op [TraceDriver].
+     * Builds an instance of [AbstractTraceDriver] using the provided [AbstractTraceSink] if
+     * `isEnabled` is `true`. Otherwise, you get an instance of a no-op [AbstractTraceDriver].
      */
     public constructor(
-        sink: TraceSink,
+        sink: AbstractTraceSink,
         isEnabled: Boolean,
     ) : this(
         context =
@@ -43,12 +43,15 @@ internal constructor(@get:RestrictTo(Scope.LIBRARY_GROUP) public val context: Tr
     public open val tracer: Tracer by
         lazy(mode = LazyThreadSafetyMode.PUBLICATION) { context.createTracer() }
 
-    /** Flushes the trace packets into the underlying [TraceSink]. */
+    /** Flushes the trace packets into the underlying [AbstractTraceSink]. */
     public open fun flush() {
         context.flush()
     }
 
-    /** Flushes all outstanding packets to the [TraceSink] and then closes the [TraceSink]. */
+    /**
+     * Flushes all outstanding packets to the [AbstractTraceSink] and then closes the
+     * [AbstractTraceSink].
+     */
     public override fun close() {
         context.close()
     }

@@ -18,16 +18,17 @@ package androidx.tracing.wire
 
 import androidx.annotation.GuardedBy
 import androidx.annotation.IntRange
+import androidx.tracing.AbstractTraceSink
 import androidx.tracing.PooledTracePacketArray
 import androidx.tracing.TraceEvent
-import androidx.tracing.TraceSink
 import androidx.tracing.synchronized
 import com.squareup.wire.ProtoWriter
 import kotlin.concurrent.Volatile
 import okio.BufferedSink
 
 /**
- * A [TraceSink] that stores [TraceEvent]s in a fixed-size ring buffer to minimize allocations.
+ * A [AbstractTraceSink] that stores [TraceEvent]s in a fixed-size ring buffer to minimize
+ * allocations.
  *
  * This buffer is designed to hold trace events temporarily before they are flushed. When the buffer
  * is full, it overwrites the oldest events.
@@ -55,7 +56,7 @@ public class InMemoryRingBufferTraceSink(
      * is estimated based on an average event size of 1KB.
      */
     capacityInBytes: Long,
-) : TraceSink() {
+) : AbstractTraceSink() {
     // Estimate 1KB per event
     private val countLimit = (capacityInBytes / 1024).toInt().coerceAtLeast(1)
     @GuardedBy("lock") private val events = Array(countLimit) { TraceEvent() }
