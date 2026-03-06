@@ -57,11 +57,17 @@ import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose;
 import androidx.xr.scenecore.runtime.PixelDimensions;
 import androidx.xr.scenecore.runtime.PlaneSemantic;
 import androidx.xr.scenecore.runtime.PlaneType;
+import androidx.xr.scenecore.runtime.PointSourceParams;
 import androidx.xr.scenecore.runtime.PointerCaptureComponent;
+import androidx.xr.scenecore.runtime.PositionalAudioComponent;
 import androidx.xr.scenecore.runtime.RenderingEntityFactory;
 import androidx.xr.scenecore.runtime.ResizableComponent;
 import androidx.xr.scenecore.runtime.ScenePose;
 import androidx.xr.scenecore.runtime.SceneRuntime;
+import androidx.xr.scenecore.runtime.SoundEffectPool;
+import androidx.xr.scenecore.runtime.SoundEffectPoolComponent;
+import androidx.xr.scenecore.runtime.SoundFieldAttributes;
+import androidx.xr.scenecore.runtime.SoundFieldAudioComponent;
 import androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper;
 import androidx.xr.scenecore.runtime.Space;
 import androidx.xr.scenecore.runtime.SpatialCapabilities;
@@ -176,8 +182,7 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                         extensions.getXrSpatialAudioExtensions().getSoundPoolExtensions());
         mAudioTrackExtensionsWrapper =
                 new AudioTrackExtensionsWrapperImpl(
-                        extensions.getXrSpatialAudioExtensions().getAudioTrackExtensions(),
-                        entityManager);
+                        extensions.getXrSpatialAudioExtensions().getAudioTrackExtensions());
         mMediaPlayerExtensionsWrapper =
                 new MediaPlayerExtensionsWrapperImpl(
                         extensions.getXrSpatialAudioExtensions().getMediaPlayerExtensions());
@@ -908,5 +913,40 @@ public class SpatialSceneRuntime implements SceneRuntime, RenderingEntityFactory
                                                         getRotationFromTransform(transform));
                                     });
         }
+    }
+
+    @NonNull
+    @Override
+    public PositionalAudioComponent createPositionalAudioComponent(
+            @NonNull Context context, @NonNull PointSourceParams params) {
+        return new PositionalAudioComponentImpl(context, mAudioTrackExtensionsWrapper, params);
+    }
+
+    @NonNull
+    @Override
+    public SoundFieldAudioComponent createSoundFieldAudioComponent(
+            @NonNull Context context, @NonNull SoundFieldAttributes soundFieldAttributes) {
+        return new SoundFieldAudioComponentImpl(
+                context, mAudioTrackExtensionsWrapper, soundFieldAttributes);
+    }
+
+    @NonNull
+    @Override
+    public SoundEffectPool createSoundEffectPool(int maxStreams) {
+        return new SoundEffectPoolImpl(
+                maxStreams, mSoundPoolExtensionsWrapper, /*soundEffectPlayer=*/ null);
+    }
+
+    @NonNull
+    @Override
+    public SoundEffectPoolComponent createSoundEffectPoolComponent(
+            @NonNull SoundEffectPool soundEffectPool
+    ) {
+        if (!(soundEffectPool instanceof SoundEffectPoolImpl)) {
+            throw new IllegalArgumentException("soundEffectPool must be an instance of "
+                    + "SoundEffectPoolImpl created from the same runtime.");
+        }
+
+        return new SoundEffectPoolComponentImpl((SoundEffectPoolImpl) soundEffectPool);
     }
 }
