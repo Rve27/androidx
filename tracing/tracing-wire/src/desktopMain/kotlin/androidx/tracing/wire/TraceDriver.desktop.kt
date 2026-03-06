@@ -18,7 +18,8 @@
 
 package androidx.tracing.wire
 
-import androidx.tracing.TraceDriver
+import androidx.tracing.AbstractTraceDriver
+import androidx.tracing.AbstractTraceSink
 import kotlin.jvm.optionals.getOrNull
 
 /**
@@ -30,8 +31,8 @@ import kotlin.jvm.optionals.getOrNull
  */
 @JvmOverloads
 @Suppress("DEPRECATION")
-public fun TraceDriver(sink: androidx.tracing.TraceSink, isEnabled: Boolean = true): TraceDriver {
-    val driver = TraceDriver(sink = sink, isEnabled = isEnabled)
+public fun TraceDriver(sink: AbstractTraceSink, isEnabled: Boolean = true): AbstractTraceDriver {
+    val driver = AbstractTraceDriver(sink = sink, isEnabled = isEnabled)
     val processHandle = ProcessHandle.current()
     val pid = processHandle.pid()
     val name = processHandle.info().command().getOrNull() ?: "Process pid($pid)"

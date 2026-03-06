@@ -16,7 +16,6 @@
 
 package androidx.tracing.wire
 
-import androidx.tracing.TraceDriver
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
