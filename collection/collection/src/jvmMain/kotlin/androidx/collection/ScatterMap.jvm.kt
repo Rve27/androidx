@@ -485,7 +485,20 @@ public actual class MutableScatterMap<K, V> @JvmOverloads actual constructor(ini
     }
 
     public actual inline fun getOrPut(key: K, defaultValue: () -> V): V {
-        return get(key) ?: defaultValue().also { set(key, it) }
+        val index = findInsertIndex(key)
+        return if (index < 0)
+            defaultValue().also {
+                val insertIndex = index.inv()
+                keys[insertIndex] = key
+                values[insertIndex] = it
+            }
+        else
+            @Suppress("UNCHECKED_CAST")
+            values[index] as V?
+                ?: defaultValue().also {
+                    keys[index] = key
+                    values[index] = it
+                }
     }
 
     public actual inline fun compute(key: K, computeBlock: (key: K, value: V?) -> V): V {
