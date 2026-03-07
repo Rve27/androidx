@@ -449,67 +449,6 @@ public class ImpressApiImpl : ImpressApi {
     }
 
     /**
-     * Starts an animation on an instanced GLTFModel.
-     *
-     * @param impressNode The integer ID of the Impress node for the instance of the GLTF
-     * @param animationName A nullable String which contains a requested animation to play. If null
-     *   is provided, this will attempt to play the first animation it finds
-     * @param looping True if the animation should loop. Note that if the animation is looped, the
-     *   returned Future will never fire successfully.
-     * @return a [Void] result when the animation stops. An exception is thrown if the animation
-     *   can't play.
-     */
-    // TODO: b/465818627 - Remove old animation APIs once all clients are migrated
-    // to new animation system.
-    override suspend fun animateGltfModel(
-        impressNode: ImpressNode,
-        animationName: String?,
-        looping: Boolean,
-    ): Void? = suspendCancellableCoroutine { continuation ->
-        nAnimateGltfModel(
-            getViewNativeHandle(view),
-            impressNode.handle,
-            animationName,
-            looping,
-            object : AssetAnimator {
-                override fun onComplete() {
-                    continuation.resume(null)
-                }
-
-                override fun onFailure(message: String) {
-                    // We can safely check for the CANCELLED string here since we
-                    // know that the underlying absl Status code is being
-                    // translated to a java Exception and the message is being
-                    // propagated. Ideally the native code would generate a separate
-                    // signal call for this.
-                    // TODO: b/374217508 - Publish a more precisely typed Exception
-                    // interface for this.
-                    if (message.contains("CANCELLED")) {
-                        onCancelled(message)
-                    } else {
-                        continuation.resumeWithException(Exception(message))
-                    }
-                }
-
-                override fun onCancelled(message: String) {
-                    continuation.cancel(Exception(message))
-                }
-            },
-        )
-        "AnimateGltfModel Operation"
-    }
-
-    /**
-     * Stops an animation on an instanced GLTFModel.
-     *
-     * @param impressNode The integer ID of the Impress node for the instance of the GLTF
-     */
-    // TODO: b/465818627 - Remove old animation APIs once all clients are migrated
-    // to new animation system.
-    override fun stopGltfModelAnimation(impressNode: ImpressNode): Unit =
-        nStopGltfModelAnimation(getViewNativeHandle(view), impressNode.handle)
-
-    /**
      * Stops an animation on an instanced glTF model on a specific channel.
      *
      * @param impressNode The integer ID of the Impress node for the instance of the GLTF
@@ -536,17 +475,6 @@ public class ImpressApiImpl : ImpressApi {
             playing,
             channel,
         )
-
-    /**
-     * Toggles an animation on an instanced GLTFModel.
-     *
-     * @param impressNode The integer ID of the Impress node for the instance of the GLTF
-     * @param playing True if the animation should play, false if it should stop.
-     */
-    // TODO: b/465818627 - Remove old animation APIs once all clients are migrated
-    // to new animation system.
-    override fun toggleGltfModelAnimation(impressNode: ImpressNode, playing: Boolean): Unit =
-        nToggleGltfModelAnimation(getViewNativeHandle(view), impressNode.handle, playing)
 
     /**
      * Sets the playback time of an animation on an instanced glTF model on a specific channel.
@@ -1798,21 +1726,7 @@ public class ImpressApiImpl : ImpressApi {
         assetAnimator: AssetAnimator,
     )
 
-    // TODO: b/465818627 - Remove old animation APIs once all clients are
-    // migrated to new animation system.
-    private external fun nAnimateGltfModel(
-        view: Long,
-        impressNode: Int,
-        animationName: String?,
-        loop: Boolean,
-        assetAnimator: AssetAnimator,
-    )
-
     private external fun nStopGltfModelAnimationNew(view: Long, impressNode: Int, channelId: Int)
-
-    // TODO: b/465818627 - Remove old animation APIs once all clients are
-    // migrated to new animation system.
-    private external fun nStopGltfModelAnimation(view: Long, impressNode: Int)
 
     private external fun nToggleGltfModelAnimationNew(
         view: Long,
@@ -1820,10 +1734,6 @@ public class ImpressApiImpl : ImpressApi {
         toggle: Boolean,
         channelId: Int,
     )
-
-    // TODO: b/465818627 - Remove old animation APIs once all clients are
-    // migrated to new animation system.
-    private external fun nToggleGltfModelAnimation(view: Long, impressNode: Int, toggle: Boolean)
 
     private external fun nSetGltfModelAnimationPlaybackTime(
         view: Long,
