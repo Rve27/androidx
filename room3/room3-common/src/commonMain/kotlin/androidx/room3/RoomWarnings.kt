@@ -195,4 +195,11 @@ public object RoomWarnings {
      */
     public const val UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE: String =
         "ROOM_UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE"
+
+    /**
+     * Reported when a [Database] annotated declaration is missing [ConstructedBy] on non-JVM
+     * platforms. When this error is suppressed then a factory should be provided to Room's builder.
+     */
+    @ExperimentalRoomApi
+    public const val NO_DATABASE_CONSTRUCTOR: String = "ROOM_NO_DATABASE_CONSTRUCTOR"
 }

@@ -20,7 +20,7 @@ package androidx.room3
  * corresponding declarations may (or may not) lead to their changes in the future.
  */
 @MustBeDocumented
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 @RequiresOptIn
 @Retention(AnnotationRetention.BINARY)
 public annotation class ExperimentalRoomApi
