@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,17 @@ package androidx.room3.solver.shortcut.binderprovider
 
 import androidx.room3.compiler.processing.XType
 import androidx.room3.processor.Context
+import androidx.room3.processor.ContinuationParamName
 import androidx.room3.solver.TypeAdapterExtras
+import androidx.room3.solver.shortcut.binder.CoroutineInsertOrUpsertFunctionBinder
 import androidx.room3.solver.shortcut.binder.InsertOrUpsertFunctionBinder
-import androidx.room3.solver.shortcut.binder.InstantInsertOrUpsertFunctionBinder
 import androidx.room3.vo.ShortcutQueryParameter
 
-/** Provider for instant (blocking) insert or upsert function binders. */
-class InstantInsertOrUpsertFunctionBinderProvider(private val context: Context) :
+/**
+ * This binder provider is the equivalent of the [InstantInsertOrUpsertFunctionBinderProvider] for
+ * suspending functions, i.e. the 'default provider' for them.
+ */
+class SuspendInsertOrUpsertFunctionBinderProvider(private val context: Context) :
     InsertOrUpsertFunctionBinderProvider {
 
     override fun matches(declared: XType) = true
@@ -35,12 +39,19 @@ class InstantInsertOrUpsertFunctionBinderProvider(private val context: Context) 
         forUpsert: Boolean,
         extras: TypeAdapterExtras,
     ): InsertOrUpsertFunctionBinder {
-        return InstantInsertOrUpsertFunctionBinder(
-            if (forUpsert) {
-                context.typeAdapterStore.findUpsertAdapter(declared, params)
-            } else {
-                context.typeAdapterStore.findInsertAdapter(declared, params)
+        val continuationName =
+            checkNotNull(extras.getData(ContinuationParamName::class)?.paramName) {
+                "Continuation parameter name not found in TypeAdapterExtras."
             }
+        return CoroutineInsertOrUpsertFunctionBinder(
+            typeArg = declared,
+            adapter =
+                if (forUpsert) {
+                    context.typeAdapterStore.findUpsertAdapter(declared, params)
+                } else {
+                    context.typeAdapterStore.findInsertAdapter(declared, params)
+                },
+            continuationParamName = continuationName,
         )
     }
 }
