@@ -287,7 +287,7 @@ public class RequireForegroundRule(private val preTestCheck: suspend () -> Unit)
         @JvmStatic
         @SuppressLint("MissingPermission", "ObsoleteSdkInt")
         @Suppress("DEPRECATION")
-        private fun clearDeviceUI(instrumentation: Instrumentation) {
+        public fun clearDeviceUI(instrumentation: Instrumentation) {
             val device = UiDevice.getInstance(instrumentation)
 
             try {
