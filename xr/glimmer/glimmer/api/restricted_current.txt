@@ -166,7 +166,7 @@ package androidx.xr.glimmer {
   }
 
   public final class IndirectPointerGestureKt {
-    method public static androidx.compose.ui.Modifier onIndirectPointerGesture(androidx.compose.ui.Modifier, optional boolean enabled, optional kotlin.jvm.functions.Function0<kotlin.Unit> onClick, optional kotlin.jvm.functions.Function0<kotlin.Unit> onSwipeForward, optional kotlin.jvm.functions.Function0<kotlin.Unit> onSwipeBackward);
+    method public static androidx.compose.ui.Modifier onIndirectPointerGesture(androidx.compose.ui.Modifier, optional boolean enabled, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onSwipeForward, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onSwipeBackward, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onClick);
     method @BytecodeOnly public static androidx.compose.ui.Modifier! onIndirectPointerGesture$default(androidx.compose.ui.Modifier!, boolean, kotlin.jvm.functions.Function0!, kotlin.jvm.functions.Function0!, kotlin.jvm.functions.Function0!, int, Object!);
   }
 
