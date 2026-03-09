@@ -58,7 +58,7 @@ internal class DataStoreImpl<T>(
      * simply throws the exception and does not produce new data.
      */
     private val corruptionHandler: CorruptionHandler<T> = ReThrowCorruptionHandler(),
-    context: CoroutineContext = ioDispatcher() + Job(),
+    context: CoroutineContext = ioDispatcher(),
     private val tracer: DataStoreTracer? = null,
 ) : CurrentDataProviderStore<T> {
     private val writerMutex = Mutex()
