@@ -24,8 +24,9 @@ import com.google.common.truth.Truth.assertThat
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.util.Base64
 import java.util.zip.GZIPOutputStream
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.abs
 import kotlin.test.assertFailsWith
 import org.junit.Test
@@ -33,6 +34,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
+@OptIn(ExperimentalEncodingApi::class)
 class StrokeInputBatchExtensionsTest {
     private val testBatch =
         MutableStrokeInputBatch()
@@ -77,7 +79,7 @@ class StrokeInputBatchExtensionsTest {
         }
         */
         // Which has more times encoded than positions.
-        Base64.getDecoder().decode("H4sIAAAAAAAA/+Ni5mJkEAIRUixcTAwMACBnCXkQAAAA")
+        Base64.Default.decode("H4sIAAAAAAAA/+Ni5mJkEAIRUixcTAwMACBnCXkQAAAA")
 
     private val compressedNotAProtoBytes =
         ByteArrayOutputStream().use { byteArrayStream ->

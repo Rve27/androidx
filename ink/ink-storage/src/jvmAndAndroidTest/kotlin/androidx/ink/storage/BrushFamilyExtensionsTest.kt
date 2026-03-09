@@ -22,15 +22,16 @@ import com.google.common.truth.Truth.assertThat
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.util.Base64
 import java.util.zip.GZIPOutputStream
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.test.assertFailsWith
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-@OptIn(ExperimentalInkCustomBrushApi::class)
+@OptIn(ExperimentalInkCustomBrushApi::class, ExperimentalEncodingApi::class)
 class BrushFamilyExtensionsTest {
 
     private val notGzippedBytes = byteArrayOf(0)
@@ -58,7 +59,7 @@ class BrushFamilyExtensionsTest {
      * ```
      */
     private val gzippedInvalidProtoBytes =
-        Base64.getDecoder().decode("H4sIAAAAAAAA/1Ni52INZWBo2A8Agg/YJAkAAAA=")
+        Base64.Default.decode("H4sIAAAAAAAA/1Ni52INZWBo2A8Agg/YJAkAAAA=")
 
     @Test
     fun encode_decode_roundTrip() {
