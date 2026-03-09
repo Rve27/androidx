@@ -16,7 +16,6 @@
 
 package androidx.webkit.internal;
 
-import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewStartupException;
 
 import org.chromium.support_lib_boundary.WebViewProviderFactoryBoundaryInterface.StartupErrorType;
@@ -54,7 +53,6 @@ public class WebViewStartupExceptionBuilder implements
     /**
      * Based on the data above, formulate the right exception here.
      */
-    @WebViewCompat.ExperimentalAsyncStartUp
     public static @NonNull WebViewStartupException buildException(
             @NonNull Consumer<BiConsumer<@StartupErrorType Integer, Object>> onFailure) {
         WebViewStartupExceptionBuilder builder = new WebViewStartupExceptionBuilder();

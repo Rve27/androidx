@@ -292,7 +292,7 @@ package androidx.webkit {
     method @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public androidx.webkit.SpeculativeLoadingParameters.Builder setVariationsId(Integer?);
   }
 
-  @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public interface StartUpLocation {
+  public interface StartUpLocation {
     method public Throwable getStackInformation();
   }
 
@@ -614,7 +614,7 @@ package androidx.webkit {
     method @RequiresFeature(name=androidx.webkit.WebViewFeature.WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") @UiThread public static void setWebViewRenderProcessClient(android.webkit.WebView, java.util.concurrent.Executor, androidx.webkit.WebViewRenderProcessClient);
     method @Deprecated @AnyThread @RequiresFeature(name=androidx.webkit.WebViewFeature.START_SAFE_BROWSING, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") public static void startSafeBrowsing(android.content.Context, android.webkit.ValueCallback<java.lang.Boolean!>?);
     method @Deprecated @SuppressCompatibility @AnyThread @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static void startUpWebView(android.content.Context, androidx.webkit.WebViewStartUpConfig, androidx.webkit.WebViewCompat.WebViewStartUpCallback);
-    method @SuppressCompatibility @AnyThread @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static void startUpWebView(android.content.Context, androidx.webkit.WebViewStartUpConfig, androidx.webkit.WebViewOutcomeReceiver<androidx.webkit.WebViewStartUpResult!,androidx.webkit.WebViewStartupException!>);
+    method @AnyThread public static void startUpWebView(android.content.Context, androidx.webkit.WebViewStartUpConfig, androidx.webkit.WebViewOutcomeReceiver<androidx.webkit.WebViewStartUpResult!,androidx.webkit.WebViewStartupException!>);
     field public static final int INJECTION_EVENT_DOCUMENT_END = 1; // 0x1
     field public static final int INJECTION_EVENT_DOCUMENT_START = 0; // 0x0
   }
@@ -633,8 +633,8 @@ package androidx.webkit {
     method @UiThread public void onPostMessage(android.webkit.WebView, androidx.webkit.WebMessageCompat, android.net.Uri, boolean, androidx.webkit.JavaScriptReplyProxy);
   }
 
-  @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static interface WebViewCompat.WebViewStartUpCallback {
-    method public void onSuccess(androidx.webkit.WebViewStartUpResult);
+  @Deprecated @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static interface WebViewCompat.WebViewStartUpCallback {
+    method @Deprecated public void onSuccess(androidx.webkit.WebViewStartUpResult);
   }
 
   public class WebViewFeature {
@@ -705,7 +705,7 @@ package androidx.webkit {
     field public static final String STARTUP_FEATURE_CONFIGURE_PARTITIONED_COOKIES = "STARTUP_FEATURE_CONFIGURE_PARTITIONED_COOKIES";
     field public static final String STARTUP_FEATURE_SET_DATA_DIRECTORY_SUFFIX = "STARTUP_FEATURE_SET_DATA_DIRECTORY_SUFFIX";
     field public static final String STARTUP_FEATURE_SET_DIRECTORY_BASE_PATHS = "STARTUP_FEATURE_SET_DIRECTORY_BASE_PATHS";
-    field @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static final String STARTUP_FEATURE_SET_PROFILES_TO_LOAD = "STARTUP_FEATURE_SET_PROFILES_TO_LOAD";
+    field public static final String STARTUP_FEATURE_SET_PROFILES_TO_LOAD = "STARTUP_FEATURE_SET_PROFILES_TO_LOAD";
     field @Deprecated @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static final String STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE = "STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE";
     field @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static final String STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE_V2 = "STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE_V2";
     field public static final String START_SAFE_BROWSING = "START_SAFE_BROWSING";
@@ -762,27 +762,27 @@ package androidx.webkit {
     method public abstract void onRenderProcessUnresponsive(android.webkit.WebView, androidx.webkit.WebViewRenderProcess?);
   }
 
-  @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public final class WebViewStartUpConfig {
+  public final class WebViewStartUpConfig {
     method public java.util.concurrent.Executor getBackgroundExecutor();
     method public java.util.Set<java.lang.String>? getProfilesToLoadDuringStartup();
     method public boolean shouldRunUiThreadStartUpTasks();
   }
 
-  @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static final class WebViewStartUpConfig.Builder {
+  public static final class WebViewStartUpConfig.Builder {
     ctor public WebViewStartUpConfig.Builder(java.util.concurrent.Executor);
     method public androidx.webkit.WebViewStartUpConfig build();
     method public androidx.webkit.WebViewStartUpConfig.Builder setProfilesToLoadDuringStartup(java.util.Set<java.lang.String!>);
     method public androidx.webkit.WebViewStartUpConfig.Builder setShouldRunUiThreadStartUpTasks(boolean);
   }
 
-  @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public interface WebViewStartUpResult {
+  public interface WebViewStartUpResult {
     method public Long? getMaxTimePerTaskInUiThreadMillis();
     method public java.util.List<androidx.webkit.StartUpLocation!>? getNonUiThreadBlockingStartUpLocations();
     method public Long? getTotalTimeInUiThreadMillis();
     method public java.util.List<androidx.webkit.StartUpLocation!>? getUiThreadBlockingStartUpLocations();
   }
 
-  @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public class WebViewStartupException extends java.lang.Exception {
+  public class WebViewStartupException extends java.lang.Exception {
     ctor public WebViewStartupException(String?);
   }
 

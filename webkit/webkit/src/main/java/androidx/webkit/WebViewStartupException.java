@@ -22,7 +22,6 @@ import org.jspecify.annotations.Nullable;
 /**
  * Exception class for errors occurring during {@link androidx.webkit.WebViewCompat#startUpWebView}.
  */
-@WebViewCompat.ExperimentalAsyncStartUp
 public class WebViewStartupException extends Exception {
 
     public WebViewStartupException(@Nullable String message) {

@@ -37,7 +37,6 @@ import java.util.function.BiConsumer;
  * a particular call to
  * {@link WebViewCompat#startUpWebView(Context, WebViewStartUpConfig, WebViewOutcomeReceiver)}
  */
-@WebViewCompat.ExperimentalAsyncStartUp
 public final class WebViewStartUpConfig {
     private final Executor mExecutor;
     private final boolean mShouldRunUiThreadStartUpTasks;
@@ -115,7 +114,6 @@ public final class WebViewStartUpConfig {
         }
     }
 
-    @WebViewCompat.ExperimentalAsyncStartUp
     public static final class Builder {
         private final Executor mExecutor;
         private boolean mShouldRunUiThreadStartUpTasks = true;
