@@ -395,7 +395,7 @@ dependencies {
     kmpDocs("androidx.sqlite:sqlite-bundled:2.7.0-alpha01")
     kmpDocs("androidx.sqlite:sqlite-framework:2.7.0-alpha01")
     docs("androidx.sqlite:sqlite-ktx:2.7.0-alpha01")
-    kmpDocs("androidx.sqlite:sqlite-web:2.7.0-alpha01")
+    kmpDocsWithoutApiSince("androidx.sqlite:sqlite-web:2.7.0-alpha01")
     docs("androidx.startup:startup-runtime:1.2.0")
     docs("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
     // androidx.test is not hosted in androidx
