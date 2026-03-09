@@ -374,7 +374,6 @@ internal class SlotTableAddressSpace(
         fun copyGroup(parent: GroupAddress, address: GroupAddress): GroupAddress {
             val sourceGroups = sourceSpace.groups
             val sourceSlots = sourceSpace.slots
-            val destGroups = groups
             val sourceFlags = sourceGroups.groupFlags(address)
             val newGroupAddress =
                 allocateGroup(
@@ -404,7 +403,7 @@ internal class SlotTableAddressSpace(
                         startIndex = address,
                         endIndex = address + size,
                     )
-                    destGroups.groupSlotRange(newGroupAddress, newSlotRange)
+                    groups.groupSlotRange(newGroupAddress, newSlotRange)
                 }
             }
             var previousSiblingAddress = NULL_ADDRESS
@@ -412,9 +411,9 @@ internal class SlotTableAddressSpace(
             while (currentChildAddress != NULL_ADDRESS) {
                 val newChildAddress = copyGroup(newGroupAddress, currentChildAddress)
                 if (previousSiblingAddress == NULL_ADDRESS) {
-                    destGroups.groupChild(newGroupAddress, newChildAddress)
+                    groups.groupChild(newGroupAddress, newChildAddress)
                 } else {
-                    destGroups.groupNext(previousSiblingAddress, newChildAddress)
+                    groups.groupNext(previousSiblingAddress, newChildAddress)
                 }
                 previousSiblingAddress = newChildAddress
                 currentChildAddress = sourceGroups.groupNext(currentChildAddress)
