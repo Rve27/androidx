@@ -27,6 +27,7 @@ import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.webkit.StartUpLocation
 import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewOutcomeReceiver
 import androidx.webkit.WebViewStartUpConfig
 import androidx.webkit.WebViewStartUpResult
 import java.io.PrintWriter
@@ -57,7 +58,7 @@ class AsyncStartUpActivity : AppCompatActivity() {
         WebViewCompat.startUpWebView(
             this,
             WebViewStartUpConfig.Builder(Executors.newSingleThreadExecutor()).build(),
-            this::onWebViewReady,
+            WebViewOutcomeReceiver { result -> this@AsyncStartUpActivity.onWebViewReady(result) },
         )
     }
 
