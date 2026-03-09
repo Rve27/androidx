@@ -4230,6 +4230,8 @@ package androidx.core.view.accessibility {
     ctor public AccessibilityNodeInfoCompat.SelectionPositionCompat(androidx.core.view.accessibility.AccessibilityNodeInfoCompat, int);
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat? getNode();
     method public int getOffset();
+    method public android.view.View? getView();
+    method public int getVirtualDescendantId();
   }
 
   public static final class AccessibilityNodeInfoCompat.TouchDelegateInfoCompat {
