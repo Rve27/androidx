@@ -749,7 +749,6 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         if (!buildFeatures.isIsolatedProjectsEnabled()) { // KT-80311
             multiplatformExtension.js { browser() }
             multiplatformExtension.wasmJs { browser() }
-            multiplatformExtension.wasmWasi { nodejs() }
         }
     }
 }
