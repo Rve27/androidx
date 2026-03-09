@@ -132,6 +132,8 @@ public class MessagePortTest {
             generateUnpairedSurrogates(131072);
     private static final byte[] LARGE_ARRAY = generateByteArray(131072);
 
+    private static final MessagePortClient IGNORE_INCOMING_MESSAGES =
+            message -> {};
     private static final MessagePortClient EXPECT_NO_INCOMING_MESSAGES =
             message -> Assert.fail("Message received when none were expected.");
 
@@ -441,9 +443,14 @@ public class MessagePortTest {
     @Test
     public void testAppPostMessage_isolateClosedAfterSettingOnMessage_silentlyDiscards()
             throws Throwable {
+        // Use IGNORE_INCOMING_MESSAGES rather than EXPECT_NO_INCOMING_MESSAGES, as closing an
+        // isolate is not a synchronous operation. The isolate thread may continue to execute code
+        // and process messages (sending and receiving) for a short while after being told to close.
+        //
+        // The most important thing to verify is that we do not throw or crash!
         MessagePort messagePort = mJsIsolate.provideMessagePort(PORT_NAME,
                 MoreExecutors.directExecutor(),
-                EXPECT_NO_INCOMING_MESSAGES);
+                IGNORE_INCOMING_MESSAGES);
         mJsIsolate.evaluateJavaScriptAsync(ECHO_MESSAGE_CODE)
                 .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
         mJsIsolate.close();
