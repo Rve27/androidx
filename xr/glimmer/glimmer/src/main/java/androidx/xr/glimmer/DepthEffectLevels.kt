@@ -22,30 +22,30 @@ import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
 
 /**
- * Jetpack Compose Glimmer components can use [Depth] to establish a sense of hierarchy. DepthLevels
- * contains different levels of [Depth] to express this hierarchy. Higher levels contain larger
- * shadows, and represent components with a higher z-order than lower levels. In their baseline
- * state (not focused) most components should have no (`null`) [Depth].
+ * Jetpack Compose Glimmer components can use [DepthEffect] to establish a sense of hierarchy.
+ * [DepthEffectLevels] contains different levels of [DepthEffect] to express this hierarchy. Higher
+ * levels contain larger shadows, and represent components with a higher z-order than lower levels.
+ * In their baseline state (not focused) most components should have no (`null`) [DepthEffect].
  *
- * @property level1 the lowest level of [Depth]. This level will have the smallest shadows.
- * @property level2 a level of [Depth] higher than [level1] and lower than [level3].
- * @property level3 a level of [Depth] higher than [level2] and lower than [level4].
- * @property level4 a level of [Depth] higher than [level3] and lower than [level5].
- * @property level5 the highest level of [Depth]. This level will have the largest shadows.
- * @see Depth
- * @see depth
+ * @property level1 the lowest level of [DepthEffect]. This level will have the smallest shadows.
+ * @property level2 a level of [DepthEffect] higher than [level1] and lower than [level3].
+ * @property level3 a level of [DepthEffect] higher than [level2] and lower than [level4].
+ * @property level4 a level of [DepthEffect] higher than [level3] and lower than [level5].
+ * @property level5 the highest level of [DepthEffect]. This level will have the largest shadows.
+ * @see DepthEffect
+ * @see depthEffect
  */
 @Immutable
-public class DepthLevels(
-    public val level1: Depth = DepthLevel1,
-    public val level2: Depth = DepthLevel2,
-    public val level3: Depth = DepthLevel3,
-    public val level4: Depth = DepthLevel4,
-    public val level5: Depth = DepthLevel5,
+public class DepthEffectLevels(
+    public val level1: DepthEffect = DepthEffectLevel1,
+    public val level2: DepthEffect = DepthEffectLevel2,
+    public val level3: DepthEffect = DepthEffectLevel3,
+    public val level4: DepthEffect = DepthEffectLevel4,
+    public val level5: DepthEffect = DepthEffectLevel5,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is DepthLevels) return false
+        if (other !is DepthEffectLevels) return false
 
         if (level1 != other.level1) return false
         if (level2 != other.level2) return false
@@ -66,32 +66,32 @@ public class DepthLevels(
     }
 
     override fun toString(): String {
-        return "DepthLevels(level1=$level1, level2=$level2, level3=$level3, level4=$level4, level5=$level5)"
+        return "DepthEffectLevels(level1=$level1, level2=$level2, level3=$level3, level4=$level4, level5=$level5)"
     }
 }
 
-private val DepthLevel1 =
-    Depth(
+private val DepthEffectLevel1 =
+    DepthEffect(
         layer1 = Shadow(radius = 12.dp, color = Color.Black, spread = 6.dp, alpha = 0.90f),
         layer2 = Shadow(radius = 6.dp, color = Color.Black, spread = 2.dp),
     )
-private val DepthLevel2 =
-    Depth(
+private val DepthEffectLevel2 =
+    DepthEffect(
         layer1 = Shadow(radius = 23.dp, color = Color.Black, spread = 13.dp, alpha = 0.90f),
         layer2 = Shadow(radius = 8.dp, color = Color.Black, spread = 5.dp),
     )
-private val DepthLevel3 =
-    Depth(
+private val DepthEffectLevel3 =
+    DepthEffect(
         layer1 = Shadow(radius = 34.dp, color = Color.Black, spread = 19.dp, alpha = 0.90f),
         layer2 = Shadow(radius = 9.dp, color = Color.Black, spread = 7.dp),
     )
-private val DepthLevel4 =
-    Depth(
+private val DepthEffectLevel4 =
+    DepthEffect(
         layer1 = Shadow(radius = 45.dp, color = Color.Black, spread = 26.dp, alpha = 0.90f),
         layer2 = Shadow(radius = 11.dp, color = Color.Black, spread = 10.dp),
     )
-private val DepthLevel5 =
-    Depth(
+private val DepthEffectLevel5 =
+    DepthEffect(
         layer1 = Shadow(radius = 56.dp, color = Color.Black, spread = 32.dp, alpha = 0.90f),
         layer2 = Shadow(radius = 12.dp, color = Color.Black, spread = 12.dp),
     )
