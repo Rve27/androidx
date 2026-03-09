@@ -13,193 +13,152 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import static androidx.xr.scenecore.spatial.core.PerceivedResolutionUtils.getDisplayResolutionInPixels;
-
-import android.content.Context;
-import android.view.Surface;
-
-import androidx.xr.runtime.FieldOfView;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.Dimensions;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.PerceivedResolutionResult;
-import androidx.xr.scenecore.runtime.ScenePose;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.runtime.SurfaceEntity;
-import androidx.xr.scenecore.runtime.SurfaceFeature;
-import androidx.xr.scenecore.runtime.TextureResource;
-
-import com.android.extensions.xr.XrExtensions;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
-import java.util.concurrent.ScheduledExecutorService;
+import android.content.Context
+import android.view.Surface
+import androidx.xr.runtime.FieldOfView
+import androidx.xr.scenecore.runtime.Dimensions
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.PerceivedResolutionResult
+import androidx.xr.scenecore.runtime.ScenePose
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.SurfaceEntity
+import androidx.xr.scenecore.runtime.SurfaceFeature
+import androidx.xr.scenecore.runtime.TextureResource
+import com.android.extensions.xr.XrExtensions
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * Implementation of a SceneCore SurfaceEntity.
  *
- * <p>This is used to create an Entity that uses SplitEngine to render an Android Surface with
- * support for stereoscopic rendering.
+ * This is used to create an Entity that uses SplitEngine to render an Android Surface with support
+ * for stereoscopic rendering.
  */
-final class SurfaceEntityImpl extends BaseRenderingEntity implements SurfaceEntity {
-    private final SurfaceFeature mSurfaceFeature;
+internal class SurfaceEntityImpl(
+    context: Context,
+    private val surfaceFeature: SurfaceFeature,
+    parent: Entity?,
+    extensions: XrExtensions,
+    entityManager: EntityManager,
+    executor: ScheduledExecutorService,
+) :
+    BaseRenderingEntity(context, surfaceFeature, extensions, entityManager, executor),
+    SurfaceEntity {
 
-    SurfaceEntityImpl(
-            Context context,
-            SurfaceFeature surfaceFeature,
-            Entity parentEntity,
-            XrExtensions extensions,
-            EntityManager entityManager,
-            ScheduledExecutorService executor) {
-        super(context, surfaceFeature, extensions, entityManager, executor);
-        mSurfaceFeature = surfaceFeature;
-        setParent(parentEntity);
+    init {
+        this.parent = parent
     }
 
-    @Override
-    public @NonNull Shape getShape() {
-        return mSurfaceFeature.getShape();
+    @SurfaceEntity.StereoMode
+    override var stereoMode: Int
+        get() = surfaceFeature.stereoMode
+        set(value) {
+            surfaceFeature.stereoMode = value
+        }
+
+    @SurfaceEntity.MediaBlendingMode
+    override var mediaBlendingMode: Int
+        get() = surfaceFeature.mediaBlendingMode
+        set(value) {
+            surfaceFeature.mediaBlendingMode = value
+        }
+
+    override var shape: SurfaceEntity.Shape
+        get() = surfaceFeature.shape
+        set(shape) {
+            surfaceFeature.shape = shape
+        }
+
+    override fun setSurfacePixelDimensions(width: Int, height: Int) {
+        surfaceFeature.setSurfacePixelDimensions(width, height)
     }
 
-    @Override
-    public void setShape(@NonNull Shape shape) {
-        mSurfaceFeature.setShape(shape);
+    override var edgeFeather: SurfaceEntity.EdgeFeather
+        get() = surfaceFeature.edgeFeather
+        set(value) {
+            surfaceFeature.edgeFeather = value
+        }
+
+    @SurfaceEntity.ColorRange
+    override val colorRange: Int
+        get() = surfaceFeature.colorRange
+
+    @SurfaceEntity.ColorTransfer
+    override val colorTransfer: Int
+        get() = surfaceFeature.colorTransfer
+
+    @SurfaceEntity.ColorSpace
+    override val colorSpace: Int
+        get() = surfaceFeature.colorSpace
+
+    override val maxContentLightLevel: Int
+        get() = surfaceFeature.maxContentLightLevel
+
+    override val contentColorMetadataSet: Boolean
+        get() = surfaceFeature.contentColorMetadataSet
+
+    override val dimensions: Dimensions
+        get() = surfaceFeature.dimensions
+
+    override val surface: Surface
+        get() = surfaceFeature.surface
+
+    override fun dispose() {
+        surfaceFeature.dispose()
+        super.dispose()
     }
 
-    @Override
-    public void setSurfacePixelDimensions(int width, int height) {
-        mSurfaceFeature.setSurfacePixelDimensions(width, height);
+    fun setColliderEnabled(enableCollider: Boolean) {
+        surfaceFeature.setColliderEnabled(enableCollider)
     }
 
-    @Override
-    public @NonNull EdgeFeather getEdgeFeather() {
-        return mSurfaceFeature.getEdgeFeather();
+    override fun setPrimaryAlphaMaskTexture(alphaMask: TextureResource?) {
+        surfaceFeature.setPrimaryAlphaMaskTexture(alphaMask)
     }
 
-    @Override
-    public void setEdgeFeather(@NonNull EdgeFeather edgeFeather) {
-        mSurfaceFeature.setEdgeFeather(edgeFeather);
+    override fun setAuxiliaryAlphaMaskTexture(alphaMask: TextureResource?) {
+        surfaceFeature.setAuxiliaryAlphaMaskTexture(alphaMask)
     }
 
-    @SuppressWarnings("ObjectToString")
-    @Override
-    public void dispose() {
-        mSurfaceFeature.dispose();
-        super.dispose();
+    override fun setContentColorMetadata(
+        @SurfaceEntity.ColorSpace colorSpace: Int,
+        @SurfaceEntity.ColorTransfer colorTransfer: Int,
+        @SurfaceEntity.ColorRange colorRange: Int,
+        maxContentLightLevel: Int,
+    ) {
+        surfaceFeature.setContentColorMetadata(
+            colorSpace,
+            colorTransfer,
+            colorRange,
+            maxContentLightLevel,
+        )
     }
 
-    @Override
-    @NonNull
-    public Dimensions getDimensions() {
-        return mSurfaceFeature.getDimensions();
+    override fun resetContentColorMetadata() {
+        surfaceFeature.resetContentColorMetadata()
     }
 
-    @Override
-    @StereoMode
-    public int getStereoMode() {
-        return mSurfaceFeature.getStereoMode();
-    }
-
-    @Override
-    public void setStereoMode(@StereoMode int mode) {
-        mSurfaceFeature.setStereoMode(mode);
-    }
-
-    @Override
-    @MediaBlendingMode
-    public int getMediaBlendingMode() {
-        return mSurfaceFeature.getMediaBlendingMode();
-    }
-
-    @Override
-    public void setMediaBlendingMode(@MediaBlendingMode int mode) {
-        mSurfaceFeature.setMediaBlendingMode(mode);
-    }
-
-    public void setColliderEnabled(boolean enableCollider) {
-        mSurfaceFeature.setColliderEnabled(enableCollider);
-    }
-
-    @Override
-    public void setPrimaryAlphaMaskTexture(@Nullable TextureResource alphaMask) {
-        mSurfaceFeature.setPrimaryAlphaMaskTexture(alphaMask);
-    }
-
-    @Override
-    public void setAuxiliaryAlphaMaskTexture(@Nullable TextureResource alphaMask) {
-        mSurfaceFeature.setAuxiliaryAlphaMaskTexture(alphaMask);
-    }
-
-    @Override
-    public @NonNull Surface getSurface() {
-        return mSurfaceFeature.getSurface();
-    }
-
-    @Override
-    @ColorSpace
-    public int getColorSpace() {
-        return mSurfaceFeature.getColorSpace();
-    }
-
-    @Override
-    @ColorTransfer
-    public int getColorTransfer() {
-        return mSurfaceFeature.getColorTransfer();
-    }
-
-    @Override
-    @ColorRange
-    public int getColorRange() {
-        return mSurfaceFeature.getColorRange();
-    }
-
-    @Override
-    public int getMaxContentLightLevel() {
-        return mSurfaceFeature.getMaxContentLightLevel();
-    }
-
-    @Override
-    public boolean getContentColorMetadataSet() {
-        return mSurfaceFeature.getContentColorMetadataSet();
-    }
-
-    @Override
-    public void setContentColorMetadata(
-            @ColorSpace int colorSpace,
-            @ColorTransfer int colorTransfer,
-            @ColorRange int colorRange,
-            int maxCLL) {
-        mSurfaceFeature.setContentColorMetadata(colorSpace, colorTransfer, colorRange, maxCLL);
-    }
-
-    @Override
-    public void resetContentColorMetadata() {
-        mSurfaceFeature.resetContentColorMetadata();
-    }
-
-    @Override
-    public @NonNull PerceivedResolutionResult getPerceivedResolution(
-            @NonNull ScenePose renderViewScenePose, @NonNull FieldOfView renderViewFov) {
+    override fun getPerceivedResolution(
+        renderViewScenePose: ScenePose,
+        renderViewFov: FieldOfView,
+    ): PerceivedResolutionResult {
         // Compute the width, height, and depth in activity space units
-        Dimensions dimensionsInLocalUnits = getDimensions();
-        Vector3 activitySpaceScale = getScale(Space.ACTIVITY);
-        Dimensions dimensionsInActivitySpace =
-                new Dimensions(
-                        dimensionsInLocalUnits.width * activitySpaceScale.getX(),
-                        dimensionsInLocalUnits.height * activitySpaceScale.getY(),
-                        dimensionsInLocalUnits.depth * activitySpaceScale.getZ());
+        val dimensionsInLocalUnits = dimensions
+        val activitySpaceScale = getScale(Space.ACTIVITY)
+        val dimensionsInActivitySpace =
+            Dimensions(
+                dimensionsInLocalUnits.width * activitySpaceScale.x,
+                dimensionsInLocalUnits.height * activitySpaceScale.y,
+                dimensionsInLocalUnits.depth * activitySpaceScale.z,
+            )
 
-        return PerceivedResolutionUtils.getPerceivedResolutionOf3DBox(
-                renderViewScenePose,
-                renderViewFov,
-                /* viewPlaneInPixels= */ getDisplayResolutionInPixels(
-                        Objects.requireNonNull(getContext())),
-                /* boxDimensionsInActivitySpace= */ dimensionsInActivitySpace,
-                /* boxPositionInActivitySpace= */ getPose(Space.ACTIVITY).getTranslation());
+        return getPerceivedResolutionOf3DBox(
+            renderViewScenePose,
+            renderViewFov,
+            /* viewPlaneInPixels= */ getDisplayResolutionInPixels(checkNotNull(context)),
+            /* boxDimensionsInActivitySpace= */ dimensionsInActivitySpace,
+            /* boxPositionInActivitySpace= */ getPose(Space.ACTIVITY).translation,
+        )
     }
 }

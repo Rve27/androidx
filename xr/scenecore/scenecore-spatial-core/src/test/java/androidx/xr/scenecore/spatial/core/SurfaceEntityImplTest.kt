@@ -13,277 +13,242 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.app.Activity
+import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.runtime.math.FloatSize2d
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Quaternion
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.PerceivedResolutionResult
+import androidx.xr.scenecore.runtime.PixelDimensions
+import androidx.xr.scenecore.runtime.Space
+import androidx.xr.scenecore.runtime.SurfaceEntity
+import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider.getXrExtensions
+import androidx.xr.scenecore.testing.FakeScenePose
+import androidx.xr.scenecore.testing.FakeScheduledExecutorService
+import androidx.xr.scenecore.testing.FakeSurfaceFeature
+import com.android.extensions.xr.node.Node
+import com.android.extensions.xr.space.ShadowSpatialState
+import com.google.common.truth.Truth.assertThat
+import java.util.function.Supplier
+import kotlin.math.atan
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.android.controller.ActivityController
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class SurfaceEntityImplTest {
+    private val activityController: ActivityController<Activity> =
+        Robolectric.buildActivity(Activity::class.java)
+    private val activity: Activity = activityController.create().start().get()
+    private val xrExtensions = requireNotNull(getXrExtensions())
+    private val fakeScheduledExecutorService = FakeScheduledExecutorService()
+    private val spatialStateProvider = Supplier { ShadowSpatialState.create() }
+    private val viewPlaneResolution = PixelDimensions(2000, 1000)
+    private val entityManager = EntityManager()
+    private val activitySpaceImpl =
+        ActivitySpaceImpl(
+            xrExtensions.createNode(),
+            activity,
+            xrExtensions,
+            entityManager,
+            spatialStateProvider,
+            fakeScheduledExecutorService,
+        )
+    private val fakeSurfaceFeature =
+        FakeSurfaceFeature(NodeHolder<Node>(xrExtensions.createNode(), Node::class.java))
 
-import static org.junit.Assert.assertThrows;
-
-import android.app.Activity;
-
-import androidx.xr.runtime.FieldOfView;
-import androidx.xr.runtime.NodeHolder;
-import androidx.xr.runtime.math.FloatSize2d;
-import androidx.xr.runtime.math.Pose;
-import androidx.xr.runtime.math.Quaternion;
-import androidx.xr.runtime.math.Vector3;
-import androidx.xr.scenecore.runtime.PerceivedResolutionResult;
-import androidx.xr.scenecore.runtime.PixelDimensions;
-import androidx.xr.scenecore.runtime.Space;
-import androidx.xr.scenecore.runtime.SurfaceEntity;
-import androidx.xr.scenecore.runtime.SurfaceEntity.Shape;
-import androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeScenePose;
-import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
-import androidx.xr.scenecore.testing.FakeSurfaceFeature;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.node.Node;
-import com.android.extensions.xr.space.ShadowSpatialState;
-import com.android.extensions.xr.space.SpatialState;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.annotation.Config;
-
-import java.util.function.Supplier;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public final class SurfaceEntityImplTest {
-    private final ActivityController<Activity> mActivityController =
-            Robolectric.buildActivity(Activity.class);
-    private final Activity mActivity = mActivityController.create().start().get();
-    private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeScheduledExecutorService mExecutor = new FakeScheduledExecutorService();
-    private final Supplier<SpatialState> mSpatialStateProvider = ShadowSpatialState::create;
-    private final PixelDimensions mViewPlaneResolution = new PixelDimensions(2000, 1000);
-    private SurfaceEntityImpl mSurfaceEntity;
-    private EntityManager mEntityManager;
-    private ActivitySpaceImpl mActivitySpace;
-    private FakeSurfaceFeature mFakeSurfaceFeature;
-    private FakeScenePose mRenderViewScenePose;
-    private FieldOfView mRenderViewFov;
+    private val surfaceEntity =
+        SurfaceEntityImpl(
+            activity,
+            fakeSurfaceFeature,
+            activitySpaceImpl,
+            xrExtensions,
+            entityManager,
+            fakeScheduledExecutorService,
+        )
+    private val renderViewScenePose = FakeScenePose()
+    private val renderViewFov =
+        FieldOfView(
+            atan(1.0).toFloat(),
+            atan(1.0).toFloat(),
+            atan(1.0).toFloat(),
+            atan(1.0).toFloat(),
+        )
 
     @Before
-    public void setUp() {
-        String widthAndHeightConfig =
-                "+w" + mViewPlaneResolution.width + "dp-h" + mViewPlaneResolution.height + "dp";
-        RuntimeEnvironment.setQualifiers(widthAndHeightConfig);
-
-        Assert.assertNotNull(mXrExtensions);
-
-        NodeHolder<?> nodeHolder = new NodeHolder<>(mXrExtensions.createNode(), Node.class);
-        mFakeSurfaceFeature = new FakeSurfaceFeature(nodeHolder);
-        mEntityManager = new EntityManager();
-
-        mActivitySpace =
-                new ActivitySpaceImpl(
-                        mXrExtensions.createNode(),
-                        mActivity,
-                        mXrExtensions,
-                        mEntityManager,
-                        mSpatialStateProvider,
-                        mExecutor);
-        mEntityManager.addSystemSpaceActivityPose(new PerceptionSpaceScenePoseImpl(mActivitySpace));
-
-        mSurfaceEntity =
-                new SurfaceEntityImpl(
-                        mActivity,
-                        mFakeSurfaceFeature,
-                        mActivitySpace,
-                        mXrExtensions,
-                        mEntityManager,
-                        mExecutor);
-        mSurfaceEntity.setPose(Pose.Identity, Space.PARENT);
-
-        mRenderViewScenePose = new FakeScenePose();
-        mRenderViewScenePose.setActivitySpacePose(
-                new Pose(new Vector3(0f, 0f, 0f), Quaternion.Identity));
-        mRenderViewFov =
-                new FieldOfView(
-                        (float) Math.atan(1.0),
-                        (float) Math.atan(1.0),
-                        (float) Math.atan(1.0),
-                        (float) Math.atan(1.0));
+    fun setUp() {
+        val widthAndHeightConfig =
+            "+w" + viewPlaneResolution.width + "dp-h" + viewPlaneResolution.height + "dp"
+        RuntimeEnvironment.setQualifiers(widthAndHeightConfig)
+        entityManager.addSystemSpaceActivityPose(PerceptionSpaceScenePoseImpl(activitySpaceImpl))
+        renderViewScenePose.activitySpacePose = Pose(Vector3(0f, 0f, 0f), Quaternion.Identity)
     }
 
     @After
-    public void tearDown() {
-        mEntityManager.clear();
-        if (mSurfaceEntity != null) {
-            mSurfaceEntity.dispose();
-        }
-        if (mActivitySpace != null) {
-            mActivitySpace.dispose();
-        }
+    fun tearDown() {
+        entityManager.clear()
+        surfaceEntity.dispose()
+        activitySpaceImpl.dispose()
     }
 
-    private void assertShapeIsSetCorrectly(SurfaceEntity.Shape expectedShape) {
-        mSurfaceEntity.setShape(expectedShape);
-        SurfaceEntity.Shape actualShape = mSurfaceEntity.getShape();
+    private fun assertShapeIsSetCorrectly(expectedShape: SurfaceEntity.Shape) {
+        surfaceEntity.shape = expectedShape
+        val actualShape = surfaceEntity.shape
 
-        assertThat(actualShape).isInstanceOf(expectedShape.getClass());
-        assertThat(actualShape.getDimensions()).isEqualTo(expectedShape.getDimensions());
+        assertThat(actualShape).isInstanceOf(expectedShape::class.java)
+        assertThat(actualShape.dimensions).isEqualTo(expectedShape.dimensions)
     }
 
     @Test
-    public void setShape_setsShape() {
-        assertShapeIsSetCorrectly(new SurfaceEntity.Shape.Quad(new FloatSize2d(12f, 12f), 1.5f));
-        assertThat(((SurfaceEntity.Shape.Quad) mSurfaceEntity.getShape()).getCornerRadius())
-                .isEqualTo(1.5f);
-        assertShapeIsSetCorrectly(new SurfaceEntity.Shape.Sphere(11f));
-        assertShapeIsSetCorrectly(new SurfaceEntity.Shape.Hemisphere(10f));
+    fun setShape_setsShape() {
+        assertShapeIsSetCorrectly(SurfaceEntity.Shape.Quad(FloatSize2d(12f, 12f), 1.5f))
+        assertThat((surfaceEntity.shape as SurfaceEntity.Shape.Quad).cornerRadius).isEqualTo(1.5f)
+        assertShapeIsSetCorrectly(SurfaceEntity.Shape.Sphere(11f))
+        assertShapeIsSetCorrectly(SurfaceEntity.Shape.Hemisphere(10f))
     }
 
     @Test
-    public void setStereoMode_setsStereoMode() {
-        int expectedStereoMode = SurfaceEntity.StereoMode.MONO;
-        mSurfaceEntity.setStereoMode(expectedStereoMode);
-        int stereoMode = mSurfaceEntity.getStereoMode();
+    fun setStereoMode_setsStereoMode() {
+        surfaceEntity.stereoMode = SurfaceEntity.StereoMode.MONO
+        assertThat(surfaceEntity.stereoMode).isEqualTo(SurfaceEntity.StereoMode.MONO)
 
-        assertThat(stereoMode).isEqualTo(expectedStereoMode);
-
-        expectedStereoMode = SurfaceEntity.StereoMode.TOP_BOTTOM;
-        mSurfaceEntity.setStereoMode(expectedStereoMode);
-        stereoMode = mSurfaceEntity.getStereoMode();
-
-        assertThat(stereoMode).isEqualTo(expectedStereoMode);
+        surfaceEntity.stereoMode = SurfaceEntity.StereoMode.TOP_BOTTOM
+        assertThat(surfaceEntity.stereoMode).isEqualTo(SurfaceEntity.StereoMode.TOP_BOTTOM)
     }
 
     @Test
-    public void dispose_supports_reentry() {
+    fun dispose_supports_reentry() {
         // Note that we don't test that dispose prevents manipulating other properties because that
         // is enforced at the API level, rather than the implementation level.
-        mSurfaceEntity.dispose();
-        mSurfaceEntity.dispose(); // shouldn't crash
+        surfaceEntity.dispose()
+        surfaceEntity.dispose() // shouldn't crash
     }
 
     @Test
-    public void setEdgeFeather_forwardsToFeature() {
-        float kFeatherRadiusX = 0.14f;
-        float kFeatherRadiusY = 0.28f;
-        SurfaceEntity.EdgeFeather expectedFeather =
-                new SurfaceEntity.EdgeFeather.RectangleFeather(kFeatherRadiusX, kFeatherRadiusY);
-        mSurfaceEntity.setEdgeFeather(expectedFeather);
-        SurfaceEntity.EdgeFeather returnedFeather = mSurfaceEntity.getEdgeFeather();
+    fun setEdgeFeather_forwardsToFeature() {
+        val kFeatherRadiusX = 0.14f
+        val kFeatherRadiusY = 0.28f
+        val expectedFeather: SurfaceEntity.EdgeFeather =
+            SurfaceEntity.EdgeFeather.RectangleFeather(kFeatherRadiusX, kFeatherRadiusY)
+        surfaceEntity.edgeFeather = expectedFeather
+        val returnedFeather = surfaceEntity.edgeFeather
 
-        assertThat(returnedFeather).isEqualTo(expectedFeather);
+        assertThat(returnedFeather).isEqualTo(expectedFeather)
     }
 
     @Test
-    public void setColliderEnabled_forwardsToFeature() {
-        mSurfaceEntity.setColliderEnabled(true);
+    fun setColliderEnabled_forwardsToFeature() {
+        surfaceEntity.setColliderEnabled(true)
 
-        assertThat(mFakeSurfaceFeature.getColliderEnabled()).isTrue();
+        assertThat(fakeSurfaceFeature.colliderEnabled).isTrue()
 
-        mSurfaceEntity.setColliderEnabled(false);
+        surfaceEntity.setColliderEnabled(false)
 
-        assertThat(mFakeSurfaceFeature.getColliderEnabled()).isFalse();
+        assertThat(fakeSurfaceFeature.colliderEnabled).isFalse()
     }
 
     @Test
-    public void getPerceivedResolution_quadInFront_returnsSuccess() {
-        Shape.Quad quadShape = new Shape.Quad(new FloatSize2d(2.0f, 1.0f)); // 2m wide, 1m high
-        mFakeSurfaceFeature.setShape(quadShape);
+    fun getPerceivedResolution_quadInFront_returnsSuccess() {
+        val quadShape = SurfaceEntity.Shape.Quad(FloatSize2d(2.0f, 1.0f)) // 2m wide, 1m high
+        fakeSurfaceFeature.shape = quadShape
 
-        mSurfaceEntity.setPose(new Pose(new Vector3(0f, 0f, -2f), Quaternion.Identity)); // 2m away
-        mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
+        surfaceEntity.setPose(Pose(Vector3(0f, 0f, -2f), Quaternion.Identity)) // 2m away
+        surfaceEntity.setScale(Vector3(1f, 1f, 1f))
 
-        PerceivedResolutionResult result =
-                mSurfaceEntity.getPerceivedResolution(mRenderViewScenePose, mRenderViewFov);
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
-        PerceivedResolutionResult.Success successResult =
-                (PerceivedResolutionResult.Success) result;
+        val result = surfaceEntity.getPerceivedResolution(renderViewScenePose, renderViewFov)
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success::class.java)
+        val successResult = result as PerceivedResolutionResult.Success
 
-        assertThat(successResult.getPerceivedResolution().width).isEqualTo(500);
-        assertThat(successResult.getPerceivedResolution().height).isEqualTo(250);
+        assertThat(successResult.perceivedResolution.width).isEqualTo(500)
+        assertThat(successResult.perceivedResolution.height).isEqualTo(250)
     }
 
     @Test
-    public void getPerceivedResolution_sphereInFront_returnsSuccess() {
-        Shape.Sphere sphereShape = new Shape.Sphere(1.0f); // radius 1m
-        mFakeSurfaceFeature.setShape(sphereShape);
+    fun getPerceivedResolution_sphereInFront_returnsSuccess() {
+        val sphereShape = SurfaceEntity.Shape.Sphere(1.0f) // radius 1m
+        fakeSurfaceFeature.shape = sphereShape
 
-        mSurfaceEntity.setPose(new Pose(new Vector3(0f, 0f, -3f), Quaternion.Identity)); //
+        surfaceEntity.setPose(Pose(Vector3(0f, 0f, -3f), Quaternion.Identity)) //
         // Center 3m away
-        mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
+        surfaceEntity.setScale(Vector3(1f, 1f, 1f))
 
-        PerceivedResolutionResult result =
-                mSurfaceEntity.getPerceivedResolution(mRenderViewScenePose, mRenderViewFov);
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
-        PerceivedResolutionResult.Success successResult =
-                (PerceivedResolutionResult.Success) result;
+        val result = surfaceEntity.getPerceivedResolution(renderViewScenePose, renderViewFov)
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success::class.java)
+        val successResult = result as PerceivedResolutionResult.Success
 
-        assertThat(successResult.getPerceivedResolution().width).isEqualTo(500);
-        assertThat(successResult.getPerceivedResolution().height).isEqualTo(500);
+        assertThat(successResult.perceivedResolution.width).isEqualTo(500)
+        assertThat(successResult.perceivedResolution.height).isEqualTo(500)
     }
 
     @Test
-    public void getPerceivedResolution_quadTooClose_returnsEntityTooClose() {
-        Shape.Quad quadShape = new Shape.Quad(new FloatSize2d(2.0f, 1.0f));
-        mFakeSurfaceFeature.setShape(quadShape);
+    fun getPerceivedResolution_quadTooClose_returnsEntityTooClose() {
+        val quadShape = SurfaceEntity.Shape.Quad(FloatSize2d(2.0f, 1.0f))
+        fakeSurfaceFeature.shape = quadShape
 
-        float veryCloseDistance = PerceivedResolutionUtils.PERCEIVED_RESOLUTION_EPSILON / 2f;
-        mSurfaceEntity.setPose(
-                new Pose(new Vector3(0f, 0f, -veryCloseDistance), Quaternion.Identity));
-        mSurfaceEntity.setScale(new Vector3(1f, 1f, 1f));
+        val veryCloseDistance = PERCEIVED_RESOLUTION_EPSILON / 2f
+        surfaceEntity.setPose(Pose(Vector3(0f, 0f, -veryCloseDistance), Quaternion.Identity))
+        surfaceEntity.setScale(Vector3(1f, 1f, 1f))
 
-        PerceivedResolutionResult result =
-                mSurfaceEntity.getPerceivedResolution(mRenderViewScenePose, mRenderViewFov);
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.EntityTooClose.class);
+        val result = surfaceEntity.getPerceivedResolution(renderViewScenePose, renderViewFov)
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.EntityTooClose::class.java)
     }
 
     @Test
-    public void getPerceivedResolution_quadWithScale_calculatesCorrectly() {
-        Shape.Quad quadShape = new Shape.Quad(new FloatSize2d(1.0f, 1.0f)); // 1m x 1m local
-        mFakeSurfaceFeature.setShape(quadShape);
+    fun getPerceivedResolution_quadWithScale_calculatesCorrectly() {
+        val quadShape = SurfaceEntity.Shape.Quad(FloatSize2d(1.0f, 1.0f)) // 1m x 1m local
+        fakeSurfaceFeature.shape = quadShape
 
-        mSurfaceEntity.setPose(new Pose(new Vector3(0f, 0f, -2f), Quaternion.Identity)); // 2m away
-        mSurfaceEntity.setScale(new Vector3(2f, 3f, 1f)); // Scaled to 2m wide, 3m high
+        surfaceEntity.setPose(Pose(Vector3(0f, 0f, -2f), Quaternion.Identity)) // 2m away
+        surfaceEntity.setScale(Vector3(2f, 3f, 1f)) // Scaled to 2m wide, 3m high
 
-        PerceivedResolutionResult result =
-                mSurfaceEntity.getPerceivedResolution(mRenderViewScenePose, mRenderViewFov);
-        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success.class);
-        PerceivedResolutionResult.Success successResult =
-                (PerceivedResolutionResult.Success) result;
+        val result = surfaceEntity.getPerceivedResolution(renderViewScenePose, renderViewFov)
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success::class.java)
+        val successResult = result as PerceivedResolutionResult.Success
 
         // The width and height are flipped because perceivedResolution calculations will
         // always place the largest dimension as the width, and the second as height.
-        assertThat(successResult.getPerceivedResolution().width).isEqualTo(750);
-        assertThat(successResult.getPerceivedResolution().height).isEqualTo(500);
+        assertThat(successResult.perceivedResolution.width).isEqualTo(750)
+        assertThat(successResult.perceivedResolution.height).isEqualTo(500)
     }
 
     @Test
-    public void getParent_nullParent_returnsNull() {
-        mSurfaceEntity.setParent(null);
-        assertThat(mSurfaceEntity.getParent()).isEqualTo(null);
+    fun getParent_nullParent_returnsNull() {
+        surfaceEntity.parent = null
+        assertThat(surfaceEntity.parent).isEqualTo(null)
     }
 
     @Test
-    public void getPoseInParentSpace_nullParent_returnsIdentity() {
-        mSurfaceEntity.setParent(null);
-        mSurfaceEntity.setPose(Pose.Identity);
-        assertThat(mSurfaceEntity.getPose(Space.PARENT)).isEqualTo(Pose.Identity);
+    fun getPoseInParentSpace_nullParent_returnsIdentity() {
+        surfaceEntity.parent = null
+        surfaceEntity.setPose(Pose.Identity)
+        assertThat(surfaceEntity.getPose(Space.PARENT)).isEqualTo(Pose.Identity)
     }
 
     @Test
-    public void getPoseInActivitySpace_nullParent_throwsException() {
-        mSurfaceEntity.setParent(null);
-        assertThrows(IllegalStateException.class, () -> mSurfaceEntity.getPose(Space.ACTIVITY));
+    fun getPoseInActivitySpace_nullParent_throwsException() {
+        surfaceEntity.parent = null
+        Assert.assertThrows(IllegalStateException::class.java) {
+            surfaceEntity.getPose(Space.ACTIVITY)
+        }
     }
 
     @Test
-    public void getPoseInRealWorldSpace_nullParent_throwsException() {
-        mSurfaceEntity.setParent(null);
-        assertThrows(IllegalStateException.class, () -> mSurfaceEntity.getPose(Space.REAL_WORLD));
+    fun getPoseInRealWorldSpace_nullParent_throwsException() {
+        surfaceEntity.parent = null
+        Assert.assertThrows(IllegalStateException::class.java) {
+            surfaceEntity.getPose(Space.REAL_WORLD)
+        }
     }
 }

@@ -371,7 +371,7 @@ private constructor(
     ): SurfaceEntity {
         val entity: SurfaceEntity =
             SurfaceEntityImpl(
-                activity,
+                checkNotNull(activity),
                 feature,
                 parentEntity,
                 xrExtensions,
