@@ -731,9 +731,21 @@ public class WebViewFeatureInternal {
      * This feature is not referred to by the app and is only used by the library to choose
      * different code paths based on underlying support from WebView.
      */
-    public static final ApiFeature.NoFramework ASYNC_WEBVIEW_STARTUP =
-            new ApiFeature.NoFramework("IMPLEMENTATION_ONLY_FEATURE",
-                    Features.ASYNC_WEBVIEW_STARTUP);
+    public static final ApiFeature.NoFrameworkInternal ASYNC_WEBVIEW_STARTUP_V2 =
+            new ApiFeature.NoFrameworkInternal(Features.ASYNC_WEBVIEW_STARTUP_V2);
+
+
+    /**
+     * @deprecated Use {@link #ASYNC_WEBVIEW_STARTUP_V2} instead.
+     * Feature that is relevant for the implementation of
+     * {@link androidx.webkit.WebViewCompat#startUpWebView(WebViewStartUpConfig, WebViewCompat.WebViewStartUpCallback)}
+     *
+     * This feature is not referred to by the app and is only used by the library to choose
+     * different code paths based on underlying support from WebView.
+     */
+    @Deprecated
+    public static final ApiFeature.NoFrameworkInternal ASYNC_WEBVIEW_STARTUP =
+            new ApiFeature.NoFrameworkInternal(Features.ASYNC_WEBVIEW_STARTUP);
 
     /**
      * Feature that is relevant for the implementation of
@@ -742,8 +754,9 @@ public class WebViewFeatureInternal {
      * This feature is not referred to by the app and is only used by the library to choose
      * different code paths based on underlying support from WebView.
      */
-    public static final ApiFeature.NoFramework ASYNC_WEBVIEW_STARTUP_ASYNC_STARTUP_LOCATIONS =
-            new ApiFeature.NoFramework("IMPLEMENTATION_ONLY_FEATURE",
+    public static final ApiFeature.NoFrameworkInternal
+            ASYNC_WEBVIEW_STARTUP_ASYNC_STARTUP_LOCATIONS =
+            new ApiFeature.NoFrameworkInternal(
                     Features.ASYNC_WEBVIEW_STARTUP_ASYNC_STARTUP_LOCATIONS);
 
     /**

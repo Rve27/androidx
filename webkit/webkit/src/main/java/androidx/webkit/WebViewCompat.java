@@ -1435,7 +1435,13 @@ public class WebViewCompat {
      * @param config   configuration for startup.
      * @param callback the callback triggered when WebView startup is complete. This will be called
      *                 on the main looper (Looper.getMainLooper()).
+     *
+     * @deprecated This is an experimental version and is planned to be removed in the next
+     * release.
+     * Use
+     * {@link #startUpWebView(Context, WebViewStartUpConfig, WebViewOutcomeReceiver)} instead.
      */
+    @Deprecated(forRemoval = true)
     @ExperimentalAsyncStartUp
     @AnyThread
     public static void startUpWebView(
@@ -1446,18 +1452,97 @@ public class WebViewCompat {
             // Invoke provider init.
             WebViewGlueCommunicator.getWebViewClassLoader();
             if (WebViewFeatureInternal.ASYNC_WEBVIEW_STARTUP.isSupportedByWebView()) {
-                // We want to ensure that the callback is run on the Android main looper. The callee
-                // doesn't guarantee this. It's also desirable to post it to make sure that we don't
+                // We want to ensure that the callback is run on the Android main looper. The
+                // callee
+                // doesn't guarantee this. It's also desirable to post it to make sure that
+                // we don't
                 // run the app's callback synchronously from inside startChromiumLocked:
                 // - This helps avoid making the blocking task longer.
                 // - If the app's callback has a problem the stack trace will hopefully make it
                 // clearer that it's not WebView's fault since WebView code will not be in the
                 // stack trace.
-                getFactory().startUpWebView(config, (result) -> {
+                getFactory().startUpWebView(config, (WebViewStartUpCallback) (result) -> {
                     new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(result));
                 });
                 return;
             }
+            if (config.shouldRunUiThreadStartUpTasks()) {
+                // This method implicitly does WebView startup.
+                WebSettings.getDefaultUserAgent(context.getApplicationContext());
+            } else {
+                // On versions of WebView without the underlying support for the API the only
+                // part
+                // of startup we can do without blocking the UI thread already happened during
+                // `getWebViewClassLoader` above and so there's nothing more to do.
+            }
+            // Trigger the callback from the main looper.
+            // The framework doesn't support providing any diagnostic information, therefore,
+            // returning `null` for every method.
+            new Handler(Looper.getMainLooper()).post(
+                    () -> callback.onSuccess(new NullReturningWebViewStartUpResult()));
+        });
+    }
+
+    /**
+     * Asynchronously trigger WebView startup.
+     * <p>
+     * WebView startup is a time-consuming process that is normally triggered during the first
+     * usage of WebView related APIs. WebView startup happens once per process.
+     * For example, the first call to {@code new WebView()} can take longer to
+     * complete than future calls due to WebView startup being triggered. The Android
+     * UI thread remains blocked till the startup completes.
+     * <p>
+     * This method allows callers to trigger WebView startup at a time of their choosing.
+     * <p>
+     * There are performance improvements this API provides.
+     * This method ensures that the portions of WebView startup which are able to run in the
+     * background will do so. Other portions of startup will still run on the UI thread.
+     * <p>
+     * Any APIs in {@code android.webkit} and {@code androidx.webkit} (including
+     * {@link WebViewFeature}) MUST only be called after the callback is invoked in order to
+     * ensure the maximum benefit.
+     * There is no feature check or call to {@link WebViewFeature} required for using this method.
+     * <p>
+     * This API can be called multiple times. The callback will be called promptly if startup
+     * has already completed.
+     * <p>
+     * Startup is not expected to fail under normal circumstances, but can in rare cases. If a
+     * failure has been reported to the callback, calling any other WebView APIs is likely to throw
+     * an exception or immediately crash, and should be avoided if possible.
+     * <p>
+     * This is an experimental API and unsuitable for non-experimental use.
+     * This method can be removed in future versions of the library.
+     *
+     * @param context  Application Context.
+     * @param config   configuration for startup.
+     * @param callback the callback triggered when WebView startup is complete or fails. This will
+     *                 be called on the main looper (Looper.getMainLooper()).
+     */
+    @SuppressWarnings("deprecation")
+    @ExperimentalAsyncStartUp
+    @AnyThread
+    public static void startUpWebView(
+            @NonNull Context context,
+            @NonNull WebViewStartUpConfig config,
+            @NonNull WebViewOutcomeReceiver<WebViewStartUpResult, WebViewStartupException>
+                    callback) {
+        config.getBackgroundExecutor().execute(() -> {
+            // Invoke provider init.
+            WebViewGlueCommunicator.getWebViewClassLoader();
+            // V2: If the ASYNC_WEBVIEW_STARTUP_V2 feature is supported, we call
+            // the new version of the API which supports WebViewOutcomeReceiver.
+            if (WebViewFeatureInternal.ASYNC_WEBVIEW_STARTUP_V2.isSupportedByWebView()) {
+                getFactory().startUpWebView(config, callback);
+                return;
+            }
+            // V1: If the ASYNC_WEBVIEW_STARTUP feature is supported, we call
+            // the old version of the API and adapt the callback.
+            if (WebViewFeatureInternal.ASYNC_WEBVIEW_STARTUP.isSupportedByWebView()) {
+                getFactory().startUpWebView(config, (WebViewStartUpCallback) callback::onResult);
+                return;
+            }
+            // Default: If none of the async startup features are supported, we
+            // fallback to calling getDefaultUserAgent if requested.
             if (config.shouldRunUiThreadStartUpTasks()) {
                 // This method implicitly does WebView startup.
                 WebSettings.getDefaultUserAgent(context.getApplicationContext());
@@ -1470,7 +1555,7 @@ public class WebViewCompat {
             // The framework doesn't support providing any diagnostic information, therefore,
             // returning `null` for every method.
             new Handler(Looper.getMainLooper()).post(
-                    () -> callback.onSuccess(new NullReturningWebViewStartUpResult()));
+                    () -> callback.onResult(new NullReturningWebViewStartUpResult()));
         });
     }
 
