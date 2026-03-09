@@ -23,6 +23,7 @@ import androidx.compose.testutils.benchmark.benchmarkFirstDraw
 import androidx.compose.testutils.benchmark.benchmarkFirstLayout
 import androidx.compose.testutils.benchmark.benchmarkFirstMeasure
 import androidx.compose.testutils.benchmark.benchmarkLayoutPerf
+import androidx.compose.testutils.benchmark.benchmarkToFirstPixel
 import androidx.compose.testutils.benchmark.toggleStateBenchmarkDraw
 import androidx.compose.testutils.benchmark.toggleStateBenchmarkLayout
 import androidx.compose.testutils.benchmark.toggleStateBenchmarkMeasure
@@ -149,5 +150,10 @@ class BasicTextField2ToggleTextBenchmark(private val textLength: Int) {
             toggleCausesRecompose = false,
             assertOneRecomposition = false,
         )
+    }
+
+    @Test
+    fun benchmarkToFirstPixel() {
+        benchmarkRule.benchmarkToFirstPixel(caseFactory)
     }
 }
