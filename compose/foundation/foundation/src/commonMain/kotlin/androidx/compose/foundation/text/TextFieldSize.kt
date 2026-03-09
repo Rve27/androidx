@@ -177,7 +177,7 @@ internal fun Modifier.legacyTextFieldMinSize(style: TextStyle) = composed {
         }
 
     val minSizeState = remember {
-        TextFieldSize(layoutDirection, density, fontFamilyResolver, style, typeface)
+        LegacyTextFieldSize(layoutDirection, density, fontFamilyResolver, style, typeface)
     }
 
     minSizeState.update(layoutDirection, density, fontFamilyResolver, resolvedStyle, typeface)
@@ -204,21 +204,15 @@ private class TextFieldSize(
     var typeface: Any,
 ) {
     private var dirty by mutableStateOf(true)
-    private var _minSize: IntSize =
-        if (isBasicTextFieldMinSizeOptimizationEnabled) IntSize.Zero
-        else computeMinSize(fontFamilyResolver)
 
-    val minSize: IntSize
-        get() {
-            if (dirty || !isBasicTextFieldMinSizeOptimizationEnabled) {
-                _minSize = computeMinSize(fontFamilyResolver)
-                dirty = false
-            }
-            return _minSize
-        }
+    private var minSize: IntSize = computeMinSize(fontFamilyResolver)
 
     fun cachedMinSizeOrComputeMinSize(typeface: Any): IntSize {
         updateTypeface(typeface)
+        if (dirty) {
+            minSize = computeMinSize(fontFamilyResolver)
+            dirty = false
+        }
         return minSize
     }
 
@@ -258,4 +252,46 @@ private class TextFieldSize(
             density = density,
             fontFamilyResolver = fontFamilyResolver,
         )
+}
+
+private class LegacyTextFieldSize(
+    var layoutDirection: LayoutDirection,
+    var density: Density,
+    var fontFamilyResolver: FontFamily.Resolver,
+    var resolvedStyle: TextStyle,
+    var typeface: Any,
+) {
+    var minSize = computeMinSize()
+        private set
+
+    fun update(
+        layoutDirection: LayoutDirection,
+        density: Density,
+        fontFamilyResolver: FontFamily.Resolver,
+        resolvedStyle: TextStyle,
+        typeface: Any,
+    ) {
+        if (
+            layoutDirection != this.layoutDirection ||
+                density != this.density ||
+                fontFamilyResolver != this.fontFamilyResolver ||
+                resolvedStyle != this.resolvedStyle ||
+                typeface != this.typeface
+        ) {
+            this.layoutDirection = layoutDirection
+            this.density = density
+            this.fontFamilyResolver = fontFamilyResolver
+            this.resolvedStyle = resolvedStyle
+            this.typeface = typeface
+            minSize = computeMinSize()
+        }
+    }
+
+    private fun computeMinSize(): IntSize {
+        return computeSizeForDefaultText(
+            style = resolvedStyle,
+            density = density,
+            fontFamilyResolver = fontFamilyResolver,
+        )
+    }
 }
