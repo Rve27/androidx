@@ -153,8 +153,8 @@ internal constructor(
         }
     }
 
-    // TODO(b/372049781): This constructor is only used for testing. Remove it once cl/683360061 is
-    // submitted.
+    // TODO(b/482642212): This constructor is only used for testing. Remove it once tests have been
+    // refactored to use ArCoreTestRule.
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public constructor(runtimeAnchor: RuntimeAnchor) : this(runtimeAnchor, XrResourcesManager())
 
