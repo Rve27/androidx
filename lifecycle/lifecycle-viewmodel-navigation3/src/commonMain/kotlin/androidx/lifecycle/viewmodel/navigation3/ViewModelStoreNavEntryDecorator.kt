@@ -22,7 +22,6 @@ package androidx.lifecycle.viewmodel.navigation3
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
@@ -45,19 +44,42 @@ import kotlin.jvm.JvmName
  *   entry's ViewModelStore will be removed.
  */
 @Composable
+@Deprecated(
+    message =
+        "This parameter was a workaround for detecting configuration changes and was never " +
+            "intended for conditional popping. Configuration changes are now handled internally. " +
+            "All decorator state must clear at the same time on pop. To keep decorator state " +
+            "around outside of when a back stack is passed to a NavDisplay, use the " +
+            "rememberDecoratedNavEntries API.",
+    replaceWith = ReplaceWith("rememberViewModelStoreNavEntryDecorator(viewModelStoreOwner)"),
+)
 public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
     viewModelStoreOwner: ViewModelStoreOwner =
         checkNotNull(LocalViewModelStoreOwner.current) {
             "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
         },
-    removeViewModelStoreOnPop: () -> Boolean =
-        ViewModelStoreNavEntryDecoratorDefaults.removeViewModelStoreOnPop(),
+    removeViewModelStoreOnPop: () -> Boolean = { true },
 ): ViewModelStoreNavEntryDecorator<T> {
-    val currentRemoveViewModelStoreOnPop = rememberUpdatedState(removeViewModelStoreOnPop)
     return remember(viewModelStoreOwner) {
-        ViewModelStoreNavEntryDecorator(viewModelStoreOwner.viewModelStore) {
-            currentRemoveViewModelStoreOnPop.value.invoke()
+        ViewModelStoreNavEntryDecorator(viewModelStoreOwner.viewModelStore)
+    }
+}
+
+/**
+ * Returns a [ViewModelStoreNavEntryDecorator] that is remembered across recompositions.
+ *
+ * @param [viewModelStoreOwner] The [ViewModelStoreOwner] that provides the [ViewModelStore] to
+ *   NavEntries
+ */
+@Composable
+public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
+    viewModelStoreOwner: ViewModelStoreOwner =
+        checkNotNull(LocalViewModelStoreOwner.current) {
+            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
         }
+): ViewModelStoreNavEntryDecorator<T> {
+    return remember(viewModelStoreOwner) {
+        ViewModelStoreNavEntryDecorator(viewModelStoreOwner.viewModelStore)
     }
 }
 
@@ -76,16 +98,9 @@ public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
  * @see NavEntryDecorator.onPop for more details on when this callback is invoked
  */
 public class ViewModelStoreNavEntryDecorator<T : Any>
-private constructor(
-    viewModelStoreProvider: ViewModelStoreProvider,
-    removeViewModelStoreOnPop: () -> Boolean,
-) :
+private constructor(viewModelStoreProvider: ViewModelStoreProvider) :
     NavEntryDecorator<T>(
-        onPop = { key ->
-            if (removeViewModelStoreOnPop()) {
-                viewModelStoreProvider.clearKey(key)
-            }
-        },
+        onPop = { key -> viewModelStoreProvider.clearKey(key) },
         decorate = { entry ->
             val owner =
                 rememberViewModelStoreOwner(
@@ -97,14 +112,33 @@ private constructor(
         },
     ) {
 
+    @Deprecated(
+        message =
+            "This parameter was a workaround for detecting configuration changes and was never " +
+                "intended for conditional popping. Configuration changes are now handled " +
+                "internally. All decorator state must clear at the same time on pop. To keep " +
+                "decorator state around outside of when a back stack is passed to a NavDisplay, " +
+                "use the rememberDecoratedNavEntries API.",
+        replaceWith = ReplaceWith("ViewModelStoreNavEntryDecorator(viewModelStore)"),
+    )
     public constructor(
         viewModelStore: ViewModelStore,
         removeViewModelStoreOnPop: () -> Boolean,
-    ) : this(ViewModelStoreProvider(viewModelStore), removeViewModelStoreOnPop)
+    ) : this(ViewModelStoreProvider(viewModelStore))
+
+    public constructor(
+        viewModelStore: ViewModelStore
+    ) : this(ViewModelStoreProvider(viewModelStore))
 }
 
 /** Holds the default functions for the [ViewModelStoreNavEntryDecorator]. */
-public expect object ViewModelStoreNavEntryDecoratorDefaults {
+@Deprecated(
+    message =
+        "This object is obsolete. The removeViewModelStoreOnPop parameter was a workaround for " +
+            "detecting configuration changes, which are now handled internally. To preserve " +
+            "decorator state outside of a NavDisplay, use the rememberDecoratedNavEntries API."
+)
+public object ViewModelStoreNavEntryDecoratorDefaults {
     /**
      * Controls whether the [ViewModelStoreNavEntryDecorator] should clear the ViewModelStore scoped
      * to a [NavEntry] when [NavEntryDecorator.onPop] is invoked for that [NavEntry]'s
@@ -112,5 +146,7 @@ public expect object ViewModelStoreNavEntryDecoratorDefaults {
      *
      * The ViewModelStore is cleared if this returns true. The store is retained if false.
      */
-    @Composable public fun removeViewModelStoreOnPop(): () -> Boolean
+    @Composable
+    @Suppress("PairedRegistration")
+    public fun removeViewModelStoreOnPop(): () -> Boolean = { true }
 }
