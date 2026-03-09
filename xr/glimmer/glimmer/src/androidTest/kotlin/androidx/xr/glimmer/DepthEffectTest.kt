@@ -58,7 +58,7 @@ import org.junit.runner.RunWith
 // The expected min sdk is 35, but we test on 33 for wider device coverage (some APIs are not
 // available below 33)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
-class DepthTest {
+class DepthEffectTest {
     @get:Rule val rule = createComposeRule(StandardTestDispatcher())
 
     @Before
@@ -73,15 +73,20 @@ class DepthTest {
 
     @Test
     fun layer2IsDrawnOnTopOfLayer1() {
-        val depth =
-            Depth(
+        val depthEffect =
+            DepthEffect(
                 layer1 = Shadow(radius = 50.dp, color = Color.Blue, spread = 50.dp),
                 layer2 = Shadow(radius = 25.dp, color = Color.Red, spread = 25.dp),
             )
         rule.setGlimmerThemeContent {
-            Box(Modifier.testTag("depth").padding(100.dp).size(100.dp).depth(depth, RectangleShape))
+            Box(
+                Modifier.testTag("depthEffect")
+                    .padding(100.dp)
+                    .size(100.dp)
+                    .depthEffect(depthEffect, RectangleShape)
+            )
         }
-        rule.onNodeWithTag("depth").captureToImage().run {
+        rule.onNodeWithTag("depthEffect").captureToImage().run {
             val map = toPixelMap()
             val center = map[width / 2, height / 2]
             val topMiddle = map[width / 2, height / 5]
@@ -100,11 +105,11 @@ class DepthTest {
         var layer2Color by mutableStateOf(Color.Red)
         rule.setGlimmerThemeContent {
             Box(
-                Modifier.testTag("depth")
+                Modifier.testTag("depthEffect")
                     .padding(100.dp)
                     .size(100.dp)
-                    .depth(
-                        Depth(
+                    .depthEffect(
+                        DepthEffect(
                             layer1 = Shadow(radius = 50.dp, color = Color.Blue, spread = 50.dp),
                             layer2 = Shadow(radius = 25.dp, color = layer2Color, spread = 25.dp),
                         ),
@@ -112,7 +117,7 @@ class DepthTest {
                     )
             )
         }
-        rule.onNodeWithTag("depth").captureToImage().run {
+        rule.onNodeWithTag("depthEffect").captureToImage().run {
             val map = toPixelMap()
             val center = map[width / 2, height / 2]
             // Center pixel should be red, as we draw layer2 (red) on top of layer1 (blue)
@@ -121,7 +126,7 @@ class DepthTest {
 
         rule.runOnIdle { layer2Color = Color.Green }
 
-        rule.onNodeWithTag("depth").captureToImage().run {
+        rule.onNodeWithTag("depthEffect").captureToImage().run {
             val map = toPixelMap()
             val center = map[width / 2, height / 2]
             // Center pixel should be green, as layer2 has changed the color
@@ -134,11 +139,11 @@ class DepthTest {
         var shape: Shape by mutableStateOf(RectangleShape)
         rule.setGlimmerThemeContent {
             Box(
-                Modifier.testTag("depth")
+                Modifier.testTag("depthEffect")
                     .padding(100.dp)
                     .size(100.dp)
-                    .depth(
-                        Depth(
+                    .depthEffect(
+                        DepthEffect(
                             layer1 = Shadow(radius = 50.dp, color = Color.Blue, spread = 50.dp),
                             layer2 = Shadow(radius = 25.dp, color = Color.Red, spread = 25.dp),
                         ),
@@ -146,7 +151,7 @@ class DepthTest {
                     )
             )
         }
-        rule.onNodeWithTag("depth").captureToImage().run {
+        rule.onNodeWithTag("depthEffect").captureToImage().run {
             val map = toPixelMap()
             val topLeftCorner = map[width / 3, height / 3]
             // Top-left pixel should be more red than blue, as we draw layer2 on top of layer1
@@ -172,7 +177,7 @@ class DepthTest {
                 }
         }
 
-        rule.onNodeWithTag("depth").captureToImage().run {
+        rule.onNodeWithTag("depthEffect").captureToImage().run {
             val map = toPixelMap()
             val topLeftCorner = map[width / 3, height / 3]
             // Top-left pixel should now be more blue than red because of the triangle shape
@@ -183,14 +188,17 @@ class DepthTest {
     @Test
     fun inspectorValue() {
         rule.runOnUiThread {
-            val depth = Depth(Shadow(1.dp), Shadow(2.dp))
+            val depthEffect = DepthEffect(Shadow(1.dp), Shadow(2.dp))
             val shape = RectangleShape
-            val modifier = Modifier.depth(depth, shape).first() as InspectableValue
+            val modifier = Modifier.depthEffect(depthEffect, shape).first() as InspectableValue
 
-            assertThat(modifier.nameFallback).isEqualTo("depth")
+            assertThat(modifier.nameFallback).isEqualTo("depthEffect")
             assertThat(modifier.valueOverride).isNull()
             assertThat(modifier.inspectableElements.asIterable())
-                .containsExactly(ValueElement("depth", depth), ValueElement("shape", shape))
+                .containsExactly(
+                    ValueElement("depthEffect", depthEffect),
+                    ValueElement("shape", shape),
+                )
         }
     }
 }

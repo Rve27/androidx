@@ -86,7 +86,7 @@ public fun TitleChip(
                     shape = shape,
                     color = color,
                     contentColor = contentColor,
-                    depth = null,
+                    depthEffect = null,
                     border = border,
                 )
                 .defaultMinSize(minHeight = MinimumHeight)
