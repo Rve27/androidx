@@ -19,6 +19,7 @@ package androidx.room3.processor
 import androidx.room3.Upsert
 import androidx.room3.compiler.processing.XMethodElement
 import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.shortcut.binder.InstantInsertOrUpsertFunctionBinder
 import androidx.room3.vo.UpsertFunction
 import androidx.room3.vo.findPropertyByColumnName
 
@@ -80,6 +81,16 @@ class UpsertFunctionProcessor(
             )
 
         val functionBinder = delegate.findUpsertFunctionBinder(returnType, params)
+        if (
+            functionBinder is InstantInsertOrUpsertFunctionBinder && !context.isAndroidOnlyTarget()
+        ) {
+            // A blocking function that does not return a deferred return type is not allowed
+            // if the target platforms include non-Android targets.
+            context.logger.e(
+                executableElement,
+                ProcessorErrors.INVALID_BLOCKING_DAO_FUNCTION_NON_ANDROID,
+            )
+        }
 
         context.checker.check(
             functionBinder.adapter != null,

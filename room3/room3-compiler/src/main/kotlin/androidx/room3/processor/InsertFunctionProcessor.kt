@@ -22,6 +22,7 @@ import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.compiler.processing.XMethodElement
 import androidx.room3.compiler.processing.XType
+import androidx.room3.solver.shortcut.binder.InstantInsertOrUpsertFunctionBinder
 import androidx.room3.vo.InsertFunction
 import androidx.room3.vo.findPropertyByColumnName
 
@@ -89,6 +90,16 @@ class InsertFunctionProcessor(
             )
 
         val functionBinder = delegate.findInsertFunctionBinder(returnType, params)
+        if (
+            functionBinder is InstantInsertOrUpsertFunctionBinder && !context.isAndroidOnlyTarget()
+        ) {
+            // A blocking function that does not return a deferred return type is not allowed
+            // if the target platforms include non-Android targets.
+            context.logger.e(
+                executableElement,
+                ProcessorErrors.INVALID_BLOCKING_DAO_FUNCTION_NON_ANDROID,
+            )
+        }
 
         context.checker.check(
             functionBinder.adapter != null,

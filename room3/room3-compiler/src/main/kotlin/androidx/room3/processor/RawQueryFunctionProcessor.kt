@@ -27,6 +27,7 @@ import androidx.room3.ext.SupportDbTypeNames
 import androidx.room3.ext.isEntityElement
 import androidx.room3.parser.SqlParser
 import androidx.room3.processor.ProcessorErrors.RAW_QUERY_STRING_PARAMETER_REMOVED
+import androidx.room3.solver.query.result.InstantQueryResultBinder
 import androidx.room3.vo.RawQueryFunction
 
 class RawQueryFunctionProcessor(
@@ -60,20 +61,18 @@ class RawQueryFunctionProcessor(
             ProcessorErrors.suspendReturnsDeferredType(returnType.rawType.typeName.toString()),
         )
 
-        if (!isSuspendFunction && !returnsDeferredType && !context.isAndroidOnlyTarget()) {
+        val observedTableNames = processObservedTables()
+        val query = SqlParser.rawQueryForTables(observedTableNames)
+        // build the query but don't calculate result info since we just guessed it.
+        val resultBinder = delegate.findResultBinder(returnType, query)
+        if (resultBinder is InstantQueryResultBinder && !context.isAndroidOnlyTarget()) {
             // A blocking function that does not return a deferred return type is not allowed if the
             // target platforms include non-Android targets.
             context.logger.e(
                 executableElement,
                 ProcessorErrors.INVALID_BLOCKING_DAO_FUNCTION_NON_ANDROID,
             )
-            // TODO(b/332781418): Early return to avoid generating redundant code.
         }
-
-        val observedTableNames = processObservedTables()
-        val query = SqlParser.rawQueryForTables(observedTableNames)
-        // build the query but don't calculate result info since we just guessed it.
-        val resultBinder = delegate.findResultBinder(returnType, query)
 
         val runtimeQueryParam = findRuntimeQueryParameter(delegate.extractParams())
         val inTransaction = executableElement.hasAnnotation(Transaction::class)

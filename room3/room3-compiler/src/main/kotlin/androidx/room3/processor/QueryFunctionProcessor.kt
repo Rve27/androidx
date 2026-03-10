@@ -25,7 +25,9 @@ import androidx.room3.ext.isNotError
 import androidx.room3.parser.ParsedQuery
 import androidx.room3.parser.QueryType
 import androidx.room3.parser.SqlParser
+import androidx.room3.solver.prepared.binder.InstantPreparedQueryResultBinder
 import androidx.room3.solver.query.result.DataClassRowAdapter
+import androidx.room3.solver.query.result.InstantQueryResultBinder
 import androidx.room3.verifier.DatabaseVerificationErrors
 import androidx.room3.verifier.DatabaseVerifier
 import androidx.room3.vo.QueryFunction
@@ -120,16 +122,7 @@ private class InternalQueryProcessor(
         )
 
         val query =
-            if (!isSuspendFunction && !returnsDeferredType && !context.isAndroidOnlyTarget()) {
-                // A blocking function that does not return a deferred return type is not allowed
-                // if the target platforms include non-Android targets.
-                context.logger.e(
-                    executableElement,
-                    ProcessorErrors.INVALID_BLOCKING_DAO_FUNCTION_NON_ANDROID,
-                )
-                // Early return so we don't generate redundant code.
-                ParsedQuery.MISSING
-            } else if (input != null) {
+            if (input != null) {
                 val query = SqlParser.parse(input)
                 context.checker.check(
                     query.errors.isEmpty(),
@@ -219,6 +212,14 @@ private class InternalQueryProcessor(
                 query.type,
             ),
         )
+        // A blocking function that does not return a deferred return type is not allowed
+        // if the target platforms include non-Android targets.
+        if (resultBinder is InstantPreparedQueryResultBinder && !context.isAndroidOnlyTarget()) {
+            context.logger.e(
+                executableElement,
+                ProcessorErrors.INVALID_BLOCKING_DAO_FUNCTION_NON_ANDROID,
+            )
+        }
 
         val parameters = delegate.extractQueryParams(query)
         return WriteQueryFunction(
@@ -243,6 +244,14 @@ private class InternalQueryProcessor(
                 returnType.asTypeName().toString(context.codeLanguage)
             ),
         )
+        // A blocking function that does not return a deferred return type is not allowed
+        // if the target platforms include non-Android targets.
+        if (resultBinder is InstantQueryResultBinder && !context.isAndroidOnlyTarget()) {
+            context.logger.e(
+                executableElement,
+                ProcessorErrors.INVALID_BLOCKING_DAO_FUNCTION_NON_ANDROID,
+            )
+        }
 
         val inTransaction = executableElement.hasAnnotation(Transaction::class)
         if (query.type == QueryType.SELECT && !inTransaction) {
