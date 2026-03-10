@@ -45,6 +45,10 @@ androidXMultiplatform {
             implementation(libs.kotlinTest)
             implementation(libs.truth)
         }
+
+        androidDeviceTest.dependencies {
+            implementation(libs.testRunner)
+        }
     }
 }
 
