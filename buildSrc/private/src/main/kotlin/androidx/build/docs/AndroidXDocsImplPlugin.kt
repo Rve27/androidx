@@ -292,6 +292,12 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                 it.isCanBeResolved = false
                 it.isCanBeConsumed = false
             }
+        // b/491196586: a KMP project without a jvm/android target will not have version metadata
+        val multiplatformDocsWithoutApiSinceConfiguration =
+            project.configurations.create("kmpDocsWithoutApiSince") {
+                it.isCanBeResolved = false
+                it.isCanBeConsumed = false
+            }
         val stubsConfiguration =
             project.configurations.create("stubs") {
                 it.isCanBeResolved = false
@@ -344,7 +350,10 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                         project.objects.named<LibraryElements>(LibraryElements.JAR),
                     )
                 }
-                configuration.extendsFrom(multiplatformDocsConfiguration)
+                configuration.extendsFrom(
+                    multiplatformDocsConfiguration,
+                    multiplatformDocsWithoutApiSinceConfiguration,
+                )
             }
 
         versionMetadataConfiguration =
@@ -429,8 +438,12 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             val targetApiClasspath =
                 createClasspathConfigurationForTarget(
                     project = project,
-                    multiplatformDocsConfiguration = multiplatformDocsConfiguration,
-                    stubsConfiguration = stubsConfiguration,
+                    extendsFromConfigurations =
+                        arrayOf(
+                            multiplatformDocsConfiguration,
+                            multiplatformDocsWithoutApiSinceConfiguration,
+                            stubsConfiguration,
+                        ),
                     target = target,
                     usageDescription = "api",
                     javaUsage = Usage.JAVA_API,
@@ -439,8 +452,12 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             val targetRuntimeClasspath =
                 createClasspathConfigurationForTarget(
                     project = project,
-                    multiplatformDocsConfiguration = multiplatformDocsConfiguration,
-                    stubsConfiguration = stubsConfiguration,
+                    extendsFromConfigurations =
+                        arrayOf(
+                            multiplatformDocsConfiguration,
+                            multiplatformDocsWithoutApiSinceConfiguration,
+                            stubsConfiguration,
+                        ),
                     target = target,
                     usageDescription = "runtime",
                     javaUsage = Usage.JAVA_RUNTIME,
@@ -459,16 +476,15 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
     }
 
     /**
-     * Configures the classpath for the given [target] extending from
-     * [multiplatformDocsConfiguration].
+     * Configures the classpath for the given [target] extending from all configurations in
+     * [extendsFromConfigurations].
      *
      * The [usageDescription] is used in the configuration name. If [target] is JVM or android, the
      * [javaUsage] is used as the usage attribute, otherwise [kotlinUsage] is used instead.
      */
     private fun createClasspathConfigurationForTarget(
         project: Project,
-        multiplatformDocsConfiguration: Configuration,
-        stubsConfiguration: Configuration,
+        extendsFromConfigurations: Array<Configuration>,
         target: KotlinTarget,
         usageDescription: String,
         javaUsage: String,
@@ -484,7 +500,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         val configurationName = "docs-compile-classpath-${target.name}-$usageDescription"
         return project.configurations
             .register(configurationName) { config ->
-                config.extendsFrom(multiplatformDocsConfiguration, stubsConfiguration)
+                config.extendsFrom(*extendsFromConfigurations)
                 config.isCanBeConsumed = false
                 config.attributes {
                     it.attribute(KotlinPlatformType.attribute, target.platformType)
