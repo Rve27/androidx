@@ -30,7 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.math.FloatSize2d
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.scene
 import androidx.xr.scenecore.testapp.accessibilitytest.AccessibilityTestActivity
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     private var session: Session? = null
 
     private val sessionManager = SessionManager(this)
-    private var pendingPanelSize: FloatSize2d? = null
+    private var pendingPanelSize: IntSize2d? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                 session?.scene?.keyEntity = session?.scene?.mainPanelEntity
                 setUpMainPanelMovable()
                 pendingPanelSize?.let {
-                    session?.scene?.mainPanelEntity?.size = it // restore panel size
+                    session?.scene?.mainPanelEntity?.sizeInPixels = it // restore panel size
                     pendingPanelSize = null // reset
                 }
             }
@@ -319,14 +319,14 @@ class MainActivity : AppCompatActivity() {
                 if (result.resultCode == RESULT_OK) {
                     val data: Intent? = result.data
 
-                    val defaultPanelSizeWidth: Float? =
-                        data?.getFloatExtra("defaultPanelSizeWidth", 1.28f)
-                    val defaultPanelSizeHeight: Float? =
-                        data?.getFloatExtra("defaultPanelSizeHeight", 0.8f)
+                    val defaultPanelSizeWidth: Int? =
+                        data?.getIntExtra("defaultPanelSizeWidth", 2048)
+                    val defaultPanelSizeHeight: Int? =
+                        data?.getIntExtra("defaultPanelSizeHeight", 1280)
 
                     if (defaultPanelSizeWidth != null && defaultPanelSizeHeight != null) {
                         val defaultPanelSize =
-                            FloatSize2d(defaultPanelSizeWidth, defaultPanelSizeHeight)
+                            IntSize2d(defaultPanelSizeWidth, defaultPanelSizeHeight)
                         if (session == null) {
                             Log.d(
                                 ACTIVITY_NAME,
@@ -338,7 +338,7 @@ class MainActivity : AppCompatActivity() {
                                 ACTIVITY_NAME,
                                 "Session exists, recover defaultPanelSize directly: $defaultPanelSize",
                             )
-                            session?.scene?.mainPanelEntity?.size = defaultPanelSize
+                            session?.scene?.mainPanelEntity?.sizeInPixels = defaultPanelSize
                         }
                     }
                 }
