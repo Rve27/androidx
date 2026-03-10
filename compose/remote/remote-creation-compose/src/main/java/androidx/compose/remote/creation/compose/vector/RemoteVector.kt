@@ -82,8 +82,8 @@ internal class RemoteVectorComponent(val root: RemoteGroupComponent) : RemoteVNo
     }
 
     override fun RemoteDrawScope.draw(colorFilter: RemoteColorFilter?) {
-        rootScaleX = remoteWidth / viewportSize.width
-        rootScaleY = remoteHeight / viewportSize.height
+        rootScaleX = width / viewportSize.width
+        rootScaleY = height / viewportSize.height
         val targetFilter = colorFilter ?: intrinsicColorFilter
         drawVector(targetFilter)
     }

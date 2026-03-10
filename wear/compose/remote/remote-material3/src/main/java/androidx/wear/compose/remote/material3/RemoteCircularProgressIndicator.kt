@@ -82,12 +82,12 @@ public fun RemoteCircularProgressIndicator(
         val fullSweep = 360f.rf - ((startAngle - endAngle) % 360f + 360f) % 360f
         val sweepAngle = progress * fullSweep
         val strokePx = strokeWidth.toPx(remoteDensity)
-        val diameter = min(remoteWidth, remoteHeight)
+        val diameter = min(width, height)
         val diameterOffset = strokePx / 2f
         val arcDimen = diameter - (diameterOffset * 2f)
 
-        val left = diameterOffset + (remoteWidth - diameter) / 2f
-        val top = diameterOffset + (remoteHeight - diameter) / 2f
+        val left = diameterOffset + (width - diameter) / 2f
+        val top = diameterOffset + (height - diameter) / 2f
         val right = left + arcDimen
         val bottom = top + arcDimen
 
@@ -96,7 +96,7 @@ public fun RemoteCircularProgressIndicator(
             style = PaintingStyle.Stroke
             this.strokeWidth = strokePx
             strokeCap = StrokeCap.Round
-            applyRemoteBrush(colors.trackBrush(enabled), remoteSize)
+            applyRemoteBrush(colors.trackBrush(enabled), size)
         }
 
         val gapSizePx = gapSize.toPx(remoteDensity)
@@ -118,7 +118,7 @@ public fun RemoteCircularProgressIndicator(
             style = PaintingStyle.Stroke
             this.strokeWidth = trackPaint.strokeWidth
             strokeCap = StrokeCap.Round
-            applyRemoteBrush(colors.indicatorBrush(enabled), remoteSize)
+            applyRemoteBrush(colors.indicatorBrush(enabled), size)
         }
 
         drawArc(

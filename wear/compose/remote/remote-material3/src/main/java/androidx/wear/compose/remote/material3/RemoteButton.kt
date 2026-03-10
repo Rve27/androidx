@@ -874,8 +874,8 @@ internal fun RemoteDrawScope.drawShapedBackground(
     borderColor: RemoteColor?,
     borderStrokeWidth: RemoteFloat?,
 ) {
-    val w = remoteWidth
-    val h = remoteHeight
+    val w = width
+    val h = height
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
         drawRect(paint = RemotePaint { this.color = color })

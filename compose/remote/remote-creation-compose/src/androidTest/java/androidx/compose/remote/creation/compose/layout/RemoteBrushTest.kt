@@ -227,11 +227,11 @@ class RemoteBrushTest {
                                         val paint = RemotePaint {
                                             applyRemoteBrush(
                                                 RemoteBrush.bitmap(image),
-                                                remoteSize,
+                                                size,
                                                 matrix33,
                                             )
                                         }
-                                        this.drawRoundRect(
+                                        drawRoundRect(
                                             paint,
                                             RemoteOffset(topLeftX.rf, topLeftY.rf),
                                             imageSize,
