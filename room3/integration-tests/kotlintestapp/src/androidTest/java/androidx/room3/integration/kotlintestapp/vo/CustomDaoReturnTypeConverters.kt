@@ -18,20 +18,22 @@ package androidx.room3.integration.kotlintestapp.vo
 
 import androidx.room3.DaoReturnTypeConverter
 import androidx.room3.OperationType
-import androidx.room3.RoomDatabase
 
 class CustomDaoReturnType<T>(val data: T)
 
 class CustomDaoReturnTypeConverter {
-    @DaoReturnTypeConverter(operations = [OperationType.READ, OperationType.WRITE])
-    suspend fun <T> convert(
-        database: RoomDatabase,
-        tableNames: Array<String>,
-        executeAndConvert: suspend () -> T,
-    ): CustomDaoReturnType<T> {
+    @DaoReturnTypeConverter([OperationType.READ, OperationType.WRITE])
+    suspend fun <T> convert(executeAndConvert: suspend () -> T): CustomDaoReturnType<T> {
         val data = executeAndConvert.invoke()
         return createCustomType(data)
     }
 
     private fun <T> createCustomType(data: T) = CustomDaoReturnType(data)
+}
+
+class ResultDaoReturnTypeConverter {
+    @DaoReturnTypeConverter([OperationType.READ, OperationType.WRITE])
+    suspend fun <T> convert(executeAndConvert: suspend () -> T): Result<T> {
+        return runCatching { executeAndConvert.invoke() }
+    }
 }
