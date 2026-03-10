@@ -52,7 +52,7 @@ public class ProjectedGeospatial internal constructor(private val xrResources: X
 
     private fun checkTrackingState() {
         if (
-            xrResources.deviceTrackingState == TrackingState.STOPPED ||
+            xrResources.trackingState == TrackingState.STOPPED ||
                 xrResources.geospatialTrackingState == TrackingState.STOPPED
         ) {
             throw GeospatialPoseNotTrackingException()
