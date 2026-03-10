@@ -1008,16 +1008,16 @@ package androidx.xr.scenecore.runtime {
     method @InaccessibleFromKotlin public void setShape(androidx.xr.scenecore.runtime.SurfaceEntity.Shape);
     method @InaccessibleFromKotlin public void setStereoMode(int);
     method public void setSurfacePixelDimensions(int width, int height);
-    property public abstract int colorRange;
-    property public abstract int colorSpace;
-    property public abstract int colorTransfer;
+    property @androidx.xr.scenecore.runtime.SurfaceEntity.ColorRange public abstract int colorRange;
+    property @androidx.xr.scenecore.runtime.SurfaceEntity.ColorSpace public abstract int colorSpace;
+    property @androidx.xr.scenecore.runtime.SurfaceEntity.ColorTransfer public abstract int colorTransfer;
     property public abstract boolean contentColorMetadataSet;
     property public abstract androidx.xr.scenecore.runtime.Dimensions dimensions;
     property public abstract androidx.xr.scenecore.runtime.SurfaceEntity.EdgeFeather edgeFeather;
     property public abstract int maxContentLightLevel;
-    property public abstract int mediaBlendingMode;
+    property @androidx.xr.scenecore.runtime.SurfaceEntity.MediaBlendingMode public abstract int mediaBlendingMode;
     property public abstract androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape;
-    property public abstract int stereoMode;
+    property @androidx.xr.scenecore.runtime.SurfaceEntity.StereoMode public abstract int stereoMode;
     property public abstract android.view.Surface surface;
   }
 
