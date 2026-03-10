@@ -546,6 +546,7 @@
          <trusted-key id="BDB5FA4FE719D787FB3D3197F6D4A1D411E9D1AE">
             <trusting group="com.google.guava"/>
             <trusting group="com.google.j2objc" name="j2objc-annotations" version="3.0.0"/>
+            <trusting group="com.google.testing.compile" name="compile-testing" version="0.22.0"/>
             <trusting group="com.google.truth"/>
             <trusting group="com.google.truth.extensions"/>
          </trusted-key>
