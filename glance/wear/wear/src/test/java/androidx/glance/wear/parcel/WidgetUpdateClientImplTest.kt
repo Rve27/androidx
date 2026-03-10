@@ -126,6 +126,19 @@ class WidgetUpdateClientImplTest {
     }
 
     @Test
+    fun requestUpdate_withInstanceId_sendsRequestWithId() = runTest {
+        val updateClient = WidgetUpdateClientImpl(newTestDispatcher())
+        val id = 1234
+        val instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, id)
+
+        updateClient.requestUpdate(appContext, TEST_PROVIDER_COMPONENT, instanceId)
+        waitAllScopesIdle()
+
+        assertThat(standardSysUiFakeReceiver.requestedComponents).contains(TEST_PROVIDER_COMPONENT)
+        assertThat(standardSysUiFakeReceiver.requestedIds).contains(id)
+    }
+
+    @Test
     fun requestUpdate_queuesUpdatesWhileBinding() = runTest {
         val updateClient = WidgetUpdateClientImpl(newTestDispatcher())
 
