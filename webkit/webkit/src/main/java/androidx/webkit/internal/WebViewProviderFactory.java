@@ -96,6 +96,7 @@ public interface WebViewProviderFactory {
      * Fetch the boundary interface representing {@link
      * WebViewCompat#startUpWebView(WebViewStartUpConfig, WebViewCompat.WebViewStartUpCallback)}.
      */
+    @SuppressWarnings("removal")
     @WebViewCompat.ExperimentalAsyncStartUp
     @Deprecated
     void startUpWebView(
@@ -106,7 +107,6 @@ public interface WebViewProviderFactory {
      * Fetch the boundary interface representing {@link
      * WebViewCompat#startUpWebView(Context, WebViewStartUpConfig, WebViewOutcomeReceiver)}.
      */
-    @WebViewCompat.ExperimentalAsyncStartUp
     void startUpWebView(
             @NonNull WebViewStartUpConfig config,
             @NonNull WebViewOutcomeReceiver<WebViewStartUpResult,
