@@ -47,10 +47,11 @@ enum class Warning(val publicKey: String) {
     // We shouldn't let devs suppress this error via Room so there is no runtime constant for it
     JVM_NAME_ON_OVERRIDDEN_FUNCTION("ROOM_JVM_NAME_IN_OVERRIDDEN_FUNCTION"),
     AMBIGUOUS_COLUMN_IN_RESULT("ROOM_AMBIGUOUS_COLUMN_IN_RESULT"),
-    UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE("ROOM_UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE");
+    UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE("ROOM_UNNECESSARY_NULLABILITY_IN_DAO_RETURN_TYPE"),
+    NO_DATABASE_CONSTRUCTOR("ROOM_NO_DATABASE_CONSTRUCTOR");
 
     companion object {
-        val PUBLIC_KEY_MAP = values().associateBy { it.publicKey }
+        val PUBLIC_KEY_MAP = entries.associateBy { it.publicKey }
 
         fun fromPublicKey(publicKey: String): Warning? {
             return PUBLIC_KEY_MAP[publicKey.uppercase(Locale.US)]
