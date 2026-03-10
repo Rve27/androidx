@@ -70,7 +70,10 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
 
     internal val tracker = PaintTracker()
 
-    override lateinit var creationState: RemoteComposeCreationState
+    internal lateinit var creationState: RemoteComposeCreationState
+
+    override val parentScope: RemoteStateScope
+        get() = creationState
 
     internal var forceSendingPaint = false
 

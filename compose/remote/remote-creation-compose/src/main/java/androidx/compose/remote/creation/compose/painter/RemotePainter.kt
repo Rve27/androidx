@@ -65,12 +65,6 @@ public abstract class RemotePainter @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) 
         obtainPaint().apply { color = color.copy(alpha = alpha) }
     }
 
-    /** Returns the size of the component that this painter is drawing on. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun RemoteDrawScope.componentSize(): RemoteSize {
-        return remoteSize
-    }
-
     /**
      * The main entry point for drawing. This method is called by the remote compose framework to
      * draw the painter.

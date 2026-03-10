@@ -137,6 +137,11 @@ package androidx.compose.remote.creation.compose.layout {
     method @BytecodeOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteBox(androidx.compose.remote.creation.compose.modifier.RemoteModifier?, androidx.compose.runtime.Composer?, int, int);
   }
 
+  public final class RemoteCanvasComposableKt {
+    method @BytecodeOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteCanvas(androidx.compose.remote.creation.compose.modifier.RemoteModifier?, kotlin.jvm.functions.Function1<? super androidx.compose.remote.creation.compose.layout.RemoteDrawScope!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @KotlinOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteCanvas(optional androidx.compose.remote.creation.compose.modifier.RemoteModifier modifier, kotlin.jvm.functions.Function1<androidx.compose.remote.creation.compose.layout.RemoteDrawScope,kotlin.Unit> content);
+  }
+
   public final class RemoteColumnKt {
     method @KotlinOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteColumn(optional androidx.compose.remote.creation.compose.modifier.RemoteModifier modifier, optional androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical verticalArrangement, optional androidx.compose.remote.creation.compose.layout.RemoteAlignment.Horizontal horizontalAlignment, kotlin.jvm.functions.Function1<androidx.compose.remote.creation.compose.layout.RemoteColumnScope,kotlin.Unit> content);
     method @BytecodeOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteColumn(androidx.compose.remote.creation.compose.modifier.RemoteModifier?, androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical?, androidx.compose.remote.creation.compose.layout.RemoteAlignment.Horizontal?, kotlin.jvm.functions.Function3<? super androidx.compose.remote.creation.compose.layout.RemoteColumnScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
@@ -148,6 +153,27 @@ package androidx.compose.remote.creation.compose.layout {
   }
 
   @androidx.compose.runtime.ComposableTargetMarker(description="RemoteCompose Composable") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER}) public @interface RemoteComposable {
+  }
+
+  public class RemoteDrawScope implements androidx.compose.remote.creation.compose.state.RemoteStateScope {
+    method @InaccessibleFromKotlin public final androidx.compose.remote.creation.compose.layout.RemoteOffset getCenter();
+    method @InaccessibleFromKotlin public final androidx.compose.remote.creation.compose.state.RemoteFloat getHeight();
+    method @BytecodeOnly public androidx.compose.ui.unit.LayoutDirection getLayoutDirection();
+    method @BytecodeOnly public androidx.compose.remote.creation.compose.capture.RemoteDensity getRemoteDensity();
+    method @InaccessibleFromKotlin public final androidx.compose.remote.creation.compose.layout.RemoteSize getSize();
+    method @InaccessibleFromKotlin public final androidx.compose.remote.creation.compose.state.RemoteFloat getWidth();
+    method public final void usePaint(androidx.compose.remote.creation.compose.state.RemotePaint paint, kotlin.jvm.functions.Function0<kotlin.Unit> block);
+    property public final androidx.compose.remote.creation.compose.layout.RemoteOffset center;
+    property public androidx.compose.remote.creation.RemoteComposeWriter document;
+    property public float androidx.compose.remote.creation.compose.state.RemoteState<? extends java.lang.Object?>.floatId;
+    property public final androidx.compose.remote.creation.compose.state.RemoteFloat height;
+    property public int androidx.compose.remote.creation.compose.state.RemoteState<? extends java.lang.Object?>.id;
+    property public androidx.compose.ui.unit.LayoutDirection layoutDirection;
+    property public long androidx.compose.remote.creation.compose.state.RemoteState<? extends java.lang.Object?>.longId;
+    property public androidx.compose.remote.creation.compose.state.RemoteStateScope parentScope;
+    property public androidx.compose.remote.creation.compose.capture.RemoteDensity remoteDensity;
+    property public final androidx.compose.remote.creation.compose.layout.RemoteSize size;
+    property public final androidx.compose.remote.creation.compose.state.RemoteFloat width;
   }
 
   public final class RemoteFloatContext {
@@ -368,6 +394,34 @@ package androidx.compose.remote.creation.compose.painter {
   public abstract class RemotePainter {
     method @InaccessibleFromKotlin public abstract androidx.compose.remote.creation.compose.layout.RemoteSize? getIntrinsicSize();
     property public abstract androidx.compose.remote.creation.compose.layout.RemoteSize? intrinsicSize;
+  }
+
+}
+
+package androidx.compose.remote.creation.compose.shaders {
+
+  @androidx.compose.runtime.Immutable public abstract class RemoteBrush {
+    method @BytecodeOnly public final long getIntrinsicSize-NH-jbRc();
+    field public static final androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion Companion;
+  }
+
+  public static final class RemoteBrush.Companion {
+  }
+
+  public final class RemoteLinearGradientKt {
+    method @KotlinOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush horizontalGradient(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion, java.util.List<androidx.compose.remote.creation.compose.state.RemoteColor> colors, optional androidx.compose.remote.creation.compose.state.RemoteFloat? startX, optional androidx.compose.remote.creation.compose.state.RemoteFloat? endX, optional androidx.compose.ui.graphics.TileMode tileMode);
+    method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush horizontalGradient-GM8hW4c(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion, java.util.List<? extends androidx.compose.remote.creation.compose.state.RemoteColor!>, androidx.compose.remote.creation.compose.state.RemoteFloat?, androidx.compose.remote.creation.compose.state.RemoteFloat?, int);
+    method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush! horizontalGradient-GM8hW4c$default(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion!, java.util.List!, androidx.compose.remote.creation.compose.state.RemoteFloat!, androidx.compose.remote.creation.compose.state.RemoteFloat!, int, int, Object!);
+    method @KotlinOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush linearGradient(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion, java.util.List<androidx.compose.remote.creation.compose.state.RemoteColor> colors, optional androidx.compose.remote.creation.compose.layout.RemoteOffset? start, optional androidx.compose.remote.creation.compose.layout.RemoteOffset? end, optional androidx.compose.ui.graphics.TileMode tileMode);
+    method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush linearGradient-GM8hW4c(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion, java.util.List<? extends androidx.compose.remote.creation.compose.state.RemoteColor!>, androidx.compose.remote.creation.compose.layout.RemoteOffset?, androidx.compose.remote.creation.compose.layout.RemoteOffset?, int);
+    method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush! linearGradient-GM8hW4c$default(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion!, java.util.List!, androidx.compose.remote.creation.compose.layout.RemoteOffset!, androidx.compose.remote.creation.compose.layout.RemoteOffset!, int, int, Object!);
+    method @KotlinOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush verticalGradient(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion, java.util.List<androidx.compose.remote.creation.compose.state.RemoteColor> colors, optional androidx.compose.remote.creation.compose.state.RemoteFloat? startY, optional androidx.compose.remote.creation.compose.state.RemoteFloat? endY, optional androidx.compose.ui.graphics.TileMode tileMode);
+    method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush verticalGradient-GM8hW4c(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion, java.util.List<? extends androidx.compose.remote.creation.compose.state.RemoteColor!>, androidx.compose.remote.creation.compose.state.RemoteFloat?, androidx.compose.remote.creation.compose.state.RemoteFloat?, int);
+    method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush! verticalGradient-GM8hW4c$default(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion!, java.util.List!, androidx.compose.remote.creation.compose.state.RemoteFloat!, androidx.compose.remote.creation.compose.state.RemoteFloat!, int, int, Object!);
+  }
+
+  public final class RemoteSolidColorKt {
+    method @androidx.compose.runtime.Stable public static androidx.compose.remote.creation.compose.shaders.RemoteBrush solidColor(androidx.compose.remote.creation.compose.shaders.RemoteBrush.Companion, androidx.compose.remote.creation.compose.state.RemoteColor color);
   }
 
 }
@@ -675,6 +729,31 @@ package androidx.compose.remote.creation.compose.state {
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.remote.creation.compose.layout.RemoteComposable") public static androidx.compose.remote.creation.compose.state.RemoteLong rememberNamedRemoteLong(String, long, androidx.compose.remote.creation.compose.state.RemoteState.Domain?, androidx.compose.runtime.Composer?, int, int);
   }
 
+  public sealed nonexhaustive interface RemotePaint {
+    method @BytecodeOnly public int getBlendMode-0nO6VwU();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getColor();
+    method @BytecodeOnly public int getStrokeCap-KaPHkGw();
+    method @BytecodeOnly public int getStrokeJoin-LxFBmk8();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteFloat getStrokeWidth();
+    method @BytecodeOnly public int getStyle-TiuSbCo();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteFloat getTextSize();
+    method @BytecodeOnly public void setBlendMode-s9anfk8(int);
+    method @InaccessibleFromKotlin public void setColor(androidx.compose.remote.creation.compose.state.RemoteColor);
+    method @BytecodeOnly public void setStrokeCap-BeK7IIE(int);
+    method @BytecodeOnly public void setStrokeJoin-Ww9F2mQ(int);
+    method @InaccessibleFromKotlin public void setStrokeWidth(androidx.compose.remote.creation.compose.state.RemoteFloat);
+    method @BytecodeOnly public void setStyle-k9PVt8s(int);
+    method @InaccessibleFromKotlin public void setTextSize(androidx.compose.remote.creation.compose.state.RemoteFloat);
+    property public abstract androidx.compose.ui.graphics.BlendMode blendMode;
+    property public abstract androidx.compose.remote.creation.compose.state.RemoteColor color;
+    property public abstract androidx.compose.ui.graphics.FilterQuality filterQuality;
+    property public abstract androidx.compose.ui.graphics.StrokeCap strokeCap;
+    property public abstract androidx.compose.ui.graphics.StrokeJoin strokeJoin;
+    property public abstract androidx.compose.remote.creation.compose.state.RemoteFloat strokeWidth;
+    property public abstract androidx.compose.ui.graphics.PaintingStyle style;
+    property public abstract androidx.compose.remote.creation.compose.state.RemoteFloat textSize;
+  }
+
   @androidx.compose.runtime.Stable public interface RemoteState<T> {
     method @InaccessibleFromKotlin public default T getConstantValue();
     method @InaccessibleFromKotlin public T? getConstantValueOrNull();
@@ -693,6 +772,13 @@ package androidx.compose.remote.creation.compose.state {
 
   public static final class RemoteState.Domain.User extends androidx.compose.remote.creation.compose.state.RemoteState.Domain {
     field public static final androidx.compose.remote.creation.compose.state.RemoteState.Domain.User INSTANCE;
+  }
+
+  public interface RemoteStateScope {
+    method @InaccessibleFromKotlin public androidx.compose.ui.unit.LayoutDirection getLayoutDirection();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.capture.RemoteDensity getRemoteDensity();
+    property public abstract androidx.compose.ui.unit.LayoutDirection layoutDirection;
+    property public abstract androidx.compose.remote.creation.compose.capture.RemoteDensity remoteDensity;
   }
 
   @androidx.compose.runtime.Stable public abstract class RemoteString extends androidx.compose.remote.creation.compose.state.BaseRemoteState<java.lang.String> {

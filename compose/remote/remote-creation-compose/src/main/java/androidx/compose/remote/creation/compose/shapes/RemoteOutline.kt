@@ -54,8 +54,8 @@ public sealed class RemoteOutline {
         internal val bottomStart: RemoteFloat,
     ) : RemoteOutline() {
         override fun RemoteDrawScope.drawOutline(paint: RemotePaint) {
-            val w = remoteWidth
-            val h = remoteHeight
+            val w = width
+            val h = height
             // Remap corner radii based on layout direction
             val topLeft: RemoteFloat
             val topRight: RemoteFloat

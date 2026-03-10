@@ -116,8 +116,8 @@ private fun RemoteDrawScope.drawTimeText(
     fontSize: RemoteFloat,
     fontFamily: FontFamily?,
 ) {
-    val width = remoteWidth
-    val height = remoteHeight
+    val width = width
+    val height = height
 
     val fontTypeface =
         when (fontFamily) {
