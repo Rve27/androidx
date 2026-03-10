@@ -111,7 +111,7 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY) public constructor() : 
      * Unmovable Entities, such as [AnchorEntity] or [ActivitySpace], cannot be set as the
      * [Scene.keyEntity] and will throw [IllegalArgumentException] if set.
      *
-     * This field can be `null` if no key entity has been set (default), or if the key entity was
+     * By default, this is set to [mainPanelEntity]. This field can be `null` if the key entity was
      * cleared by setting this value to `null`. When `null`, the default listener takes no action
      * during spatial mode changes.
      *
@@ -206,6 +206,7 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY) public constructor() : 
                 perceptionSpace,
                 entityManager,
             )
+        keyEntity = mainPanelEntity
         sceneRuntime.spatialModeChangeListener =
             RtSpatialModeChangeListener { recommendedPose, recommendedScale ->
                 lastRecommendedPose = recommendedPose
