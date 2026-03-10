@@ -98,6 +98,7 @@ public class IncompatibleApkWebViewProviderFactory implements WebViewProviderFac
         throw new UnsupportedOperationException(UNSUPPORTED_EXCEPTION_EXPLANATION);
     }
 
+    @SuppressWarnings("removal")
     @Deprecated
     @WebViewCompat.ExperimentalAsyncStartUp
     @Override
@@ -107,7 +108,6 @@ public class IncompatibleApkWebViewProviderFactory implements WebViewProviderFac
         throw new UnsupportedOperationException(UNSUPPORTED_EXCEPTION_EXPLANATION);
     }
 
-    @WebViewCompat.ExperimentalAsyncStartUp
     @Override
     public void startUpWebView(
             @NonNull WebViewStartUpConfig config,
