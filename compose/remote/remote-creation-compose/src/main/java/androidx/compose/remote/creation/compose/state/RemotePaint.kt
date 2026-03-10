@@ -18,7 +18,10 @@
 package androidx.compose.remote.creation.compose.state
 
 import android.graphics.BlendModeColorFilter as AndroidBlendModeColorFilter
+import android.graphics.ColorFilter as AndroidColorFilter
+import android.graphics.Paint as AndroidPaint
 import android.graphics.Typeface
+import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.layout.toAndroidBlendMode
@@ -30,6 +33,7 @@ import androidx.compose.remote.creation.compose.layout.toPaintingStyle
 import androidx.compose.remote.creation.compose.layout.toStrokeCap
 import androidx.compose.remote.creation.compose.layout.toStrokeJoin
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
+import androidx.compose.remote.creation.compose.shaders.RemoteShader
 import androidx.compose.remote.creation.compose.shaders.RemoteSolidColor
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -192,6 +196,128 @@ public class StandardRemotePaint() : RemotePaint {
     override fun toString(): String {
         return "RemotePaint(isAntiAlias=$isAntiAlias, blendMode=$blendMode, style=$style, strokeWidth=$strokeWidth, strokeCap=$strokeCap, strokeJoin=$strokeJoin, filterQuality=$filterQuality, shader=$shader, pathEffect=$pathEffect, textSize=$textSize, typeface=$typeface, remoteColor=$color, colorFilter=$colorFilter)"
     }
+}
+
+/**
+ * An implementation of [android.graphics.Paint] that supports [RemoteColor] and [RemoteShader].
+ *
+ * This class provides a bridge for using remote-first types with standard Android paint APIs,
+ * allowing it to be easily converted to a [RemotePaint].
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public open class CompatAndroidRemotePaint : AndroidPaint, RemotePaintConvertible {
+    public constructor() : super()
+
+    public constructor(flags: Int) : super(flags)
+
+    public constructor(paint: AndroidPaint) : super(paint) {
+        if (paint is CompatAndroidRemotePaint) {
+            remoteColor = paint.remoteColor
+            remoteColorFilter = paint.remoteColorFilter
+            remoteShader = paint.remoteShader
+        }
+    }
+
+    /**
+     * The [RemoteColor] associated with this paint.
+     *
+     * Setting this property also updates the underlying [android.graphics.Paint.setColor] if the
+     * [RemoteColor] has a constant value.
+     */
+    public var remoteColor: RemoteColor? = null
+        set(value) {
+            field = value
+            if (value != null) {
+                val constantValue = value.constantValueOrNull
+                if (constantValue != null) {
+                    super.setColor(constantValue.toArgb())
+                } else {
+                    super.setColor(android.graphics.Color.TRANSPARENT)
+                }
+            }
+        }
+
+    public override fun setColor(@ColorInt color: Int) {
+        remoteColor = null
+        super.setColor(color)
+    }
+
+    /**
+     * The [RemoteColorFilter] associated with this paint.
+     *
+     * Setting this property also updates the underlying [android.graphics.Paint.setColorFilter] if
+     * the [RemoteColorFilter] is a type that can be converted to a platform color filter.
+     */
+    public var remoteColorFilter: RemoteColorFilter? = null
+        set(value) {
+            field = value
+            when (value) {
+                is RemoteBlendModeColorFilter -> {
+                    val constantValue = value.color.constantValueOrNull
+                    if (constantValue != null) {
+                        super.setColorFilter(
+                            AndroidBlendModeColorFilter(
+                                constantValue.toArgb(),
+                                value.blendMode.toAndroidBlendMode(),
+                            )
+                        )
+                    } else {
+                        super.setColorFilter(null)
+                    }
+                }
+                is ComposeRemoteColorFilter -> {
+                    super.setColorFilter(value.composeColorFilter.asAndroidColorFilter())
+                }
+                null -> super.setColorFilter(null)
+            }
+        }
+
+    public override fun setColorFilter(filter: AndroidColorFilter?): AndroidColorFilter? {
+        remoteColorFilter = null
+        return super.setColorFilter(filter)
+    }
+
+    /**
+     * The [RemoteShader] associated with this paint.
+     *
+     * This is a convenience property that aliases [android.graphics.Paint.setShader].
+     */
+    public var remoteShader: RemoteShader?
+        get() = shader as? RemoteShader
+        set(value) {
+            shader = value
+        }
+
+    /**
+     * Applies a [RemoteBrush] to this paint.
+     *
+     * Depending on whether the brush is a shader or a solid color, this method updates
+     * [remoteShader] and [remoteColor] accordingly.
+     *
+     * @param remoteBrush The brush to apply.
+     * @param size The size of the area being drawn, used for shader calculation.
+     * @param matrix3x3 An optional matrix to apply to the shader.
+     */
+    public fun RemoteStateScope.applyRemoteBrush(
+        remoteBrush: RemoteBrush,
+        size: RemoteSize,
+        matrix3x3: RemoteMatrix3x3? = null,
+    ) {
+        if (remoteBrush.hasShader) {
+            remoteShader =
+                with(remoteBrush) { createShader(size).apply { this.remoteMatrix3x3 = matrix3x3 } }
+            remoteColor = null
+        } else if (remoteBrush is RemoteSolidColor) {
+            remoteColor = remoteBrush.color
+            remoteShader = null
+        } else {
+            throw UnsupportedOperationException("Unsupported brush type: $remoteBrush")
+        }
+    }
+
+    /** Converts this paint to a [RemotePaint]. */
+    override val remotePaint: RemotePaint
+        get() = AndroidRemotePaint(this)
 }
 
 /** An implementation of [RemotePaint] that wraps an [android.graphics.Paint]. */
@@ -396,4 +522,14 @@ public class ComposeRemotePaint(internal val composePaint: Paint) : RemotePaint 
 public fun Paint.asRemotePaint(): RemotePaint = ComposeRemotePaint(this)
 
 /** Converts an [android.graphics.Paint] to a [RemotePaint]. */
-public fun android.graphics.Paint.asRemotePaint(): RemotePaint = AndroidRemotePaint(this)
+public fun android.graphics.Paint.asRemotePaint(): RemotePaint =
+    if (this is RemotePaintConvertible) {
+        remotePaint
+    } else {
+        AndroidRemotePaint(this)
+    }
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public interface RemotePaintConvertible {
+    public val remotePaint: RemotePaint
+}
