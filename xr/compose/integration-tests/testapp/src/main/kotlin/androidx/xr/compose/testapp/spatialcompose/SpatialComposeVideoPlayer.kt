@@ -74,7 +74,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.Subspace
-import androidx.xr.compose.subspace.MovePolicy
 import androidx.xr.compose.subspace.ResizePolicy
 import androidx.xr.compose.subspace.SpatialBox
 import androidx.xr.compose.subspace.SpatialColumn
@@ -94,6 +93,7 @@ import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.height
+import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testapp.common.isDrmSupported
@@ -336,10 +336,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
         } else {
 
             SpatialColumn {
-                SpatialPanel(
-                    SubspaceModifier.height(600.dp).width(600.dp),
-                    dragPolicy = MovePolicy(),
-                ) {
+                SpatialPanel(SubspaceModifier.height(600.dp).width(600.dp).movable()) {
                     CommonTestScaffold(
                         title = "Video Player Tests",
                         showBottomBar = true,
@@ -714,10 +711,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
 
     @Composable
     fun VideoInSpatialPanel() {
-        SpatialPanel(
-            modifier = SubspaceModifier.width(600.dp).height(600.dp),
-            dragPolicy = MovePolicy(isEnabled = true),
-        ) {
+        SpatialPanel(modifier = SubspaceModifier.width(600.dp).height(600.dp).movable()) {
             DisposableEffect(Unit) { onDispose { exoPlayer?.release() } }
 
             AndroidExternalSurface {
@@ -863,8 +857,8 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                     )
                     .height(
                         if (stereoMode == StereoMode.TopBottom) videoHeight / 2 else videoHeight
-                    ),
-            dragPolicy = MovePolicy(),
+                    )
+                    .movable(),
             resizePolicy = ResizePolicy(),
             interactionPolicy =
                 InteractionPolicy.clickable {
