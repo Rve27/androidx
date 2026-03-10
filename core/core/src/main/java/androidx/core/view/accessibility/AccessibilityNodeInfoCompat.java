@@ -755,7 +755,7 @@ public class AccessibilityNodeInfoCompat {
          *  SelectionCompat selection = new SelectionCompat(null, null);
          *  arguments.setParcelable(
          *          AccessibilityNodeInfoCompat.ACTION_ARGUMENT_SELECTION_PARCELABLE,
-         *          selection.mSelection);
+         *          selection.unwrap());
          *  info.performAction(
          *          AccessibilityActionCompat.ACTION_SET_EXTENDED_SELECTION.getId(), arguments);
          * </pre></code>
@@ -1982,6 +1982,16 @@ public class AccessibilityNodeInfoCompat {
             } else {
                 return null;
             }
+        }
+
+        /**
+         * Returns the underlying platform {@link Selection} object.
+         *
+         * @return The platform {@link Selection} object, or {@code null} if the compat object
+         *     was created on an API level lower than 36.1.
+         */
+        public @Nullable Selection unwrap() {
+            return mSelection;
         }
 
         /**

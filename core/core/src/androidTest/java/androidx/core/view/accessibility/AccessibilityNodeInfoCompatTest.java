@@ -38,6 +38,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityNodeProvider;
 import android.widget.TextView;
 
+import androidx.core.os.BuildCompat;
 import androidx.core.view.ViewCompatActivity;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionCompat;
@@ -664,6 +665,28 @@ public class AccessibilityNodeInfoCompatTest extends
         // Test behavior when setting a null selection.
         containerNodeCompat.setSelection(null);
         assertThat(containerNodeCompat.getSelection()).isNull();
+    }
+
+    @SmallTest
+    @Test
+    @SdkSuppress(minSdkVersion = 30)
+    public void testSelectionCompat_unwrap() {
+        final Activity activity = mActivityTestRule.getActivity();
+        final View root = activity.findViewById(androidx.core.test.R.id.view);
+        assertThat(root).isNotNull();
+        AccessibilityNodeInfoCompat nodeCompat =
+                AccessibilityNodeInfoCompat.wrap(new AccessibilityNodeInfo(root, 1));
+        SelectionPositionCompat start = new SelectionPositionCompat(nodeCompat, 0);
+        SelectionPositionCompat end = new SelectionPositionCompat(nodeCompat, 5);
+        SelectionCompat selectionCompat = new SelectionCompat(start, end);
+
+        if (BuildCompat.isAtLeastB_1()) {
+            assertThat(selectionCompat.unwrap()).isNotNull();
+            assertThat(selectionCompat.unwrap()).isInstanceOf(
+                    AccessibilityNodeInfo.Selection.class);
+        } else {
+            assertThat(selectionCompat.unwrap()).isNull();
+        }
     }
 
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
