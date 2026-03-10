@@ -50,11 +50,9 @@ dependencies {
 
 // enable opt in only for tests so that we don't create non experimental APIs by mistake
 // in the source.
-tasks.named("compileTestKotlin", KotlinCompile.class).configure {
-    it.kotlinOptions {
-        freeCompilerArgs += [
-                "-opt-in=androidx.room3.compiler.processing.ExperimentalProcessingApi"
-        ]
+tasks.named("compileTestKotlin", KotlinCompile.class).configure { task ->
+    task.compilerOptions {
+        it.freeCompilerArgs.add("-opt-in=androidx.room3.compiler.processing.ExperimentalProcessingApi")
     }
 }
 

@@ -48,12 +48,12 @@ dependencies {
     testImplementation(SdkHelperKt.getSdkDependency(project))
 }
 
-tasks.withType(KotlinCompile).configureEach {
-    kotlinOptions {
-        freeCompilerArgs += [
+tasks.withType(KotlinCompile).configureEach { task ->
+    task.compilerOptions {
+        it.freeCompilerArgs.addAll(
                 "-opt-in=androidx.room.compiler.processing.ExperimentalProcessingApi",
                 "-opt-in=com.squareup.kotlinpoet.javapoet.KotlinPoetJavaPoetPreview"
-        ]
+        )
     }
 }
 
