@@ -1484,7 +1484,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             """
         ) { _, invocation ->
             invocation.assertCompilationResult {
-                hasErrorContaining(mayNeedMapColumn("kotlin.String?"))
+                hasErrorContaining(mayNeedMapColumn("kotlin.String"))
             }
         }
     }
@@ -1526,7 +1526,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             """
         ) { _, invocation ->
             invocation.assertCompilationResult {
-                hasErrorContaining(mayNeedMapColumn("kotlin.Long?"))
+                hasErrorContaining(mayNeedMapColumn("kotlin.Long"))
             }
         }
     }
