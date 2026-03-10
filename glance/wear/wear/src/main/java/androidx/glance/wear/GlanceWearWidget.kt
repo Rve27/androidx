@@ -118,7 +118,7 @@ internal constructor(
      * TODO: Provide a default mechanism for storing instanceId
      */
     public fun triggerUpdate(context: Context, provider: ComponentName) {
-        updateClient.requestUpdate(context, provider)
+        triggerPullUpdate(context, provider)
         val isDebuggable = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
         if (isDebuggable) {
             updateClient.sendUpdateBroadcast(context, provider)
@@ -144,6 +144,21 @@ internal constructor(
         } else {
             TODO("b/446828899 - Add compat implementation")
         }
+    }
+
+    /**
+     * Trigger a content update for all widgets associated with the [provider] service component.
+     *
+     * @param context the context from which this method is called.
+     * @param provider the component name of the widget provider service to request an update for.
+     * @param instanceId the optional ID of the widget instance to update.
+     */
+    internal fun triggerPullUpdate(
+        context: Context,
+        provider: ComponentName,
+        instanceId: WidgetInstanceId? = null,
+    ) {
+        updateClient.requestUpdate(context, provider, instanceId)
     }
 
     /**

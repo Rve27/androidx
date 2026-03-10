@@ -46,7 +46,18 @@ class GlanceWearWidgetTest {
 
         widget.triggerUpdate(getApplicationContext(), TEST_COMPONENT)
 
-        verify(mockUpdateClient).requestUpdate(any(), eq(TEST_COMPONENT))
+        verify(mockUpdateClient).requestUpdate(any(), eq(TEST_COMPONENT), eq(null))
+    }
+
+    @Test
+    fun triggerPullUpdate_withInstanceId_clientRequestsUpdateForInstance() {
+        val mockUpdateClient = mock<WidgetUpdateClient>()
+        val widget = TestWidget(mockUpdateClient)
+        val instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 1)
+
+        widget.triggerPullUpdate(getApplicationContext(), TEST_COMPONENT, instanceId)
+
+        verify(mockUpdateClient).requestUpdate(any(), eq(TEST_COMPONENT), eq(instanceId))
     }
 
     @Test
