@@ -144,7 +144,7 @@ internal class AnchorEntityImpl(
 
     fun getPoseInPerceptionSpace(): Pose {
         val perceptionSpaceScenePose =
-            mEntityManager.getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)[0]
+            mEntityManager.getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)[0]
         return transformPoseTo(Pose(), perceptionSpaceScenePose)
     }
 

@@ -204,9 +204,9 @@ private constructor(
                 lazySpatialStateProvider,
                 scheduledExecutorService,
             )
-        entityManager.addSystemSpaceActivityPose(activitySpace)
+        entityManager.addSystemSpaceScenePose(activitySpace)
         perceptionSpaceScenePose = PerceptionSpaceScenePoseImpl(activitySpace)
-        entityManager.addSystemSpaceActivityPose(perceptionSpaceScenePose)
+        entityManager.addSystemSpaceScenePose(perceptionSpaceScenePose)
         mainPanelEntity =
             MainPanelEntityImpl(
                 activity,

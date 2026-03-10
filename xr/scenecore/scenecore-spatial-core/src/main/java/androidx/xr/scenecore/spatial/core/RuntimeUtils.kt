@@ -55,7 +55,7 @@ internal object RuntimeUtils {
         // TODO: b/377541143 - Replace instance equality check in EntityManager.
         val sceneParentScale =
             entityManager
-                .getSystemSpaceActivityPoseOfType(ActivitySpaceImpl::class.java)
+                .getSystemSpaceScenePoseOfType(ActivitySpaceImpl::class.java)
                 .firstOrNull()
                 ?.sceneParentScaleAbs ?: Vector3.One
         val hitEntity = entityManager.getEntityForNode(xrHitInfo.inputNode) ?: return null
@@ -80,7 +80,7 @@ internal object RuntimeUtils {
     ): InputEvent {
         val sceneParentScale =
             entityManager
-                .getSystemSpaceActivityPoseOfType(ActivitySpaceImpl::class.java)
+                .getSystemSpaceScenePoseOfType(ActivitySpaceImpl::class.java)
                 .firstOrNull()
                 ?.sceneParentScaleAbs ?: Vector3.One
         val origin = getVector3(xrInputEvent.origin).scale(sceneParentScale)

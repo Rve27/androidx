@@ -171,7 +171,7 @@ public abstract class AndroidXrEntity(
         get() {
             val perceptionSpaceScenePose =
                 mEntityManager
-                    .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)[0]
+                    .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)[0]
             return transformPoseTo(Pose(), perceptionSpaceScenePose)
         }
 
@@ -183,7 +183,7 @@ public abstract class AndroidXrEntity(
         }
         val xrParent = parent as AndroidXrEntity
         val activitySpace =
-            mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace::class.java)[0]
+            mEntityManager.getSystemSpaceScenePoseOfType(ActivitySpace::class.java)[0]
         return activitySpace.transformPoseTo(pose, xrParent)
     }
 
@@ -195,7 +195,7 @@ public abstract class AndroidXrEntity(
         }
         val xrParent = parent as AndroidXrEntity
         val perceptionSpaceScenePose =
-            mEntityManager.getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)[0]
+            mEntityManager.getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)[0]
         return perceptionSpaceScenePose.transformPoseTo(pose, xrParent)
     }
 
@@ -447,7 +447,7 @@ public abstract class AndroidXrEntity(
     ): HitTestResult {
         // Hit tests need to be issued in the activity space then converted to the entity's space.
         val activitySpace =
-            mEntityManager.getSystemSpaceActivityPoseOfType(ActivitySpace::class.java)[0]
+            mEntityManager.getSystemSpaceScenePoseOfType(ActivitySpace::class.java)[0]
                 ?: throw IllegalStateException("ActivitySpace is null")
         return activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
     }

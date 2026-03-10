@@ -85,7 +85,7 @@ class AnchorEntityImplTest : SystemSpaceEntityImplTest() {
             )
         val currentTimeMillis = 1000000000L
         SystemClock.setCurrentTimeMillis(currentTimeMillis)
-        entityManager.addSystemSpaceActivityPose(PerceptionSpaceScenePoseImpl(activitySpace))
+        entityManager.addSystemSpaceScenePose(PerceptionSpaceScenePoseImpl(activitySpace))
     }
 
     /**

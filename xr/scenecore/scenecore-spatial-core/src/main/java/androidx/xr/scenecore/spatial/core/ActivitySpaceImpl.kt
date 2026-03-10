@@ -92,7 +92,7 @@ public class ActivitySpaceImpl(
         get() {
             val perceptionSpaceScenePose =
                 mEntityManager
-                    .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)
+                    .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)
                     .single()
             return transformPoseTo(Pose(), perceptionSpaceScenePose)
         }

@@ -183,8 +183,8 @@ class EntityManagerTest {
 
     @Test
     fun getAllSystemSpaceScenePoses_returnsAllSystemSpaceScenePoses() {
-        assertThat(entityManager.getAllSystemSpaceActivityPoses().size).isAtLeast(2)
-        assertThat(entityManager.getAllSystemSpaceActivityPoses())
+        assertThat(entityManager.getAllSystemSpaceScenePoses().size).isAtLeast(2)
+        assertThat(entityManager.getAllSystemSpaceScenePoses())
             .containsAtLeast(
                 spatialSceneRuntime.activitySpace,
                 spatialSceneRuntime.perceptionSpaceActivityPose,
@@ -193,11 +193,11 @@ class EntityManagerTest {
 
     @Test
     fun getSystemSpaceScenePoseOfType_returnsSystemSpaceScenePoseOfType() {
-        assertThat(entityManager.getSystemSpaceActivityPoseOfType(ActivitySpace::class.java).get(0))
+        assertThat(entityManager.getSystemSpaceScenePoseOfType(ActivitySpace::class.java).get(0))
             .isInstanceOf(ActivitySpaceImpl::class.java)
         assertThat(
                 entityManager
-                    .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)
+                    .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)
                     .get(0)
             )
             .isInstanceOf(PerceptionSpaceScenePoseImpl::class.java)
@@ -218,7 +218,7 @@ class EntityManagerTest {
         entityManager.clear()
 
         assertThat(entityManager.getAllEntities()).isEmpty()
-        assertThat(entityManager.getAllSystemSpaceActivityPoses()).isEmpty()
+        assertThat(entityManager.getAllSystemSpaceScenePoses()).isEmpty()
     }
 
     @Test

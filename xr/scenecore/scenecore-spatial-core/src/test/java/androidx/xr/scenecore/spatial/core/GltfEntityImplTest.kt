@@ -71,7 +71,7 @@ class GltfEntityImplTest {
                 { xrExtensions.getSpatialState(activity) },
                 fakeScheduledExecutorService,
             )
-        entityManager.addSystemSpaceActivityPose(PerceptionSpaceScenePoseImpl(activitySpace))
+        entityManager.addSystemSpaceScenePose(PerceptionSpaceScenePoseImpl(activitySpace))
 
         gltfEntityImpl = createGltfEntity(activity)
     }

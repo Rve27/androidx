@@ -92,7 +92,7 @@ class SurfaceEntityImplTest {
         val widthAndHeightConfig =
             "+w" + viewPlaneResolution.width + "dp-h" + viewPlaneResolution.height + "dp"
         RuntimeEnvironment.setQualifiers(widthAndHeightConfig)
-        entityManager.addSystemSpaceActivityPose(PerceptionSpaceScenePoseImpl(activitySpaceImpl))
+        entityManager.addSystemSpaceScenePose(PerceptionSpaceScenePoseImpl(activitySpaceImpl))
         renderViewScenePose.activitySpacePose = Pose(Vector3(0f, 0f, 0f), Quaternion.Identity)
     }
 
