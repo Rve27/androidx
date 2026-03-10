@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-package androidx.room3.solver.binderprovider
+package androidx.room3.solver.prepared.binderprovider
 
-import androidx.room3.OperationType
 import androidx.room3.compiler.processing.XType
 import androidx.room3.parser.ParsedQuery
 import androidx.room3.processor.Context
+import androidx.room3.processor.ContinuationParamName
 import androidx.room3.solver.TypeAdapterExtras
+import androidx.room3.solver.prepared.binder.CoroutinePreparedQueryResultBinder
 import androidx.room3.solver.prepared.binder.PreparedQueryResultBinder
-import androidx.room3.solver.prepared.binderprovider.PreparedQueryResultBinderProvider
-import androidx.room3.solver.shortcut.binder.DaoConverterPreparedQueryResultBinder
-import androidx.room3.solver.types.DaoReturnTypeConverter
 
-class DaoReturnTypePreparedQueryBinderProvider(
-    context: Context,
-    returnTypeConverter: DaoReturnTypeConverter,
-) :
-    BaseDaoConverterBinderProvider(context, returnTypeConverter),
+/**
+ * This binder provider is the equivalent of the [InstantPreparedQueryResultBinderProvider] for
+ * suspending functions, i.e. the 'default provider' for them.
+ */
+class SuspendPreparedQueryResultBinderProvider(val context: Context) :
     PreparedQueryResultBinderProvider {
-    override fun matches(declared: XType): Boolean = matchConverter(declared, OperationType.WRITE)
+
+    override fun matches(declared: XType) = true
 
     override fun provide(
         declared: XType,
         query: ParsedQuery,
         extras: TypeAdapterExtras,
     ): PreparedQueryResultBinder {
-        val typeArg = extractTypeArg(declared)
-        val adapter = context.typeAdapterStore.findPreparedQueryResultAdapter(typeArg, query)
-        return DaoConverterPreparedQueryResultBinder(
-            typeArg = typeArg,
-            adapter = adapter,
-            converter = converter,
+        val continuationName =
+            checkNotNull(extras.getData(ContinuationParamName::class)?.paramName) {
+                "Continuation parameter name not found in TypeAdapterExtras."
+            }
+        return CoroutinePreparedQueryResultBinder(
+            adapter = context.typeAdapterStore.findPreparedQueryResultAdapter(declared, query),
+            continuationParamName = continuationName,
         )
     }
 }

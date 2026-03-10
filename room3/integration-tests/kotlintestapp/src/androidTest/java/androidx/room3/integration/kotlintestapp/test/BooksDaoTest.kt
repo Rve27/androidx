@@ -34,6 +34,7 @@ import io.reactivex.rxjava3.subscribers.TestSubscriber
 import java.util.Date
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -410,5 +411,14 @@ class BooksDaoTest(useDriver: UseDriver) : TestDatabaseTest(useDriver) {
         booksDao.getBooksByPublisher().let { result ->
             assertThat(result[TestUtil.PUBLISHER]).containsExactly(TestUtil.BOOK_1)
         }
+    }
+
+    @Test
+    fun resultCustomDaoReturnType() = runTest {
+        assertThat(booksDao.getPublisherResult(TestUtil.PUBLISHER.publisherId).isFailure).isTrue()
+        assertThat(booksDao.insertPublisherResult(TestUtil.PUBLISHER).isSuccess).isTrue()
+        assertThat(booksDao.getPublisherResult(TestUtil.PUBLISHER.publisherId).getOrNull())
+            .isEqualTo(TestUtil.PUBLISHER)
+        assertThat(booksDao.insertPublisherResult(TestUtil.PUBLISHER).isFailure).isTrue()
     }
 }
