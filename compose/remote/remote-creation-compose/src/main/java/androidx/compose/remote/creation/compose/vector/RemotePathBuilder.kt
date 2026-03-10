@@ -28,7 +28,7 @@ import kotlin.collections.ArrayList
  * [RemotePathBuilder] provides a fluent API to creates a list of [RemotePathNode], used to describe
  * a path.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@Suppress("NotCloseable", "TopLevelBuilder")
 public class RemotePathBuilder internal constructor() {
 
     // 88% of Material icons use 32 or fewer path nodes
@@ -40,6 +40,7 @@ public class RemotePathBuilder internal constructor() {
         get() = _nodes
 
     /** Closes the current contour by adding a [RemotePathNode.Close] to [nodes]. */
+    @Suppress("BuilderSetStyle")
     public fun close(): RemotePathBuilder = apply { _nodes.add(RemotePathNode.Close) }
 
     /**
@@ -48,6 +49,7 @@ public class RemotePathBuilder internal constructor() {
      * @param x The x coordinate of the start of the new contour
      * @param y The y coordinate of the start of the new contour
      */
+    @Suppress("BuilderSetStyle")
     public fun moveTo(x: RemoteFloat, y: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.MoveTo(x, y))
     }
@@ -59,6 +61,7 @@ public class RemotePathBuilder internal constructor() {
      * @param dx The x offset of the start of the new contour, relative to the last path position
      * @param dy The y offset of the start of the new contour, relative to the last path position
      */
+    @Suppress("BuilderSetStyle")
     public fun moveToRelative(dx: RemoteFloat, dy: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.RelativeMoveTo(dx, dy))
     }
@@ -71,6 +74,7 @@ public class RemotePathBuilder internal constructor() {
      * @param x The x coordinate of the end of the line
      * @param y The y coordinate of the end of the line
      */
+    @Suppress("BuilderSetStyle")
     public fun lineTo(x: RemoteFloat, y: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.LineTo(x, y))
     }
@@ -83,6 +87,7 @@ public class RemotePathBuilder internal constructor() {
      * @param dx The x offset of the end of the line, relative to the last path position
      * @param dy The y offset of the end of the line, relative to the last path position
      */
+    @Suppress("BuilderSetStyle")
     public fun lineToRelative(dx: RemoteFloat, dy: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.RelativeLineTo(dx, dy))
     }
@@ -94,6 +99,7 @@ public class RemotePathBuilder internal constructor() {
      *
      * @param x The x coordinate of the end of the line
      */
+    @Suppress("BuilderSetStyle")
     public fun horizontalLineTo(x: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.HorizontalTo(x))
     }
@@ -106,6 +112,7 @@ public class RemotePathBuilder internal constructor() {
      *
      * @param dx The x offset of the end of the line, relative to the last path position
      */
+    @Suppress("BuilderSetStyle")
     public fun horizontalLineToRelative(dx: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.RelativeHorizontalTo(dx))
     }
@@ -117,6 +124,7 @@ public class RemotePathBuilder internal constructor() {
      *
      * @param y The y coordinate of the end of the line
      */
+    @Suppress("BuilderSetStyle")
     public fun verticalLineTo(y: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.VerticalTo(y))
     }
@@ -129,6 +137,7 @@ public class RemotePathBuilder internal constructor() {
      *
      * @param dy The y offset of the end of the line, relative to the last path position
      */
+    @Suppress("BuilderSetStyle")
     public fun verticalLineToRelative(dy: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.RelativeVerticalTo(dy))
     }
@@ -145,6 +154,7 @@ public class RemotePathBuilder internal constructor() {
      * @param x3 The x coordinate of the end point of the cubic curve
      * @param y3 The y coordinate of the end point of the cubic curve
      */
+    @Suppress("BuilderSetStyle")
     public fun curveTo(
         x1: RemoteFloat,
         y1: RemoteFloat,
@@ -172,6 +182,7 @@ public class RemotePathBuilder internal constructor() {
      * @param dy3 The y offset of the end point of the cubic curve, relative to the last path
      *   position
      */
+    @Suppress("BuilderSetStyle")
     public fun curveToRelative(
         dx1: RemoteFloat,
         dy1: RemoteFloat,
@@ -196,6 +207,7 @@ public class RemotePathBuilder internal constructor() {
      * @param x2 The x coordinate of the end point of the cubic curve
      * @param y2 The y coordinate of the end point of the cubic curve
      */
+    @Suppress("BuilderSetStyle")
     public fun reflectiveCurveTo(
         x1: RemoteFloat,
         y1: RemoteFloat,
@@ -220,6 +232,7 @@ public class RemotePathBuilder internal constructor() {
      * @param dy2 The y offset of the end point of the cubic curve, relative to the last path
      *   position
      */
+    @Suppress("BuilderSetStyle")
     public fun reflectiveCurveToRelative(
         dx1: RemoteFloat,
         dy1: RemoteFloat,
@@ -239,6 +252,7 @@ public class RemotePathBuilder internal constructor() {
      * @param x2 The x coordinate of the end point of the quadratic curve
      * @param y2 The y coordinate of the end point of the quadratic curve
      */
+    @Suppress("BuilderSetStyle")
     public fun quadTo(
         x1: RemoteFloat,
         y1: RemoteFloat,
@@ -260,6 +274,7 @@ public class RemotePathBuilder internal constructor() {
      * @param dy2 The y offset of the end point of the quadratic curve, relative to the last path
      *   position
      */
+    @Suppress("BuilderSetStyle")
     public fun quadToRelative(
         dx1: RemoteFloat,
         dy1: RemoteFloat,
@@ -279,6 +294,7 @@ public class RemotePathBuilder internal constructor() {
      * @param x1 The x coordinate of the end point of the quadratic curve
      * @param y1 The y coordinate of the end point of the quadratic curve
      */
+    @Suppress("BuilderSetStyle")
     public fun reflectiveQuadTo(x1: RemoteFloat, y1: RemoteFloat): RemotePathBuilder = withScope {
         _nodes.add(RemotePathNode.ReflectiveQuadTo(x1, y1))
     }
@@ -294,6 +310,7 @@ public class RemotePathBuilder internal constructor() {
      * @param dy1 The y offset of the end point of the quadratic curve, relative to the last path
      *   position
      */
+    @Suppress("BuilderSetStyle")
     public fun reflectiveQuadToRelative(dx1: RemoteFloat, dy1: RemoteFloat): RemotePathBuilder =
         withScope {
             _nodes.add(RemotePathNode.RelativeReflectiveQuadTo(dx1, dy1))
@@ -326,6 +343,7 @@ public class RemotePathBuilder internal constructor() {
      * @param x1 The x coordinate of the end point of the arc
      * @param y1 The y coordinate of the end point of the arc
      */
+    @Suppress("BuilderSetStyle")
     public fun arcTo(
         horizontalEllipseRadius: RemoteFloat,
         verticalEllipseRadius: RemoteFloat,
@@ -375,6 +393,7 @@ public class RemotePathBuilder internal constructor() {
      * @param dx1 The x offset of the end point of the arc, relative to the last path position
      * @param dy1 The y offset of the end point of the arc, relative to the last path position
      */
+    @Suppress("BuilderSetStyle")
     public fun arcToRelative(
         a: RemoteFloat,
         b: RemoteFloat,
@@ -391,6 +410,11 @@ public class RemotePathBuilder internal constructor() {
 
     internal fun withScope(function: () -> Boolean): RemotePathBuilder = apply { function() }
 
+    /**
+     * Build the RemotePath, encoding using the given creationState.
+     *
+     * @param creationState the recording creation state.
+     */
     public fun build(creationState: RemoteStateScope): RemotePath {
         return nodes.toRemotePath(creationState = creationState)
     }

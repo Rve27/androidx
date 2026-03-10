@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.capture
 
@@ -37,6 +36,10 @@ import androidx.compose.ui.graphics.vector.VectorGroup
  * A base class for defining vector graphics that can be drawn in a remote compose. It could be
  * rendered by passing it as an argument to
  * [androidx.compose.remote.creation.compose.vector.painterRemoteVector]
+ */
+public class RemoteImageVector
+/**
+ * Create a RemoteImageVector.
  *
  * @param name Name of the Vector asset
  * @param viewportWidth Used to define the height of the viewport space. Viewport is basically the
@@ -49,8 +52,7 @@ import androidx.compose.ui.graphics.vector.VectorGroup
  * @param autoMirror Determines if the vector asset should automatically be mirrored for right to
  *   left locales
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteImageVector(
+internal constructor(
     internal val name: String,
     internal val viewportWidth: RemoteFloat,
     internal val viewportHeight: RemoteFloat,
@@ -70,9 +72,6 @@ public class RemoteImageVector(
     @Suppress("MissingGetterMatchingBuilder")
     public class Builder(
 
-        /** Name of the vector asset */
-        private val name: String = DefaultGroupName,
-
         /**
          * Used to define the width of the viewport space. Viewport is basically the virtual canvas
          * where the paths are drawn on.
@@ -87,6 +86,9 @@ public class RemoteImageVector(
 
         /** Optional color used to tint the entire vector image */
         private val tintColor: RemoteColor,
+
+        /** Name of the vector asset */
+        private val name: String = DefaultGroupName,
 
         /** Blend mode used to apply the tint color */
         private val tintBlendMode: BlendMode = BlendMode.SrcIn,
@@ -124,7 +126,7 @@ public class RemoteImageVector(
          * @return This ImageVector.Builder instance as a convenience for chaining calls
          */
         @Suppress("MissingGetterMatchingBuilder")
-        public fun addGroup(
+        internal fun addGroup(
             name: String = DefaultGroupName,
             rotate: RemoteFloat = DefaultRotation,
             pivotX: RemoteFloat = DefaultPivotX,
@@ -159,7 +161,7 @@ public class RemoteImageVector(
          * @return This ImageVector.Builder instance as a convenience for chaining calls
          */
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun clearGroup(): Builder {
+        internal fun clearGroup(): Builder {
             ensureNotConsumed()
             val popped = nodes.pop()
             currentGroup.children.add(popped.asVectorGroup())
@@ -193,8 +195,7 @@ public class RemoteImageVector(
          * @return This ImageVector.Builder instance as a convenience for chaining calls
          */
         @Suppress("MissingGetterMatchingBuilder")
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun addPath(
+        internal fun addPath(
             pathData: List<RemotePathNode>,
             pathFillType: PathFillType = DefaultFillType,
             name: String = DefaultPathName,
@@ -238,7 +239,6 @@ public class RemoteImageVector(
          *
          * @return The newly created ImageVector instance
          */
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public fun build(): RemoteImageVector {
             ensureNotConsumed()
             // pop all groups except for the root
@@ -489,7 +489,6 @@ internal constructor(
  *   calculated.
  * @param pathBuilder [RemotePathBuilder] lambda for adding [RemotePathNode]s to this path.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteImageVector.Builder.path(
     name: String = DefaultPathName,
     fill: Brush? = null,
