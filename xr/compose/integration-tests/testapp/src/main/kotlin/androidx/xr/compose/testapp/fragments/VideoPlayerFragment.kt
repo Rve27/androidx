@@ -46,7 +46,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.Subspace
-import androidx.xr.compose.subspace.MovePolicy
 import androidx.xr.compose.subspace.ResizePolicy
 import androidx.xr.compose.subspace.SpatialBox
 import androidx.xr.compose.subspace.SpatialExternalSurface
@@ -58,6 +57,7 @@ import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.height
+import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testapp.common.isDrmSupported
@@ -105,8 +105,8 @@ class VideoPlayerFragment : Fragment() {
                     )
                     .height(
                         if (stereoMode == StereoMode.TopBottom) videoHeight / 2 else videoHeight
-                    ),
-            dragPolicy = MovePolicy(),
+                    )
+                    .movable(),
             resizePolicy = ResizePolicy(),
             interactionPolicy =
                 InteractionPolicy.clickable {
