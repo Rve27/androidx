@@ -1394,7 +1394,11 @@ public class WebViewCompat {
     /**
      * Callback interface for
      * {@link WebViewCompat#startUpWebView(Context, WebViewStartUpConfig, WebViewStartUpCallback)}.
+     *
+     * @deprecated This is set for removal in the next release,
+     * use {@link #startUpWebView(Context, WebViewStartUpConfig, WebViewOutcomeReceiver)}
      */
+    @Deprecated(forRemoval = true)
     @ExperimentalAsyncStartUp
     public interface WebViewStartUpCallback {
         /**
@@ -1509,17 +1513,14 @@ public class WebViewCompat {
      * Startup is not expected to fail under normal circumstances, but can in rare cases. If a
      * failure has been reported to the callback, calling any other WebView APIs is likely to throw
      * an exception or immediately crash, and should be avoided if possible.
-     * <p>
-     * This is an experimental API and unsuitable for non-experimental use.
-     * This method can be removed in future versions of the library.
      *
      * @param context  Application Context.
      * @param config   configuration for startup.
      * @param callback the callback triggered when WebView startup is complete or fails. This will
      *                 be called on the main looper (Looper.getMainLooper()).
      */
+    @SuppressLint("UnsafeOptInUsageError")
     @SuppressWarnings("deprecation")
-    @ExperimentalAsyncStartUp
     @AnyThread
     public static void startUpWebView(
             @NonNull Context context,
@@ -1591,7 +1592,6 @@ public class WebViewCompat {
         }
     }
 
-    @ExperimentalAsyncStartUp
     private static class NullReturningWebViewStartUpResult implements WebViewStartUpResult {
         @Override
         public Long getTotalTimeInUiThreadMillis() {

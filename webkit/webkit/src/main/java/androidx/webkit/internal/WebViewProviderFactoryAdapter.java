@@ -148,8 +148,9 @@ public class WebViewProviderFactoryAdapter implements WebViewProviderFactory {
     /**
      * @deprecated Use the {@link OutcomeReceiverCompat} version instead.
      */
-    @Deprecated
+    @SuppressWarnings("removal")
     @WebViewCompat.ExperimentalAsyncStartUp
+    @Deprecated
     @Override
     public void startUpWebView(
             @NonNull WebViewStartUpConfig config,
@@ -172,7 +173,6 @@ public class WebViewProviderFactoryAdapter implements WebViewProviderFactory {
                         })));
     }
 
-    @WebViewCompat.ExperimentalAsyncStartUp
     @Override
     public void startUpWebView(
             @NonNull WebViewStartUpConfig config,

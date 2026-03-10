@@ -971,7 +971,6 @@ public class WebViewFeatureInternal {
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
      * This feature covers {@link WebViewStartUpConfig.Builder#setProfilesToLoadDuringStartup(Set)},
      */
-    @WebViewCompat.ExperimentalAsyncStartUp
     public static final StartupApiFeature.NoFramework STARTUP_FEATURE_SET_PROFILES_TO_LOAD =
             new StartupApiFeature.NoFramework(WebViewFeature.STARTUP_FEATURE_SET_PROFILES_TO_LOAD,
                     StartupFeatures.STARTUP_FEATURE_SET_PROFILES_TO_LOAD);
@@ -983,6 +982,7 @@ public class WebViewFeatureInternal {
      *
      * @deprecated Use {@link #STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE_V2} instead.
      */
+    @WebViewCompat.ExperimentalAsyncStartUp
     @Deprecated
     public static final StartupApiFeature.NoFramework
             STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE =
@@ -995,6 +995,7 @@ public class WebViewFeatureInternal {
      * This feature covers
      * {@link androidx.webkit.ProcessGlobalConfig#setUiThreadStartupMode(Context, int)}.
      */
+    @WebViewCompat.ExperimentalAsyncStartUp
     public static final StartupApiFeature.NoFramework
             STARTUP_FEATURE_SET_UI_THREAD_STARTUP_MODE_V2 =
             new StartupApiFeature.NoFramework(

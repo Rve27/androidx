@@ -17,7 +17,6 @@
 package androidx.webkit.internal;
 
 import androidx.webkit.StartUpLocation;
-import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewStartUpResult;
 
 import org.chromium.support_lib_boundary.WebViewProviderFactoryBoundaryInterface.StartUpResultField;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-@WebViewCompat.ExperimentalAsyncStartUp
 public class WebViewStartupResultImpl implements WebViewStartUpResult,
         BiConsumer<@StartUpResultField Integer, Object> {
     private Long mTotalTimeUiThreadMillis;
