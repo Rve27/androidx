@@ -187,32 +187,32 @@ internal fun RemoteGroupComponent.createGroupComponent(
         if (vectorNode is VectorPath) {
             val remotePathComponent =
                 RemotePathComponent().apply {
-                    pathData = vectorNode.pathData
+                    pathData = vectorNode.pathData.toRemotePathNodes()
                     name = vectorNode.name
                     fill = vectorNode.fill
-                    fillAlpha = vectorNode.fillAlpha
+                    fillAlpha = vectorNode.fillAlpha.rf
                     stroke = vectorNode.stroke
-                    strokeAlpha = vectorNode.strokeAlpha
-                    strokeLineWidth = vectorNode.strokeLineWidth
+                    strokeAlpha = vectorNode.strokeAlpha.rf
+                    strokeLineWidth = vectorNode.strokeLineWidth.rf
                     strokeLineCap = vectorNode.strokeLineCap
                     strokeLineJoin = vectorNode.strokeLineJoin
-                    strokeLineMiter = vectorNode.strokeLineMiter
-                    trimPathStart = vectorNode.trimPathStart
-                    trimPathEnd = vectorNode.trimPathEnd
-                    trimPathOffset = vectorNode.trimPathOffset
+                    strokeLineMiter = vectorNode.strokeLineMiter.rf
+                    trimPathStart = vectorNode.trimPathStart.rf
+                    trimPathEnd = vectorNode.trimPathEnd.rf
+                    trimPathOffset = vectorNode.trimPathOffset.rf
                 }
             insertAt(index, remotePathComponent)
         } else if (vectorNode is VectorGroup) {
             val remoteGroupComponent =
                 RemoteGroupComponent().apply {
                     name = vectorNode.name
-                    rotation = vectorNode.rotation
-                    scaleX = vectorNode.scaleX
-                    scaleY = vectorNode.scaleY
-                    translationX = vectorNode.translationX
-                    translationY = vectorNode.translationY
-                    pivotX = vectorNode.pivotX
-                    pivotY = vectorNode.pivotY
+                    rotation = vectorNode.rotation.rf
+                    scaleX = vectorNode.scaleX.rf
+                    scaleY = vectorNode.scaleY.rf
+                    translationX = vectorNode.translationX.rf
+                    translationY = vectorNode.translationY.rf
+                    pivotX = vectorNode.pivotX.rf
+                    pivotY = vectorNode.pivotY.rf
                     createGroupComponent(vectorNode)
                 }
             insertAt(index, remoteGroupComponent)
