@@ -19,7 +19,6 @@ import androidx.annotation.RestrictTo
 import androidx.collection.MutableScatterMap
 import androidx.collection.ScatterMap
 import androidx.collection.emptyScatterMap
-import androidx.collection.mutableScatterMapOf
 
 /**
  * Stores [ViewModel] instances by key.
@@ -42,7 +41,7 @@ import androidx.collection.mutableScatterMapOf
  */
 public open class ViewModelStore {
 
-    private val map = mutableScatterMapOf<String, ViewModel>()
+    private val map = mutableMapOf<String, ViewModel>()
 
     /**
      * Stores [viewModel] under [key], replacing any existing entry.
@@ -64,10 +63,7 @@ public open class ViewModelStore {
      *
      * The returned set is not backed by this store and will not reflect subsequent changes.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun keys(): Set<String> {
-        return buildSet(capacity = map.size) { map.forEachKey { key -> add(key) } }
-    }
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public fun keys(): Set<String> = map.keys.toSet()
 
     /**
      * Clears this store and notifies all stored [ViewModel] instances that they are no longer used.
@@ -77,9 +73,11 @@ public open class ViewModelStore {
      * @see ViewModel.onCleared
      */
     public fun clear() {
-        val snapshot = map.toScatterMap()
+        val snapshot = map.toMap()
         map.clear()
-        snapshot.forEachValue { viewModel -> viewModel.clear() }
+        for (viewModel in snapshot.values) {
+            viewModel.clear()
+        }
     }
 
     override fun toString(): String {
