@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,43 +14,32 @@
  * limitations under the License.
  */
 
-package androidx.room3.solver.binderprovider
+package androidx.room3.solver.shortcut.binderprovider
 
 import androidx.room3.compiler.processing.XType
-import androidx.room3.parser.ParsedQuery
 import androidx.room3.processor.Context
 import androidx.room3.processor.ContinuationParamName
-import androidx.room3.solver.QueryResultBinderProvider
 import androidx.room3.solver.TypeAdapterExtras
-import androidx.room3.solver.query.result.CoroutineResultBinder
-import androidx.room3.solver.query.result.QueryResultBinder
+import androidx.room3.solver.shortcut.binder.CoroutineDeleteOrUpdateFunctionBinder
+import androidx.room3.solver.shortcut.binder.DeleteOrUpdateFunctionBinder
 
 /**
- * This binder provider is the equivalent of the [InstantQueryResultBinderProvider] for suspending
- * functions, i.e. the 'default provider' for them.
+ * This binder provider is the equivalent of the [InstantDeleteOrUpdateFunctionBinderProvider] for
+ * suspending functions, i.e. the 'default provider' for them.
  */
-class SuspendResultBinderProvider(val context: Context) : QueryResultBinderProvider {
+class SuspendDeleteOrUpdateFunctionBinderProvider(private val context: Context) :
+    DeleteOrUpdateFunctionBinderProvider {
 
-    override fun matches(declared: XType): Boolean {
-        // We always return true because if we got here we can only match a CoroutineResultBinder.
-        return true
-    }
+    override fun matches(declared: XType) = true
 
-    override fun provide(
-        declared: XType,
-        query: ParsedQuery,
-        extras: TypeAdapterExtras,
-    ): QueryResultBinder {
-        val adapter = context.typeAdapterStore.findQueryResultAdapter(declared, query, extras)
-
+    override fun provide(declared: XType, extras: TypeAdapterExtras): DeleteOrUpdateFunctionBinder {
         val continuationName =
             checkNotNull(extras.getData(ContinuationParamName::class)?.paramName) {
                 "Continuation parameter name not found in TypeAdapterExtras."
             }
-
-        return CoroutineResultBinder(
+        return CoroutineDeleteOrUpdateFunctionBinder(
             typeArg = declared,
-            adapter = adapter,
+            adapter = context.typeAdapterStore.findDeleteOrUpdateAdapter(declared),
             continuationParamName = continuationName,
         )
     }
