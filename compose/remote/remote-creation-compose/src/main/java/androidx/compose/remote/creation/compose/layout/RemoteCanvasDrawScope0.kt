@@ -83,11 +83,11 @@ public open class RemoteCanvasDrawScope0(
     override val layoutDirection: LayoutDirection = drawScope.layoutDirection,
 ) : RemoteDrawScope0, RemoteStateScope {
 
-    override val creationState: RemoteComposeCreationState
+    override val parentScope: RemoteComposeCreationState
         get() = remoteComposeCreationState
 
     override val remoteDensity: RemoteDensity
-        get() = creationState.remoteDensity
+        get() = parentScope.remoteDensity
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public class RemoteAccess(

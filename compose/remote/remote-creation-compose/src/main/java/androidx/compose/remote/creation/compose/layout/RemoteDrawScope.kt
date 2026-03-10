@@ -26,6 +26,7 @@ import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.compose.state.RemoteString
+import androidx.compose.remote.creation.compose.state.creationState
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -37,45 +38,40 @@ import androidx.graphics.shapes.RoundedPolygon
  * types consistently and does not attempt to implement the standard [DrawScope] interface to avoid
  * API incompatibilities.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class RemoteDrawScope internal constructor(public val remoteCanvas: RemoteCanvas) :
-    RemoteStateScope by remoteCanvas {
+public open class RemoteDrawScope
+internal constructor(
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val remoteCanvas: RemoteCanvas
+) : RemoteStateScope by remoteCanvas {
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val remoteComposeCreationState: RemoteComposeCreationState
         get() = remoteCanvas.creationState
 
     /** The width of the drawing area as a [RemoteFloat]. */
-    public val remoteWidth: RemoteFloat
+    public val width: RemoteFloat
         get() = remoteCanvas.remote.component.width
 
     /** The height of the drawing area as a [RemoteFloat]. */
-    public val remoteHeight: RemoteFloat
+    public val height: RemoteFloat
         get() = remoteCanvas.remote.component.height
 
     /** The center of the drawing area as a [RemoteOffset]. */
-    public val remoteCenter: RemoteOffset
-        get() = RemoteOffset(remoteWidth / 2f, remoteHeight / 2f)
-
-    /** The x-coordinate of the center of the drawing area. */
-    public val centerX: RemoteFloat
-        get() = remoteWidth / 2f
-
-    /** The y-coordinate of the center of the drawing area. */
-    public val centerY: RemoteFloat
-        get() = remoteHeight / 2f
+    public val center: RemoteOffset
+        get() = RemoteOffset(width / 2f, height / 2f)
 
     /** The size of the drawing area as a [RemoteSize]. */
-    public val remoteSize: RemoteSize
-        get() = RemoteSize(remoteWidth, remoteHeight)
+    public val size: RemoteSize
+        get() = RemoteSize(width, height)
 
-    public fun usePaint(paint: RemotePaint?, block: () -> Unit) {
+    public fun usePaint(paint: RemotePaint, block: () -> Unit) {
         remoteCanvas.usePaint(paint)
         block()
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawRect(
         paint: RemotePaint?,
         topLeft: RemoteOffset = RemoteOffset.Zero,
-        size: RemoteSize = remoteSize,
+        size: RemoteSize = this@RemoteDrawScope.size,
     ) {
         remoteCanvas.drawRect(
             topLeft.x,
@@ -86,10 +82,11 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
         )
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawRoundRect(
         paint: RemotePaint?,
         topLeft: RemoteOffset = RemoteOffset.Zero,
-        size: RemoteSize = remoteSize,
+        size: RemoteSize = this@RemoteDrawScope.size,
         cornerRadius: RemoteOffset = RemoteOffset.Zero,
     ) {
         remoteCanvas.drawRoundRect(
@@ -104,19 +101,21 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Draws a circle. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawCircle(
         paint: RemotePaint?,
-        center: RemoteOffset = remoteCenter,
+        center: RemoteOffset = this@RemoteDrawScope.center,
         radius: RemoteFloat,
     ) {
         RemoteSize(radius * 2f, radius * 2f)
         remoteCanvas.drawCircle(center.x, center.y, radius, paint)
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawOval(
         paint: RemotePaint?,
         topLeft: RemoteOffset = RemoteOffset.Zero,
-        size: RemoteSize = remoteSize,
+        size: RemoteSize = this@RemoteDrawScope.size,
     ) {
         remoteCanvas.drawOval(
             topLeft.x,
@@ -127,13 +126,14 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
         )
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawArc(
         paint: RemotePaint?,
         startAngle: RemoteFloat,
         sweepAngle: RemoteFloat,
         useCenter: Boolean,
         topLeft: RemoteOffset = RemoteOffset.Zero,
-        size: RemoteSize = remoteSize,
+        size: RemoteSize = this@RemoteDrawScope.size,
     ) {
         remoteCanvas.drawArc(
             topLeft.x,
@@ -148,10 +148,12 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Draws a line. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawLine(paint: RemotePaint?, start: RemoteOffset, end: RemoteOffset) {
         remoteCanvas.drawLine(start.x, start.y, end.x, end.y, paint)
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawImage(
         image: RemoteBitmap,
         topLeft: RemoteOffset = RemoteOffset.Zero,
@@ -162,12 +164,13 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Draws a bitmap scaled to the destination rectangle. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawScaledBitmap(
         image: RemoteBitmap,
         srcOffset: RemoteOffset = RemoteOffset.Zero,
         srcSize: RemoteSize = RemoteSize(image.width, image.height),
         dstOffset: RemoteOffset = RemoteOffset.Zero,
-        dstSize: RemoteSize = remoteSize,
+        dstSize: RemoteSize = size,
         scaleType: ContentScale = ContentScale.Fit,
         scaleFactor: RemoteFloat = 1f.rf,
         contentDescription: String? = null,
@@ -189,16 +192,19 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Draws a path. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawPath(path: RemotePath, paint: RemotePaint?) {
         remoteCanvas.drawPath(path, paint)
     }
 
     /** Draws a rounded polygon. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawRoundedPolygon(roundedPolygon: RoundedPolygon, paint: RemotePaint?) {
         remoteCanvas.drawRoundedPolygon(roundedPolygon, paint)
     }
 
     /** Draws a morph between two rounded polygons. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawRoundedPolygonMorph(
         from: RoundedPolygon,
         to: RoundedPolygon,
@@ -209,6 +215,7 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Draws a tween path. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawTweenPath(
         path1: RemotePath,
         path2: RemotePath,
@@ -221,10 +228,12 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Draws text. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawText(text: RemoteString, x: RemoteFloat, y: RemoteFloat, paint: RemotePaint?) {
         remoteCanvas.drawText(text, x, y, paint)
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawAnchoredText(
         text: RemoteString,
         anchorX: RemoteFloat,
@@ -237,6 +246,7 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
         remoteCanvas.drawAnchoredText(text, anchorX, anchorY, panX, panY, flags, paint)
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawTextOnPath(
         text: RemoteString,
         path: RemotePath,
@@ -248,11 +258,13 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Performs a rotation. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun rotate(degrees: RemoteFloat, block: RemoteDrawScope.() -> Unit) {
         withTransform({ rotate(degrees) }, block)
     }
 
     /** Performs a rotation. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun rotate(
         degrees: RemoteFloat,
         pivot: RemoteOffset,
@@ -262,21 +274,25 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Performs a translation. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun translate(left: RemoteFloat, top: RemoteFloat, block: RemoteDrawScope.() -> Unit) {
         withTransform({ translate(left, top) }, block)
     }
 
     /** Performs a scaling. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun scale(scale: RemoteFloat, block: RemoteDrawScope.() -> Unit) {
         withTransform({ scale(scale, scale) }, block)
     }
 
     /** Performs a scaling. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun scale(scaleX: RemoteFloat, scaleY: RemoteFloat, block: RemoteDrawScope.() -> Unit) {
         withTransform({ scale(scaleX, scaleY) }, block)
     }
 
     /** Performs a scaling. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun scale(
         scaleX: RemoteFloat,
         scaleY: RemoteFloat,
@@ -293,6 +309,7 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
      * @param drawBlock The block containing drawing operations to execute with the transformations
      *   applied.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun withTransform(
         transformBlock: RemoteCanvas.() -> Unit,
         drawBlock: RemoteDrawScope.() -> Unit,
@@ -313,6 +330,7 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
      * @param startAngle The starting angle for the text.
      * @param paint The [RemotePaint] to use for drawing.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawTextOnCircle(
         text: RemoteString,
         centerX: RemoteFloat,
@@ -338,6 +356,7 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Clips the drawing area to the specified rectangle and executes [block] within it. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun clipRect(
         left: RemoteFloat,
         top: RemoteFloat,
@@ -350,6 +369,7 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Clips the drawing area to the specified [path] and executes [block] within it. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun clipPath(
         path: RemotePath,
         clipOp: ClipOp = ClipOp.Intersect,
@@ -359,16 +379,19 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Executes [body] if [condition] evaluates to true. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawConditionally(condition: RemoteBoolean, body: RemoteDrawScope.() -> Unit) {
         remoteCanvas.drawConditionally(condition) { this.body() }
     }
 
     /** Draws into an offscreen bitmap and executes [body]. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawToOffscreenBitmap(bitmap: RemoteBitmap, body: RemoteDrawScope.() -> Unit) {
         remoteCanvas.drawToOffscreenBitmap(bitmap) { this.body() }
     }
 
     /** Executes [body] commands in a loop. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun loop(
         from: RemoteFloat,
         until: RemoteFloat,
@@ -379,5 +402,6 @@ public open class RemoteDrawScope internal constructor(public val remoteCanvas: 
     }
 
     /** Access to remote-specific utilities like time and animations. */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val remote: RemoteAccess = RemoteAccess(this)
 }
