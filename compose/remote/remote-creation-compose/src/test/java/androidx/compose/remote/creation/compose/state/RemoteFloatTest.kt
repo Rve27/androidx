@@ -49,7 +49,7 @@ import org.robolectric.annotation.Config
 
 @SdkSuppress(minSdkVersion = 29)
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
+@Config(sdk = [Config.TARGET_SDK])
 class RemoteFloatTest {
     val context =
         AndroidRemoteContext().apply {
@@ -1036,6 +1036,22 @@ class RemoteFloatTest {
                         !it.contains("RootContentDescription")
                 }
         }
+
+    @Test
+    fun RemoteFloatConstructorFromId() {
+        val floatFromId = RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC)
+
+        assertThat(floatFromId.hasConstantValue).isFalse()
+        assertThat(floatFromId.cacheKey).isEqualTo(RemoteStateIdKey(ID_CONTINUOUS_SEC))
+    }
+
+    @Test
+    fun RemoteFloatConstructorFromConstant() {
+        val floatFromId = RemoteFloat(42f)
+
+        assertThat(floatFromId.hasConstantValue).isTrue()
+        assertThat(floatFromId.cacheKey).isEqualTo(RemoteConstantCacheKey(42f))
+    }
 
     private fun makeAndPaintCoreDocument() =
         CoreDocument().apply {
