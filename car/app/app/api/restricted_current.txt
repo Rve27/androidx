@@ -248,7 +248,7 @@ package androidx.car.app.constraints {
 
 package @SuppressCompatibility androidx.car.app.dialer {
 
-  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public class InCallTemplate implements androidx.car.app.model.Template {
+  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi public class InCallTemplate implements androidx.car.app.model.Template {
     method public java.util.List<androidx.car.app.model.Action!> getActions();
     method public androidx.car.app.model.Header? getHeader();
     method public androidx.car.app.model.CarIcon? getIcon();
@@ -271,19 +271,19 @@ package @SuppressCompatibility androidx.car.app.dialer {
     method @com.google.errorprone.annotations.CanIgnoreReturnValue public androidx.car.app.dialer.InCallTemplate.Builder setTitle(CharSequence?);
   }
 
-  @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public interface TelephoneKeypadCallback {
+  @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public interface TelephoneKeypadCallback {
     method public void onKeyDown(int);
     method public void onKeyLongPress(int);
     method public void onKeyUp(int);
   }
 
-  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public interface TelephoneKeypadCallbackDelegate {
+  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi public interface TelephoneKeypadCallbackDelegate {
     method public void sendKeyDown(int, androidx.car.app.OnDoneCallback);
     method public void sendKeyLongPress(int, androidx.car.app.OnDoneCallback);
     method public void sendKeyUp(int, androidx.car.app.OnDoneCallback);
   }
 
-  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public class TelephoneKeypadTemplate implements androidx.car.app.model.Template {
+  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi public class TelephoneKeypadTemplate implements androidx.car.app.model.Template {
     ctor @VisibleForTesting public TelephoneKeypadTemplate();
     method public androidx.car.app.model.Header? getHeader();
     method public java.util.Map<java.lang.Integer!,androidx.car.app.model.CarText!> getKeySecondaryTexts();
@@ -2043,7 +2043,7 @@ package androidx.car.app.model {
     method public static androidx.car.app.model.TemplateWrapper wrap(androidx.car.app.model.Template, String);
   }
 
-  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public final class TimerSpan extends androidx.car.app.model.CarSpan {
+  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi public final class TimerSpan extends androidx.car.app.model.CarSpan {
     method public static androidx.car.app.model.TimerSpan create(long);
     method public long getElapsedRealtimeMillis();
   }
