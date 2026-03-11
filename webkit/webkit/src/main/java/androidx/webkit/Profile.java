@@ -280,7 +280,6 @@ public interface Profile {
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     @UiThread
     @ExperimentalUrlPrefetch
-    @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP)
     default void setMaxPrerenders(
             @SuppressWarnings("AutoBoxing") @Nullable @IntRange(from = 1) Integer maxPrerenders) {
         // We provide a default implementation of this method so that embedders extending the
