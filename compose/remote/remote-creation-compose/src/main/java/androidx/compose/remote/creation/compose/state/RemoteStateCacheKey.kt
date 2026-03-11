@@ -31,38 +31,14 @@ import androidx.compose.runtime.Immutable
 internal class RemoteStateInstanceKey : RemoteStateCacheKey
 
 /** A cache key for constant values (primitive types, strings, etc.). */
-internal class RemoteConstantCacheKey(private val value: Any?) : RemoteStateCacheKey {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is RemoteConstantCacheKey) return false
-
-        val v1 = value
-        val v2 = other.value
-
-        if (v1 is Float && v2 is Float) {
-            return v1.toRawBits() == v2.toRawBits()
+internal data class RemoteConstantCacheKey(private val value: Any?) : RemoteStateCacheKey {
+    init {
+        if (value is Float) {
+            check(!value.isNaN()) { "Float constant value cannot be NaN" }
         }
-        if (v1 is Double && v2 is Double) {
-            return v1.toRawBits() == v2.toRawBits()
+        if (value is Double) {
+            check(!value.isNaN()) { "Double constant value cannot be NaN" }
         }
-
-        return v1 == v2
-    }
-
-    override fun hashCode(): Int {
-        return when (value) {
-            null -> 0
-            is Float -> value.toRawBits()
-            is Double -> {
-                val bits = value.toRawBits()
-                (bits xor (bits ushr 32)).toInt()
-            }
-            else -> value.hashCode()
-        }
-    }
-
-    override fun toString(): String {
-        return "RemoteConstantCacheKey(value=$value)"
     }
 }
 
