@@ -97,7 +97,7 @@ class GlanceWearWidgetTest {
             val context = getApplicationContext<Context>()
             val instanceId = WidgetInstanceId("ns", 1)
 
-            whenever(mockWidgetCache.getInstanceType(eq(instanceId)))
+            whenever(mockWidgetCache.getContainerTypeForInstance(eq(instanceId)))
                 .thenReturn(ContainerInfo.CONTAINER_TYPE_SMALL)
             whenever(
                     mockWidgetCache.getWidgetParams(
