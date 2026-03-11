@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.shapes
 
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.LayoutDirection
  * Can be used for defining a shape of the component background, a shape of shadows cast by the
  * component, or to clip the contents.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public sealed class RemoteOutline {
 
     /** Rectangular area. */
@@ -138,6 +136,5 @@ public sealed class RemoteOutline {
     }
 
     /** Draws the outline to the canvas with paint. */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public abstract fun RemoteDrawScope.drawOutline(paint: RemotePaint)
 }
