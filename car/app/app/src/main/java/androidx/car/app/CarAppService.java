@@ -160,7 +160,7 @@ public abstract class CarAppService extends Service {
     /**
      * Used to declare that this app is a media app in the manifest.
      */
-    @ExperimentalCarApi
+    @RequiresCarApi(8)
     public static final String CATEGORY_MEDIA_APP = "androidx.car.app.category.MEDIA";
 
     private static final String AUTO_DRIVE = "AUTO_DRIVE";
