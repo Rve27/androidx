@@ -39,7 +39,7 @@ import java.util.Objects;
  * these colors will fall back to host defaults if they are unset or they fail contrast checks.
  */
 @CarProtocol
-@RequiresCarApi(8)
+@RequiresCarApi(9)
 @KeepFields
 public final class FilterChipStyle {
     @Nullable

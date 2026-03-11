@@ -1423,7 +1423,7 @@ package androidx.car.app.model {
     method public long getDurationSeconds();
   }
 
-  @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.RequiresCarApi(8) public final class FilterChip implements androidx.car.app.model.Item {
+  @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.RequiresCarApi(9) public final class FilterChip implements androidx.car.app.model.Item {
     method public androidx.car.app.model.CarIcon? getEndIcon();
     method public androidx.car.app.model.OnClickDelegate? getOnClickDelegate();
     method public androidx.car.app.model.CarIcon? getStartIcon();
@@ -1444,7 +1444,7 @@ package androidx.car.app.model {
     method public androidx.car.app.model.FilterChip.Builder setTitle(CharSequence);
   }
 
-  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public final class FilterChipSection extends androidx.car.app.model.Section<androidx.car.app.model.FilterChip!> {
+  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(9) public final class FilterChipSection extends androidx.car.app.model.Section<androidx.car.app.model.FilterChip!> {
     method public androidx.car.app.model.FilterChipStyle? getStyle();
   }
 
@@ -1454,7 +1454,7 @@ package androidx.car.app.model {
     method public androidx.car.app.model.FilterChipSection.Builder setStyle(androidx.car.app.model.FilterChipStyle);
   }
 
-  @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.RequiresCarApi(8) public final class FilterChipStyle {
+  @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.RequiresCarApi(9) public final class FilterChipStyle {
     method public androidx.car.app.model.CarColor? getBackgroundColor();
     method public androidx.car.app.model.CarColor? getContentColor();
     method public androidx.car.app.model.CarColor? getOutlineColor();
