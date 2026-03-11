@@ -1423,7 +1423,7 @@ package androidx.car.app.model {
     method public long getDurationSeconds();
   }
 
-  @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.RequiresCarApi(9) public final class FilterChip implements androidx.car.app.model.Item {
+  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(9) public final class FilterChip implements androidx.car.app.model.Item {
     method public androidx.car.app.model.CarIcon? getEndIcon();
     method public androidx.car.app.model.OnClickDelegate? getOnClickDelegate();
     method public androidx.car.app.model.CarIcon? getStartIcon();
@@ -1432,7 +1432,7 @@ package androidx.car.app.model {
     method public boolean isSelected();
   }
 
-  public static final class FilterChip.Builder {
+  @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public static final class FilterChip.Builder {
     ctor public FilterChip.Builder();
     method public androidx.car.app.model.FilterChip build();
     method public androidx.car.app.model.FilterChip.Builder setEndIcon(androidx.car.app.model.CarIcon);
@@ -1454,13 +1454,13 @@ package androidx.car.app.model {
     method public androidx.car.app.model.FilterChipSection.Builder setStyle(androidx.car.app.model.FilterChipStyle);
   }
 
-  @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.RequiresCarApi(9) public final class FilterChipStyle {
+  @SuppressCompatibility @androidx.car.app.annotations.CarProtocol @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(9) public final class FilterChipStyle {
     method public androidx.car.app.model.CarColor? getBackgroundColor();
     method public androidx.car.app.model.CarColor? getContentColor();
     method public androidx.car.app.model.CarColor? getOutlineColor();
   }
 
-  public static final class FilterChipStyle.Builder {
+  @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public static final class FilterChipStyle.Builder {
     ctor public FilterChipStyle.Builder();
     method public androidx.car.app.model.FilterChipStyle build();
     method public androidx.car.app.model.FilterChipStyle.Builder setBackgroundColor(androidx.car.app.model.CarColor);
