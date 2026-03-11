@@ -496,12 +496,6 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
         return binaryOp(this, v, OperationKey.Div) { aVal: Float, bVal: Float -> aVal / bVal }
     }
 
-    /** Converts this [RemoteFloat] to a [RemoteDp] */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun asRemoteDp(): RemoteDp {
-        return RemoteDp(this)
-    }
-
     /**
      * Returns a [RemoteFloat] that is a reference of this RemoteFloat.
      *
