@@ -112,10 +112,28 @@ import org.jetbrains.annotations.TestOnly
  * @property usePlatformDefaultWidth Whether the width of the popup's content should be limited to
  *   the platform default, which is smaller than the screen width.
  * @property windowType An optional [WindowManager.LayoutParams.type] for the popup window. Defaults
- *   to [WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL].
- * @property windowToken An optional [android.os.IBinder] for [WindowManager.LayoutParams.token] for
- *   the popup window. If null, the popup will automatically use the token from the parent Compose
- *   view.
+ *   to [WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL]. Overriding this allows you to
+ *   change the layer or behavior of the popup. For example, setting it to
+ *   [WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY] can be used to display a popup on top of
+ *   all other applications (which requires the [android.Manifest.permission.SYSTEM_ALERT_WINDOW]
+ *   permission). Note: If you are displaying a popup from a non-Activity context (such as an
+ *   [android.app.Service]) but still want it to be anchored to an existing application window, you
+ *   should leave this as the default sub-panel type and instead provide the [windowToken] of the
+ *   target application window.
+ * @property windowToken An optional [android.os.IBinder] to be used as the window token for the
+ *   popup window. In most cases, this can be left null, and the popup will use the token from the
+ *   hosting Compose view ([android.view.View.getApplicationWindowToken]). However, this parameter
+ *   is essential for cross-process scenarios. For instance, if a Service running in a different
+ *   process needs to display a popup anchored to a window in the main application process, the main
+ *   application's window token must be provided here. The provided token must be a
+ *   valid[android.os.IBinder] from an existing window and must have the necessary permissions to
+ *   add sub-windows of the specified[windowType]. Providing an invalid, stale, or permission-denied
+ *   token will typically result in an [android.view.WindowManager.BadTokenException] when the popup
+ *   attempts to show.
+ *
+ *   Example usage:
+ *
+ * @sample androidx.compose.ui.samples.PopupFromServiceSample
  */
 @Immutable
 actual class PopupProperties
@@ -242,10 +260,28 @@ constructor(
      * @param usePlatformDefaultWidth Whether the width of the popup's content should be limited to
      *   the platform default, which is smaller than the screen width.
      * @param windowType An optional [WindowManager.LayoutParams.type] for the popup window.
-     *   Defaults to [WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL].
-     * @param windowToken An optional [android.os.IBinder] for [WindowManager.LayoutParams.token]
-     *   for the popup window. If null, the popup will automatically use the token from the parent
-     *   Compose view.
+     *   Defaults to [WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL]. Overriding this allows
+     *   you to change the layer or behavior of the popup. For example, setting it to
+     *   [WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY] can be used to display a popup on top
+     *   of all other applications (which requires the
+     *   [android.Manifest.permission.SYSTEM_ALERT_WINDOW] permission). Note: If you are displaying
+     *   a popup from a non-Activity context (such as an [android.app.Service]) but still want it to
+     *   be anchored to an existing application window, you should leave this as the default
+     *   sub-panel type and instead provide the [windowToken] of the target application window.
+     * @param windowToken An optional [android.os.IBinder] to be used as the window token for the
+     *   popup window. In most cases, this can be left null, and the popup will use the token from
+     *   the hosting Compose view ([android.view.View.getApplicationWindowToken]). However, this
+     *   parameter is essential for cross-process scenarios. For instance, if a Service running in a
+     *   different process needs to display a popup anchored to a window in the main application
+     *   process, the main application's window token must be provided here. The provided token must
+     *   be a valid[android.os.IBinder] from an existing window and must have the necessary
+     *   permissions to add sub-windows of the specified[windowType]. Providing an invalid, stale,
+     *   or permission-denied token will typically result in an
+     *   [android.view.WindowManager.BadTokenException] when the popup attempts to show.
+     *
+     *   Example usage:
+     *
+     * @sample androidx.compose.ui.samples.PopupFromServiceSample
      */
     constructor(
         focusable: Boolean = false,
