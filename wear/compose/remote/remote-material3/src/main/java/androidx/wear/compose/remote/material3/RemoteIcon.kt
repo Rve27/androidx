@@ -49,7 +49,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * @param tint The color to apply to the icon. Defaults to the current content color provided by
  *   [DefaultTint].
  */
-@Suppress("RestrictedApiAndroidX")
 @RemoteComposable
 @Composable
 public fun RemoteIcon(
@@ -79,7 +78,6 @@ public fun RemoteIcon(
  * @param tint The color to apply to the icon. Defaults to the current content color provided by
  *   [DefaultTint].
  */
-@Suppress("RestrictedApiAndroidX")
 @RemoteComposable
 @Composable
 public fun RemoteIcon(

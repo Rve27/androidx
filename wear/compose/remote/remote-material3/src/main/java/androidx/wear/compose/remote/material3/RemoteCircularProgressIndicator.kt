@@ -67,7 +67,6 @@ import androidx.compose.ui.graphics.StrokeCap
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RemoteComposable
 @Composable
-@Suppress("RestrictedApiAndroidX")
 public fun RemoteCircularProgressIndicator(
     progress: RemoteFloat,
     modifier: RemoteModifier = RemoteModifier,
