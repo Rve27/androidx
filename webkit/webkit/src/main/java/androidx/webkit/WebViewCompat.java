@@ -1743,55 +1743,6 @@ public class WebViewCompat {
     }
 
     /**
-     * Sets the {@link WebNavigationClient} for the given {@link WebView}.
-     *
-     * @param webView The {@link WebView} to set the client for.
-     * @param client  The {@link WebNavigationClient} to set.
-     * @throws UnsupportedOperationException if the
-     *                                       {@link WebViewFeature#NAVIGATION_CALLBACK_BASIC}
-     *                                       feature is not supported.
-     * @deprecated Use {@link #addNavigationListener(WebView, NavigationListener)} instead.
-     */
-    @RequiresFeature(name = WebViewFeature.NAVIGATION_CALLBACK_BASIC,
-            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
-    @UiThread
-    @WebNavigationClient.ExperimentalNavigationCallback
-    @Deprecated
-    public static void setWebNavigationClient(@NonNull WebView webView,
-            @NonNull WebNavigationClient client) {
-        ApiFeature.NoFramework feature = WebViewFeatureInternal.NAVIGATION_CALLBACK_BASIC;
-        if (feature.isSupportedByWebView()) {
-            getProvider(webView).setWebNavigationClient(client);
-        } else {
-            throw WebViewFeatureInternal.getUnsupportedOperationException();
-        }
-    }
-
-    /**
-     * Gets the {@link WebNavigationClient} currently set for the given {@link WebView}.
-     *
-     * @param webView The {@link WebView} to get the client from.
-     * @return The {@link WebNavigationClient} currently set, or {@code null} if none is set.
-     * @throws UnsupportedOperationException if the
-     *                                       {@link WebViewFeature#NAVIGATION_CALLBACK_BASIC}
-     *                                       feature is not supported.
-     * @deprecated This will not be part of the final API.
-     */
-    @RequiresFeature(name = WebViewFeature.NAVIGATION_CALLBACK_BASIC,
-            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
-    @UiThread
-    @WebNavigationClient.ExperimentalNavigationCallback
-    @Deprecated
-    public static @NonNull WebNavigationClient getWebNavigationClient(@NonNull WebView webView) {
-        ApiFeature.NoFramework feature = WebViewFeatureInternal.NAVIGATION_CALLBACK_BASIC;
-        if (feature.isSupportedByWebView()) {
-            return getProvider(webView).getWebNavigationClient();
-        } else {
-            throw WebViewFeatureInternal.getUnsupportedOperationException();
-        }
-    }
-
-    /**
      * Adds a {@link NavigationListener} to the given {@link WebView}.
      *
      * <p>A listener can only be added to a WebView once. Attempting to add the same listener to the
@@ -1803,16 +1754,15 @@ public class WebViewCompat {
      * @throws IllegalStateException         if the {@code listener} has already been added to the
      *                                       {@code webView}.
      * @throws UnsupportedOperationException if the
-     *                                       {@link WebViewFeature#NAVIGATION_CALLBACK_BASIC}
+     *                                       {@link WebViewFeature#NAVIGATION_LISTENER}
      *                                       feature is not supported.
      */
-    @RequiresFeature(name = WebViewFeature.NAVIGATION_LISTENER_V1,
+    @RequiresFeature(name = WebViewFeature.NAVIGATION_LISTENER,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     @UiThread
-    @WebNavigationClient.ExperimentalNavigationCallback
     public static void addNavigationListener(@NonNull WebView webView, @NonNull Executor executor,
             @NonNull NavigationListener listener) {
-        ApiFeature.NoFramework feature = WebViewFeatureInternal.NAVIGATION_LISTENER_V1;
+        ApiFeature.NoFramework feature = WebViewFeatureInternal.NAVIGATION_LISTENER;
         if (feature.isSupportedByWebView()) {
             getProvider(webView).addNavigationListener(executor, listener);
         } else {
@@ -1833,14 +1783,13 @@ public class WebViewCompat {
      * @param webView  The {@link WebView} to set the client for.
      * @param listener The {@link NavigationListener} to add.
      * @throws UnsupportedOperationException if the
-     *                                       {@link WebViewFeature#NAVIGATION_CALLBACK_BASIC}
+     *                                       {@link WebViewFeature#NAVIGATION_LISTENER}
      *                                       feature is not supported.
      * @see #addNavigationListener(WebView, Executor, NavigationListener)
      */
-    @RequiresFeature(name = WebViewFeature.NAVIGATION_LISTENER_V1,
+    @RequiresFeature(name = WebViewFeature.NAVIGATION_LISTENER,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     @UiThread
-    @WebNavigationClient.ExperimentalNavigationCallback
     public static void addNavigationListener(@NonNull WebView webView,
             @NonNull NavigationListener listener) {
         addNavigationListener(webView, new Handler(Looper.getMainLooper())::post,
@@ -1857,17 +1806,16 @@ public class WebViewCompat {
      * @param webView  The {@link WebView} to set the client for.
      * @param listener The {@link NavigationListener} to remove.
      * @throws UnsupportedOperationException if the
-     *                                       {@link WebViewFeature#NAVIGATION_CALLBACK_BASIC}
+     *                                       {@link WebViewFeature#NAVIGATION_LISTENER}
      *                                       feature is not supported.
      * @see #addNavigationListener(WebView, Executor, NavigationListener)
      */
-    @RequiresFeature(name = WebViewFeature.NAVIGATION_LISTENER_V1,
+    @RequiresFeature(name = WebViewFeature.NAVIGATION_LISTENER,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     @UiThread
-    @WebNavigationClient.ExperimentalNavigationCallback
     public static void removeNavigationListener(@NonNull WebView webView,
             @NonNull NavigationListener listener) {
-        ApiFeature.NoFramework feature = WebViewFeatureInternal.NAVIGATION_LISTENER_V1;
+        ApiFeature.NoFramework feature = WebViewFeatureInternal.NAVIGATION_LISTENER;
         if (feature.isSupportedByWebView()) {
             getProvider(webView).removeNavigationListener(listener);
         } else {
