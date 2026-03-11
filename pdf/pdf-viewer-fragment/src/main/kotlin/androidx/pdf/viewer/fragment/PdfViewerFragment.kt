@@ -39,6 +39,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
+import androidx.core.content.ContextCompat
 import androidx.core.os.OperationCanceledException
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_CONTINUE_ON_SUBTREE
@@ -50,6 +51,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
 import androidx.pdf.ExperimentalPdfApi
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfFeature
 import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
@@ -168,6 +170,9 @@ public open class PdfViewerFragment constructor() : Fragment() {
     public var isTextSearchActive: Boolean
         get() = documentViewModel.isTextSearchActiveFromState
         set(value) {
+            if (pdfView.pdfDocument?.isFeatureSupported(PdfFeature.SEARCH) == false) {
+                return
+            }
             if (isTextSearchActive != value) {
                 // entering the immersive mode when search is active and exiting when search closes
                 documentViewModel.setImmersiveModeDesired(enterImmersive = value)
@@ -480,6 +485,10 @@ public open class PdfViewerFragment constructor() : Fragment() {
      * @param searchView The [PdfSearchView] instance to be configured.
      */
     private fun setupSearchView(searchView: PdfSearchView) {
+        if (pdfView.pdfDocument?.isFeatureSupported(PdfFeature.SEARCH) == false) {
+            return
+        }
+
         pdfSearchViewManager = PdfSearchViewManager(_pdfSearchView)
         setupSearchViewListeners(searchView)
         val windowManager = activity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -524,8 +533,8 @@ public open class PdfViewerFragment constructor() : Fragment() {
             PdfViewManager(
                 pdfView = _pdfView,
                 selectedHighlightColor =
-                    requireContext().getColor(R.color.selected_highlight_color),
-                highlightColor = requireContext().getColor(R.color.highlight_color),
+                    ContextCompat.getColor(requireContext(), R.color.selected_highlight_color),
+                highlightColor = ContextCompat.getColor(requireContext(), R.color.highlight_color),
             )
         /**
          * Closes any active search session if the user selects anything in the PdfView. This
