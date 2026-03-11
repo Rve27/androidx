@@ -3181,10 +3181,12 @@ public final class Recorder implements VideoOutput {
      * and video mime type.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public static @NonNull VideoCapabilities getVideoCapabilities(@NonNull CameraInfo cameraInfo,
+    public static @Nullable VideoCapabilities getVideoCapabilities(@NonNull CameraInfo cameraInfo,
             @NonNull String mimeType) {
-        return getVideoCapabilitiesInternal(VIDEO_RECORDING_TYPE_REGULAR, cameraInfo,
+        VideoCapabilities videoCapabilities = getVideoCapabilitiesInternal(
+                VIDEO_RECORDING_TYPE_REGULAR, cameraInfo,
                 VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE, mimeType);
+        return videoCapabilities == VideoCapabilities.EMPTY ? null : videoCapabilities;
     }
 
     /**
@@ -3268,8 +3270,9 @@ public final class Recorder implements VideoOutput {
                     videoRecordingType, cameraInfo, videoCapabilitiesSource);
             return new RecorderVideoCapabilities(profilesResolver, cameraInfoInternal);
         } else {
-            return new MimeMatchedVideoCapabilities(mimeType, cameraInfoInternal,
-                    DEFAULT_VIDEO_ENCODER_INFO_FINDER);
+            return getSupportedVideoMimeTypes().contains(mimeType)
+                    ? new MimeMatchedVideoCapabilities(mimeType, cameraInfoInternal,
+                    DEFAULT_VIDEO_ENCODER_INFO_FINDER) : VideoCapabilities.EMPTY;
         }
     }
 
