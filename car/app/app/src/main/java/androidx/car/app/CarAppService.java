@@ -126,7 +126,7 @@ public abstract class CarAppService extends Service {
      * Used in the app manifest. It declares that this app declares physical objects with sensors,
      * that connect and exchange data with other devices and systems.
      */
-    @ExperimentalCarApi
+    @RequiresCarApi(6)
     public static final String CATEGORY_IOT_APP = "androidx.car.app.category.IOT";
 
     /**
@@ -134,7 +134,7 @@ public abstract class CarAppService extends Service {
      * provide screens corresponding to the settings page and/or any error resolution screens e.g.
      * sign-in screen.
      */
-    @ExperimentalCarApi
+    @RequiresCarApi(6)
     public static final String CATEGORY_SETTINGS_APP = "androidx.car.app.category.SETTINGS";
 
     /**
@@ -154,7 +154,7 @@ public abstract class CarAppService extends Service {
     /**
      * Used to declare that this app is a weather app in the manifest.
      */
-    @ExperimentalCarApi
+    @RequiresCarApi(7)
     public static final String CATEGORY_WEATHER_APP = "androidx.car.app.category.WEATHER";
 
     /**
