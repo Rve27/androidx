@@ -2,6 +2,7 @@ import androidx.room3.RoomDatabase
 import androidx.room3.util.getColumnIndexOrThrow
 import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteStatement
+import androidx.sqlite.prepare
 import androidx.sqlite.step
 import javax.`annotation`.processing.Generated
 import kotlin.Int
@@ -26,7 +27,7 @@ internal class MyDao_Impl(
 
   public override suspend fun getFooSingleColumn(): Foo<MyEntity> {
     val _sql: String = "SELECT * FROM MyEntity"
-    return __fooReturnTypeConverter.convert(__db, arrayOf("MyEntity")) {
+    return __fooReturnTypeConverter.convert() {
       performSuspending(__db, true, false) { _connection ->
         val _stmt: SQLiteStatement = _connection.prepare(_sql)
         try {
@@ -49,7 +50,7 @@ internal class MyDao_Impl(
 
   public override suspend fun getFooList(): Foo<List<MyEntity>> {
     val _sql: String = "SELECT * FROM MyEntity"
-    return __fooReturnTypeConverter.convert(__db, arrayOf("MyEntity")) {
+    return __fooReturnTypeConverter.convert() {
       performSuspending(__db, true, false) { _connection ->
         val _stmt: SQLiteStatement = _connection.prepare(_sql)
         try {
@@ -72,7 +73,7 @@ internal class MyDao_Impl(
 
   public override fun getBlockingFooList(): Foo<List<MyEntity>> {
     val _sql: String = "SELECT * FROM MyEntity"
-    return __fooReturnTypeConverter.convertBlocking(__db, arrayOf("MyEntity")) {
+    return __fooReturnTypeConverter.convertBlocking() {
       performSuspending(__db, true, false) { _connection ->
         val _stmt: SQLiteStatement = _connection.prepare(_sql)
         try {
