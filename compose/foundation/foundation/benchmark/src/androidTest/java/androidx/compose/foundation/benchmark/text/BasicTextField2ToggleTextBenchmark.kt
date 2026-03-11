@@ -16,6 +16,7 @@
 
 package androidx.compose.foundation.benchmark.text
 
+import androidx.compose.foundation.benchmark.text.empirical.cartesian
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.testutils.benchmark.ComposeBenchmarkRule
 import androidx.compose.testutils.benchmark.benchmarkFirstCompose
@@ -41,11 +42,16 @@ import org.junit.runners.Parameterized
 
 @SmallTest
 @RunWith(Parameterized::class)
-class BasicTextField2ToggleTextBenchmark(private val textLength: Int) {
+class BasicTextField2ToggleTextBenchmark(
+    private val textLength: Int,
+    private val singleLine: Boolean,
+) {
     companion object {
+        private val Lengths = arrayOf(0, 32, 512).filterForCi { this[1] /* keep using length 32*/ }
+
         @JvmStatic
-        @Parameterized.Parameters(name = "length={0}")
-        fun initParameters(): Array<Any> = arrayOf(32, 512).filterForCi()
+        @Parameterized.Parameters(name = "length={0},singleLine={1}")
+        fun parameters() = Lengths.cartesian(arrayOf(false, true))
     }
 
     private val textBenchmarkRule = TextBenchmarkTestRule()
@@ -64,6 +70,7 @@ class BasicTextField2ToggleTextBenchmark(private val textLength: Int) {
                 textNumber = textBenchmarkRule.repeatTimes,
                 width = width,
                 fontSize = fontSize,
+                singleLine = singleLine,
             )
         }
     }
