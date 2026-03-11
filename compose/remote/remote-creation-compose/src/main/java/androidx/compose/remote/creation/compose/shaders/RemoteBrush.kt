@@ -23,6 +23,7 @@ import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationSta
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteMatrix3x3
+import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.runtime.Immutable
@@ -50,6 +51,48 @@ public abstract class RemoteBrush internal constructor() {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public abstract fun RemoteStateScope.createShader(size: RemoteSize): RemoteShader
+
+    /**
+     * Applies this [RemoteBrush] to a paint.
+     *
+     * Depending on whether the brush is a shader or a solid color, this method updates [shader] and
+     * [color] accordingly.
+     *
+     * @param paint The paint to apply to.
+     * @param size The size of the area being drawn, used for shader calculation.
+     */
+    public open fun RemoteStateScope.applyTo(paint: RemotePaint, size: RemoteSize) {
+        if (hasShader) {
+            paint.shader = createShader(size)
+            paint.color = Color.Black.rc
+        } else {
+            TODO("Unimplemented RemoteBrush.applyTo for ${this@RemoteBrush}")
+        }
+    }
+
+    /**
+     * Applies this [RemoteBrush] to a paint.
+     *
+     * Depending on whether the brush is a shader or a solid color, this method updates [shader] and
+     * [color] accordingly.
+     *
+     * @param paint The paint to apply to.
+     * @param size The size of the area being drawn, used for shader calculation.
+     * @param matrix3x3 An optional matrix to apply to the shader.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public open fun RemoteStateScope.applyTo(
+        paint: RemotePaint,
+        size: RemoteSize,
+        matrix3x3: RemoteMatrix3x3? = null,
+    ) {
+        if (hasShader) {
+            paint.shader = createShader(size).apply { this.remoteMatrix3x3 = matrix3x3 }
+            paint.color = Color.Black.rc
+        } else {
+            applyTo(paint, size)
+        }
+    }
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public open val hasShader: Boolean
