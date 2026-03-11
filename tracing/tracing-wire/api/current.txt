@@ -14,10 +14,14 @@ package androidx.tracing.wire {
     method public void onDroppedTraceEvent();
   }
 
-  public final class TraceDriverUtils {
-    method public static androidx.tracing.AbstractTraceDriver TraceDriver(android.content.Context context, androidx.tracing.AbstractTraceSink sink);
-    method public static androidx.tracing.AbstractTraceDriver TraceDriver(android.content.Context context, androidx.tracing.AbstractTraceSink sink, optional boolean isEnabled);
-    method @BytecodeOnly public static androidx.tracing.AbstractTraceDriver! TraceDriver$default(android.content.Context!, androidx.tracing.AbstractTraceSink!, boolean, int, Object!);
+  public final class TraceDriver extends androidx.tracing.AbstractTraceDriver {
+    ctor public TraceDriver(android.content.Context context, androidx.tracing.AbstractTraceSink sink);
+    ctor public TraceDriver(android.content.Context context, androidx.tracing.AbstractTraceSink sink, optional boolean isEnabled);
+    ctor @BytecodeOnly public TraceDriver(android.content.Context!, androidx.tracing.AbstractTraceSink!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public void close();
+    method public void flush();
+    method @InaccessibleFromKotlin public androidx.tracing.Tracer getTracer();
+    property public androidx.tracing.Tracer tracer;
   }
 
   public final class TraceSink extends androidx.tracing.AbstractTraceSink {

@@ -1,12 +1,16 @@
 // Signature format: 4.0
 package androidx.tracing {
 
-  public class AbstractTraceDriver implements java.lang.AutoCloseable {
-    ctor public AbstractTraceDriver(androidx.tracing.AbstractTraceSink sink, boolean isEnabled);
-    method public void close();
-    method public void flush();
-    method @InaccessibleFromKotlin public androidx.tracing.Tracer getTracer();
-    property public androidx.tracing.Tracer tracer;
+  public abstract class AbstractTraceDriver implements java.lang.AutoCloseable {
+    ctor protected AbstractTraceDriver(androidx.tracing.AbstractTraceSink sink, boolean isEnabled);
+    method public abstract void close();
+    method public abstract void flush();
+    method @InaccessibleFromKotlin public final androidx.tracing.AbstractTraceSink getSink();
+    method @InaccessibleFromKotlin public abstract androidx.tracing.Tracer getTracer();
+    method @InaccessibleFromKotlin public final boolean isEnabled();
+    property public final boolean isEnabled;
+    property public final androidx.tracing.AbstractTraceSink sink;
+    property public abstract androidx.tracing.Tracer tracer;
   }
 
   public abstract class AbstractTraceSink implements java.lang.AutoCloseable {
