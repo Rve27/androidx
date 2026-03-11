@@ -110,7 +110,7 @@ class RawQueryFunctionProcessor(
                     val entity = EntityProcessor(context = context, element = it).process()
                     arrayListOf(entity.tableName)
                 } else {
-                    val pojo =
+                    val dataClass =
                         DataClassProcessor.createFor(
                                 context = context,
                                 element = it,
@@ -118,7 +118,7 @@ class RawQueryFunctionProcessor(
                                 parent = null,
                             )
                             .process()
-                    val tableNames = pojo.accessedTableNames()
+                    val tableNames = dataClass.accessedTableNames()
                     // if it is empty, report error as it does not make sense
                     if (tableNames.isEmpty()) {
                         context.logger.e(

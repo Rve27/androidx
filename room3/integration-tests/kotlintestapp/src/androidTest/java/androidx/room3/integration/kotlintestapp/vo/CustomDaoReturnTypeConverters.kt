@@ -55,8 +55,8 @@ sealed class Either<out L, out R> {
     @OptIn(ExperimentalContracts::class)
     fun isLeft(): Boolean {
         contract {
-            returns(true) implies (this@Either is Left)
-            returns(false) implies (this@Either is Right)
+            returns(true) implies (this@Either is Left<L>)
+            returns(false) implies (this@Either is Right<R>)
         }
         return this@Either is Left<L>
     }
@@ -64,8 +64,8 @@ sealed class Either<out L, out R> {
     @OptIn(ExperimentalContracts::class)
     fun isRight(): Boolean {
         contract {
-            returns(true) implies (this@Either is Right)
-            returns(false) implies (this@Either is Left)
+            returns(true) implies (this@Either is Right<R>)
+            returns(false) implies (this@Either is Left<L>)
         }
         return this@Either is Right<R>
     }
