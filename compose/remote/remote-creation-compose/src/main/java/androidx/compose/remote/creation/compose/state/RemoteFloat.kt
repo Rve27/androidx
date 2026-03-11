@@ -674,12 +674,20 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
          * @return A [RemoteFloat] representing the given constant or encoded id.
          */
         public operator fun invoke(float: Float): RemoteFloat {
-            val constValue = if (isConstant(float)) float else null
-            return RemoteFloatExpression(
-                constantValueOrNull = constValue,
-                cacheKey = RemoteConstantCacheKey(float),
-            ) { _ ->
-                floatArrayOf(float)
+            return if (isConstant(float)) {
+                RemoteFloatExpression(
+                    constantValueOrNull = float,
+                    cacheKey = RemoteConstantCacheKey(float),
+                ) { _ ->
+                    floatArrayOf(float)
+                }
+            } else {
+                RemoteFloatExpression(
+                    constantValueOrNull = null,
+                    cacheKey = RemoteStateIdKey(Utils.idFromNan(float)),
+                ) { _ ->
+                    floatArrayOf(float)
+                }
             }
         }
 
