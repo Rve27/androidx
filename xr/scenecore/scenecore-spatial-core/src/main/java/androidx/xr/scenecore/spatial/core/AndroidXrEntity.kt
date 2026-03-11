@@ -60,7 +60,7 @@ public abstract class AndroidXrEntity(
     // Returns the underlying extension Node for the Entity.
     @JvmField internal val mNode: Node,
     @JvmField protected val mExtensions: XrExtensions,
-    @JvmField protected val mEntityManager: EntityManager,
+    @JvmField protected val mSceneNodeRegistry: SceneNodeRegistry,
     @JvmField protected val mExecutor: ScheduledExecutorService,
 ) : BaseEntity(context), Entity {
 
@@ -75,7 +75,7 @@ public abstract class AndroidXrEntity(
     private var reformOptions: ReformOptions? = null
 
     init {
-        mEntityManager.setEntityForNode(mNode, this)
+        mSceneNodeRegistry.setEntityForNode(mNode, this)
     }
 
     override var parent: Entity?
@@ -170,7 +170,7 @@ public abstract class AndroidXrEntity(
     private val poseInPerceptionSpace: Pose
         get() {
             val perceptionSpaceScenePose =
-                mEntityManager
+                mSceneNodeRegistry
                     .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)[0]
             return transformPoseTo(Pose(), perceptionSpaceScenePose)
         }
@@ -183,7 +183,7 @@ public abstract class AndroidXrEntity(
         }
         val xrParent = parent as AndroidXrEntity
         val activitySpace =
-            mEntityManager.getSystemSpaceScenePoseOfType(ActivitySpace::class.java)[0]
+            mSceneNodeRegistry.getSystemSpaceScenePoseOfType(ActivitySpace::class.java)[0]
         return activitySpace.transformPoseTo(pose, xrParent)
     }
 
@@ -195,7 +195,8 @@ public abstract class AndroidXrEntity(
         }
         val xrParent = parent as AndroidXrEntity
         val perceptionSpaceScenePose =
-            mEntityManager.getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)[0]
+            mSceneNodeRegistry
+                .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)[0]
         return perceptionSpaceScenePose.transformPoseTo(pose, xrParent)
     }
 
@@ -299,7 +300,7 @@ public abstract class AndroidXrEntity(
         pointerCaptureInputEventListener.ifPresent { listener ->
             val executor = pointerCaptureExecutor.orElse(mExecutor)
             executor.execute {
-                listener.onInputEvent(RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager))
+                listener.onInputEvent(RuntimeUtils.getInputEvent(xrInputEvent, mSceneNodeRegistry))
             }
         }
     }
@@ -308,7 +309,7 @@ public abstract class AndroidXrEntity(
     private fun dispatchStandardEvent(xrInputEvent: InputEvent) {
         inputEventListenerMap.forEach { (listener, executor) ->
             executor.execute {
-                listener.onInputEvent(RuntimeUtils.getInputEvent(xrInputEvent, mEntityManager))
+                listener.onInputEvent(RuntimeUtils.getInputEvent(xrInputEvent, mSceneNodeRegistry))
             }
         }
     }
@@ -345,7 +346,7 @@ public abstract class AndroidXrEntity(
         if (parent != null) {
             parent = null
         }
-        mEntityManager.removeEntityForNode(mNode)
+        mSceneNodeRegistry.removeEntityForNode(mNode)
         super.dispose()
     }
 
@@ -447,7 +448,7 @@ public abstract class AndroidXrEntity(
     ): HitTestResult {
         // Hit tests need to be issued in the activity space then converted to the entity's space.
         val activitySpace =
-            mEntityManager.getSystemSpaceScenePoseOfType(ActivitySpace::class.java)[0]
+            mSceneNodeRegistry.getSystemSpaceScenePoseOfType(ActivitySpace::class.java)[0]
                 ?: throw IllegalStateException("ActivitySpace is null")
         return activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
     }

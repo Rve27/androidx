@@ -40,9 +40,9 @@ internal abstract class BasePanelEntity(
     context: Context,
     node: Node,
     extensions: XrExtensions,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     executor: ScheduledExecutorService,
-) : AndroidXrEntity(context, node, extensions, entityManager, executor), PanelEntity {
+) : AndroidXrEntity(context, node, extensions, sceneNodeRegistry, executor), PanelEntity {
     protected val defaultPixelDensity: Float
         get() {
             // Spatial api versions 1 and 2+, have different density behaviors. In 2+, pixels per

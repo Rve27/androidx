@@ -102,7 +102,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Config.TARGET_SDK])
 class SpatialSceneRuntimeTest {
-    private val entityManager = EntityManager()
+    private val sceneNodeRegistry = SceneNodeRegistry()
     private val nodeRepository = NodeRepository.getInstance()
     private val xrExtensions = requireNotNull(getXrExtensions())
     private val fakeExecutor = FakeScheduledExecutorService()
@@ -118,7 +118,7 @@ class SpatialSceneRuntimeTest {
         ShadowXrExtensions.extract(xrExtensions)
             .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE)
         testRuntime =
-            SpatialSceneRuntime.create(activity!!, fakeExecutor, xrExtensions, entityManager)
+            SpatialSceneRuntime.create(activity!!, fakeExecutor, xrExtensions, sceneNodeRegistry)
     }
 
     @After
@@ -136,7 +136,7 @@ class SpatialSceneRuntimeTest {
             fakeGltfFeature,
             testRuntime.activitySpace,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             fakeExecutor,
         )
     }
@@ -149,7 +149,7 @@ class SpatialSceneRuntimeTest {
     }
 
     private fun createRuntime(): SpatialSceneRuntime {
-        return SpatialSceneRuntime.create(activity!!, fakeExecutor, xrExtensions, entityManager)
+        return SpatialSceneRuntime.create(activity!!, fakeExecutor, xrExtensions, sceneNodeRegistry)
     }
 
     @Test

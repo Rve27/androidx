@@ -25,11 +25,11 @@ import com.android.extensions.xr.node.Node
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
-/** Manages the mapping between [Node] and [Entity]. */
+/** Manages the mapping from [Node]s to [Entity] and [ScenePose]s. */
 @RestrictTo(
     RestrictTo.Scope.LIBRARY_GROUP
 ) // TODO(b/452961674): Review RestrictTo annotations in SceneCore.
-public class EntityManager public constructor() {
+public class SceneNodeRegistry public constructor() {
     private val nodeEntityMap = ConcurrentHashMap<Node, Entity>()
     private val systemSpaces = CopyOnWriteArrayList<ScenePose>()
 

@@ -58,10 +58,12 @@ public class ActivitySpaceImpl(
     taskNode: Node,
     activity: Activity,
     extensions: XrExtensions,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     private val spatialStateProvider: Supplier<SpatialState>,
     executor: ScheduledExecutorService,
-) : SystemSpaceEntityImpl(activity, taskNode, extensions, entityManager, executor), ActivitySpace {
+) :
+    SystemSpaceEntityImpl(activity, taskNode, extensions, sceneNodeRegistry, executor),
+    ActivitySpace {
 
     private val boundsListeners =
         Collections.synchronizedSet(HashSet<ActivitySpace.OnBoundsChangedListener>())
@@ -91,7 +93,7 @@ public class ActivitySpaceImpl(
     public val poseInPerceptionSpace: Pose
         get() {
             val perceptionSpaceScenePose =
-                mEntityManager
+                mSceneNodeRegistry
                     .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)
                     .single()
             return transformPoseTo(Pose(), perceptionSpaceScenePose)

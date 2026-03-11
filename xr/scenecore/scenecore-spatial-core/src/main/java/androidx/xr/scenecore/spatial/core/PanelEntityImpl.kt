@@ -53,11 +53,11 @@ internal class PanelEntityImpl : BasePanelEntity, PanelEntity {
         node: Node,
         view: View,
         extensions: XrExtensions,
-        entityManager: EntityManager,
+        sceneNodeRegistry: SceneNodeRegistry,
         surfaceDimensionsPx: PixelDimensions,
         name: String,
         executor: ScheduledExecutorService,
-    ) : super(context, node, extensions, entityManager, executor) {
+    ) : super(context, node, extensions, sceneNodeRegistry, executor) {
         val reparentedView = maybeReparentView(view, context)
         surfaceControlViewHost =
             SurfaceControlViewHost(
@@ -74,11 +74,11 @@ internal class PanelEntityImpl : BasePanelEntity, PanelEntity {
         node: Node,
         view: View,
         extensions: XrExtensions,
-        entityManager: EntityManager,
+        sceneNodeRegistry: SceneNodeRegistry,
         surfaceDimensions: Dimensions,
         name: String,
         executor: ScheduledExecutorService,
-    ) : super(context, node, extensions, entityManager, executor) {
+    ) : super(context, node, extensions, sceneNodeRegistry, executor) {
         val surfaceDimensionsPx =
             PixelDimensions(
                 (surfaceDimensions.width * defaultPixelDensity).toInt(),

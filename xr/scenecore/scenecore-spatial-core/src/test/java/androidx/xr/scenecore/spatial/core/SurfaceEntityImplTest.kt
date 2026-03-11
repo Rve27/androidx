@@ -56,13 +56,13 @@ class SurfaceEntityImplTest {
     private val fakeScheduledExecutorService = FakeScheduledExecutorService()
     private val spatialStateProvider = Supplier { ShadowSpatialState.create() }
     private val viewPlaneResolution = PixelDimensions(2000, 1000)
-    private val entityManager = EntityManager()
+    private val sceneNodeRegistry = SceneNodeRegistry()
     private val activitySpaceImpl =
         ActivitySpaceImpl(
             xrExtensions.createNode(),
             activity,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             spatialStateProvider,
             fakeScheduledExecutorService,
         )
@@ -75,7 +75,7 @@ class SurfaceEntityImplTest {
             fakeSurfaceFeature,
             activitySpaceImpl,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             fakeScheduledExecutorService,
         )
     private val renderViewScenePose = FakeScenePose()
@@ -92,13 +92,13 @@ class SurfaceEntityImplTest {
         val widthAndHeightConfig =
             "+w" + viewPlaneResolution.width + "dp-h" + viewPlaneResolution.height + "dp"
         RuntimeEnvironment.setQualifiers(widthAndHeightConfig)
-        entityManager.addSystemSpaceScenePose(PerceptionSpaceScenePoseImpl(activitySpaceImpl))
+        sceneNodeRegistry.addSystemSpaceScenePose(PerceptionSpaceScenePoseImpl(activitySpaceImpl))
         renderViewScenePose.activitySpacePose = Pose(Vector3(0f, 0f, 0f), Quaternion.Identity)
     }
 
     @After
     fun tearDown() {
-        entityManager.clear()
+        sceneNodeRegistry.clear()
         surfaceEntity.dispose()
         activitySpaceImpl.dispose()
     }

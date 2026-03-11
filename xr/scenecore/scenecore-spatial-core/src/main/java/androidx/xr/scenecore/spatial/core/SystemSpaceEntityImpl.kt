@@ -44,9 +44,9 @@ internal constructor(
     context: Context,
     node: Node,
     extensions: XrExtensions,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     executor: ScheduledExecutorService,
-) : AndroidXrEntity(context, node, extensions, entityManager, executor), SystemSpaceEntity {
+) : AndroidXrEntity(context, node, extensions, sceneNodeRegistry, executor), SystemSpaceEntity {
     // Transform for this space's origin in OpenXR reference space.
     internal val openXrReferenceSpaceTransform = AtomicReference<Matrix4?>(null)
     @VisibleForTesting internal var _worldSpaceScale: Vector3 = Vector3(1f, 1f, 1f)

@@ -36,9 +36,9 @@ internal class MainPanelEntityImpl(
     activity: Activity,
     node: Node,
     extensions: XrExtensions,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     executor: ScheduledExecutorService,
-) : BasePanelEntity(activity, node, extensions, entityManager, executor), PanelEntity {
+) : BasePanelEntity(activity, node, extensions, sceneNodeRegistry, executor), PanelEntity {
     // Note that we expect the Node supplied here to be the WindowLeash node.
     init {
         // Read the Pixel dimensions for the primary panel off the Activity's WindowManager. Note

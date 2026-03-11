@@ -45,7 +45,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [Config.TARGET_SDK])
 class GltfEntityImplTest {
     private val xrExtensions = requireNotNull(getXrExtensions())
-    private val entityManager = EntityManager()
+    private val sceneNodeRegistry = SceneNodeRegistry()
     private val fakeScheduledExecutorService = FakeScheduledExecutorService()
     private val mockGltfFeature: GltfFeature = mock<GltfFeature>()
     private lateinit var activitySpace: ActivitySpaceImpl
@@ -67,11 +67,11 @@ class GltfEntityImplTest {
                 taskNode,
                 activity,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 { xrExtensions.getSpatialState(activity) },
                 fakeScheduledExecutorService,
             )
-        entityManager.addSystemSpaceScenePose(PerceptionSpaceScenePoseImpl(activitySpace))
+        sceneNodeRegistry.addSystemSpaceScenePose(PerceptionSpaceScenePoseImpl(activitySpace))
 
         gltfEntityImpl = createGltfEntity(activity)
     }
@@ -90,7 +90,7 @@ class GltfEntityImplTest {
             fakeGltfFeature,
             activitySpace,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             fakeScheduledExecutorService,
         )
     }

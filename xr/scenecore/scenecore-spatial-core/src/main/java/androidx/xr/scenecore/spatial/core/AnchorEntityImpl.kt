@@ -44,9 +44,9 @@ internal class AnchorEntityImpl(
     node: Node,
     private val activitySpace: ActivitySpaceImpl,
     extensions: XrExtensions,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     executor: ScheduledExecutorService,
-) : SystemSpaceEntityImpl(context, node, extensions, entityManager, executor), AnchorEntity {
+) : SystemSpaceEntityImpl(context, node, extensions, sceneNodeRegistry, executor), AnchorEntity {
     private val openXrScenePoseHelper = OpenXrScenePoseHelper(activitySpace)
     private var onStateChangedListener: AnchorEntity.OnStateChangedListener? = null
     private var _state: @AnchorEntity.State Int = AnchorEntity.State.UNANCHORED
@@ -144,7 +144,8 @@ internal class AnchorEntityImpl(
 
     fun getPoseInPerceptionSpace(): Pose {
         val perceptionSpaceScenePose =
-            mEntityManager.getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)[0]
+            mSceneNodeRegistry
+                .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)[0]
         return transformPoseTo(Pose(), perceptionSpaceScenePose)
     }
 
@@ -183,7 +184,7 @@ internal class AnchorEntityImpl(
             node: Node,
             activitySpace: ActivitySpaceImpl,
             extensions: XrExtensions,
-            entityManager: EntityManager,
+            sceneNodeRegistry: SceneNodeRegistry,
             executor: ScheduledExecutorService,
         ): AnchorEntityImpl {
             return AnchorEntityImpl(
@@ -191,7 +192,7 @@ internal class AnchorEntityImpl(
                 node,
                 activitySpace,
                 extensions,
-                entityManager,
+                sceneNodeRegistry,
                 executor,
             )
         }

@@ -53,7 +53,7 @@ class PositionalAudioComponentImplTest {
     fun setUp() {
         testSpatialApiVersion = 1
         fakeRuntime =
-            SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions!!, EntityManager())
+            SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions!!, SceneNodeRegistry())
     }
 
     @After

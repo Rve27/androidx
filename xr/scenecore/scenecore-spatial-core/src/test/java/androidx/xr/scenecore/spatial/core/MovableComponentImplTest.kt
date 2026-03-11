@@ -89,7 +89,7 @@ class MovableComponentImplTest {
     private val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
     private val fakeExecutor = FakeScheduledExecutorService()
     private val xrExtensions = getXrExtensions()!!
-    private val entityManager = EntityManager()
+    private val sceneNodeRegistry = SceneNodeRegistry()
     private val mockPanelShadowRenderer = mock<EntityShadowRenderer>()
     private val nodeRepository: NodeRepository = NodeRepository.getInstance()
 
@@ -107,7 +107,7 @@ class MovableComponentImplTest {
     @Before
     fun setUp() {
         sceneRuntime =
-            SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions, entityManager)
+            SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions, sceneNodeRegistry)
         activitySpaceImpl = sceneRuntime.activitySpace
         activitySpaceNode = activitySpaceImpl.mNode
         Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -138,7 +138,7 @@ class MovableComponentImplTest {
                 node,
                 view,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 PixelDimensions(10, 10),
                 "panelShadow",
                 fakeExecutor,
@@ -209,7 +209,7 @@ class MovableComponentImplTest {
             fakeGltfFeature,
             activitySpaceImpl,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             fakeExecutor,
         )
     }
@@ -223,7 +223,7 @@ class MovableComponentImplTest {
             fakeSurfaceFeature,
             activitySpaceImpl,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             fakeExecutor,
         )
     }

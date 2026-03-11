@@ -38,10 +38,10 @@ internal class SubspaceNodeEntityImpl(
     context: Context,
     xrExtensions: XrExtensions,
     private val subspaceNode: Node,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     executor: ScheduledExecutorService,
 ) :
-    AndroidXrEntity(context, xrExtensions.createNode(), xrExtensions, entityManager, executor),
+    AndroidXrEntity(context, xrExtensions.createNode(), xrExtensions, sceneNodeRegistry, executor),
     SubspaceNodeEntity {
 
     private var internalScale = Vector3(1f, 1f, 1f)

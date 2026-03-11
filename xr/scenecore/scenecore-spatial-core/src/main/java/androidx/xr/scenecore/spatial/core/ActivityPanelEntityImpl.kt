@@ -33,11 +33,11 @@ internal class ActivityPanelEntityImpl(
     node: Node,
     name: String,
     extensions: XrExtensions,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     private val activityPanel: ActivityPanel,
     windowBoundsPx: PixelDimensions,
     executor: ScheduledExecutorService,
-) : BasePanelEntity(context, node, extensions, entityManager, executor), ActivityPanelEntity {
+) : BasePanelEntity(context, node, extensions, sceneNodeRegistry, executor), ActivityPanelEntity {
 
     // TODO(b/352630140): Add a static factory method and remove the business logic from
     // SpatialSceneRuntime.
