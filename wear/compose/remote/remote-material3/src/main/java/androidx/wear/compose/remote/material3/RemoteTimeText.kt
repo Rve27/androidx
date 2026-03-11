@@ -17,7 +17,6 @@
 
 package androidx.wear.compose.remote.material3
 
-import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.text.format.DateFormat
 import androidx.annotation.RestrictTo
@@ -63,7 +62,7 @@ import androidx.compose.ui.text.font.GenericFontFamily
  * @param color The color of the text. Defaults to the `onBackground` color from the current
  *   `RemoteMaterialTheme`.
  */
-@SuppressLint("RestrictedApiAndroidX")
+@Suppress("RestrictedApiAndroidX")
 @RemoteComposable
 @Composable
 public fun RemoteTimeText(
@@ -73,7 +72,7 @@ public fun RemoteTimeText(
     fontFamily: FontFamily? = null,
     leadingText: RemoteString? = null,
     trailingText: RemoteString? = null,
-    separator: RemoteString = RemoteString("·"),
+    separator: RemoteString = "·".rs,
     color: RemoteColor = RemoteMaterialTheme.colorScheme.onBackground,
 ) {
     val text =
@@ -109,7 +108,7 @@ private fun buildTimeTextString(
     return leadingWithSeparator + time + trailingWithSeparator
 }
 
-@SuppressLint("RestrictedApiAndroidX")
+@Suppress("RestrictedApiAndroidX")
 private fun RemoteDrawScope.drawTimeText(
     text: RemoteString,
     textColor: RemoteColor,
@@ -141,9 +140,9 @@ private fun RemoteDrawScope.drawTimeText(
 
     drawTextOnCircle(
         text,
-        width / 2f,
-        height / 2f,
-        width / 2f - fontSize,
+        width / 2f.rf,
+        height / 2f.rf,
+        width / 2f.rf - fontSize,
         270f.rf,
         0f.rf,
         DrawTextOnCircle.Alignment.CENTER,
@@ -152,7 +151,7 @@ private fun RemoteDrawScope.drawTimeText(
     )
 }
 
-@SuppressLint("RestrictedApiAndroidX")
+@Suppress("RestrictedApiAndroidX")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RemoteTimeTextDefaults {
 

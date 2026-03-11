@@ -17,7 +17,6 @@
 
 package androidx.wear.compose.remote.material3
 
-import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteImageVector
 import androidx.compose.remote.creation.compose.layout.RemoteBox
@@ -29,13 +28,12 @@ import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.semantics
 import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.RemoteColor
+import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteString
-import androidx.compose.remote.creation.compose.state.asRemotePaint
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.vector.painterRemoteVector
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -51,7 +49,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * @param tint The color to apply to the icon. Defaults to the current content color provided by
  *   [DefaultTint].
  */
-@SuppressLint("RestrictedApiAndroidX")
+@Suppress("RestrictedApiAndroidX")
 @RemoteComposable
 @Composable
 public fun RemoteIcon(
@@ -65,7 +63,7 @@ public fun RemoteIcon(
         RemoteCanvas(modifier = RemoteModifier.fillMaxSize()) {
             with(painter) { onDraw() }
             // TODO(b/474687917): Temporary fix to reset tinted paint
-            remoteCanvas.usePaint(Paint().asRemotePaint())
+            usePaint(RemotePaint()) {}
         }
     }
 }
@@ -81,7 +79,7 @@ public fun RemoteIcon(
  * @param tint The color to apply to the icon. Defaults to the current content color provided by
  *   [DefaultTint].
  */
-@SuppressLint("RestrictedApiAndroidX")
+@Suppress("RestrictedApiAndroidX")
 @RemoteComposable
 @Composable
 public fun RemoteIcon(

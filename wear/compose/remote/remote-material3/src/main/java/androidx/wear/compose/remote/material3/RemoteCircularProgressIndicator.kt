@@ -79,15 +79,15 @@ public fun RemoteCircularProgressIndicator(
     gapSize: RemoteDp = RemoteProgressIndicatorDefaults.calculateRecommendedGapSize(strokeWidth),
 ) {
     RemoteCanvas(modifier = modifier.fillMaxSize()) {
-        val fullSweep = 360f.rf - ((startAngle - endAngle) % 360f + 360f) % 360f
+        val fullSweep = 360f.rf - ((startAngle - endAngle) % 360f.rf + 360f.rf) % 360f.rf
         val sweepAngle = progress * fullSweep
-        val strokePx = strokeWidth.toPx(remoteDensity)
+        val strokePx = strokeWidth.toPx()
         val diameter = min(width, height)
-        val diameterOffset = strokePx / 2f
-        val arcDimen = diameter - (diameterOffset * 2f)
+        val diameterOffset = strokePx / 2f.rf
+        val arcDimen = diameter - (diameterOffset * 2f.rf)
 
-        val left = diameterOffset + (width - diameter) / 2f
-        val top = diameterOffset + (height - diameter) / 2f
+        val left = diameterOffset + (width - diameter) / 2f.rf
+        val top = diameterOffset + (height - diameter) / 2f.rf
         val right = left + arcDimen
         val bottom = top + arcDimen
 
@@ -99,10 +99,10 @@ public fun RemoteCircularProgressIndicator(
             applyRemoteBrush(colors.trackBrush(enabled), size)
         }
 
-        val gapSizePx = gapSize.toPx(remoteDensity)
+        val gapSizePx = gapSize.toPx()
 
         // Sweep angle between two segments.
-        val gapSweep = toDeg(asin((strokePx + gapSizePx) / (diameter - strokePx))) * 2f
+        val gapSweep = toDeg(asin((strokePx + gapSizePx) / (diameter - strokePx))) * 2f.rf
 
         drawArc(
             paint = trackPaint,
@@ -144,7 +144,7 @@ public object RemoteProgressIndicatorDefaults {
     /** Returns recommended size of the gap based on `strokeWidth`. */
     @Suppress("RestrictedApiAndroidX")
     public fun calculateRecommendedGapSize(strokeWidth: RemoteDp): RemoteDp =
-        (strokeWidth.value * (1f / 3f)).asRemoteDp()
+        (strokeWidth.value * (1f.rf / 3f.rf)).asRemoteDp()
 
     /** Creates a [RemoteProgressIndicatorColors] with modified colors. */
     @Composable
