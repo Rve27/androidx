@@ -8,8 +8,8 @@ androidGradlePlugin = "9.2.0-alpha03"
 androidLint = "32.2.0-alpha03"
 # Once you have a chosen version of AGP to upgrade to, go to
 # https://developer.android.com/studio/archive and find the matching version of Studio.
-androidStudioIj = "2025.3.3.2"
-androidStudioName = "panda3-canary2"
+androidStudioIj = "2025.3.3.3"
+androidStudioName = "panda3-canary3"
 # -----------------------------------------------------------------------------
 
 androidLintMin = "31.1.1"
