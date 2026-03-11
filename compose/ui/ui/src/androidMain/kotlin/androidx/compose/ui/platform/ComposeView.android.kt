@@ -453,6 +453,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
     private fun attachedToWindow() {
+        // Sometimes Robolectric will call onAttachedToWindow() when it isn't attached. It is also
+        // possible for this View to be detached after postAtFrontOfQueue() in onAttachedToWindow().
+        if (!isAttachedToWindow) {
+            return
+        }
         previousAttachedWindowToken = windowToken
         if (composeViewContext == null) {
             val child = if (isEmpty()) null else getChildAt(0) as? AndroidComposeView
