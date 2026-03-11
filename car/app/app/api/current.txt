@@ -1113,7 +1113,7 @@ package androidx.car.app.mediaextensions.analytics.event {
 
 package androidx.car.app.messaging {
 
-  @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public class MessagingServiceConstants {
+  @androidx.car.app.annotations.RequiresCarApi(8) public class MessagingServiceConstants {
     field public static final String ACTION_HANDLE_CAR_MESSAGING = "androidx.car.app.messaging.action.HANDLE_CAR_MESSAGING";
   }
 
@@ -1587,14 +1587,14 @@ package androidx.car.app.model {
     method public androidx.car.app.model.OnItemVisibilityChangedDelegate? getOnItemVisibilityChangedDelegate();
     method public androidx.car.app.model.OnSelectedDelegate? getOnSelectedDelegate();
     method public int getSelectedIndex();
-    method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public androidx.car.app.model.ItemList.Builder toBuilder();
+    method public androidx.car.app.model.ItemList.Builder toBuilder();
   }
 
   public static final class ItemList.Builder {
     ctor public ItemList.Builder();
     method public androidx.car.app.model.ItemList.Builder addItem(androidx.car.app.model.Item);
     method public androidx.car.app.model.ItemList build();
-    method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public androidx.car.app.model.ItemList.Builder clearItems();
+    method public androidx.car.app.model.ItemList.Builder clearItems();
     method public androidx.car.app.model.ItemList.Builder setNoItemsMessage(CharSequence);
     method public androidx.car.app.model.ItemList.Builder setOnItemsVisibilityChangedListener(androidx.car.app.model.ItemList.OnItemVisibilityChangedListener);
     method public androidx.car.app.model.ItemList.Builder setOnSelectedListener(androidx.car.app.model.ItemList.OnSelectedListener);
@@ -1618,7 +1618,7 @@ package androidx.car.app.model {
     method public androidx.car.app.model.ItemList? getSingleList();
     method @Deprecated public androidx.car.app.model.CarText? getTitle();
     method public boolean isLoading();
-    method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public androidx.car.app.model.ListTemplate.Builder toBuilder();
+    method public androidx.car.app.model.ListTemplate.Builder toBuilder();
   }
 
   public static final class ListTemplate.Builder {
@@ -1626,7 +1626,7 @@ package androidx.car.app.model {
     method @androidx.car.app.annotations.RequiresCarApi(6) public androidx.car.app.model.ListTemplate.Builder addAction(androidx.car.app.model.Action);
     method public androidx.car.app.model.ListTemplate.Builder addSectionedList(androidx.car.app.model.SectionedItemList);
     method public androidx.car.app.model.ListTemplate build();
-    method @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public androidx.car.app.model.ListTemplate.Builder clearSectionedLists();
+    method public androidx.car.app.model.ListTemplate.Builder clearSectionedLists();
     method @Deprecated public androidx.car.app.model.ListTemplate.Builder setActionStrip(androidx.car.app.model.ActionStrip);
     method @androidx.car.app.annotations.RequiresCarApi(7) public androidx.car.app.model.ListTemplate.Builder setHeader(androidx.car.app.model.Header);
     method @Deprecated public androidx.car.app.model.ListTemplate.Builder setHeaderAction(androidx.car.app.model.Action);
