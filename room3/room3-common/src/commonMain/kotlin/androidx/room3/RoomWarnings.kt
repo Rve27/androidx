@@ -185,7 +185,7 @@ public object RoomWarnings {
      */
     public const val MISMATCHED_SETTER: String = "ROOM_MISMATCHED_SETTER_TYPE"
 
-    /** Reported when there is an ambiguous column on the result of a multimap query. */
+    /** Reported when there is an ambiguous column on the result of a query. */
     public const val AMBIGUOUS_COLUMN_IN_RESULT: String = "ROOM_AMBIGUOUS_COLUMN_IN_RESULT"
 
     /**
