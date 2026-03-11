@@ -458,7 +458,7 @@ package androidx.room3 {
     field public static final String MISMATCHED_GETTER = "ROOM_MISMATCHED_GETTER_TYPE";
     field public static final String MISMATCHED_SETTER = "ROOM_MISMATCHED_SETTER_TYPE";
     field public static final String MISSING_INDEX_ON_FOREIGN_KEY_CHILD = "ROOM_MISSING_FOREIGN_KEY_CHILD_INDEX";
-    field public static final String MISSING_INDEX_ON_JUNCTION = "MISSING_INDEX_ON_JUNCTION";
+    field public static final String MISSING_INDEX_ON_JUNCTION = "ROOM_MISSING_INDEX_ON_JUNCTION";
     field public static final String MISSING_JAVA_TMP_DIR = "ROOM_MISSING_JAVA_TMP_DIR";
     field public static final String MISSING_SCHEMA_LOCATION = "ROOM_MISSING_SCHEMA_LOCATION";
     field @SuppressCompatibility @androidx.room3.ExperimentalRoomApi public static final String NO_DATABASE_CONSTRUCTOR = "ROOM_NO_DATABASE_CONSTRUCTOR";
