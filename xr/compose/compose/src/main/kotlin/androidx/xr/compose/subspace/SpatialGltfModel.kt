@@ -135,7 +135,11 @@ public fun SpatialGltfModel(
     )
 }
 
-/** Remembers a [SpatialGltfModelState] object for use with the [SpatialGltfModel] API. */
+/**
+ * Remembers a [SpatialGltfModelState] object for use with the [SpatialGltfModel] API.
+ *
+ * @param source The [SpatialGltfModelSource] that defines where to load the 3D model from.
+ */
 @Composable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun rememberSpatialGltfModelState(source: SpatialGltfModelSource): SpatialGltfModelState =
