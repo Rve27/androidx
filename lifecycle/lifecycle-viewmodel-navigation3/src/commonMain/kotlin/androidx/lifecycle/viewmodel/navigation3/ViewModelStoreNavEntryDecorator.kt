@@ -22,14 +22,17 @@ package androidx.lifecycle.viewmodel.navigation3
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.ViewModelStoreProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.rememberViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.rememberViewModelStoreProvider
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
+import androidx.navigation3.runtime.SaveableStateHolderNavEntryDecorator
 import androidx.savedstate.compose.LocalSavedStateRegistryOwner
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
@@ -38,10 +41,11 @@ import kotlin.jvm.JvmName
  * Returns a [ViewModelStoreNavEntryDecorator] that is remembered across recompositions.
  *
  * @param [viewModelStoreOwner] The [ViewModelStoreOwner] that provides the [ViewModelStore] to
- *   NavEntries
- * @param [removeViewModelStoreOnPop] A lambda that returns a Boolean for whether the store for a
- *   [NavEntry] should be removed when the [NavEntry] is popped from the backStack. If true, the
- *   entry's ViewModelStore will be removed.
+ *   NavEntries. If this owner implements [HasDefaultViewModelProviderFactory], its default factory
+ *   and creation extras will be propagated to the NavEntries.
+ * @param [removeViewModelStoreOnPop] This parameter is now ignored and the lambda is never invoked.
+ *   Previously, it was a lambda that returned a Boolean for whether the store for a [NavEntry]
+ *   should be removed when the [NavEntry] is popped from the backStack.
  */
 @Composable
 @Deprecated(
@@ -60,8 +64,9 @@ public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
         },
     removeViewModelStoreOnPop: () -> Boolean = { true },
 ): ViewModelStoreNavEntryDecorator<T> {
-    return remember(viewModelStoreOwner) {
-        ViewModelStoreNavEntryDecorator(viewModelStoreOwner.viewModelStore)
+    val viewModelStoreProvider = rememberViewModelStoreProvider(parent = viewModelStoreOwner)
+    return remember(viewModelStoreOwner, viewModelStoreProvider) {
+        ViewModelStoreNavEntryDecorator(viewModelStoreProvider)
     }
 }
 
@@ -69,7 +74,8 @@ public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
  * Returns a [ViewModelStoreNavEntryDecorator] that is remembered across recompositions.
  *
  * @param [viewModelStoreOwner] The [ViewModelStoreOwner] that provides the [ViewModelStore] to
- *   NavEntries
+ *   NavEntries. If this owner implements [androidx.lifecycle.HasDefaultViewModelProviderFactory],
+ *   its default factory and creation extras will be propagated to the NavEntries.
  */
 @Composable
 public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
@@ -78,8 +84,9 @@ public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
             "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
         }
 ): ViewModelStoreNavEntryDecorator<T> {
-    return remember(viewModelStoreOwner) {
-        ViewModelStoreNavEntryDecorator(viewModelStoreOwner.viewModelStore)
+    val viewModelStoreProvider = rememberViewModelStoreProvider(parent = viewModelStoreOwner)
+    return remember(viewModelStoreOwner, viewModelStoreProvider) {
+        ViewModelStoreNavEntryDecorator(viewModelStoreProvider)
     }
 }
 
@@ -87,18 +94,13 @@ public fun <T : Any> rememberViewModelStoreNavEntryDecorator(
  * Provides the content of a [NavEntry] with a [ViewModelStoreOwner] and provides that
  * [ViewModelStoreOwner] as a [LocalViewModelStoreOwner] so that it is available within the content.
  *
- * This requires the usage of [androidx.navigation3.runtime.SaveableStateHolderNavEntryDecorator] to
- * ensure that the [NavEntry] scoped [ViewModel]s can properly provide access to
- * [androidx.lifecycle.SavedStateHandle]s
+ * This requires the usage of [SaveableStateHolderNavEntryDecorator] to ensure that the [NavEntry]
+ * scoped [ViewModel]s can properly provide access to [androidx.lifecycle.SavedStateHandle]s.
  *
- * @param [viewModelStore] The [ViewModelStore] that provides to NavEntries
- * @param [removeViewModelStoreOnPop] A lambda that returns a Boolean for whether the store for a
- *   [NavEntry] should be cleared when the [NavEntry] is popped from the backStack. If true, the
- *   entry's ViewModelStore will be removed.
  * @see NavEntryDecorator.onPop for more details on when this callback is invoked
  */
 public class ViewModelStoreNavEntryDecorator<T : Any>
-private constructor(viewModelStoreProvider: ViewModelStoreProvider) :
+public constructor(viewModelStoreProvider: ViewModelStoreProvider) :
     NavEntryDecorator<T>(
         onPop = { key -> viewModelStoreProvider.clearKey(key) },
         decorate = { entry ->
@@ -112,6 +114,13 @@ private constructor(viewModelStoreProvider: ViewModelStoreProvider) :
         },
     ) {
 
+    /**
+     * Constructs a [ViewModelStoreNavEntryDecorator].
+     *
+     * @param [viewModelStore] The [ViewModelStore] that provides to the [NavEntry].
+     * @param [removeViewModelStoreOnPop] This parameter is now ignored and the lambda is never
+     *   invoked.
+     */
     @Deprecated(
         message =
             "This parameter was a workaround for detecting configuration changes and was never " +
@@ -128,15 +137,6 @@ private constructor(viewModelStoreProvider: ViewModelStoreProvider) :
         ViewModelStoreProvider(
             parentKey = "androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator",
             parentStore = viewModelStore,
-        )
-    )
-
-    public constructor(
-        viewModelStore: ViewModelStore
-    ) : this(
-        ViewModelStoreProvider(
-            parentKey = "androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator",
-            viewModelStore,
         )
     )
 }
