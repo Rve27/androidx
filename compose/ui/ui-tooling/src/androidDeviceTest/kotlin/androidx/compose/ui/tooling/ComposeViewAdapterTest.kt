@@ -478,16 +478,24 @@ class ComposeViewAdapterTest {
         supported: List<String> = emptyList(),
         triggers: List<String> = emptyList(),
     ) {
-        val clock = PreviewAnimationClock({}, {})
+        lateinit var clock: PreviewAnimationClock
 
         activityTestRule.runOnUiThread {
-            composeViewAdapter.init("androidx.compose.ui.tooling.TestAnimationPreviewKt", preview)
-            composeViewAdapter.clock = clock
-            assertFalse(composeViewAdapter.hasAnimations())
-            assertTrue(clock.animationClocks.isEmpty())
-            assertTrue(clock.trackedUnsupportedAnimations.isEmpty())
-            assertTrue(clock.triggersToTrack.isEmpty())
+            composeViewAdapter.init(
+                "androidx.compose.ui.tooling.TestAnimationPreviewKt",
+                preview,
+                animationClockStartTime = 0,
+            )
         }
+
+        waitFor(5, TimeUnit.SECONDS) {
+            // Handle the case where onLayout was called too soon. Calling requestLayout will
+            // make sure onLayout will be called again.
+            composeViewAdapter.requestLayout()
+            composeViewAdapter.clockInitialized
+        }
+
+        activityTestRule.runOnUiThread { clock = composeViewAdapter.clock }
 
         waitFor(5, TimeUnit.SECONDS) {
             // Handle the case where onLayout was called too soon. Calling requestLayout will
