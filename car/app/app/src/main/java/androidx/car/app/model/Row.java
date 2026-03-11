@@ -286,7 +286,7 @@ public final class Row implements Item {
      *
      * @see Builder#setProgressBar(CarProgressBar)
      */
-    @RequiresCarApi(8)
+    @RequiresCarApi(9)
     @ExperimentalCarApi
     public @Nullable CarProgressBar getProgressBar() {
         return mProgressBar;
@@ -796,7 +796,7 @@ public final class Row implements Item {
          *
          * @throws NullPointerException if {@code progressBar} is {@code null}
          */
-        @RequiresCarApi(8)
+        @RequiresCarApi(9)
         @ExperimentalCarApi
         public @NonNull Builder setProgressBar(@NonNull CarProgressBar progressBar) {
             mProgressBar = requireNonNull(progressBar);
