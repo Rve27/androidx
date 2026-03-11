@@ -132,4 +132,28 @@ class RemoteStateCacheKeyTest {
 
         assertThat(intKey).isNotEqualTo(floatKey)
     }
+
+    @Test
+    fun remoteConstantCacheKey_FloatNaN_NoCollision() {
+        val nan1 = java.lang.Float.intBitsToFloat(0x7f800001)
+        val nan2 = java.lang.Float.intBitsToFloat(0x7f800002)
+
+        val key1 = RemoteConstantCacheKey(nan1)
+        val key2 = RemoteConstantCacheKey(nan2)
+
+        assertThat(key1).isNotEqualTo(key2)
+        assertThat(key1.hashCode()).isNotEqualTo(key2.hashCode())
+    }
+
+    @Test
+    fun remoteConstantCacheKey_DoubleNaN_NoCollision() {
+        val nan1 = java.lang.Double.longBitsToDouble(0x7ff0000000000001L)
+        val nan2 = java.lang.Double.longBitsToDouble(0x7ff0000000000002L)
+
+        val key1 = RemoteConstantCacheKey(nan1)
+        val key2 = RemoteConstantCacheKey(nan2)
+
+        assertThat(key1).isNotEqualTo(key2)
+        assertThat(key1.hashCode()).isNotEqualTo(key2.hashCode())
+    }
 }
