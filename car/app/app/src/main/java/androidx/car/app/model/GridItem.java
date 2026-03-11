@@ -148,7 +148,7 @@ public final class GridItem implements Item {
      *
      * @see Builder#setBadge(Badge)
      */
-    @ExperimentalCarApi
+    @RequiresCarApi(8)
     public @Nullable Badge getBadge() {
         return mBadge;
     }
@@ -158,7 +158,7 @@ public final class GridItem implements Item {
      *
      * @see Builder#setIndexable(boolean)
      */
-    @ExperimentalCarApi
+    @RequiresCarApi(8)
     public boolean isIndexable() {
         return mIndexable;
     }
@@ -382,7 +382,7 @@ public final class GridItem implements Item {
          * @throws NullPointerException if {@code image} or {@code badge} is {@code null}
          * @see #setImage(CarIcon, int)
          */
-        @ExperimentalCarApi
+        @RequiresCarApi(8)
         public @NonNull Builder setImage(@NonNull CarIcon image, @NonNull Badge badge) {
             requireNonNull(badge);
             mBadge = badge;
@@ -400,7 +400,7 @@ public final class GridItem implements Item {
          * @throws NullPointerException if {@code image} or {@code badge} is {@code null}
          * @see #setImage(CarIcon, int)
          */
-        @ExperimentalCarApi
+        @RequiresCarApi(8)
         public @NonNull Builder setImage(@NonNull CarIcon image, @GridItemImageType int imageType,
                 @NonNull Badge badge) {
             requireNonNull(badge);
@@ -472,7 +472,7 @@ public final class GridItem implements Item {
          * template's API (eg. {@code SectionedItemTemplate
          * .Builder#setAlphabeticalIndexingStrategy(int)}).
          */
-        @ExperimentalCarApi
+        @RequiresCarApi(8)
         public @NonNull Builder setIndexable(boolean indexable) {
             mIndexable = indexable;
             return this;
