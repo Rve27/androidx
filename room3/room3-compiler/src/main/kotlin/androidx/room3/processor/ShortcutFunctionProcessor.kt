@@ -98,7 +98,7 @@ class ShortcutFunctionProcessor(
 
         val entities =
             params
-                .filter { it.pojoType != null }
+                .filter { it.dataClassType != null }
                 .let {
                     if (targetEntity != null) {
                         extractPartialEntities(targetEntity, it, onValidatePartialEntity)
@@ -118,32 +118,34 @@ class ShortcutFunctionProcessor(
         params.associateBy(
             { it.name },
             { param ->
-                if (targetEntity.type.isSameType(param.pojoType!!)) {
+                if (targetEntity.type.isSameType(param.dataClassType!!)) {
                     ShortcutEntity(entity = targetEntity, partialEntity = null)
                 } else {
-                    // Target entity and pojo param are not the same, process and validate partial
-                    // entity.
-                    val pojoTypeElement = param.pojoType.typeElement
-                    val pojo =
-                        if (pojoTypeElement == null) {
+                    // Target entity and data class param are not the same, process and validate
+                    // partial entity.
+                    val dataClassTypeElement = param.dataClassType.typeElement
+                    val dataClass =
+                        if (dataClassTypeElement == null) {
                             context.logger.e(
                                 targetEntity.element,
                                 ProcessorErrors.shortcutFunctionArgumentMustBeAClass(
                                     typeName =
-                                        param.pojoType.asTypeName().toString(context.codeLanguage)
+                                        param.dataClassType
+                                            .asTypeName()
+                                            .toString(context.codeLanguage)
                                 ),
                             )
                             null
                         } else {
                             DataClassProcessor.createFor(
                                     context = context,
-                                    element = pojoTypeElement,
+                                    element = dataClassTypeElement,
                                     bindingScope = PropertyProcessor.BindingScope.BIND_TO_STMT,
                                     parent = null,
                                 )
                                 .process()
-                                .also { pojo ->
-                                    pojo.properties
+                                .also { dataClass ->
+                                    dataClass.properties
                                         .filter {
                                             targetEntity.findPropertyByColumnName(it.columnName) ==
                                                 null
@@ -159,27 +161,29 @@ class ShortcutFunctionProcessor(
                                             )
                                         }
 
-                                    if (pojo.relations.isNotEmpty()) {
-                                        // TODO: Support Pojos with relations.
+                                    if (dataClass.relations.isNotEmpty()) {
+                                        // TODO: Support data classes with relations.
                                         context.logger.e(
-                                            pojo.element,
+                                            dataClass.element,
                                             ProcessorErrors.INVALID_RELATION_IN_PARTIAL_ENTITY,
                                         )
                                     }
 
-                                    if (pojo.properties.isEmpty()) {
+                                    if (dataClass.properties.isEmpty()) {
                                         context.logger.e(
                                             executableElement,
                                             ProcessorErrors.noColumnsInPartialEntity(
                                                 partialEntityName =
-                                                    pojo.typeName.toString(context.codeLanguage)
+                                                    dataClass.typeName.toString(
+                                                        context.codeLanguage
+                                                    )
                                             ),
                                         )
                                     }
-                                    onValidatePartialEntity(targetEntity, pojo)
+                                    onValidatePartialEntity(targetEntity, dataClass)
                                 }
                         }
-                    ShortcutEntity(entity = targetEntity, partialEntity = pojo)
+                    ShortcutEntity(entity = targetEntity, partialEntity = dataClass)
                 }
             },
         )
@@ -187,7 +191,7 @@ class ShortcutFunctionProcessor(
     private fun extractEntities(params: List<ShortcutQueryParameter>) =
         params
             .mapNotNull {
-                val entityTypeElement = it.pojoType?.typeElement
+                val entityTypeElement = it.dataClassType?.typeElement
                 if (entityTypeElement == null) {
                     context.logger.e(
                         it.element,

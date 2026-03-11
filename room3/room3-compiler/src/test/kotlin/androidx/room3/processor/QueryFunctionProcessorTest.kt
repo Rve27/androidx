@@ -734,7 +734,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("name", "lastName as lName"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).isEmpty()
-            assertThat(adapter?.mapping?.unusedFields).isEmpty()
+            assertThat(adapter?.mapping?.unusedProperties).isEmpty()
             invocation.assertCompilationResult { hasNoWarnings() }
         }
     }
@@ -749,7 +749,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("name", "lastName"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).isEmpty()
-            assertThat(adapter?.mapping?.unusedFields).isEmpty()
+            assertThat(adapter?.mapping?.unusedProperties).isEmpty()
             invocation.assertCompilationResult { hasNoWarnings() }
         }
     }
@@ -767,7 +767,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("*"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).isEmpty()
-            assertThat(adapter?.mapping?.unusedFields).isEmpty()
+            assertThat(adapter?.mapping?.unusedProperties).isEmpty()
             invocation.assertCompilationResult { hasNoWarnings() }
         }
     }
@@ -903,7 +903,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("MAX(ageColumn)", "name"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).isEmpty()
-            assertThat(adapter?.mapping?.unusedFields).isEmpty()
+            assertThat(adapter?.mapping?.unusedProperties).isEmpty()
             invocation.assertCompilationResult { hasNoWarnings() }
         }
     }
@@ -918,7 +918,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("name", "lastName"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).containsExactly("name", "lastName")
-            assertThat(adapter?.mapping?.unusedFields)
+            assertThat(adapter?.mapping?.unusedProperties)
                 .containsExactlyElementsIn(adapter?.dataClass?.properties)
             invocation.assertCompilationResult {
                 hasErrorContaining(cannotFindQueryResultAdapter("foo.bar.MyClass.DataClass?"))
@@ -968,7 +968,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("uid", "name", "lastName"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).containsExactly("uid")
-            assertThat(adapter?.mapping?.unusedFields).isEmpty()
+            assertThat(adapter?.mapping?.unusedProperties).isEmpty()
             invocation.assertCompilationResult {
                 hasWarningContaining(
                     ProcessorErrors.queryPropertyDataClassMismatch(
@@ -992,7 +992,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("lastName"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).isEmpty()
-            assertThat(adapter?.mapping?.unusedFields)
+            assertThat(adapter?.mapping?.unusedProperties)
                 .containsExactlyElementsIn(
                     adapter?.dataClass?.properties?.filter { it.name == "name" }
                 )
@@ -1022,7 +1022,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("lastName"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).isEmpty()
-            assertThat(adapter?.mapping?.unusedFields)
+            assertThat(adapter?.mapping?.unusedProperties)
                 .containsExactlyElementsIn(
                     adapter?.dataClass?.properties?.filter { it.name == "name" }
                 )
@@ -1058,7 +1058,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             listOf("uid", "name"),
         ) { adapter, _, invocation ->
             assertThat(adapter?.mapping?.unusedColumns).containsExactly("uid")
-            assertThat(adapter?.mapping?.unusedFields)
+            assertThat(adapter?.mapping?.unusedProperties)
                 .containsExactlyElementsIn(
                     adapter?.dataClass?.properties?.filter { it.name == "lastName" }
                 )
