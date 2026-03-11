@@ -168,19 +168,17 @@ internal constructor(
      *
      * @param context the context from which this method is called.
      * @param instanceId the ID of the widget instance to update.
-     * @throws IllegalStateException if the widget instance or its parameters cannot be found in the
-     *   local cache.
+     * @throws IllegalArgumentException if the widget instance or its parameters cannot be found in
+     *   the local cache.
+     * @throws [WearWidgetCache.WidgetCacheMissException] if any required cache entry cannot be
+     *   found.
      */
     // TODO: b/446828899 - Add RequiresApi(37) annotation.
     // TODO: b/446828899 - Recover if cache entries are not found.
     private suspend fun pushUpdate(context: Context, instanceId: WidgetInstanceId) {
         val cache = widgetCache ?: WearWidgetCache(context)
-        val containerType =
-            cache.getInstanceType(instanceId)
-                ?: throw IllegalStateException("No container type found for instance $instanceId")
-        val params =
-            cache.getWidgetParams(containerType, instanceId)
-                ?: throw IllegalStateException("No container spec found for type $containerType")
+        val containerType = cache.getContainerTypeForInstance(instanceId)
+        val params = cache.getWidgetParams(containerType, instanceId)
 
         val rawContent =
             withContext(Dispatchers.Main.immediate) {
