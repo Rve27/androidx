@@ -133,7 +133,7 @@ dependencies {
     docs("androidx.core:core-performance:1.0.0")
     docs("androidx.core:core-performance-play-services:1.0.0")
     docs("androidx.core:core-performance-testing:1.0.0")
-    docs("androidx.core:core-pip:1.0.0-beta01")
+    docs("androidx.core:core-pip:1.0.0-alpha02")
     docs("androidx.core:core-remoteviews:1.1.0")
     docs("androidx.core:core-role:1.2.0-alpha01")
     docs("androidx.core:core-splashscreen:1.2.0")
