@@ -2,9 +2,9 @@ import androidx.room3.RoomDatabase
 import androidx.room3.util.getColumnIndexOrThrow
 import androidx.room3.util.performSuspending
 import androidx.sqlite.SQLiteStatement
+import androidx.sqlite.prepare
 import androidx.sqlite.step
 import javax.`annotation`.processing.Generated
-import kotlin.Array
 import kotlin.Int
 import kotlin.String
 import kotlin.Suppress
@@ -19,15 +19,13 @@ internal class MyDao_Impl(
   __db: RoomDatabase,
 ) : MyDao {
   private val __db: RoomDatabase
-
-  private val __fooReturnTypeConverter: FooReturnTypeConverter = FooReturnTypeConverter()
   init {
     this.__db = __db
   }
 
-  public override suspend fun getFooList(): FooList<MyEntity> {
+  public override suspend fun getFooList(): Foo<List<MyEntity>> {
     val _sql: String = "SELECT * FROM MyEntity"
-    return __fooReturnTypeConverter.convertList(__db, arrayOf("MyEntity")) {
+    return FooReturnTypeConverter.convert() {
       performSuspending(__db, true, false) { _connection ->
         val _stmt: SQLiteStatement = _connection.prepare(_sql)
         try {
@@ -40,30 +38,6 @@ internal class MyDao_Impl(
             _item = MyEntity(_tmpPk)
             _result.add(_item)
           }
-          _result
-        } finally {
-          _stmt.close()
-        }
-      }
-    }
-  }
-
-  public override suspend fun getFooArray(): FooArray<MyEntity> {
-    val _sql: String = "SELECT * FROM MyEntity"
-    return __fooReturnTypeConverter.convertArray() {
-      performSuspending(__db, true, false) { _connection ->
-        val _stmt: SQLiteStatement = _connection.prepare(_sql)
-        try {
-          val _columnIndexOfPk: Int = getColumnIndexOrThrow(_stmt, "pk")
-          val _listResult: MutableList<MyEntity> = mutableListOf()
-          while (_stmt.step()) {
-            val _item: MyEntity
-            val _tmpPk: Int
-            _tmpPk = _stmt.getLong(_columnIndexOfPk).toInt()
-            _item = MyEntity(_tmpPk)
-            _listResult.add(_item)
-          }
-          val _result: Array<MyEntity> = _listResult.toTypedArray()
           _result
         } finally {
           _stmt.close()

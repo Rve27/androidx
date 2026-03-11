@@ -289,20 +289,21 @@ object ProcessorErrors {
         "Classes annotated with @Database should extend " + ROOM_DB.canonicalName
 
     const val DAO_RETURN_TYPE_CONVERTER_MUST_HAVE_ONE_LAMBDA_PARAM_THAT_IS_SUSPEND =
-        "DaoReturnTypeConverter functions must have exactly ONE lambda parameter, must be suspend " +
+        "@DaoReturnTypeConverter functions must have exactly ONE lambda parameter, must be suspend " +
             "and can have at most one parameter of type RoomRawQuery."
 
     const val DAO_RETURN_TYPE_CONVERTER_ANNOTATION_MUST_HAVE_OPERATION_TYPE =
-        "A Dao Return Type Converter function annotated with `@DaoReturnTypeConverter` must specify the `OperationType` in the annotation."
+        "A Dao Return Type Converter function annotated with @DaoReturnTypeConverter must " +
+            "specify the OperationType in the annotation."
 
     const val FOUND_DAO_TYPE_CONVERTER_WITH_NON_SUSPEND_LAMBDA =
-        "Found a DaoReturnTypeConverter function with a non-suspend lambda parameter."
+        "Found a @DaoReturnTypeConverter function with a non-suspend lambda parameter."
 
     const val DAO_RETURN_TYPE_CONVERTER_LAMBDA_MUST_BE_LAST_PARAM =
-        "The lambda parameter of a DaoReturnTypeConverter function should be the last parameter."
+        "The lambda parameter of a @DaoReturnTypeConverter function should be the last parameter."
 
     const val DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_WITHOUT_TYPE_PARAM_SHOULD_RETURN_UNIT =
-        "DaoReturnTypeConverter functions without a type parameter should have a suspend lambda " +
+        "@DaoReturnTypeConverter functions without a type parameter should have a suspend lambda " +
             "returning Unit."
 
     const val OBSERVABLE_QUERY_NOTHING_TO_OBSERVE =
@@ -465,6 +466,13 @@ object ProcessorErrors {
 
     const val DAO_RETURN_TYPE_CONVERTER_FUNCTIONS_MUST_HAVE_AT_MOST_ONE_TYPE_PARAMETER =
         "DAO return type converter functions can have at most 1 type parameter."
+
+    fun daoReturnTypeFunctionForOpWithBadParam(op: String, paramTypeName: String) =
+        "A DAO return type converter functions for $op operations cannot have a param of type " +
+            "$paramTypeName."
+
+    fun daoReturnTypeFunctionWithBadParam(paramTypeName: String) =
+        "Unsupported parameter in DAO return type converter function: $paramTypeName."
 
     fun daoReturnTypeConverterFunctionsWithATypeParamShouldHaveReturnTypeContainingTheSameTypeArg(
         functionArg: String,
