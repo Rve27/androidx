@@ -429,7 +429,7 @@ object ProcessorErrors {
             dataClassUnusedProperties.map { (dataClassName, unusedProperties) ->
                 """
                 $dataClassName has some properties
-                [${unusedProperties.joinToString() { it.columnName }}] which are not returned by
+                [${unusedProperties.joinToString { it.columnName }}] which are not returned by
                 the query. If they are not supposed to be read from the result, you can mark them
                 with @Ignore annotation.
             """
@@ -439,7 +439,7 @@ object ProcessorErrors {
             $unusedColumnsWarning
             ${unusedPropertiesWarning.joinToString(separator = " ")}
             You can suppress this warning by annotating the function with
-            @SuppressWarnings(RoomWarnings.QUERY_MISMATCH).
+            @Suppress(RoomWarnings.QUERY_MISMATCH).
             Columns returned by the query: ${allColumns.joinToString()}.
             """
             .trim()
@@ -748,14 +748,6 @@ object ProcessorErrors {
         to add $entity to the entities section of the @Database?
         """
             .trim()
-
-    const val MISSING_ROOM_GUAVA_ARTIFACT =
-        "To use Guava features, you must add `guava`" +
-            " artifact from Room as a dependency. androidx.room3:room3-guava:<version>"
-
-    const val MISSING_ROOM_RXJAVA3_ARTIFACT =
-        "To use RxJava3 features, you must add `rxjava3`" +
-            " artifact from Room as a dependency. androidx.room3:room3-rxjava3:<version>"
 
     fun ambiguousConstructor(
         dataClass: String,
@@ -1179,20 +1171,33 @@ object ProcessorErrors {
                 }
                 AmbiguousColumnLocation.ENTITY -> {
                     checkNotNull(typeName)
-                    "in the entity '$typeName'" to
-                        "use a new data class / data class with " + "@ColumnInfo'"
+                    "in the entity '$typeName'" to "use a new data class with " + "@ColumnInfo'"
                 }
             }
         return "The column '$columnName' $locationDesc is ambiguous and cannot be properly " +
             "resolved. Please alias the column and $recommendation. Otherwise there is a risk of " +
             "the query returning invalid values. You can suppress this warning by annotating " +
-            "the function with @SuppressWarnings(RoomWarnings.AMBIGUOUS_COLUMN_IN_RESULT)."
+            "the function with @Suppress(RoomWarnings.AMBIGUOUS_COLUMN_IN_RESULT)."
     }
 
     enum class AmbiguousColumnLocation {
         MAP_COLUMN,
         DATA_CLASS,
         ENTITY,
+    }
+
+    fun ambiguousDuplicateColumn(dataClassTypeNames: List<String>, columnName: String): String {
+        val dataClassNames =
+            if (dataClassTypeNames.size > 1) {
+                "one of [${dataClassTypeNames.joinToString()}]"
+            } else {
+                dataClassTypeNames.single()
+            }
+        return "The column '$columnName' in $dataClassNames and in the query result is ambiguous " +
+            "because it is a duplicate column in the query result which can lead invalid values. " +
+            "Please remove the duplicate column from the query projection or alias the column. " +
+            "You can suppress this warning by annotating the function with " +
+            "@Suppress(RoomWarnings.AMBIGUOUS_COLUMN_IN_RESULT)."
     }
 
     const val NONNULL_VOID =

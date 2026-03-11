@@ -1766,4 +1766,23 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
             }
         }
     }
+
+    @Test
+    fun testAmbiguousDuplicateColumn() {
+        if (!enableVerification) {
+            // No warning without verification, avoiding false positives
+            return
+        }
+        singleQueryMethod<ReadQueryFunction>(
+            """
+                @Query("SELECT User.*, User.uid FROM User")
+                abstract User getUser();
+            """
+        ) { _, invocation ->
+            invocation.assertCompilationResult {
+                hasWarningCount(1)
+                hasWarning(ProcessorErrors.ambiguousDuplicateColumn(listOf("foo.bar.User"), "uid"))
+            }
+        }
+    }
 }

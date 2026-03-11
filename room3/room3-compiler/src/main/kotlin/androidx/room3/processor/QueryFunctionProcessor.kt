@@ -272,7 +272,7 @@ private class InternalQueryProcessor(
         query.resultInfo?.let { queryResultInfo ->
             val mappings = resultBinder.adapter?.mappings ?: return@let
             // If there are no mapping (e.g. might be a primitive return type result), then we
-            // can't reasonably determine cursor mismatch.
+            // can't reasonably determine result mismatch.
             if (
                 mappings.isEmpty() || mappings.none { it is DataClassRowAdapter.DataClassMapping }
             ) {
@@ -289,6 +289,8 @@ private class InternalQueryProcessor(
                     .associate {
                         it.dataClass.typeName.toString(context.codeLanguage) to it.unusedProperties
                     }
+            // Warn if there are unused columns in the query result or unused properties in the
+            // return type (properties with no matching column in the query result).
             if (unusedColumns.isNotEmpty() || dataClassUnusedProperties.isNotEmpty()) {
                 val warningMsg =
                     ProcessorErrors.queryPropertyDataClassMismatch(
@@ -301,6 +303,39 @@ private class InternalQueryProcessor(
                         dataClassUnusedProperties = dataClassUnusedProperties,
                     )
                 context.logger.w(Warning.QUERY_MISMATCH, executableElement, warningMsg)
+            }
+
+            val duplicateColumns = buildSet {
+                val visitedColumns = mutableSetOf<String>()
+                columnNames.forEach {
+                    // When Set.add() returns false the column is already visited and a dupe.
+                    if (!visitedColumns.add(it)) {
+                        add(it)
+                    }
+                }
+            }
+            if (duplicateColumns.isNotEmpty()) {
+                val singleMatchedUsedColumns =
+                    usedColumns.groupingBy { it }.eachCount().filter { it.value == 1 }.keys
+                usedColumns
+                    .filter { it in duplicateColumns && it in singleMatchedUsedColumns }
+                    .forEach { duplicatedUsedColumn ->
+                        // Warn if there are duplicate columns in the query result that match
+                        // a single data class property.
+                        val warningMsg =
+                            ProcessorErrors.ambiguousDuplicateColumn(
+                                dataClassTypeNames =
+                                    dataClassMappings.map {
+                                        it.dataClass.typeName.toString(context.codeLanguage)
+                                    },
+                                columnName = duplicatedUsedColumn,
+                            )
+                        context.logger.w(
+                            warning = Warning.AMBIGUOUS_COLUMN_IN_RESULT,
+                            element = executableElement,
+                            msg = warningMsg,
+                        )
+                    }
             }
         }
 
