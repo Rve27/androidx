@@ -17,7 +17,8 @@
 package androidx.compose.remote.creation.compose.layout
 
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.core.operations.DrawTextOnCircle
+import androidx.compose.remote.core.operations.DrawTextOnCircle.Alignment
+import androidx.compose.remote.core.operations.DrawTextOnCircle.Placement
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
@@ -67,7 +68,6 @@ internal constructor(
         block()
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawRect(
         paint: RemotePaint?,
         topLeft: RemoteOffset = RemoteOffset.Zero,
@@ -82,7 +82,6 @@ internal constructor(
         )
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawRoundRect(
         paint: RemotePaint?,
         topLeft: RemoteOffset = RemoteOffset.Zero,
@@ -126,7 +125,6 @@ internal constructor(
         )
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawArc(
         paint: RemotePaint?,
         startAngle: RemoteFloat,
@@ -328,9 +326,11 @@ internal constructor(
      * @param centerY The y-coordinate of the circle's center.
      * @param radius The radius of the circle.
      * @param startAngle The starting angle for the text.
+     * @param warpRadiusOffset the offset of the text from the circle.
      * @param paint The [RemotePaint] to use for drawing.
+     * @param alignment the alignment of the text.
+     * @param placement the placement of the text.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun drawTextOnCircle(
         text: RemoteString,
         centerX: RemoteFloat,
@@ -338,9 +338,9 @@ internal constructor(
         radius: RemoteFloat,
         startAngle: RemoteFloat,
         warpRadiusOffset: RemoteFloat,
-        alignment: DrawTextOnCircle.Alignment,
-        placement: DrawTextOnCircle.Placement,
-        paint: RemotePaint?,
+        alignment: Alignment = Alignment.CENTER,
+        placement: Placement = Placement.OUTSIDE,
+        paint: RemotePaint? = null,
     ) {
         remoteCanvas.drawTextOnCircle(
             text,

@@ -23,8 +23,8 @@ import androidx.annotation.RestrictTo
  * A remote-compatible drawing scope for RemoteCompose that provides access to the content of the
  * component being drawn.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteDrawWithContentScope(
+public class RemoteContentDrawScope
+internal constructor(
     remoteCanvas: RemoteCanvas,
     private val content: RemoteDrawScope.() -> Unit = {
         remoteCanvas.internalCanvas.document.drawComponentContent()
