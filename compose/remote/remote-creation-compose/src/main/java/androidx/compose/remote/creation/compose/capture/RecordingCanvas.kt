@@ -30,6 +30,7 @@ import androidx.compose.remote.core.RcPlatformServices.RcPathArrayCreator
 import androidx.compose.remote.core.operations.ConditionalOperations
 import androidx.compose.remote.core.operations.DrawTextOnCircle
 import androidx.compose.remote.core.operations.paint.PaintBundle
+import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.RemoteComposeWriter
 import androidx.compose.remote.creation.RemotePath
 import androidx.compose.remote.creation.compose.shapes.MorphTweenUtility
@@ -88,6 +89,9 @@ public open class RecordingCanvas(bitmap: Bitmap) : Canvas(bitmap), RemoteStateS
 
     override val layoutDirection: LayoutDirection
         get() = this.creationState.layoutDirection
+
+    public val creationDisplayInfo: CreationDisplayInfo
+        get() = creationState.creationDisplayInfo
 
     /**
      * Forces the next `usePaint` call to send all Paint attributes, regardless of changes. This is
