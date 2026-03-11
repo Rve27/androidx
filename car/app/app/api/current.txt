@@ -1990,7 +1990,6 @@ package androidx.car.app.model {
 
   public static final class TabContents.Builder {
     ctor public TabContents.Builder(androidx.car.app.model.Template);
-    ctor @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi public TabContents.Builder(androidx.car.app.model.Template, boolean);
     method public androidx.car.app.model.TabContents build();
   }
 
