@@ -47,34 +47,34 @@ class UpsertFunctionProcessor(
             delegate.extractParams(
                 targetEntityType = annotation?.get("entity")?.asType(),
                 missingParamError = ProcessorErrors.UPSERT_DOES_NOT_HAVE_ANY_PARAMETERS_TO_UPSERT,
-                onValidatePartialEntity = { entity, pojo ->
+                onValidatePartialEntity = { entity, dataClass ->
                     val missingPrimaryKeys =
                         entity.primaryKey.properties.any {
-                            pojo.findPropertyByColumnName(it.columnName) == null
+                            dataClass.findPropertyByColumnName(it.columnName) == null
                         }
                     context.checker.check(
                         entity.primaryKey.autoGenerateId || !missingPrimaryKeys,
                         executableElement,
                         ProcessorErrors.missingPrimaryKeysInPartialEntityForUpsert(
-                            partialEntityName = pojo.typeName.toString(context.codeLanguage),
+                            partialEntityName = dataClass.typeName.toString(context.codeLanguage),
                             primaryKeyNames = entity.primaryKey.properties.columnNames,
                         ),
                     )
 
-                    // Verify all non null columns without a default value are in the POJO otherwise
-                    // the UPSERT will fail with a NOT NULL constraint.
-                    val missingRequiredFields =
+                    // Verify all non null columns without a default value are in the data class
+                    // otherwise the UPSERT will fail with a NOT NULL constraint.
+                    val missingRequiredProperties =
                         (entity.properties - entity.primaryKey.properties).filter {
                             it.nonNull &&
                                 it.defaultValue == null &&
-                                pojo.findPropertyByColumnName(it.columnName) == null
+                                dataClass.findPropertyByColumnName(it.columnName) == null
                         }
                     context.checker.check(
-                        missingRequiredFields.isEmpty(),
+                        missingRequiredProperties.isEmpty(),
                         executableElement,
                         ProcessorErrors.missingRequiredColumnsInPartialEntity(
-                            partialEntityName = pojo.typeName.toString(context.codeLanguage),
-                            missingColumnNames = missingRequiredFields.map { it.columnName },
+                            partialEntityName = dataClass.typeName.toString(context.codeLanguage),
+                            missingColumnNames = missingRequiredProperties.map { it.columnName },
                         ),
                     )
                 },

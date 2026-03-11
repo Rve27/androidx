@@ -47,16 +47,16 @@ class UpdateFunctionProcessor(
             delegate.extractParams(
                 targetEntityType = annotation?.get("entity")?.asType(),
                 missingParamError = ProcessorErrors.UPDATE_MISSING_PARAMS,
-                onValidatePartialEntity = { entity, pojo ->
+                onValidatePartialEntity = { entity, dataClass ->
                     val missingPrimaryKeys =
                         entity.primaryKey.properties.filter {
-                            pojo.findPropertyByColumnName(it.columnName) == null
+                            dataClass.findPropertyByColumnName(it.columnName) == null
                         }
                     context.checker.check(
                         missingPrimaryKeys.isEmpty(),
                         executableElement,
                         ProcessorErrors.missingPrimaryKeysInPartialEntityForUpdate(
-                            partialEntityName = pojo.typeName.toString(context.codeLanguage),
+                            partialEntityName = dataClass.typeName.toString(context.codeLanguage),
                             primaryKeyNames = missingPrimaryKeys.map { it.columnName },
                         ),
                     )

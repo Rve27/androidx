@@ -272,7 +272,7 @@ private class InternalQueryProcessor(
         query.resultInfo?.let { queryResultInfo ->
             val mappings = resultBinder.adapter?.mappings ?: return@let
             // If there are no mapping (e.g. might be a primitive return type result), then we
-            // can't reasonable determine cursor mismatch.
+            // can't reasonably determine cursor mismatch.
             if (
                 mappings.isEmpty() || mappings.none { it is DataClassRowAdapter.DataClassMapping }
             ) {
@@ -280,16 +280,16 @@ private class InternalQueryProcessor(
             }
             val usedColumns = mappings.flatMap { it.usedColumns }
             val columnNames = queryResultInfo.columns.map { it.name }
-            val unusedColumns = columnNames - usedColumns
+            val unusedColumns = columnNames - usedColumns.toSet()
             val dataClassMappings =
                 mappings.filterIsInstance<DataClassRowAdapter.DataClassMapping>()
-            val pojoUnusedFields =
+            val dataClassUnusedProperties =
                 dataClassMappings
-                    .filter { it.unusedFields.isNotEmpty() }
+                    .filter { it.unusedProperties.isNotEmpty() }
                     .associate {
-                        it.dataClass.typeName.toString(context.codeLanguage) to it.unusedFields
+                        it.dataClass.typeName.toString(context.codeLanguage) to it.unusedProperties
                     }
-            if (unusedColumns.isNotEmpty() || pojoUnusedFields.isNotEmpty()) {
+            if (unusedColumns.isNotEmpty() || dataClassUnusedProperties.isNotEmpty()) {
                 val warningMsg =
                     ProcessorErrors.queryPropertyDataClassMismatch(
                         dataClassTypeNames =
@@ -298,7 +298,7 @@ private class InternalQueryProcessor(
                             },
                         unusedColumns = unusedColumns,
                         allColumns = columnNames,
-                        dataClassUnusedProperties = pojoUnusedFields,
+                        dataClassUnusedProperties = dataClassUnusedProperties,
                     )
                 context.logger.w(Warning.QUERY_MISMATCH, executableElement, warningMsg)
             }
