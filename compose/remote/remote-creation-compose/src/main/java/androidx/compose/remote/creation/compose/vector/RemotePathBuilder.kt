@@ -34,10 +34,12 @@ public class RemotePathBuilder(scope: RemoteStateScope) : RemoteStateScope by sc
     private val _nodes = ArrayList<PathNode>(32)
 
     /** Returns the list of [PathNode] currently held in this builder. */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val nodes: List<PathNode>
         get() = _nodes
 
     /** Closes the current contour by adding a [PathNode.Close] to [nodes]. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun close(): RemotePathBuilder = apply { _nodes.add(PathNode.Close) }
 
     /**
