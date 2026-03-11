@@ -48,7 +48,7 @@ final class ImpressApiTestHelper {
     static native void nativeSetExpectedSetGltfReformAffordanceEnabled(
             int impressNodeId, boolean enabled, boolean systemMovable);
 
-    static native void nativeSetExpectedAnimateGltfModelNew(
+    static native void nativeSetExpectedAnimateGltfModel(
             int nodeId,
             String animationName,
             boolean loop,
@@ -60,9 +60,9 @@ final class ImpressApiTestHelper {
 
     static native void nativeSetAnimateGltfModelFailure(String message);
 
-    static native void nativeSetExpectedStopGltfModelAnimationNew(int nodeId, int channelId);
+    static native void nativeSetExpectedStopGltfModelAnimation(int nodeId, int channelId);
 
-    static native void nativeSetExpectedToggleGltfModelAnimationNew(
+    static native void nativeSetExpectedToggleGltfModelAnimation(
             int nodeId, boolean toggle, int channelId);
 
     static native void nativeSetExpectedGetGltfModelAnimationDurationSeconds(int nodeId, int index);
