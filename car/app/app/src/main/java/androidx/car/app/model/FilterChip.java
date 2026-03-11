@@ -40,7 +40,7 @@ import java.util.Objects;
  * They can also be selected or unselected.
  */
 @CarProtocol
-@RequiresCarApi(8)
+@RequiresCarApi(9)
 @KeepFields
 public final class FilterChip implements Item {
     @Nullable
