@@ -30,6 +30,7 @@ import androidx.glance.wear.proto.legacy.TileUpdateRequest
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -169,31 +170,12 @@ internal class WidgetUpdateClientImpl(
                 dispatcher = dispatcher,
                 sendRequest = { service, pushData ->
                     suspendCancellableCoroutine { continuation ->
-                        val contCallback =
-                            object : IExecutionCallback.Stub() {
-                                override fun getInterfaceVersion(): Int = VERSION
+                        val contCallback = ContinuationCallback(continuation)
 
-                                override fun onSuccess() {
-                                    if (continuation.isActive) {
-                                        continuation.resume(Unit)
-                                    }
-                                }
-
-                                override fun onError(errorCode: Int, errorMessage: String?) {
-                                    if (continuation.isActive) {
-                                        continuation.resumeWithException(
-                                            RuntimeException(
-                                                "Update failed (code=$errorCode): $errorMessage"
-                                            )
-                                        )
-                                    }
-                                }
-                            }
                         // The service doesn't have an API to cancel in-flight requests,
                         // so we don't register a cancellation handler here. If the coroutine
                         // is cancelled, suspendCancellableCoroutine automatically handles
                         // throwing CancellationException to the caller.
-
                         try {
                             service.requestUpdate(
                                 pushData.request.toParcel(),
@@ -214,5 +196,31 @@ internal class WidgetUpdateClientImpl(
                     }
                 },
             )
+
+        private class ContinuationCallback(
+            private val continuation: CancellableContinuation<Unit>
+        ) : IExecutionCallback.Stub() {
+            override fun getInterfaceVersion(): Int = VERSION
+
+            override fun onSuccess() {
+                if (continuation.isActive) {
+                    continuation.resume(Unit)
+                }
+            }
+
+            override fun onError(errorCode: Int, errorMessage: String?) {
+                if (continuation.isActive) {
+                    val exception =
+                        when (errorCode) {
+                            IWearWidgetUpdateRequester.UPDATE_ERROR_CODE_INVALID_REQUEST_ERROR ->
+                                IllegalArgumentException(errorMessage)
+
+                            else ->
+                                RuntimeException("Update failed (code=$errorCode): $errorMessage")
+                        }
+                    continuation.resumeWithException(exception)
+                }
+            }
+        }
     }
 }
