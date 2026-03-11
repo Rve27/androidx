@@ -112,10 +112,11 @@ public class InMemoryRingBufferTraceSink(
         isDroppedTraceEvent = true
     }
 
-    /** Clears the current buffer and drops the events without writing them out. */
-    override fun flush() {
-        flushInternal(null)
-    }
+    /**
+     * Intentionally a no-op because we expect the caller to explicitly flush to a sink via
+     * [flushTo].
+     */
+    override fun flush() {}
 
     /**
      * Flushes the current buffer to the provided [BufferedSink].
