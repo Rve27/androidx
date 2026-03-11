@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Manages the mapping between [androidx.xr.scenecore.runtime.Entity] and [Entity] for a given
  * SceneCore [androidx.xr.runtime.Session].
  */
-internal class EntityManager {
+internal class EntityRegistry {
     private val rtEntityEntityMap = ConcurrentHashMap<RtEntity, Entity>()
 
     /**
@@ -96,7 +96,7 @@ internal class EntityManager {
         rtEntityEntityMap.remove(entity)
     }
 
-    /** Clears the EntityManager. */
+    /** Clears the EntityRegistry. */
     internal fun clear() {
         rtEntityEntityMap.clear()
     }
