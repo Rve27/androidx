@@ -946,6 +946,7 @@ internal class StyleOuterNode(styleState: StyleState?, style: Style) :
         get() = OuterNodeKey
 
     fun resolveStyleAndInvalidate(initial: Boolean = false) {
+        if (!isAttached) return
         val prev = if (initial) null else _resolved
         val next = if (initial) _resolved else bufferNonNull
         val density = requireDensity()
