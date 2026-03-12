@@ -916,7 +916,13 @@ internal constructor(
 ) :
     RemoteInt(
         constantValueOrNull = constantValueOrNull,
-        arrayProvider = { creationState -> longArrayOf(idProvider(creationState)) },
+        arrayProvider = { creationState ->
+            val id =
+                creationState.getOrPutVariableId(cacheKey) {
+                    Utils.idFromLong(idProvider(creationState)).toInt()
+                }
+            longArrayOf(id.toLong() + 0x100000000L)
+        },
     ),
     MutableRemoteState<Int> {
 

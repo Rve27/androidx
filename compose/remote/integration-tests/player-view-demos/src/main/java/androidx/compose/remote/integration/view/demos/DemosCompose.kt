@@ -23,6 +23,7 @@ import androidx.compose.remote.creation.compose.RemoteComposeCreationComposeFlag
 import androidx.compose.remote.integration.view.demos.examples.RcSimpleClock1
 import androidx.compose.remote.integration.view.demos.examples.ScrollViewDemo
 import androidx.compose.remote.integration.view.demos.examples.SimplePath
+import androidx.compose.remote.integration.view.demos.examples.SwitchWidgetDemo
 import androidx.compose.remote.integration.view.demos.examples.WeatherDemo
 import androidx.compose.remote.integration.view.demos.examples.shaderFireworks
 import androidx.compose.remote.integration.view.demos.utils.RCDoc
@@ -36,8 +37,7 @@ fun getRemoteComposable(context: Context): ArrayList<RCDoc> {
         getComposeDoc(context, "Compose/SimplePath") { SimplePath() },
         getComposeDoc(context, "Compose/WeatherDemo") { WeatherDemo() },
         getComposeDoc(context, "Compose/Simple Clock") { RcSimpleClock1() },
-        //        getComposeDoc(context, "Compose/Switch Widget") { SwitchWidgetDemo() }, Currently
-        // broken
+        getComposeDoc(context, "Compose/Switch Widget") { SwitchWidgetDemo() },
         getComposeDoc(context, "Compose/Calendar") { ScrollViewDemo() },
     )
 }
