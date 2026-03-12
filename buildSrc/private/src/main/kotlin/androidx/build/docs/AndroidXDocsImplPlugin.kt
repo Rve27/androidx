@@ -48,6 +48,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.ComponentMetadataContext
 import org.gradle.api.artifacts.ComponentMetadataRule
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
@@ -412,22 +413,12 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             }
         }
         nonKmpDependencyClasspath =
-            docsCompileClasspath.incoming
-                .artifactView {
-                    it.attributes.attribute(
-                        Attribute.of("artifactType", String::class.java),
-                        "android-classes",
-                    )
-                }
-                .files +
-                docsRuntimeClasspath.incoming
-                    .artifactView {
-                        it.attributes.attribute(
-                            Attribute.of("artifactType", String::class.java),
-                            "android-classes",
-                        )
-                    }
-                    .files
+            classpathArtifactsFromConfiguration(docsCompileClasspath, isJvm = true, isKmp = false) +
+                classpathArtifactsFromConfiguration(
+                    docsRuntimeClasspath,
+                    isJvm = true,
+                    isKmp = false,
+                )
 
         // Create mapping from target name to classpath for that target.
         kmpDependencyClasspathMap = project.objects.mapProperty<String, FileCollection>()
@@ -537,22 +528,50 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                 }
             }
             .map { configuration ->
-                configuration.incoming
-                    .artifactView {
-                        // Set the configuration to lenient because not every KMP project will have
-                        // all targets configured.
-                        it.isLenient = true
-                        // For android/jvm projects, make sure to use the classes jar instead of the
-                        // aar for any android dependencies, since dackka can't handle the aars.
-                        if (isJvm) {
-                            it.attributes.attribute(
-                                Attribute.of("artifactType", String::class.java),
-                                "android-classes",
-                            )
-                        }
-                    }
-                    .files
+                classpathArtifactsFromConfiguration(configuration, isJvm = isJvm, isKmp = true)
             }
+    }
+
+    /**
+     * Creates a file collection with jar and klib dependencies resolved from the [configuration].
+     *
+     * When [isJvm] is true, this transforms aar dependencies into jars which dackka can process.
+     *
+     * When [isKmp] is true, classpath resolution is lenient because not every KMP dependency exists
+     * for every target.
+     */
+    private fun classpathArtifactsFromConfiguration(
+        configuration: Configuration,
+        isJvm: Boolean,
+        isKmp: Boolean,
+    ): FileCollection {
+        fun getArtifacts(androidArtifactType: String? = null): FileCollection {
+            return configuration.incoming
+                .artifactView {
+                    // Set the configuration to lenient because not every KMP project will have all
+                    // targets configured.
+                    if (isKmp) {
+                        it.isLenient = true
+                    }
+                    // Set the aar transformation as needed.
+                    androidArtifactType?.let { androidArtifactType ->
+                        it.attributes.attribute(
+                            ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                            androidArtifactType,
+                        )
+                    }
+                }
+                .files
+        }
+
+        return if (isJvm) {
+            // Dackka can't handle the aar dependencies, so this gets the jar from any aars (it is
+            // important that this does not use the transformed android-classes jar, because that
+            // jar does not contain kotlin module metadata) and the resource jar.
+            getArtifacts("jar") + getArtifacts("r-class-jar")
+        } else {
+            getArtifacts()
+        }
     }
 
     private fun configureDackka(
