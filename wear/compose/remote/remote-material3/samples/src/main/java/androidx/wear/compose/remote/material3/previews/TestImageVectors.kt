@@ -30,7 +30,6 @@ object TestImageVectors {
 
     val VolumeUp =
         RemoteImageVector.Builder(
-                testRemoteStateScope,
                 name = "Volume up",
                 viewportWidth = 24.0f.rf,
                 viewportHeight = 24.0f.rf,
@@ -38,7 +37,7 @@ object TestImageVectors {
                 autoMirror = true,
             )
             .addPath(
-                RemotePathData(testRemoteStateScope) {
+                RemotePathData {
                     moveTo(3.0f.rf, 9.0f.rf)
                     verticalLineToRelative(6.0f.rf)
                     horizontalLineToRelative(4.0f.rf)
