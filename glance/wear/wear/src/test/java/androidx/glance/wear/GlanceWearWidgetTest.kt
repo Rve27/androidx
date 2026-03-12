@@ -18,7 +18,6 @@ package androidx.glance.wear
 
 import android.content.ComponentName
 import android.content.Context
-import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.glance.wear.cache.WearWidgetCache
 import androidx.glance.wear.core.ContainerInfo
 import androidx.glance.wear.core.WearWidgetParams
@@ -131,7 +130,7 @@ class GlanceWearWidgetTest {
     ) : GlanceWearWidget(updateClient, widgetCache) {
 
         override suspend fun provideWidgetData(context: Context, params: WearWidgetParams) =
-            WearWidgetDocument(background = WearWidgetBrush) { RemoteText("Testing...") }
+            WearWidgetDocument(background = WearWidgetBrush) {}
     }
 
     private companion object {
