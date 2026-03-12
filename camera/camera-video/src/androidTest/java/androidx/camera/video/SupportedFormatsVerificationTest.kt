@@ -194,7 +194,7 @@ class SupportedFormatsVerificationTest(
             // Filter out unsupported Video Mimes for dynamic range
             .filter { videoMime ->
                 val videoCapabilities = Recorder.getVideoCapabilities(cameraInfo, videoMime)
-                val isSupported = dynamicRange in videoCapabilities.supportedDynamicRanges
+                val isSupported = dynamicRange in videoCapabilities!!.supportedDynamicRanges
                 if (!isSupported) {
                     Log.d(
                         TAG,
