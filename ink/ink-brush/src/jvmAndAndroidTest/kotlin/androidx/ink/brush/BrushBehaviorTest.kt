@@ -60,6 +60,8 @@ class BrushBehaviorTest {
             .isEqualTo("BrushBehavior.Source.DISTANCE_TRAVELED_IN_MULTIPLES_OF_BRUSH_SIZE")
         assertThat(BrushBehavior.Source.TIME_OF_INPUT_IN_SECONDS.toString())
             .isEqualTo("BrushBehavior.Source.TIME_OF_INPUT_IN_SECONDS")
+        assertThat(BrushBehavior.Source.TIME_FROM_INPUT_TO_STROKE_END_IN_SECONDS.toString())
+            .isEqualTo("BrushBehavior.Source.TIME_FROM_INPUT_TO_STROKE_END_IN_SECONDS")
         assertThat(
                 BrushBehavior.Source.PREDICTED_DISTANCE_TRAVELED_IN_MULTIPLES_OF_BRUSH_SIZE
                     .toString()
@@ -112,47 +114,35 @@ class BrushBehaviorTest {
             .isEqualTo(
                 "BrushBehavior.Source.ACCELERATION_LATERAL_IN_MULTIPLES_OF_BRUSH_SIZE_PER_SECOND_SQUARED"
             )
-        assertThat(BrushBehavior.Source.INPUT_SPEED_IN_CENTIMETERS_PER_SECOND.toString())
-            .isEqualTo("BrushBehavior.Source.INPUT_SPEED_IN_CENTIMETERS_PER_SECOND")
-        assertThat(BrushBehavior.Source.INPUT_VELOCITY_X_IN_CENTIMETERS_PER_SECOND.toString())
-            .isEqualTo("BrushBehavior.Source.INPUT_VELOCITY_X_IN_CENTIMETERS_PER_SECOND")
-        assertThat(BrushBehavior.Source.INPUT_VELOCITY_Y_IN_CENTIMETERS_PER_SECOND.toString())
-            .isEqualTo("BrushBehavior.Source.INPUT_VELOCITY_Y_IN_CENTIMETERS_PER_SECOND")
-        assertThat(BrushBehavior.Source.INPUT_DISTANCE_TRAVELED_IN_CENTIMETERS.toString())
-            .isEqualTo("BrushBehavior.Source.INPUT_DISTANCE_TRAVELED_IN_CENTIMETERS")
-        assertThat(BrushBehavior.Source.PREDICTED_INPUT_DISTANCE_TRAVELED_IN_CENTIMETERS.toString())
-            .isEqualTo("BrushBehavior.Source.PREDICTED_INPUT_DISTANCE_TRAVELED_IN_CENTIMETERS")
+        assertThat(BrushBehavior.Source.SPEED_IN_CENTIMETERS_PER_SECOND.toString())
+            .isEqualTo("BrushBehavior.Source.SPEED_IN_CENTIMETERS_PER_SECOND")
+        assertThat(BrushBehavior.Source.VELOCITY_X_IN_CENTIMETERS_PER_SECOND.toString())
+            .isEqualTo("BrushBehavior.Source.VELOCITY_X_IN_CENTIMETERS_PER_SECOND")
+        assertThat(BrushBehavior.Source.VELOCITY_Y_IN_CENTIMETERS_PER_SECOND.toString())
+            .isEqualTo("BrushBehavior.Source.VELOCITY_Y_IN_CENTIMETERS_PER_SECOND")
+        assertThat(BrushBehavior.Source.DISTANCE_TRAVELED_IN_CENTIMETERS.toString())
+            .isEqualTo("BrushBehavior.Source.DISTANCE_TRAVELED_IN_CENTIMETERS")
+        assertThat(BrushBehavior.Source.PREDICTED_DISTANCE_TRAVELED_IN_CENTIMETERS.toString())
+            .isEqualTo("BrushBehavior.Source.PREDICTED_DISTANCE_TRAVELED_IN_CENTIMETERS")
+        assertThat(BrushBehavior.Source.ACCELERATION_IN_CENTIMETERS_PER_SECOND_SQUARED.toString())
+            .isEqualTo("BrushBehavior.Source.ACCELERATION_IN_CENTIMETERS_PER_SECOND_SQUARED")
+        assertThat(BrushBehavior.Source.ACCELERATION_X_IN_CENTIMETERS_PER_SECOND_SQUARED.toString())
+            .isEqualTo("BrushBehavior.Source.ACCELERATION_X_IN_CENTIMETERS_PER_SECOND_SQUARED")
+        assertThat(BrushBehavior.Source.ACCELERATION_Y_IN_CENTIMETERS_PER_SECOND_SQUARED.toString())
+            .isEqualTo("BrushBehavior.Source.ACCELERATION_Y_IN_CENTIMETERS_PER_SECOND_SQUARED")
         assertThat(
-                BrushBehavior.Source.INPUT_ACCELERATION_IN_CENTIMETERS_PER_SECOND_SQUARED.toString()
-            )
-            .isEqualTo("BrushBehavior.Source.INPUT_ACCELERATION_IN_CENTIMETERS_PER_SECOND_SQUARED")
-        assertThat(
-                BrushBehavior.Source.INPUT_ACCELERATION_X_IN_CENTIMETERS_PER_SECOND_SQUARED
+                BrushBehavior.Source.ACCELERATION_FORWARD_IN_CENTIMETERS_PER_SECOND_SQUARED
                     .toString()
             )
             .isEqualTo(
-                "BrushBehavior.Source.INPUT_ACCELERATION_X_IN_CENTIMETERS_PER_SECOND_SQUARED"
+                "BrushBehavior.Source.ACCELERATION_FORWARD_IN_CENTIMETERS_PER_SECOND_SQUARED"
             )
         assertThat(
-                BrushBehavior.Source.INPUT_ACCELERATION_Y_IN_CENTIMETERS_PER_SECOND_SQUARED
+                BrushBehavior.Source.ACCELERATION_LATERAL_IN_CENTIMETERS_PER_SECOND_SQUARED
                     .toString()
             )
             .isEqualTo(
-                "BrushBehavior.Source.INPUT_ACCELERATION_Y_IN_CENTIMETERS_PER_SECOND_SQUARED"
-            )
-        assertThat(
-                BrushBehavior.Source.INPUT_ACCELERATION_FORWARD_IN_CENTIMETERS_PER_SECOND_SQUARED
-                    .toString()
-            )
-            .isEqualTo(
-                "BrushBehavior.Source.INPUT_ACCELERATION_FORWARD_IN_CENTIMETERS_PER_SECOND_SQUARED"
-            )
-        assertThat(
-                BrushBehavior.Source.INPUT_ACCELERATION_LATERAL_IN_CENTIMETERS_PER_SECOND_SQUARED
-                    .toString()
-            )
-            .isEqualTo(
-                "BrushBehavior.Source.INPUT_ACCELERATION_LATERAL_IN_CENTIMETERS_PER_SECOND_SQUARED"
+                "BrushBehavior.Source.ACCELERATION_LATERAL_IN_CENTIMETERS_PER_SECOND_SQUARED"
             )
         assertThat(BrushBehavior.Source.DISTANCE_REMAINING_AS_FRACTION_OF_STROKE_LENGTH.toString())
             .isEqualTo("BrushBehavior.Source.DISTANCE_REMAINING_AS_FRACTION_OF_STROKE_LENGTH")
@@ -192,8 +182,8 @@ class BrushBehaviorTest {
             .isEqualTo("BrushBehavior.Target.HUE_OFFSET_IN_RADIANS")
         assertThat(BrushBehavior.Target.SATURATION_MULTIPLIER.toString())
             .isEqualTo("BrushBehavior.Target.SATURATION_MULTIPLIER")
-        assertThat(BrushBehavior.Target.LUMINOSITY.toString())
-            .isEqualTo("BrushBehavior.Target.LUMINOSITY")
+        assertThat(BrushBehavior.Target.LUMINOSITY_OFFSET.toString())
+            .isEqualTo("BrushBehavior.Target.LUMINOSITY_OFFSET")
         assertThat(BrushBehavior.Target.OPACITY_MULTIPLIER.toString())
             .isEqualTo("BrushBehavior.Target.OPACITY_MULTIPLIER")
     }
