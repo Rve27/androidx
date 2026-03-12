@@ -33,8 +33,9 @@ import okio.BufferedSink
  * This buffer is designed to hold trace events temporarily before they are flushed. When the buffer
  * is full, it overwrites the oldest events.
  *
- * A standard [flush] or [close] will simply clear the buffer and drop the events. To persist the
- * trace data, you must provide a [BufferedSink] by calling [flushTo] or [closeAndFlushTo].
+ * A standard [flush] will do nothing. A [close] will simply clear the buffer and drop the events.
+ * To persist the trace data, you **must** provide a [BufferedSink] by calling [flushTo] or
+ * [closeAndFlushTo].
  *
  * This implementation converts [androidx.tracing.TraceEvent]s into binary protos using
  * [the Wire library](https://square.github.io/wire/).
