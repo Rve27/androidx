@@ -691,12 +691,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             kotlinMultiplatformAndroidComponentsExtension,
         )
         kotlinMultiplatformAndroidComponentsExtension.apply {
-            finalizeDsl {
-                it.lint.targetSdk = project.defaultAndroidConfig.targetSdk
-                project.setUpBlankProguardFileForKmpAarIfNeeded(
-                    kotlinMultiplatformAndroidTarget.optimization.consumerKeepRules
-                )
-            }
+            finalizeDsl { it.lint.targetSdk = project.defaultAndroidConfig.targetSdk }
         }
 
         kotlinMultiplatformAndroidComponentsExtension.onVariants { variant ->
@@ -845,7 +840,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
 
         libraryAndroidComponentsExtension.apply {
             finalizeDsl {
-                project.setUpBlankProguardFileForAarIfNeeded(it.defaultConfig)
                 it.lint.targetSdk = project.defaultAndroidConfig.targetSdk
                 it.testOptions.targetSdk = project.defaultAndroidConfig.targetSdk
                 // Replace with a public API once available, see b/360392255
@@ -920,7 +914,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             }
         }
 
-        project.setUpBlankProguardFileForJarIfNeeded(javaExtension)
         project.configureJavaCompilationWarnings(androidXExtension)
 
         if (
