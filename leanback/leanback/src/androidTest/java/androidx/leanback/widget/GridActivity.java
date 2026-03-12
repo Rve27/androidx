@@ -30,7 +30,6 @@ import android.widget.TextView;
 
 import androidx.leanback.test.R;
 import androidx.recyclerview.widget.ConcatAdapter;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jspecify.annotations.NonNull;
@@ -420,14 +419,14 @@ public class GridActivity extends Activity {
 
     class MyAdapter extends RecyclerView.Adapter implements FacetProviderAdapter, FacetProvider {
 
-        GridLayoutManager.SpanSizeLookup mSpanSizeLookup;
+        SpanSizeLookup mSpanSizeLookup;
 
         MyAdapter() {
             if (mSpanSizes != null) {
                 if (mSpanSizes.size() == 0) {
-                    mSpanSizeLookup = new GridLayoutManager.DefaultSpanSizeLookup();
+                    mSpanSizeLookup = SpanSizeLookup.DefaultSpanSizeLookup.INSTANCE;
                 } else {
-                    mSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+                    mSpanSizeLookup = new SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int position) {
                             if (position < 0 || position >= mGridView.getAdapter().getItemCount()) {
@@ -457,7 +456,7 @@ public class GridActivity extends Activity {
         @Override
         public @Nullable Object getFacet(@NonNull Class<?> facetClass) {
             if (mSpanSizeLookup != null) {
-                if (facetClass.equals(GridLayoutManager.SpanSizeLookup.class)) {
+                if (facetClass.equals(SpanSizeLookup.class)) {
                     return mSpanSizeLookup;
                 }
             }
@@ -616,7 +615,7 @@ public class GridActivity extends Activity {
         }
         boolean multiSpan = false;
         if (mGridView.getAdapter() instanceof MyAdapter) {
-            androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup spanSizeLookup =
+            SpanSizeLookup spanSizeLookup =
                     ((MyAdapter) mGridView.getAdapter()).mSpanSizeLookup;
             multiSpan = spanSizeLookup != null && (spanSizeLookup.getSpanSize(position) > 1
                     || spanSizeLookup.getSpanSize(position) < 0);

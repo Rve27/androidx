@@ -16,7 +16,6 @@
 package androidx.leanback.widget;
 
 import androidx.collection.CircularIntArray;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.io.PrintWriter;
 
@@ -29,19 +28,19 @@ class StandardGrid extends Grid {
     Object[] mTmpItems;
     private int[] mTmpItemsSize;
 
-    SpanSupport mSpanSupport;
+    SpanSizeLookup mSpanSizeLookup;
 
     StandardGrid() {
         setNumRows(1);
     }
 
-    void setSpanSizeLookup(GridLayoutManager.SpanSizeLookup spanSizeLookup) {
+    void setSpanSizeLookup(SpanSizeLookup spanSizeLookup) {
         if (spanSizeLookup != null
-                && !(spanSizeLookup instanceof GridLayoutManager.DefaultSpanSizeLookup)) {
-            mSpanSupport = new SpanSupport(spanSizeLookup);
+                && !(spanSizeLookup instanceof SpanSizeLookup.DefaultSpanSizeLookup)) {
+            mSpanSizeLookup = spanSizeLookup;
             mSearchFocusInNextSpanGroup = true;
         } else {
-            mSpanSupport = null;
+            mSpanSizeLookup = null;
             mSearchFocusInNextSpanGroup = false;
         }
     }
@@ -57,22 +56,22 @@ class StandardGrid extends Grid {
     }
 
     private int getSpanIndex(int index) {
-        if (mSpanSupport != null) {
-            return mSpanSupport.getCachedSpanIndex(index, mNumRows);
+        if (mSpanSizeLookup != null) {
+            return mSpanSizeLookup.getCachedSpanIndex(index, mNumRows);
         }
         return index % mNumRows;
     }
 
     int getSpanGroupIndex(int index) {
-        if (mSpanSupport != null) {
-            return mSpanSupport.getCachedSpanGroupIndex(index, mNumRows);
+        if (mSpanSizeLookup != null) {
+            return mSpanSizeLookup.getCachedSpanGroupIndex(index, mNumRows);
         }
         return index / mNumRows;
     }
 
     private int getSpanSize(int index) {
-        if (mSpanSupport != null) {
-            return mSpanSupport.getSpanSize(index, mNumRows);
+        if (mSpanSizeLookup != null) {
+            return mSpanSizeLookup.getSpanSize(index, mNumRows);
         }
         return 1;
     }
