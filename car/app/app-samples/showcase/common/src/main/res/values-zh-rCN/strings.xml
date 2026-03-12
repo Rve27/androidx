@@ -250,7 +250,7 @@
     <string name="search_hint" msgid="978495498991026792">"在此处搜索"</string>
     <string name="additional_text" msgid="5755100726890686184">"请查看我们的"<annotation link="terms_of_service">"服务条款"</annotation></string>
     <string name="google_sign_in" msgid="6556259799319701727">"Google 登录"</string>
-    <string name="use_pin" msgid="7850893299484337431">"使用 PIN 码"</string>
+    <string name="use_pin" msgid="7850893299484337431">"使用数字密码"</string>
     <string name="qr_code" msgid="5487041647280777397">"二维码"</string>
     <string name="sign_in_template_not_supported_text" msgid="7184733753948837646">"您的主机不支持登录模板"</string>
     <string name="sign_in_template_not_supported_title" msgid="4892883228898541764">"不兼容的主机"</string>
