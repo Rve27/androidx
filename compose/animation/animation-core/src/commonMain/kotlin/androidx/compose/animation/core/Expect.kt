@@ -16,9 +16,6 @@
 
 package androidx.compose.animation.core
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateObserver
-
 internal expect class AtomicReference<V>(value: V) {
     fun get(): V
 
@@ -28,6 +25,3 @@ internal expect class AtomicReference<V>(value: V) {
 
     fun compareAndSet(expect: V, newValue: V): Boolean
 }
-
-// TODO(mount): b/490176913 remove this and use something common like CompositionLocal
-@Composable internal expect fun createSnapshotStateObserver(): SnapshotStateObserver
