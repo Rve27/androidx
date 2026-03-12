@@ -44,8 +44,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.util.fastForEach
 import androidx.core.util.size
 
-private const val logTag = "ComposeAutofillManager"
-
 /**
  * Semantic autofill implementation for Android.
  *

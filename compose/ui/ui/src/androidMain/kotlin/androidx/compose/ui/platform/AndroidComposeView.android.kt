@@ -61,7 +61,6 @@ import android.view.ViewStructure
 import android.view.ViewTreeObserver
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.animation.AnimationUtils
-import android.view.autofill.AutofillManager as PlatformAndroidManager
 import android.view.autofill.AutofillValue
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
@@ -99,7 +98,7 @@ import androidx.compose.ui.SessionMutex
 import androidx.compose.ui.autofill.AndroidAutofill
 import androidx.compose.ui.autofill.AndroidAutofillManager
 import androidx.compose.ui.autofill.Autofill
-import androidx.compose.ui.autofill.AutofillCallback
+import androidx.compose.ui.autofill.AutofillLoggingCallback
 import androidx.compose.ui.autofill.AutofillManager
 import androidx.compose.ui.autofill.AutofillTree
 import androidx.compose.ui.autofill.PlatformAutofillManagerImpl
@@ -684,10 +683,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     internal val _autofillManager =
         if (autofillSupported()) {
-            val platformAutofill = context.getSystemService(PlatformAndroidManager::class.java)
-            checkPreconditionNotNull(platformAutofill) { "Autofill service could not be located." }
             AndroidAutofillManager(
-                platformAutofillManager = PlatformAutofillManagerImpl(platformAutofill),
+                platformAutofillManager = PlatformAutofillManagerImpl(context),
                 semanticsOwner = semanticsOwner,
                 view = this,
                 rectManager = rectManager,
@@ -2408,11 +2405,11 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         invalidateLayoutNodeMeasurement(root)
         invalidateLayers(root)
         snapshotObserver.startObserving()
-        ifDebug {
+        ifAutofillDebug {
             if (autofillSupported()) {
                 // TODO(b/333102566): Use _semanticAutofill after switching to the newer Autofill
                 // system.
-                _autofill?.let { AutofillCallback.register(it) }
+                _autofill?.let { AutofillLoggingCallback.register(it) }
             }
         }
         // Moving this work outside of frame this callback is not trivial. The initial value will be
@@ -2550,11 +2547,11 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         }
         lifecycle.removeObserver(contentCaptureManager)
         lifecycle.removeObserver(this)
-        ifDebug {
+        ifAutofillDebug {
             if (autofillSupported()) {
                 // TODO(b/333102566): Use _semanticAutofill after switching to the newer Autofill
                 // system.
-                _autofill?.let { AutofillCallback.unregister(it) }
+                _autofill?.let { AutofillLoggingCallback.unregister(it) }
             }
         }
         viewTreeObserver.removeOnGlobalLayoutListener(this)
