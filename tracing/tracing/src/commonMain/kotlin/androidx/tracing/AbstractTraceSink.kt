@@ -43,6 +43,10 @@ public abstract class AbstractTraceSink : AutoCloseable {
     /**
      * Flush any enqueued trace events to the [AbstractTraceSink].
      *
+     * If the trace sink writes to persistent storage, this forces any buffered events to be written
+     * immediately. For in-memory sinks, this is typically a no-op because they do not have an
+     * underlying persistent storage destination by default.
+     *
      * This function may be called from any thread.
      */
     public abstract fun flush()
