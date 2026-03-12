@@ -347,7 +347,7 @@ class BasicCallControlsTest : BaseTelecomTest() {
      * requests a switch to the speaker endpoint on start. The call should use the *V2 platform
      * APIs* under the hood.
      */
-    @SdkSuppress(minSdkVersion = VERSION_CODES.UPSIDE_DOWN_CAKE)
+    @SdkSuppress(minSdkVersion = VERSION_CODES.O)
     @LargeTest
     @Test(timeout = 15000)
     fun testIncomingVideoCall_EnforcesSpeakerOnStart() {
