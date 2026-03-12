@@ -104,10 +104,11 @@ final class androidx.lifecycle/ViewModelProvider { // androidx.lifecycle/ViewMod
 open class androidx.lifecycle/ViewModelStore { // androidx.lifecycle/ViewModelStore|null[0]
     constructor <init>() // androidx.lifecycle/ViewModelStore.<init>|<init>(){}[0]
 
+    final fun <#A1: androidx.lifecycle/ViewModel> getOrPut(kotlin/Any?, kotlin/Function0<#A1>): #A1 // androidx.lifecycle/ViewModelStore.getOrPut|getOrPut(kotlin.Any?;kotlin.Function0<0:0>){0§<androidx.lifecycle.ViewModel>}[0]
     final fun clear() // androidx.lifecycle/ViewModelStore.clear|clear(){}[0]
-    final fun get(kotlin/String): androidx.lifecycle/ViewModel? // androidx.lifecycle/ViewModelStore.get|get(kotlin.String){}[0]
-    final fun keys(): kotlin.collections/Set<kotlin/String> // androidx.lifecycle/ViewModelStore.keys|keys(){}[0]
-    final fun put(kotlin/String, androidx.lifecycle/ViewModel) // androidx.lifecycle/ViewModelStore.put|put(kotlin.String;androidx.lifecycle.ViewModel){}[0]
+    final fun get(kotlin/Any?): androidx.lifecycle/ViewModel? // androidx.lifecycle/ViewModelStore.get|get(kotlin.Any?){}[0]
+    final fun keys(): kotlin.collections/Set<kotlin/Any?> // androidx.lifecycle/ViewModelStore.keys|keys(){}[0]
+    final fun put(kotlin/Any?, androidx.lifecycle/ViewModel) // androidx.lifecycle/ViewModelStore.put|put(kotlin.Any?;androidx.lifecycle.ViewModel){}[0]
     open fun toString(): kotlin/String // androidx.lifecycle/ViewModelStore.toString|toString(){}[0]
 }
 
