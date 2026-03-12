@@ -16,7 +16,9 @@
 
 package androidx.compose.remote.creation.compose.state
 
+import androidx.compose.remote.core.operations.Utils
 import com.google.common.truth.Truth.assertThat
+import kotlin.test.assertFails
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -134,26 +136,15 @@ class RemoteStateCacheKeyTest {
     }
 
     @Test
-    fun remoteConstantCacheKey_FloatNaN_NoCollision() {
-        val nan1 = java.lang.Float.intBitsToFloat(0x7f800001)
-        val nan2 = java.lang.Float.intBitsToFloat(0x7f800002)
-
-        val key1 = RemoteConstantCacheKey(nan1)
-        val key2 = RemoteConstantCacheKey(nan2)
-
-        assertThat(key1).isNotEqualTo(key2)
-        assertThat(key1.hashCode()).isNotEqualTo(key2.hashCode())
+    fun remoteConstantCacheKey_FloatNaN_NotSupported() {
+        val t = assertFails { RemoteConstantCacheKey(Utils.asNan(101)) }
+        assertThat(t.message).isEqualTo("Float constant value cannot be NaN")
     }
 
     @Test
-    fun remoteConstantCacheKey_DoubleNaN_NoCollision() {
+    fun remoteConstantCacheKey_DoubleNaN_NotSupported() {
         val nan1 = java.lang.Double.longBitsToDouble(0x7ff0000000000001L)
-        val nan2 = java.lang.Double.longBitsToDouble(0x7ff0000000000002L)
-
-        val key1 = RemoteConstantCacheKey(nan1)
-        val key2 = RemoteConstantCacheKey(nan2)
-
-        assertThat(key1).isNotEqualTo(key2)
-        assertThat(key1.hashCode()).isNotEqualTo(key2.hashCode())
+        val t = assertFails { RemoteConstantCacheKey(nan1) }
+        assertThat(t.message).isEqualTo("Double constant value cannot be NaN")
     }
 }
