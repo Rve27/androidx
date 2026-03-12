@@ -611,7 +611,38 @@ public final class Recorder implements VideoOutput {
         mRequiredFreeStorageBytes =
                 requiredFreeStorageBytes != REQUIRED_FREE_STORAGE_UNSET
                         ? requiredFreeStorageBytes : REQUIRED_FREE_STORAGE_DEFAULT_BYTES;
+
+        Logger.d(TAG, "mediaSpec = " + mediaSpec);
         Logger.d(TAG, "mRequiredFreeStorageBytes = " + formatSize(mRequiredFreeStorageBytes));
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @Override
+    public void onValidateConfig() throws IllegalArgumentException {
+        MediaSpec mediaSpec = getObservableData(mMediaSpec);
+
+        checkMimeTypeSupportOrThrow(mediaSpec);
+    }
+
+    private void checkMimeTypeSupportOrThrow(@NonNull MediaSpec mediaSpec)
+            throws IllegalArgumentException {
+        // Validate Video MIME Type
+        String videoMime = mediaSpec.getVideoSpec().getMimeType();
+        if (!Objects.equals(videoMime, MIME_TYPE_UNSPECIFIED)) {
+            List<String> supportedVideoMimes = getSupportedVideoMimeTypes();
+            checkArgument(supportedVideoMimes.contains(videoMime),
+                    "The requested video MIME type " + videoMime
+                            + " is not supported by this device.");
+        }
+
+        // Validate Audio MIME Type
+        String audioMime = mediaSpec.getAudioSpec().getMimeType();
+        if (!Objects.equals(audioMime, MIME_TYPE_UNSPECIFIED)) {
+            List<String> supportedAudioMimes = getSupportedAudioMimeTypes();
+            checkArgument(supportedAudioMimes.contains(audioMime),
+                    "The requested audio MIME type " + audioMime
+                            + " is not supported by this device.");
+        }
     }
 
     @Override
