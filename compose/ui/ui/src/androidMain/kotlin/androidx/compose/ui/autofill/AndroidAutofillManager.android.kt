@@ -99,8 +99,45 @@ internal class AndroidAutofillManager(
         previousSemanticsConfiguration: SemanticsConfiguration?,
     ) {
         val config = semanticsInfo.semanticsConfiguration
-        val prevConfig = previousSemanticsConfiguration
         val semanticsId = semanticsInfo.semanticsId
+
+        notifyAutofillManager(config, previousSemanticsConfiguration, semanticsId)
+
+        // Update currentlyDisplayedIDs if relevance to Autocommit has changed.
+        val prevRelatedToAutoCommit =
+            previousSemanticsConfiguration?.isRelatedToAutoCommit() == true
+        val currRelatedToAutoCommit = config?.isRelatedToAutoCommit() == true
+        if (prevRelatedToAutoCommit != currRelatedToAutoCommit) {
+            if (currRelatedToAutoCommit) {
+                currentlyDisplayedIDs.add(semanticsId)
+            } else {
+                currentlyDisplayedIDs.remove(semanticsId)
+            }
+        }
+    }
+
+    private fun notifyAutofillManager(
+        config: SemanticsConfiguration?,
+        prevConfig: SemanticsConfiguration?,
+        semanticsId: Int,
+    ) {
+        val previousContentDataType = prevConfig?.getOrNull(SemanticsProperties.ContentDataType)
+        val contentDataType = config?.getOrNull(SemanticsProperties.ContentDataType)
+
+        if (contentDataType == ContentDataType.None) {
+            if (previousContentDataType != ContentDataType.None) {
+                platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, false)
+            }
+            // Ignore the rest of the changes, as it is not autofillable anymore.
+            return
+        }
+
+        if (
+            previousContentDataType == ContentDataType.None &&
+                contentDataType != ContentDataType.None
+        ) {
+            platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, true)
+        }
 
         // Check Input Text.
         val previousText = prevConfig?.getOrNull(SemanticsProperties.InputText)?.text
@@ -112,7 +149,6 @@ internal class AndroidAutofillManager(
                 newText == null ->
                     platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, false)
                 else -> {
-                    val contentDataType = config.getOrNull(SemanticsProperties.ContentDataType)
                     if (contentDataType == ContentDataType.Text) {
                         platformAutofillManager.notifyValueChanged(
                             view,
@@ -136,7 +172,6 @@ internal class AndroidAutofillManager(
                     platformAutofillManager.notifyViewVisibilityChanged(view, semanticsId, false)
 
                 else -> {
-                    val contentDataType = config.getOrNull(SemanticsProperties.ContentDataType)
                     if (contentDataType == ContentDataType.Toggle) {
                         val isToggled =
                             when (newToggleValue) {
@@ -172,17 +207,6 @@ internal class AndroidAutofillManager(
                         (newFillableData as AndroidFillableData).autofillValue,
                     )
                 }
-            }
-        }
-
-        // Update currentlyDisplayedIDs if relevance to Autocommit has changed.
-        val prevRelatedToAutoCommit = prevConfig?.isRelatedToAutoCommit() == true
-        val currRelatedToAutoCommit = config?.isRelatedToAutoCommit() == true
-        if (prevRelatedToAutoCommit != currRelatedToAutoCommit) {
-            if (currRelatedToAutoCommit) {
-                currentlyDisplayedIDs.add(semanticsId)
-            } else {
-                currentlyDisplayedIDs.remove(semanticsId)
             }
         }
     }
@@ -325,6 +349,9 @@ internal class AndroidAutofillManager(
 }
 
 private fun SemanticsConfiguration.isAutofillable(): Boolean {
+    if (getOrNull(SemanticsProperties.ContentDataType) == ContentDataType.None) {
+        return false
+    }
     @Suppress("DEPRECATION")
     return props.contains(SemanticsActions.OnAutofillText) ||
         props.contains(SemanticsActions.OnFillData)
