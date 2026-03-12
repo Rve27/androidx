@@ -87,7 +87,7 @@ public open class ViewModelStore {
         val className = this::class.simpleName ?: "ViewModelStore"
         // Discourage relying on the string output.
         val identity = hashCode().toString(radix = 16)
-        return "$className#$identity(keys=${keys()})"
+        return "$className@$identity(keys=${keys()})"
     }
 }
 
