@@ -921,5 +921,13 @@ package androidx.compose.remote.creation.compose.text {
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.text.RemoteTextStyle getDefault();
   }
 
+  public final class RemoteTimeDefaults {
+    method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.remote.creation.compose.state.RemoteString defaultTimeString(optional androidx.compose.remote.creation.compose.state.RemoteBoolean is24HourFormat);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.remote.creation.compose.state.RemoteString defaultTimeString(androidx.compose.remote.creation.compose.state.RemoteBoolean?, androidx.compose.runtime.Composer?, int, int);
+    method @KotlinOnly @androidx.compose.runtime.Composable public androidx.compose.remote.creation.compose.state.RemoteBoolean is24HourFormat();
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.remote.creation.compose.state.RemoteBoolean is24HourFormat(androidx.compose.runtime.Composer?, int);
+    field public static final androidx.compose.remote.creation.compose.text.RemoteTimeDefaults INSTANCE;
+  }
+
 }
 
