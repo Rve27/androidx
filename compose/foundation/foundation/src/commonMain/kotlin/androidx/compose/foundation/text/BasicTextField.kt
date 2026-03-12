@@ -90,6 +90,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.constrain
 import androidx.compose.ui.unit.dp
@@ -480,11 +481,12 @@ internal fun BasicTextField(
                 Box(
                     propagateMinConstraints = true,
                     modifier =
-                        Modifier.minHeightForSingleLineField(textLayoutState)
+                        Modifier.heightForSingleLineField(textLayoutState)
                             .heightInLines(
                                 textStyle = textStyle,
                                 minLines = minLines,
                                 maxLines = maxLines,
+                                softWrap = !singleLine,
                             )
                             .textFieldMinSize(textStyle)
                             .clipToBounds()
@@ -533,23 +535,26 @@ internal fun BasicTextField(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-private fun Modifier.minHeightForSingleLineField(textLayoutState: TextLayoutState) =
+private fun Modifier.heightForSingleLineField(textLayoutState: TextLayoutState) =
     if (ComposeFoundationFlags.isBasicTextFieldMinSizeOptimizationEnabled) {
         layout { measurable, constraints ->
+            val height = textLayoutState.heightForSingleLineField
+            val heightPx = height.roundToPx()
             val wrappedConstraints =
                 constraints.constrain(
                     Constraints(
                         minWidth = 0,
                         maxWidth = Constraints.Infinity,
-                        minHeight = textLayoutState.minHeightForSingleLineField.roundToPx(),
-                        maxHeight = Constraints.Infinity,
+                        minHeight = heightPx,
+                        maxHeight = if (height == 0.dp) Constraints.Infinity else heightPx,
                     )
                 )
             val placeable = measurable.measure(wrappedConstraints)
             layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
         }
     } else {
-        heightIn(min = textLayoutState.minHeightForSingleLineField)
+        val height = textLayoutState.heightForSingleLineField
+        heightIn(min = height, max = if (height == 0.dp) Dp.Unspecified else height)
     }
 
 @OptIn(ExperimentalFoundationApi::class)
