@@ -110,6 +110,12 @@ package androidx.compose.remote.creation.compose.layout {
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical getSpaceEvenly();
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal getStart();
     method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical getTop();
+    method public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical spacedBy(androidx.compose.remote.creation.compose.state.RemoteDp space);
+    method public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal spacedBy(androidx.compose.remote.creation.compose.state.RemoteDp space, androidx.compose.remote.creation.compose.layout.RemoteAlignment.Horizontal alignment);
+    method public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical spacedBy(androidx.compose.remote.creation.compose.state.RemoteDp space, androidx.compose.remote.creation.compose.layout.RemoteAlignment.Vertical alignment);
+    method public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical spacedBy(androidx.compose.remote.creation.compose.state.RemoteFloat space);
+    method public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal spacedBy(androidx.compose.remote.creation.compose.state.RemoteFloat space, androidx.compose.remote.creation.compose.layout.RemoteAlignment.Horizontal alignment);
+    method public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical spacedBy(androidx.compose.remote.creation.compose.state.RemoteFloat space, androidx.compose.remote.creation.compose.layout.RemoteAlignment.Vertical alignment);
     property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Vertical Bottom;
     property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.HorizontalOrVertical Center;
     property public androidx.compose.remote.creation.compose.layout.RemoteArrangement.Horizontal End;
