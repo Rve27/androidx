@@ -16,43 +16,29 @@
 
 package androidx.tracing
 
-import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope
-
 /** The entry point for the tracing API. */
-public open class AbstractTraceDriver
-internal constructor(@get:RestrictTo(Scope.LIBRARY_GROUP) public val context: TraceContext) :
-    AutoCloseable {
+public abstract class AbstractTraceDriver : AutoCloseable {
+    public val sink: AbstractTraceSink
+    public val isEnabled: Boolean
+
     /**
      * Builds an instance of [AbstractTraceDriver] using the provided [AbstractTraceSink] if
      * `isEnabled` is `true`. Otherwise, you get an instance of a no-op [AbstractTraceDriver].
      */
-    public constructor(
-        sink: AbstractTraceSink,
-        isEnabled: Boolean,
-    ) : this(
-        context =
-            if (isEnabled) {
-                TraceContext(sink = sink, isEnabled = isEnabled)
-            } else {
-                EmptyTraceContext
-            }
-    )
+    protected constructor(sink: AbstractTraceSink, isEnabled: Boolean) {
+        this.sink = sink
+        this.isEnabled = isEnabled
+    }
 
     /** Return an instance of a [Tracer] that can be used to emit trace events. */
-    public open val tracer: Tracer by
-        lazy(mode = LazyThreadSafetyMode.PUBLICATION) { context.createTracer() }
+    public abstract val tracer: Tracer
 
     /** Flushes the trace packets into the underlying [AbstractTraceSink]. */
-    public open fun flush() {
-        context.flush()
-    }
+    public abstract fun flush()
 
     /**
      * Flushes all outstanding packets to the [AbstractTraceSink] and then closes the
      * [AbstractTraceSink].
      */
-    public override fun close() {
-        context.close()
-    }
+    public abstract override fun close()
 }
