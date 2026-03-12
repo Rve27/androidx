@@ -143,12 +143,13 @@ class ButtonTest {
     fun shapeAndColorFromThemeIsUsed() {
         lateinit var expectedShape: Shape
         val surfaceColor = Color.Blue
-        rule.setGlimmerThemeContent {
-            GlimmerTheme(Colors(surface = surfaceColor)) {
-                expectedShape = GlimmerTheme.shapes.large
-                Button(onClick = {}, modifier = Modifier.testTag("button"), border = null) {
-                    Box(Modifier.size(100.dp, 100.dp))
-                }
+        val backgroundColor = Color.Red
+        rule.setGlimmerThemeContent(
+            colors = Colors(background = backgroundColor, surface = surfaceColor)
+        ) {
+            expectedShape = GlimmerTheme.shapes.large
+            Button(onClick = {}, modifier = Modifier.testTag("button"), border = null) {
+                Box(Modifier.size(100.dp, 100.dp))
             }
         }
 
@@ -159,7 +160,7 @@ class ButtonTest {
                 density = rule.density,
                 shape = expectedShape,
                 shapeColor = surfaceColor,
-                backgroundColor = Color.Black,
+                backgroundColor = backgroundColor,
                 antiAliasingGap = with(rule.density) { 1.dp.toPx() },
             )
     }
