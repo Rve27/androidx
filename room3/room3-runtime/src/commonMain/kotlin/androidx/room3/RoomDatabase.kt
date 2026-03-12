@@ -30,6 +30,7 @@ import androidx.sqlite.SQLiteException
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
+import kotlin.jvm.JvmOverloads
 import kotlin.reflect.KClass
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -265,11 +266,13 @@ constructor() {
          * [fallbackToDestructiveMigrationOnDowngrade].
          *
          * @param dropAllTables Set to `true` if all tables should be dropped during destructive
-         *   migration including those not managed by Room. Recommended value is `true` as otherwise
-         *   Room could leave obsolete data when table names or existence changes between versions.
+         *   migration including those not managed by Room, otherwise only Room managed tables are
+         *   dropped. Default value is `true` as otherwise Room could leave obsolete data when table
+         *   names or existence changes between versions.
          * @return This builder instance.
          */
-        public fun fallbackToDestructiveMigration(dropAllTables: Boolean): Builder<T>
+        @JvmOverloads
+        public fun fallbackToDestructiveMigration(dropAllTables: Boolean = true): Builder<T>
 
         /**
          * Allows Room to destructively recreate database tables if [Migration]s are not available
@@ -278,11 +281,15 @@ constructor() {
          * For details, see [Builder.fallbackToDestructiveMigration].
          *
          * @param dropAllTables Set to `true` if all tables should be dropped during destructive
-         *   migration including those not managed by Room. Recommended value is `true` as otherwise
-         *   Room could leave obsolete data when table names or existence changes between versions.
+         *   migration including those not managed by Room, otherwise only Room managed tables are
+         *   dropped. Default value is `true` as otherwise Room could leave obsolete data when table
+         *   names or existence changes between versions.
          * @return This builder instance.
          */
-        public fun fallbackToDestructiveMigrationOnDowngrade(dropAllTables: Boolean): Builder<T>
+        @JvmOverloads
+        public fun fallbackToDestructiveMigrationOnDowngrade(
+            dropAllTables: Boolean = true
+        ): Builder<T>
 
         /**
          * Informs Room that it is allowed to destructively recreate database tables from specific
@@ -302,14 +309,16 @@ constructor() {
          * thrown.
          *
          * @param dropAllTables Set to `true` if all tables should be dropped during destructive
-         *   migration including those not managed by Room. Recommended value is `true` as otherwise
-         *   Room could leave obsolete data when table names or existence changes between versions.
+         *   migration including those not managed by Room, otherwise only Room managed tables are
+         *   dropped. Default value is `true` as otherwise Room could leave obsolete data when table
+         *   names or existence changes between versions.
          * @param startVersions The set of schema versions from which Room should use a destructive
          *   migration.
          * @return This builder instance.
          */
+        @JvmOverloads
         public fun fallbackToDestructiveMigrationFrom(
-            dropAllTables: Boolean,
+            dropAllTables: Boolean = true,
             vararg startVersions: Int,
         ): Builder<T>
 
