@@ -126,7 +126,7 @@ public object RoomWarnings {
      * It is recommended that columns on entities used as junctions contain indices, otherwise Room
      * will print this warning.
      */
-    public const val MISSING_INDEX_ON_JUNCTION: String = "MISSING_INDEX_ON_JUNCTION"
+    public const val MISSING_INDEX_ON_JUNCTION: String = "ROOM_MISSING_INDEX_ON_JUNCTION"
 
     /**
      * Reported when a data class has multiple constructors, one of which is a no-arg constructor.
