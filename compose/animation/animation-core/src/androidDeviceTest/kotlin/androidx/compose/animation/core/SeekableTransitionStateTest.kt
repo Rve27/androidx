@@ -2589,22 +2589,23 @@ class SeekableTransitionStateTest {
 
     @Test
     fun testCleanupAfterDispose() {
-
-        var seekableState: SeekableTransitionState<*> = SeekableTransitionState(true)
-        var disposed by mutableStateOf(false)
-
         fun isObserving(): Boolean {
             var active = false
-            seekableState.snapshotStateObserver?.clearIf {
+            SeekableStateObserver.clearIf {
                 active = true
                 false
             }
             return active
         }
 
+        var seekableState: SeekableTransitionState<*>?
+        var disposed by mutableStateOf(false)
+
         rule.setContent {
+            seekableState = remember { SeekableTransitionState(true) }
+
             if (!disposed) {
-                rememberTransition(transitionState = seekableState)
+                rememberTransition(transitionState = seekableState!!)
             }
         }
         rule.waitForIdle()
