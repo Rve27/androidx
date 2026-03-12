@@ -637,7 +637,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
     ) {
         androidComponents.onVariants { variant ->
             variant.configureTests(project.getKeystore())
-            variant.enableMicrobenchmarkInternalDefaults(project)
+            variant.enableBenchmarkInternalDefaults(project)
             project.validateKotlinModuleFiles(
                 variant.name,
                 variant.artifacts.get(SingleArtifact.AAR),
