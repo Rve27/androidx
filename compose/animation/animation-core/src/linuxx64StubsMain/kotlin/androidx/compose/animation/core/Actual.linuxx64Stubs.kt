@@ -16,9 +16,6 @@
 
 package androidx.compose.animation.core
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateObserver
-
 internal actual class AtomicReference<V> actual constructor(value: V) {
     actual fun get(): V = implementedInJetBrainsFork()
 
@@ -30,5 +27,3 @@ internal actual class AtomicReference<V> actual constructor(value: V) {
 
     actual fun compareAndSet(expect: V, newValue: V): Boolean = implementedInJetBrainsFork()
 }
-
-@Composable internal actual fun createSnapshotStateObserver() = SnapshotStateObserver { it() }

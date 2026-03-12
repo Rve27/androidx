@@ -202,6 +202,10 @@ private val SeekableTransitionStateTotalDurationChanged: (SeekableTransitionStat
     it.onTotalDurationChanged()
 }
 
+// This observer is also accessed from test. It should be otherwise treated as private.
+internal val SeekableStateObserver: SnapshotStateObserver by
+    lazy(LazyThreadSafetyMode.NONE) { SnapshotStateObserver { it() }.apply { start() } }
+
 /**
  * A [TransitionState] that can manipulate the progress of the [Transition] by seeking with [seekTo]
  * or animating with [animateTo].
@@ -236,17 +240,6 @@ public class SeekableTransitionState<S>(initialState: S) : TransitionState<S>() 
     private val recalculateTotalDurationNanos: () -> Unit = {
         totalDurationNanos = transition?.totalDurationNanos ?: 0L
     }
-
-    internal var snapshotStateObserver: SnapshotStateObserver? = null
-        set(value) {
-            if (field != value) {
-                field?.clear(this)
-                field?.stop()
-                field = value
-                value?.start()
-                observeTotalDuration()
-            }
-        }
 
     /**
      * The progress of the transition from [currentState] to [targetState] as a fraction of the
@@ -693,11 +686,11 @@ public class SeekableTransitionState<S>(initialState: S) : TransitionState<S>() 
 
     override fun transitionRemoved() {
         this.transition = null
-        snapshotStateObserver?.clear(this)
+        SeekableStateObserver.clear(this)
     }
 
     internal fun observeTotalDuration() {
-        snapshotStateObserver?.observeReads(
+        SeekableStateObserver.observeReads(
             scope = this,
             onValueChangedForScope = SeekableTransitionStateTotalDurationChanged,
             block = recalculateTotalDurationNanos,
@@ -819,16 +812,6 @@ public fun <T> rememberTransition(
             Snapshot.withoutReadObservation { Transition(transitionState = transitionState, label) }
         }
     if (transitionState is SeekableTransitionState) {
-        val snapshotStateObserver =
-            transitionState.snapshotStateObserver ?: createSnapshotStateObserver()
-        DisposableEffect(snapshotStateObserver) {
-            transitionState.snapshotStateObserver = snapshotStateObserver
-            onDispose {
-                if (transitionState.snapshotStateObserver === snapshotStateObserver) {
-                    transitionState.snapshotStateObserver = null
-                }
-            }
-        }
         LaunchedEffect(transitionState.currentState, transitionState.targetState) {
             transitionState.observeTotalDuration()
             transitionState.compositionContinuationMutex.withLock {
