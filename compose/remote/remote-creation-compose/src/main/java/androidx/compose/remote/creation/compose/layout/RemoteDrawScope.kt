@@ -328,8 +328,6 @@ internal constructor(
      * @param startAngle The starting angle for the text.
      * @param warpRadiusOffset the offset of the text from the circle.
      * @param paint The [RemotePaint] to use for drawing.
-     * @param alignment the alignment of the text.
-     * @param placement the placement of the text.
      */
     public fun drawTextOnCircle(
         text: RemoteString,
@@ -338,8 +336,6 @@ internal constructor(
         radius: RemoteFloat,
         startAngle: RemoteFloat,
         warpRadiusOffset: RemoteFloat,
-        alignment: Alignment = Alignment.CENTER,
-        placement: Placement = Placement.OUTSIDE,
         paint: RemotePaint? = null,
     ) {
         remoteCanvas.drawTextOnCircle(
@@ -349,8 +345,8 @@ internal constructor(
             radius,
             startAngle,
             warpRadiusOffset,
-            alignment,
-            placement,
+            Alignment.CENTER,
+            Placement.OUTSIDE,
             paint,
         )
     }
