@@ -17,8 +17,8 @@
 package androidx.ink.geometry
 
 import androidx.annotation.FloatRange
-import androidx.ink.nativeloader.NativeLoader
-import androidx.ink.nativeloader.UsedByNative
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 import kotlin.math.PI
 
 /**
@@ -93,17 +93,12 @@ public object Angle {
     @JvmField @AngleDegreesFloat public val FULL_TURN_DEGREES: Float = 360.0f
 }
 
-@UsedByNative
-internal object AngleNative {
-    init {
-        NativeLoader.load()
-    }
+expect internal object AngleNative {
+    fun normalizedDegrees(degrees: Float): Float
 
-    @UsedByNative external fun normalizedDegrees(degrees: Float): Float
+    fun normalizedAboutZeroDegrees(degrees: Float): Float
 
-    @UsedByNative external fun normalizedAboutZeroDegrees(degrees: Float): Float
+    fun normalizedRadians(radians: Float): Float
 
-    @UsedByNative external fun normalizedRadians(radians: Float): Float
-
-    @UsedByNative external fun normalizedAboutZeroRadians(radians: Float): Float
+    fun normalizedAboutZeroRadians(radians: Float): Float
 }
