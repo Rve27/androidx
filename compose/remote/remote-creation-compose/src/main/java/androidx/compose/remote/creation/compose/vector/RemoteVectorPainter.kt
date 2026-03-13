@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.compose.remote.creation.compose.vector
 
@@ -44,7 +43,7 @@ import androidx.compose.ui.unit.LayoutDirection
  * into the provided RemoteCanvas.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class RemoteVectorPainter() : RemotePainter() {
+public class RemoteVectorPainter : RemotePainter() {
 
     internal var root: RemoteGroupComponent
         get() = RemoteGroupComponent()
@@ -99,25 +98,25 @@ public class RemoteVectorPainter() : RemotePainter() {
  * Creates a [RemoteVectorPainter] from a [RemoteImageVector].
  *
  * @param vector The [RemoteImageVector] to create the painter for.
+ * @param tintColor the tine color to apply to the image.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun painterRemoteVector(
     vector: RemoteImageVector,
     tintColor: RemoteColor = RemoteColor(Color.Black),
-): RemoteVectorPainter {
+): RemotePainter {
     return createVectorPainterFromRemoteImageVector(vector, tintColor, vector.tintBlendMode)
 }
 
 /**
  * Creates a [RemoteVectorPainter] from a [RemoteImageVector].
  *
- * @param image The [ImageVector] to create the painter for.
+ * @param image the [ImageVector] to create the painter for.
+ * @param tintColor the tine color to apply to the image.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun painterRemoteVector(
     image: ImageVector,
     tintColor: RemoteColor = RemoteColor(Color.Black),
-): RemoteVectorPainter {
+): RemotePainter {
     return createVectorPainterFromImageVector(image, tintColor)
 }
 
