@@ -171,18 +171,6 @@ androidx {
     kotlinTarget = KotlinTarget.KOTLIN_2_2
 }
 
-// TODO(https://github.com/google/ksp/issues/2250) Remove when KSP migrates to the new variants API
-// Without this, dependency introduced between lintAnalyzeAndroidDeviceTest and kspAndroidDeviceTest
-tasks.withType(AndroidLintAnalysisTask).configureEach {
-    mustRunAfter(tasks.withType(KspAATask))
-}
-
-// TODO(https://github.com/google/ksp/issues/2250) Remove when KSP migrates to the new variants API
-// Without this, dependency introduced between lintAnalyzeAndroidDeviceTest and kspAndroidDeviceTest
-tasks.withType(LintModelWriterTask).configureEach {
-    mustRunAfter(tasks.withType(KspAATask))
-}
-
 afterEvaluate {
     // This project has commonTest/ sources, but none of these contain actual tests. This means that
     // testAndroidHostTest will attempt to run as it has sources, but there will be no tests to run.
