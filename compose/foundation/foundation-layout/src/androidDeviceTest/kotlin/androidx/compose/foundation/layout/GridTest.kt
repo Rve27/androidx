@@ -2643,6 +2643,123 @@ class GridTest : LayoutTest() {
             )
         }
 
+    @Test
+    fun testGrid_implicitRows_includeGapsInTotalSize() =
+        with(density) {
+            // Scenario:
+            // 1 Explicit Column, NO Explicit Rows.
+            // Gap = 10dp.
+            // 3 items placed vertically in rows 1, 2, and 3 (all implicit).
+            // Expected Total Height = (3 * 50dp) + (2 * 10dp gap) = 170dp.
+
+            val itemSize = 50.dp
+            val gapSize = 10.dp
+            val itemSizePx = itemSize.roundToPx()
+            val gapSizePx = gapSize.roundToPx()
+
+            val expectedHeight = (itemSizePx * 3) + (gapSizePx * 2)
+            val expectedWidth = itemSizePx
+
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        column(GridTrackSize.Fixed(itemSize))
+                        gap(gapSize)
+                    },
+                    modifier =
+                        Modifier.onGloballyPositioned { coordinates ->
+                            gridSize.value = coordinates.size
+                            latch.countDown()
+                        },
+                ) {
+                    // Item 1: Row 1 (Implicit)
+                    Box(Modifier.gridItem(row = 1, column = 1).size(itemSize))
+
+                    // Item 2: Row 2 (Implicit)
+                    Box(Modifier.gridItem(row = 2, column = 1).size(itemSize))
+
+                    // Item 3: Row 3 (Implicit)
+                    Box(Modifier.gridItem(row = 3, column = 1).size(itemSize))
+                }
+            }
+
+            assertTrue("Timed out waiting for layout", latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "Grid height should include gaps between implicitly created rows",
+                expectedHeight,
+                gridSize.value?.height,
+            )
+
+            assertEquals(
+                "Grid width should match the single explicit column",
+                expectedWidth,
+                gridSize.value?.width,
+            )
+        }
+
+    @Test
+    fun testGrid_implicitColumns_includeGapsInTotalSize() =
+        with(density) {
+            // Scenario:
+            // 1 Explicit Row, NO Explicit Columns.
+            // Gap = 10dp.
+            // 3 items placed horizontally in cols 1, 2, and 3 (all implicit).
+            // Expected Total Width = (3 * 50dp) + (2 * 10dp gap) = 170dp.
+
+            val itemSize = 50.dp
+            val gapSize = 10.dp
+            val itemSizePx = itemSize.roundToPx()
+            val gapSizePx = gapSize.roundToPx()
+
+            val expectedWidth = (itemSizePx * 3) + (gapSizePx * 2)
+            val expectedHeight = itemSizePx
+
+            val latch = CountDownLatch(1)
+            val gridSize = Ref<IntSize>()
+
+            show {
+                Grid(
+                    config = {
+                        row(GridTrackSize.Fixed(itemSize))
+                        // Notice: NO column() calls here.
+                        gap(gapSize)
+                    },
+                    modifier =
+                        Modifier.onGloballyPositioned { coordinates ->
+                            gridSize.value = coordinates.size
+                            latch.countDown()
+                        },
+                ) {
+                    // Item 1: Col 1 (Implicit)
+                    Box(Modifier.gridItem(row = 1, column = 1).size(itemSize))
+
+                    // Item 2: Col 2 (Implicit)
+                    Box(Modifier.gridItem(row = 1, column = 2).size(itemSize))
+
+                    // Item 3: Col 3 (Implicit)
+                    Box(Modifier.gridItem(row = 1, column = 3).size(itemSize))
+                }
+            }
+
+            assertTrue("Timed out waiting for layout", latch.await(1, TimeUnit.SECONDS))
+
+            assertEquals(
+                "Grid width should include gaps between implicitly created columns",
+                expectedWidth,
+                gridSize.value?.width,
+            )
+
+            assertEquals(
+                "Grid height should match the single explicit row",
+                expectedHeight,
+                gridSize.value?.height,
+            )
+        }
+
     @Composable
     private fun IntrinsicItem(
         minWidth: Int,
