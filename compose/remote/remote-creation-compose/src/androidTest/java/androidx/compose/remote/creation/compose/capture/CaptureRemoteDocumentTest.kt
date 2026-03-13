@@ -23,7 +23,6 @@ import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.Operations
 import androidx.compose.remote.core.RcProfiles
 import androidx.compose.remote.core.RemoteComposeBuffer
-import androidx.compose.remote.core.operations.DrawTextOnCircle
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid
 import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
@@ -118,8 +117,6 @@ class CaptureRemoteDocumentTest {
                                 radius = width / 2f,
                                 startAngle = 0f.rf,
                                 warpRadiusOffset = 0f.rf,
-                                alignment = DrawTextOnCircle.Alignment.CENTER,
-                                placement = DrawTextOnCircle.Placement.INSIDE,
                                 paint = textPaint,
                             )
                         }

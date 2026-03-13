@@ -19,7 +19,6 @@ package androidx.wear.compose.remote.material3
 
 import android.graphics.Typeface
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.core.operations.DrawTextOnCircle
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
@@ -140,8 +139,6 @@ private fun RemoteDrawScope.drawTimeText(
         width / 2f.rf - fontSize,
         270f.rf,
         0f.rf,
-        DrawTextOnCircle.Alignment.CENTER,
-        DrawTextOnCircle.Placement.OUTSIDE,
         textPaint,
     )
 }
