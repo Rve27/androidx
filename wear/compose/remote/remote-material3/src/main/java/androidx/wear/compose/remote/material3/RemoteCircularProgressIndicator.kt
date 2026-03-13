@@ -23,7 +23,6 @@ import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
-import androidx.compose.remote.creation.compose.shaders.RemoteSolidColor
 import androidx.compose.remote.creation.compose.shaders.solidColor
 import androidx.compose.remote.creation.compose.state.RemoteBoolean
 import androidx.compose.remote.creation.compose.state.RemoteColor
@@ -139,18 +138,15 @@ public object RemoteProgressIndicatorDefaults {
     /** Creates a [RemoteProgressIndicatorColors] with the default colors. */
     @Composable
     @RemoteComposable
-    @Suppress("RestrictedApiAndroidX")
     public fun colors(): RemoteProgressIndicatorColors = defaultProgressIndicatorColors()
 
     /** Returns recommended size of the gap based on `strokeWidth`. */
-    @Suppress("RestrictedApiAndroidX")
     public fun calculateRecommendedGapSize(strokeWidth: RemoteDp): RemoteDp =
         (strokeWidth.value * (1f.rf / 3f.rf)).asRemoteDp()
 
     /** Creates a [RemoteProgressIndicatorColors] with modified colors. */
     @Composable
     @RemoteComposable
-    @Suppress("RestrictedApiAndroidX")
     public fun colors(
         indicatorColor: RemoteColor? = null,
         trackColor: RemoteColor? = null,
@@ -182,7 +178,6 @@ public object RemoteProgressIndicatorDefaults {
     /** Creates a [RemoteProgressIndicatorColors] with modified brushes. */
     @Composable
     @RemoteComposable
-    @Suppress("RestrictedApiAndroidX")
     public fun colors(
         indicatorBrush: RemoteBrush? = null,
         trackBrush: RemoteBrush? = null,
@@ -205,7 +200,6 @@ public object RemoteProgressIndicatorDefaults {
 
     @Composable
     @RemoteComposable
-    @Suppress("RestrictedApiAndroidX")
     private fun defaultProgressIndicatorColors(): RemoteProgressIndicatorColors {
         val colorScheme = RemoteMaterialTheme.colorScheme
         return RemoteProgressIndicatorColors(
@@ -226,7 +220,6 @@ public object RemoteProgressIndicatorDefaults {
 
 /** Represents the indicator and track colors used in progress indicator in a remote context. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Suppress("RestrictedApiAndroidX")
 public class RemoteProgressIndicatorColors(
     public val indicatorBrush: RemoteBrush,
     public val trackBrush: RemoteBrush,
@@ -240,7 +233,6 @@ public class RemoteProgressIndicatorColors(
      *
      * @param enabled whether the component is enabled.
      */
-    @Suppress("RestrictedApiAndroidX")
     internal fun indicatorBrush(enabled: RemoteBoolean): RemoteBrush =
         resolveRemoteBrush(enabled, indicatorBrush, disabledIndicatorBrush)
 
@@ -249,7 +241,6 @@ public class RemoteProgressIndicatorColors(
      *
      * @param enabled whether the component is enabled.
      */
-    @Suppress("RestrictedApiAndroidX")
     internal fun trackBrush(enabled: RemoteBoolean): RemoteBrush =
         resolveRemoteBrush(enabled, trackBrush, disabledTrackBrush)
 
@@ -258,7 +249,6 @@ public class RemoteProgressIndicatorColors(
      *
      * @param enabled whether the component is enabled.
      */
-    @Suppress("RestrictedApiAndroidX")
     internal fun overflowTrackBrush(enabled: RemoteBoolean): RemoteBrush =
         resolveRemoteBrush(enabled, overflowTrackBrush, disabledOverflowTrackBrush)
 
@@ -292,12 +282,9 @@ public class RemoteProgressIndicatorColors(
         enabledBrush: RemoteBrush,
         disableBrush: RemoteBrush,
     ): RemoteBrush {
-        if (enabledBrush is RemoteSolidColor && disableBrush is RemoteSolidColor) {
-            val color = enabled.select(ifTrue = enabledBrush.color, ifFalse = disableBrush.color)
-            return RemoteBrush.solidColor(color)
-        }
-
-        // TODO conditionals for RemoteBrush that are not solid colors, return constant now.
-        return if (enabled.constantValueOrNull == true) enabledBrush else disableBrush
+        // Always returns the enabled brush if enabled is not constant
+        return enabled.constantValueOrNull?.let { isEnabled ->
+            if (isEnabled) enabledBrush else disableBrush
+        } ?: enabledBrush
     }
 }
