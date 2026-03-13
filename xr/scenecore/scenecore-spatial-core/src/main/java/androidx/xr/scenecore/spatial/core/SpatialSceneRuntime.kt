@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import android.provider.Settings
 import android.view.View
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
+import androidx.xr.runtime.NodeHolder
+import androidx.xr.runtime.TypeHolder
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.runtime.ActivityPanelEntity
 import androidx.xr.scenecore.runtime.AnchorEntity
@@ -403,6 +405,23 @@ private constructor(
     }
 
     public fun createSubspaceNodeEntity(node: Node, size: Dimensions): SubspaceNodeEntity {
+        val entity: SubspaceNodeEntity =
+            SubspaceNodeEntityImpl(
+                checkNotNull(activity),
+                xrExtensions,
+                node,
+                sceneNodeRegistry,
+                scheduledExecutorService,
+            )
+        entity.size = size
+        return entity
+    }
+
+    override fun createSubspaceNodeEntity(
+        nodeHolder: NodeHolder<*>,
+        size: Dimensions,
+    ): SubspaceNodeEntity {
+        val node: Node = TypeHolder.assertGetValue(nodeHolder, Node::class.java)
         val entity: SubspaceNodeEntity =
             SubspaceNodeEntityImpl(
                 checkNotNull(activity),

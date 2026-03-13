@@ -734,6 +734,7 @@ package androidx.xr.scenecore.runtime {
     method public androidx.xr.scenecore.runtime.SoundEffectPoolComponent createSoundEffectPoolComponent(androidx.xr.scenecore.runtime.SoundEffectPool soundEffectPool);
     method public androidx.xr.scenecore.runtime.SoundFieldAudioComponent createSoundFieldAudioComponent(android.content.Context context, androidx.xr.scenecore.runtime.SoundFieldAttributes rtSoundFieldAttributes);
     method public androidx.xr.scenecore.runtime.SpatialPointerComponent createSpatialPointerComponent();
+    method public androidx.xr.scenecore.runtime.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder, androidx.xr.scenecore.runtime.Dimensions size);
     method public void enablePanelDepthTest(boolean enabled);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.ActivitySpace getActivitySpace();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper getAudioTrackExtensionsWrapper();
