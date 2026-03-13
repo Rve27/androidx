@@ -572,6 +572,9 @@ public abstract class CameraController {
      * <p>{@link HighSpeedVideoSessionConfig} is not supported because it is not compatible with
      * {@link ViewPort}, which is always enabled by CameraController.
      *
+     * <p>CameraController will override the autoRotationEnabled setting in the provided
+     * SessionConfig to match its current state.
+     *
      * @param sessionConfig  The {@link SessionConfig} to be used. This can be a standard
      *                       {@link SessionConfig} or an
      *                       {@link androidx.camera.extensions.ExtensionSessionConfig}.
