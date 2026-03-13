@@ -1,10 +1,7 @@
 # Project: Jetpack Compose (General)
 
 This directory contains the libraries that make up Jetpack Compose. All code
-generated or modified must follow the guidelines in
-`frameworks/support/docs/api_guidelines` and
-`frameworks/support/docs/api_guidelines/compose_api_guidelines`, as well as the
-[Android Kotlin Style Guide](https://developer.android.com/kotlin/style-guide).
+generated or modified must follow standard AndroidX Compose guidelines.
 
 ## Project Structure Map
 - **Runtime (`compose:runtime`):** The core engine for state management and the
