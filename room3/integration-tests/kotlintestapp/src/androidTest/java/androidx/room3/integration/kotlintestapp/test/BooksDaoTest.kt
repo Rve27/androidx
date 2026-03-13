@@ -25,6 +25,8 @@ import androidx.room3.integration.kotlintestapp.vo.BookWithPublisher
 import androidx.room3.integration.kotlintestapp.vo.Either
 import androidx.room3.integration.kotlintestapp.vo.Lang
 import androidx.room3.integration.kotlintestapp.vo.Publisher
+import androidx.room3.integration.kotlintestapp.vo.isLeft
+import androidx.room3.integration.kotlintestapp.vo.isRight
 import androidx.sqlite.SQLiteException
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
