@@ -48,6 +48,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.ComponentMetadataContext
 import org.gradle.api.artifacts.ComponentMetadataRule
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.VersionConstraint
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Bundling
@@ -439,6 +440,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                     usageDescription = "api",
                     javaUsage = Usage.JAVA_API,
                     kotlinUsage = KotlinUsages.KOTLIN_API,
+                    kotlinVersionConstraint = kotlinLatest,
                 )
             val targetRuntimeClasspath =
                 createClasspathConfigurationForTarget(
@@ -453,6 +455,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                     usageDescription = "runtime",
                     javaUsage = Usage.JAVA_RUNTIME,
                     kotlinUsage = KotlinUsages.KOTLIN_RUNTIME,
+                    kotlinVersionConstraint = kotlinLatest,
                 )
             val classpath =
                 targetApiClasspath.zip(targetRuntimeClasspath) { api, runtime -> api + runtime }
@@ -480,6 +483,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         usageDescription: String,
         javaUsage: String,
         kotlinUsage: String,
+        kotlinVersionConstraint: VersionConstraint,
     ): Provider<FileCollection> {
         // Skip the common target, which is associated with the metadata compilation.
         if (target.platformType == KotlinPlatformType.common)
@@ -507,6 +511,10 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                         Category.CATEGORY_ATTRIBUTE,
                         project.objects.named<Category>(Category.LIBRARY),
                     )
+                    it.attribute(
+                        BuildTypeAttr.ATTRIBUTE,
+                        project.objects.named<BuildTypeAttr>("release"),
+                    )
                     // Add additional attributes based on the target.
                     target.attributes.keySet().forEach { key ->
                         if (key.type == String::class.java) {
@@ -523,6 +531,13 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                                 KotlinWasmTargetAttribute.wasmTargetAttribute,
                                 wasmTargetType.toAttribute(),
                             )
+                        }
+                    }
+                }
+                config.resolutionStrategy {
+                    it.eachDependency { details ->
+                        if (details.requested.group == "org.jetbrains.kotlin") {
+                            details.useVersion(kotlinVersionConstraint.requiredVersion)
                         }
                     }
                 }
