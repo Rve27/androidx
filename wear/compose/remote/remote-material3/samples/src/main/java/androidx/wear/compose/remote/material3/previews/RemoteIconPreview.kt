@@ -23,9 +23,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
-import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.RemoteColor
-import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.creation.compose.state.rememberNamedRemoteColor
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.profile.Profile
@@ -44,11 +42,7 @@ import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 @Composable
 @RemoteComposable
 fun RemoteIconDefault() {
-    RemoteIcon(
-        imageVector = TestImageVectors.VolumeUp,
-        contentDescription = null,
-        modifier = RemoteModifier.size(24.rdp),
-    )
+    RemoteIcon(imageVector = TestImageVectors.VolumeUp, contentDescription = null)
 }
 
 @WearPreviewDevices
@@ -62,7 +56,6 @@ private fun RemoteIconPreview(
 fun RemoteIconFromResource() {
     RemoteIcon(
         imageVector = ImageVector.vectorResource(R.drawable.gs_map_wght500rond100_vd_theme_24),
-        modifier = RemoteModifier.size(24.rdp),
         contentDescription = null,
     )
 }
@@ -77,12 +70,7 @@ private fun RemoteIconFromResourcePreview(
 @RemoteComposable
 fun RemoteIconColor() {
     val color = rememberNamedRemoteColor("testColor", Color.Red)
-    RemoteIcon(
-        imageVector = VolumeUp,
-        contentDescription = null,
-        tint = color,
-        modifier = RemoteModifier.size(24.rdp),
-    )
+    RemoteIcon(imageVector = VolumeUp, contentDescription = null, tint = color)
 }
 
 @WearPreviewDevices
