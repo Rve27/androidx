@@ -56,7 +56,6 @@ public fun RemoteButtonGroup(
     RemoteButtonGroupImpl(modifier, spacing, contentPadding, verticalAlignment, content)
 }
 
-@Suppress("RestrictedApiAndroidX")
 @Composable
 @RemoteComposable
 private fun RemoteButtonGroupImpl(

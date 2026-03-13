@@ -150,7 +150,6 @@ public object RemoteIconButtonDefaults {
      *
      * @param buttonSize The size of the icon button
      */
-    @Suppress("RestrictedApiAndroidX")
     public fun iconSizeFor(buttonSize: RemoteDp): RemoteDp =
         buttonSize.value
             .gt(LargeButtonSize.value)
