@@ -425,40 +425,18 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         kmpDependencyClasspathMap = project.objects.mapProperty<String, FileCollection>()
         val kmpExtension = project.extensions.getByType<KotlinMultiplatformExtension>()
         kmpExtension.targets.configureEach { target ->
-            // Find both the API and runtime dependencies. Technically only the API dependencies
-            // should be required for docs, but projects don't always use the correct configuration.
-            val targetApiClasspath =
-                createClasspathConfigurationForTarget(
-                    project = project,
-                    extendsFromConfigurations =
-                        arrayOf(
-                            multiplatformDocsConfiguration,
-                            multiplatformDocsWithoutApiSinceConfiguration,
-                            stubsConfiguration,
-                        ),
-                    target = target,
-                    usageDescription = "api",
-                    javaUsage = Usage.JAVA_API,
-                    kotlinUsage = KotlinUsages.KOTLIN_API,
-                    kotlinVersionConstraint = kotlinLatest,
-                )
-            val targetRuntimeClasspath =
-                createClasspathConfigurationForTarget(
-                    project = project,
-                    extendsFromConfigurations =
-                        arrayOf(
-                            multiplatformDocsConfiguration,
-                            multiplatformDocsWithoutApiSinceConfiguration,
-                            stubsConfiguration,
-                        ),
-                    target = target,
-                    usageDescription = "runtime",
-                    javaUsage = Usage.JAVA_RUNTIME,
-                    kotlinUsage = KotlinUsages.KOTLIN_RUNTIME,
-                    kotlinVersionConstraint = kotlinLatest,
-                )
             val classpath =
-                targetApiClasspath.zip(targetRuntimeClasspath) { api, runtime -> api + runtime }
+                createClasspathConfigurationsForTarget(
+                    project = project,
+                    extendsFromConfigurations =
+                        arrayOf(
+                            multiplatformDocsConfiguration,
+                            multiplatformDocsWithoutApiSinceConfiguration,
+                            stubsConfiguration,
+                        ),
+                    target = target,
+                    kotlinVersionConstraint = kotlinLatest,
+                )
             // Add the classpath for the target to the mapping.
             kmpDependencyClasspathMap.put(target.name + "Main", classpath)
             // It is an error to configure separate jvm and desktop targets, so treat the jvm target
@@ -467,6 +445,41 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                 kmpDependencyClasspathMap.put("desktopMain", classpath)
             }
         }
+    }
+
+    /**
+     * Configures the classpath for the given [target] extending from all configurations in
+     * [extendsFromConfigurations], with both the API and runtime dependencies.
+     */
+    private fun createClasspathConfigurationsForTarget(
+        project: Project,
+        extendsFromConfigurations: Array<Configuration>,
+        target: KotlinTarget,
+        kotlinVersionConstraint: VersionConstraint,
+    ): Provider<FileCollection> {
+        // Find both the API and runtime dependencies. Technically only the API dependencies
+        // should be required for docs, but projects don't always use the correct configuration.
+        val targetApiClasspath =
+            createClasspathConfigurationForTarget(
+                project = project,
+                extendsFromConfigurations = extendsFromConfigurations,
+                target = target,
+                usageDescription = "api",
+                javaUsage = Usage.JAVA_API,
+                kotlinUsage = KotlinUsages.KOTLIN_API,
+                kotlinVersionConstraint = kotlinVersionConstraint,
+            )
+        val targetRuntimeClasspath =
+            createClasspathConfigurationForTarget(
+                project = project,
+                extendsFromConfigurations = extendsFromConfigurations,
+                target = target,
+                usageDescription = "runtime",
+                javaUsage = Usage.JAVA_RUNTIME,
+                kotlinUsage = KotlinUsages.KOTLIN_RUNTIME,
+                kotlinVersionConstraint = kotlinVersionConstraint,
+            )
+        return targetApiClasspath.zip(targetRuntimeClasspath) { api, runtime -> api + runtime }
     }
 
     /**
