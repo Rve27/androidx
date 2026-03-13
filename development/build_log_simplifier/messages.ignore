@@ -61,7 +61,7 @@ See the complete report at file://.*/build/reports/configuration\-cache/[^ ]*/[^
 A fine\-grained performance profile is available\: use the \-\-scan option\.
 # > Task :docs
 # b/484324711
-WARN: Couldn't resolve link for .*
+WARN: Couldn't resolve link: .*
 WARN: .*\/unzippedJvmSources\/android\/support\/v4\/media\/session\/MediaControllerCompat\.java:[0-9]+ Missing @param tag for parameter `context` in DFunction MediaControllerCompat
 WARN: .*\/unzippedJvmSources\/androidx\/appcompat\/app\/AppCompatDelegate\.java:[0-9]+ Missing @param tag for parameter `activity` in DFunction create
 WARN: .*\/unzippedJvmSources\/androidx\/appcompat\/app\/AppCompatDelegate\.java:[0-9]+ Missing @param tag for parameter `context` in DFunction create
