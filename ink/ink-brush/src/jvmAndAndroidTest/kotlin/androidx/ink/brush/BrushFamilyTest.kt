@@ -43,8 +43,8 @@ class BrushFamilyTest {
 
     @Test
     fun inputModelHashCode_isSameForIdenticalModels() {
-        assertThat(BrushFamily.SPRING_MODEL.hashCode())
-            .isEqualTo(BrushFamily.SPRING_MODEL.hashCode())
+        assertThat(BrushFamily.DEFAULT_INPUT_MODEL.hashCode())
+            .isEqualTo(BrushFamily.DEFAULT_INPUT_MODEL.hashCode())
     }
 
     @Test
@@ -53,7 +53,11 @@ class BrushFamilyTest {
             BrushFamily(
                 customTip,
                 customPaint,
-                inputModel = BrushFamily.SPRING_MODEL,
+                inputModel =
+                    BrushFamily.SlidingWindowModel(
+                        windowDurationMillis = 250,
+                        upsamplingFrequencyHz = 1,
+                    ),
                 clientBrushFamilyId = customBrushFamilyId,
             )
         val differentCoat = BrushCoat(BrushTip(), BrushPaint())
@@ -65,7 +69,11 @@ class BrushFamilyTest {
                 BrushFamily(
                     tip = customTip,
                     paint = customPaint,
-                    inputModel = BrushFamily.SPRING_MODEL,
+                    inputModel =
+                        BrushFamily.SlidingWindowModel(
+                            windowDurationMillis = 250,
+                            upsamplingFrequencyHz = 1,
+                        ),
                     clientBrushFamilyId = customBrushFamilyId,
                 )
             )
@@ -78,25 +86,30 @@ class BrushFamilyTest {
     }
 
     @Test
-    fun inputModelEquals_comparesModels() {
-        assertThat(BrushFamily.SPRING_MODEL).isEqualTo(BrushFamily.SPRING_MODEL)
-    }
-
-    @Test
     fun toString_returnsExpectedValues() {
-        assertThat(BrushFamily(inputModel = BrushFamily.SPRING_MODEL).toString())
+        assertThat(
+                BrushFamily(
+                        inputModel =
+                            BrushFamily.SlidingWindowModel(
+                                windowDurationMillis = 1000,
+                                upsamplingFrequencyHz = 1,
+                            )
+                    )
+                    .toString()
+            )
             .isEqualTo(
                 "BrushFamily(developerComment=, coats=[BrushCoat(tip=BrushTip(scale=(1.0, 1.0), " +
                     "cornerRounding=1.0, slantDegrees=0.0, pinch=0.0, rotationDegrees=0.0, " +
                     "particleGapDistanceScale=0.0, particleGapDurationMillis=0, behaviors=[]), " +
                     "paintPreferences=[BrushPaint(textureLayers=[], colorFunctions=[], " +
-                    "selfOverlap=SelfOverlap.ANY)])], inputModel=SpringModel, clientBrushFamilyId=)"
+                    "selfOverlap=SelfOverlap.ANY)])], " +
+                    "inputModel=SlidingWindowModel(windowDurationMillis=1000, upsamplingFrequencyHz=1), " +
+                    "clientBrushFamilyId=)"
             )
     }
 
     @Test
     fun inputModelToString_returnsExpectedValues() {
-        assertThat(BrushFamily.SPRING_MODEL.toString()).isEqualTo("SpringModel")
         assertThat(BrushFamily.EXPERIMENTAL_NAIVE_MODEL.toString())
             .isEqualTo("ExperimentalNaiveModel")
         assertThat(
@@ -123,7 +136,8 @@ class BrushFamilyTest {
                     upsamplingFrequencyHz = 150,
                 )
             )
-        assertThat(BrushFamily.SPRING_MODEL).isEqualTo(BrushFamily.SPRING_MODEL)
+        assertThat(BrushFamily.EXPERIMENTAL_NAIVE_MODEL)
+            .isEqualTo(BrushFamily.EXPERIMENTAL_NAIVE_MODEL)
 
         assertThat(
                 BrushFamily.SlidingWindowModel(
@@ -155,8 +169,8 @@ class BrushFamilyTest {
                     upsamplingFrequencyHz = 150,
                 )
             )
-            .isNotEqualTo(BrushFamily.SPRING_MODEL)
-        assertThat(BrushFamily.SPRING_MODEL)
+            .isNotEqualTo(BrushFamily.EXPERIMENTAL_NAIVE_MODEL)
+        assertThat(BrushFamily.EXPERIMENTAL_NAIVE_MODEL)
             .isNotEqualTo(
                 BrushFamily.SlidingWindowModel(
                     windowDurationMillis = 47,
