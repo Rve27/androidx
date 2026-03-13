@@ -167,38 +167,21 @@ class HeightInLinesModifierTest {
     @Test(expected = IllegalArgumentException::class)
     fun minLines_invalidValue() {
         rule.setContent {
-            CoreTextField(
-                value = TextFieldValue(),
-                onValueChange = {},
-                modifier = Modifier.heightInLines(textStyle = TextStyle.Default, minLines = 0),
-            )
+            CoreTextField(value = TextFieldValue(), onValueChange = {}, minLines = 0)
         }
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun maxLines_invalidValue() {
         rule.setContent {
-            CoreTextField(
-                value = TextFieldValue(),
-                onValueChange = {},
-                modifier = Modifier.heightInLines(textStyle = TextStyle.Default, maxLines = 0),
-            )
+            CoreTextField(value = TextFieldValue(), onValueChange = {}, maxLines = 0)
         }
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun minLines_greaterThan_maxLines_invalidValue() {
         rule.setContent {
-            CoreTextField(
-                value = TextFieldValue(),
-                onValueChange = {},
-                modifier =
-                    Modifier.heightInLines(
-                        textStyle = TextStyle.Default,
-                        minLines = 2,
-                        maxLines = 1,
-                    ),
-            )
+            CoreTextField(value = TextFieldValue(), onValueChange = {}, minLines = 2, maxLines = 1)
         }
     }
 
@@ -356,8 +339,12 @@ class HeightInLinesModifierTest {
     @Test
     fun testInspectableValue() {
         val modifier =
-            Modifier.heightInLines(textStyle = TextStyle.Default, minLines = 5, maxLines = 10)
-                as InspectableValue
+            Modifier.heightInLines(
+                textStyle = TextStyle.Default,
+                softWrap = true,
+                minLines = 5,
+                maxLines = 10,
+            ) as InspectableValue
         assertThat(modifier.nameFallback).isEqualTo("heightInLines")
         assertThat(modifier.inspectableElements.asIterable())
             .containsExactly(
@@ -490,6 +477,32 @@ class HeightInLinesModifierTest {
         }
     }
 
+    @Test
+    fun heightInLines_returnsOriginalModifier_whenSingleLine() {
+        val style = TextStyle.Default
+        val modifier = Modifier
+        val result =
+            modifier.heightInLines(textStyle = style, minLines = 1, maxLines = 1, softWrap = false)
+        assertThat(result).isSameInstanceAs(modifier)
+    }
+
+    @Test
+    fun heightInLines_returnsOriginalModifier_multiLine_whenMinLinesAndMaxLinesAreOne() {
+        val style = TextStyle.Default
+        val modifier = Modifier
+        val result =
+            modifier.heightInLines(textStyle = style, minLines = 1, maxLines = 1, softWrap = true)
+        assertThat(result).isNotSameInstanceAs(modifier)
+    }
+
+    @Test
+    fun heightInLines_returnsOriginalModifier_whenDefaults() {
+        val style = TextStyle.Default
+        val modifier = Modifier
+        val result = modifier.heightInLines(textStyle = style, softWrap = true)
+        assertThat(result).isSameInstanceAs(modifier)
+    }
+
     @Composable
     private fun HeightObservingText(
         onGlobalHeightPositioned: (Int) -> Unit = {},
@@ -509,14 +522,10 @@ class HeightInLinesModifierTest {
             CoreTextField(
                 value = textFieldValue,
                 onValueChange = {},
+                modifier = Modifier.requiredWidth(100.dp),
                 textStyle = textStyle,
-                modifier =
-                    Modifier.requiredWidth(100.dp)
-                        .heightInLines(
-                            textStyle = textStyle,
-                            minLines = minLines,
-                            maxLines = maxLines,
-                        ),
+                minLines = minLines,
+                maxLines = maxLines,
                 onTextLayout = onTextLayoutResult,
             )
         }
