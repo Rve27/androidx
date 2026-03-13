@@ -195,8 +195,9 @@ public interface Profile {
      * @param cancellationSignal will make the best effort to cancel an
      *                           in-flight prefetch request, However cancellation is not
      *                           guaranteed.
-     * @param callbackExecutor   the executor to resolve the callback with.
-     * @param operationCallback  callbacks for reporting result back to application.
+     * @param callbackExecutor   the executor to resolve the callback with. If {@code null},
+     *                           the callback will be executed on the main thread.
+     * @param outcomeReceiver    callbacks for reporting result back to application.
      * @throws IllegalArgumentException if the url or callback is null.
      * @throws UnsupportedOperationException if the {@link WebViewFeature#PROFILE_URL_PREFETCH}
      *                                       feature is not supported.
@@ -205,10 +206,11 @@ public interface Profile {
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     @AnyThread
     @ExperimentalUrlPrefetch
-    void prefetchUrlAsync(@NonNull String url,
+    void prefetchUrlAsync(
+            @NonNull String url,
             @Nullable CancellationSignal cancellationSignal,
-            @NonNull Executor callbackExecutor,
-            @NonNull WebViewOutcomeReceiver<Void, PrefetchException> operationCallback);
+            @Nullable Executor callbackExecutor,
+            @NonNull WebViewOutcomeReceiver<@Nullable Void, PrefetchException> outcomeReceiver);
 
     /**
      * Starts a URL prefetch request.
@@ -240,9 +242,11 @@ public interface Profile {
      * @param cancellationSignal           will make the best effort to cancel an
      *                                     in-flight prefetch request, However cancellation is not
      *                                     guaranteed.
-     * @param callbackExecutor             the executor to resolve the callback with.
+     * @param callbackExecutor             the executor to resolve the callback with. If
+     *                                     {@code null}, the callback will be executed on the
+     *                                     main thread.
      * @param speculativeLoadingParameters parameters to customize the prefetch request.
-     * @param operationCallback            callbacks for reporting result back to application.
+     * @param outcomeReceiver              callbacks for reporting result back to application.
      * @throws IllegalArgumentException if the url or callback is null.
      * @throws UnsupportedOperationException if the {@link WebViewFeature#PROFILE_URL_PREFETCH}
      *                                       feature is not supported.
@@ -251,11 +255,12 @@ public interface Profile {
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     @AnyThread
     @ExperimentalUrlPrefetch
-    void prefetchUrlAsync(@NonNull String url,
+    void prefetchUrlAsync(
+            @NonNull String url,
             @Nullable CancellationSignal cancellationSignal,
-            @NonNull Executor callbackExecutor,
+            @Nullable Executor callbackExecutor,
             @NonNull SpeculativeLoadingParameters speculativeLoadingParameters,
-            @NonNull WebViewOutcomeReceiver<Void, PrefetchException> operationCallback);
+            @NonNull WebViewOutcomeReceiver<@Nullable Void, PrefetchException> outcomeReceiver);
 
 
     /**
