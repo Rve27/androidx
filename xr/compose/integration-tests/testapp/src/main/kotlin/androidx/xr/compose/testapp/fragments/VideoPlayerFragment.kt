@@ -49,9 +49,9 @@ import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.ResizePolicy
 import androidx.xr.compose.subspace.SpatialBox
 import androidx.xr.compose.subspace.SpatialExternalSurface
+import androidx.xr.compose.subspace.SpatialExternalSurfaceProtection
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.StereoMode
-import androidx.xr.compose.subspace.SurfaceProtection
 import androidx.xr.compose.subspace.layout.InteractionPolicy
 import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceModifier
@@ -120,7 +120,8 @@ class VideoPlayerFragment : Fragment() {
                 },
             stereoMode = stereoMode,
             surfaceProtection =
-                if (useDrmState.value) SurfaceProtection.Protected else SurfaceProtection.None,
+                if (useDrmState.value) SpatialExternalSurfaceProtection.Protected
+                else SpatialExternalSurfaceProtection.None,
         ) {
             onSurfaceCreated {
                 val player = ExoPlayer.Builder(requireActivity()).build()
