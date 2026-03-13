@@ -357,11 +357,14 @@ package androidx.compose.remote.creation.compose.modifier {
   }
 
   public final class SemanticsModifierKt {
+    method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier clearAndSetSemantics(androidx.compose.remote.creation.compose.modifier.RemoteModifier, kotlin.jvm.functions.Function1<? super androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver,kotlin.Unit> properties);
     method @InaccessibleFromKotlin public static androidx.compose.remote.creation.compose.state.RemoteString? getContentDescription(androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver);
     method @InaccessibleFromKotlin public static boolean getEnabled(androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver);
     method @BytecodeOnly public static androidx.compose.ui.semantics.Role? getRole(androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver);
     method @InaccessibleFromKotlin public static androidx.compose.remote.creation.compose.state.RemoteString? getStateDescription(androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver);
     method @InaccessibleFromKotlin public static androidx.compose.remote.creation.compose.state.RemoteString? getText(androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver);
+    method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier semantics(androidx.compose.remote.creation.compose.modifier.RemoteModifier, optional boolean mergeDescendants, kotlin.jvm.functions.Function1<? super androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver,kotlin.Unit> properties);
+    method @BytecodeOnly public static androidx.compose.remote.creation.compose.modifier.RemoteModifier! semantics$default(androidx.compose.remote.creation.compose.modifier.RemoteModifier!, boolean, kotlin.jvm.functions.Function1!, int, Object!);
     method @InaccessibleFromKotlin public static void setContentDescription(androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver, androidx.compose.remote.creation.compose.state.RemoteString?);
     method @InaccessibleFromKotlin public static void setEnabled(androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver, boolean);
     method @BytecodeOnly public static void setRole-0qwdnHY(androidx.compose.remote.creation.compose.modifier.SemanticsPropertyReceiver, androidx.compose.ui.semantics.Role?);
