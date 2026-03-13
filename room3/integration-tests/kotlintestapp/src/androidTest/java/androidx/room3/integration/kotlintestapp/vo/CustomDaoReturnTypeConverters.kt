@@ -18,6 +18,8 @@ package androidx.room3.integration.kotlintestapp.vo
 
 import androidx.room3.DaoReturnTypeConverter
 import androidx.room3.OperationType
+import androidx.room3.integration.kotlintestapp.vo.Either.Left
+import androidx.room3.integration.kotlintestapp.vo.Either.Right
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -44,33 +46,33 @@ class EitherDaoReturnTypeConverter {
     @DaoReturnTypeConverter([OperationType.READ, OperationType.WRITE])
     suspend fun <R> convert(executeAndConvert: suspend () -> R): Either<Throwable, R> {
         return try {
-            Either.Right(executeAndConvert.invoke())
+            Right(executeAndConvert.invoke())
         } catch (e: Throwable) {
-            Either.Left(e)
+            Left(e)
         }
     }
 }
 
 sealed class Either<out L, out R> {
-    @OptIn(ExperimentalContracts::class)
-    fun isLeft(): Boolean {
-        contract {
-            returns(true) implies (this@Either is Left<L>)
-            returns(false) implies (this@Either is Right<R>)
-        }
-        return this@Either is Left<L>
-    }
-
-    @OptIn(ExperimentalContracts::class)
-    fun isRight(): Boolean {
-        contract {
-            returns(true) implies (this@Either is Right<R>)
-            returns(false) implies (this@Either is Left<L>)
-        }
-        return this@Either is Right<R>
-    }
-
     data class Left<out L>(val value: L) : Either<L, Nothing>()
 
     data class Right<out R>(val value: R) : Either<Nothing, R>()
+}
+
+@OptIn(ExperimentalContracts::class)
+fun <L, R> Either<L, R>.isLeft(): Boolean {
+    contract {
+        returns(true) implies (this@isLeft is Left<L>)
+        returns(false) implies (this@isLeft is Right<R>)
+    }
+    return this is Left<L>
+}
+
+@OptIn(ExperimentalContracts::class)
+fun <L, R> Either<L, R>.isRight(): Boolean {
+    contract {
+        returns(true) implies (this@isRight is Right<R>)
+        returns(false) implies (this@isRight is Left<L>)
+    }
+    return this is Right<R>
 }
