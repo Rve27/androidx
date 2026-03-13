@@ -91,8 +91,7 @@ abstract class AndroidXMultiplatformExtension(val project: Project) {
     fun provideKlibStdLibForTests() {
         val konanBuildService = KonanBuildService.obtain(project)
         // directory format of stdlib klib for use during tests
-        val stdLibKlibDir =
-            konanBuildService.map { it.parameters.konanHome.dir("klib/common/stdlib") }
+        val stdLibKlibDir = konanBuildService.map { it.stdlibKlibDir() }
         project.tasks.withType(Test::class.java).configureEach { task ->
             task.inputs
                 .dir(stdLibKlibDir)

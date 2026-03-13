@@ -17,6 +17,7 @@
 package androidx.build.docs
 
 import androidx.build.KonanPrebuiltsSetup
+import androidx.build.clang.KonanBuildService
 import androidx.build.configureTaskTimeouts
 import androidx.build.dackka.DackkaTask
 import androidx.build.dackka.GenerateMetadataTask
@@ -92,6 +93,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
@@ -398,6 +400,8 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         // Create mapping from target name to classpath for that target.
         val kmpDependencyClasspathMap = createKmpClasspaths()
 
+        private val stdLibKlibDir = KonanBuildService.obtain(project).map { it.stdlibKlibDir() }
+
         private fun createKmpClasspaths(): MapProperty<String, FileCollection> {
             val map = project.objects.mapProperty<String, FileCollection>()
             kmpExtension.targets.configureEach { target ->
@@ -452,7 +456,15 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                     kotlinUsage = KotlinUsages.KOTLIN_RUNTIME,
                     isKmp = isKmp,
                 )
-            return targetApiClasspath.zip(targetRuntimeClasspath) { api, runtime -> api + runtime }
+            return targetApiClasspath.zip(targetRuntimeClasspath) { api, runtime ->
+                val additionalFiles =
+                    if (target is KotlinNativeTarget) {
+                        project.files(stdLibKlibDir)
+                    } else {
+                        project.files()
+                    }
+                api + runtime + additionalFiles
+            }
         }
 
         /**
