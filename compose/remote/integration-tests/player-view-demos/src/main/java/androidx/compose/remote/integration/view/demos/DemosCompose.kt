@@ -18,8 +18,6 @@ package androidx.compose.remote.integration.view.demos
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
-import androidx.compose.remote.creation.compose.RemoteComposeCreationComposeFlags
 import androidx.compose.remote.integration.view.demos.examples.RcSimpleClock1
 import androidx.compose.remote.integration.view.demos.examples.ScrollViewDemo
 import androidx.compose.remote.integration.view.demos.examples.SimplePath
@@ -30,8 +28,6 @@ import androidx.compose.remote.integration.view.demos.utils.RCDoc
 
 @SuppressLint("RestrictedApiAndroidX")
 fun getRemoteComposable(context: Context): ArrayList<RCDoc> {
-    @OptIn(ExperimentalRemoteCreationComposeApi::class)
-    RemoteComposeCreationComposeFlags.isRemoteApplierEnabled = false // TODO WORK WITH Applier
     return arrayListOf(
         getComposeDoc(context, "Compose/Fireworks") { shaderFireworks() },
         getComposeDoc(context, "Compose/SimplePath") { SimplePath() },
