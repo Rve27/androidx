@@ -37,7 +37,9 @@ import androidx.compose.remote.creation.compose.state.RemoteString
 import androidx.compose.remote.creation.compose.state.asRemotePaint
 import androidx.compose.remote.creation.compose.state.rb
 import androidx.compose.remote.creation.compose.state.rf
+import androidx.compose.remote.creation.compose.v2.RemoteComposeApplierV2
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
@@ -71,6 +73,8 @@ public fun RemoteCanvas0(
     modifier: RemoteModifier = RemoteModifier,
     content: RemoteCanvasDrawScope0.() -> Unit,
 ) {
+    check(currentComposer.applier !is RemoteComposeApplierV2) { "Migrate to RemoteCanvas" }
+
     val captureMode = LocalRemoteComposeCreationState.current
     @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
     Spacer(
