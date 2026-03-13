@@ -48,6 +48,8 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.ComponentMetadataContext
 import org.gradle.api.artifacts.ComponentMetadataRule
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.VersionConstraint
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
@@ -104,7 +106,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
     lateinit var multiplatformDocsSourcesConfiguration: Configuration
     lateinit var versionMetadataConfiguration: Configuration
     // Classpath for non-KMP projects
-    lateinit var nonKmpDependencyClasspath: FileCollection
+    lateinit var nonKmpDependencyClasspath: Provider<FileCollection>
     // Mapping from KMP target name to classpath for that target
     lateinit var kmpDependencyClasspathMap: MapProperty<String, FileCollection>
 
@@ -374,97 +376,43 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                 it.extendsFrom(docsConfiguration, multiplatformDocsConfiguration)
             }
 
-        fun Configuration.setResolveClasspathForUsage(usage: String) {
-            isCanBeConsumed = false
-            attributes {
-                it.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named<Usage>(usage))
-                it.attribute(
-                    Category.CATEGORY_ATTRIBUTE,
-                    project.objects.named<Category>(Category.LIBRARY),
-                )
-                it.attribute(
-                    BuildTypeAttr.ATTRIBUTE,
-                    project.objects.named<BuildTypeAttr>("release"),
-                )
-            }
-            extendsFrom(docsConfiguration, stubsConfiguration, docsWithoutApiSinceConfiguration)
-        }
-
-        // Build a compile & runtime classpaths for needed for documenting the libraries
-        // from the configurations above.
-        val docsCompileClasspath =
-            project.configurations.create("docs-compile-classpath") {
-                it.setResolveClasspathForUsage(Usage.JAVA_API)
-            }
-        val docsRuntimeClasspath =
-            project.configurations.create("docs-runtime-classpath") {
-                it.setResolveClasspathForUsage(Usage.JAVA_RUNTIME)
-            }
         val kotlinDefaultCatalogVersion = androidx.build.KotlinTarget.LATEST.catalogVersion
         val kotlinLatest = project.versionCatalog.findVersion(kotlinDefaultCatalogVersion).get()
-        listOf(docsCompileClasspath, docsRuntimeClasspath).forEach { config ->
-            config.resolutionStrategy {
-                it.eachDependency { details ->
-                    if (details.requested.group == "org.jetbrains.kotlin") {
-                        details.useVersion(kotlinLatest.requiredVersion)
-                    }
-                }
-            }
-        }
+
+        val kmpExtension = project.extensions.getByType<KotlinMultiplatformExtension>()
+
+        // Use the android target to resolve the non-KMP classpath, so that for any KMP dependencies
+        // of non-KMP projects with both android and jvmstubs artifacts the android variant is used.
         nonKmpDependencyClasspath =
-            docsCompileClasspath.incoming
-                .artifactView {
-                    it.attributes.attribute(
-                        Attribute.of("artifactType", String::class.java),
-                        "android-classes",
-                    )
-                }
-                .files +
-                docsRuntimeClasspath.incoming
-                    .artifactView {
-                        it.attributes.attribute(
-                            Attribute.of("artifactType", String::class.java),
-                            "android-classes",
-                        )
-                    }
-                    .files
+            createClasspathConfigurationsForTarget(
+                project = project,
+                extendsFromConfigurations =
+                    arrayOf(
+                        docsConfiguration,
+                        stubsConfiguration,
+                        docsWithoutApiSinceConfiguration,
+                    ),
+                target = kmpExtension.androidLibraryTarget(),
+                kotlinVersionConstraint = kotlinLatest,
+                isKmp = false,
+            )
 
         // Create mapping from target name to classpath for that target.
         kmpDependencyClasspathMap = project.objects.mapProperty<String, FileCollection>()
-        val kmpExtension = project.extensions.getByType<KotlinMultiplatformExtension>()
         kmpExtension.targets.configureEach { target ->
-            // Find both the API and runtime dependencies. Technically only the API dependencies
-            // should be required for docs, but projects don't always use the correct configuration.
-            val targetApiClasspath =
-                createClasspathConfigurationForTarget(
-                    project = project,
-                    extendsFromConfigurations =
-                        arrayOf(
-                            multiplatformDocsConfiguration,
-                            multiplatformDocsWithoutApiSinceConfiguration,
-                            stubsConfiguration,
-                        ),
-                    target = target,
-                    usageDescription = "api",
-                    javaUsage = Usage.JAVA_API,
-                    kotlinUsage = KotlinUsages.KOTLIN_API,
-                )
-            val targetRuntimeClasspath =
-                createClasspathConfigurationForTarget(
-                    project = project,
-                    extendsFromConfigurations =
-                        arrayOf(
-                            multiplatformDocsConfiguration,
-                            multiplatformDocsWithoutApiSinceConfiguration,
-                            stubsConfiguration,
-                        ),
-                    target = target,
-                    usageDescription = "runtime",
-                    javaUsage = Usage.JAVA_RUNTIME,
-                    kotlinUsage = KotlinUsages.KOTLIN_RUNTIME,
-                )
             val classpath =
-                targetApiClasspath.zip(targetRuntimeClasspath) { api, runtime -> api + runtime }
+                createClasspathConfigurationsForTarget(
+                    project = project,
+                    extendsFromConfigurations =
+                        arrayOf(
+                            multiplatformDocsConfiguration,
+                            multiplatformDocsWithoutApiSinceConfiguration,
+                            stubsConfiguration,
+                        ),
+                    target = target,
+                    kotlinVersionConstraint = kotlinLatest,
+                    isKmp = true,
+                )
             // Add the classpath for the target to the mapping.
             kmpDependencyClasspathMap.put(target.name + "Main", classpath)
             // It is an error to configure separate jvm and desktop targets, so treat the jvm target
@@ -473,6 +421,44 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                 kmpDependencyClasspathMap.put("desktopMain", classpath)
             }
         }
+    }
+
+    /**
+     * Configures the classpath for the given [target] extending from all configurations in
+     * [extendsFromConfigurations], with both the API and runtime dependencies.
+     */
+    private fun createClasspathConfigurationsForTarget(
+        project: Project,
+        extendsFromConfigurations: Array<Configuration>,
+        target: KotlinTarget,
+        kotlinVersionConstraint: VersionConstraint,
+        isKmp: Boolean,
+    ): Provider<FileCollection> {
+        // Find both the API and runtime dependencies. Technically only the API dependencies
+        // should be required for docs, but projects don't always use the correct configuration.
+        val targetApiClasspath =
+            createClasspathConfigurationForTarget(
+                project = project,
+                extendsFromConfigurations = extendsFromConfigurations,
+                target = target,
+                usageDescription = "api",
+                javaUsage = Usage.JAVA_API,
+                kotlinUsage = KotlinUsages.KOTLIN_API,
+                kotlinVersionConstraint = kotlinVersionConstraint,
+                isKmp = isKmp,
+            )
+        val targetRuntimeClasspath =
+            createClasspathConfigurationForTarget(
+                project = project,
+                extendsFromConfigurations = extendsFromConfigurations,
+                target = target,
+                usageDescription = "runtime",
+                javaUsage = Usage.JAVA_RUNTIME,
+                kotlinUsage = KotlinUsages.KOTLIN_RUNTIME,
+                kotlinVersionConstraint = kotlinVersionConstraint,
+                isKmp = isKmp,
+            )
+        return targetApiClasspath.zip(targetRuntimeClasspath) { api, runtime -> api + runtime }
     }
 
     /**
@@ -489,6 +475,8 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         usageDescription: String,
         javaUsage: String,
         kotlinUsage: String,
+        kotlinVersionConstraint: VersionConstraint,
+        isKmp: Boolean,
     ): Provider<FileCollection> {
         // Skip the common target, which is associated with the metadata compilation.
         if (target.platformType == KotlinPlatformType.common)
@@ -497,7 +485,8 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             target.platformType == KotlinPlatformType.androidJvm ||
                 target.platformType == KotlinPlatformType.jvm
 
-        val configurationName = "docs-compile-classpath-${target.name}-$usageDescription"
+        val kmpString = if (isKmp) "kmp" else "non-kmp"
+        val configurationName = "docs-compile-classpath-${target.name}-$kmpString-$usageDescription"
         return project.configurations
             .register(configurationName) { config ->
                 config.extendsFrom(*extendsFromConfigurations)
@@ -515,6 +504,10 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                     it.attribute(
                         Category.CATEGORY_ATTRIBUTE,
                         project.objects.named<Category>(Category.LIBRARY),
+                    )
+                    it.attribute(
+                        BuildTypeAttr.ATTRIBUTE,
+                        project.objects.named<BuildTypeAttr>("release"),
                     )
                     // Add additional attributes based on the target.
                     target.attributes.keySet().forEach { key ->
@@ -535,24 +528,59 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                         }
                     }
                 }
-            }
-            .map { configuration ->
-                configuration.incoming
-                    .artifactView {
-                        // Set the configuration to lenient because not every KMP project will have
-                        // all targets configured.
-                        it.isLenient = true
-                        // For android/jvm projects, make sure to use the classes jar instead of the
-                        // aar for any android dependencies, since dackka can't handle the aars.
-                        if (isJvm) {
-                            it.attributes.attribute(
-                                Attribute.of("artifactType", String::class.java),
-                                "android-classes",
-                            )
+                config.resolutionStrategy {
+                    it.eachDependency { details ->
+                        if (details.requested.group == "org.jetbrains.kotlin") {
+                            details.useVersion(kotlinVersionConstraint.requiredVersion)
                         }
                     }
-                    .files
+                }
             }
+            .map { configuration ->
+                classpathArtifactsFromConfiguration(configuration, isJvm = isJvm, isKmp = isKmp)
+            }
+    }
+
+    /**
+     * Creates a file collection with jar and klib dependencies resolved from the [configuration].
+     *
+     * When [isJvm] is true, this transforms aar dependencies into jars which dackka can process.
+     *
+     * When [isKmp] is true, classpath resolution is lenient because not every KMP dependency exists
+     * for every target.
+     */
+    private fun classpathArtifactsFromConfiguration(
+        configuration: Configuration,
+        isJvm: Boolean,
+        isKmp: Boolean,
+    ): FileCollection {
+        fun getArtifacts(androidArtifactType: String? = null): FileCollection {
+            return configuration.incoming
+                .artifactView {
+                    // Set the configuration to lenient because not every KMP project will have all
+                    // targets configured.
+                    if (isKmp) {
+                        it.isLenient = true
+                    }
+                    // Set the aar transformation as needed.
+                    androidArtifactType?.let { androidArtifactType ->
+                        it.attributes.attribute(
+                            ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                            androidArtifactType,
+                        )
+                    }
+                }
+                .files
+        }
+
+        return if (isJvm) {
+            // Dackka can't handle the aar dependencies, so this gets the jar from any aars (it is
+            // important that this does not use the transformed android-classes jar, because that
+            // jar does not contain kotlin module metadata) and the resource jar.
+            getArtifacts("jar") + getArtifacts("r-class-jar")
+        } else {
+            getArtifacts()
+        }
     }
 
     private fun configureDackka(
@@ -564,7 +592,7 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         unzippedJvmSamplesSources: Provider<Directory>,
         unzipJvmSamplesTask: TaskProvider<Sync>,
         unzippedKmpSamplesSources: Provider<Directory>,
-        nonKmpDependencyClasspath: FileCollection,
+        nonKmpDependencyClasspath: Provider<FileCollection>,
         kmpDependencyClasspathMap: Provider<Map<String, FileCollection>>,
         buildOnServer: TaskProvider<*>,
         docsConfiguration: Configuration,
@@ -723,15 +751,17 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
         }
     }
 
+    private fun KotlinMultiplatformExtension.androidLibraryTarget():
+        KotlinMultiplatformAndroidLibraryTarget {
+        return extensions.getByType(KotlinMultiplatformAndroidLibraryTarget::class.java)
+    }
+
     /** Configures all possible targets, so that all necessary classpaths will be generated. */
     @OptIn(ExperimentalWasmDsl::class)
     private fun configureTargets(project: Project, docsType: String) {
         val multiplatformExtension = project.multiplatformExtension!!
 
-        val androidLibraryTarget =
-            multiplatformExtension.extensions.getByType(
-                KotlinMultiplatformAndroidLibraryTarget::class.java
-            )
+        val androidLibraryTarget = multiplatformExtension.androidLibraryTarget()
         androidLibraryTarget.compileSdk {
             version = release(project.defaultAndroidConfig.latestStableCompileSdk)
         }
