@@ -178,28 +178,26 @@ internal class AccessibilitySemantics : SemanticsPropertyReceiver {
 /**
  * Clears the semantics of all descendants and sets new semantics.
  *
- * @param fn A lambda to configure the semantics.
+ * @param properties A lambda to configure the semantics.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteModifier.clearAndSetSemantics(
-    fn: SemanticsPropertyReceiver.() -> Unit
+    properties: SemanticsPropertyReceiver.() -> Unit
 ): RemoteModifier =
-    then(SemanticsModifier(CLEAR_AND_SET, AccessibilitySemantics().apply(fn).props.toMap()))
+    then(SemanticsModifier(CLEAR_AND_SET, AccessibilitySemantics().apply(properties).props.toMap()))
 
 /**
  * Adds semantics to the node.
  *
  * @param mergeDescendants Whether to merge the semantics of all descendants into this node.
- * @param fn A lambda to configure the semantics.
+ * @param properties A lambda to configure the semantics.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteModifier.semantics(
     mergeDescendants: Boolean = false,
-    fn: SemanticsPropertyReceiver.() -> Unit,
+    properties: SemanticsPropertyReceiver.() -> Unit,
 ): RemoteModifier =
     then(
         SemanticsModifier(
             if (mergeDescendants) MERGE else SET,
-            AccessibilitySemantics().apply(fn).props.toMap(),
+            AccessibilitySemantics().apply(properties).props.toMap(),
         )
     )
