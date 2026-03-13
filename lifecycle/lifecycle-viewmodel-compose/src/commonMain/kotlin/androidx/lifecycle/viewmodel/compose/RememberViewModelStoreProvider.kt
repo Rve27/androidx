@@ -32,12 +32,12 @@ import androidx.savedstate.SavedState
 import androidx.savedstate.savedState
 
 /**
- * Remembers a new [ViewModelStoreProvider] which creates a ViewModel scope linked to a parent owner
- * found in the composition.
+ * Remembers a new [ViewModelStoreProvider] which creates a ViewModel scope linked to a parent found
+ * in the composition.
  *
- * This composable creates a provider that links to any parent owner found in the composition,
- * forming a parent-child relationship. If no parent exists, it automatically becomes a new root
- * provider. This is useful for isolating ViewModel instances within specific UI sections, such as a
+ * This composable creates a provider that links to any parent found in the composition, forming a
+ * parent-child relationship. If no parent exists, it automatically becomes a new root provider.
+ * This is useful for isolating ViewModel instances within specific UI sections, such as a
  * self-contained feature screen, dialog, or tab, ensuring they are cleared when that section is
  * removed.
  *
@@ -53,7 +53,8 @@ import androidx.savedstate.savedState
  *   to the owner from [LocalViewModelStoreOwner].
  * @param key A unique identifier for this call site to isolate its provider from others. Defaults
  *   to [currentCompositeKeyHashCode]. If called multiple times in the same scope or loop, provide a
- *   custom key to ensure each instance gets its own [ViewModelStoreProvider].
+ *   custom key to ensure each instance gets its own [ViewModelStoreProvider]. A `null` key is valid
+ *   and is treated as a distinct scope.
  * @param defaultArgs The [SavedState] containing default arguments to be passed to ViewModels
  *   created in this scope. These arguments are merged with any default arguments in
  *   [defaultCreationExtras]. If the same key exists in both, the value from [defaultArgs] takes

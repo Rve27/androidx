@@ -38,7 +38,7 @@ import kotlin.jvm.JvmOverloads
  * Manages a set of [ViewModelStore] instances scoped to a parent [ViewModelStore].
  *
  * This class allows the creation of "child" scopes that survive configuration changes (via the
- * parent owner) but can be independently cleared when no longer needed.
+ * parent) but can be independently cleared when no longer needed.
  *
  * **Important:** This class prevents a child [ViewModel] from being cleared while they are still in
  * use (e.g., during exit animations). Consumers must call [acquireToken] to mark a child
@@ -46,9 +46,9 @@ import kotlin.jvm.JvmOverloads
  * finished. Calling [clearKey] or [clearAllKeys] will only perform the actual cleanup once all of a
  * store's tokens have been released.
  *
- * **Null owner:** If [parentStore] is **EXPLICITLY** `null`, this creates a root provider that runs
- * independently. It manages its own state and will not be automatically cleared by configuration
- * changes; you must manually call [clearAllKeys] to clean it up.
+ * **Null parentStore:** If [parentStore] is **EXPLICITLY** `null`, this creates a root provider
+ * that runs independently. It manages its own state and will not be automatically cleared by
+ * configuration changes; you must manually call [clearAllKeys] to clean it up.
  *
  * @param parentKey A unique identifier used to scope this provider and its underlying state within
  *   the [parentStore].
@@ -108,11 +108,12 @@ public constructor(
 
     /**
      * Increments the reference count for the [ViewModelStore] associated with the given [key],
-     * ensuring it is not cleared until the returned [] is released.
+     * ensuring it is not cleared until the returned [ReferenceToken] is released.
      *
-     * @param key The unique identifier for the child scope.
+     * @param key The unique identifier for the child scope. A `null` key is valid and is treated as
+     *   a distinct scope.
      * @return A token that must be released via [ReferenceToken.close] when the caller no longer
-     *   requires the
+     *   requires the store.
      */
     public fun acquireToken(key: Any?): ReferenceToken {
         val entry = stateHolder.getOrCreate(key)
@@ -131,7 +132,8 @@ public constructor(
      * If a store with this key already exists, it is returned. If not, a new store is created. To
      * protect this store from being prematurely cleared, you must call [acquireToken].
      *
-     * @param key The unique identifier for the child scope.
+     * @param key The unique identifier for the child scope. A `null` key is valid and is treated as
+     *   a distinct scope.
      * @return The [ViewModelStore] tied to the provided key.
      */
     public fun getOrCreate(key: Any?): ViewModelStore {
@@ -153,7 +155,8 @@ public constructor(
      * [SavedStateHandle]. When saved state is enabled and [defaultFactory] is not explicitly
      * overridden, it automatically upgrades to a [SavedStateViewModelFactory].
      *
-     * @param key The unique identifier for the child scope.
+     * @param key The unique identifier for the child scope. A `null` key is valid and is treated as
+     *   a distinct scope.
      * @param savedStateRegistryOwner An optional parent registry owner to delegate saved state
      *   operations to. If `null`, the returned owner will not support [SavedStateHandle].
      * @param defaultArgs The default [SavedState] arguments to use for child stores. These
@@ -200,7 +203,8 @@ public constructor(
      * If the store currently has a reference count of zero, it is cleared immediately. Otherwise,
      * the actual cleanup is deferred until all acquired tokens are released.
      *
-     * @param key The unique identifier for the child scope.
+     * @param key The unique identifier for the child scope. Passing `null` will target the specific
+     *   scope associated with the `null` key.
      */
     public fun clearKey(key: Any?) {
         stateHolder.clearKey(key)

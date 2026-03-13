@@ -109,7 +109,8 @@ public fun rememberViewModelStoreOwner(
  *   underlying [ViewModelStore].
  * @param key A unique identifier for this call site to isolate its store from others. Defaults to
  *   [currentCompositeKeyHashCode]. If called multiple times in the same scope or loop, provide a
- *   custom key to ensure each instance gets its own [ViewModelStore].
+ *   custom key to ensure each instance gets its own [ViewModelStore]. A `null` key is valid and is
+ *   treated as a distinct scope.
  * @param savedStateRegistryOwner An optional [SavedStateRegistryOwner] to delegate saved state
  *   operations. When `null`, ViewModels created in this scope do not support saved state.
  * @return A [ViewModelStoreOwner] remembered across compositions and scoped to this call site.
