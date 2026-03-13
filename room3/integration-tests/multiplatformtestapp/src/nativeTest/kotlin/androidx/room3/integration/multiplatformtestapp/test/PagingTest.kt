@@ -27,7 +27,7 @@ import platform.posix.remove
 
 class PagingTest : BasePagingTest() {
 
-    private val filename = "/tmp/test-${Random.Default.nextInt()}.db"
+    private val filename = "/tmp/test-${Random.nextInt()}.db"
 
     override fun getRoomDatabase(): PagingDatabase {
         return Room.databaseBuilder<PagingDatabase>(name = filename)
