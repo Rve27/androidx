@@ -164,7 +164,7 @@ public class TorchState private constructor() {
     }
 }
 
-/** Requirement to consider prior to locking auto-exposure, auto-focus and auto-whitebalance. */
+/** Requirement to consider prior to locking auto exposure, autofocus and auto white balance. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @JvmInline
 public value class Lock3ABehavior private constructor(public val value: Int) {
@@ -190,6 +190,19 @@ public value class Lock3ABehavior private constructor(public val value: Int) {
 
         /** Initiate a new scan, and then lock the values once the scan is done. */
         public val AFTER_NEW_SCAN: Lock3ABehavior = Lock3ABehavior(3)
+    }
+}
+
+/** Requirement to converging auto exposure, autofocus and auto while balance. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@JvmInline
+public value class Converge3ABehavior private constructor(public val value: Int) {
+    public companion object {
+        /** Reuse the ongoing scan. */
+        public val AFTER_CURRENT_SCAN: Converge3ABehavior = Converge3ABehavior(1)
+
+        /** Initiate a new scan. */
+        public val AFTER_NEW_SCAN: Converge3ABehavior = Converge3ABehavior(2)
     }
 }
 
