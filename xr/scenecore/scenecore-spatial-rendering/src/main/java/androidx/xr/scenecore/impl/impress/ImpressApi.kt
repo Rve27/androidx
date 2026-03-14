@@ -291,7 +291,7 @@ public interface ImpressApi {
      * @return a Coroutine which fires when the animation stops. It will return an exception if the
      *   animation can't play.
      */
-    public suspend fun animateGltfModelNew(
+    public suspend fun animateGltfModel(
         impressNode: ImpressNode,
         animationName: String?,
         looping: Boolean,
@@ -306,7 +306,7 @@ public interface ImpressApi {
      * @param impressNode The object of the Impress node for the instance of the glTF model.
      * @param channel The channel of the animation.
      */
-    public fun stopGltfModelAnimationNew(impressNode: ImpressNode, channel: Int)
+    public fun stopGltfModelAnimation(impressNode: ImpressNode, channel: Int)
 
     /**
      * Toggles the playback of a glTF model's animation to pause or resume on a specific channel.
@@ -315,7 +315,7 @@ public interface ImpressApi {
      * @param playing `true` to resume the animation, `false` to pause it.
      * @param channel The channel of the animation.
      */
-    public fun toggleGltfModelAnimationNew(impressNode: ImpressNode, playing: Boolean, channel: Int)
+    public fun toggleGltfModelAnimation(impressNode: ImpressNode, playing: Boolean, channel: Int)
 
     /**
      * Sets the playback time of a glTF model's animation on a specific channel.

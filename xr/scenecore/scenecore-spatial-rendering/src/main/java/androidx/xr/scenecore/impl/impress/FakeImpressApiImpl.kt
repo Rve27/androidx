@@ -255,7 +255,7 @@ public class FakeImpressApiImpl : ImpressApi {
         throw IllegalArgumentException("not implemented")
     }
 
-    override suspend fun animateGltfModelNew(
+    override suspend fun animateGltfModel(
         impressNode: ImpressNode,
         animationName: String?,
         looping: Boolean,
@@ -283,7 +283,7 @@ public class FakeImpressApiImpl : ImpressApi {
         return null
     }
 
-    override fun stopGltfModelAnimationNew(impressNode: ImpressNode, channel: Int) {
+    override fun stopGltfModelAnimation(impressNode: ImpressNode, channel: Int) {
         val nodeAnims = channelAnimations[impressNode]
         if (nodeAnims != null) {
             nodeAnims.remove(channel)
@@ -293,7 +293,7 @@ public class FakeImpressApiImpl : ImpressApi {
         }
     }
 
-    override fun toggleGltfModelAnimationNew(
+    override fun toggleGltfModelAnimation(
         impressNode: ImpressNode,
         playing: Boolean,
         channel: Int,
