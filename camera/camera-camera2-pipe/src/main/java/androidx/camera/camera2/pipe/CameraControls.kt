@@ -20,6 +20,8 @@ import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureResult
 import android.hardware.camera2.TotalCaptureResult
 import androidx.annotation.RestrictTo
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 
 // Public controls and enums used to interact with a CameraGraph.
 
@@ -215,9 +217,17 @@ public value class Converge3ABehavior private constructor(public val value: Int)
  *   happen that the [CaptureResult] itself has all the key-value pairs needed to determine the
  *   completion of the method, in that case this frameMetadata may not contain all the kay value
  *   pairs associated with the final result i.e. [TotalCaptureResult] of this frame.
+ * @param frameInfo [FrameInfo] i.e. the TotalCaptureResult for the frame at which the method
+ *   succeeded or was aborted. Note that to optimize for latency we complete the [status] and
+ *   [frameMetadata] as early as possible, and if the total result is desired then it can be
+ *   retrieved by calling await() on the frameInfo.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public data class Result3A(val status: Status, val frameMetadata: FrameMetadata? = null) {
+public data class Result3A(
+    val status: Status,
+    val frameMetadata: FrameMetadata? = null,
+    val frameInfo: Deferred<FrameInfo> = defaultFrameInfoDeferred,
+) {
     /**
      * Enum to know the status of 3A operation in case the method returns before the desired
      * operation is complete. The reason could be that the operation was talking a lot longer and an
@@ -233,5 +243,10 @@ public data class Result3A(val status: Status, val frameMetadata: FrameMetadata?
             public val SUBMIT_CANCELLED: Status = Status(3)
             public val SUBMIT_FAILED: Status = Status(4)
         }
+    }
+
+    public companion object {
+        private val defaultFrameInfoDeferred: CompletableDeferred<FrameInfo> =
+            CompletableDeferred<FrameInfo>().apply { cancel() }
     }
 }
