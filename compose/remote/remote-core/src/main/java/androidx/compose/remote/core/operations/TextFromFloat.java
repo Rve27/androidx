@@ -51,7 +51,6 @@ public class TextFromFloat extends Operation implements VariableSupport, Seriali
     public short mDigitsAfter;
     public int mFlags;
     public boolean mLegacy = false;
-    public static final int MAX_STRING_SIZE = 4000;
     char mPre = ' ';
     char mAfter = ' ';
     byte mGroup = GROUPING_NONE;
