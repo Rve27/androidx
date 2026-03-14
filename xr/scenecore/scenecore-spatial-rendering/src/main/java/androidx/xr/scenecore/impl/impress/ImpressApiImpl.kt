@@ -404,7 +404,7 @@ public class ImpressApiImpl : ImpressApi {
      * @param channel The channel of the animation.
      * @return a [Void] result when the animation completed.
      */
-    override suspend fun animateGltfModelNew(
+    override suspend fun animateGltfModel(
         impressNode: ImpressNode,
         animationName: String?,
         looping: Boolean,
@@ -412,7 +412,7 @@ public class ImpressApiImpl : ImpressApi {
         startTime: Float,
         channel: Int,
     ): Void? = suspendCancellableCoroutine { continuation ->
-        nAnimateGltfModelNew(
+        nAnimateGltfModel(
             getViewNativeHandle(view),
             impressNode.handle,
             animationName,
@@ -454,8 +454,8 @@ public class ImpressApiImpl : ImpressApi {
      * @param impressNode The integer ID of the Impress node for the instance of the GLTF
      * @param channel The channel of the animation.
      */
-    override fun stopGltfModelAnimationNew(impressNode: ImpressNode, channel: Int): Unit =
-        nStopGltfModelAnimationNew(getViewNativeHandle(view), impressNode.handle, channel)
+    override fun stopGltfModelAnimation(impressNode: ImpressNode, channel: Int): Unit =
+        nStopGltfModelAnimation(getViewNativeHandle(view), impressNode.handle, channel)
 
     /**
      * Toggles an animation on an instanced glTF model on a specific channel.
@@ -464,17 +464,12 @@ public class ImpressApiImpl : ImpressApi {
      * @param playing True if the animation should play, false if it should stop.
      * @param channel The channel of the animation.
      */
-    override fun toggleGltfModelAnimationNew(
+    override fun toggleGltfModelAnimation(
         impressNode: ImpressNode,
         playing: Boolean,
         channel: Int,
     ): Unit =
-        nToggleGltfModelAnimationNew(
-            getViewNativeHandle(view),
-            impressNode.handle,
-            playing,
-            channel,
-        )
+        nToggleGltfModelAnimation(getViewNativeHandle(view), impressNode.handle, playing, channel)
 
     /**
      * Sets the playback time of an animation on an instanced glTF model on a specific channel.
@@ -1715,7 +1710,7 @@ public class ImpressApiImpl : ImpressApi {
         systemMovable: Boolean,
     )
 
-    private external fun nAnimateGltfModelNew(
+    private external fun nAnimateGltfModel(
         view: Long,
         impressNode: Int,
         animationName: String?,
@@ -1726,9 +1721,9 @@ public class ImpressApiImpl : ImpressApi {
         assetAnimator: AssetAnimator,
     )
 
-    private external fun nStopGltfModelAnimationNew(view: Long, impressNode: Int, channelId: Int)
+    private external fun nStopGltfModelAnimation(view: Long, impressNode: Int, channelId: Int)
 
-    private external fun nToggleGltfModelAnimationNew(
+    private external fun nToggleGltfModelAnimation(
         view: Long,
         impressNode: Int,
         toggle: Boolean,
