@@ -89,7 +89,7 @@ class GltfAnimationFeatureImplTest {
 
         val channelAnimations = fakeImpressApi.getChannelAnimations(modelImpressNode)
         // Depending on implementation, it might remove the entry or just stop it.
-        // FakeImpressApiImpl.stopGltfModelAnimationNew removes it.
+        // FakeImpressApiImpl.stopGltfModelAnimation removes it.
         if (channelAnimations != null) {
             assertThat(channelAnimations).doesNotContainKey(animationIndex)
         }
