@@ -50,7 +50,7 @@ public class AudioTrackExtensionsWrapperImplTest {
     XrSpatialAudioExtensions mSpatialAudioExtensions;
     AudioTrackExtensions mAudioTrackExtensions;
 
-    private EntityManager mEntityManager;
+    private SceneNodeRegistry mSceneNodeRegistry;
 
     private AudioTrack.Builder mBuilder;
 
@@ -66,7 +66,7 @@ public class AudioTrackExtensionsWrapperImplTest {
         // TODO(b/401557718): Consider adding a reset method to the XrExtensions shadow.
         ShadowAudioTrackExtensions.extract(mAudioTrackExtensions).setSoundFieldAttributes(null);
 
-        mEntityManager = new EntityManager();
+        mSceneNodeRegistry = new SceneNodeRegistry();
         mBuilder = mock(AudioTrack.Builder.class);
     }
 
@@ -131,7 +131,7 @@ public class AudioTrackExtensionsWrapperImplTest {
         Node fakeNode = mXrExtensions.createNode();
         AndroidXrEntity entity = mock(AndroidXrEntity.class);
         when(entity.getNode()).thenReturn(fakeNode);
-        mEntityManager.setEntityForNode(fakeNode, entity);
+        mSceneNodeRegistry.setEntityForNode(fakeNode, entity);
 
         AudioTrack.Builder unused =
                 mAudioTrackExtensions.setPointSourceParams(

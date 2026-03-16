@@ -25,11 +25,11 @@ import com.android.extensions.xr.node.Node
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
-/** Manages the mapping between [Node] and [Entity]. */
+/** Manages the mapping from [Node]s to [Entity] and [ScenePose]s. */
 @RestrictTo(
     RestrictTo.Scope.LIBRARY_GROUP
 ) // TODO(b/452961674): Review RestrictTo annotations in SceneCore.
-public class EntityManager public constructor() {
+public class SceneNodeRegistry public constructor() {
     private val nodeEntityMap = ConcurrentHashMap<Node, Entity>()
     private val systemSpaces = CopyOnWriteArrayList<ScenePose>()
 
@@ -70,13 +70,13 @@ public class EntityManager public constructor() {
         nodeEntityMap.remove(node)
     }
 
-    /** Adds a system space activity pose to the EntityManager. */
-    public fun addSystemSpaceActivityPose(systemSpaceScenePose: ScenePose) {
+    /** Adds a system space scene pose to the EntityManager. */
+    public fun addSystemSpaceScenePose(systemSpaceScenePose: ScenePose) {
         systemSpaces.add(systemSpaceScenePose)
     }
 
-    /** Returns a collection of all system space activity poses. */
-    public fun getAllSystemSpaceActivityPoses(): List<ScenePose> {
+    /** Returns a collection of all system space scene poses. */
+    public fun getAllSystemSpaceScenePoses(): List<ScenePose> {
         return systemSpaces
     }
 
@@ -86,7 +86,7 @@ public class EntityManager public constructor() {
      * @param systemSpaceScenePoseClass the type of [ScenePose] to return.
      * @return a list of all [ScenePose]s of type `T` (including subtypes of `T`).
      */
-    public fun <T : ScenePose> getSystemSpaceActivityPoseOfType(
+    public fun <T : ScenePose> getSystemSpaceScenePoseOfType(
         systemSpaceScenePoseClass: Class<T>
     ): List<T> = systemSpaces.filterIsInstance(systemSpaceScenePoseClass).toList()
 
