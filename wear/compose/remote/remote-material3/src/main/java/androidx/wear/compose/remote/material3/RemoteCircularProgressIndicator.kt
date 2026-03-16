@@ -96,7 +96,7 @@ public fun RemoteCircularProgressIndicator(
             style = PaintingStyle.Stroke
             this.strokeWidth = strokePx
             strokeCap = StrokeCap.Round
-            applyRemoteBrush(colors.trackBrush(enabled), size)
+            with(colors.trackBrush(enabled)) { applyTo(this@RemotePaint, size) }
         }
 
         val gapSizePx = gapSize.toPx()
@@ -118,7 +118,7 @@ public fun RemoteCircularProgressIndicator(
             style = PaintingStyle.Stroke
             this.strokeWidth = trackPaint.strokeWidth
             strokeCap = StrokeCap.Round
-            applyRemoteBrush(colors.indicatorBrush(enabled), size)
+            with(colors.indicatorBrush(enabled)) { applyTo(this@RemotePaint, size) }
         }
 
         drawArc(
