@@ -788,6 +788,26 @@ package androidx.window.layout {
     property public androidx.window.layout.SupportedPosture TABLETOP;
   }
 
+  public final class VisualStateRequest {
+    method public boolean isSustainedVisualsEnabled();
+  }
+
+  public static final class VisualStateRequest.Builder {
+    ctor public VisualStateRequest.Builder();
+    method public androidx.window.layout.VisualStateRequest build();
+    method public androidx.window.layout.VisualStateRequest.Builder setSustainedVisualsEnabled(boolean isSustainedVisualsEnabled);
+  }
+
+  public abstract class WindowInfoController {
+    method public static final androidx.window.layout.WindowInfoController getInstance(@UiContext android.content.Context context);
+    method @MainThread public abstract void requestVisualState(@UiContext android.content.Context context, androidx.window.layout.VisualStateRequest request);
+    field public static final androidx.window.layout.WindowInfoController.Companion Companion;
+  }
+
+  public static final class WindowInfoController.Companion {
+    method public androidx.window.layout.WindowInfoController getInstance(@UiContext android.content.Context context);
+  }
+
   public interface WindowInfoTracker {
     method @androidx.window.RequiresWindowSdkExtension(version=9) public default androidx.window.layout.WindowLayoutInfo getCurrentWindowLayoutInfo(@UiContext android.content.Context context);
     method @InaccessibleFromKotlin public static androidx.window.layout.WindowInfoTracker getOrCreate(android.content.Context context);
