@@ -44,7 +44,6 @@ import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.uiautomator.uiAutomator
 import com.google.common.truth.Truth.assertThat
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -131,8 +130,9 @@ class BasicA11yTest {
                 RemoteText(text)
             }
         }
+
         uiAutomator {
-            val item = onElement { text == "Initial" }
+            val item = onElement { isClickable }
             assertThat(item).isNotNull()
 
             item.click()
@@ -141,7 +141,6 @@ class BasicA11yTest {
     }
 
     @Test
-    @Ignore("This test will be failing until b/492161842 is resolved")
     fun intValueChange() {
         remoteComposeTestRule.runTest {
             val remoteInt = rememberMutableRemoteInt(0)
@@ -155,8 +154,10 @@ class BasicA11yTest {
                 RemoteText("".rs + remoteInt.toRemoteString(3, Rc.TextFromFloat.PAD_PRE_NONE))
             }
         }
+
         uiAutomator {
-            val item = onElement { text == "0" }
+            val item = onElement { isClickable }
+            assertThat(item).isNotNull()
 
             item.click()
             assertThat(item.text).isEqualTo("1")
