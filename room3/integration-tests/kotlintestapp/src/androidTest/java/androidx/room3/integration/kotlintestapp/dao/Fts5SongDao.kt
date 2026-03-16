@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,23 @@ package androidx.room3.integration.kotlintestapp.dao
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.Query
+import androidx.room3.integration.kotlintestapp.vo.Fts5SongDescription
 import androidx.room3.integration.kotlintestapp.vo.Song
-import androidx.room3.integration.kotlintestapp.vo.SongDescription
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface SongDao {
+interface Fts5SongDao {
     @Insert fun insert(song: Song)
 
     @Insert fun insert(songs: List<Song>)
 
-    @Query("SELECT * FROM SongDescription WHERE SongDescription MATCH :searchQuery")
-    fun getSongDescriptions(searchQuery: String): List<SongDescription>
+    @Query("SELECT * FROM Fts5SongDescription WHERE Fts5SongDescription MATCH :searchQuery")
+    fun getSongDescriptions(searchQuery: String): List<Fts5SongDescription>
 
     @Query(
         """
             SELECT s.mSongId, s.mTitle, s.mArtist, s.mAlbum, s.mLength, s.mReleasedYear
-            FROM Song as s JOIN SongDescription as fts ON (docid = mSongId)
+            FROM Song as s JOIN Fts5SongDescription as fts ON (fts.rowid = s.mSongId)
             WHERE fts.mTitle MATCH :searchQuery
             """
     )
@@ -42,6 +42,6 @@ interface SongDao {
 
     @Query("SELECT * FROM Song") fun getFlowSong(): Flow<List<Song>>
 
-    @Query("SELECT * FROM SongDescription")
-    fun getFlowSongDescription(): Flow<List<SongDescription>>
+    @Query("SELECT * FROM Fts5SongDescription")
+    fun getFlowSongDescription(): Flow<List<Fts5SongDescription>>
 }
