@@ -145,7 +145,7 @@ class CameraStateRobolectricTest(private val config: TestConfig) {
         testSchedulerThread = HandlerThread("CameraStateTestScheduler")
         testSchedulerThread.start()
         testSchedulerHandler = Handler(testSchedulerThread.looper)
-        testCameraExecutor = Executors.newFixedThreadPool(2)
+        testCameraExecutor = Executors.newFixedThreadPool(1)
 
         val cameraXConfig =
             configBuilder
