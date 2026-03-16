@@ -69,6 +69,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.xr.glimmer.testutils.captureToImage
 import androidx.xr.glimmer.testutils.createGlimmerRule
 import com.google.common.truth.Truth.assertThat
+import kotlin.properties.Delegates
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -380,7 +381,11 @@ class ListItemTest {
 
     @Test
     fun positioning() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var largeSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            largeSpacing = GlimmerTheme.componentSpacingValues.large
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 ListItem(modifier = Modifier.testTag("listItem")) {
@@ -405,7 +410,7 @@ class ListItemTest {
             )
 
         (primaryLabelBounds.left - listItemBounds.left).assertIsEqualTo(
-            Spacing.Large + Spacing.Small,
+            largeSpacing + smallSpacing,
             "Padding between the start of the list item and the start of the primary label.",
         )
 
@@ -416,7 +421,11 @@ class ListItemTest {
 
     @Test
     fun positioning_supportingLabel() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var largeSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            largeSpacing = GlimmerTheme.componentSpacingValues.large
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 ListItem(
@@ -442,17 +451,17 @@ class ListItemTest {
         // Label should be top aligned when the height of the primary and supporting labels is
         // greater than minimum list item height
         (primaryLabelBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of primary label.",
         )
 
         (primaryLabelBounds.left - listItemBounds.left).assertIsEqualTo(
-            Spacing.Large + Spacing.Small,
+            largeSpacing + smallSpacing,
             "Padding between the start of the list item and the start of the primary label.",
         )
 
         (supportingLabelBounds.left - listItemBounds.left).assertIsEqualTo(
-            Spacing.Large + Spacing.Small,
+            largeSpacing + smallSpacing,
             "Padding between the start of the list item and the start of the supporting label.",
         )
 
@@ -462,7 +471,7 @@ class ListItemTest {
         )
 
         (listItemBounds.bottom - supportingLabelBounds.bottom).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between bottom of list item and bottom of supporting label.",
         )
 
@@ -475,7 +484,11 @@ class ListItemTest {
 
     @Test
     fun positioning_withIcons() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var largeSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            largeSpacing = GlimmerTheme.componentSpacingValues.large
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 ListItem(
@@ -512,12 +525,12 @@ class ListItemTest {
             rule.onNodeWithTag("listItem", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (leadingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of leading icon.",
         )
 
         (leadingIconBounds.left - listItemBounds.left).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between start of list item and start of leading icon.",
         )
 
@@ -530,31 +543,35 @@ class ListItemTest {
             )
 
         (primaryLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between end of leading icon and start of primary label.",
         )
 
         (trailingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of trailing icon.",
         )
 
         (listItemBounds.right - trailingIconBounds.right).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between end of trailing icon and end of list item.",
         )
 
         // The width should fill the max width, like with the spacer
         listItemBounds.width.assertIsEqualTo(spacerBounds.width, "width of list item.")
         listItemBounds.height.assertIsEqualTo(
-            /* vertical padding * 2 + icon height*/ Spacing.Large * 2 + 48.dp,
+            /* vertical padding * 2 + icon height*/ largeSpacing * 2 + 48.dp,
             "height of list item.",
         )
     }
 
     @Test
     fun positioning_supportingLabel_withIcons() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var largeSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            largeSpacing = GlimmerTheme.componentSpacingValues.large
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 ListItem(
@@ -596,29 +613,29 @@ class ListItemTest {
             rule.onNodeWithTag("listItem", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (leadingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of leading icon.",
         )
 
         (leadingIconBounds.left - listItemBounds.left).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between start of list item and start of leading icon.",
         )
 
         // Label should be top aligned when the height of the primary and supporting labels is
         // greater than minimum list item height
         (primaryLabelBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of primary label.",
         )
 
         (primaryLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between end of leading icon and start of primary label.",
         )
 
         (supportingLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between end of leading icon and start of supporting label.",
         )
 
@@ -628,17 +645,17 @@ class ListItemTest {
         )
 
         (listItemBounds.bottom - supportingLabelBounds.bottom).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between bottom of list item and bottom of supporting label.",
         )
 
         (trailingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of trailing icon.",
         )
 
         (listItemBounds.right - trailingIconBounds.right).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between end of trailing icon and end of list item.",
         )
 
@@ -651,7 +668,11 @@ class ListItemTest {
 
     @Test
     fun positioning_supportingLabel_withIcons_longText() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var largeSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            largeSpacing = GlimmerTheme.componentSpacingValues.large
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 ListItem(
@@ -696,29 +717,29 @@ class ListItemTest {
             rule.onNodeWithTag("listItem", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (leadingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of leading icon.",
         )
 
         (leadingIconBounds.left - listItemBounds.left).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between start of list item and start of leading icon.",
         )
 
         // Label should be top aligned when the height of the primary and supporting labels is
         // greater than minimum list item height
         (primaryLabelBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of primary label.",
         )
 
         (primaryLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between end of leading icon and start of primary label.",
         )
 
         (supportingLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between end of leading icon and start of supporting label.",
         )
 
@@ -728,17 +749,17 @@ class ListItemTest {
         )
 
         (listItemBounds.bottom - supportingLabelBounds.bottom).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between bottom of list item and bottom of supporting label.",
         )
 
         (trailingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between top of list item and top of trailing icon.",
         )
 
         (listItemBounds.right - trailingIconBounds.right).assertIsEqualTo(
-            Spacing.Large,
+            largeSpacing,
             "Padding between end of trailing icon and end of list item.",
         )
 

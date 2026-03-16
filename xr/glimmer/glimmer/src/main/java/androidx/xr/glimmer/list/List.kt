@@ -35,9 +35,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMap
-import androidx.xr.glimmer.Spacing
+import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.edgeScrim
-import androidx.xr.glimmer.list.VerticalListDefaults.VerticalArrangement
 import kotlin.math.max
 
 /**
@@ -75,13 +74,13 @@ import kotlin.math.max
 public fun VerticalList(
     modifier: Modifier = Modifier,
     state: ListState = rememberListState(),
-    contentPadding: PaddingValues = VerticalListDefaults.ContentPadding,
+    contentPadding: PaddingValues = VerticalListDefaults.contentPadding,
     userScrollEnabled: Boolean = true,
     overscrollEffect: OverscrollEffect? = rememberOverscrollEffect(),
     flingBehavior: FlingBehavior = VerticalListDefaults.flingBehavior(state),
     reverseLayout: Boolean = false,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    verticalArrangement: Arrangement.Vertical = VerticalListDefaults.VerticalArrangement,
+    verticalArrangement: Arrangement.Vertical = VerticalListDefaults.verticalArrangement,
     content: ListScope.() -> Unit,
 ): Unit =
     List(
@@ -149,13 +148,13 @@ public fun VerticalList(
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     state: ListState = rememberListState(),
-    contentPadding: PaddingValues = VerticalListDefaults.ContentPaddingWithTitle,
+    contentPadding: PaddingValues = VerticalListDefaults.contentPaddingWithTitle,
     userScrollEnabled: Boolean = true,
     overscrollEffect: OverscrollEffect? = rememberOverscrollEffect(),
     flingBehavior: FlingBehavior = VerticalListDefaults.flingBehavior(state),
     reverseLayout: Boolean = false,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    verticalArrangement: Arrangement.Vertical = VerticalListDefaults.VerticalArrangement,
+    verticalArrangement: Arrangement.Vertical = VerticalListDefaults.verticalArrangement,
     content: ListScope.() -> Unit,
 ) {
     VerticalListWithTitleLayout(
@@ -182,23 +181,25 @@ public object VerticalListDefaults {
     /**
      * Recommended value for the distance between items.
      *
-     * @see [VerticalArrangement] for the default arrangement that uses this spacing.
+     * @see [verticalArrangement] for the default arrangement that uses this spacing.
      */
-    public val ItemSpacing: Dp = Spacing.ExtraLarge
+    public val itemSpacing: Dp
+        @Composable get() = GlimmerTheme.componentSpacingValues.extraLarge
 
     /** The maximum height of the fade effects on the sides of the list. */
     public val ScrimMaxHeight: Dp = 46.dp
 
     /** Recommended content padding values for lists without a title. */
-    public val ContentPadding: PaddingValues =
-        PaddingValues(vertical = ItemSpacing, horizontal = 0.dp)
+    public val contentPadding: PaddingValues
+        @Composable get() = PaddingValues(vertical = itemSpacing, horizontal = 0.dp)
 
     /** Recommended content padding values for lists with a title. */
-    public val ContentPaddingWithTitle: PaddingValues =
-        PaddingValues(top = ScrimMaxHeight, bottom = ItemSpacing)
+    public val contentPaddingWithTitle: PaddingValues
+        @Composable get() = PaddingValues(top = ScrimMaxHeight, bottom = itemSpacing)
 
     /** Recommended values for the vertical arrangement. */
-    public val VerticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(ItemSpacing)
+    public val verticalArrangement: Arrangement.Vertical
+        @Composable get() = Arrangement.spacedBy(itemSpacing)
 
     /**
      * Creates and remembers the default fling behavior for a [VerticalList] that aligns the focus

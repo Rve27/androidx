@@ -80,6 +80,7 @@ import androidx.xr.glimmer.samples.placeholderImagePainter
 import androidx.xr.glimmer.testutils.captureToImage
 import androidx.xr.glimmer.testutils.createGlimmerRule
 import com.google.common.truth.Truth.assertThat
+import kotlin.properties.Delegates
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -388,7 +389,9 @@ class CardTest {
 
     @Test
     fun header_appliesAspectRatioToMaximumHeight_fillMaxSize() {
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Card(
                 modifier = Modifier.testTag("card"),
                 header = { Box(Modifier.fillMaxSize().testTag("header")) },
@@ -401,7 +404,7 @@ class CardTest {
 
         rule.onNodeWithTag("header").apply {
             with(getBoundsInRoot()) {
-                width.assertIsEqualTo(cardBounds.width - Spacing.Medium * 2, "width")
+                width.assertIsEqualTo(cardBounds.width - mediumSpacing * 2, "width")
                 height.assertIsEqualTo(width / 1.6f, "height")
             }
         }
@@ -409,7 +412,9 @@ class CardTest {
 
     @Test
     fun header_appliesAspectRatioToMaximumHeight_fixedLargeSize() {
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Card(
                 modifier = Modifier.testTag("card"),
                 header = { Box(Modifier.size(1000.dp).testTag("header")) },
@@ -422,7 +427,7 @@ class CardTest {
 
         rule.onNodeWithTag("header").apply {
             with(getBoundsInRoot()) {
-                width.assertIsEqualTo(cardBounds.width - Spacing.Medium * 2, "width")
+                width.assertIsEqualTo(cardBounds.width - mediumSpacing * 2, "width")
                 height.assertIsEqualTo(width / 1.6f, "height")
             }
         }
@@ -430,7 +435,9 @@ class CardTest {
 
     @Test
     fun header_doesNotEnforceFillingHeight_fillMaxWidth() {
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Card(
                 modifier = Modifier.testTag("card"),
                 header = { Box(Modifier.fillMaxWidth().height(10.dp).testTag("header")) },
@@ -443,7 +450,7 @@ class CardTest {
 
         rule.onNodeWithTag("header").apply {
             with(getBoundsInRoot()) {
-                width.assertIsEqualTo(cardBounds.width - Spacing.Medium * 2, "width")
+                width.assertIsEqualTo(cardBounds.width - mediumSpacing * 2, "width")
                 height.assertIsEqualTo(10.dp, "height")
             }
         }
@@ -451,7 +458,9 @@ class CardTest {
 
     @Test
     fun header_doesNotEnforceFillingWidth_fillMaxHeight() {
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Card(
                 modifier = Modifier.testTag("card"),
                 header = { Box(Modifier.fillMaxHeight().width(10.dp).testTag("header")) },
@@ -465,7 +474,7 @@ class CardTest {
         rule.onNodeWithTag("header").apply {
             with(getBoundsInRoot()) {
                 width.assertIsEqualTo(10.dp, "width")
-                height.assertIsEqualTo((cardBounds.width - Spacing.Medium * 2) / 1.6f, "height")
+                height.assertIsEqualTo((cardBounds.width - mediumSpacing * 2) / 1.6f, "height")
             }
         }
     }
@@ -494,7 +503,9 @@ class CardTest {
         // width in this case, so this should no-op.
         val cardHeight = 50.dp
 
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Card(
                 modifier = Modifier.size(cardWidth, cardHeight).testTag("card"),
                 header = { Box(Modifier.fillMaxSize().testTag("header")) },
@@ -506,8 +517,8 @@ class CardTest {
         rule.onNodeWithTag("header").apply {
             with(getBoundsInRoot()) {
                 // Height and width should be unmodified
-                height.assertIsEqualTo(50.dp - Spacing.Medium * 2, "height")
-                width.assertIsEqualTo(150.dp - Spacing.Medium * 2, "width")
+                height.assertIsEqualTo(50.dp - mediumSpacing * 2, "height")
+                width.assertIsEqualTo(150.dp - mediumSpacing * 2, "width")
             }
         }
     }
@@ -533,7 +544,11 @@ class CardTest {
         val actionSize = 50.dp
         val cardContentSize = 100.dp
 
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Card(
                 modifier = Modifier.testTag("cardAndAction"),
                 action = { Box(Modifier.size(actionSize).testTag("action")) },
@@ -559,7 +574,7 @@ class CardTest {
             // Default card width fills the maximum width
             width.assertIsEqualTo(rule.onRoot().getBoundsInRoot().width, "total card width")
             // Overall card height should be determined by the size of the card content and action
-            val totalOuterAndInnerPadding = (Spacing.Medium + Spacing.Small) * 2
+            val totalOuterAndInnerPadding = (mediumSpacing + smallSpacing) * 2
             height.assertIsEqualTo(
                 (actionBounds.height - /* overlapping offset */ 16.dp) +
                     cardContentBounds.height +
@@ -574,7 +589,11 @@ class CardTest {
         val cardSize = 150.dp
         val actionSize = 50.dp
 
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Card(
                 modifier =
                     Modifier.sizeIn(maxWidth = cardSize, maxHeight = cardSize)
@@ -600,7 +619,7 @@ class CardTest {
             }
 
         rule.onNodeWithTag("cardContent").getBoundsInRoot().apply {
-            val totalOuterAndInnerPadding = (Spacing.Medium + Spacing.Small) * 2
+            val totalOuterAndInnerPadding = (mediumSpacing + smallSpacing) * 2
             width.assertIsEqualTo(
                 cardAndActionBounds.width - totalOuterAndInnerPadding,
                 "card content width",
@@ -652,7 +671,11 @@ class CardTest {
 
     @Test
     fun positioning() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(modifier = Modifier.testTag("card")) {
@@ -676,7 +699,7 @@ class CardTest {
         )
 
         (contentBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between the start of the card and the start of the content.",
         )
 
@@ -687,7 +710,11 @@ class CardTest {
 
     @Test
     fun positioning_titleAndSubtitle() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(
@@ -714,22 +741,22 @@ class CardTest {
         // Title should be top aligned when the height of the content, title, and subtitle is
         // greater than minimum card height
         (titleBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of title.",
         )
 
         (titleBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between the start of the card and the start of the title.",
         )
 
         (subtitleBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between the start of the card and the start of the subtitle.",
         )
 
         (contentBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between the start of the card and the start of the content.",
         )
 
@@ -744,7 +771,7 @@ class CardTest {
         )
 
         (cardBounds.bottom - contentBounds.bottom).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between bottom of card and bottom of content.",
         )
 
@@ -757,7 +784,11 @@ class CardTest {
 
     @Test
     fun positioning_withIcons() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(
@@ -794,12 +825,12 @@ class CardTest {
             rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (leadingIconBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of leading icon.",
         )
 
         (leadingIconBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between start of card and start of leading icon.",
         )
 
@@ -811,23 +842,23 @@ class CardTest {
         )
 
         (contentBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of content.",
         )
 
         (trailingIconBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of trailing icon.",
         )
 
         (cardBounds.right - trailingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between end of trailing icon and end of card.",
         )
 
         // The width should fill the max width, like with the spacer
         cardBounds.width.assertIsEqualTo(spacerBounds.width, "width of card.")
-        val totalOuterAndInnerPadding = (Spacing.Medium + Spacing.Small) * 2
+        val totalOuterAndInnerPadding = (mediumSpacing + smallSpacing) * 2
         cardBounds.height.assertIsEqualTo(
             /* vertical padding * 2 + icon height*/ totalOuterAndInnerPadding + 48.dp,
             "height of card.",
@@ -836,7 +867,11 @@ class CardTest {
 
     @Test
     fun positioning_header() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column(Modifier.width(300.dp)) {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(
@@ -865,32 +900,32 @@ class CardTest {
             rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (headerBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between top of card and top of header image.",
         )
 
         (headerBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between the start of the card and the start of the header image.",
         )
 
         (cardBounds.right - headerBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between the end of the header image and the end of the card.",
         )
 
         (contentBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between the start of the card and the start of the content.",
         )
 
         (contentBounds.top - headerBounds.bottom).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between the bottom of the header image and the top of the content.",
         )
 
         (cardBounds.bottom - contentBounds.bottom).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between bottom of card and bottom of content.",
         )
 
@@ -902,7 +937,11 @@ class CardTest {
 
     @Test
     fun positioning_action() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(
@@ -933,7 +972,7 @@ class CardTest {
         )
 
         (contentBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between the start of the card and the start of the content.",
         )
 
@@ -963,7 +1002,11 @@ class CardTest {
 
     @Test
     fun positioning_titleAndSubtitle_withIcons() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(
@@ -1006,34 +1049,34 @@ class CardTest {
             rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (leadingIconBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of leading icon.",
         )
 
         (leadingIconBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between start of card and start of leading icon.",
         )
 
         // Title should be top aligned when the height of the content, title, and subtitle is
         // greater than minimum card height
         (titleBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of title.",
         )
 
         (titleBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of title.",
         )
 
         (subtitleBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of subtitle.",
         )
 
         (contentBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of content.",
         )
 
@@ -1048,17 +1091,17 @@ class CardTest {
         )
 
         (cardBounds.bottom - contentBounds.bottom).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between bottom of card and bottom of content.",
         )
 
         (trailingIconBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of trailing icon.",
         )
 
         (cardBounds.right - trailingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between end of trailing icon and end of card.",
         )
 
@@ -1071,7 +1114,11 @@ class CardTest {
 
     @Test
     fun positioning_titleAndSubtitle_withImageAndIcons() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column(Modifier.width(300.dp)) {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(
@@ -1124,47 +1171,47 @@ class CardTest {
             rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (headerBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between top of card and top of header image.",
         )
 
         (headerBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between the start of the card and the start of the header image.",
         )
 
         (cardBounds.right - headerBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between the end of the header image and the end of the card.",
         )
 
         (leadingIconBounds.top - headerBounds.bottom).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between the bottom of header image and top of leading icon.",
         )
 
         (leadingIconBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between start of card and start of leading icon.",
         )
 
         (titleBounds.top - headerBounds.bottom).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between the bottom of header image and top of title.",
         )
 
         (titleBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of title.",
         )
 
         (subtitleBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of subtitle.",
         )
 
         (contentBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of content.",
         )
 
@@ -1179,17 +1226,17 @@ class CardTest {
         )
 
         (cardBounds.bottom - contentBounds.bottom).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between bottom of card and bottom of content.",
         )
 
         (trailingIconBounds.top - headerBounds.bottom).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between the bottom of header image and top of trailing icon.",
         )
 
         (cardBounds.right - trailingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between end of trailing icon and end of card.",
         )
 
@@ -1201,7 +1248,11 @@ class CardTest {
 
     @Test
     fun positioning_titleAndSubtitle_withImageAndIcons_withAction() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column(Modifier.width(300.dp)) {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(
@@ -1257,47 +1308,47 @@ class CardTest {
             rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (headerBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between top of card and top of header image.",
         )
 
         (headerBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between the start of the card and the start of the header image.",
         )
 
         (cardBounds.right - headerBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between the end of the header image and the end of the card.",
         )
 
         (leadingIconBounds.top - headerBounds.bottom).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between the bottom of header image and top of leading icon.",
         )
 
         (leadingIconBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between start of card and start of leading icon.",
         )
 
         (titleBounds.top - headerBounds.bottom).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between the bottom of header image and top of title.",
         )
 
         (titleBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of title.",
         )
 
         (subtitleBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of subtitle.",
         )
 
         (contentBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of content.",
         )
 
@@ -1312,18 +1363,18 @@ class CardTest {
         )
 
         (trailingIconBounds.top - headerBounds.bottom).assertIsEqualTo(
-            Spacing.Small,
+            smallSpacing,
             "Padding between the bottom of header image and top of trailing icon.",
         )
 
         (cardBounds.right - trailingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between end of trailing icon and end of card.",
         )
 
         (actionBounds.top).assertIsEqualTo(
             // Padding - offset
-            contentBounds.bottom + Spacing.Medium + Spacing.Small - 16.dp,
+            contentBounds.bottom + mediumSpacing + smallSpacing - 16.dp,
             "Space between the top of the action and the bottom of the content",
         )
 
@@ -1346,7 +1397,11 @@ class CardTest {
 
     @Test
     fun positioning_titleAndSubtitle_withIcons_longText() {
+        var smallSpacing: Dp by Delegates.notNull()
+        var mediumSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
+            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            mediumSpacing = GlimmerTheme.componentSpacingValues.medium
             Column(Modifier.width(300.dp)) {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
                 Card(
@@ -1389,34 +1444,34 @@ class CardTest {
             rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (leadingIconBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of leading icon.",
         )
 
         (leadingIconBounds.left - cardBounds.left).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between start of card and start of leading icon.",
         )
 
         // Title should be top aligned when the height of the content, title, and subtitle is
         // greater than minimum card height
         (titleBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of title.",
         )
 
         (titleBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of title.",
         )
 
         (subtitleBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of subtitle.",
         )
 
         (contentBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium,
+            mediumSpacing,
             "Padding between end of leading icon and start of content.",
         )
 
@@ -1431,17 +1486,17 @@ class CardTest {
         )
 
         (cardBounds.bottom - contentBounds.bottom).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between bottom of card and bottom of content.",
         )
 
         (trailingIconBounds.top - cardBounds.top).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between top of card and top of trailing icon.",
         )
 
         (cardBounds.right - trailingIconBounds.right).assertIsEqualTo(
-            Spacing.Medium + Spacing.Small,
+            mediumSpacing + smallSpacing,
             "Padding between end of trailing icon and end of card.",
         )
 
