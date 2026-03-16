@@ -151,6 +151,10 @@ package androidx.xr.runtime {
     ctor @KotlinOnly public ExperimentalXrDeviceLifecycleApi();
   }
 
+  @SuppressCompatibility @kotlin.RequiresOptIn(message="This is an experimental API. It may be changed or removed in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalXrServiceAvailabilityApi {
+    ctor @KotlinOnly public ExperimentalXrServiceAvailabilityApi();
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class EyeTrackingMode extends androidx.xr.runtime.Config.ConfigMode {
     method @InaccessibleFromKotlin public int getMode();
     property public int mode;
