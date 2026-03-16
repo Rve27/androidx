@@ -367,7 +367,7 @@ public annotation class ExperimentalFollowingSubspaceApi
  *
  * When the target parameter is specified to be [FollowTarget.ArDevice], the content will be
  * positioned relative the view of the AR device. This is sometimes referred to as head-locked
- * content. For this API, it is required for headtracking to not be disabled in the session
+ * content. For this API, it is required for device tracking to not be disabled in the session
  * configuration. If it is disabled, this API will not return anything. The session configuration
  * should resemble `session.configure( config = session.config.copy(deviceTracking =
  * Config.DeviceTrackingMode.SPATIAL_LAST_KNOWN) )` The [FollowTarget.ArDevice] is not compatible
@@ -505,7 +505,7 @@ private fun validateFollowingSubspaceConfiguration(
     behavior: FollowBehavior,
     config: Config,
 ): Boolean {
-    // Following an AR device requires head tracking to be enabled.
+    // Following an AR device requires device tracking to be enabled.
     if (target is ArDeviceTarget && config.deviceTracking == DeviceTrackingMode.DISABLED) {
         return false
     }
