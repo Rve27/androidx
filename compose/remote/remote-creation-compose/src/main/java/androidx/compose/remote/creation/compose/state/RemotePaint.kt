@@ -23,7 +23,6 @@ import android.graphics.Paint as AndroidPaint
 import android.graphics.Typeface
 import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.layout.toAndroidBlendMode
 import androidx.compose.remote.creation.compose.layout.toAndroidCap
 import androidx.compose.remote.creation.compose.layout.toAndroidJoin
@@ -32,9 +31,7 @@ import androidx.compose.remote.creation.compose.layout.toComposeBlendMode
 import androidx.compose.remote.creation.compose.layout.toPaintingStyle
 import androidx.compose.remote.creation.compose.layout.toStrokeCap
 import androidx.compose.remote.creation.compose.layout.toStrokeJoin
-import androidx.compose.remote.creation.compose.shaders.RemoteBrush
 import androidx.compose.remote.creation.compose.shaders.RemoteShader
-import androidx.compose.remote.creation.compose.shaders.RemoteSolidColor
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
@@ -110,19 +107,15 @@ public sealed interface RemotePaint {
     public var colorFilter: RemoteColorFilter?
 
     /** The [Typeface] to use for drawing text. */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var typeface: Typeface?
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {
         /**
          * Creates a new [RemotePaint] instance using [StandardRemotePaint].
          *
          * @param init An optional initialization block to configure the paint.
          */
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public operator fun invoke(init: StandardRemotePaint.() -> Unit = {}): RemotePaint =
+        public operator fun invoke(init: RemotePaint.() -> Unit = {}): RemotePaint =
             StandardRemotePaint().apply(init)
     }
 }
@@ -164,33 +157,6 @@ public class StandardRemotePaint() : RemotePaint {
         this.textSize = other.textSize
         this.typeface = other.typeface
         this.color = other.color
-    }
-
-    /**
-     * Applies a [RemoteBrush] to this paint.
-     *
-     * Depending on whether the brush is a shader or a solid color, this method updates [shader] and
-     * [color] accordingly.
-     *
-     * @param remoteBrush The brush to apply.
-     * @param size The size of the area being drawn, used for shader calculation.
-     * @param matrix3x3 An optional matrix to apply to the shader.
-     */
-    public fun RemoteStateScope.applyRemoteBrush(
-        remoteBrush: RemoteBrush,
-        size: RemoteSize,
-        matrix3x3: RemoteMatrix3x3? = null,
-    ) {
-        if (remoteBrush.hasShader) {
-            shader =
-                with(remoteBrush) { createShader(size).apply { this.remoteMatrix3x3 = matrix3x3 } }
-            color = Color.Black.rc
-        } else if (remoteBrush is RemoteSolidColor) {
-            color = remoteBrush.color
-            shader = null
-        } else {
-            throw UnsupportedOperationException("Unsupported brush type: $remoteBrush")
-        }
     }
 
     override fun toString(): String {
@@ -287,33 +253,6 @@ public open class CompatAndroidRemotePaint : AndroidPaint, RemotePaintConvertibl
         set(value) {
             shader = value
         }
-
-    /**
-     * Applies a [RemoteBrush] to this paint.
-     *
-     * Depending on whether the brush is a shader or a solid color, this method updates
-     * [remoteShader] and [remoteColor] accordingly.
-     *
-     * @param remoteBrush The brush to apply.
-     * @param size The size of the area being drawn, used for shader calculation.
-     * @param matrix3x3 An optional matrix to apply to the shader.
-     */
-    public fun RemoteStateScope.applyRemoteBrush(
-        remoteBrush: RemoteBrush,
-        size: RemoteSize,
-        matrix3x3: RemoteMatrix3x3? = null,
-    ) {
-        if (remoteBrush.hasShader) {
-            remoteShader =
-                with(remoteBrush) { createShader(size).apply { this.remoteMatrix3x3 = matrix3x3 } }
-            remoteColor = null
-        } else if (remoteBrush is RemoteSolidColor) {
-            remoteColor = remoteBrush.color
-            remoteShader = null
-        } else {
-            throw UnsupportedOperationException("Unsupported brush type: $remoteBrush")
-        }
-    }
 
     /** Converts this paint to a [RemotePaint]. */
     override val remotePaint: RemotePaint

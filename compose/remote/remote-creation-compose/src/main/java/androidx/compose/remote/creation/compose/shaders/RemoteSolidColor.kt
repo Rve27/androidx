@@ -19,6 +19,7 @@ package androidx.compose.remote.creation.compose.shaders
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.layout.RemoteSize
 import androidx.compose.remote.creation.compose.state.RemoteColor
+import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -35,6 +36,11 @@ public class RemoteSolidColor(public val color: RemoteColor) : RemoteBrush() {
         throw UnsupportedOperationException(
             "SolidColor not supported for Shader, use Color directly"
         )
+    }
+
+    override fun RemoteStateScope.applyTo(paint: RemotePaint, size: RemoteSize) {
+        paint.color = color
+        paint.shader = null
     }
 
     override val hasShader: Boolean

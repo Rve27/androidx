@@ -197,7 +197,9 @@ class RemoteCanvasTest {
                 anchorY = 40f.rf,
                 paint =
                     RemotePaint {
-                        applyRemoteBrush(RemoteBrush.solidColor(Color.Red.rc), size)
+                        with(RemoteBrush.solidColor(Color.Red.rc)) {
+                            applyTo(this@RemotePaint, size)
+                        }
                         textSize = SMALL_FONT_SIZE.rf
                     },
             )
@@ -207,7 +209,9 @@ class RemoteCanvasTest {
                 anchorY = 80f.rf,
                 paint =
                     RemotePaint {
-                        applyRemoteBrush(RemoteBrush.solidColor(Color.Green.rc), size)
+                        with(RemoteBrush.solidColor(Color.Green.rc)) {
+                            applyTo(this@RemotePaint, size)
+                        }
                         textSize = MEDIUM_FONT_SIZE.rf
                     },
             )
@@ -217,7 +221,9 @@ class RemoteCanvasTest {
                 anchorY = 120f.rf,
                 paint =
                     RemotePaint {
-                        applyRemoteBrush(RemoteBrush.solidColor(Color.Blue.rc), size)
+                        with(RemoteBrush.solidColor(Color.Blue.rc)) {
+                            applyTo(this@RemotePaint, size)
+                        }
                         textSize = LARGE_FONT_SIZE.rf
                     },
             )

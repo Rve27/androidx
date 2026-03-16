@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.DefaultAlpha
  * [RemotePainter] are responsible for implementing the [onDraw] method, which defines the drawing
  * operations.
  */
-public abstract class RemotePainter @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) constructor() {
+public abstract class RemotePainter {
 
     private var paint: RemotePaint? = null
 
