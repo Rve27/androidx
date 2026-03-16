@@ -324,16 +324,15 @@ internal fun BottomSheetImpl(
                         }
                     }
                     val newTarget =
-                        when (state.anchoredDraggableState.targetValue) {
+                        when (state.targetValue) {
                             Hidden -> Hidden
                             PartiallyExpanded -> {
-                                val hasPartiallyExpandedState =
-                                    newAnchors.hasPositionFor(PartiallyExpanded)
-                                val newTarget =
-                                    if (hasPartiallyExpandedState) PartiallyExpanded
-                                    else if (newAnchors.hasPositionFor(Expanded)) Expanded
-                                    else Hidden
-                                newTarget
+                                when {
+                                    newAnchors.hasPositionFor(PartiallyExpanded) ->
+                                        PartiallyExpanded
+                                    newAnchors.hasPositionFor(Expanded) -> Expanded
+                                    else -> Hidden
+                                }
                             }
 
                             Expanded -> {
