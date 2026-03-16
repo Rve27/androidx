@@ -735,9 +735,18 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
                 val context = RemoteFloatContext(creationState)
                 val result = expression(context)
                 val initialValueId = result.getFloatIdForCreationState(creationState)
-                val floatId =
-                    creationState.document.addNamedFloat(domain.prefixed(name), initialValueId)
-                floatArrayOf(floatId)
+                if (Utils.isVariable(initialValueId)) {
+                    val floatId = creationState.document.floatExpression(initialValueId)
+                    creationState.document.setFloatName(
+                        Utils.idFromNan(floatId),
+                        domain.prefixed(name),
+                    )
+                    floatArrayOf(floatId)
+                } else {
+                    val floatId =
+                        creationState.document.addNamedFloat(domain.prefixed(name), initialValueId)
+                    floatArrayOf(floatId)
+                }
             }
         }
     }
@@ -1393,7 +1402,7 @@ internal constructor(
          */
         public fun createMutable(initialValue: Float): MutableRemoteFloat {
             return MutableRemoteFloat(cacheKey = RemoteStateInstanceKey()) { creationState ->
-                creationState.document.addFloatConstant(initialValue)
+                creationState.document.floatExpression(initialValue)
             }
         }
 
@@ -1627,7 +1636,7 @@ public fun rememberMutableRemoteFloat(
         // Currently evaluated eagerly to grab the right component
         val value = content(context)
         MutableRemoteFloat(cacheKey = RemoteStateInstanceKey()) { state ->
-            value.getFloatIdForCreationState(state)
+            state.document.floatExpression(*value.arrayForCreationState(state))
         }
     }
 }
@@ -1668,20 +1677,8 @@ public fun rememberNamedRemoteFloat(
     domain: RemoteState.Domain = RemoteState.Domain.User,
     content: RemoteFloatContext.() -> RemoteFloat,
 ): RemoteFloat {
-    val state = LocalRemoteComposeCreationState.current
     return rememberNamedState(name, domain) {
-        val context = RemoteFloatContext(state)
-        // Currently evaluated eagerly to grab the right component
-        val remoteFloat = content(context)
-        val key = RemoteNamedCacheKey(domain, name)
-        RemoteFloatExpression(constantValueOrNull = null, cacheKey = key) { creationState ->
-            // Create an additional expression to name, in case the input value is meaningful
-            // and just a default. So override is of this named value, not the expression.
-            val floatId =
-                state.document.floatExpression(*remoteFloat.arrayForCreationState(creationState))
-            state.document.setFloatName(Utils.idFromNan(floatId), domain.prefixed(name))
-            floatArrayOf(floatId)
-        }
+        RemoteFloat.createNamedRemoteFloatExpression(name, domain, expression = content)
     }
 }
 
