@@ -19,9 +19,9 @@ package androidx.wear.compose.remote.material3
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.action.Action
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
+import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteRow
-import androidx.compose.remote.creation.compose.layout.RemoteSpacer
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
 import androidx.compose.remote.creation.compose.modifier.height
@@ -51,7 +51,6 @@ import androidx.compose.runtime.CompositionLocalProvider
  * @param content The optional body content of the card.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Suppress("RestrictedApiAndroidX")
 @RemoteComposable
 @Composable
 public fun RemoteTitleCard(
@@ -86,7 +85,7 @@ public fun RemoteTitleCard(
     ) {
         if (content == null && time != null) {
             timeWithTextStyle()
-            RemoteSpacer(modifier = RemoteModifier.height(4.rdp))
+            RemoteBox(modifier = RemoteModifier.height(4.rdp))
         }
         RemoteRow(
             modifier = RemoteModifier.fillMaxWidth(),
@@ -100,12 +99,12 @@ public fun RemoteTitleCard(
                 )
             }
             if (content != null && time != null) {
-                RemoteSpacer(modifier = RemoteModifier.width(4.rdp))
+                RemoteBox(modifier = RemoteModifier.width(4.rdp))
                 timeWithTextStyle()
             }
         }
         content?.let {
-            RemoteSpacer(modifier = RemoteModifier.height(2.rdp))
+            RemoteBox(modifier = RemoteModifier.height(2.rdp))
             CompositionLocalProvider(
                 LocalRemoteContentColor provides colors.contentColor,
                 LocalRemoteTextStyle provides RemoteCardTokens.ContentTypography,
@@ -113,7 +112,7 @@ public fun RemoteTitleCard(
             )
         }
         subtitle?.let {
-            RemoteSpacer(
+            RemoteBox(
                 modifier =
                     RemoteModifier.height(if (time == null && content == null) 2.rdp else 6.rdp)
             )
