@@ -29,7 +29,9 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.InvocationHandler;
 
 public class PrefetchOperationCallbackAdapter {
-    private PrefetchOperationCallbackAdapter() {}
+    private PrefetchOperationCallbackAdapter() {
+    }
+
     /**
      * Builds the PrefetchOperationCallback to send to the prefetch request.
      *
@@ -44,6 +46,15 @@ public class PrefetchOperationCallbackAdapter {
                     @Override
                     public void onSuccess() {
                         callback.onResult(null);
+                    }
+
+                    @SuppressWarnings({"UnusedVariable", "UnusedMethod"})
+                    public void onResult(int type) {
+                    }
+
+                    @SuppressWarnings("UnusedMethod")
+                    public String[] getSupportedFeatures() {
+                        return new String[]{};
                     }
 
                     @Override
