@@ -44,7 +44,7 @@ import org.robolectric.annotation.Config
 class PerceptionSpaceScenePoseImplTest {
     private val xrExtensions = getXrExtensions()!!
     private val fakeScheduledExecutor = FakeScheduledExecutorService()
-    private val entityManager = EntityManager()
+    private val sceneNodeRegistry = SceneNodeRegistry()
     private val activity: Activity =
         Robolectric.buildActivity(Activity::class.java).create().start().get()
     private val activitySpace =
@@ -52,7 +52,7 @@ class PerceptionSpaceScenePoseImplTest {
             xrExtensions.createNode(),
             activity,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             { xrExtensions.getSpatialState(activity) },
             fakeScheduledExecutor,
         )
@@ -72,7 +72,7 @@ class PerceptionSpaceScenePoseImplTest {
             FakeGltfFeature(node),
             activitySpace,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             fakeScheduledExecutor,
         )
     }

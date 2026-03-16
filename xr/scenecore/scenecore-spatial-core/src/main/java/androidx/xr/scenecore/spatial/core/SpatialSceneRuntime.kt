@@ -103,7 +103,7 @@ private constructor(
     activity: Activity,
     private val scheduledExecutorService: ScheduledExecutorService,
     private val xrExtensions: XrExtensions,
-    private val entityManager: EntityManager,
+    private val sceneNodeRegistry: SceneNodeRegistry,
     @get:VisibleForTesting internal val sceneRootNode: Node,
     @get:VisibleForTesting internal val taskWindowLeashNode: Node,
 ) : SceneRuntime, RenderingEntityFactory {
@@ -200,19 +200,19 @@ private constructor(
                 sceneRootNode,
                 activity,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 lazySpatialStateProvider,
                 scheduledExecutorService,
             )
-        entityManager.addSystemSpaceActivityPose(activitySpace)
+        sceneNodeRegistry.addSystemSpaceScenePose(activitySpace)
         perceptionSpaceScenePose = PerceptionSpaceScenePoseImpl(activitySpace)
-        entityManager.addSystemSpaceActivityPose(perceptionSpaceScenePose)
+        sceneNodeRegistry.addSystemSpaceScenePose(perceptionSpaceScenePose)
         mainPanelEntity =
             MainPanelEntityImpl(
                 activity,
                 taskWindowLeashNode,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 scheduledExecutorService,
             )
         mainPanelEntity.parent = activitySpace
@@ -242,8 +242,8 @@ private constructor(
         // TODO: b/376934871 - Check async results.
         xrExtensions.detachSpatialScene(activity, { it.run() }) { _: XrExtensionResult -> }
         activity = null
-        entityManager.getAllEntities().forEach(Entity::dispose)
-        entityManager.clear()
+        sceneNodeRegistry.getAllEntities().forEach(Entity::dispose)
+        sceneNodeRegistry.clear()
         isDestroyed = true
     }
 
@@ -266,7 +266,7 @@ private constructor(
                 node,
                 view,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 dimensions,
                 name,
                 scheduledExecutorService,
@@ -291,7 +291,7 @@ private constructor(
                 node,
                 view,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 pixelDimensions,
                 name,
                 scheduledExecutorService,
@@ -324,7 +324,7 @@ private constructor(
                 activityPanel.node,
                 name,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 activityPanel,
                 windowBoundsPx,
                 scheduledExecutorService,
@@ -341,7 +341,7 @@ private constructor(
             node,
             activitySpace,
             xrExtensions,
-            entityManager,
+            sceneNodeRegistry,
             scheduledExecutorService,
         )
     }
@@ -357,7 +357,7 @@ private constructor(
                 feature,
                 parentEntity,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 scheduledExecutorService,
             )
         entity.setPose(pose, Space.PARENT)
@@ -375,7 +375,7 @@ private constructor(
                 feature,
                 parentEntity,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 scheduledExecutorService,
             )
         entity.setPose(pose, Space.PARENT)
@@ -388,7 +388,7 @@ private constructor(
                 checkNotNull(activity),
                 xrExtensions,
                 node,
-                entityManager,
+                sceneNodeRegistry,
                 scheduledExecutorService,
             )
         entity.size = size
@@ -409,7 +409,7 @@ private constructor(
                     activity,
                     node,
                     xrExtensions,
-                    entityManager,
+                    sceneNodeRegistry,
                     scheduledExecutorService,
                 ) {}
         entity.parent = parent
@@ -836,7 +836,7 @@ private constructor(
                 activity,
                 executor,
                 extensions = requireNotNull(getXrExtensions()),
-                EntityManager(),
+                SceneNodeRegistry(),
                 sceneRootNode,
                 taskWindowLeashNode,
             )
@@ -848,7 +848,7 @@ private constructor(
             activity: Activity,
             executor: ScheduledExecutorService,
             extensions: XrExtensions,
-            entityManager: EntityManager,
+            sceneNodeRegistry: SceneNodeRegistry,
             sceneRootNode: Node = extensions.createNode(),
             taskWindowLeashNode: Node = extensions.createNode(),
         ): SpatialSceneRuntime {
@@ -867,7 +867,7 @@ private constructor(
                 activity,
                 executor,
                 extensions,
-                entityManager,
+                sceneNodeRegistry,
                 sceneRootNode,
                 taskWindowLeashNode,
             )
@@ -879,7 +879,12 @@ private constructor(
             activity: Activity,
             executor: ScheduledExecutorService,
         ): SpatialSceneRuntime {
-            return create(activity, executor, requireNotNull(getXrExtensions()), EntityManager())
+            return create(
+                activity,
+                executor,
+                requireNotNull(getXrExtensions()),
+                SceneNodeRegistry(),
+            )
         }
     }
 }

@@ -58,10 +58,12 @@ public class ActivitySpaceImpl(
     taskNode: Node,
     activity: Activity,
     extensions: XrExtensions,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     private val spatialStateProvider: Supplier<SpatialState>,
     executor: ScheduledExecutorService,
-) : SystemSpaceEntityImpl(activity, taskNode, extensions, entityManager, executor), ActivitySpace {
+) :
+    SystemSpaceEntityImpl(activity, taskNode, extensions, sceneNodeRegistry, executor),
+    ActivitySpace {
 
     private val boundsListeners =
         Collections.synchronizedSet(HashSet<ActivitySpace.OnBoundsChangedListener>())
@@ -91,8 +93,8 @@ public class ActivitySpaceImpl(
     public val poseInPerceptionSpace: Pose
         get() {
             val perceptionSpaceScenePose =
-                mEntityManager
-                    .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)
+                sceneNodeRegistry
+                    .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)
                     .single()
             return transformPoseTo(Pose(), perceptionSpaceScenePose)
         }
@@ -122,7 +124,7 @@ public class ActivitySpaceImpl(
             cachedRecommendedContentBox.updateAndGet { currentBox ->
                 currentBox
                     ?: run {
-                        val recommendedBox = mExtensions.recommendedContentBoxInFullSpace
+                        val recommendedBox = extensions.recommendedContentBoxInFullSpace
                         BoundingBox.fromMinMax(
                             Vector3(
                                 recommendedBox.min.x,
@@ -210,7 +212,7 @@ public class ActivitySpaceImpl(
         val yaw = activitySpaceRotation.eulerAngles.y
         val yawRotation = Quaternion.fromEulerAngles(0.0f, yaw, 0.0f)
         val gravityAlignedRotation = activitySpaceRotation.inverse * yawRotation
-        mExtensions.createNodeTransaction().use { transaction ->
+        extensions.createNodeTransaction().use { transaction ->
             transaction
                 .setScale(
                     getNode(),
@@ -287,12 +289,12 @@ public class ActivitySpaceImpl(
             }
 
         try {
-            mExtensions.hitTest(
+            extensions.hitTest(
                 activity,
                 Vec3(origin.x, origin.y, origin.z),
                 Vec3(direction.x, direction.y, direction.z),
                 RuntimeUtils.getHitTestFilter(hitTestFilter),
-                mExecutor,
+                scheduledExecutor,
                 consumer,
             )
         } catch (e: Throwable) {

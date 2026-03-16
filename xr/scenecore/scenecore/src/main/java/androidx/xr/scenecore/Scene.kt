@@ -48,7 +48,7 @@ import java.util.function.Consumer
 @Suppress("NotCloseable")
 public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY) public constructor() : SessionConnector {
 
-    internal val entityManager = EntityManager()
+    internal val entityRegistry = EntityRegistry()
 
     internal lateinit var sceneRuntime: SceneRuntime
         private set
@@ -195,16 +195,16 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY) public constructor() : 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     override fun initialize(runtimes: List<JxrRuntime>) {
         this.sceneRuntime = runtimes.filterIsInstance<SceneRuntime>().first()
-        spatialEnvironment = SpatialEnvironment(sceneRuntime, entityManager)
+        spatialEnvironment = SpatialEnvironment(sceneRuntime, entityRegistry)
         perceptionSpace = PerceptionSpace.create(sceneRuntime)
-        activitySpace = ActivitySpace.create(sceneRuntime, entityManager)
+        activitySpace = ActivitySpace.create(sceneRuntime, entityRegistry)
         val perceptionRuntime = runtimes.filterIsInstance<PerceptionRuntime>().first()
         mainPanelEntity =
             MainPanelEntity.create(
                 perceptionRuntime.lifecycleManager,
                 sceneRuntime,
                 perceptionSpace,
-                entityManager,
+                entityRegistry,
             )
         keyEntity = mainPanelEntity
         sceneRuntime.spatialModeChangeListener =
@@ -224,7 +224,7 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY) public constructor() : 
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     override fun close() {
-        entityManager.clear()
+        entityRegistry.clear()
         sceneRuntime.removeSpatialCapabilitiesChangedListener(rtSpatialCapabilitiesListener)
         spatialCapabilitiesListeners.keys.forEach { removeSpatialCapabilitiesChangedListener(it) }
         keyEntity = null
@@ -339,10 +339,10 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY) public constructor() : 
      * @return a list of all entities of the given type.
      */
     public fun <T : Entity> getEntitiesOfType(type: Class<out T>): List<T> =
-        entityManager.getEntitiesOfType(type)
+        entityRegistry.getEntitiesOfType(type)
 
     internal fun getEntityForRtEntity(entity: RtEntity): Entity? {
-        return entityManager.getEntityForRtEntity(entity)
+        return entityRegistry.getEntityForRtEntity(entity)
     }
 
     /**

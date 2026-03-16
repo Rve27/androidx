@@ -40,10 +40,10 @@ internal class SurfaceEntityImpl(
     private val surfaceFeature: SurfaceFeature,
     parent: Entity?,
     extensions: XrExtensions,
-    entityManager: EntityManager,
+    sceneNodeRegistry: SceneNodeRegistry,
     executor: ScheduledExecutorService,
 ) :
-    BaseRenderingEntity(context, surfaceFeature, extensions, entityManager, executor),
+    BaseRenderingEntity(context, surfaceFeature, extensions, sceneNodeRegistry, executor),
     SurfaceEntity {
 
     init {

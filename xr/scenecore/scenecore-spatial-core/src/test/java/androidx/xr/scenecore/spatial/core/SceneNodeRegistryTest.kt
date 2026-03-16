@@ -46,12 +46,12 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Config.TARGET_SDK])
-class EntityManagerTest {
+class SceneNodeRegistryTest {
     private val xrExtensions = getXrExtensions()!!
     private val fakeScheduledExecutorService = FakeScheduledExecutorService()
     private val panelEntityNode: Node = xrExtensions.createNode()
     private val anchorEntityNode: Node = xrExtensions.createNode()
-    private val entityManager = EntityManager()
+    private val sceneNodeRegistry = SceneNodeRegistry()
     private lateinit var entityNode: Node
     private lateinit var gltfEntityNode: Node
     private val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
@@ -65,7 +65,7 @@ class EntityManagerTest {
                 activity,
                 fakeScheduledExecutorService,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
             )
         val taskNode = xrExtensions.createNode()
         activitySpace =
@@ -73,7 +73,7 @@ class EntityManagerTest {
                 taskNode,
                 activity,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 { xrExtensions.getSpatialState(activity) },
                 fakeScheduledExecutorService,
             )
@@ -91,18 +91,17 @@ class EntityManagerTest {
     }
 
     @Test
-    fun creatingEntity_addsEntityToEntityManager() {
+    fun creatingEntity_addsEntityToSceneNodeRegistry() {
         val gltfEntity = createGltfEntity()
         val panelEntity = createPanelEntity()
         val entity = createEntity()
         val anchorEntity = createAnchorEntity()
         val activityPanelEntity = createActivityPanelEntity()
 
-        // Entity manager also contains the main panel entity and activity space, which are created
-        // when
-        // the runtime is created.
-        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
-        assertThat(entityManager.getAllEntities())
+        // SceneNodeRegistry also contains the main panel entity and activity space, which are
+        // created when the runtime is created.
+        assertThat(sceneNodeRegistry.getAllEntities().size).isAtLeast(5)
+        assertThat(sceneNodeRegistry.getAllEntities())
             .containsAtLeast(gltfEntity, panelEntity, entity, anchorEntity, activityPanelEntity)
     }
 
@@ -114,11 +113,11 @@ class EntityManagerTest {
         val anchorEntity = createAnchorEntity()
         val testNode = xrExtensions.createNode()
 
-        assertThat(entityManager.getEntityForNode(gltfEntityNode)).isEqualTo(gltfEntity)
-        assertThat(entityManager.getEntityForNode(panelEntityNode)).isEqualTo(panelEntity)
-        assertThat(entityManager.getEntityForNode(entityNode)).isEqualTo(entity)
-        assertThat(entityManager.getEntityForNode(anchorEntityNode)).isEqualTo(anchorEntity)
-        assertThat(entityManager.getEntityForNode(testNode)).isNull()
+        assertThat(sceneNodeRegistry.getEntityForNode(gltfEntityNode)).isEqualTo(gltfEntity)
+        assertThat(sceneNodeRegistry.getEntityForNode(panelEntityNode)).isEqualTo(panelEntity)
+        assertThat(sceneNodeRegistry.getEntityForNode(entityNode)).isEqualTo(entity)
+        assertThat(sceneNodeRegistry.getEntityForNode(anchorEntityNode)).isEqualTo(anchorEntity)
+        assertThat(sceneNodeRegistry.getEntityForNode(testNode)).isNull()
     }
 
     @Test
@@ -129,16 +128,17 @@ class EntityManagerTest {
         val anchorEntity = createAnchorEntity()
         val activityPanelEntity = createActivityPanelEntity()
 
-        assertThat(entityManager.getEntitiesOfType(GltfEntity::class.java))
+        assertThat(sceneNodeRegistry.getEntitiesOfType(GltfEntity::class.java))
             .containsExactly(gltfEntity)
         // MainPanel is also a PanelEntity.
-        assertThat(entityManager.getEntitiesOfType(PanelEntity::class.java)).contains(panelEntity)
+        assertThat(sceneNodeRegistry.getEntitiesOfType(PanelEntity::class.java))
+            .contains(panelEntity)
         // Base class of all entities.
-        assertThat(entityManager.getEntitiesOfType<Entity>(Entity::class.java)).contains(entity)
-        assertThat(entityManager.getEntitiesOfType<AnchorEntity>(AnchorEntity::class.java))
+        assertThat(sceneNodeRegistry.getEntitiesOfType<Entity>(Entity::class.java)).contains(entity)
+        assertThat(sceneNodeRegistry.getEntitiesOfType<AnchorEntity>(AnchorEntity::class.java))
             .containsExactly(anchorEntity)
         assertThat(
-                entityManager.getEntitiesOfType<ActivityPanelEntity>(
+                sceneNodeRegistry.getEntitiesOfType<ActivityPanelEntity>(
                     ActivityPanelEntity::class.java
                 )
             )
@@ -146,45 +146,45 @@ class EntityManagerTest {
     }
 
     @Test
-    fun removeEntity_removesFromEntityManager() {
+    fun removeEntity_removesFromSceneNodeRegistry() {
         val gltfEntity = createGltfEntity()
         val panelEntity = createPanelEntity()
         val entity = createEntity()
         val anchorEntity = createAnchorEntity()
         val activityPanelEntity = createActivityPanelEntity()
 
-        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
-        assertThat(entityManager.getAllEntities())
+        assertThat(sceneNodeRegistry.getAllEntities().size).isAtLeast(5)
+        assertThat(sceneNodeRegistry.getAllEntities())
             .containsAtLeast(gltfEntity, panelEntity, entity, anchorEntity, activityPanelEntity)
 
-        entityManager.removeEntityForNode(entityNode)
+        sceneNodeRegistry.removeEntityForNode(entityNode)
 
-        assertThat(entityManager.getAllEntities().size).isAtLeast(4)
-        assertThat(entityManager.getAllEntities()).doesNotContain(entity)
+        assertThat(sceneNodeRegistry.getAllEntities().size).isAtLeast(4)
+        assertThat(sceneNodeRegistry.getAllEntities()).doesNotContain(entity)
     }
 
     @Test
-    fun disposeEntity_removesFromEntityManager() {
+    fun disposeEntity_removesFromSceneNodeRegistry() {
         val gltfEntity = createGltfEntity()
         val panelEntity = createPanelEntity()
         val entity = createEntity()
         val anchorEntity = createAnchorEntity()
         val activityPanelEntity = createActivityPanelEntity()
 
-        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
-        assertThat(entityManager.getAllEntities())
+        assertThat(sceneNodeRegistry.getAllEntities().size).isAtLeast(5)
+        assertThat(sceneNodeRegistry.getAllEntities())
             .containsAtLeast(gltfEntity, panelEntity, entity, anchorEntity, activityPanelEntity)
 
         entity.dispose()
 
-        assertThat(entityManager.getAllEntities().size).isAtLeast(4)
-        assertThat(entityManager.getAllEntities()).doesNotContain(entity)
+        assertThat(sceneNodeRegistry.getAllEntities().size).isAtLeast(4)
+        assertThat(sceneNodeRegistry.getAllEntities()).doesNotContain(entity)
     }
 
     @Test
     fun getAllSystemSpaceScenePoses_returnsAllSystemSpaceScenePoses() {
-        assertThat(entityManager.getAllSystemSpaceActivityPoses().size).isAtLeast(2)
-        assertThat(entityManager.getAllSystemSpaceActivityPoses())
+        assertThat(sceneNodeRegistry.getAllSystemSpaceScenePoses().size).isAtLeast(2)
+        assertThat(sceneNodeRegistry.getAllSystemSpaceScenePoses())
             .containsAtLeast(
                 spatialSceneRuntime.activitySpace,
                 spatialSceneRuntime.perceptionSpaceActivityPose,
@@ -193,32 +193,34 @@ class EntityManagerTest {
 
     @Test
     fun getSystemSpaceScenePoseOfType_returnsSystemSpaceScenePoseOfType() {
-        assertThat(entityManager.getSystemSpaceActivityPoseOfType(ActivitySpace::class.java).get(0))
+        assertThat(
+                sceneNodeRegistry.getSystemSpaceScenePoseOfType(ActivitySpace::class.java).get(0)
+            )
             .isInstanceOf(ActivitySpaceImpl::class.java)
         assertThat(
-                entityManager
-                    .getSystemSpaceActivityPoseOfType(PerceptionSpaceScenePose::class.java)
+                sceneNodeRegistry
+                    .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)
                     .get(0)
             )
             .isInstanceOf(PerceptionSpaceScenePoseImpl::class.java)
     }
 
     @Test
-    fun clearEntityManager_removesAllEntityFromEntityManager() {
+    fun clearSceneNodeRegistry_removesAllEntityFromSceneNodeRegistry() {
         val gltfEntity = createGltfEntity()
         val panelEntity = createPanelEntity()
         val entity = createEntity()
         val anchorEntity = createAnchorEntity()
         val activityPanelEntity = createActivityPanelEntity()
 
-        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
-        assertThat(entityManager.getAllEntities())
+        assertThat(sceneNodeRegistry.getAllEntities().size).isAtLeast(5)
+        assertThat(sceneNodeRegistry.getAllEntities())
             .containsAtLeast(gltfEntity, panelEntity, entity, anchorEntity, activityPanelEntity)
 
-        entityManager.clear()
+        sceneNodeRegistry.clear()
 
-        assertThat(entityManager.getAllEntities()).isEmpty()
-        assertThat(entityManager.getAllSystemSpaceActivityPoses()).isEmpty()
+        assertThat(sceneNodeRegistry.getAllEntities()).isEmpty()
+        assertThat(sceneNodeRegistry.getAllSystemSpaceScenePoses()).isEmpty()
     }
 
     @Test
@@ -228,10 +230,10 @@ class EntityManagerTest {
 
         val aliasNode = xrExtensions.createNode()
 
-        entityManager.setEntityForNode(aliasNode, primaryEntity)
+        sceneNodeRegistry.setEntityForNode(aliasNode, primaryEntity)
 
-        assertThat(entityManager.getEntityForNode(primaryNode)).isSameInstanceAs(primaryEntity)
-        assertThat(entityManager.getEntityForNode(aliasNode)).isSameInstanceAs(primaryEntity)
+        assertThat(sceneNodeRegistry.getEntityForNode(primaryNode)).isSameInstanceAs(primaryEntity)
+        assertThat(sceneNodeRegistry.getEntityForNode(aliasNode)).isSameInstanceAs(primaryEntity)
     }
 
     @Test
@@ -240,9 +242,9 @@ class EntityManagerTest {
 
         val aliasNode = xrExtensions.createNode()
 
-        entityManager.setEntityForNode(aliasNode, primaryEntity)
+        sceneNodeRegistry.setEntityForNode(aliasNode, primaryEntity)
 
-        assertThat(entityManager.getAllEntities()).containsNoDuplicates()
+        assertThat(sceneNodeRegistry.getAllEntities()).containsNoDuplicates()
     }
 
     /** Creates a generic glTF entity. */
@@ -254,11 +256,11 @@ class EntityManagerTest {
                 FakeGltfFeature(nodeHolder),
                 activitySpace,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 fakeScheduledExecutorService,
             )
         gltfEntityNode = gltfEntity.getNode()
-        entityManager.setEntityForNode(gltfEntityNode, gltfEntity)
+        sceneNodeRegistry.setEntityForNode(gltfEntityNode, gltfEntity)
         return gltfEntity
     }
 
@@ -273,12 +275,12 @@ class EntityManagerTest {
                 panelEntityNode,
                 view,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 PixelDimensions(VGA_WIDTH, VGA_HEIGHT),
                 "panel",
                 fakeScheduledExecutorService,
             )
-        entityManager.setEntityForNode(panelEntityNode, panelEntity)
+        sceneNodeRegistry.setEntityForNode(panelEntityNode, panelEntity)
         return panelEntity
     }
 
@@ -286,7 +288,7 @@ class EntityManagerTest {
         val entity =
             spatialSceneRuntime.createEntity(Pose(), "testGroup", spatialSceneRuntime.activitySpace)
         entityNode = (entity as AndroidXrEntity).getNode()
-        entityManager.setEntityForNode(entityNode, entity)
+        sceneNodeRegistry.setEntityForNode(entityNode, entity)
         return entity
     }
 
@@ -297,10 +299,10 @@ class EntityManagerTest {
                 anchorEntityNode,
                 activitySpace,
                 xrExtensions,
-                entityManager,
+                sceneNodeRegistry,
                 fakeScheduledExecutorService,
             )
-        entityManager.setEntityForNode(anchorEntityNode, anchorEntity)
+        sceneNodeRegistry.setEntityForNode(anchorEntityNode, anchorEntity)
         return anchorEntity
     }
 
