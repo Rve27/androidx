@@ -50,7 +50,7 @@ internal class GltfEntityImpl(
         get() = gltfFeature.getGltfModelBoundingBox()
 
     override val animations: List<GltfAnimationFeature>
-        get() = gltfFeature.getAnimations(mExecutor)
+        get() = gltfFeature.getAnimations(scheduledExecutor)
 
     override fun setColliderEnabled(enabled: Boolean) {
         gltfFeature.setColliderEnabled(enabled)
@@ -65,6 +65,6 @@ internal class GltfEntityImpl(
     }
 
     override fun setReformAffordanceEnabled(enabled: Boolean, systemMovable: Boolean) {
-        gltfFeature.setReformAffordanceEnabled(this, enabled, mExecutor, systemMovable)
+        gltfFeature.setReformAffordanceEnabled(this, enabled, scheduledExecutor, systemMovable)
     }
 }

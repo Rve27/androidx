@@ -93,7 +93,7 @@ public class ActivitySpaceImpl(
     public val poseInPerceptionSpace: Pose
         get() {
             val perceptionSpaceScenePose =
-                mSceneNodeRegistry
+                sceneNodeRegistry
                     .getSystemSpaceScenePoseOfType(PerceptionSpaceScenePose::class.java)
                     .single()
             return transformPoseTo(Pose(), perceptionSpaceScenePose)
@@ -124,7 +124,7 @@ public class ActivitySpaceImpl(
             cachedRecommendedContentBox.updateAndGet { currentBox ->
                 currentBox
                     ?: run {
-                        val recommendedBox = mExtensions.recommendedContentBoxInFullSpace
+                        val recommendedBox = extensions.recommendedContentBoxInFullSpace
                         BoundingBox.fromMinMax(
                             Vector3(
                                 recommendedBox.min.x,
@@ -212,7 +212,7 @@ public class ActivitySpaceImpl(
         val yaw = activitySpaceRotation.eulerAngles.y
         val yawRotation = Quaternion.fromEulerAngles(0.0f, yaw, 0.0f)
         val gravityAlignedRotation = activitySpaceRotation.inverse * yawRotation
-        mExtensions.createNodeTransaction().use { transaction ->
+        extensions.createNodeTransaction().use { transaction ->
             transaction
                 .setScale(
                     getNode(),
@@ -289,12 +289,12 @@ public class ActivitySpaceImpl(
             }
 
         try {
-            mExtensions.hitTest(
+            extensions.hitTest(
                 activity,
                 Vec3(origin.x, origin.y, origin.z),
                 Vec3(direction.x, direction.y, direction.z),
                 RuntimeUtils.getHitTestFilter(hitTestFilter),
-                mExecutor,
+                scheduledExecutor,
                 consumer,
             )
         } catch (e: Throwable) {

@@ -55,7 +55,7 @@ internal abstract class BaseRenderingEntity(
         }
 
     override fun dispose() {
-        subspaceNode?.let { mSceneNodeRegistry.removeEntityForNode(it) }
+        subspaceNode?.let { sceneNodeRegistry.removeEntityForNode(it) }
         renderingFeature.dispose()
         super.dispose()
     }

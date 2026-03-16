@@ -53,7 +53,7 @@ internal constructor(
     // Visible for testing.
     public lateinit var nodeTransformCloseable: Closeable
     private var originChangedListener: Runnable? = null
-    private var originChangedExecutor: Executor = mExecutor
+    private var originChangedExecutor: Executor = scheduledExecutor
 
     init {
         // The underlying CPM node is always expected to be updated in response to changes to
@@ -70,7 +70,7 @@ internal constructor(
     /** Registers the SDK layer / application's listener for space origin updates. */
     override fun setOnOriginChangedListener(listener: Runnable?, executor: Executor?) {
         originChangedListener = listener
-        originChangedExecutor = executor ?: mExecutor
+        originChangedExecutor = executor ?: scheduledExecutor
     }
 
     public val poseInOpenXrReferenceSpace: Pose?

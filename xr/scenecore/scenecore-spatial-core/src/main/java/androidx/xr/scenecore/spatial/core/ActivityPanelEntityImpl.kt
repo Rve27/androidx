@@ -45,7 +45,7 @@ internal class ActivityPanelEntityImpl(
         super.sizeInPixels = windowBoundsPx
         // We need to notify our base class of the pixelDimensions, even though the Extensions are
         // initialized in the factory method. (ext.ActivityPanel.setWindowBounds, etc.)
-        mExtensions.createNodeTransaction().use { transaction ->
+        extensions.createNodeTransaction().use { transaction ->
             transaction
                 .setVisibility(activityPanel.node, true)
                 .setName(activityPanel.node, name)

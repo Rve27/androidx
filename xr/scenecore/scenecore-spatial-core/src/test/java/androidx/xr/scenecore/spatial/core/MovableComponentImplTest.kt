@@ -109,7 +109,7 @@ class MovableComponentImplTest {
         sceneRuntime =
             SpatialSceneRuntime.create(activity, fakeExecutor, xrExtensions, sceneNodeRegistry)
         activitySpaceImpl = sceneRuntime.activitySpace
-        activitySpaceNode = activitySpaceImpl.mNode
+        activitySpaceNode = activitySpaceImpl.node
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
@@ -162,7 +162,7 @@ class MovableComponentImplTest {
     }
 
     private fun getEntityNode(entity: Entity): Node {
-        return (entity as AndroidXrEntity).mNode
+        return (entity as AndroidXrEntity).node
     }
 
     private fun sendReformEvent(node: Node, reformEvent: ReformEvent) {
@@ -295,11 +295,11 @@ class MovableComponentImplTest {
 
         val entity = gltfEntity as AndroidXrEntity
         // Cache parent before adding the component
-        val parentBefore = nodeRepository.getParent(entity.mNode)
+        val parentBefore = nodeRepository.getParent(entity.node)
         // Assert the component has be added.
         Truth.assertThat(gltfEntity.addComponent(movableComponent)).isTrue()
         // Get parent after adding the component
-        val parentAfter = nodeRepository.getParent(entity.mNode)
+        val parentAfter = nodeRepository.getParent(entity.node)
         // Assert it has been reparented by Impress.
         Truth.assertThat(parentBefore !== parentAfter).isTrue()
     }
@@ -331,7 +331,7 @@ class MovableComponentImplTest {
         val transform = Mat4f(expectedTransform)
         val hitPosition = Vec3(1f, 2f, 3f)
         val extensionHitInfo =
-            InputEvent.HitInfo(1, checkNotNull(entity).mNode, transform, hitPosition)
+            InputEvent.HitInfo(1, checkNotNull(entity).node, transform, hitPosition)
 
         val inputEvent =
             ShadowInputEvent.create(
@@ -347,7 +347,7 @@ class MovableComponentImplTest {
             )
         Truth.assertThat(gltfEntity.addComponent(movableComponent)).isTrue()
 
-        val shadowNode = ShadowNode.extract(checkNotNull(entity).mNode)
+        val shadowNode = ShadowNode.extract(checkNotNull(entity).node)
         Truth.assertThat(shadowNode.inputListener).isNotNull()
         Truth.assertThat(shadowNode.inputExecutor).isEqualTo(fakeExecutor)
         shadowNode.inputExecutor.execute { shadowNode.inputListener.accept(inputEvent) }
@@ -461,7 +461,7 @@ class MovableComponentImplTest {
         shadowReformEvent.setProposedOrientation(Quatf(0.5f, 0.5f, 0.5f, 0.5f))
         shadowReformEvent.setProposedScale(Vec3(1.2f, 1.2f, 1.2f))
 
-        sendReformEvent(entity.mNode, reformEvent)
+        sendReformEvent(entity.node, reformEvent)
 
         expect.that(entity.getPose()).isEqualTo(expectedPose)
         expect.that(entity.getScale()).isEqualTo(expectedScale)
@@ -498,7 +498,7 @@ class MovableComponentImplTest {
         shadowReformEvent.setProposedOrientation(Quatf(0.5f, 0.5f, 0.5f, 0.5f))
         shadowReformEvent.setProposedScale(Vec3(1.2f, 1.2f, 1.2f))
 
-        sendReformEvent(entity.mNode, reformEvent)
+        sendReformEvent(entity.node, reformEvent)
 
         expect.that(entity.getPose()).isEqualTo(expectedPose)
         expect.that(entity.getScale()).isEqualTo(expectedScale)
@@ -656,7 +656,7 @@ class MovableComponentImplTest {
         movableComponent.addMoveEventListener(MoreExecutors.directExecutor(), mockMoveEventListener)
         Truth.assertThat(movableComponent.reformEventConsumer).isNotNull()
         Truth.assertThat(entity.addComponent(movableComponent)).isTrue()
-        val options = nodeRepository.getReformOptions(entity.mNode)
+        val options = nodeRepository.getReformOptions(entity.node)
 
         Truth.assertThat(options.currentSize.x).isEqualTo(2f)
         Truth.assertThat(options.currentSize.y).isEqualTo(2f)
@@ -684,7 +684,7 @@ class MovableComponentImplTest {
             )
         Truth.assertThat(movableComponent).isNotNull()
         Truth.assertThat(entity.addComponent(movableComponent)).isTrue()
-        val options = nodeRepository.getReformOptions(entity.mNode)
+        val options = nodeRepository.getReformOptions(entity.node)
         val mockMoveEventListener = mock<MoveEventListener>()
 
         movableComponent.addMoveEventListener(MoreExecutors.directExecutor(), mockMoveEventListener)
@@ -699,7 +699,7 @@ class MovableComponentImplTest {
                 /* id= */ 0,
             )
 
-        sendReformEvent(entity.mNode, resizeReformEvent)
+        sendReformEvent(entity.node, resizeReformEvent)
         verify(mockMoveEventListener, never()).onMoveEvent(any())
 
         val moveReformEvent =
@@ -709,7 +709,7 @@ class MovableComponentImplTest {
                 /* id= */ 0,
             )
 
-        sendReformEvent(entity.mNode, moveReformEvent)
+        sendReformEvent(entity.node, moveReformEvent)
         val moveEventCaptor = argumentCaptor<MoveEvent>()
         verify(mockMoveEventListener).onMoveEvent(moveEventCaptor.capture())
         val capturedEvents = moveEventCaptor.allValues
@@ -1088,7 +1088,7 @@ class MovableComponentImplTest {
                 InputEvent.ACTION_DOWN,
             )
         val entity = gltfEntity as AndroidXrEntity
-        val shadowNode = ShadowNode.extract(entity.mNode)
+        val shadowNode = ShadowNode.extract(entity.node)
 
         assertNotNull(shadowNode.inputListener)
         assertEquals(shadowNode.inputExecutor, fakeExecutor)
@@ -1175,7 +1175,7 @@ class MovableComponentImplTest {
             )
 
         val entity = gltfEntity as AndroidXrEntity
-        val shadowNode = ShadowNode.extract(entity.mNode)
+        val shadowNode = ShadowNode.extract(entity.node)
         sendInputEvent(shadowNode, moveStartInputEvent)
         sendInputEvent(shadowNode, moveOngoingInputEvent)
         sendInputEvent(shadowNode, moveEndInputEvent)
@@ -1226,7 +1226,7 @@ class MovableComponentImplTest {
             )
 
         val entity = gltfEntity as AndroidXrEntity
-        val shadowNode = ShadowNode.extract(entity.mNode)
+        val shadowNode = ShadowNode.extract(entity.node)
         sendInputEvent(shadowNode, moveStartInputEvent)
         sendInputEvent(shadowNode, moveEndInputEvent)
 

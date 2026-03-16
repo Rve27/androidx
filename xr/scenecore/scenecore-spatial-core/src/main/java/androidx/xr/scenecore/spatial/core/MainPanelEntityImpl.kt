@@ -47,7 +47,7 @@ internal class MainPanelEntityImpl(
         super.sizeInPixels =
             PixelDimensions(boundsFromWindowManager.width(), boundsFromWindowManager.height())
         val cornerRadius = defaultCornerRadiusInMeters
-        mExtensions.createNodeTransaction().use { transaction ->
+        extensions.createNodeTransaction().use { transaction ->
             transaction.setCornerRadius(node, cornerRadius).apply()
         }
         super.cornerRadiusValue = cornerRadius
@@ -85,7 +85,7 @@ internal class MainPanelEntityImpl(
             // the expected size is called.
             super.sizeInPixels = value
             // TODO: b/376934871 - Check async results.
-            mExtensions.setMainWindowSize(
+            extensions.setMainWindowSize(
                 activity,
                 value.width,
                 value.height,
