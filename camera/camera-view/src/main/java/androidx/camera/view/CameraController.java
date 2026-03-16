@@ -372,6 +372,8 @@ public abstract class CameraController {
     private long mTapToFocusAutoCancelDurationNanos = TimeUnit.MILLISECONDS.toNanos(
             FocusMeteringAction.DEFAULT_AUTO_CANCEL_DURATION_MILLIS);
 
+    private boolean mAutoRotationEnabled = true;
+
     private @Nullable SessionConfig mSessionConfig = null;
     private @Nullable SessionConfig mBoundSessionConfig = null;
 
@@ -444,6 +446,48 @@ public abstract class CameraController {
 
     private boolean isCameraAttached() {
         return mCamera != null;
+    }
+
+    /**
+     * Sets whether to enable auto-rotation.
+     *
+     * <p>When enabled, {@link CameraController} will monitor the device rotation changes and set
+     * the target rotation for non-preview use cases (e.g. image capture, video capture, and image
+     * analysis). This ensures the output images/videos are oriented correctly relative to the
+     * device.
+     *
+     * <p>Auto-rotation is enabled by default.
+     *
+     * <p>If a {@link SessionConfig} is set via
+     * {@link #setSessionConfig(SessionConfig, CameraSelector)}, the auto-rotation setting in the
+     * provided {@link SessionConfig} will be overridden by the state of this controller.
+     *
+     * <p>Changing the value will reconfigure the camera which will cause additional latency. To
+     * avoid this, set the value before controller is bound to the lifecycle.
+     *
+     * @param enabled {@code true} to enable auto-rotation, {@code false} to disable.
+     */
+    @MainThread
+    public void setAutoRotationEnabled(boolean enabled) {
+        checkMainThread();
+        if (mAutoRotationEnabled == enabled) {
+            return;
+        }
+        mAutoRotationEnabled = enabled;
+        unbindSessionConfig();
+        startCameraAndTrackStates();
+    }
+
+    /**
+     * Returns whether auto-rotation is enabled.
+     *
+     * @return {@code true} if auto-rotation is enabled, {@code false} otherwise.
+     * @see #setAutoRotationEnabled(boolean)
+     */
+    @MainThread
+    public boolean isAutoRotationEnabled() {
+        checkMainThread();
+        return mAutoRotationEnabled;
     }
 
     /**
@@ -573,7 +617,8 @@ public abstract class CameraController {
      * {@link ViewPort}, which is always enabled by CameraController.
      *
      * <p>CameraController will override the autoRotationEnabled setting in the provided
-     * SessionConfig to match its current state.
+     * SessionConfig to match its current state. See {@link #setAutoRotationEnabled(boolean)} for
+     * more information.
      *
      * @param sessionConfig  The {@link SessionConfig} to be used. This can be a standard
      *                       {@link SessionConfig} or an
@@ -3092,7 +3137,7 @@ public abstract class CameraController {
 
         mBoundSessionConfig = builder
                 .setViewPort(mViewPort)
-                .setAutoRotationEnabled(true)
+                .setAutoRotationEnabled(mAutoRotationEnabled)
                 .build();
         return mBoundSessionConfig;
     }

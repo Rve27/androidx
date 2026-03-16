@@ -547,6 +547,41 @@ class CameraControllerTest {
 
     @UiThreadTest
     @Test
+    fun setAutoRotationEnabledToFalse_getBoundSessionConfig_autoRotationEnabledIsFalse() {
+        // Arrange.
+        completeCameraInitialization()
+
+        // Act.
+        controller.isAutoRotationEnabled = false
+        val sessionConfig = controller.getBoundSessionConfig()
+
+        // Assert.
+        assertThat(controller.isAutoRotationEnabled).isFalse()
+        assertThat(sessionConfig?.isAutoRotationEnabled).isFalse()
+    }
+
+    @UiThreadTest
+    @Test
+    fun setAutoRotationEnabled_dynamicallyUpdatesBoundSessionConfig() {
+        // Arrange.
+        completeCameraInitialization()
+        assertThat(controller.getBoundSessionConfig()?.isAutoRotationEnabled).isTrue()
+
+        // Act: Disable auto-rotation.
+        controller.isAutoRotationEnabled = false
+
+        // Assert: Bound SessionConfig is updated.
+        assertThat(controller.getBoundSessionConfig()?.isAutoRotationEnabled).isFalse()
+
+        // Act: Re-enable auto-rotation.
+        controller.isAutoRotationEnabled = true
+
+        // Assert: Bound SessionConfig is updated again.
+        assertThat(controller.getBoundSessionConfig()?.isAutoRotationEnabled).isTrue()
+    }
+
+    @UiThreadTest
+    @Test
     fun setSelectorBeforeBound_selectorSet() {
         // Arrange.
         assertThat(controller.cameraSelector.lensFacing).isEqualTo(CameraSelector.LENS_FACING_BACK)
