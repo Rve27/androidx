@@ -16,7 +16,6 @@
 
 package androidx.wear.compose.remote.material3
 
-import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
@@ -43,7 +42,6 @@ import androidx.compose.runtime.Composable
  * @param content the content and properties of each button. The Ux guidance is to use no more than
  *   3 buttons within a ButtonGroup.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
 @RemoteComposable
 public fun RemoteButtonGroup(
@@ -75,7 +73,6 @@ private fun RemoteButtonGroupImpl(
 }
 
 /** Contains the default values used by [RemoteButtonGroup] */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RemoteButtonGroupDefaults {
     /**
      * Return the recommended padding to use as the contentPadding of a [RemoteButtonGroup], when it
