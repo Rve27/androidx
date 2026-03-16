@@ -98,6 +98,7 @@
             android:exported="true" />
         <activity
             android:name=".inputmoveresize.InputMoveResizeTestActivity"
+            android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout"
             android:exported="true" />
         <activity
             android:name=".spatialaudio.SpatialAudioActivity"
