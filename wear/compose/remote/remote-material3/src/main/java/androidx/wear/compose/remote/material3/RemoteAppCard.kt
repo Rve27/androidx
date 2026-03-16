@@ -20,9 +20,9 @@ import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.action.Action
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
+import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteRow
-import androidx.compose.remote.creation.compose.layout.RemoteSpacer
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
 import androidx.compose.remote.creation.compose.modifier.height
@@ -54,7 +54,6 @@ import androidx.compose.runtime.CompositionLocalProvider
  * @param content The main slot for a content of this card
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Suppress("RestrictedApiAndroidX")
 @RemoteComposable
 @Composable
 public fun RemoteAppCard(
@@ -89,7 +88,7 @@ public fun RemoteAppCard(
             ) {
                 appImage?.let {
                     appImage()
-                    RemoteSpacer(RemoteModifier.width(4.rdp))
+                    RemoteBox(RemoteModifier.width(4.rdp))
                 }
                 CompositionLocalProvider(
                     LocalRemoteContentColor provides colors.appNameColor,
@@ -99,7 +98,7 @@ public fun RemoteAppCard(
             }
 
             time?.let {
-                RemoteSpacer(modifier = RemoteModifier.width(6.rdp))
+                RemoteBox(modifier = RemoteModifier.width(6.rdp))
                 CompositionLocalProvider(
                     LocalRemoteContentColor provides colors.timeColor,
                     LocalRemoteTextStyle provides RemoteAppCardTokens.TimeTypography,
@@ -107,7 +106,7 @@ public fun RemoteAppCard(
                 )
             }
         }
-        RemoteSpacer(modifier = RemoteModifier.height(6.rdp))
+        RemoteBox(modifier = RemoteModifier.height(6.rdp))
         RemoteRow(modifier = RemoteModifier.fillMaxWidth()) {
             CompositionLocalProvider(
                 LocalRemoteContentColor provides colors.titleColor,
@@ -115,7 +114,7 @@ public fun RemoteAppCard(
                 content = title,
             )
         }
-        RemoteSpacer(modifier = RemoteModifier.height(2.rdp))
+        RemoteBox(modifier = RemoteModifier.height(2.rdp))
         CompositionLocalProvider(
             LocalRemoteContentColor provides colors.contentColor,
             LocalRemoteTextStyle provides RemoteCardTokens.ContentTypography,
