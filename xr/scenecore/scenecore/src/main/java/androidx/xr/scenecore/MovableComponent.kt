@@ -54,7 +54,7 @@ import kotlinx.coroutines.flow.StateFlow
 public class MovableComponent
 private constructor(
     private val session: Session,
-    private val entityManager: EntityManager,
+    private val entityRegistry: EntityRegistry,
     private val systemMovable: Boolean = true,
     private val scaleInZ: Boolean = true,
     private val anchorPlacement: Set<AnchorPlacement> = emptySet(),
@@ -72,7 +72,7 @@ private constructor(
     }
     private val moveListenersMap = ConcurrentHashMap<EntityMoveListener, Executor>()
     private val rtMoveEventListener: RtMoveEventListener = RtMoveEventListener { rtMoveEvent ->
-        val moveEvent = rtMoveEvent.toMoveEvent(entityManager)
+        val moveEvent = rtMoveEvent.toMoveEvent(entityRegistry)
         val updatedReformEventInfo: UpdatedReformEventInfo? =
             if (anchorable) getUpdatedReformEventPoseAndParent(moveEvent) else null
         moveListenersMap.forEach { (entityMoveListener, executor) ->
@@ -364,7 +364,7 @@ private constructor(
         /** Factory function for creating a MovableComponent. */
         internal fun create(
             session: Session,
-            entityManager: EntityManager,
+            entityRegistry: EntityRegistry,
             systemMovable: Boolean = true,
             scaleInZ: Boolean = true,
             anchorPlacement: Set<AnchorPlacement> = emptySet(),
@@ -374,7 +374,7 @@ private constructor(
         ): MovableComponent {
             return MovableComponent(
                 session,
-                entityManager,
+                entityRegistry,
                 systemMovable,
                 scaleInZ,
                 anchorPlacement,
@@ -417,7 +417,7 @@ private constructor(
         ): MovableComponent =
             create(
                 session = session,
-                entityManager = session.scene.entityManager,
+                entityRegistry = session.scene.entityRegistry,
                 systemMovable = false,
                 scaleInZ = scaleInZ,
                 initialListener = entityMoveListener,
@@ -451,7 +451,7 @@ private constructor(
         ): MovableComponent =
             create(
                 session = session,
-                entityManager = session.scene.entityManager,
+                entityRegistry = session.scene.entityRegistry,
                 systemMovable = true,
                 scaleInZ = scaleInZ,
             )
@@ -493,7 +493,7 @@ private constructor(
             }
             return create(
                 session = session,
-                entityManager = session.scene.entityManager,
+                entityRegistry = session.scene.entityRegistry,
                 systemMovable = true,
                 scaleInZ = false,
                 anchorPlacement = anchorPlacement,

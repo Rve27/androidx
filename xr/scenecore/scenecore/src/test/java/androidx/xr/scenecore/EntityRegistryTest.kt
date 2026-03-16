@@ -42,13 +42,13 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 @org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
-class EntityManagerTest {
+class EntityRegistryTest {
     private val activity =
         Robolectric.buildActivity(ComponentActivity::class.java).create().start().get()
     private lateinit var sceneRuntime: SceneRuntime
     private lateinit var renderingRuntime: RenderingRuntime
 
-    private lateinit var entityManager: EntityManager
+    private lateinit var entityRegistry: EntityRegistry
     private lateinit var session: Session
     private lateinit var activitySpace: ActivitySpace
     private lateinit var gltfModel: GltfModel
@@ -69,21 +69,21 @@ class EntityManagerTest {
         session.configure(Config(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
         sceneRuntime = session.sceneRuntime
         renderingRuntime = session.renderingRuntime
-        entityManager = session.scene.entityManager
-        activitySpace = ActivitySpace.create(sceneRuntime, entityManager)
+        entityRegistry = session.scene.entityRegistry
+        activitySpace = ActivitySpace.create(sceneRuntime, entityRegistry)
     }
 
     @Test
-    fun creatingEntity_addsEntityToEntityManager() {
+    fun creatingEntity_addsEntityToEntityRegistry() {
         createEntity()
         createPanelEntity()
         createAnchorEntity()
         createActivityPanelEntity()
         createGltfEntity()
 
-        // The entityManager contains activity space.
-        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
-        assertThat(entityManager.getAllEntities())
+        // The entityRegistry contains activity space.
+        assertThat(entityRegistry.getAllEntities().size).isAtLeast(5)
+        assertThat(entityRegistry.getAllEntities())
             .containsAtLeast(
                 entity,
                 panelEntity,
@@ -101,7 +101,7 @@ class EntityManagerTest {
         createActivityPanelEntity()
         createGltfEntity()
 
-        assertThat(entityManager.getEntities<Entity>())
+        assertThat(entityRegistry.getEntities<Entity>())
             .containsAtLeast(
                 entity,
                 panelEntity,
@@ -109,22 +109,22 @@ class EntityManagerTest {
                 activityPanelEntity,
                 gltfModelEntity,
             )
-        assertThat(entityManager.getEntities<PanelEntity>()).contains(panelEntity)
-        assertThat(entityManager.getEntities<AnchorEntity>()).containsExactly(anchorEntity)
-        assertThat(entityManager.getEntities<ActivityPanelEntity>())
+        assertThat(entityRegistry.getEntities<PanelEntity>()).contains(panelEntity)
+        assertThat(entityRegistry.getEntities<AnchorEntity>()).containsExactly(anchorEntity)
+        assertThat(entityRegistry.getEntities<ActivityPanelEntity>())
             .containsExactly(activityPanelEntity)
-        assertThat(entityManager.getEntities<GltfModelEntity>()).containsExactly(gltfModelEntity)
+        assertThat(entityRegistry.getEntities<GltfModelEntity>()).containsExactly(gltfModelEntity)
     }
 
     @Test
-    fun disposeEntity_removesEntityFromEntityManager() {
+    fun disposeEntity_removesEntityfromEntityRegistry() {
         createEntity()
         createPanelEntity()
         createAnchorEntity()
         createActivityPanelEntity()
         createGltfEntity()
-        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
-        assertThat(entityManager.getAllEntities())
+        assertThat(entityRegistry.getAllEntities().size).isAtLeast(5)
+        assertThat(entityRegistry.getAllEntities())
             .containsAtLeast(
                 entity,
                 panelEntity,
@@ -135,19 +135,19 @@ class EntityManagerTest {
 
         entity.dispose()
 
-        assertThat(entityManager.getAllEntities().size).isAtLeast(4)
-        assertThat(entityManager.getAllEntities()).doesNotContain(entity)
+        assertThat(entityRegistry.getAllEntities().size).isAtLeast(4)
+        assertThat(entityRegistry.getAllEntities()).doesNotContain(entity)
     }
 
     @Test
-    fun clearEntityManager_removesAllEntityFromEntityManager() {
+    fun clearEntityRegistry_removesAllEntityfromEntityRegistry() {
         createEntity()
         createPanelEntity()
         createAnchorEntity()
         createActivityPanelEntity()
         createGltfEntity()
-        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
-        assertThat(entityManager.getAllEntities())
+        assertThat(entityRegistry.getAllEntities().size).isAtLeast(5)
+        assertThat(entityRegistry.getAllEntities())
             .containsAtLeast(
                 entity,
                 panelEntity,
@@ -156,20 +156,20 @@ class EntityManagerTest {
                 gltfModelEntity,
             )
 
-        entityManager.clear()
+        entityRegistry.clear()
 
-        assertThat(entityManager.getAllEntities()).isEmpty()
+        assertThat(entityRegistry.getAllEntities()).isEmpty()
     }
 
     @Test
-    fun removeRtEntity_removesEntityFromEntityManager() {
+    fun removeRtEntity_removesEntityfromEntityRegistry() {
         createEntity()
         createPanelEntity()
         createAnchorEntity()
         createActivityPanelEntity()
         createGltfEntity()
-        assertThat(entityManager.getAllEntities().size).isAtLeast(5)
-        assertThat(entityManager.getAllEntities())
+        assertThat(entityRegistry.getAllEntities().size).isAtLeast(5)
+        assertThat(entityRegistry.getAllEntities())
             .containsAtLeast(
                 entity,
                 panelEntity,
@@ -178,10 +178,10 @@ class EntityManagerTest {
                 gltfModelEntity,
             )
 
-        entityManager.removeEntity(panelEntity.rtEntity as FakeEntity)
+        entityRegistry.removeEntity(panelEntity.rtEntity as FakeEntity)
 
-        assertThat(entityManager.getAllEntities().size).isAtLeast(4)
-        assertThat(entityManager.getAllEntities()).doesNotContain(panelEntity)
+        assertThat(entityRegistry.getAllEntities().size).isAtLeast(4)
+        assertThat(entityRegistry.getAllEntities()).doesNotContain(panelEntity)
     }
 
     private fun createPanelEntity() {
@@ -190,7 +190,7 @@ class EntityManagerTest {
                 activity,
                 sceneRuntime,
                 session.scene.perceptionSpace,
-                entityManager,
+                entityRegistry,
                 TextView(activity),
                 IntSize2d(720, 480),
                 "test",
@@ -202,14 +202,14 @@ class EntityManagerTest {
             gltfModel = GltfModel.create(session, Paths.get("test.glb"))
         }
         gltfModelEntity =
-            GltfModelEntity.create(sceneRuntime, renderingRuntime, entityManager, gltfModel)
+            GltfModelEntity.create(sceneRuntime, renderingRuntime, entityRegistry, gltfModel)
     }
 
     private fun createAnchorEntity() {
         anchorEntity =
             AnchorEntity.create(
                 session,
-                entityManager,
+                entityRegistry,
                 FloatSize2d(),
                 PlaneOrientation.ANY,
                 PlaneSemanticType.ANY,
@@ -223,7 +223,7 @@ class EntityManagerTest {
                 session.perceptionRuntime.lifecycleManager,
                 sceneRuntime,
                 session.scene.perceptionSpace,
-                entityManager,
+                entityRegistry,
                 IntSize2d(640, 480),
                 "test",
                 activity,
@@ -231,6 +231,6 @@ class EntityManagerTest {
     }
 
     private fun createEntity() {
-        entity = EntityImpl.create(sceneRuntime, entityManager, "test")
+        entity = EntityImpl.create(sceneRuntime, entityRegistry, "test")
     }
 }
