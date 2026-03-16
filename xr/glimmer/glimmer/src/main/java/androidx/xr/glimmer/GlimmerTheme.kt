@@ -47,15 +47,17 @@ import androidx.xr.glimmer.GlimmerTheme.Companion.shapes
  *
  * @param colors [Colors] used by components within this hierarchy
  * @param typography [Typography] used by components within this hierarchy
+ * @param componentSpacingValues [ComponentSpacingValues] used by components within this hierarchy
  * @param content The content that can retrieve values from this theme
  */
 @Composable
 public fun GlimmerTheme(
     colors: Colors = GlimmerTheme.colors,
     typography: Typography = GlimmerTheme.typography,
+    componentSpacingValues: ComponentSpacingValues = GlimmerTheme.componentSpacingValues,
     content: @Composable () -> Unit,
 ) {
-    val theme = GlimmerTheme(colors, typography)
+    val theme = GlimmerTheme(colors, typography, componentSpacingValues)
     CompositionLocalProvider(
         _localGlimmerTheme provides theme,
         // TODO: b/413429405
@@ -74,6 +76,8 @@ public fun GlimmerTheme(
  *
  * @property colors [Colors] used by Jetpack Compose Glimmer components
  * @property typography [Typography] used by Jetpack Compose Glimmer components
+ * @property componentSpacingValues [ComponentSpacingValues] used by Jetpack Compose Glimmer
+ *   components
  * @property shapes [Shapes] used by Jetpack Compose Glimmer components
  * @property depthEffectLevels [DepthEffectLevels] used by Jetpack Compose Glimmer components
  * @property iconSizes [IconSizes] used by icons
@@ -82,6 +86,7 @@ public fun GlimmerTheme(
 public class GlimmerTheme(
     public val colors: Colors = Colors(),
     public val typography: Typography = Typography(),
+    public val componentSpacingValues: ComponentSpacingValues = ComponentSpacingValues(),
 ) {
     public val shapes: Shapes = _shapes
     public val depthEffectLevels: DepthEffectLevels = _depthEffectLevels
@@ -95,6 +100,13 @@ public class GlimmerTheme(
         /** Retrieves the current [Typography] at the call site's position in the hierarchy. */
         public val typography: Typography
             @Composable @ReadOnlyComposable get() = LocalGlimmerTheme.current.typography
+
+        /**
+         * Retrieves the current [ComponentSpacingValues] at the call site's position in the
+         * hierarchy.
+         */
+        public val componentSpacingValues: ComponentSpacingValues
+            @Composable @ReadOnlyComposable get() = LocalGlimmerTheme.current.componentSpacingValues
 
         /** Retrieves the current [Shapes] at the call site's position in the hierarchy. */
         public val shapes: Shapes
