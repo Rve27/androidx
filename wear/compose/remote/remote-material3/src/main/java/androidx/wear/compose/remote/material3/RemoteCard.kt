@@ -357,7 +357,6 @@ private fun RemoteDrawScope.drawShapedBackground(
     }
 }
 
-@Suppress("RestrictedApiAndroidX")
 private fun RemoteDrawScope.drawBorder(
     borderColor: RemoteColor,
     borderStrokeWidth: RemoteFloat,
@@ -376,7 +375,6 @@ private fun RemoteDrawScope.drawBorder(
     }
 }
 
-@Suppress("RestrictedApiAndroidX")
 private fun RemoteDrawScope.drawSolidColorShape(
     shape: RemoteShape,
     w: RemoteFloat,
