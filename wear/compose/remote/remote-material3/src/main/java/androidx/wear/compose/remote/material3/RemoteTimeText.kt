@@ -56,7 +56,6 @@ import androidx.compose.ui.text.font.GenericFontFamily
  * @param color The color of the text. Defaults to the `onBackground` color from the current
  *   `RemoteMaterialTheme`.
  */
-@Suppress("RestrictedApiAndroidX")
 @RemoteComposable
 @Composable
 public fun RemoteTimeText(
@@ -102,7 +101,6 @@ private fun buildTimeTextString(
     return leadingWithSeparator + time + trailingWithSeparator
 }
 
-@Suppress("RestrictedApiAndroidX")
 private fun RemoteDrawScope.drawTimeText(
     text: RemoteString,
     textColor: RemoteColor,
