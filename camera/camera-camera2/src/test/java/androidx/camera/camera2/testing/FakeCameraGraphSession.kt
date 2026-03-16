@@ -21,6 +21,7 @@ import androidx.camera.camera2.pipe.AeMode
 import androidx.camera.camera2.pipe.AfMode
 import androidx.camera.camera2.pipe.AwbMode
 import androidx.camera.camera2.pipe.CameraGraph
+import androidx.camera.camera2.pipe.FlashMode
 import androidx.camera.camera2.pipe.Frame
 import androidx.camera.camera2.pipe.FrameCapture
 import androidx.camera.camera2.pipe.FrameMetadata
@@ -179,6 +180,7 @@ open class FakeCameraGraphSession : CameraGraph.Session {
         aeMode: AeMode?,
         afMode: AfMode?,
         awbMode: AwbMode?,
+        flashMode: FlashMode?,
         aeRegions: List<MeteringRectangle>?,
         afRegions: List<MeteringRectangle>?,
         awbRegions: List<MeteringRectangle>?,
