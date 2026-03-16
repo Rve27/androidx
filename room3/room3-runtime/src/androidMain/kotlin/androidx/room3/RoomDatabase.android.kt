@@ -856,18 +856,20 @@ actual constructor() {
          * [IllegalStateException]. You can call this method to change this behavior to re-create
          * the database tables instead of crashing.
          *
-         * If the database was create from an asset or a file then Room will try to use the same
-         * file to re-create the database, otherwise this will delete all of the data in the
-         * database tables managed by Room.
+         * If the database was created from an asset or a file then Room will try to use the same
+         * file to re-create the database, otherwise this will delete all the data in the database
+         * tables managed by Room.
          *
          * To let Room fallback to destructive migration only during a schema downgrade then use
          * [fallbackToDestructiveMigrationOnDowngrade].
          *
          * @param dropAllTables Set to `true` if all tables should be dropped during destructive
-         *   migration including those not managed by Room. Recommended value is `true` as otherwise
-         *   Room could leave obsolete data when table names or existence changes between versions.
+         *   migration including those not managed by Room, otherwise only Room managed tables are
+         *   dropped. Default value is `true` as otherwise Room could leave obsolete data when table
+         *   names or existence changes between versions.
          * @return This builder instance.
          */
+        @JvmOverloads
         @Suppress("BuilderSetStyle") // Overload of existing API
         public actual fun fallbackToDestructiveMigration(dropAllTables: Boolean): Builder<T> =
             apply {
@@ -883,10 +885,12 @@ actual constructor() {
          * For details, see [Builder.fallbackToDestructiveMigration].
          *
          * @param dropAllTables Set to `true` if all tables should be dropped during destructive
-         *   migration including those not managed by Room. Recommended value is `true` as otherwise
-         *   Room could leave obsolete data when table names or existence changes between versions.
+         *   migration including those not managed by Room, otherwise only Room managed tables are
+         *   dropped. Default value is `true` as otherwise Room could leave obsolete data when table
+         *   names or existence changes between versions.
          * @return This builder instance.
          */
+        @JvmOverloads
         @Suppress("BuilderSetStyle") // Overload of existing API
         public actual fun fallbackToDestructiveMigrationOnDowngrade(
             dropAllTables: Boolean
@@ -914,13 +918,17 @@ actual constructor() {
          * thrown.
          *
          * @param dropAllTables Set to `true` if all tables should be dropped during destructive
-         *   migration including those not managed by Room.
+         *   migration including those not managed by Room, otherwise only Room managed tables are
+         *   dropped. Default value is `true` as otherwise Room could leave obsolete data when table
+         *   names or existence changes between versions.
          * @param startVersions The set of schema versions from which Room should use a destructive
          *   migration.
          * @return This builder instance.
          */
+        @JvmOverloads
         @Suppress("BuilderSetStyle") // Overload of existing API
         public actual fun fallbackToDestructiveMigrationFrom(
+            @Suppress("KotlinDefaultParameterOrder") // vararg should be last param
             dropAllTables: Boolean,
             vararg startVersions: Int,
         ): Builder<T> = apply {
