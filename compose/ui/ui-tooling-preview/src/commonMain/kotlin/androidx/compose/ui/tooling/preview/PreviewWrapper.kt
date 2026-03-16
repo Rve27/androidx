@@ -26,11 +26,11 @@ import kotlin.reflect.KClass
  * specific environments, themes, or containers (such as a Remote Compose) without requiring
  * repetitive code in every preview function.
  *
- * **Usage:** Implementations are applied to previews using the [PreviewWrapperProvider] annotation.
+ * **Usage:** Implementations are applied to previews using the [PreviewWrapper] annotation.
  *
- * @see PreviewWrapperProvider
+ * @see PreviewWrapper
  */
-interface PreviewWrapper {
+interface PreviewWrapperProvider {
 
     /**
      * Wraps the provided [content] with custom UI logic or containers.
@@ -51,7 +51,7 @@ interface PreviewWrapper {
 }
 
 /**
- * Annotation used to associate a [PreviewWrapper] with a Composable.
+ * Annotation used to associate a [PreviewWrapperProvider] with a Composable.
  *
  * When a preview is rendered, Android Studio looks for this annotation to determine if the preview
  * content should be wrapped in a custom container (e.g., for Remote Compose or custom theming).
@@ -67,7 +67,7 @@ interface PreviewWrapper {
  * **1. Basic Usage**
  *
  * ```kotlin
- * class CustomThemeWrapper : PreviewWrapper {
+ * class CustomThemeWrapper : PreviewWrapperProvider {
  *     @Composable
  *     override fun Wrap(content: @Composable () -> Unit) {
  *         // Apply your custom theme here
@@ -77,7 +77,7 @@ interface PreviewWrapper {
  *     }
  * }
  *
- * @PreviewWrapperProvider(wrapper = CustomThemeWrapper::class)
+ * @PreviewWrapper(wrapper = CustomThemeWrapper::class)
  * @Preview
  * @Composable
  * fun MyThemedComponent() { ... }
@@ -91,7 +91,7 @@ interface PreviewWrapper {
  * @Preview(name = "Large", fontScale = 1.2f)
  * annotation class FontPreviews
  *
- * @PreviewWrapperProvider(wrapper = CustomThemeWrapper::class)
+ * @PreviewWrapper(wrapper = CustomThemeWrapper::class)
  * @FontPreviews
  * @Composable
  * fun MyMultiPreviewComponent() { ... }
@@ -99,12 +99,12 @@ interface PreviewWrapper {
  *
  * **3. Combining Multiple Wrappers**
  *
- * Since [PreviewWrapperProvider] allows only a single wrapper, you can create a composite wrapper
- * to apply multiple effects.
+ * Since [PreviewWrapper] allows only a single wrapper, you can create a composite wrapper to apply
+ * multiple effects.
  *
  * ```kotlin
  * // A composite wrapper that combines Theming and Remote Compose logic.
- * class ThemeAndRemoteWrapper : PreviewWrapper {
+ * class ThemeAndRemoteWrapper : PreviewWrapperProvider {
  *
  *     // Instantiate the individual wrappers
  *     private val themeWrapper = ThemeWrapper()
@@ -123,10 +123,10 @@ interface PreviewWrapper {
  * }
  * ```
  *
- * @param wrapper The [KClass] of the [PreviewWrapper] implementation to use. Must have a default
- *   zero-argument constructor.
+ * @param wrapper The [KClass] of the [PreviewWrapperProvider] implementation to use. Must have a
+ *   default zero-argument constructor.
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
-annotation class PreviewWrapperProvider(val wrapper: KClass<out PreviewWrapper>)
+annotation class PreviewWrapper(val wrapper: KClass<out PreviewWrapperProvider>)
