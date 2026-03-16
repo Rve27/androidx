@@ -1201,8 +1201,10 @@ private fun calculateGridTrackSizes(
             rowGap = rowGapPx,
         )
 
-    val totalColumnGap = max(0, columnSpecs.size - 1) * colGapPx
-    val totalRowGap = max(0, rowSpecs.size - 1) * rowGapPx
+    // Use totalColCount and totalRowCount instead of the explicit spec sizes.
+    // This ensures gaps between implicitly created tracks are included in the final Grid size.
+    val totalColumnGap = max(0, totalColCount - 1) * colGapPx
+    val totalRowGap = max(0, totalRowCount - 1) * rowGapPx
 
     return GridTrackSizes(
         columnWidths = columnWidths,
