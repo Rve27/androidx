@@ -1711,17 +1711,6 @@ public class WebViewCompat {
     }
 
     /**
-     * Denotes that the WebViewCompat#saveState API surface is experimental.
-     * <p>
-     * It may change without warning and should not be relied upon for non-experimental purposes.
-     */
-    @Retention(RetentionPolicy.CLASS)
-    @Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
-    @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-    public @interface ExperimentalSaveState {
-    }
-
-    /**
      * Saves the state of the provided WebView, such as for use with
      * {@link Activity#onSaveInstanceState}. This is an extension of
      * {@link WebView#saveState(Bundle)} and the returned state can be restored through
@@ -1741,7 +1730,6 @@ public class WebViewCompat {
     @RequiresFeature(name = WebViewFeature.SAVE_STATE,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     @UiThread
-    @ExperimentalSaveState
     public static void saveState(@NonNull WebView webView,
             @NonNull Bundle outState,
             @IntRange(from = 1) int maxSizeBytes,
