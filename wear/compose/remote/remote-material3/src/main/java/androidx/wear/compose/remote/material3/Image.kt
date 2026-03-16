@@ -161,7 +161,6 @@ private fun FallbackAvatar(
 
 @Composable
 @RemoteComposable
-@Suppress("RestrictedApiAndroidX")
 private fun BackgroundOverlay(modifier: RemoteModifier, overlayColor: RemoteColor) {
     RemoteCanvas(modifier = modifier.clip(ImageDefaults.backgroundShape())) {
         val cornerRadius = ImageDefaults.BACKGROUND_CORNER_RADIUS_DP.toPx()
