@@ -21,6 +21,16 @@ package androidx.tracing {
     method public abstract void onDroppedTraceEvent();
   }
 
+  @SuppressCompatibility @androidx.tracing.DelicateTracingApi public final class AttributeEntry {
+    method public void reset();
+    property public Long? longValue;
+    property public String? name;
+    property public String? stringValue;
+    field public Long? longValue;
+    field public String? name;
+    field public String? stringValue;
+  }
+
   public final class ClockSource_androidKt {
     method public static inline long nanoTime();
   }
@@ -169,6 +179,12 @@ package androidx.tracing {
     field public static final androidx.tracing.Trace INSTANCE;
   }
 
+  public abstract class TraceAttributes {
+    method public abstract void addAttribute(String name, String value);
+    method public abstract void addAttribute(String name, long value);
+    method @SuppressCompatibility @androidx.tracing.DelicateTracingApi public abstract void dispatchToTraceSink();
+  }
+
   @SuppressCompatibility @androidx.tracing.DelicateTracingApi public final class TraceEvent {
     ctor public TraceEvent();
     method public void copyFrom(androidx.tracing.TraceEvent src);
@@ -179,6 +195,7 @@ package androidx.tracing {
     method @kotlin.PublishedApi internal inline void setCounterLong(long trackUuid, long value);
     method @kotlin.PublishedApi internal inline void setEndSection(long trackUuid);
     method @kotlin.PublishedApi internal inline void setInstant(long trackUuid, String name);
+    property public java.util.List<androidx.tracing.AttributeEntry> attributes;
     property public java.util.List<java.lang.String> categories;
     property public Long? correlationId;
     property public String? correlationIdString;
@@ -186,6 +203,7 @@ package androidx.tracing {
     property public Long? counterLongValue;
     property public java.util.List<java.lang.Long> flowIds;
     property public java.util.List<androidx.tracing.Frame> frames;
+    property public int lastAttributeIndex;
     property public int lastCategoryIndex;
     property public int lastFrameIndex;
     property public int lastMetadataEntryIndex;
@@ -196,6 +214,7 @@ package androidx.tracing {
     property public androidx.tracing.TrackDescriptor? trackDescriptor;
     property public long trackUuid;
     property public int type;
+    field public java.util.List<androidx.tracing.AttributeEntry> attributes;
     field public java.util.List<java.lang.String> categories;
     field public Long? correlationId;
     field public String? correlationIdString;
@@ -203,6 +222,7 @@ package androidx.tracing {
     field public Long? counterLongValue;
     field public java.util.List<java.lang.Long> flowIds;
     field public java.util.List<androidx.tracing.Frame> frames;
+    field public int lastAttributeIndex;
     field public int lastCategoryIndex;
     field public int lastFrameIndex;
     field public int lastMetadataEntryIndex;

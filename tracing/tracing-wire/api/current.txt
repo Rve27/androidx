@@ -17,7 +17,8 @@ package androidx.tracing.wire {
   public final class TraceDriver extends androidx.tracing.AbstractTraceDriver {
     ctor public TraceDriver(android.content.Context context, androidx.tracing.AbstractTraceSink sink);
     ctor public TraceDriver(android.content.Context context, androidx.tracing.AbstractTraceSink sink, optional boolean isEnabled);
-    ctor @BytecodeOnly public TraceDriver(android.content.Context!, androidx.tracing.AbstractTraceSink!, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public TraceDriver(android.content.Context!, androidx.tracing.AbstractTraceSink!, boolean, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor public TraceDriver(android.content.Context context, androidx.tracing.AbstractTraceSink sink, optional boolean isEnabled, optional kotlin.jvm.functions.Function1<? super androidx.tracing.TraceAttributes,kotlin.Unit>? attributes);
     method public void close();
     method public void flush();
     method @InaccessibleFromKotlin public androidx.tracing.Tracer getTracer();
