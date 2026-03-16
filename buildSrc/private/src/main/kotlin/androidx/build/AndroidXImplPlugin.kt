@@ -655,13 +655,10 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
     private fun AarMetadata.configureMinAgpVersion() {
         @Suppress("UnstableApiUsage") // usage of minAgpVersion
         minAgpVersion.set(
-            @Suppress(
-                "Deprecation"
-            ) // TODO: use `minCompileSdkVersion` once http://ag/38072823 merged
-            minCompileSdk.map { value ->
+            minCompileSdkVersion.map { value ->
                 // Taken from
                 // https://developer.android.com/build/releases/about-agp#api-level-support
-                when (value) {
+                when (value.apiLevel) {
                     1 -> "7.2.0"
                     33 -> "7.2.0"
                     34 -> "8.1.1"
