@@ -84,7 +84,7 @@ public fun ListItem(
     color: Color = GlimmerTheme.colors.surface,
     contentColor: Color = calculateContentColor(color),
     border: BorderStroke? = SurfaceDefaults.border(),
-    contentPadding: PaddingValues = ListItemDefaults.ContentPadding,
+    contentPadding: PaddingValues = ListItemDefaults.contentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) {
@@ -157,7 +157,7 @@ public fun ListItem(
     color: Color = GlimmerTheme.colors.surface,
     contentColor: Color = calculateContentColor(color),
     border: BorderStroke? = SurfaceDefaults.border(),
-    contentPadding: PaddingValues = ListItemDefaults.ContentPadding,
+    contentPadding: PaddingValues = ListItemDefaults.contentPadding,
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,
 ) {
@@ -195,6 +195,7 @@ private fun ListItemImpl(
     val colors = GlimmerTheme.colors
     val iconSize = GlimmerTheme.iconSizes.large
     val typography = GlimmerTheme.typography
+    val innerPadding = GlimmerTheme.componentSpacingValues.small
     val depthEffect =
         SurfaceDepthEffect(
             depthEffect = null,
@@ -239,7 +240,7 @@ private fun ListItemImpl(
                 CompositionLocalProvider(LocalIconSize provides iconSize, content = leadingIcon)
             }
         }
-        Column(Modifier.weight(1f).padding(horizontal = InnerPadding)) {
+        Column(Modifier.weight(1f).padding(horizontal = innerPadding)) {
             if (supportingLabel == null) {
                 CompositionLocalProvider(
                     LocalTextStyle provides typography.bodySmall,
@@ -270,13 +271,9 @@ private fun ListItemImpl(
 /** Default values used for [ListItem] */
 public object ListItemDefaults {
     /** Default content padding used for a [ListItem] */
-    public val ContentPadding: PaddingValues = PaddingValues(Spacing.Large)
+    public val contentPadding: PaddingValues
+        @Composable get() = PaddingValues(GlimmerTheme.componentSpacingValues.large)
 }
 
 /** Default minimum height for a [ListItem] */
 private val MinimumHeight = 80.dp
-
-/**
- * Padding around the [ListItem] body content, i.e., between the text and leading/trailing icons.
- */
-private val InnerPadding = Spacing.Small
