@@ -179,8 +179,9 @@ object ComposeFoundationFlags {
     var isBasicTextFieldMinSizeOptimizationEnabled = true
 
     /**
-     * This flag controls the fix where item placement animation is disabled when animated scroll
-     * happens.
+     * This flag controls the fix where item placement animation in
+     * [androidx.compose.foundation.lazy.LazyColumn] and [androidx.compose.foundation.lazy.LazyRow]
+     * is disabled when animated scroll happens.
      */
     // TODO: Remove this flag once it has soaked (b/493183465)
     @field:Suppress("MutableBareField") @JvmField var isSkipItemPlacementAnimationFixEnabled = true
