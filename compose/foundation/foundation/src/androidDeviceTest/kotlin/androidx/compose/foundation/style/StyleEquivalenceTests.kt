@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -168,6 +169,34 @@ class StyleEquivalenceTests {
                     onClick = {},
                     border = BorderStroke(2.dp, Color.Red),
                     shape = RoundedCornerShape(2.dp),
+                    background = SolidColor(Color.Blue),
+                ) {
+                    Box(modifier = Modifier.size(20.dp))
+                }
+            },
+        )
+    }
+
+    @Test
+    fun border_genericShape_background() {
+        checkEquivalence(
+            styleVersion = {
+                BaseStyleableButton(
+                    onClick = {},
+                    style = {
+                        border(2.dp, Color.Red)
+                        shape(CutCornerShape(3.dp))
+                        background(Color.Blue)
+                    },
+                ) {
+                    Box(modifier = Modifier.size(20.dp))
+                }
+            },
+            modifierVersion = {
+                BaseModifierButton(
+                    onClick = {},
+                    border = BorderStroke(2.dp, Color.Red),
+                    shape = CutCornerShape(3.dp),
                     background = SolidColor(Color.Blue),
                 ) {
                     Box(modifier = Modifier.size(20.dp))
