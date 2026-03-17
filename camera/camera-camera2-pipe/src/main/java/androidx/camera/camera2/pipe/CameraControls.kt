@@ -25,6 +25,32 @@ import kotlinx.coroutines.Deferred
 
 // Public controls and enums used to interact with a CameraGraph.
 
+/**
+ * An enum to match the CameraMetadata.CONTROL_MODE_* constants. See
+ * [CameraMetadata.CONTROL_MODE](https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#CONTROL_MODE).
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@JvmInline
+public value class ControlMode(public val value: Int) {
+    public companion object {
+        public val OFF: ControlMode = ControlMode(CameraMetadata.CONTROL_MODE_OFF)
+        public val AUTO: ControlMode = ControlMode(CameraMetadata.CONTROL_MODE_AUTO)
+        public val USE_SCENE_MODE: ControlMode =
+            ControlMode(CameraMetadata.CONTROL_MODE_USE_SCENE_MODE)
+        public val OFF_KEEP_STATE: ControlMode =
+            ControlMode(CameraMetadata.CONTROL_MODE_OFF_KEEP_STATE)
+        public val USE_EXTENDED_SCENE_MODE: ControlMode =
+            ControlMode(CameraMetadata.CONTROL_MODE_USE_EXTENDED_SCENE_MODE)
+
+        public val values: List<ControlMode> =
+            listOf(OFF, AUTO, USE_SCENE_MODE, OFF_KEEP_STATE, USE_EXTENDED_SCENE_MODE)
+
+        @JvmStatic
+        public fun fromIntOrNull(value: Int): ControlMode? =
+            values.firstOrNull { it.value == value }
+    }
+}
+
 /** An enum to match the CameraMetadata.CONTROL_AF_MODE_* constants. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @JvmInline
