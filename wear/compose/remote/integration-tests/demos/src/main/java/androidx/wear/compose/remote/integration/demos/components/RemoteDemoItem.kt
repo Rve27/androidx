@@ -48,7 +48,7 @@ fun RemoteDemoItem(
     Column(modifier = modifier) {
         ListSubHeader { Text(label) }
 
-        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
+        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/481422057
         RememberRemoteDocumentInline(
             onDocument = { doc ->
                 println("Document generated: $doc")

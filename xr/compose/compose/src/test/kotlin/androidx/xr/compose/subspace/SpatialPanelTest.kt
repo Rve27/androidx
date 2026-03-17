@@ -475,7 +475,7 @@ class SpatialPanelTest {
                             shape = SpatialRoundedCornerShape(CornerSize(50)),
                         )
                         if (showDialog.value) {
-                            @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
+                            @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/481422057
                             SpatialDialog(onDismissRequest = { showDialog.value = false }) {
                                 Text("Spatial Dialog")
                             }
@@ -518,7 +518,7 @@ class SpatialPanelTest {
                             shape = SpatialRoundedCornerShape(CornerSize(50)),
                         )
                         if (showDialog.value) {
-                            @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
+                            @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/481422057
                             SpatialDialog(onDismissRequest = { showDialog.value = false }) {
                                 Text("Spatial Dialog")
                             }
