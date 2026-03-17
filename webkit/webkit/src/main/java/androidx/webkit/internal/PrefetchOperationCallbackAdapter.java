@@ -49,11 +49,11 @@ public class PrefetchOperationCallbackAdapter {
                         callback.onResult(null);
                     }
 
-                    @SuppressWarnings({"UnusedVariable", "UnusedMethod"})
+                    @SuppressWarnings({"UnusedVariable", "UnusedMethod", "MissingOverride"})
                     public void onResult(int type) {
                     }
 
-                    @SuppressWarnings("UnusedMethod")
+                    @SuppressWarnings({"UnusedMethod", "MissingOverride"})
                     public String[] getSupportedFeatures() {
                         return new String[]{};
                     }
