@@ -582,7 +582,9 @@ package androidx.xr.compose.subspace.animation {
     property public androidx.compose.animation.core.Transition<androidx.compose.animation.EnterExitState> transition;
   }
 
-  public abstract sealed nonexhaustive class SpatialEnterTransition {
+  @androidx.compose.runtime.Immutable public abstract sealed nonexhaustive class SpatialEnterTransition {
+    method public abstract boolean equals(Object? other);
+    method public abstract int hashCode();
     method @androidx.compose.runtime.Stable public final operator androidx.xr.compose.subspace.animation.SpatialEnterTransition plus(androidx.xr.compose.subspace.animation.SpatialEnterTransition enter);
     field public static final androidx.xr.compose.subspace.animation.SpatialEnterTransition.Companion Companion;
   }
@@ -592,7 +594,9 @@ package androidx.xr.compose.subspace.animation {
     property public androidx.xr.compose.subspace.animation.SpatialEnterTransition None;
   }
 
-  public abstract sealed nonexhaustive class SpatialExitTransition {
+  @androidx.compose.runtime.Immutable public abstract sealed nonexhaustive class SpatialExitTransition {
+    method public abstract boolean equals(Object? other);
+    method public abstract int hashCode();
     method @androidx.compose.runtime.Stable public final operator androidx.xr.compose.subspace.animation.SpatialExitTransition plus(androidx.xr.compose.subspace.animation.SpatialExitTransition exit);
     field public static final androidx.xr.compose.subspace.animation.SpatialExitTransition.Companion Companion;
   }
