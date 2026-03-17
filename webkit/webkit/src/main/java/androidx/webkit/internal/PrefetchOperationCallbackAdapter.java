@@ -43,6 +43,7 @@ public class PrefetchOperationCallbackAdapter {
             @NonNull WebViewOutcomeReceiver<@Nullable Void, @NonNull PrefetchException> callback) {
         PrefetchOperationCallbackBoundaryInterface operationCallback =
                 new PrefetchOperationCallbackBoundaryInterface() {
+                    @SuppressWarnings("deprecation")
                     @Override
                     public void onSuccess() {
                         callback.onResult(null);
