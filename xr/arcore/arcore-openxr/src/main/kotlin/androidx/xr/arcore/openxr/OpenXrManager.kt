@@ -97,6 +97,12 @@ internal constructor(
         private set
 
     override fun configure(config: Config) {
+        if (config.deviceTracking == DeviceTrackingMode.INERTIAL_LAST_KNOWN) {
+            throw UnsupportedOperationException(
+                "OpenXR does not support native 3DoF tracking (INERTIAL_LAST_KNOWN)."
+            )
+        }
+
         if (config.depthEstimation == DepthEstimationMode.SMOOTH_AND_RAW) {
             throw UnsupportedOperationException(
                 "Failed to configure session, runtime does not support raw and smooth depth simultaneously."
