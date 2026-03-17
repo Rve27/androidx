@@ -610,7 +610,9 @@ internal class PopupLayout(
     popupId: UUID,
     private val isNested: Boolean,
     private val popupLayoutHelper: PopupLayoutHelper =
-        if (Build.VERSION.SDK_INT >= 29) {
+        if (Build.VERSION.SDK_INT >= 30) {
+            PopupLayoutHelperImpl30()
+        } else if (Build.VERSION.SDK_INT >= 29) {
             PopupLayoutHelperImpl29()
         } else {
             PopupLayoutHelperImpl()
@@ -736,7 +738,7 @@ internal class PopupLayout(
             // platform default. Therefore, we create a new measure spec for width, which
             // corresponds to the full screen width. We do the same for height, even if
             // ViewRootImpl gives it to us from the first measure.
-            val visibleDisplayBounds = getVisibleDisplayBounds()
+            val visibleDisplayBounds = getDisplayBounds()
             val displayWidthMeasureSpec =
                 makeMeasureSpec(visibleDisplayBounds.width, MeasureSpec.AT_MOST)
             val displayHeightMeasureSpec =
@@ -897,8 +899,7 @@ internal class PopupLayout(
         val parentBounds = parentBounds ?: return
         val popupContentSize = popupContentSize ?: return
 
-        val windowSize =
-            getVisibleDisplayBounds().let { IntSize(width = it.width, height = it.height) }
+        val windowSize = getDisplayBounds().let { IntSize(width = it.width, height = it.height) }
 
         // The PopupPositionProvider returns the desired position of the popup.
         // If isNested is true, parentBounds are absolute, so the result is absolute.
@@ -1000,11 +1001,16 @@ internal class PopupLayout(
         }
     }
 
-    private fun getVisibleDisplayBounds(): IntRect =
-        previousWindowVisibleFrame.let {
-            popupLayoutHelper.getWindowVisibleDisplayFrame(composeView, it)
-            it.toIntBounds()
+    private fun getDisplayBounds(): IntRect {
+        return previousWindowVisibleFrame.let { rect ->
+            if (properties.clippingEnabled) {
+                popupLayoutHelper.getWindowVisibleDisplayFrame(composeView, rect)
+            } else {
+                popupLayoutHelper.getWindowBounds(composeView, rect)
+            }
+            rect.toIntBounds()
         }
+    }
 
     private companion object {
         private val onCommitAffectingPopupPosition = { popupLayout: PopupLayout ->
@@ -1050,6 +1056,8 @@ private object Api33Impl {
 internal interface PopupLayoutHelper {
     fun getWindowVisibleDisplayFrame(composeView: View, outRect: Rect)
 
+    fun getWindowBounds(composeView: View, outRect: Rect)
+
     fun setGestureExclusionRects(composeView: View, width: Int, height: Int)
 
     fun updateViewLayout(
@@ -1062,6 +1070,11 @@ internal interface PopupLayoutHelper {
 private open class PopupLayoutHelperImpl : PopupLayoutHelper {
     override fun getWindowVisibleDisplayFrame(composeView: View, outRect: Rect) {
         composeView.getWindowVisibleDisplayFrame(outRect)
+    }
+
+    override fun getWindowBounds(composeView: View, outRect: Rect) {
+        val displayMetrics = composeView.resources.displayMetrics
+        outRect.set(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels)
     }
 
     override fun setGestureExclusionRects(composeView: View, width: Int, height: Int) {
@@ -1078,9 +1091,19 @@ private open class PopupLayoutHelperImpl : PopupLayoutHelper {
 }
 
 @RequiresApi(29)
-private class PopupLayoutHelperImpl29 : PopupLayoutHelperImpl() {
+private open class PopupLayoutHelperImpl29 : PopupLayoutHelperImpl() {
     override fun setGestureExclusionRects(composeView: View, width: Int, height: Int) {
         composeView.systemGestureExclusionRects = mutableListOf(Rect(0, 0, width, height))
+    }
+}
+
+@RequiresApi(30)
+private class PopupLayoutHelperImpl30 : PopupLayoutHelperImpl29() {
+    override fun getWindowBounds(composeView: View, outRect: Rect) {
+        val windowManager =
+            composeView.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val bounds = windowManager.currentWindowMetrics.bounds
+        outRect.set(bounds)
     }
 }
 
