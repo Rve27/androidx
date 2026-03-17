@@ -58,19 +58,6 @@ public constructor(
     public val cornerRadiusDp: Float,
 ) {
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun withContainerType(containerType: Int = this.containerType): WearWidgetParams {
-        return WearWidgetParams(
-            instanceId = instanceId,
-            containerType = containerType,
-            widthDp = widthDp,
-            heightDp = heightDp,
-            horizontalPaddingDp = horizontalPaddingDp,
-            verticalPaddingDp = verticalPaddingDp,
-            cornerRadiusDp = cornerRadiusDp,
-        )
-    }
-
     /** Converts this object to [androidx.glance.wear.parcel.WearWidgetRequestParcel]. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public fun toParcel(): WearWidgetRequestParcel {
