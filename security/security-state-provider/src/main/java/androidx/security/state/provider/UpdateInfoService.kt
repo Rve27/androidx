@@ -487,13 +487,16 @@ public abstract class UpdateInfoService : Service() {
     /**
      * Performs the actual network request to fetch fresh updates from the backend.
      *
-     * Implementations of this method should:
-     * * Block until the network request completes.
-     * * Return the list of updates found.
-     * * Throw an exception if the network request fails (this will be caught and logged).
+     * **Template Method:** This method is implemented by the host application (e.g., the System
+     * Updater) and invoked by the [UpdateInfoService] base class on a background thread. The base
+     * class handles concurrency, caching, and rate-limiting.
      *
-     * **Note:** This method is only called if [shouldFetchUpdates] returns `true` and the rate
-     * limiter allows the request.
+     * **Preconditions:** This method is only called if [shouldFetchUpdates] returns `true` and
+     * [shouldThrottle] returns `false` (the rate limiter allows the request).
+     *
+     * **Error Handling:** If this method throws an exception (e.g., due to a network timeout or
+     * server error), the base class will catch it, invoke [onFetchFailed] for telemetry logging,
+     * and gracefully return the currently cached data to the client.
      *
      * @return A list of [UpdateInfo] objects currently available for the device.
      */
@@ -514,13 +517,23 @@ public abstract class UpdateInfoService : Service() {
     }
 
     /**
-     * Checks if the operation should be throttled based on the rate limiter.
+     * Checks if the update check operation should be throttled.
      *
-     * The default implementation delegates to an internal rate limiter that enforces a cooling-off
-     * period (e.g., one check per hour). Hosts can override this to inject custom rate limiting
-     * logic (e.g., battery checks).
+     * **Default Behavior:** The default implementation delegates to an internal rate limiter backed
+     * by `SharedPreferences`. This enforces a standard minimum interval (e.g., 1 hour) between
+     * network requests to protect backend infrastructure. The rate limiting state persists across
+     * application restarts.
      *
-     * @return `true` if the request should be blocked.
+     * **Host Customization:** Hosts can override this method to inject custom rate-limiting logic,
+     * such as blocking background checks when the device is on a metered network or has low
+     * battery.
+     *
+     * **Graceful Degradation:** If this method returns `true`, the base class skips calling
+     * [fetchUpdates] and gracefully returns the currently cached data to the client. Because the
+     * client receives the cached state along with its original `lastCheckTimeMillis`, the client is
+     * not expected to manage complex backoff or retry loops.
+     *
+     * @return `true` if the network request should be blocked (throttled).
      */
     protected open fun shouldThrottle(): Boolean {
         return checkRateLimiter.shouldThrottle()
@@ -529,16 +542,22 @@ public abstract class UpdateInfoService : Service() {
     /**
      * Callback for handling exceptions that occur during the update check process.
      *
-     * This method is invoked if any step of the update logic fails, including:
-     * * Determining cache freshness ([shouldFetchUpdates]).
-     * * Recording rate-limit attempts.
-     * * Fetching data from the backend ([fetchUpdates]).
-     * * Persisting the results to local storage.
+     * **Template Method:** The [UpdateInfoService] base class executes the update check logic and
+     * catches all unhandled exceptions to prevent the service from crashing. When an exception is
+     * caught, the base class gracefully falls back to returning the currently cached data to the
+     * client, and invokes this method.
      *
-     * The default implementation logs the error to Logcat. Hosts can override this to report errors
-     * to their own telemetry or crash reporting systems.
+     * This method will be triggered if an exception occurs during any step of the lifecycle,
+     * including:
+     * * Determining cache freshness (e.g., inside [shouldFetchUpdates]).
+     * * Evaluating rate limits (e.g., inside [shouldThrottle]).
+     * * Fetching data from the backend (e.g., inside [fetchUpdates]).
+     * * Persisting the fetched results or metadata to local storage.
      *
-     * @param e The exception thrown during the operation.
+     * The default implementation logs the error to Logcat. Hosts can override this method to report
+     * failures to their own telemetry or crash reporting systems.
+     *
+     * @param e The exception caught by the base class during the operation.
      */
     protected open fun onFetchFailed(e: Exception) {
         Log.w(TAG, "Failed to fetch updates", e)
