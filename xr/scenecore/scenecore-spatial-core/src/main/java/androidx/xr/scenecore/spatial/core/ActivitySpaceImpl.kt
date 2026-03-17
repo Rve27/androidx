@@ -86,10 +86,6 @@ public class ActivitySpaceImpl(
                 }
             }
 
-    /** Returns the identity pose since this entity defines the origin of the activity space. */
-    override val poseInActivitySpace: Pose
-        get() = Pose()
-
     public val poseInPerceptionSpace: Pose
         get() {
             val perceptionSpaceScenePose =
@@ -99,7 +95,7 @@ public class ActivitySpaceImpl(
             return transformPoseTo(Pose(), perceptionSpaceScenePose)
         }
 
-    /** Returns the identity pose since we assume the activity space is the world space root. */
+    /** Returns the identity pose since this entity defines the origin of the activity space. */
     override val activitySpacePose: Pose
         get() = Pose()
 
@@ -146,7 +142,7 @@ public class ActivitySpaceImpl(
                 throw UnsupportedOperationException(
                     "ActivitySpace is a root space and it does not have a parent."
                 )
-            Space.ACTIVITY -> poseInActivitySpace
+            Space.ACTIVITY -> activitySpacePose
             Space.REAL_WORLD -> poseInPerceptionSpace
             else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
         }
