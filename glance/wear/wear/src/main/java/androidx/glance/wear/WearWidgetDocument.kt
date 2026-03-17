@@ -24,7 +24,6 @@ import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.glance.wear.composable.WearWidgetContainer
 import androidx.glance.wear.core.WearWidgetParams
 import androidx.glance.wear.core.WearWidgetRawContent
@@ -70,7 +69,7 @@ public class WearWidgetDocument(
             WearWidgetContainer(
                 horizontalPadding = params.horizontalPaddingDp.rdp,
                 verticalPadding = params.verticalPaddingDp.rdp,
-                cornerRadius = params.cornerRadiusDp.dp,
+                cornerRadius = params.cornerRadiusDp.rdp,
                 background = background,
                 content = content,
             )

@@ -113,7 +113,7 @@ class WearWidgetProviderImplTest {
             ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
               BOX [-3:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
                 MODIFIERS
-                  ROUNDED_CLIP_RECT = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+                  DRAW_CONTENT
                 BOX [-5:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
                   DATA_TEXT<42> = "Testing ..."
                   MODIFIERS
