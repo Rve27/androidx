@@ -41,6 +41,11 @@ public abstract class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
     private final SparseIntArray mSpanIndexCache = new SparseIntArray();
     private final SparseIntArray mSpanGroupIndexCache = new SparseIntArray();
 
+    void clearCache() {
+        mSpanIndexCache.clear();
+        mSpanGroupIndexCache.clear();
+    }
+
     int getCachedSpanIndex(int position, int spanCount) {
         if (!isSpanIndexCacheEnabled()) {
             // If app supplied SpanSizeLookup declares the cache is not enabled.  Then it is
