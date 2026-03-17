@@ -25,6 +25,7 @@ import androidx.camera.camera2.pipe.AudioRestrictionMode.Companion.AUDIO_RESTRIC
 import androidx.camera.camera2.pipe.AwbMode
 import androidx.camera.camera2.pipe.CameraGraph
 import androidx.camera.camera2.pipe.CameraGraphId
+import androidx.camera.camera2.pipe.FlashMode
 import androidx.camera.camera2.pipe.FrameInfo
 import androidx.camera.camera2.pipe.FrameMetadata
 import androidx.camera.camera2.pipe.FrameNumber
@@ -115,6 +116,7 @@ class FakeCameraGraph(
         aeMode: AeMode?,
         afMode: AfMode?,
         awbMode: AwbMode?,
+        flashMode: FlashMode?,
         aeRegions: List<MeteringRectangle>?,
         afRegions: List<MeteringRectangle>?,
         awbRegions: List<MeteringRectangle>?,
