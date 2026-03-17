@@ -834,7 +834,7 @@ private fun ExpandedDockedSearchBarImpl(
 ) {
     if (!state.isExpanded) return
 
-    val hasScrim = scrimColor != Color.Unspecified || scrimColor != Color.Transparent
+    val hasScrim = scrimColor != Color.Unspecified && scrimColor != Color.Transparent
     val positionProvider =
         object : PopupPositionProvider {
             override fun calculatePosition(
