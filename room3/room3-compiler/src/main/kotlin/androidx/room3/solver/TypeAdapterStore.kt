@@ -29,6 +29,7 @@ import androidx.room3.ext.CollectionTypeNames.INT_SPARSE_ARRAY
 import androidx.room3.ext.CollectionTypeNames.LONG_SPARSE_ARRAY
 import androidx.room3.ext.CommonTypeNames
 import androidx.room3.ext.GuavaTypeNames
+import androidx.room3.ext.SUPPORTED_VALUES_TYPES
 import androidx.room3.ext.getValueClassUnderlyingInfo
 import androidx.room3.ext.isByteBuffer
 import androidx.room3.ext.isEntityElement
@@ -110,6 +111,7 @@ import androidx.room3.solver.types.StatementValueBinder
 import androidx.room3.solver.types.StatementValueReader
 import androidx.room3.solver.types.StringColumnTypeAdapter
 import androidx.room3.solver.types.TypeConverter
+import androidx.room3.solver.types.UnsignedIntegerColumnTypeAdapter
 import androidx.room3.solver.types.UuidColumnTypeAdapter
 import androidx.room3.solver.types.ValueClassConverterWrapper
 import androidx.room3.vo.BuiltInConverterFlags
@@ -182,6 +184,8 @@ private constructor(
             StringColumnTypeAdapter.create(context.processingEnv).forEach(::addColumnAdapter)
             ByteArrayColumnTypeAdapter.create(context.processingEnv).forEach(::addColumnAdapter)
             ByteArrayWrapperColumnTypeAdapter.create(context.processingEnv)
+                .forEach(::addColumnAdapter)
+            UnsignedIntegerColumnTypeAdapter.createUnsignedAdapters(context.processingEnv)
                 .forEach(::addColumnAdapter)
             PrimitiveBooleanToIntConverter.create(context.processingEnv).forEach(::addTypeConverter)
             // null aware converter is able to automatically null wrap converters so we don't
@@ -420,6 +424,10 @@ private constructor(
     ): ColumnTypeAdapter? {
         val typeElement = type.typeElement
         if (typeElement?.isValueClass() == true) {
+            // Skip
+            if (typeElement.asClassName() in SUPPORTED_VALUES_TYPES) {
+                return null
+            }
             // Extract the type value of the Value class element
             val underlyingInfo = typeElement.getValueClassUnderlyingInfo()
             if (underlyingInfo.constructor.isPrivate() || underlyingInfo.getter == null) {
