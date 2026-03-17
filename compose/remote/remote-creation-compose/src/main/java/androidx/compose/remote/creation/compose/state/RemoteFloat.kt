@@ -183,6 +183,8 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
                 TextFromFloat.SEPARATOR_COMMA_PERIOD
             }
 
+        val before = format.maximumIntegerDigits.coerceAtMost(255)
+        val after = format.maximumFractionDigits.coerceAtMost(255)
         var options = 0
         if (format.negativePrefix == "(") {
             options = options or TextFromFloat.OPTIONS_NEGATIVE_PARENTHESES
@@ -201,16 +203,25 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
         }
 
         if (format.minimumIntegerDigits > 1) {
+            // Support DecimalFormat("000") and similar cases.
+            if (format.minimumFractionDigits == 0 && before == 255) {
+                val unpadded = toRemoteString(before, after, flags or TextFromFloat.PAD_PRE_NONE)
+                return (unpadded.length le format.minimumIntegerDigits.ri).select(
+                    toRemoteString(
+                        format.minimumIntegerDigits,
+                        after,
+                        flags or TextFromFloat.PAD_PRE_ZERO,
+                    ),
+                    unpadded,
+                )
+            }
+
             flags = flags or TextFromFloat.PAD_PRE_ZERO
         } else {
             flags = flags or TextFromFloat.PAD_PRE_NONE
         }
 
-        return toRemoteString(
-            before = format.maximumIntegerDigits.coerceAtMost(255),
-            after = format.maximumFractionDigits.coerceAtMost(255),
-            flags = flags,
-        )
+        return toRemoteString(before, after, flags)
     }
 
     /**
