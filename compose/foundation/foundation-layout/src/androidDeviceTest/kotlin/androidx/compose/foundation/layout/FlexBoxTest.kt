@@ -1819,6 +1819,116 @@ class FlexBoxTest {
 
     @OptIn(ExperimentalFlexBoxApi::class)
     @Test
+    fun testFlexBox_directionRowReverse_withGap_positionsCorrectly() {
+        val xPositions = mutableListOf<Float>()
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                Box(Modifier.size(200.dp)) {
+                    FlexBox(
+                        modifier = Modifier.fillMaxWidth(),
+                        config = {
+                            direction(FlexDirection.RowReverse)
+                            columnGap(10.dp)
+                        },
+                    ) {
+                        repeat(3) { index ->
+                            Box(
+                                Modifier.size(20.dp).onPlaced {
+                                    xPositions.add(index, it.positionInParent().x)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        rule.waitForIdle()
+
+        Truth.assertThat(xPositions).containsExactly(180f, 150f, 120f).inOrder()
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_directionColumnReverse_withGap_positionsCorrectly() {
+        val yPositions = mutableListOf<Float>()
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                Box(Modifier.size(200.dp)) {
+                    FlexBox(
+                        modifier = Modifier.fillMaxHeight(),
+                        config = {
+                            direction(FlexDirection.ColumnReverse)
+                            rowGap(10.dp)
+                        },
+                    ) {
+                        repeat(3) { index ->
+                            Box(
+                                Modifier.size(20.dp).onPlaced {
+                                    yPositions.add(index, it.positionInParent().y)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        rule.waitForIdle()
+
+        Truth.assertThat(yPositions).containsExactly(180f, 150f, 120f).inOrder()
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
+    fun testFlexBox_directionRow_withGap_justifyContentEnd_positionsCorrectly() {
+        val xPositions = mutableListOf<Float>()
+
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides NoOpDensity) {
+                Box(Modifier.size(200.dp)) {
+                    FlexBox(
+                        modifier = Modifier.fillMaxWidth(),
+                        config = {
+                            direction(FlexDirection.Row)
+                            columnGap(10.dp)
+                            justifyContent(FlexJustifyContent.End)
+                        },
+                    ) {
+                        repeat(3) { index ->
+                            Box(
+                                Modifier.size(20.dp).onPlaced {
+                                    xPositions.add(index, it.positionInParent().x)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        rule.waitForIdle()
+
+        // Container width is 200px.
+        // 3 items of 20px each = 60px.
+        // 2 gaps of 10px each = 20px.
+        // Total line width = 80px.
+        // Remaining space = 200 - 80 = 120px.
+        // Because of JustifyContent.End, the first item should start at 120px.
+        //
+        // Item 0: x = 120
+        // Item 1: 120 + 20 + 10 = 150
+        // Item 2: 150 + 20 + 10 = 180
+        //
+        // If the gap was double-counted (making line width look like 100px),
+        // the remaining space would incorrectly be 100px, shifting everything left.
+        Truth.assertThat(xPositions).containsExactly(120f, 150f, 180f).inOrder()
+    }
+
+    @OptIn(ExperimentalFlexBoxApi::class)
+    @Test
     fun testFlexBox_overflow_column_mainAxis_itemsSkipped() {
         val itemSize = 50
         val containerSize = 100

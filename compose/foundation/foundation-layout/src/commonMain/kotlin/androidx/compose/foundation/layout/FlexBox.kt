@@ -814,8 +814,7 @@ private class FlexBoxMeasurePolicy(private val flexBoxConfigState: State<FlexBox
         val itemCount = line.endIndex - line.startIndex
         if (itemCount == 0) return
 
-        val totalItemsGap = (itemCount - 1) * mainAxisGap
-        val remainingSpace = containerMainAxisSize - line.mainAxisSize - totalItemsGap
+        val remainingSpace = containerMainAxisSize - line.mainAxisSize
 
         val spaceBetweenItems =
             when (flexBoxConfig.justifyContent) {
