@@ -184,4 +184,13 @@ object ComposeFoundationFlags {
      */
     // TODO: Remove this flag once it has soaked (b/493183465)
     @field:Suppress("MutableBareField") @JvmField var isSkipItemPlacementAnimationFixEnabled = true
+
+    /**
+     * This flag controls the fix where we correctly dispatch deltas in pager's default
+     * pageNestedScrollConnection by considering the role of reverse layout.
+     */
+    // TODO: Remove this flag once it has soaked (b/493462428)
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isReverseLayoutNestedScrollConnectionInPagerFixEnabled = true
 }
