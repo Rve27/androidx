@@ -79,6 +79,13 @@ class SecurityPatchStateTest {
         `when`(mockBinder.queryLocalInterface(anyString())).thenReturn(mockFactory)
         `when`(mockFactory.openSession(anyString(), any(IBinder::class.java)))
             .thenReturn(mockSession)
+        `when`(
+                mockPackageManager.checkPermission(
+                    eq("android.permission.READ_PRIVILEGED_PHONE_STATE"),
+                    anyString(),
+                )
+            )
+            .thenReturn(PackageManager.PERMISSION_GRANTED)
         securityState = SecurityPatchState(mockContext, listOf(), mockSecurityStateManagerCompat)
     }
 
@@ -2591,21 +2598,35 @@ class SecurityPatchStateTest {
     }
 
     @Test
-    fun testQueryAllAvailableUpdates_ignoresNonSystemApps() {
+    fun testListAvailableUpdates_ignoresProvidersWithoutPrivilegedPermission() {
         runBlocking {
-            // GIVEN a third-party app exposes the service
-            val untrustedInfo =
-                createUpdateInfoServiceResolveInfo("com.thirdparty", isSystem = false)
+            // GIVEN a system app that DOES NOT have the required permission
+            // (e.g., a pre-installed flashlight app or carrier bloatware)
+            val untrustedSystemApp =
+                createUpdateInfoServiceResolveInfo("com.oem.bloatware", isSystem = true)
 
             `when`(mockPackageManager.queryIntentServices(any(Intent::class.java), anyInt()))
-                .thenReturn(listOf(untrustedInfo))
+                .thenReturn(listOf(untrustedSystemApp))
+
+            // Force the permission check to fail
+            `when`(
+                    mockPackageManager.checkPermission(
+                        eq("android.permission.READ_PRIVILEGED_PHONE_STATE"),
+                        eq("com.oem.bloatware"),
+                    )
+                )
+                .thenReturn(PackageManager.PERMISSION_DENIED)
 
             // WHEN we query for all available updates
             val results = securityState.queryAllAvailableUpdates()
 
-            // THEN it is ignored (result list is empty)
-            assertTrue(results.isEmpty())
-            // AND we never attempted to bind
+            // THEN the untrusted app is filtered out, resulting in an empty list
+            assertTrue(
+                "Should ignore system apps lacking the required permission",
+                results.isEmpty(),
+            )
+
+            // AND we never attempted to bind to it
             verify(mockContext, times(0)).bindService(any(), any(), anyInt())
         }
     }

@@ -21,7 +21,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Binder
@@ -1090,12 +1089,24 @@ constructor(
     /**
      * Discovers trusted system services that implement the UpdateInfoService protocol.
      *
-     * This method queries the [PackageManager] for services that handle the
-     * [ACTION_UPDATE_INFO_SERVICE] intent, using the `PackageManager.MATCH_SYSTEM_ONLY` flag. This
-     * flag ensures that only components from applications installed on the system image are
-     * returned, which includes both original and updated system apps.
+     * This method queries the [android.content.pm.PackageManager] for services that handle the
+     * [ACTION_UPDATE_INFO_SERVICE] intent and filters them to ensure that only authentic, highly
+     * privileged system components are trusted.
      *
-     * @return A list of [ComponentName]s for all trusted update services found on the device.
+     * **Optimization:** The initial query uses the
+     * [android.content.pm.PackageManager.MATCH_SYSTEM_ONLY] flag to efficiently filter out standard
+     * third-party applications at the OS level, reducing the number of IPC permission checks
+     * required.
+     *
+     * **Trust Model & Security:** Relying solely on `MATCH_SYSTEM_ONLY` is insufficient for a
+     * strict security boundary, as OEMs may preload unprivileged third-party applications
+     * (bloatware) on the system partition. To enforce true trust, this method explicitly verifies
+     * that the application hosting the service has been granted the
+     * `android.permission.READ_PRIVILEGED_PHONE_STATE` permission. This is a strictly controlled
+     * `signature|privileged` capability held by core OS updaters, guaranteeing the provider is a
+     * legitimate system component.
+     *
+     * @return A list of [ComponentName]s for all fully trusted update services found on the device.
      */
     @VisibleForTesting
     internal fun getTrustedUpdateInfoServices(): List<ComponentName> {
@@ -1105,18 +1116,26 @@ constructor(
             context.packageManager.queryIntentServices(intent, PackageManager.MATCH_SYSTEM_ONLY)
 
         return resolveInfos.mapNotNull { resolveInfo ->
-            val serviceInfo = resolveInfo.serviceInfo
-            if (serviceInfo?.applicationInfo == null) {
-                null
-            } else {
-                val isSystem =
-                    (serviceInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
-                if (isSystem) {
-                    ComponentName(serviceInfo.packageName, serviceInfo.name)
-                } else {
+            val serviceName = resolveInfo.serviceInfo?.name
+            val packageName = resolveInfo.serviceInfo?.packageName
+
+            when {
+                // Rule 1: Drop malformed OS data silently
+                packageName == null || serviceName == null -> null
+
+                // Rule 2: If the provider is trusted, map it to a ComponentName
+                context.packageManager.checkPermission(
+                    "android.permission.READ_PRIVILEGED_PHONE_STATE",
+                    packageName,
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    ComponentName(packageName, serviceName)
+                }
+
+                // Rule 3: If it lacks the permission, log a warning and drop it
+                else -> {
                     Log.w(
                         TAG,
-                        "Ignoring non-system provider found with MATCH_SYSTEM_ONLY: ${serviceInfo.packageName}",
+                        "Ignoring untrusted update provider (lacks READ_PRIVILEGED_PHONE_STATE): $packageName",
                     )
                     null
                 }
