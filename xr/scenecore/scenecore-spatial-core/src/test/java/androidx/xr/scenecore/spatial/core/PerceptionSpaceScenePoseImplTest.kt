@@ -95,7 +95,7 @@ class PerceptionSpaceScenePoseImplTest {
 
         val poseInActivitySpace = mPerceptionSpaceScenePose!!.poseInActivitySpace
 
-        val expectedPose = activitySpaceMatrix.inverse.pose
+        val expectedPose = activitySpaceMatrix.inverse.toPose()
 
         assertPose(poseInActivitySpace, expectedPose)
     }
@@ -113,7 +113,7 @@ class PerceptionSpaceScenePoseImplTest {
 
         val transformedPose = mPerceptionSpaceScenePose!!.transformPoseTo(Pose(), activitySpace)
 
-        val expectedPose = activitySpaceMatrix.inverse.pose
+        val expectedPose = activitySpaceMatrix.inverse.toPose()
 
         assertPose(transformedPose, expectedPose)
     }
@@ -133,7 +133,7 @@ class PerceptionSpaceScenePoseImplTest {
 
         val transformedPose = mPerceptionSpaceScenePose!!.transformPoseTo(Pose(), gltfEntity)
 
-        val unscaledPose = activitySpaceMatrix.inverse.pose
+        val unscaledPose = activitySpaceMatrix.inverse.toPose()
         val expectedPose =
             Pose(unscaledPose.translation.scale(Vector3(0.5f, 0.5f, 0.5f)), unscaledPose.rotation)
 
