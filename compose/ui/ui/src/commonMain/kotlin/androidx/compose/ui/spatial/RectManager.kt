@@ -322,7 +322,9 @@ internal class RectManager(
                                 hasCallbacks = hasCallbacks,
                             )
                     } else {
-                        // root insertion
+                        // inserting the root, which has no parent.
+                        // when parent is null offsetFromParent is just the outer coordinator
+                        // offset.
                         layoutNode.rectListIndex =
                             rects.insert(
                                 value = semanticsId,
@@ -730,21 +732,27 @@ private fun Matrix.analyzeComponents(): Int {
     // See top-level comment
     val v = values
     if (v.size < 16) return 0
+
+    // Uses `and` instead of `&&` to avoid overhead of the short-circuit jumps
     val isIdentity3x3 =
-        v[0] == 1f &&
-            v[1] == 0f &&
-            v[2] == 0f &&
-            v[4] == 0f &&
-            v[5] == 1f &&
-            v[6] == 0f &&
-            v[8] == 0f &&
-            v[9] == 0f &&
-            v[10] == 1f
+        (v[0] == 1f).toInt() and
+            (v[1] == 0f).toInt() and
+            (v[2] == 0f).toInt() and
+            (v[4] == 0f).toInt() and
+            (v[5] == 1f).toInt() and
+            (v[6] == 0f).toInt() and
+            (v[8] == 0f).toInt() and
+            (v[9] == 0f).toInt() and
+            (v[10] == 1f).toInt()
 
     // translation components
-    val hasNoTranslationComponents = v[12] == 0f && v[13] == 0f && v[14] == 0f && v[15] == 1f
+    val hasNoTranslationComponents =
+        (v[12] == 0f).toInt() and
+            (v[13] == 0f).toInt() and
+            (v[14] == 0f).toInt() and
+            (v[15] == 1f).toInt()
 
-    return isIdentity3x3.toInt() shl 1 or hasNoTranslationComponents.toInt()
+    return isIdentity3x3 shl 1 or hasNoTranslationComponents
 }
 
 @Suppress("NOTHING_TO_INLINE")
