@@ -485,13 +485,11 @@ public fun SpatialPanel(
         update = { composeView ->
             composeView.setContent {
                 // The root is a Box. Its size is determined by its content.
-                @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
                 Box {
                     content()
                     // The scrim for input handling. It uses matchParentSize to avoid affecting
                     // the measurement of the parent Box.
                     if (isDialogActive) {
-                        @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/446706254
                         Box(
                             modifier =
                                 Modifier
