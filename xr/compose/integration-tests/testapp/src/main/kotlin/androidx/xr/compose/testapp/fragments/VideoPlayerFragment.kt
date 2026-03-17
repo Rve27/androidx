@@ -162,6 +162,7 @@ class VideoPlayerFragment : Fragment() {
                 }
             }
 
+            @Suppress("DEPRECATION")
             Orbiter(position = ContentEdge.Bottom, offset = 48.dp) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Button(onClick = { useDrmState.value = !useDrmState.value }) {

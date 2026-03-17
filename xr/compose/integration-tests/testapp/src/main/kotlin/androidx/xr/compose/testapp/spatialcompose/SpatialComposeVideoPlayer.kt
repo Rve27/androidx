@@ -828,6 +828,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @OptIn(ExperimentalComposeApi::class)
     @Composable
     fun VideoInSpatialExternalSurface(
