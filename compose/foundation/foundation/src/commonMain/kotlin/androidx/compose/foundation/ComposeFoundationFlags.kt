@@ -177,4 +177,11 @@ object ComposeFoundationFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isBasicTextFieldMinSizeOptimizationEnabled = true
+
+    /**
+     * This flag controls the fix where item placement animation is disabled when animated scroll
+     * happens.
+     */
+    // TODO: Remove this flag once it has soaked (b/493183465)
+    @field:Suppress("MutableBareField") @JvmField var isSkipItemPlacementAnimationFixEnabled = true
 }
