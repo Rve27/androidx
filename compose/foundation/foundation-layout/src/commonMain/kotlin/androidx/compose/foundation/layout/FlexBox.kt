@@ -1800,7 +1800,7 @@ internal class ResolvedFlexBoxConfig : FlexBoxConfigScope {
     var baselineAlignmentLine: AlignmentLine? = null
         private set
 
-    var baselineAlignmentBlock: ((Measured) -> Int)? = null
+    var baselineAlignmentBlock: AlignmentLineProviderBlock? = null
         private set
 
     override val density: Float
@@ -1860,7 +1860,7 @@ internal class ResolvedFlexBoxConfig : FlexBoxConfigScope {
     override fun alignItems(alignmentLineBlock: (Measured) -> Int) {
         alignItems = FlexAlignItems.Baseline
         baselineAlignmentLine = null
-        baselineAlignmentBlock = alignmentLineBlock
+        baselineAlignmentBlock = AlignmentLineProviderBlock { alignmentLineBlock(it) }
     }
 
     override fun alignContent(value: FlexAlignContent) {
@@ -1882,7 +1882,8 @@ internal class ResolvedFlexBoxConfig : FlexBoxConfigScope {
 
     internal fun getBaseline(placeable: Placeable): Int {
         return when {
-            baselineAlignmentBlock != null -> baselineAlignmentBlock!!.invoke(placeable)
+            baselineAlignmentBlock != null ->
+                baselineAlignmentBlock!!.calculateAlignmentLinePosition(placeable)
             baselineAlignmentLine != null -> {
                 val value = placeable[baselineAlignmentLine!!]
 
@@ -2154,7 +2155,7 @@ internal class ResolvedFlexItemInfo : FlexConfigScope {
     var baselineAlignmentLine: AlignmentLine? = null
         private set
 
-    var baselineAlignmentBlock: ((Measured) -> Int)? = null
+    var baselineAlignmentBlock: AlignmentLineProviderBlock? = null
         private set
 
     private var _density: Density = DefaultDensity
@@ -2194,7 +2195,7 @@ internal class ResolvedFlexItemInfo : FlexConfigScope {
     override fun alignSelf(alignmentLineBlock: (Measured) -> Int) {
         this.alignSelf = FlexAlignSelf.Baseline
         this.baselineAlignmentLine = null
-        this.baselineAlignmentBlock = alignmentLineBlock
+        this.baselineAlignmentBlock = AlignmentLineProviderBlock { alignmentLineBlock(it) }
     }
 
     override fun order(value: Int) {
@@ -2235,7 +2236,8 @@ internal class ResolvedFlexItemInfo : FlexConfigScope {
 
     fun getBaseline(placeable: Placeable, fallback: ResolvedFlexBoxConfig): Int {
         return when {
-            baselineAlignmentBlock != null -> baselineAlignmentBlock!!.invoke(placeable)
+            baselineAlignmentBlock != null ->
+                baselineAlignmentBlock!!.calculateAlignmentLinePosition(placeable)
             baselineAlignmentLine != null -> {
                 val value = placeable[baselineAlignmentLine!!]
                 if (value != AlignmentLine.Unspecified) {
