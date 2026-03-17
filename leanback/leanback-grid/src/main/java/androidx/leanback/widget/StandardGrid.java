@@ -46,6 +46,14 @@ class StandardGrid extends Grid {
     }
 
     @Override
+    public void resetVisibleIndex() {
+        super.resetVisibleIndex();
+        if (mSpanSizeLookup != null) {
+            mSpanSizeLookup.clearCache();
+        }
+    }
+
+    @Override
     void setNumRows(int numRows) {
         if (mNumRows == numRows) {
             return;

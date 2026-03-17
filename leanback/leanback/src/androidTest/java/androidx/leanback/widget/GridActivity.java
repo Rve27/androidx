@@ -166,9 +166,7 @@ public class GridActivity extends Activity {
         int[] spanSizesArray = intent.getIntArrayExtra(EXTRA_SPAN_SIZES);
         if (spanSizesArray != null) {
             mSpanSizes = new HashMap<>();
-            for (int i = 0; i <= spanSizesArray.length - 2; i += 2) {
-                mSpanSizes.put(spanSizesArray[i], spanSizesArray[i + 1]);
-            }
+            setSpanSizes(spanSizesArray);
         }
         mRequestLayoutOnFocus = intent.getBooleanExtra(EXTRA_REQUEST_LAYOUT_ONFOCUS,
                 DEFAULT_REQUEST_LAYOUT_ONFOCUS);
@@ -342,6 +340,13 @@ public class GridActivity extends Activity {
     void changeArraySize(int length) {
         mNumItems = length;
         mGridView.getAdapter().notifyDataSetChanged();
+    }
+
+    void setSpanSizes(int[] spanSizesArray) {
+        mSpanSizes.clear();
+        for (int i = 0; i <= spanSizesArray.length - 2; i += 2) {
+            mSpanSizes.put(spanSizesArray[i], spanSizesArray[i + 1]);
+        }
     }
 
     int[] removeItems(int index, int length) {
