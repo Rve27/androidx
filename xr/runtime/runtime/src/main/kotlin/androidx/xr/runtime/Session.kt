@@ -118,24 +118,6 @@ public constructor(
     public companion object {
         private val contextSessionMap = ConcurrentHashMap<Context, Session>()
 
-        /** Restricted version of factory for 1Ps. */
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
-        @Deprecated(
-            message =
-                "unScaledGravityAlignedActivitySpace flag deprecated, scheduled for removal in future release."
-        )
-        public fun create(
-            activity: Activity,
-            coroutineContext: CoroutineContext,
-            unscaledGravityAlignedActivitySpace: Boolean,
-        ): SessionCreateResult =
-            create(
-                context = activity,
-                lifecycleOwner = activity as LifecycleOwner,
-                coroutineContext = coroutineContext,
-                unscaledGravityAlignedActivitySpace = unscaledGravityAlignedActivitySpace,
-            )
-
         /**
          * Creates a new [Session].
          *
@@ -181,7 +163,6 @@ public constructor(
                 context = activity,
                 lifecycleOwner = lifecycleOwner,
                 coroutineContext = coroutineContext,
-                unscaledGravityAlignedActivitySpace = true,
             )
 
         /**
@@ -229,19 +210,6 @@ public constructor(
             context: Context,
             lifecycleOwner: LifecycleOwner,
             coroutineContext: CoroutineContext = EmptyCoroutineContext,
-        ): SessionCreateResult =
-            create(
-                context = context,
-                lifecycleOwner = lifecycleOwner,
-                coroutineContext = coroutineContext,
-                unscaledGravityAlignedActivitySpace = true,
-            )
-
-        private fun create(
-            context: Context,
-            lifecycleOwner: LifecycleOwner,
-            coroutineContext: CoroutineContext,
-            unscaledGravityAlignedActivitySpace: Boolean = true,
         ): SessionCreateResult {
             check(lifecycleOwner.lifecycle.currentState != Lifecycle.State.DESTROYED) {
                 "Cannot create a new session on a destroyed lifecycleOwner."
@@ -285,13 +253,7 @@ public constructor(
                         ),
                         features,
                     )
-
-                val sceneRuntime =
-                    if (unscaledGravityAlignedActivitySpace) {
-                        sceneRuntimeFactory?.create(context, unscaledGravityAlignedActivitySpace)
-                    } else {
-                        sceneRuntimeFactory?.create(context)
-                    }
+                val sceneRuntime = sceneRuntimeFactory?.create(context)
                 sceneRuntime?.let { runtimes.add(it) }
 
                 val renderingRuntimeFactory =

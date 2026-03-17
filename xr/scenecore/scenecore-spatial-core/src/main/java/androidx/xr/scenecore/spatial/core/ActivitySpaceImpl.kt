@@ -61,7 +61,6 @@ public class ActivitySpaceImpl(
     sceneNodeRegistry: SceneNodeRegistry,
     private val spatialStateProvider: Supplier<SpatialState>,
     executor: ScheduledExecutorService,
-    private val unscaledGravityAlignedActivitySpace: Boolean = true,
 ) :
     SystemSpaceEntityImpl(activity, taskNode, extensions, sceneNodeRegistry, executor),
     ActivitySpace {
@@ -206,38 +205,35 @@ public class ActivitySpaceImpl(
      */
     public fun handleOriginUpdate(newTransform: Matrix4) {
         openXrReferenceSpaceTransform.set(newTransform)
-        var activitySpaceRotation = Quaternion.Identity
-        if (unscaledGravityAlignedActivitySpace) {
-            // Get the absolute scale of the scene parent)
-            sceneParentScaleAbs = Vector3.abs(newTransform.scale)
-            val sceneParentScaleInv = sceneParentScaleAbs.inverse()
-            // Get the unscaled rotation of the activity space.
-            activitySpaceRotation = newTransform.unscaled().rotation
-            val yaw = activitySpaceRotation.eulerAngles.y
-            val yawRotation = Quaternion.fromEulerAngles(0.0f, yaw, 0.0f)
-            val gravityAlignedRotation = activitySpaceRotation.inverse * yawRotation
-            extensions.createNodeTransaction().use { transaction ->
-                transaction
-                    .setScale(
-                        getNode(),
-                        sceneParentScaleInv.x,
-                        sceneParentScaleInv.y,
-                        sceneParentScaleInv.z,
-                    )
-                    .setOrientation(
-                        getNode(),
-                        gravityAlignedRotation.x,
-                        gravityAlignedRotation.y,
-                        gravityAlignedRotation.z,
-                        gravityAlignedRotation.w,
-                    )
-                    .apply()
-            }
-            // Update the rotation to be sent out in onSpatialModeChanged.
-            // It needs to provide identity yaw rotation since we already preserved that part of
-            // original rotation for the activity space origin.
-            activitySpaceRotation = yawRotation.inverse * activitySpaceRotation
+        sceneParentScaleAbs = Vector3.abs(newTransform.scale)
+        val sceneParentScaleInv = sceneParentScaleAbs.inverse()
+        // Get the unscaled rotation of the activity space.
+        var activitySpaceRotation = newTransform.unscaled().rotation
+        val yaw = activitySpaceRotation.eulerAngles.y
+        val yawRotation = Quaternion.fromEulerAngles(0.0f, yaw, 0.0f)
+        val gravityAlignedRotation = activitySpaceRotation.inverse * yawRotation
+        extensions.createNodeTransaction().use { transaction ->
+            transaction
+                .setScale(
+                    getNode(),
+                    sceneParentScaleInv.x,
+                    sceneParentScaleInv.y,
+                    sceneParentScaleInv.z,
+                )
+                .setOrientation(
+                    getNode(),
+                    gravityAlignedRotation.x,
+                    gravityAlignedRotation.y,
+                    gravityAlignedRotation.z,
+                    gravityAlignedRotation.w,
+                )
+                .apply()
         }
+        // Update the rotation to be sent out in onSpatialModeChanged.
+        // It needs to provide identity yaw rotation since we already preserved that part of
+        // original rotation for the activity space origin.
+        activitySpaceRotation = yawRotation.inverse * activitySpaceRotation
+
         // The translation is zero - since the activity space origin has been already translated by
         // system. SceneCore is relaying the same rotation and scale that activity space would have
         // inherited if it was in HOME_SPACE mode for continuity in FULL_SPACE_MANAGED mode.
@@ -249,7 +245,7 @@ public class ActivitySpaceImpl(
 
     // TODO: b/469860602 - Remove this override once transform listener fix lands.
     override val worldSpaceScale: Vector3
-        get() = if (unscaledGravityAlignedActivitySpace) Vector3.One else super.worldSpaceScale
+        get() = Vector3.One
 
     override fun addOnBoundsChangedListener(listener: ActivitySpace.OnBoundsChangedListener) {
         boundsListeners.add(listener)
