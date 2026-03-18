@@ -2,7 +2,7 @@
 package androidx.lifecycle.viewmodel.navigation3 {
 
   public final class ViewModelStoreNavEntryDecorator<T> extends androidx.navigation3.runtime.NavEntryDecorator<T> {
-    ctor public ViewModelStoreNavEntryDecorator(androidx.lifecycle.ViewModelStore viewModelStore);
+    ctor public ViewModelStoreNavEntryDecorator(androidx.lifecycle.viewmodel.ViewModelStoreProvider viewModelStoreProvider);
     ctor @Deprecated public ViewModelStoreNavEntryDecorator(androidx.lifecycle.ViewModelStore viewModelStore, kotlin.jvm.functions.Function0<java.lang.Boolean> removeViewModelStoreOnPop);
   }
 
