@@ -35,8 +35,6 @@ internal const val EMPTY: String = ""
  * End users of tracing will never use this class directly. They will only interact with it using
  * [TraceEventScope].
  */
-// False positive: https://youtrack.jetbrains.com/issue/KTIJ-22326
-@Suppress("NOTHING_TO_INLINE", "OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @DelicateTracingApi
 public class MetadataEntry
 internal constructor(

@@ -24,8 +24,6 @@ import kotlinx.coroutines.withContext
  *
  * To obtain an instance of `Tracer` use [AbstractTraceDriver.tracer].
  */
-// False positive: https://youtrack.jetbrains.com/issue/KTIJ-22326
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 public abstract class Tracer(
     /** Is set to `true` if Tracing is enabled. */
     @JvmField
