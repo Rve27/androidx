@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ package androidx.room3.integration.kotlintestapp.vo
 
 import androidx.room3.ColumnInfo
 import androidx.room3.Entity
-import androidx.room3.Fts4
+import androidx.room3.Fts5
 import androidx.room3.PrimaryKey
 
 @Entity
-@Fts4
-data class Mail(
+@Fts5
+data class Fts5Mail(
     @PrimaryKey @ColumnInfo(name = "rowid") val rowId: Long,
     val subject: String,
     val body: String,

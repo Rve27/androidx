@@ -18,9 +18,9 @@ package androidx.room3.integration.kotlintestapp.test
 import android.content.Context
 import androidx.kruth.assertThat
 import androidx.room3.Room
-import androidx.room3.integration.kotlintestapp.FtsTestDatabase
-import androidx.room3.integration.kotlintestapp.dao.MailDao
-import androidx.room3.integration.kotlintestapp.dao.SongDao
+import androidx.room3.integration.kotlintestapp.Fts4TestDatabase
+import androidx.room3.integration.kotlintestapp.dao.Fts4MailDao
+import androidx.room3.integration.kotlintestapp.dao.Fts4SongDao
 import androidx.room3.integration.kotlintestapp.test.TestDatabaseTest.UseDriver
 import androidx.room3.integration.kotlintestapp.vo.Song
 import androidx.sqlite.driver.AndroidSQLiteDriver
@@ -38,7 +38,7 @@ import org.junit.runners.Parameterized.Parameters
 
 @SmallTest
 @RunWith(Parameterized::class)
-class FtsTableTest(private val useDriver: UseDriver) {
+class Fts4TableTest(private val useDriver: UseDriver) {
 
     private companion object {
         @JvmStatic
@@ -46,15 +46,15 @@ class FtsTableTest(private val useDriver: UseDriver) {
         fun parameters() = arrayOf(UseDriver.ANDROID, UseDriver.BUNDLED)
     }
 
-    private lateinit var database: FtsTestDatabase
-    private lateinit var mailDao: MailDao
-    private lateinit var songDao: SongDao
+    private lateinit var database: Fts4TestDatabase
+    private lateinit var mailDao: Fts4MailDao
+    private lateinit var songDao: Fts4SongDao
 
     @Before
     fun setup() {
         val context: Context = ApplicationProvider.getApplicationContext()
         database =
-            Room.inMemoryDatabaseBuilder<FtsTestDatabase>(context)
+            Room.inMemoryDatabaseBuilder<Fts4TestDatabase>(context)
                 .setDriver(
                     when (useDriver) {
                         UseDriver.ANDROID -> AndroidSQLiteDriver()
@@ -73,7 +73,7 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun readWrite() {
-        val item = TestUtil.createMail(1, "Hello old friend", "How are you? Wanna grab coffee?")
+        val item = TestUtil.createFts4Mail(1, "Hello old friend", "How are you? Wanna grab coffee?")
         mailDao.insert(item)
         val loaded = mailDao.getMail("coffee")
         assertThat(loaded[0]).isEqualTo(item)
@@ -81,14 +81,15 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun prefixQuery() {
-        val item1 = TestUtil.createMail(1, "Linux problem", "Hi - Need help with my linux machine.")
+        val item1 =
+            TestUtil.createFts4Mail(1, "Linux problem", "Hi - Need help with my linux machine.")
         val item2 =
-            TestUtil.createMail(
+            TestUtil.createFts4Mail(
                 2,
                 "Math help needed",
                 "Anyone able to help me with linear algebra?",
             )
-        val item3 = TestUtil.createMail(3, "Chef needed", "Need a cheeseburger check ASAP")
+        val item3 = TestUtil.createFts4Mail(3, "Chef needed", "Need a cheeseburger check ASAP")
         mailDao.insert(listOf(item1, item2, item3))
         val loaded = mailDao.getMail("lin*")
         assertThat(loaded).hasSize(2)
@@ -98,14 +99,15 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun prefixQuery_multiple() {
-        val item1 = TestUtil.createMail(1, "Linux problem", "Hi - Need help with my linux machine.")
+        val item1 =
+            TestUtil.createFts4Mail(1, "Linux problem", "Hi - Need help with my linux machine.")
         val item2 =
-            TestUtil.createMail(
+            TestUtil.createFts4Mail(
                 2,
                 "Math help needed",
                 "Anyone able to help me with linear algebra?",
             )
-        val item3 = TestUtil.createMail(3, "Chef needed", "Need a cheeseburger check ASAP")
+        val item3 = TestUtil.createFts4Mail(3, "Chef needed", "Need a cheeseburger check ASAP")
         mailDao.insert(listOf(item1, item2, item3))
         val loaded = mailDao.getMail("help linux")
         assertThat(loaded).hasSize(1)
@@ -114,14 +116,15 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun prefixQuery_multiple_OR() {
-        val item1 = TestUtil.createMail(1, "Linux problem", "Hi - Need help with my linux machine.")
+        val item1 =
+            TestUtil.createFts4Mail(1, "Linux problem", "Hi - Need help with my linux machine.")
         val item2 =
-            TestUtil.createMail(
+            TestUtil.createFts4Mail(
                 2,
                 "Math help needed",
                 "Anyone able to help me with linear algebra?",
             )
-        val item3 = TestUtil.createMail(3, "Chef needed", "Need a cheeseburger check ASAP")
+        val item3 = TestUtil.createFts4Mail(3, "Chef needed", "Need a cheeseburger check ASAP")
         mailDao.insert(listOf(item1, item2, item3))
         val loaded = mailDao.getMail("linux OR linear")
         assertThat(loaded).hasSize(2)
@@ -131,14 +134,15 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun prefixQuery_body() {
-        val item1 = TestUtil.createMail(1, "Linux problem", "Hi - Need help with my linux machine.")
+        val item1 =
+            TestUtil.createFts4Mail(1, "Linux problem", "Hi - Need help with my linux machine.")
         val item2 =
-            TestUtil.createMail(
+            TestUtil.createFts4Mail(
                 2,
                 "Math help needed",
                 "Anyone able to help me with linear algebra?",
             )
-        val item3 = TestUtil.createMail(3, "Chef needed", "Need a cheeseburger check ASAP")
+        val item3 = TestUtil.createFts4Mail(3, "Chef needed", "Need a cheeseburger check ASAP")
         mailDao.insert(listOf(item1, item2, item3))
         val loaded = mailDao.getMailWithBody("subject:help algebra")
         assertThat(loaded).hasSize(1)
@@ -147,7 +151,7 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun prefixQuery_startsWith() {
-        val item = TestUtil.createMail(1, "Hello old friend", "How are you? Wanna grab coffee?")
+        val item = TestUtil.createFts4Mail(1, "Hello old friend", "How are you? Wanna grab coffee?")
         mailDao.insert(item)
         val loaded = mailDao.getMailWithSubject("^hello")
         assertThat(loaded[0]).isEqualTo(item)
@@ -155,9 +159,10 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun phraseQuery() {
-        val item1 = TestUtil.createMail(1, "Linux problem", "Hi - Need help with my linux machine.")
+        val item1 =
+            TestUtil.createFts4Mail(1, "Linux problem", "Hi - Need help with my linux machine.")
         val item2 =
-            TestUtil.createMail(
+            TestUtil.createFts4Mail(
                 2,
                 "Math help needed",
                 "Anyone able to help me with linear algebra?",
@@ -170,7 +175,7 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun nearQuery() {
-        val item = TestUtil.createMail(1, "Hello old friend", "How are you? Wanna grab coffee?")
+        val item = TestUtil.createFts4Mail(1, "Hello old friend", "How are you? Wanna grab coffee?")
         mailDao.insert(item)
         val loaded = mailDao.getMail("coffee")
         assertThat(loaded[0]).isEqualTo(item)
@@ -178,9 +183,10 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun snippetQuery() {
-        val item1 = TestUtil.createMail(1, "Linux problem", "Hi - Need help with my linux machine.")
+        val item1 =
+            TestUtil.createFts4Mail(1, "Linux problem", "Hi - Need help with my linux machine.")
         val item2 =
-            TestUtil.createMail(
+            TestUtil.createFts4Mail(
                 2,
                 "Math help needed",
                 "Hello dear friends. I am in desperate need for some help. " +
@@ -200,14 +206,14 @@ class FtsTableTest(private val useDriver: UseDriver) {
 
     @Test
     fun specialCommand_optimize() {
-        val item = TestUtil.createMail(1, "Hello old friend", "How are you? Wanna grab coffee?")
+        val item = TestUtil.createFts4Mail(1, "Hello old friend", "How are you? Wanna grab coffee?")
         mailDao.insert(item)
         mailDao.optimizeMail()
     }
 
     @Test
     fun specialCommand_rebuild() {
-        val item = TestUtil.createMail(1, "Hello old friend", "How are you? Wanna grab coffee?")
+        val item = TestUtil.createFts4Mail(1, "Hello old friend", "How are you? Wanna grab coffee?")
         mailDao.insert(item)
         mailDao.rebuildMail()
     }
@@ -230,7 +236,7 @@ class FtsTableTest(private val useDriver: UseDriver) {
         val mail = mailDao.getFlowDataMail().produceIn(this)
         assertThat(mail.receive()).isEmpty()
 
-        val item = TestUtil.createMail(1, "Hello old friend", "How are you? Wanna grab coffee?")
+        val item = TestUtil.createFts4Mail(1, "Hello old friend", "How are you? Wanna grab coffee?")
         mailDao.insert(item)
         assertThat(mail.receive()).containsExactly(item)
 
