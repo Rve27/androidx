@@ -296,6 +296,84 @@ class SpatialRenderingRuntimeTest {
     }
 
     @Test
+    fun createMeshBuffer_returnsMeshBuffer() {
+        val meshBuffer =
+            renderingRuntime.createMeshBuffer(
+                intArrayOf(1),
+                intArrayOf(1),
+                byteArrayOf(0),
+                10,
+                10,
+                null,
+                null,
+                null,
+                0,
+            )
+        assertThat(meshBuffer).isNotNull()
+        assertThat(meshBuffer)
+            .isInstanceOf(androidx.xr.scenecore.impl.impress.MeshBuffer::class.java)
+    }
+
+    @Test
+    fun destroyMeshBuffer_removesMeshBuffer() {
+        val meshBuffer =
+            renderingRuntime.createMeshBuffer(
+                intArrayOf(1),
+                intArrayOf(1),
+                byteArrayOf(0),
+                10,
+                10,
+                null,
+                null,
+                null,
+                0,
+            )
+        renderingRuntime.destroyMeshBuffer(meshBuffer)
+        // No exception means success, as destroy() is final and calls impressApi.destroyMeshBuffer
+    }
+
+    @Test
+    fun createCustomMesh_returnsCustomMesh() {
+        val meshBuffer =
+            renderingRuntime.createMeshBuffer(
+                intArrayOf(1),
+                intArrayOf(1),
+                byteArrayOf(0),
+                10,
+                10,
+                null,
+                null,
+                null,
+                0,
+            )
+        val customMesh =
+            renderingRuntime.createCustomMesh(meshBuffer, intArrayOf(0), intArrayOf(10))
+        assertThat(customMesh).isNotNull()
+        assertThat(customMesh)
+            .isInstanceOf(androidx.xr.scenecore.impl.impress.CustomMesh::class.java)
+    }
+
+    @Test
+    fun destroyCustomMesh_removesCustomMesh() {
+        val meshBuffer =
+            renderingRuntime.createMeshBuffer(
+                intArrayOf(1),
+                intArrayOf(1),
+                byteArrayOf(0),
+                10,
+                10,
+                null,
+                null,
+                null,
+                0,
+            )
+        val customMesh =
+            renderingRuntime.createCustomMesh(meshBuffer, intArrayOf(0), intArrayOf(10))
+        renderingRuntime.destroyCustomMesh(customMesh)
+        // No exception means success
+    }
+
+    @Test
     fun destroyWaterMaterial_removesWaterMaterial() {
         val material = createWaterMaterial() as Material
         val initialMaterialCount = fakeImpressApi.getMaterials().size

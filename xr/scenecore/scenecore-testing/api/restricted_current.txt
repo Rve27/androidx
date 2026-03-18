@@ -260,6 +260,16 @@ package androidx.xr.scenecore.testing {
     property public java.util.Map<android.media.MediaPlayer,androidx.xr.scenecore.runtime.SoundFieldAttributes> soundFieldAttributes;
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeMeshEntity extends androidx.xr.scenecore.testing.FakeEntity implements androidx.xr.scenecore.runtime.MeshEntity {
+    ctor public FakeMeshEntity();
+    ctor public FakeMeshEntity(optional androidx.xr.scenecore.runtime.MeshFeature? feature);
+    ctor @BytecodeOnly public FakeMeshEntity(androidx.xr.scenecore.runtime.MeshFeature!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMeshFeature extends androidx.xr.scenecore.testing.FakeBaseRenderingFeature implements androidx.xr.scenecore.runtime.MeshFeature {
+    ctor public FakeMeshFeature(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder);
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMovableComponent extends androidx.xr.scenecore.testing.FakeComponent implements androidx.xr.scenecore.runtime.MovableComponent {
     ctor public FakeMovableComponent();
     method public void addMoveEventListener(androidx.xr.scenecore.runtime.MoveEventListener moveEventListener);
@@ -344,13 +354,18 @@ package androidx.xr.scenecore.testing {
     ctor public FakeRenderingRuntime(androidx.xr.scenecore.runtime.SceneRuntime sceneRuntime, optional androidx.xr.scenecore.runtime.RenderingEntityFactory entityFactory);
     ctor @BytecodeOnly public FakeRenderingRuntime(androidx.xr.scenecore.runtime.SceneRuntime!, androidx.xr.scenecore.runtime.RenderingEntityFactory!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.xr.scenecore.runtime.TextureResource? borrowReflectionTexture();
+    method public androidx.xr.scenecore.runtime.CustomMeshResource createCustomMesh(androidx.xr.scenecore.runtime.MeshBufferResource meshBuffer, int[] subsetOffsets, int[] subsetCounts);
     method public androidx.xr.scenecore.runtime.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.GltfModelResource loadedGltf, androidx.xr.scenecore.runtime.Entity? parentEntity);
     method public suspend Object? createKhronosPbrMaterial(androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.MaterialResource>);
+    method public androidx.xr.scenecore.runtime.MeshBufferResource createMeshBuffer(int[] attributeIds, int[] attributeTypes, byte[] bufferIndices, int maxVertices, int maxIndices, java.nio.ByteBuffer[]? vertexData, int[]? vertexDataSizes, java.nio.ByteBuffer? indexData, int indexDataSize);
+    method public androidx.xr.scenecore.runtime.MeshEntity createMeshEntity(androidx.xr.scenecore.runtime.CustomMeshResource customMesh, java.util.List<? extends androidx.xr.scenecore.runtime.MaterialResource> materials, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.Entity? parent);
     method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(int stereoMode, int mediaBlendingMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape, int surfaceProtection, int superSampling, androidx.xr.scenecore.runtime.Entity? parentEntity);
     method public suspend Object? createWaterMaterial(boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.MaterialResource>);
+    method public void destroyCustomMesh(androidx.xr.scenecore.runtime.CustomMeshResource customMesh);
     method public void destroyExrImage(androidx.xr.scenecore.runtime.ExrImageResource exrImage);
     method public void destroyGltfModel(androidx.xr.scenecore.runtime.GltfModelResource gltfModel);
     method public void destroyKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material);
+    method public void destroyMeshBuffer(androidx.xr.scenecore.runtime.MeshBufferResource meshBuffer);
     method public void destroyTexture(androidx.xr.scenecore.runtime.TextureResource texture);
     method public void destroyWaterMaterial(androidx.xr.scenecore.runtime.MaterialResource material);
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.testing.FakeRenderingRuntime.FakeKhronosPbrMaterial> getCreatedKhronosPbrMaterials();
@@ -375,6 +390,7 @@ package androidx.xr.scenecore.testing {
     method public void setClearcoatNormalTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource clearcoatNormal, androidx.xr.scenecore.runtime.TextureSampler sampler);
     method public void setClearcoatRoughnessTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource clearcoatRoughness, androidx.xr.scenecore.runtime.TextureSampler sampler);
     method public void setClearcoatTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource clearcoat, androidx.xr.scenecore.runtime.TextureSampler sampler);
+    method public void setCustomMeshBoundingBox(androidx.xr.scenecore.runtime.CustomMeshResource customMesh, float centerX, float centerY, float centerZ, float halfExtentX, float halfExtentY, float halfExtentZ);
     method public void setEmissiveFactorsOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.runtime.math.Vector3 factors);
     method public void setEmissiveTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource emissive, androidx.xr.scenecore.runtime.TextureSampler sampler);
     method public void setEmissiveUvTransformOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.runtime.math.Matrix3 uvTransform);
@@ -660,6 +676,7 @@ package androidx.xr.scenecore.testing {
     method @Deprecated public androidx.xr.scenecore.runtime.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.scenecore.runtime.Entity? parent);
     method public androidx.xr.scenecore.runtime.InteractableComponent createInteractableComponent(java.util.concurrent.Executor executor, androidx.xr.scenecore.runtime.InputEventListener listener);
     method public androidx.xr.scenecore.runtime.LoggingEntity createLoggingEntity(androidx.xr.runtime.math.Pose pose);
+    method public androidx.xr.scenecore.runtime.MeshEntity createMeshEntity(androidx.xr.scenecore.runtime.MeshFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.Entity? parentEntity);
     method public androidx.xr.scenecore.testing.FakeMovableComponent createMovableComponent(boolean systemMovable, boolean scaleInZ, boolean userAnchorable);
     method public androidx.xr.scenecore.runtime.PanelEntity createPanelEntity(android.content.Context context, androidx.xr.runtime.math.Pose pose, android.view.View view, androidx.xr.scenecore.runtime.Dimensions dimensions, String name, androidx.xr.scenecore.runtime.Entity? parent);
     method public androidx.xr.scenecore.runtime.PanelEntity createPanelEntity(android.content.Context context, androidx.xr.runtime.math.Pose pose, android.view.View view, androidx.xr.scenecore.runtime.PixelDimensions pixelDimensions, String name, androidx.xr.scenecore.runtime.Entity? parent);
