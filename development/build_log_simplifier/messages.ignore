@@ -60,6 +60,7 @@ See the complete report at file://.*/build/reports/configuration\-cache/[^ ]*/[^
 # > Task :buildSrc:build UP-TO-DATE
 A fine\-grained performance profile is available\: use the \-\-scan option\.
 # > Task :docs
+WARN: Couldn't resolve link: \[IUpdateInfoService\.listAvailableUpdates\] in .*\/unzippedJvmSources\/androidx\/security\/state\/UpdateCheckResult\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
 WARN: Couldn't resolve link: \[a\] in .*\/unzippedMultiplatformSources\/androidMain\/androidx\/compose\/foundation\/lazy\/layout\/PrefetchScheduler\.android\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
 WARN: Couldn't resolve link: \[Activity\.finish\] in .*\/unzippedMultiplatformSources\/commonMain\/androidx\/navigation\/NavController\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
 WARN: Couldn't resolve link: \[ActivityNavigator\] in .*\/unzippedMultiplatformSources\/commonMain\/androidx\/navigation\/Navigator\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
