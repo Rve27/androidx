@@ -21,6 +21,7 @@ import androidx.camera.camera2.pipe.AeMode
 import androidx.camera.camera2.pipe.AfMode
 import androidx.camera.camera2.pipe.AwbMode
 import androidx.camera.camera2.pipe.CameraGraph
+import androidx.camera.camera2.pipe.ControlMode
 import androidx.camera.camera2.pipe.Converge3ABehavior
 import androidx.camera.camera2.pipe.FlashMode
 import androidx.camera.camera2.pipe.FrameCapture
@@ -104,6 +105,7 @@ internal class CameraGraphSessionImpl(
         aeMode: AeMode?,
         afMode: AfMode?,
         awbMode: AwbMode?,
+        controlMode: ControlMode?,
         flashMode: FlashMode?,
         aeRegions: List<MeteringRectangle>?,
         afRegions: List<MeteringRectangle>?,
@@ -114,6 +116,7 @@ internal class CameraGraphSessionImpl(
             aeMode = aeMode,
             afMode = afMode,
             awbMode = awbMode,
+            controlMode = controlMode,
             flashMode = flashMode,
             aeRegions = aeRegions,
             afRegions = afRegions,

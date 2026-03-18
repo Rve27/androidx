@@ -34,6 +34,7 @@ import androidx.camera.camera2.pipe.CameraGraph.Constants3A.DEFAULT_FRAME_LIMIT
 import androidx.camera.camera2.pipe.CameraGraph.Constants3A.DEFAULT_TIME_LIMIT_NS
 import androidx.camera.camera2.pipe.CameraMetadata
 import androidx.camera.camera2.pipe.CameraMetadata.Companion.supportsAutoFocusTrigger
+import androidx.camera.camera2.pipe.ControlMode
 import androidx.camera.camera2.pipe.Converge3ABehavior
 import androidx.camera.camera2.pipe.FlashMode
 import androidx.camera.camera2.pipe.FrameMetadata
@@ -190,6 +191,7 @@ constructor(
         afMode: AfMode? = null,
         awbMode: AwbMode? = null,
         flashMode: FlashMode? = null,
+        controlMode: ControlMode? = null,
         aeRegions: List<MeteringRectangle>? = null,
         afRegions: List<MeteringRectangle>? = null,
         awbRegions: List<MeteringRectangle>? = null,
@@ -201,6 +203,7 @@ constructor(
                 aeMode,
                 afMode,
                 awbMode,
+                controlMode,
                 flashMode,
                 aeRegions,
                 afRegions,
@@ -212,13 +215,22 @@ constructor(
 
         // Add the listener to a global pool of 3A listeners to monitor the state change to the
         // desired one.
-        val listener = createListenerFor3AParams(aeMode, afMode, awbMode, flashMode)
+        val listener = createListenerFor3AParams(aeMode, afMode, awbMode, controlMode, flashMode)
         graphListener3A.addListener(listener)
 
         // Update the 3A state of the graph. This will make sure then when GraphProcessor builds
         // the next request it will apply the 3A parameters corresponding to the updated 3A state
         // to the request.
-        graphState3A.update(aeMode, afMode, awbMode, flashMode, aeRegions, afRegions, awbRegions)
+        graphState3A.update(
+            aeMode,
+            afMode,
+            awbMode,
+            controlMode,
+            flashMode,
+            aeRegions,
+            afRegions,
+            awbRegions,
+        )
 
         // Try submitting a new repeating request with the 3A parameters corresponding to the new
         // 3A state and corresponding listeners.
@@ -248,7 +260,8 @@ constructor(
 
         // Add the listener to a global pool of 3A listeners to monitor the state change to the
         // desired one.
-        val listener = createListenerFor3AParams(aeMode, afMode, awbMode)
+        val listener =
+            createListenerFor3AParams(aeMode = aeMode, afMode = afMode, awbMode = awbMode)
         graphListener3A.addListener(listener)
 
         val extra3AParams = mutableMapOf<CaptureRequest.Key<*>, Any?>()
@@ -755,7 +768,7 @@ constructor(
         var lastAeMode: AeMode? = null
         afTriggerStartAeMode?.let {
             lastAeMode = graphState3A.current.aeMode
-            graphState3A.update(it)
+            graphState3A.update(aeMode = it)
             graphProcessor.update3AParameters(graphState3A.toCaptureRequestParametersMap())
         }
 
@@ -897,12 +910,14 @@ constructor(
         aeMode: AeMode? = null,
         afMode: AfMode? = null,
         awbMode: AwbMode? = null,
+        controlMode: ControlMode? = null,
         flashMode: FlashMode? = null,
     ): Result3AStateListenerImpl {
         val resultModesMap = mutableMapOf<CaptureResult.Key<*>, List<Any>>()
         aeMode?.let { resultModesMap.put(CaptureResult.CONTROL_AE_MODE, listOf(it.value)) }
         afMode?.let { resultModesMap.put(CaptureResult.CONTROL_AF_MODE, listOf(it.value)) }
         awbMode?.let { resultModesMap.put(CaptureResult.CONTROL_AWB_MODE, listOf(it.value)) }
+        controlMode?.let { resultModesMap.put(CaptureResult.CONTROL_MODE, listOf(it.value)) }
         flashMode?.let { resultModesMap.put(CaptureResult.FLASH_MODE, listOf(it.value)) }
         return Result3AStateListenerImpl(resultModesMap.toMap())
     }
