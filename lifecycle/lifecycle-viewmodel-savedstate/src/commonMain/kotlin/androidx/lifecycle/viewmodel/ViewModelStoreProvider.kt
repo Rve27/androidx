@@ -50,10 +50,11 @@ import kotlin.jvm.JvmOverloads
  * that runs independently. It manages its own state and will not be automatically cleared by
  * configuration changes; you must manually call [clearAllKeys] to clean it up.
  *
- * @param parentKey A unique identifier used to scope this provider and its underlying state within
- *   the [parentStore].
  * @param parentStore The parent [ViewModelStore] to bind to, or `null` for an independent root
  *   provider.
+ * @param parentKey A unique identifier used to scope this provider and its underlying state within
+ *   the [parentStore]. Providers sharing the same key will share the same internal state. A `null`
+ *   key is valid and acts as its own distinct shared scope. Defaults to `null`.
  * @param defaultArgs The default [SavedState] arguments to use for child stores. These arguments
  *   are merged with any default arguments in [defaultCreationExtras]. If the same key exists in
  *   both, the value from [defaultArgs] takes precedence.
@@ -63,8 +64,8 @@ import kotlin.jvm.JvmOverloads
 public class ViewModelStoreProvider
 @JvmOverloads
 public constructor(
-    private val parentKey: Any?,
     private val parentStore: ViewModelStore?,
+    private val parentKey: Any? = null,
     private val defaultArgs: SavedState = savedState(),
     private val defaultCreationExtras: CreationExtras = CreationExtras.Empty,
     private val defaultFactory: Factory = SavedStateViewModelFactory(),
@@ -73,10 +74,11 @@ public constructor(
     /**
      * Constructs a [ViewModelStoreProvider] bound to a parent [ViewModelStoreOwner].
      *
-     * @param parentKey A unique identifier used to scope this provider and its underlying state
-     *   within the [parentOwner].
      * @param parentOwner The parent [ViewModelStoreOwner] to bind to, or `null` for an independent
      *   root provider.
+     * @param parentKey A unique identifier used to scope this provider and its underlying state
+     *   within the [parentOwner]. Providers sharing the same key will share the same internal
+     *   state. A `null` key is valid and acts as its own distinct shared scope. Defaults to `null`.
      * @param defaultArgs The default [SavedState] arguments to use for child stores. These
      *   arguments are merged with any default arguments in [defaultCreationExtras]. If the same key
      *   exists in both, the value from [defaultArgs] takes precedence.
@@ -87,14 +89,14 @@ public constructor(
      */
     @JvmOverloads
     public constructor(
-        parentKey: Any?,
         parentOwner: ViewModelStoreOwner?,
+        parentKey: Any? = null,
         defaultArgs: SavedState = savedState(),
         defaultCreationExtras: CreationExtras = parentOwner.defaultViewModelCreationExtras,
         defaultFactory: Factory = parentOwner.defaultViewModelProviderFactory,
     ) : this(
-        parentKey,
         parentStore = parentOwner?.viewModelStore,
+        parentKey,
         defaultArgs,
         defaultCreationExtras,
         defaultFactory,

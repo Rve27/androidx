@@ -78,7 +78,7 @@ public fun rememberViewModelStoreProvider(
 ): ViewModelStoreProvider {
     val provider =
         remember(parent, key, defaultFactory, defaultCreationExtras) {
-            ViewModelStoreProvider(key, parent, defaultArgs, defaultCreationExtras, defaultFactory)
+            ViewModelStoreProvider(parent, key, defaultArgs, defaultCreationExtras, defaultFactory)
         }
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
