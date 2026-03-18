@@ -26,14 +26,12 @@ import android.os.Looper
 import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.RestrictTo
-import androidx.annotation.WorkerThread
 import androidx.room3.Room.LOG_TAG
 import androidx.room3.autoclose.AutoCloser
 import androidx.room3.autoclose.AutoCloserConfig
 import androidx.room3.autoclose.AutoClosingSQLiteDriver
 import androidx.room3.concurrent.CloseBarrier
 import androidx.room3.coroutines.TransactionElement
-import androidx.room3.coroutines.runBlockingUninterruptible
 import androidx.room3.coroutines.withTransactionContext
 import androidx.room3.migration.AutoMigrationSpec
 import androidx.room3.migration.Migration
@@ -344,37 +342,7 @@ actual constructor() {
      *
      * See SQLite documentation for details. [FileFormat](https://www.sqlite.org/fileformat.html)
      */
-    @WorkerThread public abstract fun clearAllTables()
-
-    /**
-     * Performs a 'clear all tables' operation.
-     *
-     * This should only be invoked from generated code.
-     *
-     * @see [RoomDatabase.clearAllTables]
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    protected fun performClear(hasForeignKeys: Boolean, vararg tableNames: String) {
-        assertNotMainThread()
-        runBlockingUninterruptible {
-            connectionManager.useConnection(isReadOnly = false) { connection ->
-                if (!connection.inTransaction()) {
-                    invalidationTracker.sync()
-                }
-                connection.withTransaction(Transactor.SQLiteTransactionType.IMMEDIATE) {
-                    if (hasForeignKeys) {
-                        executeSQL("PRAGMA defer_foreign_keys = TRUE")
-                    }
-                    tableNames.forEach { tableName -> executeSQL("DELETE FROM `$tableName`") }
-                }
-                if (!connection.inTransaction()) {
-                    connection.executeSQL("PRAGMA wal_checkpoint(FULL)")
-                    connection.executeSQL("VACUUM")
-                    invalidationTracker.refreshAsync()
-                }
-            }
-        }
-    }
+    public actual abstract suspend fun clearAllTables()
 
     /** True if the actual database connection is open, regardless of auto-close. */
     internal val isOpenInternal: Boolean
