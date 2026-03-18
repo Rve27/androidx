@@ -84,6 +84,7 @@ core = "1.12.0"
 xmlApis = "1.4.01"
 yarn = "1.22.17"
 extensionsXr = "1.3.0"
+xrProjectedMinApiVersion = "260316000"
 
 [libraries]
 agpTestingPlatformCoreProto =  { module = "com.google.testing.platform:core-proto", version = "0.0.8-alpha08" }
