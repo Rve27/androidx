@@ -41,7 +41,6 @@ dependencies {
     implementation("androidx.concurrent:concurrent-futures:1.0.0")
     implementation("androidx.media3:media3-exoplayer:1.9.0-beta01")
     implementation(libs.androidx.core)
-    implementation libs.testRules
 
     testImplementation(libs.junit)
     testImplementation(libs.testRules)
