@@ -35,9 +35,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import okio.BufferedSink
 
-// False positive: https://youtrack.jetbrains.com/issue/KTIJ-22326
-@Suppress("NOTHING_TO_INLINE", "OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-
 /**
  * The trace sink that writes [BufferedSink], to a new file per trace session.
  *
@@ -154,6 +151,7 @@ public class TraceSink(
         }
     }
 
+    @Suppress("NOTHING_TO_INLINE")
     private inline fun drainQueue() {
         while (queue.isNotEmpty()) {
             // We are not trying to be accurate about exactly which specific event has the
