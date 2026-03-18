@@ -23,15 +23,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-/** Tests for [FilterChipSection]. */
+/** Tests for [ChipSection]. */
 @RunWith(RobolectricTestRunner::class)
 @org.robolectric.annotation.Config(sdk = [org.robolectric.annotation.Config.TARGET_SDK])
-class FilterChipSectionTest {
+class ChipSectionTest {
 
     @Test
     fun create_defaultValues() {
-        val chip = FilterChip.Builder().setTitle("Title").setOnClickListener {}.build()
-        val section = FilterChipSection.Builder().addItem(chip).build()
+        val chip = Chip.Builder().setTitle("Title").setOnClickListener {}.build()
+        val section = ChipSection.Builder().addItem(chip).build()
 
         assertThat(section.itemsDelegate.requestAllItemsForTest()).containsExactly(chip)
         assertThat(section.title).isNull()
@@ -42,7 +42,7 @@ class FilterChipSectionTest {
     @Test
     fun build_throws_ifNoItems() {
         try {
-            FilterChipSection.Builder().build()
+            ChipSection.Builder().build()
             assertWithMessage("Expected builder to throw an exception, but it didn't").fail()
         } catch (e: IllegalArgumentException) {
             assertThat(e.message).contains("must contain at least one item")
@@ -51,43 +51,40 @@ class FilterChipSectionTest {
 
     @Test
     fun setStyle() {
-        val style = FilterChipStyle.Builder().setBackgroundColor(CarColor.RED).build()
-        val chip = FilterChip.Builder().setTitle("Title").setOnClickListener {}.build()
-        val section = FilterChipSection.Builder().addItem(chip).setStyle(style).build()
+        val style = ChipStyle.Builder().setBackgroundColor(CarColor.RED).build()
+        val chip = Chip.Builder().setTitle("Title").setOnClickListener {}.build()
+        val section = ChipSection.Builder().addItem(chip).setStyle(style).build()
 
         assertThat(section.style).isEqualTo(style)
     }
 
     @Test
     fun equals() {
-        val chip = FilterChip.Builder().setTitle("Title").setOnClickListener {}.build()
-        val style = FilterChipStyle.Builder().setBackgroundColor(CarColor.RED).build()
-        val section =
-            FilterChipSection.Builder().addItem(chip).setStyle(style).setTitle("Title").build()
+        val chip = Chip.Builder().setTitle("Title").setOnClickListener {}.build()
+        val style = ChipStyle.Builder().setBackgroundColor(CarColor.RED).build()
+        val section = ChipSection.Builder().addItem(chip).setStyle(style).setTitle("Title").build()
 
-        assertThat(
-                FilterChipSection.Builder().addItem(chip).setStyle(style).setTitle("Title").build()
-            )
+        assertThat(ChipSection.Builder().addItem(chip).setStyle(style).setTitle("Title").build())
             .isEqualTo(section)
     }
 
     @Test
     fun notEquals_differentItems() {
-        val chip1 = FilterChip.Builder().setTitle("Title1").setOnClickListener {}.build()
-        val chip2 = FilterChip.Builder().setTitle("Title2").setOnClickListener {}.build()
-        val section = FilterChipSection.Builder().addItem(chip1).build()
+        val chip1 = Chip.Builder().setTitle("Title1").setOnClickListener {}.build()
+        val chip2 = Chip.Builder().setTitle("Title2").setOnClickListener {}.build()
+        val section = ChipSection.Builder().addItem(chip1).build()
 
-        assertThat(FilterChipSection.Builder().addItem(chip2).build()).isNotEqualTo(section)
+        assertThat(ChipSection.Builder().addItem(chip2).build()).isNotEqualTo(section)
     }
 
     @Test
     fun notEquals_differentStyle() {
-        val chip = FilterChip.Builder().setTitle("Title").setOnClickListener {}.build()
-        val style1 = FilterChipStyle.Builder().setBackgroundColor(CarColor.RED).build()
-        val style2 = FilterChipStyle.Builder().setBackgroundColor(CarColor.BLUE).build()
-        val section = FilterChipSection.Builder().addItem(chip).setStyle(style1).build()
+        val chip = Chip.Builder().setTitle("Title").setOnClickListener {}.build()
+        val style1 = ChipStyle.Builder().setBackgroundColor(CarColor.RED).build()
+        val style2 = ChipStyle.Builder().setBackgroundColor(CarColor.BLUE).build()
+        val section = ChipSection.Builder().addItem(chip).setStyle(style1).build()
 
-        assertThat(FilterChipSection.Builder().addItem(chip).setStyle(style2).build())
+        assertThat(ChipSection.Builder().addItem(chip).setStyle(style2).build())
             .isNotEqualTo(section)
     }
 }

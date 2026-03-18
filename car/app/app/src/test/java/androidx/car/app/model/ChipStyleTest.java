@@ -24,15 +24,15 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.internal.DoNotInstrument;
 
-/** Tests for {@link FilterChipStyle}. */
+/** Tests for {@link ChipStyle}. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = {Config.TARGET_SDK})
 @DoNotInstrument
-public class FilterChipStyleTest {
+public class ChipStyleTest {
 
     @Test
     public void create_defaultValues() {
-        FilterChipStyle style = new FilterChipStyle.Builder().build();
+        ChipStyle style = new ChipStyle.Builder().build();
         assertThat(style.getBackgroundColor()).isNull();
         assertThat(style.getContentColor()).isNull();
         assertThat(style.getOutlineColor()).isNull();
@@ -40,7 +40,7 @@ public class FilterChipStyleTest {
 
     @Test
     public void setBackgroundColor() {
-        FilterChipStyle style = new FilterChipStyle.Builder()
+        ChipStyle style = new ChipStyle.Builder()
                 .setBackgroundColor(CarColor.RED)
                 .build();
         assertThat(style.getBackgroundColor()).isEqualTo(CarColor.RED);
@@ -48,7 +48,7 @@ public class FilterChipStyleTest {
 
     @Test
     public void setContentColor() {
-        FilterChipStyle style = new FilterChipStyle.Builder()
+        ChipStyle style = new ChipStyle.Builder()
                 .setContentColor(CarColor.BLUE)
                 .build();
         assertThat(style.getContentColor()).isEqualTo(CarColor.BLUE);
@@ -56,7 +56,7 @@ public class FilterChipStyleTest {
 
     @Test
     public void setStrokeColor() {
-        FilterChipStyle style = new FilterChipStyle.Builder()
+        ChipStyle style = new ChipStyle.Builder()
                 .setOutlineColor(CarColor.GREEN)
                 .build();
         assertThat(style.getOutlineColor()).isEqualTo(CarColor.GREEN);
@@ -64,13 +64,13 @@ public class FilterChipStyleTest {
 
     @Test
     public void equals() {
-        FilterChipStyle style = new FilterChipStyle.Builder()
+        ChipStyle style = new ChipStyle.Builder()
                 .setBackgroundColor(CarColor.RED)
                 .setContentColor(CarColor.BLUE)
                 .setOutlineColor(CarColor.GREEN)
                 .build();
 
-        assertThat(new FilterChipStyle.Builder()
+        assertThat(new ChipStyle.Builder()
                 .setBackgroundColor(CarColor.RED)
                 .setContentColor(CarColor.BLUE)
                 .setOutlineColor(CarColor.GREEN)
@@ -80,10 +80,10 @@ public class FilterChipStyleTest {
 
     @Test
     public void notEquals_differentBackgroundColor() {
-        FilterChipStyle style = new FilterChipStyle.Builder()
+        ChipStyle style = new ChipStyle.Builder()
                 .setBackgroundColor(CarColor.RED)
                 .build();
-        assertThat(new FilterChipStyle.Builder()
+        assertThat(new ChipStyle.Builder()
                 .setBackgroundColor(CarColor.BLUE)
                 .build()
         ).isNotEqualTo(style);
@@ -91,8 +91,8 @@ public class FilterChipStyleTest {
 
     @Test
     public void notEquals_differentContentColor() {
-        FilterChipStyle style = new FilterChipStyle.Builder().setContentColor(CarColor.RED).build();
-        assertThat(new FilterChipStyle.Builder()
+        ChipStyle style = new ChipStyle.Builder().setContentColor(CarColor.RED).build();
+        assertThat(new ChipStyle.Builder()
                 .setContentColor(CarColor.BLUE)
                 .build()
         ).isNotEqualTo(style);
@@ -100,10 +100,10 @@ public class FilterChipStyleTest {
 
     @Test
     public void notEquals_differentStrokeColor() {
-        FilterChipStyle style = new FilterChipStyle.Builder()
+        ChipStyle style = new ChipStyle.Builder()
                 .setOutlineColor(CarColor.RED)
                 .build();
-        assertThat(new FilterChipStyle.Builder()
+        assertThat(new ChipStyle.Builder()
                 .setOutlineColor(CarColor.BLUE)
                 .build()
         ).isNotEqualTo(style);
