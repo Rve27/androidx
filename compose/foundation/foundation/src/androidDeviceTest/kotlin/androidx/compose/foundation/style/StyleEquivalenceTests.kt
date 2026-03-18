@@ -68,6 +68,7 @@ import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.matchers.MSSIMMatcher
 import kotlin.math.ceil
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -150,6 +151,8 @@ class StyleEquivalenceTests {
     }
 
     @Test
+    @Ignore("Flaky: b/488190299")
+    // Re-enabling tracked by b/493662885
     fun border_shape_background() {
         checkEquivalence(
             styleVersion = {
