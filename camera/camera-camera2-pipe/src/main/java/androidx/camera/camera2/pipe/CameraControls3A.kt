@@ -43,6 +43,9 @@ public interface CameraControls3A {
      * @param awbMode the desired Auto-White Balance mode. Corresponds to
      *   [CaptureRequest.CONTROL_AWB_MODE](https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#CONTROL_AWB_MODE).
      *   If `null`, the current AWB mode is not modified.
+     * @param controlMode the desired overall mode of 3A. Corresponds to
+     *   [CaptureRequest.CONTROL_MODE](https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#CONTROL_MODE.
+     *   If `null`, the current flash mode is not modified.
      * @param flashMode the desired flash mode. Corresponds to
      *   [CaptureRequest.FLASH_MODE](https://developer.android.com/reference/android/hardware/camera2/CaptureRequest#FLASH_MODE).
      *   If `null`, the current flash mode is not modified.
@@ -63,6 +66,7 @@ public interface CameraControls3A {
         aeMode: AeMode? = null,
         afMode: AfMode? = null,
         awbMode: AwbMode? = null,
+        controlMode: ControlMode? = null,
         flashMode: FlashMode? = null,
         aeRegions: List<MeteringRectangle>? = null,
         afRegions: List<MeteringRectangle>? = null,
