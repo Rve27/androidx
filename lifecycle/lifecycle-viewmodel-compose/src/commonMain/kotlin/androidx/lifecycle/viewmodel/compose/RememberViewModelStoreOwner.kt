@@ -19,9 +19,7 @@ package androidx.lifecycle.viewmodel.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.currentCompositeKeyHashCode
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
@@ -29,8 +27,10 @@ import androidx.lifecycle.defaultViewModelCreationExtras
 import androidx.lifecycle.defaultViewModelProviderFactory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.ViewModelStoreProvider
+import androidx.savedstate.SavedState
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.compose.LocalSavedStateRegistryOwner
+import androidx.savedstate.savedState
 
 /**
  * Remembers a [ViewModelStoreOwner] scoped to the current composable.
@@ -52,6 +52,10 @@ import androidx.savedstate.compose.LocalSavedStateRegistryOwner
  *   [LocalViewModelStoreOwner].
  * @param savedStateRegistryOwner An optional [SavedStateRegistryOwner] to delegate saved state
  *   operations. When `null`, ViewModels created in this scope do not support saved state.
+ * @param defaultArgs The [SavedState] containing default arguments to be passed to ViewModels
+ *   created in this scope. These arguments are merged with any default arguments in
+ *   [defaultCreationExtras]. If the same key exists in both, the value from [defaultArgs] takes
+ *   precedence.
  * @param defaultCreationExtras The [CreationExtras] to use. Defaults to the [parent]'s default
  *   extras.
  * @param defaultFactory The [ViewModelProvider.Factory] to use for creating ViewModels in this
@@ -66,10 +70,12 @@ public fun rememberViewModelStoreOwner(
             "CompositionLocal LocalViewModelStoreOwner not present"
         },
     savedStateRegistryOwner: SavedStateRegistryOwner? = LocalSavedStateRegistryOwner.current,
+    defaultArgs: SavedState = savedState(),
     defaultCreationExtras: CreationExtras = parent.defaultViewModelCreationExtras,
     defaultFactory: ViewModelProvider.Factory = parent.defaultViewModelProviderFactory,
 ): ViewModelStoreOwner {
-    val provider = rememberViewModelStoreProvider(parent, defaultCreationExtras, defaultFactory)
+    val provider =
+        rememberViewModelStoreProvider(parent, defaultArgs, defaultCreationExtras, defaultFactory)
     return rememberViewModelStoreOwner(
         provider = provider,
         savedStateRegistryOwner = savedStateRegistryOwner,
