@@ -18,19 +18,19 @@ package androidx.room3.integration.kotlintestapp
 
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
-import androidx.room3.integration.kotlintestapp.dao.MailDao
-import androidx.room3.integration.kotlintestapp.dao.SongDao
-import androidx.room3.integration.kotlintestapp.vo.Mail
+import androidx.room3.integration.kotlintestapp.dao.Fts4MailDao
+import androidx.room3.integration.kotlintestapp.dao.Fts4SongDao
+import androidx.room3.integration.kotlintestapp.vo.Fts4Mail
+import androidx.room3.integration.kotlintestapp.vo.Fts4SongDescription
 import androidx.room3.integration.kotlintestapp.vo.Song
-import androidx.room3.integration.kotlintestapp.vo.SongDescription
 
 @Database(
-    entities = [Mail::class, SongDescription::class, Song::class],
+    entities = [Fts4Mail::class, Fts4SongDescription::class, Song::class],
     version = 1,
     exportSchema = false,
 )
-abstract class FtsTestDatabase : RoomDatabase() {
-    abstract fun getMailDao(): MailDao
+abstract class Fts4TestDatabase : RoomDatabase() {
+    abstract fun getMailDao(): Fts4MailDao
 
-    abstract fun getSongDao(): SongDao
+    abstract fun getSongDao(): Fts4SongDao
 }
