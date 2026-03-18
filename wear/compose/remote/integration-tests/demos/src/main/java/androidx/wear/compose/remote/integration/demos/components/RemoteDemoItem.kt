@@ -18,7 +18,13 @@ package androidx.wear.compose.remote.integration.demos.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.remote.creation.compose.capture.RememberRemoteDocumentInline
+import androidx.compose.remote.creation.compose.layout.RemoteAlignment
+import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
+import androidx.compose.remote.creation.compose.modifier.padding
+import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
@@ -58,7 +64,13 @@ fun RemoteDemoItem(
                     documentState = RemoteDocument(doc)
                 }
             },
-            content = content,
+            content = {
+                RemoteBox(
+                    modifier = RemoteModifier.fillMaxWidth().padding(horizontal = 8.rdp),
+                    contentAlignment = RemoteAlignment.Center,
+                    content = content,
+                )
+            },
         )
 
         if (documentState != null) {

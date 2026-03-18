@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,7 +10,7 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the naggingfivemissions and
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
@@ -28,13 +28,13 @@ import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
-import androidx.wear.compose.remote.material3.previews.RemoteIconButtonEnabled
-import androidx.wear.compose.remote.material3.previews.RemoteIconButtonOutlined
-import androidx.wear.compose.remote.material3.previews.RemoteIconButtonTonal
+import androidx.wear.compose.remote.material3.previews.RemoteAppCardDefault
+import androidx.wear.compose.remote.material3.previews.RemoteAppCardWithAppNameTimeTitle
+import androidx.wear.compose.remote.material3.previews.RemoteAppCardWithAppNameTitleSubtitle
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @Composable
-fun RemoteIconButtonDemos(modifier: Modifier = Modifier) {
+fun RemoteAppCardDemos(modifier: Modifier = Modifier) {
     val transformationSpec = rememberTransformationSpec()
     val columnState = rememberTransformingLazyColumnState()
 
@@ -51,21 +51,29 @@ fun RemoteIconButtonDemos(modifier: Modifier = Modifier) {
                     transformation = SurfaceTransformation(transformationSpec),
                 ) {
                     Text(
-                        "RemoteIconButton Demos",
+                        "RemoteAppCard Demos",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                     )
                 }
             }
-            item { RemoteDemoItem("Default") { RemoteIconButtonEnabled() } }
-            item { RemoteDemoItem("Tonal") { RemoteIconButtonTonal() } }
-            item { RemoteDemoItem("Outlined") { RemoteIconButtonOutlined() } }
+            item { RemoteDemoItem("Default", documentHeight = 150) { RemoteAppCardDefault() } }
+            item {
+                RemoteDemoItem("With App Name, Time and Title", documentHeight = 150) {
+                    RemoteAppCardWithAppNameTimeTitle()
+                }
+            }
+            item {
+                RemoteDemoItem("With App Name, Title and Subtitle", documentHeight = 150) {
+                    RemoteAppCardWithAppNameTitleSubtitle()
+                }
+            }
         }
     }
 }
 
 @WearPreviewDevices
 @Composable
-private fun RemoteIconButtonDemosPreview() {
-    RemoteIconButtonDemos()
+private fun RemoteAppCardDemosPreview() {
+    RemoteAppCardDemos()
 }
