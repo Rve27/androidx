@@ -256,16 +256,46 @@ package androidx.room3 {
     property public abstract String[] tokenizerArgs;
   }
 
+  @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.CLASS) public @interface Fts5 {
+    ctor @KotlinOnly public Fts5(optional String tokenizer, optional String[] tokenizerArgs, optional kotlin.reflect.KClass<? extends java.lang.Object?> contentEntity, optional String contentRowId, optional int[] prefix, optional boolean hasColumnSize, optional androidx.room3.FtsOptions.Detail detail, optional String[] notIndexed);
+    method @InaccessibleFromKotlin public abstract Class<? extends java.lang.Object?> contentEntity() default Any::class;
+    method @InaccessibleFromKotlin public abstract String contentRowId() default "";
+    method @InaccessibleFromKotlin public abstract androidx.room3.FtsOptions.Detail detail() default androidx.room3.FtsOptions.Detail.FULL;
+    method @InaccessibleFromKotlin public abstract boolean hasColumnSize() default true;
+    method @InaccessibleFromKotlin public abstract String[] notIndexed() default {};
+    method @InaccessibleFromKotlin public abstract int[] prefix() default {};
+    method @InaccessibleFromKotlin public abstract String tokenizer() default androidx.room3.FtsOptions.TOKENIZER_UNICODE61;
+    method @InaccessibleFromKotlin public abstract String[] tokenizerArgs() default {};
+    property public abstract kotlin.reflect.KClass<? extends java.lang.Object?> contentEntity;
+    property public abstract String contentRowId;
+    property public abstract androidx.room3.FtsOptions.Detail detail;
+    property public abstract boolean hasColumnSize;
+    property public abstract String[] notIndexed;
+    property public abstract int[] prefix;
+    property public abstract String tokenizer;
+    property public abstract String[] tokenizerArgs;
+  }
+
   public final class FtsOptions {
+    property public static String TOKENIZER_ASCII;
     property public static String TOKENIZER_ICU;
     property public static String TOKENIZER_PORTER;
     property public static String TOKENIZER_SIMPLE;
+    property public static String TOKENIZER_TRIGRAM;
     property public static String TOKENIZER_UNICODE61;
     field public static final androidx.room3.FtsOptions INSTANCE;
+    field public static final String TOKENIZER_ASCII = "ascii";
     field public static final String TOKENIZER_ICU = "icu";
     field public static final String TOKENIZER_PORTER = "porter";
     field public static final String TOKENIZER_SIMPLE = "simple";
+    field public static final String TOKENIZER_TRIGRAM = "trigram";
     field public static final String TOKENIZER_UNICODE61 = "unicode61";
+  }
+
+  public enum FtsOptions.Detail {
+    enum_constant public static final androidx.room3.FtsOptions.Detail COLUMN;
+    enum_constant public static final androidx.room3.FtsOptions.Detail FULL;
+    enum_constant public static final androidx.room3.FtsOptions.Detail NONE;
   }
 
   public enum FtsOptions.MatchInfo {

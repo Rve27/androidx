@@ -29,7 +29,7 @@ import org.junit.runners.JUnit4
 import org.mockito.Mockito.mock
 
 @RunWith(JUnit4::class)
-class FtsEntityTest {
+class Fts4EntityTest {
 
     @Test
     fun createStatement() {
@@ -71,6 +71,9 @@ class FtsEntityTest {
                         notIndexedColumns = listOf("dontIndexMe1", "dontIndexMe2"),
                         prefixSizes = listOf(2, 4),
                         preferredOrder = androidx.room3.FtsOptions.Order.DESC,
+                        contentRowId = null,
+                        columnSize = null,
+                        detail = null,
                     ),
             )
 
@@ -123,6 +126,9 @@ class FtsEntityTest {
                         notIndexedColumns = emptyList(),
                         prefixSizes = emptyList(),
                         preferredOrder = androidx.room3.FtsOptions.Order.ASC,
+                        contentRowId = null,
+                        columnSize = null,
+                        detail = null,
                     ),
             )
 
@@ -167,6 +173,9 @@ class FtsEntityTest {
                         notIndexedColumns = emptyList(),
                         prefixSizes = emptyList(),
                         preferredOrder = androidx.room3.FtsOptions.Order.ASC,
+                        contentRowId = null,
+                        columnSize = null,
+                        detail = null,
                     ),
             )
 
@@ -206,6 +215,9 @@ class FtsEntityTest {
                         notIndexedColumns = emptyList(),
                         prefixSizes = emptyList(),
                         preferredOrder = androidx.room3.FtsOptions.Order.ASC,
+                        contentRowId = null,
+                        columnSize = null,
+                        detail = null,
                     ),
             )
 
@@ -250,6 +262,9 @@ class FtsEntityTest {
                         notIndexedColumns = emptyList(),
                         prefixSizes = emptyList(),
                         preferredOrder = androidx.room3.FtsOptions.Order.ASC,
+                        contentRowId = null,
+                        columnSize = null,
+                        detail = null,
                     ),
             )
 

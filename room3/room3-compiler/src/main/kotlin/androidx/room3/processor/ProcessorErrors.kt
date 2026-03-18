@@ -856,9 +856,12 @@ object ProcessorErrors {
 
     const val FTS_EXTERNAL_CONTENT_CANNOT_FIND_ENTITY = "Cannot find external content entity class."
 
+    const val FTS_CONTENT_ROW_ID_WITHOUT_EXTERNAL_CONTENT_ENTITY =
+        "Cannot declare a 'contentRowId' without also declaring an external content entity class."
+
     fun externalContentNotAnEntity(className: String) =
         "External content entity referenced in " +
-            "a Fts4 annotation must be a @Entity class. $className is not an entity"
+            "a Fts4 or Fts5 annotation must be a @Entity class. $className is not an entity"
 
     fun missingFtsContentProperty(
         ftsClassName: String,
@@ -867,6 +870,15 @@ object ProcessorErrors {
     ) =
         "External Content FTS Entity '$ftsClassName' has declared property with column name " +
             "'$columnName' that was not found in the external content entity " +
+            "'$contentClassName'."
+
+    fun missingContentRowIdProperty(
+        ftsClassName: String,
+        contentRowIdName: String,
+        contentClassName: String,
+    ) =
+        "External Content FTS Entity '$ftsClassName' declares a 'content_rowid' named " +
+            "'$contentRowIdName' that was not found in the external content entity " +
             "'$contentClassName'."
 
     fun missingExternalContentEntity(ftsClassName: String, contentClassName: String) =
