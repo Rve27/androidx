@@ -22,7 +22,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.lifecycle.DEFAULT_ARGS_KEY
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.viewmodel.ViewModelStoreProvider
+import androidx.savedstate.read
+import androidx.savedstate.savedState
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
@@ -114,5 +118,19 @@ class RememberViewModelStoreProviderTest {
         rule.waitForIdle()
 
         assertThat(provider).isNotSameInstanceAs(originalProvider)
+    }
+
+    @Test
+    fun rememberViewModelStoreProvider_withDefaultArgs_propagatesToProvider() {
+        var provider: ViewModelStoreProvider? = null
+        val expectedArgs = savedState { putString("key", "value") }
+
+        rule.setContent { provider = rememberViewModelStoreProvider(defaultArgs = expectedArgs) }
+        rule.waitForIdle()
+
+        assertThat(provider).isNotNull()
+        val owner = provider!!.getOrCreateOwner("test_key") as HasDefaultViewModelProviderFactory
+        val actualArgs = owner.defaultViewModelCreationExtras[DEFAULT_ARGS_KEY]
+        assertThat(actualArgs!!.read { contentDeepEquals(expectedArgs) }).isTrue()
     }
 }

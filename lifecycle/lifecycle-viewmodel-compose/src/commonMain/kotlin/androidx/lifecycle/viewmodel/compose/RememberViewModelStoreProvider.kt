@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,8 @@ import androidx.lifecycle.defaultViewModelCreationExtras
 import androidx.lifecycle.defaultViewModelProviderFactory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.ViewModelStoreProvider
+import androidx.savedstate.SavedState
+import androidx.savedstate.savedState
 
 /**
  * Remembers a new [ViewModelStoreProvider] which creates a ViewModel scope linked to a parent owner
@@ -48,6 +50,10 @@ import androidx.lifecycle.viewmodel.ViewModelStoreProvider
  *
  * @param parent The [ViewModelStoreOwner] to use as the parent, or `null` if it is a root. Defaults
  *   to the owner from [LocalViewModelStoreOwner].
+ * @param defaultArgs The [SavedState] containing default arguments to be passed to ViewModels
+ *   created in this scope. These arguments are merged with any default arguments in
+ *   [defaultCreationExtras]. If the same key exists in both, the value from [defaultArgs] takes
+ *   precedence.
  * @param defaultCreationExtras The [CreationExtras] to use. Defaults to the [parent]'s default
  *   extras.
  * @param defaultFactory The [ViewModelProvider.Factory] to use for creating ViewModels in this
@@ -60,12 +66,13 @@ public fun rememberViewModelStoreProvider(
         checkNotNull(LocalViewModelStoreOwner.current) {
             "CompositionLocal LocalViewModelStoreOwner not present"
         },
+    defaultArgs: SavedState = savedState(),
     defaultCreationExtras: CreationExtras = parent.defaultViewModelCreationExtras,
     defaultFactory: ViewModelProvider.Factory = parent.defaultViewModelProviderFactory,
 ): ViewModelStoreProvider {
     val provider =
         remember(parent, defaultFactory, defaultCreationExtras) {
-            ViewModelStoreProvider(parent, defaultCreationExtras, defaultFactory)
+            ViewModelStoreProvider(parent, defaultArgs, defaultCreationExtras, defaultFactory)
         }
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
