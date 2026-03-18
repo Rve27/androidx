@@ -25,8 +25,6 @@ import kotlin.concurrent.Volatile
  * managed and written into a single [AbstractTraceSink] in an optimal way based on the underlying
  * platform.
  */
-// False positive: https://youtrack.jetbrains.com/issue/KTIJ-22326
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @RestrictTo(Scope.LIBRARY_GROUP)
 public open class TraceContext
 internal constructor(
