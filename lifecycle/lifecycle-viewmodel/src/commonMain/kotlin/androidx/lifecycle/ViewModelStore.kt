@@ -41,7 +41,7 @@ import androidx.collection.emptyScatterMap
  */
 public open class ViewModelStore {
 
-    private val map = mutableMapOf<String, ViewModel>()
+    private val map = mutableMapOf<Any?, ViewModel>()
 
     /**
      * Stores [viewModel] under [key], replacing any existing entry.
@@ -49,21 +49,31 @@ public open class ViewModelStore {
      * If a [ViewModel] is already stored for [key], it is removed and immediately cleared.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun put(key: String, viewModel: ViewModel) {
+    public fun put(key: Any?, viewModel: ViewModel) {
         val oldViewModel = map.put(key, viewModel)
         oldViewModel?.clear()
     }
 
     /** Returns the [ViewModel] stored under [key], or `null` if none exists. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public operator fun get(key: String): ViewModel? = map[key]
+    public operator fun get(key: Any?): ViewModel? = map[key]
+
+    /**
+     * Returns the value for the given [key] if the value is present and not `null`. Otherwise,
+     * calls the [defaultValue] function, puts its result into the map under the given [key] and
+     * returns the call result.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @Suppress("UNCHECKED_CAST")
+    public fun <T : ViewModel> getOrPut(key: Any?, defaultValue: () -> T): T =
+        map.getOrPut(key, defaultValue) as T
 
     /**
      * Returns a snapshot of currently stored keys.
      *
      * The returned set is not backed by this store and will not reflect subsequent changes.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public fun keys(): Set<String> = map.keys.toSet()
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public fun keys(): Set<Any?> = map.keys.toSet()
 
     /**
      * Clears this store and notifies all stored [ViewModel] instances that they are no longer used.
