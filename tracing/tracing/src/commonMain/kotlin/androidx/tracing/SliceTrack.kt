@@ -22,8 +22,6 @@ import androidx.annotation.RestrictTo.Scope
 /**
  * Horizontal track of time in a trace which contains slice events (`beginSection` / `endSection`).
  */
-// False positive: https://youtrack.jetbrains.com/issue/KTIJ-22326
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @RestrictTo(Scope.LIBRARY_GROUP)
 public abstract class SliceTrack(
     /** The [TraceContext] instance. */

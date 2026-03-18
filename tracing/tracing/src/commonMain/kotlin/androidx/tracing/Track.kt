@@ -31,8 +31,6 @@ import androidx.annotation.RestrictTo
  *   on a specific thread. With synchronous (non-coroutine) code, this is where most trace events
  *   should go.
  */
-// False positive: https://youtrack.jetbrains.com/issue/KTIJ-22326
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public abstract class Track(
     /** The [TraceContext] instance. */
