@@ -526,7 +526,7 @@ class InvalidationTrackerTest {
             }
         }
 
-        override fun clearAllTables() {}
+        override suspend fun clearAllTables() {}
 
         override fun createAutoMigrations(
             autoMigrationSpecs: Map<KClass<out AutoMigrationSpec>, AutoMigrationSpec>
@@ -575,7 +575,7 @@ class InvalidationTrackerTest {
             override fun close() {}
         }
 
-        private inner class FakeSQLiteStatement(private val invalidateTables: IntArray?) :
+        private class FakeSQLiteStatement(private val invalidateTables: IntArray?) :
             SQLiteStatement {
 
             private var position = -1

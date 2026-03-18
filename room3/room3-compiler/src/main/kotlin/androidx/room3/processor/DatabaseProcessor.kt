@@ -125,9 +125,6 @@ class DatabaseProcessor(baseContext: Context, val element: XTypeElement) {
 
         val hasForeignKeys = entities.any { it.foreignKeys.isNotEmpty() }
 
-        val hasClearAllTables =
-            roomDatabaseTypeElement.getDeclaredMethods().any { it.name == "clearAllTables" }
-
         val version = dbAnnotation.getAsInt("version")
         context.checker.check(
             predicate = version > 0,
@@ -147,7 +144,6 @@ class DatabaseProcessor(baseContext: Context, val element: XTypeElement) {
                 daoFunctions = daoFunctions,
                 exportSchema = exportSchema,
                 enableForeignKeys = hasForeignKeys,
-                overrideClearAllTables = hasClearAllTables,
                 constructorObject = constructorObject,
             )
         database.autoMigrations = processAutoMigrations(element, dbAnnotation, database.bundle)

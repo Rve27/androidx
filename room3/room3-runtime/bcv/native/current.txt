@@ -119,6 +119,7 @@ abstract class androidx.room3/RoomDatabase { // androidx.room3/RoomDatabase|null
     abstract fun createOpenDelegate(): androidx.room3/RoomOpenDelegateMarker // androidx.room3/RoomDatabase.createOpenDelegate|createOpenDelegate(){}[0]
     abstract fun getRequiredAutoMigrationSpecClasses(): kotlin.collections/Set<kotlin.reflect/KClass<out androidx.room3.migration/AutoMigrationSpec>> // androidx.room3/RoomDatabase.getRequiredAutoMigrationSpecClasses|getRequiredAutoMigrationSpecClasses(){}[0]
     abstract fun getRequiredTypeConverterClasses(): kotlin.collections/Map<kotlin.reflect/KClass<*>, kotlin.collections/List<kotlin.reflect/KClass<*>>> // androidx.room3/RoomDatabase.getRequiredTypeConverterClasses|getRequiredTypeConverterClasses(){}[0]
+    abstract suspend fun clearAllTables() // androidx.room3/RoomDatabase.clearAllTables|clearAllTables(){}[0]
     final fun <#A1: kotlin/Any> getTypeConverter(kotlin.reflect/KClass<#A1>): #A1 // androidx.room3/RoomDatabase.getTypeConverter|getTypeConverter(kotlin.reflect.KClass<0:0>){0§<kotlin.Any>}[0]
     final fun close() // androidx.room3/RoomDatabase.close|close(){}[0]
     final fun getCoroutineScope(): kotlinx.coroutines/CoroutineScope // androidx.room3/RoomDatabase.getCoroutineScope|getCoroutineScope(){}[0]
@@ -458,3 +459,4 @@ final suspend fun androidx.room3.util/dropFtsSyncTriggers(androidx.sqlite/SQLite
 final suspend fun androidx.room3.util/foreignKeyCheck(androidx.sqlite/SQLiteConnection, kotlin/String) // androidx.room3.util/foreignKeyCheck|foreignKeyCheck(androidx.sqlite.SQLiteConnection;kotlin.String){}[0]
 final suspend fun androidx.room3.util/getLastInsertedRowId(androidx.sqlite/SQLiteConnection): kotlin/Long // androidx.room3.util/getLastInsertedRowId|getLastInsertedRowId(androidx.sqlite.SQLiteConnection){}[0]
 final suspend fun androidx.room3.util/getTotalChangedRows(androidx.sqlite/SQLiteConnection): kotlin/Int // androidx.room3.util/getTotalChangedRows|getTotalChangedRows(androidx.sqlite.SQLiteConnection){}[0]
+final suspend fun androidx.room3.util/performClear(androidx.room3/RoomDatabase, kotlin/Boolean, kotlin/Array<out kotlin/String>...) // androidx.room3.util/performClear|performClear(androidx.room3.RoomDatabase;kotlin.Boolean;kotlin.Array<out|kotlin.String>...){}[0]

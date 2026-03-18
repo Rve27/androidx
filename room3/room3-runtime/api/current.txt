@@ -59,7 +59,7 @@ package androidx.room3 {
   }
 
   public abstract class RoomDatabase {
-    method @WorkerThread public abstract void clearAllTables();
+    method public abstract suspend Object? clearAllTables(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public void close();
     method protected abstract androidx.room3.InvalidationTracker createInvalidationTracker();
     method @InaccessibleFromKotlin public androidx.room3.InvalidationTracker getInvalidationTracker();
