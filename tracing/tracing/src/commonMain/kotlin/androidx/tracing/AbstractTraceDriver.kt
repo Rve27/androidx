@@ -18,7 +18,16 @@ package androidx.tracing
 
 /** The entry point for the tracing API. */
 public abstract class AbstractTraceDriver : AutoCloseable {
+    /**
+     * The [AbstractTraceSink] that asynchronously serializes trace events to a file or buffer,
+     * depending on implementation.
+     */
     public val sink: AbstractTraceSink
+
+    /**
+     * When [isEnabled] is `true`, then the [Tracer] obtained from the [AbstractTraceDriver] emits
+     * trace events. Otherwise, no events are emitted.
+     */
     public val isEnabled: Boolean
 
     /**
