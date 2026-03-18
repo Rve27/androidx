@@ -44,6 +44,8 @@ import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.InteractableComponent
 import androidx.xr.scenecore.runtime.LoggingEntity
 import androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper
+import androidx.xr.scenecore.runtime.MeshEntity
+import androidx.xr.scenecore.runtime.MeshFeature
 import androidx.xr.scenecore.runtime.MovableComponent
 import androidx.xr.scenecore.runtime.PanelEntity
 import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose
@@ -371,6 +373,24 @@ private constructor(
     ): SurfaceEntity {
         val entity: SurfaceEntity =
             SurfaceEntityImpl(
+                checkNotNull(activity),
+                feature,
+                parentEntity,
+                xrExtensions,
+                sceneNodeRegistry,
+                scheduledExecutorService,
+            )
+        entity.setPose(pose, Space.PARENT)
+        return entity
+    }
+
+    override fun createMeshEntity(
+        feature: MeshFeature,
+        pose: Pose,
+        parentEntity: Entity?,
+    ): MeshEntity {
+        val entity: MeshEntity =
+            MeshEntityImpl(
                 checkNotNull(activity),
                 feature,
                 parentEntity,

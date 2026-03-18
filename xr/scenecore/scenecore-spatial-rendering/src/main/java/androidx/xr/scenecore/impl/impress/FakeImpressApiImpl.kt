@@ -132,6 +132,8 @@ public class FakeImpressApiImpl : ImpressApi {
     private val resourceManager = BindingsResourceManager(Handler(Looper.getMainLooper()))
     // Vector of image based lighting asset tokens.
     private val imageBasedLightingAssets: MutableMap<Long, ExrImage> = mutableMapOf()
+    private var nextMeshBufferId: Long = 1
+    private var nextCustomMeshId: Long = 1
     // Map of model tokens to the list of impress nodes that are instances of that model.
     private val gltfModels: MutableMap<Long, MutableList<Int>> = HashMap()
     // Map of impress nodes to their parent impress nodes.
@@ -1132,6 +1134,48 @@ public class FakeImpressApiImpl : ImpressApi {
         gltfModels.clear()
         textureImages.clear()
         materials.clear()
+    }
+
+    override fun createMeshBuffer(
+        attributeIds: IntArray,
+        attributeTypes: IntArray,
+        bufferIndices: ByteArray,
+        maxVertices: Int,
+        maxIndices: Int,
+        vertexData: Array<java.nio.ByteBuffer>?,
+        vertexDataSizes: IntArray?,
+        indexData: java.nio.ByteBuffer?,
+        indexDataSize: Int,
+    ): MeshBuffer {
+        val handle = nextMeshBufferId++
+        return MeshBuffer.Builder().setImpressApi(this).setNativeMeshBuffer(handle).build()
+    }
+
+    override fun destroyMeshBuffer(meshBufferHandle: Long) {}
+
+    override fun createCustomMesh(
+        meshBufferHandle: Long,
+        subsetOffsets: IntArray,
+        subsetCounts: IntArray,
+    ): CustomMesh {
+        val handle = nextCustomMeshId++
+        return CustomMesh.Builder().setImpressApi(this).setNativeCustomMesh(handle).build()
+    }
+
+    override fun destroyCustomMesh(customMeshHandle: Long) {}
+
+    override fun setCustomMeshBoundingBox(
+        customMeshHandle: Long,
+        centerX: Float,
+        centerY: Float,
+        centerZ: Float,
+        halfExtentX: Float,
+        halfExtentY: Float,
+        halfExtentZ: Float,
+    ) {}
+
+    override fun createCustomMeshNode(customMeshHandle: Long, materialHandles: LongArray): Int {
+        return nextNodeId++
     }
 
     /** Returns the map of texture image tokens to their associated Texture object. */
