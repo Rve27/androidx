@@ -768,6 +768,7 @@ package androidx.xr.scenecore.testing {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSceneRuntimeFactory implements androidx.xr.runtime.internal.SceneRuntimeFactory {
     ctor public FakeSceneRuntimeFactory();
     method public androidx.xr.scenecore.testing.FakeSceneRuntime create(android.app.Activity activity);
+    method public androidx.xr.scenecore.testing.FakeSceneRuntime create(android.app.Activity activity, boolean unscaledGravityAlignedActivitySpace);
     method @InaccessibleFromKotlin public java.util.Set<androidx.xr.runtime.interfaces.Feature> getRequirements();
     property public java.util.Set<androidx.xr.runtime.interfaces.Feature> requirements;
   }

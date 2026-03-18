@@ -108,6 +108,7 @@ private constructor(
     private val sceneNodeRegistry: SceneNodeRegistry,
     @get:VisibleForTesting internal val sceneRootNode: Node,
     @get:VisibleForTesting internal val taskWindowLeashNode: Node,
+    unscaledGravityAlignedActivitySpace: Boolean = true,
 ) : SceneRuntime, RenderingEntityFactory {
     private val spatialEnvironmentImpl: SpatialEnvironmentImpl
     private val spatialCapabilitiesChangedListeners =
@@ -205,6 +206,7 @@ private constructor(
                 sceneNodeRegistry,
                 lazySpatialStateProvider,
                 scheduledExecutorService,
+                unscaledGravityAlignedActivitySpace,
             )
         sceneNodeRegistry.addSystemSpaceScenePose(activitySpace)
         perceptionSpaceScenePose = PerceptionSpaceScenePoseImpl(activitySpace)
@@ -904,6 +906,43 @@ private constructor(
                 executor,
                 requireNotNull(getXrExtensions()),
                 SceneNodeRegistry(),
+            )
+        }
+
+        /**
+         * Create a new SpatialSceneRuntime. Added temporarily for 1P backward compat. To be removed
+         * in future release.
+         */
+        public fun create(
+            activity: Activity,
+            executor: ScheduledExecutorService,
+            unscaledGravityAlignedActivitySpace: Boolean = true,
+        ): SpatialSceneRuntime {
+            val xrExtensions = requireNotNull(getXrExtensions())
+            val sceneRootNode = xrExtensions.createNode()
+            val taskWindowLeashNode = xrExtensions.createNode()
+            xrExtensions.attachSpatialScene(
+                activity,
+                sceneRootNode,
+                taskWindowLeashNode,
+                executor,
+            ) { _: XrExtensionResult ->
+            }
+            xrExtensions.createNodeTransaction().use { transaction ->
+                transaction
+                    .setName(sceneRootNode, "SpatialSceneAndActivitySpaceRootNode")
+                    .setParent(taskWindowLeashNode, sceneRootNode)
+                    .setName(taskWindowLeashNode, "MainPanelAndTaskWindowLeashNode")
+                    .apply()
+            }
+            return SpatialSceneRuntime(
+                activity,
+                executor,
+                xrExtensions,
+                SceneNodeRegistry(),
+                sceneRootNode,
+                taskWindowLeashNode,
+                unscaledGravityAlignedActivitySpace,
             )
         }
     }
