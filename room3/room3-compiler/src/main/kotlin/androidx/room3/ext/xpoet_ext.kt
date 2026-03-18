@@ -201,6 +201,17 @@ object KotlinTypeNames {
     val NO_ARG_LAMBDA = XClassName.get("kotlin", "Function0")
     val SINGLE_ARG_SUSPEND_LAMBDA = XClassName.get("kotlin.coroutines", "SuspendFunction1")
     val SINGLE_ARG_LAMBDA = XClassName.get("kotlin", "Function1")
+    val U_BYTE = XClassName.get("kotlin", "UByte")
+    val U_SHORT = XClassName.get("kotlin", "UShort")
+    val U_INT = XClassName.get("kotlin", "UInt")
+    val U_LONG = XClassName.get("kotlin", "ULong")
+}
+
+object KotlinUnsignedMemberNames {
+    val TO_BYTE = KotlinTypeNames.U_BYTE.packageMember("toUByte")
+    val TO_SHORT = KotlinTypeNames.U_SHORT.packageMember("toUShort")
+    val TO_INT = KotlinTypeNames.U_INT.packageMember("toUInt")
+    val TO_LONG = KotlinTypeNames.U_LONG.packageMember("toULong")
 }
 
 object RoomMemberNames {
@@ -227,6 +238,14 @@ object SQLiteDriverMemberNames {
     val CONNECTION_PREPARE = SQLiteDriverTypeNames.SQLITE.packageMember("prepare")
     val STATEMENT_STEP = SQLiteDriverTypeNames.SQLITE.packageMember("step")
 }
+
+val SUPPORTED_VALUES_TYPES =
+    listOf(
+        KotlinTypeNames.U_BYTE,
+        KotlinTypeNames.U_SHORT,
+        KotlinTypeNames.U_INT,
+        KotlinTypeNames.U_LONG,
+    )
 
 val DEFERRED_TYPES =
     listOf(
