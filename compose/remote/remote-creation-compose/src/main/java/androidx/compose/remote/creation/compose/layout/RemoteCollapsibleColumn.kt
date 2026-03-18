@@ -35,6 +35,7 @@ import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.platform.LocalLayoutDirection
 
 /** Utility modifier to record the layout information */
 internal class RemoteComposeCollapsibleColumnModifier(
@@ -82,7 +83,13 @@ public fun RemoteCollapsibleColumn(
     content: @Composable RemoteCollapsibleColumnScope.() -> Unit,
 ) {
     if (currentComposer.applier is RemoteComposeApplierV2) {
-        RemoteCollapsibleColumnV2(modifier, horizontalAlignment, verticalArrangement, content)
+        RemoteCollapsibleColumnV2(
+            modifier,
+            horizontalAlignment,
+            verticalArrangement,
+            LocalLayoutDirection.current,
+            content,
+        )
         return
     }
 
