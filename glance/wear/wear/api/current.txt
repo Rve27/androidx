@@ -37,6 +37,8 @@ package androidx.glance.wear {
 
   public final class WearWidgetBrushKt {
     method public static androidx.glance.wear.WearWidgetBrush color(androidx.glance.wear.WearWidgetBrush, androidx.compose.remote.creation.compose.state.RemoteColor color);
+    method public static androidx.glance.wear.WearWidgetBrush horizontalGradient(androidx.glance.wear.WearWidgetBrush, java.util.List<? extends androidx.compose.remote.creation.compose.state.RemoteColor> colors);
+    method public static androidx.glance.wear.WearWidgetBrush verticalGradient(androidx.glance.wear.WearWidgetBrush, java.util.List<? extends androidx.compose.remote.creation.compose.state.RemoteColor> colors);
   }
 
   public interface WearWidgetData {
