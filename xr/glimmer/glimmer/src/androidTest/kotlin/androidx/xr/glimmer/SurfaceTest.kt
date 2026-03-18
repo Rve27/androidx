@@ -2229,13 +2229,15 @@ class SurfaceTest {
     fun clickableSurface_pressedOverlay_appearsAndDisappearsWithPressChange() {
         rule.mainClock.autoAdvance = false
 
+        var surfaceColor = Color.Unspecified
         rule.setGlimmerThemeContent {
+            surfaceColor = GlimmerTheme.colors.surface
             Column { Box(Modifier.size(100.dp).surface(onClick = {}).testTag("surface")) }
         }
 
-        // The center of the surface should be black
+        // The center of the surface should be the surface color
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isEqualTo(surfaceColor)
         }
 
         // Start a press
@@ -2246,7 +2248,7 @@ class SurfaceTest {
 
         // The press overlay should be showing
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            val expectedColor = Color.White.copy(alpha = 0.16f).compositeOver(Color.Black)
+            val expectedColor = Color.White.copy(alpha = 0.16f).compositeOver(surfaceColor)
             assertThat(get(width / 2, height / 2)).isEqualTo(expectedColor)
         }
 
@@ -2256,9 +2258,10 @@ class SurfaceTest {
         // Advance until after the animation has finished
         rule.mainClock.advanceTimeBy(5000)
 
-        // The press overlay should disappear, so the center of the surface should be black again
+        // The press overlay should disappear, so the center of the surface should be the surface
+        // color again
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isEqualTo(surfaceColor)
         }
     }
 
@@ -2268,7 +2271,9 @@ class SurfaceTest {
 
         var interactionSource by mutableStateOf(MutableInteractionSource())
 
+        var surfaceColor = Color.Unspecified
         rule.setGlimmerThemeContent {
+            surfaceColor = GlimmerTheme.colors.surface
             Column {
                 Box(
                     Modifier.size(100.dp)
@@ -2278,9 +2283,9 @@ class SurfaceTest {
             }
         }
 
-        // The center of the surface should be black
+        // The center of the surface should be the surface color
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isEqualTo(surfaceColor)
         }
 
         // Start a press
@@ -2291,7 +2296,7 @@ class SurfaceTest {
 
         // The press overlay should be showing
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            val expectedColor = Color.White.copy(alpha = 0.16f).compositeOver(Color.Black)
+            val expectedColor = Color.White.copy(alpha = 0.16f).compositeOver(surfaceColor)
             assertThat(get(width / 2, height / 2)).isEqualTo(expectedColor)
         }
 
@@ -2301,9 +2306,10 @@ class SurfaceTest {
         // Advance until after the animation has finished
         rule.mainClock.advanceTimeBy(5000)
 
-        // The press overlay should disappear, so the center of the surface should be black again
+        // The press overlay should disappear, so the center of the surface should be the surface
+        // color again
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isEqualTo(surfaceColor)
         }
 
         // Release and start another press
@@ -2317,7 +2323,7 @@ class SurfaceTest {
 
         // The press overlay should be showing again
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            val expectedColor = Color.White.copy(alpha = 0.16f).compositeOver(Color.Black)
+            val expectedColor = Color.White.copy(alpha = 0.16f).compositeOver(surfaceColor)
             assertThat(get(width / 2, height / 2)).isEqualTo(expectedColor)
         }
     }
@@ -2334,7 +2340,9 @@ class SurfaceTest {
         val interactionSource = MutableInteractionSource()
         lateinit var scope: CoroutineScope
 
+        var surfaceColor = Color.Unspecified
         rule.setGlimmerThemeContent {
+            surfaceColor = GlimmerTheme.colors.surface
             scope = rememberCoroutineScope()
             Column {
                 Box(
@@ -2345,9 +2353,9 @@ class SurfaceTest {
             }
         }
 
-        // The center of the surface should be black
+        // The center of the surface should be the surface color
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isEqualTo(surfaceColor)
         }
 
         val press = PressInteraction.Press(Offset.Zero)
@@ -2360,7 +2368,7 @@ class SurfaceTest {
 
         // The press overlay should be showing
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            val expectedColor = Color.White.copy(alpha = 0.16f).compositeOver(Color.Black)
+            val expectedColor = Color.White.copy(alpha = 0.16f).compositeOver(surfaceColor)
             assertThat(get(width / 2, height / 2)).isEqualTo(expectedColor)
         }
 
@@ -2370,9 +2378,10 @@ class SurfaceTest {
         // Advance until after the animation has finished
         rule.mainClock.advanceTimeBy(5000)
 
-        // The press overlay should disappear, so the center of the surface should be black again
+        // The press overlay should disappear, so the center of the surface should be the surface
+        // color again
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isEqualTo(surfaceColor)
         }
     }
 
@@ -2380,13 +2389,15 @@ class SurfaceTest {
     fun clickableSurface_pressedOverlay_hasAMinimumDuration() {
         rule.mainClock.autoAdvance = false
 
+        var surfaceColor = Color.Unspecified
         rule.setGlimmerThemeContent {
+            surfaceColor = GlimmerTheme.colors.surface
             Column { Box(Modifier.size(100.dp).surface(onClick = {}).testTag("surface")) }
         }
 
-        // The center of the surface should be black
+        // The center of the surface should be the surface color
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isEqualTo(surfaceColor)
         }
 
         // Start a press, and immediately release
@@ -2402,16 +2413,16 @@ class SurfaceTest {
         // If there was no minimum duration, the animation would have ended already - so
         // make sure the color is not equal to the base color.
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isNotEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isNotEqualTo(surfaceColor)
         }
 
         // Advance until after the animation has finished
         rule.mainClock.advanceTimeBy(5000)
 
         // The press overlay should disappear after the minimum duration, so the center of the
-        // surface should be black again
+        // surface should be the surface color again
         rule.onNodeWithTag("surface").captureToImage().toPixelMap().run {
-            assertThat(get(width / 2, height / 2)).isEqualTo(Color.Black)
+            assertThat(get(width / 2, height / 2)).isEqualTo(surfaceColor)
         }
     }
 }
