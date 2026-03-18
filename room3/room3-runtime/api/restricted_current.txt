@@ -109,7 +109,7 @@ package androidx.room3 {
   public abstract class RoomDatabase {
     ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public RoomDatabase();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void assertNotMainThread();
-    method @WorkerThread public abstract void clearAllTables();
+    method public abstract suspend Object? clearAllTables(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public void close();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract java.util.List<androidx.room3.migration.Migration> createAutoMigrations(java.util.Map<kotlin.reflect.KClass<? extends androidx.room3.migration.AutoMigrationSpec>,? extends androidx.room3.migration.AutoMigrationSpec> autoMigrationSpecs);
     method protected abstract androidx.room3.InvalidationTracker createInvalidationTracker();
@@ -312,6 +312,7 @@ package androidx.room3.util {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend Object? dropFtsSyncTriggers(androidx.sqlite.SQLiteConnection connection, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend Object? foreignKeyCheck(androidx.sqlite.SQLiteConnection db, String tableName, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static <R> R performBlocking(androidx.room3.RoomDatabase db, boolean isReadOnly, boolean inTransaction, kotlin.jvm.functions.Function2<? super androidx.sqlite.SQLiteConnection,? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend Object? performClear(androidx.room3.RoomDatabase db, boolean hasForeignKeys, String[] tableNames, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static <R> R performInTransactionBlocking(androidx.room3.RoomDatabase db, kotlin.jvm.functions.Function0<? extends R> block);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend <R> Object? performInTransactionSuspending(androidx.room3.RoomDatabase db, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super R>);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend <R> Object? performSuspending(androidx.room3.RoomDatabase db, boolean isReadOnly, boolean inTransaction, kotlin.jvm.functions.Function2<? super androidx.sqlite.SQLiteConnection,? super kotlin.coroutines.Continuation<? super R>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super R>);
