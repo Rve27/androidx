@@ -17,6 +17,7 @@
 package androidx.lifecycle.viewmodel
 
 import androidx.kruth.assertThat
+import androidx.lifecycle.DEFAULT_ARGS_KEY
 import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
@@ -26,12 +27,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.defaultViewModelProviderFactory
 import androidx.lifecycle.get
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
+import androidx.savedstate.read
+import androidx.savedstate.savedState
 import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -314,6 +316,22 @@ internal class ViewModelStoreProviderTest {
         // of SavedStateViewModelFactory.
         assertThat(extras[SAVED_STATE_REGISTRY_OWNER_KEY]).isSameInstanceAs(wrapper)
         assertThat(extras[VIEW_MODEL_STORE_OWNER_KEY]).isSameInstanceAs(wrapper)
+    }
+
+    @Test
+    @IgnoreAndroidHostTarget
+    fun getViewModelStoreOwner_withDefaultArgs_injectsDefaultArgsCreationExtras() {
+        val owner = TestViewModelStoreOwner()
+        val defaultArgs = savedState { putString("key", "value") }
+        val provider = ViewModelStoreProvider(owner, defaultArgs = defaultArgs)
+
+        val wrapper = provider.getOrCreateOwner("key")
+
+        val wrapperAsDefaults = wrapper as HasDefaultViewModelProviderFactory
+        val extras = wrapperAsDefaults.defaultViewModelCreationExtras
+        val retrievedArgs = extras[DEFAULT_ARGS_KEY]
+
+        assertThat(retrievedArgs!!.read { contentDeepEquals(defaultArgs) }).isTrue()
     }
 
     private fun createViewModel(store: ViewModelStore): TestViewModel {
