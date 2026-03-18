@@ -122,12 +122,13 @@ class ListItemTest {
     fun shapeAndColorFromThemeIsUsed() {
         lateinit var expectedShape: Shape
         val surfaceColor = Color.Blue
-        rule.setGlimmerThemeContent {
-            GlimmerTheme(Colors(surface = surfaceColor)) {
-                expectedShape = GlimmerTheme.shapes.medium
-                ListItem(modifier = Modifier.testTag("listItem"), border = null) {
-                    Box(Modifier.size(100.dp, 100.dp))
-                }
+        val backgroundColor = Color.Black
+        rule.setGlimmerThemeContent(
+            colors = Colors(surface = surfaceColor, background = backgroundColor)
+        ) {
+            expectedShape = GlimmerTheme.shapes.medium
+            ListItem(modifier = Modifier.testTag("listItem"), border = null) {
+                Box(Modifier.size(100.dp, 100.dp))
             }
         }
 
@@ -138,7 +139,7 @@ class ListItemTest {
                 density = rule.density,
                 shape = expectedShape,
                 shapeColor = surfaceColor,
-                backgroundColor = Color.Black,
+                backgroundColor = backgroundColor,
                 antiAliasingGap = with(rule.density) { 1.dp.toPx() },
             )
     }

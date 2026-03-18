@@ -131,12 +131,13 @@ class CardTest {
     fun shapeAndColorFromThemeIsUsed() {
         lateinit var expectedShape: Shape
         val surfaceColor = Color.Blue
-        rule.setGlimmerThemeContent {
-            GlimmerTheme(Colors(surface = surfaceColor)) {
-                expectedShape = GlimmerTheme.shapes.medium
-                Card(modifier = Modifier.testTag("card"), border = null) {
-                    Box(Modifier.size(100.dp, 100.dp))
-                }
+        val backgroundColor = Color.Red
+        rule.setGlimmerThemeContent(
+            colors = Colors(surface = surfaceColor, background = backgroundColor)
+        ) {
+            expectedShape = GlimmerTheme.shapes.medium
+            Card(modifier = Modifier.testTag("card"), border = null) {
+                Box(Modifier.size(100.dp, 100.dp))
             }
         }
 
@@ -147,7 +148,7 @@ class CardTest {
                 density = rule.density,
                 shape = expectedShape,
                 shapeColor = surfaceColor,
-                backgroundColor = Color.Black,
+                backgroundColor = backgroundColor,
                 antiAliasingGap = with(rule.density) { 1.dp.toPx() },
             )
     }
