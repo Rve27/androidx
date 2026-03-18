@@ -1030,7 +1030,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
     DATA_TEXT<47> = "Green"
     MODIFIERS
       DRAW_CONTENT
-    TEXT_LAYOUT [-5:-1] = [250.0, 364.0, 215.0, 97.0] VISIBLE (47:"Green")
+    CORE_TEXT [-5:-1] = [250.0, 364.0, 215.0, 97.0] VISIBLE (47:"Green")
       MODIFIERS
 """
         testLayout(result) {
