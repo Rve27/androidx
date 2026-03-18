@@ -533,10 +533,10 @@ package androidx.xr.compose.subspace {
     method public void close();
     method @InaccessibleFromKotlin @RequiresApi(android.os.Build.VERSION_CODES.O) public java.util.List<androidx.xr.compose.subspace.SpatialGltfModelAnimation> getAnimations();
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.GltfModelNode> getNodes();
-    method @InaccessibleFromKotlin public androidx.compose.runtime.State<androidx.xr.compose.subspace.SpatialGltfModelStatus> getStatus();
+    method @InaccessibleFromKotlin public androidx.xr.compose.subspace.SpatialGltfModelStatus getStatus();
     property @RequiresApi(android.os.Build.VERSION_CODES.O) public java.util.List<androidx.xr.compose.subspace.SpatialGltfModelAnimation> animations;
     property public java.util.List<androidx.xr.scenecore.GltfModelNode> nodes;
-    property public androidx.compose.runtime.State<androidx.xr.compose.subspace.SpatialGltfModelStatus> status;
+    property public androidx.xr.compose.subspace.SpatialGltfModelStatus status;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class SpatialGltfModelStatus {
