@@ -74,7 +74,7 @@ public final class CheckFlagsRule implements TestRule {
             // Flags class) to get the actual flag value.
             Boolean actualFlagValue;
             try {
-                Method flagMethod = Flags.class.getMethod(getFlagMethodName(flag));
+                Method flagMethod = getFlagMethod(flag);
                 actualFlagValue = (Boolean) flagMethod.invoke(null);
             } catch (Exception e) {
                 // Failed to get the actual flag value. Set it to true.
@@ -145,13 +145,21 @@ public final class CheckFlagsRule implements TestRule {
         }
     }
 
-    private static String getFlagMethodName(@NonNull String flagName)
-            throws IllegalArgumentException {
-        if (!flagName.startsWith(Flags.FLAG_PREFIX)) {
+    private static Method getFlagMethod(@NonNull String flagName)
+            throws IllegalArgumentException, NoSuchMethodException {
+        int methodNameStartIndex;
+        Class<?> flagClass;
+        if (flagName.startsWith(Flags.FLAG_PREFIX)) {
+            flagClass = Flags.class;
+            methodNameStartIndex = Flags.FLAG_PREFIX.length();
+        } else if (flagName.startsWith(android.app.appfunctions.flags.Flags.FLAG_PREFIX)) {
+            flagClass = android.app.appfunctions.flags.Flags.class;
+            methodNameStartIndex = android.app.appfunctions.flags.Flags.FLAG_PREFIX.length();
+        } else {
             throw new IllegalArgumentException("Invalid flag name");
         }
         StringBuilder methodNameBuilder = new StringBuilder();
-        for (int i = Flags.FLAG_PREFIX.length(); i < flagName.length(); ++i) {
+        for (int i = methodNameStartIndex; i < flagName.length(); ++i) {
             if (flagName.charAt(i) == '_') {
                 if (i + 1 >= flagName.length()) {
                     throw new IllegalArgumentException("Invalid flag name ending with underscore");
@@ -162,6 +170,6 @@ public final class CheckFlagsRule implements TestRule {
                 methodNameBuilder.append(flagName.charAt(i));
             }
         }
-        return methodNameBuilder.toString();
+        return flagClass.getMethod(methodNameBuilder.toString());
     }
 }

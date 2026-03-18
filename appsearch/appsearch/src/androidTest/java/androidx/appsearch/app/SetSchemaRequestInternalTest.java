@@ -16,16 +16,26 @@
 
 package androidx.appsearch.app;
 
+import static androidx.appsearch.app.SetSchemaRequest.EXECUTE_APP_FUNCTIONS_SYSTEM;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assume.assumeTrue;
 
+import androidx.appsearch.testutil.AppSearchTestUtils;
+import androidx.appsearch.testutil.flags.RequiresFlagsDisabled;
+import androidx.appsearch.testutil.flags.RequiresFlagsEnabled;
+
 import com.google.common.collect.ImmutableSet;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 
 public class SetSchemaRequestInternalTest {
+    @Rule
+    public final RuleChain mRuleChain = AppSearchTestUtils.createCommonTestRules();
 
     @Test
     public void testAddRequiredPermissionsForSchemaTypeVisibility_emptyPermissions() {
@@ -45,5 +55,29 @@ public class SetSchemaRequestInternalTest {
                         "Schema", ImmutableSet.of()));
         assertThat(expected).hasMessageThat().contains(
                 "The set of required permissions cannot be empty");
+    }
+
+    @Test
+    @RequiresFlagsEnabled(
+            android.app.appfunctions.flags.Flags.FLAG_ENABLE_APP_FUNCTION_PERMISSION_V2)
+    public void testSetExecuteAppFunctionsSystemPermissions() {
+        SetSchemaRequest request = new SetSchemaRequest.Builder()
+                .addSchemas(new AppSearchSchema.Builder("Schema").build())
+                .addRequiredPermissionsForSchemaTypeVisibility(
+                        "Schema",
+                        ImmutableSet.of(EXECUTE_APP_FUNCTIONS_SYSTEM))
+                .build();
+        assertThat(request.getRequiredPermissionsForSchemaTypeVisibility())
+                .containsExactly("Schema",
+                        ImmutableSet.of(ImmutableSet.of(EXECUTE_APP_FUNCTIONS_SYSTEM)));
+    }
+
+    @Test
+    @RequiresFlagsDisabled(
+            android.app.appfunctions.flags.Flags.FLAG_ENABLE_APP_FUNCTION_PERMISSION_V2)
+    public void testSetExecuteAppFunctionsSystemPermissions_disabled() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new SetSchemaRequest.Builder().addRequiredPermissionsForSchemaTypeVisibility(
+                        "Schema", ImmutableSet.of(EXECUTE_APP_FUNCTIONS_SYSTEM)));
     }
 }
