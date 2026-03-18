@@ -683,6 +683,7 @@ package androidx.xr.runtime.internal {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SceneRuntimeFactory extends androidx.xr.runtime.interfaces.Service {
     method public androidx.xr.runtime.internal.JxrRuntime create(android.app.Activity activity);
+    method public androidx.xr.runtime.internal.JxrRuntime create(android.app.Activity activity, boolean unscaledGravityAlignedActivitySpace);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class UnsupportedDeviceException extends androidx.xr.runtime.internal.LifecycleException {
