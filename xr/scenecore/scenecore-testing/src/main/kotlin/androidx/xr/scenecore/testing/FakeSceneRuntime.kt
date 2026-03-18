@@ -33,6 +33,8 @@ import androidx.xr.scenecore.runtime.GltfFeature
 import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.InteractableComponent
 import androidx.xr.scenecore.runtime.LoggingEntity
+import androidx.xr.scenecore.runtime.MeshEntity
+import androidx.xr.scenecore.runtime.MeshFeature
 import androidx.xr.scenecore.runtime.PanelEntity
 import androidx.xr.scenecore.runtime.PerceptionSpaceScenePose
 import androidx.xr.scenecore.runtime.PixelDimensions
@@ -202,6 +204,17 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
         surfaceEntity.parent = parentEntity
 
         return surfaceEntity
+    }
+
+    override fun createMeshEntity(
+        feature: MeshFeature,
+        pose: Pose,
+        parentEntity: Entity?,
+    ): MeshEntity {
+        val meshEntity = FakeMeshEntity(feature)
+        meshEntity.setPose(pose)
+        meshEntity.parent = parentEntity
+        return meshEntity
     }
 
     override fun createEntity(pose: Pose, name: String?, parent: Entity?): Entity {

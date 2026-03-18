@@ -79,6 +79,9 @@
             android:name=".model.GltfModelMaterialTextureActivity"
             android:exported="true" />
         <activity
+            android:name=".meshentity.MeshEntityActivity"
+            android:exported="true" />
+        <activity
             android:name=".model.GltfModelAnimationActivity"
             android:exported="true" />
         <activity

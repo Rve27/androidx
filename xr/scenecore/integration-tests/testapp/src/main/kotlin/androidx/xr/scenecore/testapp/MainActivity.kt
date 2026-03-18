@@ -82,6 +82,7 @@ import androidx.xr.scenecore.testapp.headlockedui.HeadLockedUiActivity
 import androidx.xr.scenecore.testapp.hittest.HitTestActivity
 import androidx.xr.scenecore.testapp.inputmoveresize.InputMoveResizeTestActivity
 import androidx.xr.scenecore.testapp.memoryleak.MemoryLeakActivity
+import androidx.xr.scenecore.testapp.meshentity.MeshEntityActivity
 import androidx.xr.scenecore.testapp.model.GltfModelAnimationActivity
 import androidx.xr.scenecore.testapp.model.GltfModelMaterialTextureActivity
 import androidx.xr.scenecore.testapp.movable.MovableActivity
@@ -431,6 +432,8 @@ class MainActivity : AppCompatActivity() {
             Tests.SURFACE_CUSTOM_MESH_TEST.test ->
                 startActivity(createIntent<SurfaceEntityCustomMeshActivity>())
 
+            Tests.MESH_ENTITY_TEST.test -> startActivity(createIntent<MeshEntityActivity>())
+
             Tests.SURFACE_ENTITY_IMAGE_TEST.test ->
                 startActivity(createIntent<SurfaceEntityImageActivity>())
 
@@ -575,6 +578,7 @@ class MainActivity : AppCompatActivity() {
                             R.string.cuj_spatial_audio_setting_pointsourceparams_test,
                             Tests.SPATIAL_AUDIO_3_TEST.test,
                         ),
+                        TestCase(R.string.cuj_mesh_entity_test, Tests.MESH_ENTITY_TEST.test),
                     ),
                 "SYSTEM & CAPABILITIES" to
                     listOf(
@@ -623,5 +627,6 @@ class MainActivity : AppCompatActivity() {
         PANEL_COORDINATES_TEST(27),
         GLTF_MODEL_ANIMATION_TEST(28),
         SURFACE_CUSTOM_MESH_TEST(29),
+        MESH_ENTITY_TEST(30),
     }
 }
