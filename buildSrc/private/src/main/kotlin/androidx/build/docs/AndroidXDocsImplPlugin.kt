@@ -582,10 +582,10 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             }
 
             return if (isJvm) {
-                // Dackka can't handle the aar dependencies, so this gets the jar from any aars (it
-                // is important that this does not use the transformed android-classes jar, because
-                // that jar does not contain kotlin module metadata) and the resource jar.
-                getArtifacts("jar") + getArtifacts("r-class-jar")
+                // Dackka can't handle the aar dependencies, so this gets two jars from any aars:
+                // the regular jar contains kotlin module metadata and the android-classes jar
+                // contains resources.
+                getArtifacts("jar") + getArtifacts("android-classes")
             } else {
                 getArtifacts()
             }
