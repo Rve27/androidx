@@ -416,7 +416,7 @@ public class FakeImpressApiImpl : ImpressApi {
     override fun setImpressNodeLocalTransform(impressNode: ImpressNode, transform: Matrix4) {
         val nodeData =
             getGltfNodeData(impressNode) ?: throw IllegalArgumentException("Impress node not found")
-        val pose = transform.pose
+        val pose = transform.toPose()
         val scale = transform.scale
         nodeData.transform[0] = pose.translation.x
         nodeData.transform[1] = pose.translation.y
@@ -454,7 +454,7 @@ public class FakeImpressApiImpl : ImpressApi {
     ) {
         val nodeData =
             getGltfNodeData(impressNode) ?: throw IllegalArgumentException("Impress node not found")
-        val pose = transform.pose
+        val pose = transform.toPose()
         val scale = transform.scale
         nodeData.transform[0] = pose.translation.x
         nodeData.transform[1] = pose.translation.y

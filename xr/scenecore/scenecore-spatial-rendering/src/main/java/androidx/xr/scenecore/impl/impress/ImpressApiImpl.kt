@@ -586,7 +586,7 @@ public class ImpressApiImpl : ImpressApi {
         nGetImpressNodeName(getViewNativeHandle(view), impressNode.handle)
 
     override fun setImpressNodeLocalTransform(impressNode: ImpressNode, transform: Matrix4) {
-        val pose = transform.pose
+        val pose = transform.toPose()
         val scale = transform.scale
         nSetImpressNodeLocalTransform(
             getViewNativeHandle(view),
@@ -620,7 +620,7 @@ public class ImpressApiImpl : ImpressApi {
         relativeNode: ImpressNode,
         transform: Matrix4,
     ) {
-        val pose = transform.pose
+        val pose = transform.toPose()
         val scale = transform.scale
         nSetImpressNodeRelativeTransform(
             getViewNativeHandle(view),

@@ -1136,9 +1136,10 @@ class FakeImpressApiImplTest {
         fakeImpressApi.setImpressNodeLocalTransform(node, transform)
 
         val outTransform = fakeImpressApi.getImpressNodeLocalTransform(node)
+        val outPose = outTransform.toPose()
 
-        assertThat(outTransform.pose.translation).isEqualTo(translation)
-        assertThat(outTransform.pose.rotation).isEqualTo(rotation)
+        assertThat(outPose.translation).isEqualTo(translation)
+        assertThat(outPose.rotation).isEqualTo(rotation)
         assertThat(outTransform.scale).isEqualTo(scale)
     }
 
@@ -1154,9 +1155,10 @@ class FakeImpressApiImplTest {
         fakeImpressApi.setImpressNodeRelativeTransform(node, relative, transform)
 
         val outTransform = fakeImpressApi.getImpressNodeRelativeTransform(node, relative)
+        val outPose = outTransform.toPose()
 
-        assertThat(outTransform.pose.translation).isEqualTo(translation)
-        assertThat(outTransform.pose.rotation).isEqualTo(rotation)
+        assertThat(outPose.translation).isEqualTo(translation)
+        assertThat(outPose.rotation).isEqualTo(rotation)
         assertThat(outTransform.scale).isEqualTo(scale)
     }
 
