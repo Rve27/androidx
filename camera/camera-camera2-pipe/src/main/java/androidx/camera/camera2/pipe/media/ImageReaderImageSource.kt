@@ -199,6 +199,14 @@ public class ImageReaderImageSource(
 
     override fun toString(): String = "ImageSource($imageReader)"
 
+    override fun discardFreeBuffers() {
+        imageReader.discardFreeBuffers()
+    }
+
+    override fun flush() {
+        imageReader.flush()
+    }
+
     private fun onImage(streamId: StreamId, outputId: OutputId, image: ImageWrapper) {
         // Always increment the imageCount before acquireNextImage
         val currentImageCount = imageCount.incrementAndGet()
