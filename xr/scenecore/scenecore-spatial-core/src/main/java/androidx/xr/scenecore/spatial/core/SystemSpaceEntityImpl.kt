@@ -80,7 +80,7 @@ internal constructor(
          * The OpenXR reference space is the space returned by
          * [XrExtensions.getOpenXrWorldReferenceSpaceType]
          */
-        get() = openXrReferenceSpaceTransform.get()?.unscaled()?.pose
+        get() = openXrReferenceSpaceTransform.get()?.unscaled()?.toPose()
 
     /**
      * Sets the pose and scale of the entity in an OpenXR reference space and should call the
