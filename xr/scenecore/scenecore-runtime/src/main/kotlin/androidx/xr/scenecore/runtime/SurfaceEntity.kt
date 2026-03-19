@@ -18,7 +18,7 @@ package androidx.xr.scenecore.runtime
 
 import android.view.Surface
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.math.FieldOfView
 import androidx.xr.runtime.math.FloatSize2d
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
