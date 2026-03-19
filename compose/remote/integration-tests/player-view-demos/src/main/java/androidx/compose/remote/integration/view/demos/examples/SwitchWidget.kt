@@ -50,7 +50,6 @@ import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 
 @Suppress("RestrictedApiAndroidX")
 @Composable
@@ -61,7 +60,7 @@ fun SwitchWidgetOnState(modifier: RemoteModifier = RemoteModifier, id: Int = 0) 
             modifier
                 .clip(RemoteRoundedCornerShape(20.rdp))
                 .background(Color(63, 81, 181, 255))
-                .padding(2.dp),
+                .padding(2.rdp),
         contentAlignment = RemoteAlignment.CenterEnd,
     ) {
         RemoteCanvas(modifier = RemoteModifier.size(32.rdp)) {
@@ -85,7 +84,7 @@ fun SwitchWidgetOffState(modifier: RemoteModifier = RemoteModifier) {
                 // todo: use the animationId
                 .clip(RemoteRoundedCornerShape(20.rdp))
                 .background(Color(100, 100, 100))
-                .padding(8.dp)
+                .padding(8.rdp)
                 .then(modifier),
         contentAlignment = RemoteAlignment.CenterStart,
     ) {
@@ -125,7 +124,7 @@ fun SwitchWidget(value: MutableRemoteInt) {
         RemoteModifier.clickable(ValueChange(remoteState = value, updatedValue = (value + 1) % 2))
 
     RemoteBox(
-        modifier = RemoteModifier.padding(4.dp),
+        modifier = RemoteModifier.padding(4.rdp),
         contentAlignment = RemoteAlignment.CenterStart,
     ) {
         val modifierSize = RemoteModifier.size(60.rdp, 36.rdp)
@@ -177,7 +176,7 @@ fun Divider(modifier: RemoteModifier = RemoteModifier) {
     RemoteBox(
         modifier =
             modifier
-                .padding(left = 8.dp, right = 8.dp)
+                .padding(left = 8.rdp, right = 8.rdp)
                 .size(2.rdp, 8.rdp)
                 .background(Color.LightGray)
     )
@@ -187,7 +186,7 @@ fun Divider(modifier: RemoteModifier = RemoteModifier) {
 @Composable
 @RemoteComposable
 fun SwitchWidgetDemo() {
-    RemoteColumn(modifier = Modifier.padding(8.dp).background(Color.LightGray)) {
+    RemoteColumn(modifier = Modifier.padding(8.rdp).background(Color.LightGray)) {
         val checkedA = rememberMutableRemoteInt(0)
         val checkedB = rememberMutableRemoteInt(0)
         val checkedC = rememberMutableRemoteInt(1)
@@ -198,7 +197,7 @@ fun SwitchWidgetDemo() {
         RowSwitch(checkedA, "State A", modifier = visibilityModifierC)
         RowSwitch(checkedC, "State C")
         Row(
-            modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
+            modifier = Modifier.padding(top = 8.rdp).fillMaxWidth(),
             horizontalArrangement = RemoteArrangement.Center,
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {

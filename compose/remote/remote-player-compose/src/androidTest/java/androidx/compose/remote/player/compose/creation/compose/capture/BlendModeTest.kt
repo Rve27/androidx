@@ -45,7 +45,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PaintingStyle
-import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
@@ -156,7 +155,7 @@ class BlendModeTest {
     @Composable
     private fun RemoteBlendModeVisual(blendMode: BlendMode, name: String) {
         RemoteBox(
-            RemoteModifier.size(100.rdp).border(1.rdp, Color.Black.rc).padding(8.dp),
+            RemoteModifier.size(100.rdp).border(1.rdp, Color.Black.rc).padding(8.rdp),
             contentAlignment = RemoteAlignment.TopStart,
         ) {
             RemoteCanvas(RemoteModifier.size(100.rdp)) {
