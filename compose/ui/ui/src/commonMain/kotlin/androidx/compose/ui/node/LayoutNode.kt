@@ -44,11 +44,8 @@ import androidx.compose.ui.layout.ModifierInfo
 import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.Remeasurement
+import androidx.compose.ui.node.LayoutNode.Companion.NotPlacedPlaceOrder
 import androidx.compose.ui.node.LayoutNode.LayoutState.Idle
-import androidx.compose.ui.node.LayoutNode.LayoutState.LayingOut
-import androidx.compose.ui.node.LayoutNode.LayoutState.LookaheadLayingOut
-import androidx.compose.ui.node.LayoutNode.LayoutState.LookaheadMeasuring
-import androidx.compose.ui.node.LayoutNode.LayoutState.Measuring
 import androidx.compose.ui.node.Nodes.PointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -58,6 +55,7 @@ import androidx.compose.ui.platform.simpleIdentityToString
 import androidx.compose.ui.semantics.SemanticsConfiguration
 import androidx.compose.ui.semantics.SemanticsInfo
 import androidx.compose.ui.semantics.generateSemanticsId
+import androidx.compose.ui.spatial.NotFound
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
@@ -106,7 +104,10 @@ internal class LayoutNode(
     // rect in parent is the sum of transformations for parent's coordinators not including the
     // outer one, and the transformations on this node's outer coordinator.
     internal var rectInParentDirty: Boolean = true
-    internal var addedToRectList: Boolean = false
+    // Cached last known rect list index. It might be incorrect if RectManager structure got updated
+    // since last access. Expected to be reset to the default value when the node is removed from
+    // the list.
+    internal var rectListIndex: Int = NotFound
     // Params managed by RectManager end.
 
     override var compositeKeyHash: Int = 0
@@ -1188,7 +1189,7 @@ internal class LayoutNode(
     internal fun onCoordinatorRectChanged(coordinator: NodeCoordinator) {
         val rectManager = owner?.rectManager
         val placementPending = layoutState != Idle || measurePending || layoutPending
-        if (addedToRectList && rectManager != null) {
+        if (rectListIndex != NotFound && rectManager != null) {
             if (coordinator === outerCoordinator) {
                 // transformations on the outer coordinator update the offset from parent
                 rectInParentDirty = true
