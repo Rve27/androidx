@@ -20,7 +20,7 @@ import android.content.Context
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.math.FieldOfView
 import androidx.xr.runtime.math.Vector2
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.Dimensions

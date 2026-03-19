@@ -24,6 +24,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.arcore.RenderViewpoint
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.XrLog
+import androidx.xr.runtime.math.FieldOfView
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
@@ -998,6 +999,9 @@ private constructor(
      *   [androidx.xr.runtime.Config.DeviceTrackingMode.SPATIAL_LAST_KNOWN].
      * @see PerceivedResolutionResult
      */
+    // TODO(b/494286565) - Remove deprecation suppression when androidx.xr.runtime.FieldOfView is
+    // removed.
+    @Suppress("DEPRECATION")
     public fun getPerceivedResolution(renderViewpoint: RenderViewpoint): PerceivedResolutionResult {
         checkNotDisposed()
         val renderViewpointState = renderViewpoint.state.value
@@ -1006,7 +1010,12 @@ private constructor(
                 (perceptionSpace.getScenePoseFromPerceptionPose(renderViewpointState.pose)
                         as PerceptionScenePose)
                     .rtScenePose,
-                renderViewpointState.fieldOfView,
+                FieldOfView(
+                    renderViewpointState.fieldOfView.angleLeft,
+                    renderViewpointState.fieldOfView.angleRight,
+                    renderViewpointState.fieldOfView.angleUp,
+                    renderViewpointState.fieldOfView.angleDown,
+                ),
             )
             .toPerceivedResolutionResult()
     }
