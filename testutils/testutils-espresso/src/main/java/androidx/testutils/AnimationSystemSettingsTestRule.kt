@@ -25,32 +25,27 @@ import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 /**
- * TestRule that sets the animator_duration_scale to a particular value for the duration of a test,
+ * TestRule that sets the animatorDurationScale to a particular value for the duration of a test,
  * then restores it to its original value afterward. Note that when multiple TestRules are used, you
  * must use a RuleChain with RuleChain.outerRule(AnimationSystemSettingsTestRule()) to ensure the
  * animator_duration_scale is set before anything else runs, and is restored after everything else
  * is finished.
  *
- * @param animator_duration_scale Float within the range 0.0 to 1.0 that animator_duration_scale
- *   will be set to for the duration of the test.
+ * @param animatorDurationScale Float that animator_duration_scale will be set to for the duration
+ *   of the test.
  */
 class AnimationSystemSettingsTestRule(
-    @FloatRange(from = 0.0, to = 1.0) val animator_duration_scale: Float
+    @param:FloatRange(from = 0.0, fromInclusive = false) val animatorDurationScale: Float
 ) : TestRule {
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
             override fun evaluate() {
                 val instrumentation = InstrumentationRegistry.getInstrumentation()
                 val uiAutomation = instrumentation.uiAutomation
-
                 val initialAnimatorDurationScale = getSetting(uiAutomation)
 
-                if (initialAnimatorDurationScale.toFloat() == animator_duration_scale) {
-                    return
-                }
-
                 try {
-                    setSetting(uiAutomation, animator_duration_scale.toString())
+                    setSetting(uiAutomation, animatorDurationScale.toString())
                     base.evaluate()
                 } finally {
                     setSetting(uiAutomation, initialAnimatorDurationScale)
