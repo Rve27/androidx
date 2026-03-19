@@ -17,19 +17,21 @@
 package androidx.xr.runtime.openxr
 
 import android.content.Context
-import androidx.xr.runtime.interfaces.Feature
-import androidx.xr.runtime.interfaces.XrDeviceCapabilityProvider
-import androidx.xr.runtime.interfaces.XrDeviceCapabilityProviderFactory
-import kotlin.coroutines.CoroutineContext
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.filters.SdkSuppress
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
 
-internal class OpenXrDeviceCapabilityProviderFactory() : XrDeviceCapabilityProviderFactory {
+// TODO - b/382119583: Remove the @SdkSuppress annotation once "androidx.xr.runtime.openxr.test"
+// supports a lower SDK version.
+@SdkSuppress(minSdkVersion = 29)
+class OpenXrInstanceManagerTest {
 
-    override val requirements: Set<Feature> = setOf(Feature.FULLSTACK, Feature.OPEN_XR)
+    @Test
+    fun getXrInstanceHandle_returnsNonZeroHandle() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val handle = OpenXrInstanceManager.getXrInstanceHandle(context)
 
-    override fun create(
-        context: Context,
-        coroutineContext: CoroutineContext,
-    ): XrDeviceCapabilityProvider {
-        return OpenXrDeviceCapabilityProvider(context)
+        assertThat(handle).isNotEqualTo(0L)
     }
 }
