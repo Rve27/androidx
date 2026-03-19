@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime
+package androidx.xr.runtime.math
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test

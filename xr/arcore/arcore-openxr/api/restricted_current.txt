@@ -211,9 +211,9 @@ package androidx.xr.arcore.openxr {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class OpenXrRenderViewpoint implements androidx.xr.arcore.runtime.RenderViewpoint {
-    method @InaccessibleFromKotlin public androidx.xr.runtime.FieldOfView getFieldOfView();
+    method @InaccessibleFromKotlin @Deprecated public androidx.xr.runtime.FieldOfView getFieldOfView();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
-    property public androidx.xr.runtime.FieldOfView fieldOfView;
+    property @Deprecated public androidx.xr.runtime.FieldOfView fieldOfView;
     property public androidx.xr.runtime.math.Pose pose;
   }
 
@@ -238,18 +238,18 @@ package androidx.xr.arcore.openxr {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) internal final class ViewCameraState {
     ctor public ViewCameraState();
-    ctor public ViewCameraState(optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.runtime.FieldOfView fieldOfView);
-    ctor @BytecodeOnly public ViewCameraState(androidx.xr.runtime.math.Pose!, androidx.xr.runtime.FieldOfView!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor public ViewCameraState(optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.runtime.math.FieldOfView fieldOfView);
+    ctor @BytecodeOnly public ViewCameraState(androidx.xr.runtime.math.Pose!, androidx.xr.runtime.math.FieldOfView!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.xr.runtime.math.Pose component1();
-    method public androidx.xr.runtime.FieldOfView component2();
-    method public androidx.xr.arcore.openxr.ViewCameraState copy(optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.runtime.FieldOfView fieldOfView);
-    method @BytecodeOnly public static androidx.xr.arcore.openxr.ViewCameraState! copy$default(androidx.xr.arcore.openxr.ViewCameraState!, androidx.xr.runtime.math.Pose!, androidx.xr.runtime.FieldOfView!, int, Object!);
+    method public androidx.xr.runtime.math.FieldOfView component2();
+    method public androidx.xr.arcore.openxr.ViewCameraState copy(optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.runtime.math.FieldOfView fieldOfView);
+    method @BytecodeOnly public static androidx.xr.arcore.openxr.ViewCameraState! copy$default(androidx.xr.arcore.openxr.ViewCameraState!, androidx.xr.runtime.math.Pose!, androidx.xr.runtime.math.FieldOfView!, int, Object!);
     method internal boolean equals(Object? other);
-    method @InaccessibleFromKotlin public androidx.xr.runtime.FieldOfView getFieldOfView();
+    method @InaccessibleFromKotlin public androidx.xr.runtime.math.FieldOfView getFieldOfView();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
     method internal int hashCode();
     method internal String toString();
-    property public androidx.xr.runtime.FieldOfView fieldOfView;
+    property public androidx.xr.runtime.math.FieldOfView fieldOfView;
     property public androidx.xr.runtime.math.Pose pose;
   }
 

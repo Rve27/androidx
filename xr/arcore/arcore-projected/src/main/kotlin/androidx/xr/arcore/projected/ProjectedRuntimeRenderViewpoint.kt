@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+// TODO(b/494286565) - Remove deprecation suppression when androidx.xr.runtime.FieldOfView is
+// removed.
+@file:Suppress("DEPRECATION")
+
 package androidx.xr.arcore.projected
 
 import androidx.annotation.RestrictTo
@@ -28,5 +32,6 @@ import androidx.xr.runtime.math.Pose
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class ProjectedRuntimeRenderViewpoint(
     override var pose: Pose = Pose(),
+    @Deprecated(message = "Convert to androidx.xr.runtime.math.FieldOfView")
     override var fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f),
 ) : RuntimeRenderViewpoint {}
