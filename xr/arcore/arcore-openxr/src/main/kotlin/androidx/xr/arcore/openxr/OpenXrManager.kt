@@ -34,6 +34,7 @@ import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.manifest.HAND_TRACKING
+import androidx.xr.runtime.openxr.OpenXrInstanceManager
 import kotlin.time.ComparableTimeMark
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
@@ -76,14 +77,18 @@ internal constructor(
     override var instancePointer: Long = 0L
         private set
 
+    internal var instanceProcAddr: Long = 0L
+        private set
+
     override fun create() {
         nativePointer = nativeGetPointer()
+        instancePointer = OpenXrInstanceManager.getXrInstanceHandle(context)
+        instanceProcAddr = OpenXrInstanceManager.getXrInstanceProcAddr()
         // Only initialize the OpenXrManager and bring up resources.
-        check(nativeInit(context, startPollingThread = false))
+        check(nativeInit(context, startPollingThread = false, instancePointer, instanceProcAddr))
         contextList.add(context)
         setAuthentication(context)
         sessionPointer = nativeGetXrSessionHandle()
-        instancePointer = nativeGetXrInstanceHandle()
     }
 
     override var config: Config =
@@ -225,7 +230,7 @@ internal constructor(
         // lifecycle. Ideally make this two different functions.
         // The initialization will be a no-op but it will start the polling loop for the resumed
         // lifecycle.
-        check(nativeInit(context, startPollingThread = true))
+        check(nativeInit(context, startPollingThread = true, instancePointer, instanceProcAddr))
     }
 
     override suspend fun update(): ComparableTimeMark {
@@ -313,7 +318,12 @@ internal constructor(
 
     private external fun nativeGetXrInstanceHandle(): Long
 
-    private external fun nativeInit(context: Context, startPollingThread: Boolean): Boolean
+    private external fun nativeInit(
+        context: Context,
+        startPollingThread: Boolean,
+        instancePointer: Long,
+        instanceProcAddr: Long,
+    ): Boolean
 
     private external fun nativeDeInit(): Boolean
 
