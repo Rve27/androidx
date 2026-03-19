@@ -109,6 +109,8 @@ class HelloArPlaneActivity : ComponentActivity() {
     fun HelloPlanes(session: Session) {
         val state by session.state.collectAsStateWithLifecycle()
         val perceptionState = state.perceptionState
+        val arDevice = androidx.xr.arcore.ArDevice.getInstance(session)
+        val arDeviceState by arDevice.state.collectAsStateWithLifecycle()
         var title = intent.getStringExtra("TITLE")
         if (title == null) title = "Hello AR Plane"
         val blendMode = XrDevice.getCurrentDevice(session).getPreferredDisplayBlendMode()
@@ -144,6 +146,20 @@ class HelloArPlaneActivity : ComponentActivity() {
                     Text(
                         modifier = Modifier.padding(start = 10.dp).weight(3f),
                         text = "${state.timeMark}",
+                        fontSize = 20.sp,
+                    )
+                }
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp).weight(1f),
+                        text = "Tracking State:",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 10.dp).weight(3f),
+                        text = "${arDeviceState.trackingState}",
                         fontSize = 20.sp,
                     )
                 }
