@@ -41,9 +41,11 @@ public class OpenXrDevice internal constructor() : ArDevice, Updatable {
      * @param xrTime the number of nanoseconds since the start of the OpenXR epoch
      */
     override fun update(xrTime: Long) {
-        // Keep the device pose as the previous one if native returns null.
-        devicePose = nativeGetHeadPose(xrTime) ?: devicePose
+        val deviceState = nativeGetDeviceState(xrTime)
+
+        devicePose = deviceState.pose ?: devicePose
+        trackingState = deviceState.trackingState
     }
 
-    private external fun nativeGetHeadPose(timestampNs: Long): Pose?
+    private external fun nativeGetDeviceState(monotonicTimeNs: Long): DeviceState
 }
