@@ -20,7 +20,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.os.Build
 import android.os.OutcomeReceiver
+import androidx.glance.wear.cache.WearWidgetCache
+import androidx.glance.wear.core.ActiveWearWidgetHandle
 import androidx.glance.wear.core.ContainerInfo
+import androidx.glance.wear.core.WearWidgetParams
 import androidx.glance.wear.core.WidgetInstanceId
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -60,17 +63,23 @@ class GlanceWearWidgetManagerTest {
     private val tilesManager: TilesManager = mock()
     private val activeWidgetStore: ActiveWidgetStore = ActiveWidgetStore(context)
 
+    private val widgetCache: WearWidgetCache = mock<WearWidgetCache>()
     private val widgetManager: GlanceWearWidgetManager =
-        GlanceWearWidgetManager(tilesManager, activeWidgetStore)
+        GlanceWearWidgetManager(context, tilesManager, activeWidgetStore, widgetCache)
 
-    @After
-    fun tearDown() {
-        activeWidgetStore.markWidgetAsInactive(component1, 1)
-    }
+    @After fun tearDown() = runTest { activeWidgetStore.markWidgetAsInactive(component1, 1) }
 
     @Test
     @Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun fetchActiveWidgetsApi34_returnsAllActiveWidgets() = runTest {
+        whenever(widgetCache.getServiceToWidgetMapping())
+            .thenReturn(
+                mapOf(
+                    TestWidgetService1::class.java.name to TestWidget1::class.java.canonicalName!!,
+                    TestWidgetService2::class.java.name to TestWidget2::class.java.canonicalName!!,
+                )
+            )
+
         whenever(tilesManager.getActiveTiles(any(), any())).thenAnswer { invocationOnMock ->
             val executor = invocationOnMock.getArgument<Executor>(0)
             val outcomeReceiver =
@@ -80,17 +89,19 @@ class GlanceWearWidgetManagerTest {
 
         val widgets = widgetManager.fetchActiveWidgets()
 
-        assertThat(widgets.size).isEqualTo(2)
-        assertThat(widgets[0].instanceId.id).isEqualTo(1)
-        assertThat(widgets[0].instanceId.namespace)
-            .isEqualTo(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE)
-        assertThat(widgets[0].provider).isEqualTo(component1)
-        assertThat(widgets[0].containerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_TILE_COMPAT)
-        assertThat(widgets[1].instanceId.id).isEqualTo(2)
-        assertThat(widgets[1].instanceId.namespace)
-            .isEqualTo(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE)
-        assertThat(widgets[1].provider).isEqualTo(component2)
-        assertThat(widgets[1].containerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_TILE_COMPAT)
+        assertThat(widgets)
+            .containsExactly(
+                ActiveWearWidgetHandle(
+                    provider = component1,
+                    instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 1),
+                    containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
+                ),
+                ActiveWearWidgetHandle(
+                    provider = component2,
+                    instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 2),
+                    containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
+                ),
+            )
     }
 
     @Test(expected = RuntimeException::class)
@@ -109,24 +120,55 @@ class GlanceWearWidgetManagerTest {
     @Test
     @Config(maxSdk = Build.VERSION_CODES.TIRAMISU)
     fun fetchActiveWidgetsApi33_returnsAllActiveWidgets() = runTest {
+        whenever(widgetCache.getServiceToWidgetMapping())
+            .thenReturn(
+                mapOf(
+                    TestWidgetService1::class.java.name to TestWidget1::class.java.canonicalName!!
+                )
+            )
         activeWidgetStore.markWidgetAsActive(component1, 1)
 
         val widgets = widgetManager.fetchActiveWidgets()
 
         verify(tilesManager, never()).getActiveTiles(any(), any())
-        assertThat(widgets.size).isEqualTo(1)
-        assertThat(widgets[0].instanceId.id).isEqualTo(1)
-        assertThat(widgets[0].instanceId.namespace)
-            .isEqualTo(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE)
-        assertThat(widgets[0].provider).isEqualTo(component1)
-        assertThat(widgets[0].containerType).isEqualTo(ContainerInfo.CONTAINER_TYPE_TILE_COMPAT)
+        assertThat(widgets)
+            .containsExactly(
+                ActiveWearWidgetHandle(
+                    provider = component1,
+                    instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 1),
+                    containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
+                )
+            )
     }
 
-    private class TestWidgetService1 : GlanceWearWidgetService() {
-        override val widget: GlanceWearWidget = mock()
-    }
+    @Test
+    fun updateService_updatesWidgetCache() = runTest {
+        val service = TestWidgetService1()
 
-    private class TestWidgetService2 : GlanceWearWidgetService() {
-        override val widget: GlanceWearWidget = mock()
+        widgetManager.updateServiceMapping(service, service.widget)
+
+        verify(widgetCache).update(any())
     }
+}
+
+private open class TestWidget1 : GlanceWearWidget() {
+    override suspend fun provideWidgetData(
+        context: Context,
+        params: WearWidgetParams,
+    ): WearWidgetData = mock()
+}
+
+private open class TestWidget2 : GlanceWearWidget() {
+    override suspend fun provideWidgetData(
+        context: Context,
+        params: WearWidgetParams,
+    ): WearWidgetData = mock()
+}
+
+public class TestWidgetService1 : GlanceWearWidgetService() {
+    override val widget: GlanceWearWidget = TestWidget1()
+}
+
+public class TestWidgetService2 : GlanceWearWidgetService() {
+    override val widget: GlanceWearWidget = TestWidget2()
 }
