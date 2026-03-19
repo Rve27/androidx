@@ -548,6 +548,10 @@ package androidx.xr.runtime {
     property @Deprecated public androidx.xr.runtime.XrDevice.DisplayBlendMode NO_DISPLAY;
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class XrExtensionsHolder<T> extends androidx.xr.runtime.TypeHolder<T> {
+    ctor public XrExtensionsHolder(T extensions, Class<? extends java.lang.Object?> type);
+  }
+
   public final class XrLog {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void debug(String message);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void debug(optional Throwable? throwable, kotlin.jvm.functions.Function0<java.lang.String> message);
