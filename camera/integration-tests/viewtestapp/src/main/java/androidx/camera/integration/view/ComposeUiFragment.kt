@@ -225,7 +225,10 @@ private fun CameraScreen(
     var showImplementationMode by remember { mutableStateOf(false) }
     var showScaleMenu by remember { mutableStateOf(false) }
     val viewfinderState = rememberCameraXViewfinderState()
-    LaunchedEffect(viewfinderState) { viewfinderState.isPinchToZoomEnabled = true }
+    LaunchedEffect(viewfinderState) {
+        viewfinderState.isPinchToZoomEnabled = true
+        viewfinderState.isTapToFocusEnabled = true
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         surfaceRequest?.let { request ->

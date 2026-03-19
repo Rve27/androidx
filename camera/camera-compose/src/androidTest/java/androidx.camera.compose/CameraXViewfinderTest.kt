@@ -30,6 +30,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.CameraUtil.PreTestCameraIdList
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
+import androidx.camera.viewfinder.core.FocusMeteringState
 import androidx.camera.viewfinder.core.ImplementationMode
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.collectAsState
@@ -45,6 +46,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -553,6 +555,120 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
             .assert(SemanticsMatcher.hasChild())
 
         ensureCameraIsStreaming()
+    }
+
+    @Test
+    fun tapToFocus_whenEnabled_invokesCallback() = runViewfinderTest {
+        // Arrange
+        val receivedStatuses = mutableListOf<Int>()
+        startCamera()
+
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            currentSurfaceRequest?.let { surfaceRequest ->
+                val state = rememberCameraXViewfinderState()
+                state.isPinchToZoomEnabled = false
+                state.isTapToFocusEnabled = true
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    state = state,
+                    onTapToFocus = { receivedStatuses.add(it.status) },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+
+        // Act
+        composeTest
+            .onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG)
+            .assertIsDisplayed()
+            .performTouchInput { click(center) }
+
+        // Wait for a terminal state (FOCUSED, NOT_FOCUSED, or FAILED)
+        composeTest.waitUntil(5000) { receivedStatuses.size > 1 }
+
+        // Assert
+        assertThat(receivedStatuses).isNotEmpty()
+        assertThat(receivedStatuses[0]).isEqualTo(FocusMeteringState.FOCUS_METERING_STARTED)
+        assertThat(receivedStatuses.last())
+            .isAnyOf(
+                FocusMeteringState.FOCUS_METERING_FOCUSED,
+                FocusMeteringState.FOCUS_METERING_NOT_FOCUSED,
+                FocusMeteringState.FOCUS_METERING_FAILED,
+            )
+    }
+
+    @Test
+    fun tapToFocus_reportsCorrectOffset() = runViewfinderTest {
+        // Arrange
+        var receivedOffset: Offset? = null
+        startCamera()
+
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            currentSurfaceRequest?.let { surfaceRequest ->
+                val state = rememberCameraXViewfinderState()
+                state.isPinchToZoomEnabled = false
+                state.isTapToFocusEnabled = true
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    state = state,
+                    onTapToFocus = {
+                        if (it.status == FocusMeteringState.FOCUS_METERING_STARTED) {
+                            receivedOffset = it.tapCoordinate
+                        }
+                    },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+
+        // Act
+        val tapLocation = Offset(100f, 200f)
+        composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).performTouchInput {
+            click(tapLocation)
+        }
+        composeTest.awaitIdle()
+
+        // Assert
+        assertThat(receivedOffset).isEqualTo(tapLocation)
+    }
+
+    @Test
+    fun tapToFocus_whenDisabled_doesNotInvokeCallback() = runViewfinderTest {
+        // Arrange
+        startCamera()
+        var callbackInvoked = false
+
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            currentSurfaceRequest?.let { surfaceRequest ->
+                val state = rememberCameraXViewfinderState()
+                state.isPinchToZoomEnabled = false
+                state.isTapToFocusEnabled = false
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    state = state,
+                    onTapToFocus = { callbackInvoked = true },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+
+        // Act
+        composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).performTouchInput { click(center) }
+        composeTest.awaitIdle()
+
+        // Assert
+        assertThat(callbackInvoked).isFalse()
     }
 
     companion object {
