@@ -357,6 +357,7 @@ public constructor(
                 "androidx.xr.arcore.playservices.ArCoreRuntimeFactory",
                 "androidx.xr.arcore.openxr.OpenXrRuntimeFactory",
                 "androidx.xr.arcore.testing.FakePerceptionRuntimeFactory",
+                "androidx.xr.runtime.StubPerceptionRuntimeFactory",
             )
 
         private val SCENE_RUNTIME_FACTORY_PROVIDERS =
@@ -377,11 +378,13 @@ public constructor(
                 "androidx.xr.arcore.PerceptionStateExtender",
                 "androidx.xr.arcore.playservices.CameraStateExtender",
                 "androidx.xr.arcore.testing.FakeStateExtender",
+                "androidx.xr.runtime.StubStateExtender",
             )
         private val SESSION_CONNECTOR_PROVIDERS =
             listOf(
                 "androidx.xr.scenecore.Scene",
                 "androidx.xr.runtime.testing.FakeSessionConnector",
+                "androidx.xr.runtime.StubSessionConnector",
             )
     }
 
