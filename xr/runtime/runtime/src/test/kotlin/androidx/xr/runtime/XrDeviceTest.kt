@@ -17,8 +17,6 @@ package androidx.xr.runtime
 
 import androidx.activity.ComponentActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.xr.arcore.testing.FakeLifecycleManager
-import androidx.xr.arcore.testing.FakePerceptionRuntime
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -46,7 +44,7 @@ class XrDeviceTest {
         activity = activityController.get()
 
         val shadowApplication = shadowOf(activity.application)
-        FakeLifecycleManager.TestPermissions.forEach { permission ->
+        StubPerceptionRuntime.TestPermissions.forEach { permission ->
             shadowApplication.grantPermissions(permission)
         }
     }
@@ -56,7 +54,7 @@ class XrDeviceTest {
         activityController.create()
         session = createSession()
         session.runtimes
-            .filterIsInstance<FakePerceptionRuntime>()
+            .filterIsInstance<StubPerceptionRuntime>()
             .single()
             .xrDevicePreferredDisplayBlendMode = DisplayBlendMode.ADDITIVE
 
