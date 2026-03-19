@@ -2390,6 +2390,8 @@ package androidx.compose.foundation.style {
 
   @SuppressCompatibility public final class StyleScopeKt {
     method @SuppressCompatibility @androidx.compose.foundation.style.ExperimentalFoundationStyleApi public static void apply(androidx.compose.foundation.style.StyleScope, androidx.compose.foundation.style.Style style);
+    method @SuppressCompatibility @androidx.compose.foundation.style.ExperimentalFoundationStyleApi public static void contentPadding(androidx.compose.foundation.style.StyleScope, androidx.compose.foundation.layout.PaddingValues paddingValues);
+    method @SuppressCompatibility @androidx.compose.foundation.style.ExperimentalFoundationStyleApi public static void externalPadding(androidx.compose.foundation.style.StyleScope, androidx.compose.foundation.layout.PaddingValues paddingValues);
     method @SuppressCompatibility @androidx.compose.foundation.style.ExperimentalFoundationStyleApi public static void fillHeight(androidx.compose.foundation.style.StyleScope);
     method @SuppressCompatibility @androidx.compose.foundation.style.ExperimentalFoundationStyleApi public static void fillSize(androidx.compose.foundation.style.StyleScope);
     method @SuppressCompatibility @androidx.compose.foundation.style.ExperimentalFoundationStyleApi public static void fillWidth(androidx.compose.foundation.style.StyleScope);
