@@ -642,6 +642,8 @@ abstract interface androidx.compose.ui.layout/LayoutInfo { // androidx.compose.u
         abstract fun <get-width>(): kotlin/Int // androidx.compose.ui.layout/LayoutInfo.width.<get-width>|<get-width>(){}[0]
     open val isDeactivated // androidx.compose.ui.layout/LayoutInfo.isDeactivated|{}isDeactivated[0]
         open fun <get-isDeactivated>(): kotlin/Boolean // androidx.compose.ui.layout/LayoutInfo.isDeactivated.<get-isDeactivated>|<get-isDeactivated>(){}[0]
+    open val isVirtual // androidx.compose.ui.layout/LayoutInfo.isVirtual|{}isVirtual[0]
+        open fun <get-isVirtual>(): kotlin/Boolean // androidx.compose.ui.layout/LayoutInfo.isVirtual.<get-isVirtual>|<get-isVirtual>(){}[0]
 
     abstract fun getModifierInfo(): kotlin.collections/List<androidx.compose.ui.layout/ModifierInfo> // androidx.compose.ui.layout/LayoutInfo.getModifierInfo|getModifierInfo(){}[0]
 }
