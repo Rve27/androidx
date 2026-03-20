@@ -928,6 +928,8 @@ public class WebViewCompat {
      * @return the {@link ScriptHandler}, which is a handle for removing the script.
      * @throws IllegalArgumentException If one of the {@code allowedOriginRules} is invalid or if
      *                                  the {@code world} is invalid.
+     * @throws UnsupportedOperationException If the underlying webview does not support
+     *                                       this feature.
      * @see #addWebMessageListener(WebView, String, Set, WebMessageListener)
      * @see ScriptHandler
      */
