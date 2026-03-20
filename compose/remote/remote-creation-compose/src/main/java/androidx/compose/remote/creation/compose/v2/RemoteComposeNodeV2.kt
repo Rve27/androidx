@@ -20,6 +20,7 @@ import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.Operations
 import androidx.compose.remote.core.operations.layout.managers.TextLayout
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
+import androidx.compose.remote.creation.compose.layout.HorizontalArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas
@@ -51,7 +52,9 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachReversed
 
 internal abstract class RemoteComposeNodeV2 {
     val children = mutableListOf<RemoteComposeNodeV2>()
@@ -59,7 +62,11 @@ internal abstract class RemoteComposeNodeV2 {
 
     abstract fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas)
 
-    fun renderChildren(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
+    fun renderChildren(
+        creationState: RemoteComposeCreationState,
+        remoteCanvas: RemoteCanvas,
+        reversed: Boolean = false,
+    ) {
         val drawWithContent = modifier.find<DrawWithContentModifier>()
 
         if (drawWithContent != null) {
@@ -70,7 +77,11 @@ internal abstract class RemoteComposeNodeV2 {
             creationState.document.endCanvasOperations()
         }
 
-        children.fastForEach { it.render(creationState, remoteCanvas) }
+        if (!reversed) {
+            children.fastForEach { it.render(creationState, remoteCanvas) }
+        } else {
+            children.fastForEachReversed { it.render(creationState, remoteCanvas) }
+        }
     }
 }
 
@@ -107,12 +118,13 @@ internal class RemoteRootNodeV2 : RemoteComposeNodeV2() {
 internal class RemoteBoxNodeV2 : RemoteComposeNodeV2() {
     var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start
     var verticalAlignment: RemoteAlignment.Vertical = RemoteAlignment.Top
+    var layoutDirection: LayoutDirection = LayoutDirection.Ltr
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startBox(
             recordingModifier,
-            horizontalAlignment.toRemote(creationState.layoutDirection),
+            horizontalAlignment.toRemote(layoutDirection),
             verticalAlignment.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -123,6 +135,7 @@ internal class RemoteBoxNodeV2 : RemoteComposeNodeV2() {
 internal class RemoteRowNodeV2 : RemoteComposeNodeV2() {
     var horizontalArrangement: RemoteArrangement.Horizontal = RemoteArrangement.Start
     var verticalAlignment: RemoteAlignment.Vertical = RemoteAlignment.Top
+    var layoutDirection: LayoutDirection = LayoutDirection.Ltr
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
@@ -131,10 +144,14 @@ internal class RemoteRowNodeV2 : RemoteComposeNodeV2() {
         }
         creationState.document.startRow(
             recordingModifier,
-            horizontalArrangement.toRemote(creationState.layoutDirection),
+            horizontalArrangement.toRemote(layoutDirection),
             verticalAlignment.toRemote(),
         )
-        renderChildren(creationState, remoteCanvas)
+        renderChildren(
+            creationState,
+            remoteCanvas,
+            reversed = shouldReverse(horizontalArrangement, layoutDirection),
+        )
         creationState.document.endRow()
     }
 }
@@ -142,6 +159,7 @@ internal class RemoteRowNodeV2 : RemoteComposeNodeV2() {
 internal class RemoteFlowRowNodeV2 : RemoteComposeNodeV2() {
     var horizontalArrangement: RemoteArrangement.Horizontal = RemoteArrangement.Start
     var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top
+    var layoutDirection: LayoutDirection = LayoutDirection.Ltr
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
@@ -150,10 +168,14 @@ internal class RemoteFlowRowNodeV2 : RemoteComposeNodeV2() {
         }
         creationState.document.startFlow(
             recordingModifier,
-            horizontalArrangement.toRemote(creationState.layoutDirection),
+            horizontalArrangement.toRemote(layoutDirection),
             verticalArrangement.toRemote(),
         )
-        renderChildren(creationState, remoteCanvas)
+        renderChildren(
+            creationState,
+            remoteCanvas,
+            reversed = shouldReverse(horizontalArrangement, layoutDirection),
+        )
         creationState.document.endFlow()
     }
 }
@@ -161,6 +183,7 @@ internal class RemoteFlowRowNodeV2 : RemoteComposeNodeV2() {
 internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
     var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top
     var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start
+    var layoutDirection: LayoutDirection = LayoutDirection.Ltr
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
@@ -169,7 +192,7 @@ internal class RemoteColumnNodeV2 : RemoteComposeNodeV2() {
         }
         creationState.document.startColumn(
             recordingModifier,
-            horizontalAlignment.toRemote(creationState.layoutDirection),
+            horizontalAlignment.toRemote(layoutDirection),
             verticalArrangement.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -194,12 +217,13 @@ internal class RemoteStateLayoutNodeV2 : RemoteComposeNodeV2() {
 internal class RemoteFitBoxNodeV2 : RemoteComposeNodeV2() {
     var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start
     var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top
+    var layoutDirection: LayoutDirection = LayoutDirection.Ltr
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
         creationState.document.startFitBox(
             recordingModifier,
-            horizontalAlignment.toRemote(creationState.layoutDirection),
+            horizontalAlignment.toRemote(layoutDirection),
             verticalArrangement.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -210,6 +234,7 @@ internal class RemoteFitBoxNodeV2 : RemoteComposeNodeV2() {
 internal class RemoteCollapsibleColumnNodeV2 : RemoteComposeNodeV2() {
     var horizontalAlignment: RemoteAlignment.Horizontal = RemoteAlignment.Start
     var verticalArrangement: RemoteArrangement.Vertical = RemoteArrangement.Top
+    var layoutDirection: LayoutDirection = LayoutDirection.Ltr
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
@@ -218,7 +243,7 @@ internal class RemoteCollapsibleColumnNodeV2 : RemoteComposeNodeV2() {
         }
         creationState.document.startCollapsibleColumn(
             recordingModifier,
-            horizontalAlignment.toRemote(creationState.layoutDirection),
+            horizontalAlignment.toRemote(layoutDirection),
             verticalArrangement.toRemote(),
         )
         renderChildren(creationState, remoteCanvas)
@@ -229,6 +254,7 @@ internal class RemoteCollapsibleColumnNodeV2 : RemoteComposeNodeV2() {
 internal class RemoteCollapsibleRowNodeV2 : RemoteComposeNodeV2() {
     var horizontalArrangement: RemoteArrangement.Horizontal = RemoteArrangement.Start
     var verticalAlignment: RemoteAlignment.Vertical = RemoteAlignment.Top
+    var layoutDirection: LayoutDirection = LayoutDirection.Ltr
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
         val recordingModifier = creationState.toRecordingModifier(modifier)
@@ -237,10 +263,14 @@ internal class RemoteCollapsibleRowNodeV2 : RemoteComposeNodeV2() {
         }
         creationState.document.startCollapsibleRow(
             recordingModifier,
-            horizontalArrangement.toRemote(creationState.layoutDirection),
+            horizontalArrangement.toRemote(layoutDirection),
             verticalAlignment.toRemote(),
         )
-        renderChildren(creationState, remoteCanvas)
+        renderChildren(
+            creationState,
+            remoteCanvas,
+            reversed = shouldReverse(horizontalArrangement, layoutDirection),
+        )
         creationState.document.endCollapsibleRow()
     }
 }
@@ -396,3 +426,17 @@ internal inline fun <T : RemoteComposeNodeV2> RemoteComposeNode(
 ) {
     ComposeNode<T, RemoteComposeApplierV2>(factory, update, content)
 }
+
+private fun shouldReverse(
+    horizontalArrangement: RemoteArrangement.Horizontal,
+    layoutDirection: LayoutDirection,
+): Boolean =
+    if (layoutDirection == LayoutDirection.Rtl) {
+        if (horizontalArrangement is HorizontalArrangement) {
+            !horizontalArrangement.isAbsolute()
+        } else {
+            true
+        }
+    } else {
+        false
+    }
