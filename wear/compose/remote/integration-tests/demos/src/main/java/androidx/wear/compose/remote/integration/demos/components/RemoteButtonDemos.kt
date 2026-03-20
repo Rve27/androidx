@@ -29,6 +29,7 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import androidx.wear.compose.remote.material3.previews.RemoteButtonEnabled
+import androidx.wear.compose.remote.material3.previews.RemoteButtonWithBackground
 import androidx.wear.compose.remote.material3.previews.RemoteButtonWithBorder
 import androidx.wear.compose.remote.material3.previews.RemoteButtonWithIcon
 import androidx.wear.compose.remote.material3.previews.RemoteButtonWithIconAndSecondaryLabel
@@ -68,6 +69,7 @@ fun RemoteButtonDemos(modifier: Modifier = Modifier) {
                     RemoteButtonWithIconAndSecondaryLabel()
                 }
             }
+            item { RemoteDemoItem("With background") { RemoteButtonWithBackground() } }
         }
     }
 }
