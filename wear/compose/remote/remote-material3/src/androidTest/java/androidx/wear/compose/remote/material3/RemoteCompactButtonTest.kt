@@ -38,6 +38,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithIcon
 import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithIconAndLabel
 import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithLabel
+import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithShape
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -101,6 +102,16 @@ class RemoteCompactButtonTest {
             creationDisplayInfo = creationDisplayInfo,
         ) {
             Center(RemoteModifier.fillMaxSize()) { RemoteCompactButtonWithIconAndLabel() }
+        }
+    }
+
+    @Test
+    fun compact_button_with_shape() {
+        remoteComposeTestRule.runScreenshotTest(
+            backgroundColor = Color.Black,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
+            Center(RemoteModifier.fillMaxSize()) { RemoteCompactButtonWithShape() }
         }
     }
 
