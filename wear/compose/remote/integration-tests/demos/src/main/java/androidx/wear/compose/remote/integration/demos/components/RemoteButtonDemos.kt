@@ -34,6 +34,7 @@ import androidx.wear.compose.remote.material3.previews.RemoteButtonWithBorder
 import androidx.wear.compose.remote.material3.previews.RemoteButtonWithIcon
 import androidx.wear.compose.remote.material3.previews.RemoteButtonWithIconAndSecondaryLabel
 import androidx.wear.compose.remote.material3.previews.RemoteButtonWithSecondaryLabel
+import androidx.wear.compose.remote.material3.previews.RemoteButtonWithShape
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @Composable
@@ -60,16 +61,17 @@ fun RemoteButtonDemos(modifier: Modifier = Modifier) {
                     )
                 }
             }
-            item { RemoteDemoItem("With label") { RemoteButtonEnabled() } }
-            item { RemoteDemoItem("With border") { RemoteButtonWithBorder() } }
-            item { RemoteDemoItem("With secondary label") { RemoteButtonWithSecondaryLabel() } }
-            item { RemoteDemoItem("With icon") { RemoteButtonWithIcon() } }
+            item { RemoteDemoItem("Label") { RemoteButtonEnabled() } }
+            item { RemoteDemoItem("Border") { RemoteButtonWithBorder() } }
+            item { RemoteDemoItem("Secondary label") { RemoteButtonWithSecondaryLabel() } }
+            item { RemoteDemoItem("Icon") { RemoteButtonWithIcon() } }
             item {
-                RemoteDemoItem("With icon and secondary label") {
+                RemoteDemoItem("Icon and secondary label") {
                     RemoteButtonWithIconAndSecondaryLabel()
                 }
             }
-            item { RemoteDemoItem("With background") { RemoteButtonWithBackground() } }
+            item { RemoteDemoItem("Custom shape") { RemoteButtonWithShape() } }
+            item { RemoteDemoItem("Background") { RemoteButtonWithBackground() } }
         }
     }
 }
