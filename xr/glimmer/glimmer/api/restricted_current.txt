@@ -490,8 +490,8 @@ package androidx.xr.glimmer.stack {
   }
 
   public static final class StackState.Companion {
-    method @InaccessibleFromKotlin public androidx.compose.runtime.saveable.Saver<androidx.xr.glimmer.stack.StackState,java.lang.Integer> getSaver();
-    property public androidx.compose.runtime.saveable.Saver<androidx.xr.glimmer.stack.StackState,java.lang.Integer> Saver;
+    method @InaccessibleFromKotlin public androidx.compose.runtime.saveable.Saver<androidx.xr.glimmer.stack.StackState,? extends java.lang.Object?> getSaver();
+    property public androidx.compose.runtime.saveable.Saver<androidx.xr.glimmer.stack.StackState,? extends java.lang.Object?> Saver;
   }
 
   public final class StackStateKt {
