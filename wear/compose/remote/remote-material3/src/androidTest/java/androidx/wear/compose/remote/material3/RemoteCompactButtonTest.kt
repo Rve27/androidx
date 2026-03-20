@@ -28,6 +28,7 @@ import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.state.rb
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.state.rs
+import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -58,6 +59,7 @@ class RemoteCompactButtonTest {
     @Test
     fun compact_button_disabled() {
         remoteComposeTestRule.runScreenshotTest(
+            profile = RcPlatformProfiles.WEAR_WIDGETS,
             backgroundColor = Color.Black,
             creationDisplayInfo = creationDisplayInfo,
         ) {

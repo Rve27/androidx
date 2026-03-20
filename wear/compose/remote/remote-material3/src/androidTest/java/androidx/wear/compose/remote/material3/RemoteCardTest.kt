@@ -23,6 +23,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
+import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.compose.runtime.Composable
 import androidx.test.core.app.ApplicationProvider
@@ -52,14 +53,20 @@ class RemoteCardTest {
 
     @Test
     fun card_default() {
-        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
+        remoteComposeTestRule.runScreenshotTest(
+            profile = RcPlatformProfiles.WEAR_WIDGETS,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             Container(RemoteModifier.fillMaxSize()) { RemoteCardDefault() }
         }
     }
 
     @Test
     fun card_outline() {
-        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
+        remoteComposeTestRule.runScreenshotTest(
+            profile = RcPlatformProfiles.WEAR_WIDGETS,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             Container(RemoteModifier.fillMaxSize()) { RemoteCardOutline() }
         }
     }
