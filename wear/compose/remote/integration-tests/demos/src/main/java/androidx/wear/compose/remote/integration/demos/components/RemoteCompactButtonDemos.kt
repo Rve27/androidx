@@ -28,13 +28,15 @@ import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
-import androidx.wear.compose.remote.material3.previews.RemoteTitleCardDefault
-import androidx.wear.compose.remote.material3.previews.RemoteTitleCardWithTitleSubtitle
-import androidx.wear.compose.remote.material3.previews.RemoteTitleCardWithTitleTime
+import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithBorder
+import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithIcon
+import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithIconAndLabel
+import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithLabel
+import androidx.wear.compose.remote.material3.previews.RemoteCompactButtonWithShape
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
 
 @Composable
-fun RemoteTitleCardDemos(modifier: Modifier = Modifier) {
+fun RemoteCompactButtonDemos(modifier: Modifier = Modifier) {
     val transformationSpec = rememberTransformationSpec()
     val columnState = rememberTransformingLazyColumnState()
 
@@ -51,29 +53,23 @@ fun RemoteTitleCardDemos(modifier: Modifier = Modifier) {
                     transformation = SurfaceTransformation(transformationSpec),
                 ) {
                     Text(
-                        "RemoteTitleCard Demos",
+                        "RemoteCompactButton Demos",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                     )
                 }
             }
-            item { RemoteDemoItem("Default", documentHeight = 150) { RemoteTitleCardDefault() } }
-            item {
-                RemoteDemoItem("Title and subtitle", documentHeight = 150) {
-                    RemoteTitleCardWithTitleSubtitle()
-                }
-            }
-            item {
-                RemoteDemoItem("Title and time", documentHeight = 150) {
-                    RemoteTitleCardWithTitleTime()
-                }
-            }
+            item { RemoteDemoItem("Icon") { RemoteCompactButtonWithIcon() } }
+            item { RemoteDemoItem("Label") { RemoteCompactButtonWithLabel() } }
+            item { RemoteDemoItem("Icon and label") { RemoteCompactButtonWithIconAndLabel() } }
+            item { RemoteDemoItem("Border") { RemoteCompactButtonWithBorder() } }
+            item { RemoteDemoItem("Custom shape") { RemoteCompactButtonWithShape() } }
         }
     }
 }
 
 @WearPreviewDevices
 @Composable
-private fun RemoteTitleCardDemosPreview() {
-    RemoteTitleCardDemos()
+private fun RemoteCompactButtonDemosPreview() {
+    RemoteCompactButtonDemos()
 }
