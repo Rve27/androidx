@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package androidx.wear.compose.remote.material3.previews
+package androidx.wear.compose.remote.material3.previews.utils
 
-import androidx.compose.remote.creation.compose.capture.NoRemoteCompose
 import androidx.compose.remote.creation.compose.capture.RemoteImageVector
 import androidx.compose.remote.creation.compose.capture.path
 import androidx.compose.remote.creation.compose.state.RemoteColor
@@ -25,18 +24,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 
 object TestImageVectors {
-
-    val testRemoteStateScope = NoRemoteCompose()
-
     val VolumeUp =
         RemoteImageVector.Builder(
                 viewportWidth = 24.0f.rf,
                 viewportHeight = 24.0f.rf,
-                tintColor = RemoteColor(Color.Black),
+                tintColor = RemoteColor(Color.Companion.Black),
                 name = "Volume up",
                 autoMirror = true,
             )
-            .path(fill = SolidColor(Color.Black)) {
+            .path(fill = SolidColor(Color.Companion.Black)) {
                 moveTo(3.0f.rf, 9.0f.rf)
                 verticalLineToRelative(6.0f.rf)
                 horizontalLineToRelative(4.0f.rf)
