@@ -16,83 +16,78 @@
 
 package androidx.savedstate.compose.serialization.serializers
 
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.mutableStateSetOf
+import androidx.compose.runtime.snapshots.SnapshotStateSet
 import androidx.kruth.assertThat
+import androidx.savedstate.compose.IgnoreAndroidHostTest
 import androidx.savedstate.serialization.decodeFromSavedState
 import androidx.savedstate.serialization.encodeToSavedState
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SmallTest
 import kotlin.test.Test
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import org.junit.runner.RunWith
 
-@SmallTest
-@RunWith(AndroidJUnit4::class)
-internal class SnapshotStateMapSerializerTest {
+@IgnoreAndroidHostTest
+internal class SnapshotStateSetSerializerTest {
 
     @Test
     fun encodeDecode_serializable_withElementSerializer() {
-        val original = mutableStateMapOf(Data(11) to Data(21), Data(12) to Data(22))
-        val serializer = SnapshotStateMapSerializer<Data, Data>(serializer(), serializer())
-        doTest(original, serializer)
+        doTest(mutableStateSetOf(Data(1), Data(2)), SnapshotStateSetSerializer(serializer()))
     }
 
     @Test
     fun encodeDecode_serializable() {
-        val original = mutableStateMapOf(Data(11) to Data(21), Data(12) to Data(22))
-        val serializer = SnapshotStateMapSerializer<Data, Data>()
-        doTest(original, serializer)
+        doTest(mutableStateSetOf(Data(1), Data(2)))
     }
 
     @Test
     fun encodeDecode_boolean() {
-        doTest(mutableStateMapOf(true to false, false to false))
+        doTest(mutableStateSetOf(true, false))
     }
 
     @Test
     fun encodeDecode_short() {
-        doTest(mutableStateMapOf(123.toShort() to 456.toShort(), 789.toShort() to 1011.toShort()))
+        doTest(mutableStateSetOf(123.toShort(), 456.toShort()))
     }
 
     @Test
     fun encodeDecode_int() {
-        doTest(mutableStateMapOf(123 to 456, 789 to 1011))
+        doTest(mutableStateSetOf(123, 456))
     }
 
     @Test
     fun encodeDecode_long() {
-        doTest(mutableStateMapOf(123L to 456L, 789L to 1011L))
+        doTest(mutableStateSetOf(123L, 456L))
     }
 
     @Test
     fun encodeDecode_float() {
-        doTest(mutableStateMapOf(3.14F to 2.71F, 1.0F to 2.0F))
+        // 3.5F and 2.25F have exact binary representations. This avoids precision loss and strict
+        // equality failures that occur specifically in Kotlin/JS during encode/decode.
+        doTest(mutableStateSetOf(3.5F, 2.25F))
     }
 
     @Test
     fun encodeDecode_double() {
-        doTest(mutableStateMapOf(3.14 to 2.71, 1.0 to 2.0))
+        doTest(mutableStateSetOf(3.5, 2.25))
     }
 
     @Test
     fun encodeDecode_char() {
-        doTest(mutableStateMapOf('c' to 'd', 'e' to 'f'))
+        doTest(mutableStateSetOf('c', 'd'))
     }
 
     @Test
     fun encodeDecode_strings() {
-        doTest(mutableStateMapOf("foo" to "bar", "baz" to "qux"))
+        doTest(mutableStateSetOf("foo", "bar"))
     }
 
-    private inline fun <reified K, reified V> doTest(
-        original: SnapshotStateMap<K, V>,
-        serializer: SnapshotStateMapSerializer<K, V> = SnapshotStateMapSerializer<K, V>(),
+    private inline fun <reified T : Any> doTest(
+        original: SnapshotStateSet<T>,
+        serializer: SnapshotStateSetSerializer<T> = SnapshotStateSetSerializer(),
     ) {
         val serialized = encodeToSavedState(serializer, original)
         val deserialized = decodeFromSavedState(serializer, serialized)
-        assertThat(original.toMap()).isEqualTo(deserialized.toMap())
+        assertThat(deserialized).isEqualTo(original)
     }
 
     @Serializable private data class Data(val value: Int)
