@@ -16,14 +16,18 @@
 
 package androidx.compose.ui.tooling.preview.samples
 
-import androidx.annotation.Sampled
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.tooling.preview.PreviewWrapperProvider
 
+/*
+ * NOTE: Any change in this sample file needs to be manually copied over to the KDoc in
+ * PreviewWrapper.kt and vice versa. This is to ensure the documentation examples remain
+ * accurate, self-contained, and compile correctly.
+ */
+
 /** Basic sample showing how to implement a [PreviewWrapperProvider] to provide a custom theme. */
-@Sampled
 fun PreviewWrapperProviderSample() {
     class CustomThemeWrapper : PreviewWrapperProvider {
         @Composable
@@ -38,7 +42,6 @@ fun PreviewWrapperProviderSample() {
 
 /** Basic sample showing how to use [PreviewWrapper] to apply a custom wrapper to a preview. */
 @Preview
-@Sampled
 @Composable
 @PreviewWrapper(wrapper = SampleThemeWrapper::class)
 fun PreviewWrapperSample() {
@@ -62,7 +65,6 @@ annotation class FontPreviews
 
 /** Sample showing [PreviewWrapper] used in conjunction with a MultiPreview annotation. */
 @FontPreviews
-@Sampled
 @Composable
 @PreviewWrapper(wrapper = SampleThemeWrapper::class)
 fun PreviewWrapperMultiPreviewSample() {
@@ -71,7 +73,6 @@ fun PreviewWrapperMultiPreviewSample() {
 
 /** Sample showing how to combine multiple wrappers using a composite [PreviewWrapper]. */
 @Preview
-@Sampled
 @Composable
 @PreviewWrapper(wrapper = ThemeAndRemoteWrapper::class)
 fun PreviewWrapperCompositeSample() {
