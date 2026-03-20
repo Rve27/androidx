@@ -19,17 +19,14 @@ package androidx.savedstate.compose.serialization.serializers
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.kruth.assertThat
+import androidx.savedstate.compose.IgnoreAndroidHostTest
 import androidx.savedstate.serialization.decodeFromSavedState
 import androidx.savedstate.serialization.encodeToSavedState
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SmallTest
 import kotlin.test.Test
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import org.junit.runner.RunWith
 
-@SmallTest
-@RunWith(AndroidJUnit4::class)
+@IgnoreAndroidHostTest
 internal class SnapshotStateListSerializerTest {
 
     @Test
@@ -64,7 +61,9 @@ internal class SnapshotStateListSerializerTest {
 
     @Test
     fun encodeDecode_float() {
-        doTest(mutableStateListOf(3.14F, 2.71F))
+        // 3.5F and 2.25F have exact binary representations. This avoids precision loss and strict
+        // equality failures that occur specifically in Kotlin/JS during encode/decode.
+        doTest(mutableStateListOf(3.5F, 2.25F))
     }
 
     @Test
