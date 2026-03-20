@@ -36,8 +36,18 @@ interface PreviewWrapperProvider {
      * Wraps the provided [content] with custom UI logic or containers.
      *
      * Example usage for applying a Theme:
+     * ```kotlin
+     * class CustomThemeWrapper : PreviewWrapperProvider {
+     *     @Composable
+     *     override fun Wrap(content: @Composable () -> Unit) {
+     *         // Apply your custom theme or environment here
+     *          MyTheme {
+     *            content()
+     *          }
+     *     }
+     * }
+     * ```
      *
-     * @sample androidx.compose.ui.tooling.preview.samples.PreviewWrapperProviderSample
      * @param content The original composable content of the function annotated with [Preview].
      */
     @Composable fun Wrap(content: @Composable () -> Unit)
@@ -59,18 +69,80 @@ interface PreviewWrapperProvider {
  *
  * **1. Basic Usage**
  *
- * @sample androidx.compose.ui.tooling.preview.samples.PreviewWrapperSample
+ * ```kotlin
+ * class SampleThemeWrapper : PreviewWrapperProvider {
+ *     @Composable
+ *     override fun Wrap(content: @Composable () -> Unit) {
+ *         // Apply your custom theme here
+ *          MyTheme {
+ *              content()
+ *          }
+ *     }
+ * }
+ *
+ * @Preview
+ * @Composable
+ * @PreviewWrapper(wrapper = SampleThemeWrapper::class)
+ * fun PreviewWrapperSample() {
+ *     // Your component content here
+ * }
+ * ```
  *
  * **2. Usage with MultiPreview**
  *
- * @sample androidx.compose.ui.tooling.preview.samples.PreviewWrapperMultiPreviewSample
+ * ```kotlin
+ * @Preview(name = "Small", fontScale = 0.8f)
+ * @Preview(name = "Large", fontScale = 1.2f)
+ * annotation class FontPreviews
+ *
+ * @FontPreviews
+ * @Composable
+ * @PreviewWrapper(wrapper = SampleThemeWrapper::class)
+ * fun PreviewWrapperMultiPreviewSample() {
+ *     // Your component content here
+ * }
+ * ```
  *
  * **3. Combining Multiple Wrappers**
  *
  * Since [PreviewWrapper] allows only a single wrapper, you can create a composite wrapper to apply
  * multiple effects.
  *
- * @sample androidx.compose.ui.tooling.preview.samples.PreviewWrapperCompositeSample
+ * ```kotlin
+ * class ThemeWrapper : PreviewWrapperProvider {
+ *     @Composable
+ *     override fun Wrap(content: @Composable () -> Unit) {
+ *         content()
+ *     }
+ * }
+ *
+ * class RemoteComposeWrapper : PreviewWrapperProvider {
+ *     @Composable
+ *     override fun Wrap(content: @Composable () -> Unit) {
+ *         content()
+ *     }
+ * }
+ *
+ * class ThemeAndRemoteWrapper : PreviewWrapperProvider {
+ *     private val themeWrapper = ThemeWrapper()
+ *     private val remoteWrapper = RemoteComposeWrapper()
+ *
+ *     @Composable
+ *     override fun Wrap(content: @Composable () -> Unit) {
+ *         // Nest the wrappers: Theme is usually the outermost layer,
+ *         // followed by the environment/container wrapper.
+ *         themeWrapper.Wrap { remoteWrapper.Wrap { content() } }
+ *     }
+ * }
+ *
+ * @Preview
+ * @Composable
+ * @PreviewWrapper(wrapper = ThemeAndRemoteWrapper::class)
+ * fun PreviewWrapperCompositeSample() {
+ *     // Your component content here
+ * }
+ * ```
+ *
  * @param wrapper The [KClass] of the [PreviewWrapperProvider] implementation to use. Must have a
  *   default zero-argument constructor.
  */
