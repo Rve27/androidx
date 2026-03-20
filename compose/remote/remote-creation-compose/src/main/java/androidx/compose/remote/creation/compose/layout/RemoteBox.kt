@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.platform.LocalLayoutDirection
 
 /** Utility modifier to record the layout information */
 internal class RemoteComposeBoxModifier(
@@ -63,7 +64,7 @@ public fun RemoteBox(
     content: @Composable () -> Unit,
 ) {
     if (currentComposer.applier is RemoteComposeApplierV2) {
-        RemoteBoxV2(modifier, contentAlignment) { content() }
+        RemoteBoxV2(modifier, contentAlignment, LocalLayoutDirection.current) { content() }
         return
     }
     @Suppress("COMPOSE_APPLIER_CALL_MISMATCH") // b/481422057

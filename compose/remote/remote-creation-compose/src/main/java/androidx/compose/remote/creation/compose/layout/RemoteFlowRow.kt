@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.draw.DrawModifier
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.platform.LocalLayoutDirection
 
 internal class RemoteComposeFlowRowModifier(
     private val modifier: RemoteModifier,
@@ -67,5 +68,11 @@ public fun RemoteFlowRow(
     require(currentComposer.applier is RemoteComposeApplierV2) {
         "This component is only supported with RemoteComposeApplierV2."
     }
-    RemoteFlowRowV2(modifier, horizontalArrangement, verticalArrangement, content)
+    RemoteFlowRowV2(
+        modifier,
+        horizontalArrangement,
+        verticalArrangement,
+        LocalLayoutDirection.current,
+        content,
+    )
 }
