@@ -16,7 +16,6 @@
 
 package androidx.wear.compose.remote.material3
 
-import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.action.Action
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
@@ -56,7 +55,6 @@ import androidx.compose.runtime.CompositionLocalProvider
  * @param time A slot for displaying the time relevant to the contents of the card.
  * @param content The main slot for a content of this card
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @RemoteComposable
 @Composable
 public fun RemoteAppCard(
