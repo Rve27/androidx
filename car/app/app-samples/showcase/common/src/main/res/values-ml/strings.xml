@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
  Copyright (C) 2021 The Android Open Source Project
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -236,6 +236,13 @@
     <string name="sectioned_item_template_toggle_section_title" msgid="3197227971733559949">"\'ടോഗിൾ ചെയ്യുക\' വിഭാഗം"</string>
     <string name="sectioned_item_template_lots_of_rows_section_title" msgid="1501401956386938735">"നിരവധി വരികളുള്ള വിഭാഗം"</string>
     <string name="sectioned_item_template_grid_item_section_title" msgid="565528119467142741">"ഗ്രിഡ് ഇന വിഭാഗം"</string>
+    <string name="sectioned_item_list_demo_title" msgid="1236735461225007729">"വിഭാഗങ്ങളാക്കിയ ഇന ലിസ്‌റ്റിന്റെ ഡെമോ"</string>
+    <string name="sectioned_item_list_one_title" msgid="6594204350307263338">"ലിസ്റ്റ് 1"</string>
+    <string name="sectioned_item_list_two_title" msgid="4941545381743022833">"ലിസ്റ്റ് 2"</string>
+    <string name="sectioned_item_list_subtext" msgid="2963927693547537519">"ഓരോ ലിസ്‌റ്റിന് കീഴിലും സബ്‌ടെക്‌സ്‌റ്റ്"</string>
+    <string name="end_image_and_action_demo_title" msgid="6451955718459316414">"അവസാന ചിത്രവും പ്രവർത്തനങ്ങളും സംബന്ധിച്ച ഡെമോ"</string>
+    <string name="chip_demo_title" msgid="92190365856639582">"ഫിൽട്ടർ ചിപ്പ് ഡെമോ"</string>
+    <string name="progress_bar_demo_title" msgid="1759206063037269237">"പ്രോഗ്രസ് ബാർ ഡെമോ"</string>
     <string name="pane_template_demo_title" msgid="7804292600060341608">"പെയിൻ ടെംപ്ലേറ്റ് ഡെമോ"</string>
     <string name="place_list_template_demo_title" msgid="2054022985455460469">"സ്ഥലങ്ങളുടെ ലിസ്റ്റിന്റെ ടെംപ്ലേറ്റ് ഡെമോ"</string>
     <string name="browse_places_title" msgid="7246005909846715898">"സ്ഥലങ്ങൾ ബ്രൗസ് ചെയ്യുക"</string>

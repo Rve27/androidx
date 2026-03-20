@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
  Copyright (C) 2021 The Android Open Source Project
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -236,6 +236,13 @@
     <string name="sectioned_item_template_toggle_section_title" msgid="3197227971733559949">"Odeljak sa prekidačem"</string>
     <string name="sectioned_item_template_lots_of_rows_section_title" msgid="1501401956386938735">"Odeljak sa mnogo redova"</string>
     <string name="sectioned_item_template_grid_item_section_title" msgid="565528119467142741">"Odeljak stavke mreže"</string>
+    <string name="sectioned_item_list_demo_title" msgid="1236735461225007729">"Demonstracija liste za stavke sa odeljcima"</string>
+    <string name="sectioned_item_list_one_title" msgid="6594204350307263338">"Lista 1"</string>
+    <string name="sectioned_item_list_two_title" msgid="4941545381743022833">"Lista 2"</string>
+    <string name="sectioned_item_list_subtext" msgid="2963927693547537519">"Podtekst ispod svake liste"</string>
+    <string name="end_image_and_action_demo_title" msgid="6451955718459316414">"Demonstracija krajnje slike i radnji"</string>
+    <string name="chip_demo_title" msgid="92190365856639582">"Demonstracija fragmenta filtera"</string>
+    <string name="progress_bar_demo_title" msgid="1759206063037269237">"Demo verzija trake napretka"</string>
     <string name="pane_template_demo_title" msgid="7804292600060341608">"Demonstracija šablona okna"</string>
     <string name="place_list_template_demo_title" msgid="2054022985455460469">"Demonstracija šablona liste mesta"</string>
     <string name="browse_places_title" msgid="7246005909846715898">"Pregledajte mesta"</string>
