@@ -46,8 +46,9 @@ internal fun WearWidgetContainer(
         modifier =
             RemoteModifier.fillMaxSize().drawWithContent {
                 val cornerRadiusOffset = RemoteOffset(cornerRadius.toPx(), cornerRadius.toPx())
-                background.foldIn(Unit) { _, brush ->
-                    val paint = RemotePaint { color = brush.color }
+                val paint = RemotePaint()
+                background.foldIn(Unit) { _, element ->
+                    with(element.brush) { applyTo(paint, size) }
                     drawRoundRect(paint = paint, cornerRadius = cornerRadiusOffset)
                 }
                 drawContent()
