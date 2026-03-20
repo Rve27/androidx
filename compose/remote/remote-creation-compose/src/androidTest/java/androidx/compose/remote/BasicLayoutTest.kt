@@ -408,7 +408,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         RemoteModifier.fillMaxWidth()
                             .height(100.rdp)
                             .background(Color.White)
-                            .padding(8.dp)
+                            .padding(8.rdp)
                             .background(Color.LightGray)
                 ) {
                     val blue = Color.Blue
@@ -469,7 +469,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         RemoteModifier.fillMaxWidth()
                             .height(100.rdp)
                             .background(Color.White)
-                            .padding(8.dp)
+                            .padding(8.rdp)
                             .background(Color.LightGray)
                 )
             }
@@ -515,7 +515,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 modifier =
                     RemoteModifier.fillMaxSize()
                         .background(Color.Red)
-                        .padding(20.dp)
+                        .padding(20.rdp)
                         .background(Color.Cyan),
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
@@ -532,9 +532,9 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         text = text,
                         modifier =
                             RemoteModifier.background(Color.Yellow)
-                                .padding(4.dp)
+                                .padding(4.rdp)
                                 .background(Color.Red)
-                                .padding(4.dp),
+                                .padding(4.rdp),
                         fontSize = 32.rsp,
                         color = white,
                     )
@@ -543,9 +543,9 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                     text = "Hola Mundo",
                     modifier =
                         RemoteModifier.background(Color.Blue)
-                            .padding(4.dp)
+                            .padding(4.rdp)
                             .background(Color.Black)
-                            .padding(4.dp),
+                            .padding(4.rdp),
                     fontSize = 18.rsp,
                     color = white,
                 )
@@ -611,7 +611,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 modifier =
                     RemoteModifier.fillMaxSize()
                         .background(Color.Red)
-                        .padding(20.dp)
+                        .padding(20.rdp)
                         .background(Color.Cyan),
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
@@ -622,18 +622,18 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 RemoteText(
                     text,
                     RemoteModifier.background(Color.Yellow)
-                        .padding(4.dp)
+                        .padding(4.rdp)
                         .background(Color.Red)
-                        .padding(4.dp),
+                        .padding(4.rdp),
                     white,
                     18.rsp,
                 )
                 RemoteText(
                     text,
                     RemoteModifier.background(Color.Yellow)
-                        .padding(4.dp)
+                        .padding(4.rdp)
                         .background(Color.Red)
-                        .padding(4.dp),
+                        .padding(4.rdp),
                     white,
                     18.rsp,
                     FontStyle.Italic,
@@ -641,9 +641,9 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 RemoteText(
                     text,
                     RemoteModifier.background(Color.Yellow)
-                        .padding(4.dp)
+                        .padding(4.rdp)
                         .background(Color.Red)
-                        .padding(4.dp),
+                        .padding(4.rdp),
                     white,
                     18.rsp,
                     fontWeight = FontWeight.ExtraLight,
@@ -651,9 +651,9 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 RemoteText(
                     text,
                     RemoteModifier.background(Color.Yellow)
-                        .padding(4.dp)
+                        .padding(4.rdp)
                         .background(Color.Red)
-                        .padding(4.dp),
+                        .padding(4.rdp),
                     white,
                     18.rsp,
                     fontWeight = FontWeight.Black,
@@ -661,9 +661,9 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 RemoteText(
                     text,
                     RemoteModifier.background(Color.Yellow)
-                        .padding(4.dp)
+                        .padding(4.rdp)
                         .background(Color.Red)
-                        .padding(4.dp),
+                        .padding(4.rdp),
                     white,
                     18.rsp,
                     fontFamily = FontFamily.Serif,
@@ -671,9 +671,9 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 RemoteText(
                     text,
                     RemoteModifier.background(Color.Yellow)
-                        .padding(4.dp)
+                        .padding(4.rdp)
                         .background(Color.Red)
-                        .padding(4.dp),
+                        .padding(4.rdp),
                     white,
                     18.rsp,
                     fontFamily = FontFamily.SansSerif,
@@ -941,7 +941,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         RemoteModifier.background(Color.Red)
                             .weight(1f)
                             .height(30.rdp)
-                            .padding(left = 4.dp)
+                            .padding(left = 4.rdp)
                 )
                 RemoteBox(
                     modifier = RemoteModifier.fillMaxHeight().width(1.rdp).background(Color.Green)
@@ -951,7 +951,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                         RemoteModifier.background(Color.Blue)
                             .weight(1f)
                             .height(60.rdp)
-                            .padding(right = 4.dp)
+                            .padding(right = 4.rdp)
                 )
             }
         }
@@ -997,7 +997,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                             RemoteModifier.background(Color.Red)
                                 .weight(1f)
                                 .height(60.rdp)
-                                .padding(left = 4.dp)
+                                .padding(left = 4.rdp)
                     )
                     RemoteBox(
                         modifier =
@@ -1008,7 +1008,7 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                             RemoteModifier.background(Color.Blue)
                                 .weight(1f)
                                 .height(30.rdp)
-                                .padding(right = 4.dp)
+                                .padding(right = 4.rdp)
                     )
                 }
                 RemoteBox(
@@ -1233,7 +1233,7 @@ list:
                             }
                             .size(64.rdp)
                             .background(Color.Blue)
-                            .padding(8.dp)
+                            .padding(8.rdp)
                             .background(Color.Magenta),
                     contentAlignment = RemoteAlignment.Center,
                 ) {

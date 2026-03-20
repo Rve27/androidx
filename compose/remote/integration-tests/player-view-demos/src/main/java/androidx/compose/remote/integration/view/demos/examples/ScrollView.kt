@@ -55,7 +55,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 
 @Suppress("RestrictedApiAndroidX")
 @Composable
@@ -108,7 +107,7 @@ fun CanvasCalendarMonth(modifier: RemoteModifier = RemoteModifier, month: Int = 
             fontFamily = FontFamily.Serif,
             fontWeight = FontWeight.Bold,
             fontSize = 32.rsp,
-            modifier = RemoteModifier.padding(bottom = 24.dp),
+            modifier = RemoteModifier.padding(bottom = 24.rdp),
         )
         RemoteRow(modifier = RemoteModifier.height(IntrinsicSize.Min)) {
             var done = false
@@ -226,7 +225,7 @@ fun ScrollViewDemo() {
                             )
                             .width(h2)
                             .height(h2)
-                            .padding(0.dp)
+                            .padding(0.rdp)
                     //    .background(Color.White)
                     ,
                     i,
