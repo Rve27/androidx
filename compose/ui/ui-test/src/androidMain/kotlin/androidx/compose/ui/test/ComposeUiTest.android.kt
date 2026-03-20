@@ -814,7 +814,7 @@ internal constructor(
         }
     }
 
-    internal inner class AndroidComposeUiTestImpl : AndroidComposeUiTest<A> {
+    internal inner class AndroidComposeUiTestImpl : AndroidComposeUiTest<A>, TestOwnerProvider {
 
         override val activity: A?
             get() = this@AndroidComposeUiTestEnvironment.activity
@@ -825,6 +825,9 @@ internal constructor(
 
         override val mainClock: MainTestClock
             get() = mainClockImpl
+
+        override val testOwner: TestOwner
+            get() = this@AndroidComposeUiTestEnvironment.testOwner
 
         override fun setComposeAccessibilityValidator(validator: ComposeAccessibilityValidator?) {
             testContext.platform.composeAccessibilityValidator = validator
@@ -1053,4 +1056,12 @@ private fun CoroutineContext.createDefaultTestDispatcher(
         return StandardTestDispatcher(this[TestCoroutineScheduler])
     }
     return UnconfinedTestDispatcher(this[TestCoroutineScheduler])
+}
+
+/**
+ * Internal interface to expose the TestOwner safely to extension functions within the same
+ * module/library group.
+ */
+internal interface TestOwnerProvider {
+    val testOwner: TestOwner
 }
