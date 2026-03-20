@@ -95,6 +95,72 @@ package androidx.wear.compose.remote.material3 {
     method public static androidx.compose.remote.creation.compose.modifier.RemoteModifier buttonSizeModifier(androidx.compose.remote.creation.compose.modifier.RemoteModifier);
   }
 
+  public final class RemoteColorScheme {
+    ctor public RemoteColorScheme(androidx.compose.remote.creation.compose.state.RemoteColor primary, androidx.compose.remote.creation.compose.state.RemoteColor primaryDim, androidx.compose.remote.creation.compose.state.RemoteColor primaryContainer, androidx.compose.remote.creation.compose.state.RemoteColor onPrimary, androidx.compose.remote.creation.compose.state.RemoteColor onPrimaryContainer, androidx.compose.remote.creation.compose.state.RemoteColor secondary, androidx.compose.remote.creation.compose.state.RemoteColor secondaryDim, androidx.compose.remote.creation.compose.state.RemoteColor secondaryContainer, androidx.compose.remote.creation.compose.state.RemoteColor onSecondary, androidx.compose.remote.creation.compose.state.RemoteColor onSecondaryContainer, androidx.compose.remote.creation.compose.state.RemoteColor tertiary, androidx.compose.remote.creation.compose.state.RemoteColor tertiaryDim, androidx.compose.remote.creation.compose.state.RemoteColor tertiaryContainer, androidx.compose.remote.creation.compose.state.RemoteColor onTertiary, androidx.compose.remote.creation.compose.state.RemoteColor onTertiaryContainer, androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainerLow, androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainer, androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainerHigh, androidx.compose.remote.creation.compose.state.RemoteColor onSurface, androidx.compose.remote.creation.compose.state.RemoteColor onSurfaceVariant, androidx.compose.remote.creation.compose.state.RemoteColor outline, androidx.compose.remote.creation.compose.state.RemoteColor outlineVariant, androidx.compose.remote.creation.compose.state.RemoteColor background, androidx.compose.remote.creation.compose.state.RemoteColor onBackground, androidx.compose.remote.creation.compose.state.RemoteColor error, androidx.compose.remote.creation.compose.state.RemoteColor errorDim, androidx.compose.remote.creation.compose.state.RemoteColor errorContainer, androidx.compose.remote.creation.compose.state.RemoteColor onError, androidx.compose.remote.creation.compose.state.RemoteColor onErrorContainer);
+    ctor public RemoteColorScheme(optional androidx.wear.compose.material3.ColorScheme colorScheme);
+    ctor @BytecodeOnly public RemoteColorScheme(androidx.wear.compose.material3.ColorScheme!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public androidx.wear.compose.remote.material3.RemoteColorScheme copy(optional androidx.compose.remote.creation.compose.state.RemoteColor primary, optional androidx.compose.remote.creation.compose.state.RemoteColor primaryDim, optional androidx.compose.remote.creation.compose.state.RemoteColor primaryContainer, optional androidx.compose.remote.creation.compose.state.RemoteColor onPrimary, optional androidx.compose.remote.creation.compose.state.RemoteColor onPrimaryContainer, optional androidx.compose.remote.creation.compose.state.RemoteColor secondary, optional androidx.compose.remote.creation.compose.state.RemoteColor secondaryDim, optional androidx.compose.remote.creation.compose.state.RemoteColor secondaryContainer, optional androidx.compose.remote.creation.compose.state.RemoteColor onSecondary, optional androidx.compose.remote.creation.compose.state.RemoteColor onSecondaryContainer, optional androidx.compose.remote.creation.compose.state.RemoteColor tertiary, optional androidx.compose.remote.creation.compose.state.RemoteColor tertiaryDim, optional androidx.compose.remote.creation.compose.state.RemoteColor tertiaryContainer, optional androidx.compose.remote.creation.compose.state.RemoteColor onTertiary, optional androidx.compose.remote.creation.compose.state.RemoteColor onTertiaryContainer, optional androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainerLow, optional androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainer, optional androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainerHigh, optional androidx.compose.remote.creation.compose.state.RemoteColor onSurface, optional androidx.compose.remote.creation.compose.state.RemoteColor onSurfaceVariant, optional androidx.compose.remote.creation.compose.state.RemoteColor outline, optional androidx.compose.remote.creation.compose.state.RemoteColor outlineVariant, optional androidx.compose.remote.creation.compose.state.RemoteColor background, optional androidx.compose.remote.creation.compose.state.RemoteColor onBackground, optional androidx.compose.remote.creation.compose.state.RemoteColor error, optional androidx.compose.remote.creation.compose.state.RemoteColor errorDim, optional androidx.compose.remote.creation.compose.state.RemoteColor errorContainer, optional androidx.compose.remote.creation.compose.state.RemoteColor onError, optional androidx.compose.remote.creation.compose.state.RemoteColor onErrorContainer);
+    method @BytecodeOnly public static androidx.wear.compose.remote.material3.RemoteColorScheme! copy$default(androidx.wear.compose.remote.material3.RemoteColorScheme!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, androidx.compose.remote.creation.compose.state.RemoteColor!, int, Object!);
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getBackground();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getError();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getErrorContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getErrorDim();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnBackground();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnError();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnErrorContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnPrimary();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnPrimaryContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnSecondary();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnSecondaryContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnSurface();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnSurfaceVariant();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnTertiary();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOnTertiaryContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOutline();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getOutlineVariant();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getPrimary();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getPrimaryContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getPrimaryDim();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getSecondary();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getSecondaryContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getSecondaryDim();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getSurfaceContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getSurfaceContainerHigh();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getSurfaceContainerLow();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getTertiary();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getTertiaryContainer();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.state.RemoteColor getTertiaryDim();
+    property public androidx.compose.remote.creation.compose.state.RemoteColor background;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor error;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor errorContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor errorDim;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onBackground;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onError;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onErrorContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onPrimary;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onPrimaryContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onSecondary;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onSecondaryContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onSurface;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onSurfaceVariant;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onTertiary;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor onTertiaryContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor outline;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor outlineVariant;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor primary;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor primaryContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor primaryDim;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor secondary;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor secondaryContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor secondaryDim;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainerHigh;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor surfaceContainerLow;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor tertiary;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor tertiaryContainer;
+    property public androidx.compose.remote.creation.compose.state.RemoteColor tertiaryDim;
+  }
+
   @androidx.compose.runtime.Immutable public final class RemoteIconButtonColors {
     ctor public RemoteIconButtonColors(androidx.compose.remote.creation.compose.state.RemoteColor containerColor, androidx.compose.remote.creation.compose.state.RemoteColor contentColor, androidx.compose.remote.creation.compose.state.RemoteColor disabledContainerColor, androidx.compose.remote.creation.compose.state.RemoteColor disabledContentColor);
     method public androidx.wear.compose.remote.material3.RemoteIconButtonColors copy(optional androidx.compose.remote.creation.compose.state.RemoteColor? containerColor, optional androidx.compose.remote.creation.compose.state.RemoteColor? contentColor, optional androidx.compose.remote.creation.compose.state.RemoteColor? disabledContainerColor, optional androidx.compose.remote.creation.compose.state.RemoteColor? disabledContentColor);
