@@ -146,6 +146,36 @@ package androidx.wear.compose.remote.material3 {
     method @BytecodeOnly @androidx.compose.remote.creation.compose.layout.RemoteComposable @androidx.compose.runtime.Composable public static void RemoteIcon(androidx.compose.remote.creation.compose.capture.RemoteImageVector, androidx.compose.remote.creation.compose.state.RemoteString?, androidx.compose.remote.creation.compose.modifier.RemoteModifier?, androidx.compose.remote.creation.compose.state.RemoteColor?, androidx.compose.runtime.Composer?, int, int);
   }
 
+  public final class RemoteShapeDefaults {
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape getExtraLarge();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape getExtraSmall();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape getLarge();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape getMedium();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape getSmall();
+    property public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape ExtraLarge;
+    property public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape ExtraSmall;
+    property public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape Large;
+    property public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape Medium;
+    property public androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape Small;
+    field public static final androidx.wear.compose.remote.material3.RemoteShapeDefaults INSTANCE;
+  }
+
+  public final class RemoteShapes {
+    ctor public RemoteShapes();
+    ctor public RemoteShapes(optional androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape extraSmall, optional androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape small, optional androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape medium, optional androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape large, optional androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape extraLarge);
+    ctor @BytecodeOnly public RemoteShapes(androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape!, androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape!, androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape!, androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape!, androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape getExtraLarge();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape getExtraSmall();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape getLarge();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape getMedium();
+    method @InaccessibleFromKotlin public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape getSmall();
+    property public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape extraLarge;
+    property public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape extraSmall;
+    property public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape large;
+    property public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape medium;
+    property public androidx.compose.remote.creation.compose.shapes.RemoteCornerBasedShape small;
+  }
+
   @androidx.compose.runtime.Immutable public final class RemoteTextButtonColors {
     ctor public RemoteTextButtonColors(androidx.compose.remote.creation.compose.state.RemoteColor containerColor, androidx.compose.remote.creation.compose.state.RemoteColor contentColor, androidx.compose.remote.creation.compose.state.RemoteColor disabledContainerColor, androidx.compose.remote.creation.compose.state.RemoteColor disabledContentColor);
     method public androidx.wear.compose.remote.material3.RemoteTextButtonColors copy(optional androidx.compose.remote.creation.compose.state.RemoteColor? containerColor, optional androidx.compose.remote.creation.compose.state.RemoteColor? contentColor, optional androidx.compose.remote.creation.compose.state.RemoteColor? disabledContainerColor, optional androidx.compose.remote.creation.compose.state.RemoteColor? disabledContentColor);
