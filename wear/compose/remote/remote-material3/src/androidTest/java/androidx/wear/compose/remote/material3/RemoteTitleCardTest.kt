@@ -18,6 +18,7 @@ package androidx.wear.compose.remote.material3
 
 import android.content.Context
 import androidx.compose.remote.creation.CreationDisplayInfo
+import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -47,21 +48,30 @@ class RemoteTitleCardTest {
 
     @Test
     fun title_card_default() {
-        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
+        remoteComposeTestRule.runScreenshotTest(
+            profile = RcPlatformProfiles.WEAR_WIDGETS,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             RemoteTitleCardDefault()
         }
     }
 
     @Test
     fun title_card_with_title_subtitle() {
-        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
+        remoteComposeTestRule.runScreenshotTest(
+            profile = RcPlatformProfiles.WEAR_WIDGETS,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             RemoteTitleCardWithTitleSubtitle()
         }
     }
 
     @Test
     fun title_card_with_title_time() {
-        remoteComposeTestRule.runScreenshotTest(creationDisplayInfo = creationDisplayInfo) {
+        remoteComposeTestRule.runScreenshotTest(
+            profile = RcPlatformProfiles.WEAR_WIDGETS,
+            creationDisplayInfo = creationDisplayInfo,
+        ) {
             RemoteTitleCardWithTitleTime()
         }
     }
