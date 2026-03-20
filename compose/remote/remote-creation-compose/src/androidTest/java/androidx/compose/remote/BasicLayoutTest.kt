@@ -394,16 +394,15 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
     MODIFIERS
       BACKGROUND = [0.0, 0.0, 715.0, 825.0] color [1.0, 1.0, 0.0, 1.0] shape [0]
     CANVAS [-5:-1] = [0.0, 275.0, 715.0, 275.0] VISIBLE
+      ComponentValue value 42 set to WIDTH of Component -5
+      ComponentValue value 43 set to HEIGHT of Component -5
+      DrawLine(0.0, 0.0, [42 = 715.0], [43 = 275.0])
+      DrawLine(0.0, [43 = 275.0], [42 = 715.0], 0.0)
       MODIFIERS
         HEIGHT = 100.0 dp
         BACKGROUND = [0.0, 0.0, 715.0, 275.0] color [1.0, 1.0, 1.0, 1.0] shape [0]
         PADDING = [22.0, 22.0, 22.0, 22.0]
         BACKGROUND = [0.0, 0.0, 671.0, 231.0] color [0.8, 0.8, 0.8, 1.0] shape [0]
-      CANVAS_CONTENT [-7:-1] = [0.0, 0.0, 671.0, 231.0] VISIBLE
-        ComponentValue value 42 set to WIDTH of Component -7
-        ComponentValue value 43 set to HEIGHT of Component -7
-        DrawLine(0.0, 0.0, [42 = 671.0], [43 = 231.0])
-        DrawLine(0.0, [43 = 231.0], [42 = 671.0], 0.0)
 """
         testLayout(result) {
             RemoteColumn(
@@ -1080,12 +1079,11 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
       MODIFIERS
         BACKGROUND = [0.0, 0.0, 88.0, 88.0] color [0.0, 0.0, 1.0, 1.0] shape [0]
       CANVAS [-7:-1] = [0.0, 0.0, 88.0, 88.0] VISIBLE
+        ComponentValue value 47 set to WIDTH of Component -7
+        ComponentValue value 48 set to HEIGHT of Component -7
         MODIFIERS
           WIDTH = 32.0 dp
           HEIGHT = 32.0 dp
-        CANVAS_CONTENT [-9:-1] = [0.0, 0.0, 88.0, 88.0] VISIBLE
-          ComponentValue value 47 set to WIDTH of Component -9
-          ComponentValue value 48 set to HEIGHT of Component -9
 """
         testLayout(result) {
             val colors =

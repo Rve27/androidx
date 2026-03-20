@@ -88,7 +88,7 @@ import java.util.Set;
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class RemoteComposeWriter {
-    private int mApiLevel;
+    protected int mApiLevel;
     protected @NonNull RemoteComposeBuffer mBuffer;
     protected @NonNull RemoteComposeState mState = new RemoteComposeState();
     protected @NonNull RcPlatformServices mPlatform;
@@ -172,12 +172,12 @@ public class RemoteComposeWriter {
      */
     public RemoteComposeWriter(@NonNull Profile profile, HTag @NonNull ... tags) {
         this.mPlatform = profile.getPlatform();
+        this.mApiLevel = profile.getApiLevel();
         mBuffer = new RemoteComposeBuffer(profile.getApiLevel());
 
         Object w = HTag.getValue(tags, Header.DOC_WIDTH);
         Object h = HTag.getValue(tags, Header.DOC_HEIGHT);
         Object d = HTag.getValue(tags, Header.DOC_CONTENT_DESCRIPTION);
-        int profiles = HTag.getProfiles(tags);
 
         if (w instanceof Integer) {
             mOriginalWidth = (int) w;
@@ -190,12 +190,8 @@ public class RemoteComposeWriter {
         }
 
         Set<Integer> supportedOperations = profile.getSupportedOperations();
-        if (supportedOperations != null) {
-            mBuffer.setVersion(profile.getApiLevel(),
-                    profile.getOperationsProfiles(), supportedOperations);
-        } else {
-            mBuffer.setVersion(profile.getApiLevel(), profiles);
-        }
+        mBuffer.setVersion(profile.getApiLevel(),
+                profile.getOperationsProfiles(), supportedOperations);
 
         mBuffer.addHeader(HTag.getTags(tags), HTag.getValues(tags));
     }
@@ -332,6 +328,7 @@ public class RemoteComposeWriter {
     public RemoteComposeWriter(
             @NonNull Profile profile, @NonNull RemoteComposeBuffer buffer, HTag @NonNull ... tags) {
         this.mPlatform = profile.getPlatform();
+        this.mApiLevel = profile.getApiLevel();
         mBuffer = buffer;
 
         Object w = HTag.getValue(tags, Header.DOC_WIDTH);
