@@ -75,6 +75,19 @@ package androidx.xr.scenecore.runtime {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface CustomMeshResource extends androidx.xr.scenecore.runtime.Resource {
   }
 
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface CustomMeshResource.Topology {
+    field public static final androidx.xr.scenecore.runtime.CustomMeshResource.Topology.Companion Companion;
+    field public static final int TRIANGLES = 0; // 0x0
+    field public static final int TRIANGLE_STRIP = 1; // 0x1
+  }
+
+  public static final class CustomMeshResource.Topology.Companion {
+    property public static int TRIANGLES;
+    property public static int TRIANGLE_STRIP;
+    field public static final int TRIANGLES = 0; // 0x0
+    field public static final int TRIANGLE_STRIP = 1; // 0x1
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Dimensions {
     ctor public Dimensions(float width, float height, float depth);
     property public float depth;
@@ -400,6 +413,59 @@ package androidx.xr.scenecore.runtime {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MeshBufferResource extends androidx.xr.scenecore.runtime.Resource {
   }
 
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface MeshBufferResource.VertexAttribute {
+    field public static final int BONE_INDICES = 5; // 0x5
+    field public static final int BONE_WEIGHTS = 6; // 0x6
+    field public static final int COLOR = 2; // 0x2
+    field public static final androidx.xr.scenecore.runtime.MeshBufferResource.VertexAttribute.Companion Companion;
+    field public static final int NORMAL = 1; // 0x1
+    field public static final int POSITION = 0; // 0x0
+    field public static final int UV0 = 3; // 0x3
+    field public static final int UV1 = 4; // 0x4
+  }
+
+  public static final class MeshBufferResource.VertexAttribute.Companion {
+    property public static int BONE_INDICES;
+    property public static int BONE_WEIGHTS;
+    property public static int COLOR;
+    property public static int NORMAL;
+    property public static int POSITION;
+    property public static int UV0;
+    property public static int UV1;
+    field public static final int BONE_INDICES = 5; // 0x5
+    field public static final int BONE_WEIGHTS = 6; // 0x6
+    field public static final int COLOR = 2; // 0x2
+    field public static final int NORMAL = 1; // 0x1
+    field public static final int POSITION = 0; // 0x0
+    field public static final int UV0 = 3; // 0x3
+    field public static final int UV1 = 4; // 0x4
+  }
+
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface MeshBufferResource.VertexAttributeType {
+    field public static final androidx.xr.scenecore.runtime.MeshBufferResource.VertexAttributeType.Companion Companion;
+    field public static final int FLOAT = 0; // 0x0
+    field public static final int FLOAT2 = 1; // 0x1
+    field public static final int FLOAT3 = 2; // 0x2
+    field public static final int FLOAT4 = 3; // 0x3
+    field public static final int UBYTE = 5; // 0x5
+    field public static final int UBYTE4_NORM = 4; // 0x4
+  }
+
+  public static final class MeshBufferResource.VertexAttributeType.Companion {
+    property public static int FLOAT;
+    property public static int FLOAT2;
+    property public static int FLOAT3;
+    property public static int FLOAT4;
+    property public static int UBYTE;
+    property public static int UBYTE4_NORM;
+    field public static final int FLOAT = 0; // 0x0
+    field public static final int FLOAT2 = 1; // 0x1
+    field public static final int FLOAT3 = 2; // 0x2
+    field public static final int FLOAT4 = 3; // 0x3
+    field public static final int UBYTE = 5; // 0x5
+    field public static final int UBYTE4_NORM = 4; // 0x4
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MeshEntity extends androidx.xr.scenecore.runtime.Entity {
   }
 
@@ -573,11 +639,11 @@ package androidx.xr.scenecore.runtime {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingRuntime extends androidx.xr.runtime.internal.JxrRuntime {
     method public androidx.xr.scenecore.runtime.TextureResource? borrowReflectionTexture();
-    method public androidx.xr.scenecore.runtime.CustomMeshResource createCustomMesh(androidx.xr.scenecore.runtime.MeshBufferResource meshBuffer, int[] subsetOffsets, int[] subsetCounts);
+    method public androidx.xr.scenecore.runtime.CustomMeshResource createCustomMesh(androidx.xr.scenecore.runtime.MeshBufferResource meshBuffer, int[] subsetOffsets, int[] subsetCounts, int[] subsetTopologies, float centerX, float centerY, float centerZ, float halfExtentX, float halfExtentY, float halfExtentZ);
     method public androidx.xr.scenecore.runtime.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.GltfModelResource loadedGltf, androidx.xr.scenecore.runtime.Entity? parentEntity);
     method public suspend Object? createKhronosPbrMaterial(androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.MaterialResource>);
     method public androidx.xr.scenecore.runtime.MeshBufferResource createMeshBuffer(int[] attributeIds, int[] attributeTypes, byte[] bufferIndices, int maxVertices, int maxIndices, java.nio.ByteBuffer[]? vertexData, int[]? vertexDataSizes, java.nio.ByteBuffer? indexData, int indexDataSize);
-    method public androidx.xr.scenecore.runtime.MeshEntity createMeshEntity(androidx.xr.scenecore.runtime.CustomMeshResource customMesh, java.util.List<? extends androidx.xr.scenecore.runtime.MaterialResource> materials, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.Entity? parent);
+    method public androidx.xr.scenecore.runtime.MeshEntity createMeshEntity(androidx.xr.scenecore.runtime.CustomMeshResource customMesh, java.util.List<? extends androidx.xr.scenecore.runtime.MaterialResource> materials, int boneCount, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.Entity? parent);
     method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(int stereoMode, @androidx.xr.scenecore.runtime.SurfaceEntity.MediaBlendingMode int mediaBlendingMode, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.SurfaceEntity.Shape shape, @androidx.xr.scenecore.runtime.SurfaceEntity.SurfaceProtection int surfaceProtection, int superSampling, androidx.xr.scenecore.runtime.Entity? parentEntity);
     method public suspend Object? createWaterMaterial(boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.MaterialResource>);
     method public void destroyCustomMesh(androidx.xr.scenecore.runtime.CustomMeshResource customMesh);
@@ -606,7 +672,6 @@ package androidx.xr.scenecore.runtime {
     method public void setClearcoatNormalTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource clearcoatNormal, androidx.xr.scenecore.runtime.TextureSampler sampler);
     method public void setClearcoatRoughnessTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource clearcoatRoughness, androidx.xr.scenecore.runtime.TextureSampler sampler);
     method public void setClearcoatTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource clearcoat, androidx.xr.scenecore.runtime.TextureSampler sampler);
-    method public void setCustomMeshBoundingBox(androidx.xr.scenecore.runtime.CustomMeshResource customMesh, float centerX, float centerY, float centerZ, float halfExtentX, float halfExtentY, float halfExtentZ);
     method public void setEmissiveFactorsOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.runtime.math.Vector3 factors);
     method public void setEmissiveTextureOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.scenecore.runtime.TextureResource emissive, androidx.xr.scenecore.runtime.TextureSampler sampler);
     method public void setEmissiveUvTransformOnKhronosPbrMaterial(androidx.xr.scenecore.runtime.MaterialResource material, androidx.xr.runtime.math.Matrix3 uvTransform);

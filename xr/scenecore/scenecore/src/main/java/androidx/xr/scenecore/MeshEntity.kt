@@ -43,7 +43,9 @@ private constructor(
          *
          * @param session The session to use for creating the MeshEntity.
          * @param mesh The [CustomMesh] to render.
-         * @param materials The list of [Material]s to use for each subset of the mesh.
+         * @param materials The list of [Material]s to use for each subset of the mesh. The list
+         *   must contain one material per mesh subset.
+         * @param boneCount the number of bones. If zero, skinning will be disabled.
          * @param pose The initial pose of the entity relative to its parent. Defaults to
          *   `Pose.Identity`.
          * @return A new [MeshEntity].
@@ -53,6 +55,7 @@ private constructor(
             session: Session,
             mesh: CustomMesh,
             materials: List<Material>,
+            boneCount: Int = 0,
             pose: Pose = Pose.Identity,
         ): MeshEntity {
             val renderingRuntime = session.renderingRuntime
@@ -69,6 +72,7 @@ private constructor(
                 renderingRuntime.createMeshEntity(
                     customMeshResource,
                     materialResources,
+                    boneCount,
                     pose,
                     parentEntity.rtEntity,
                 )

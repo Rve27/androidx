@@ -34,8 +34,6 @@ public class MeshBuffer
 private constructor(
     private val resource: RtMeshBufferResource,
     public val vertexLayout: VertexLayout,
-    public val maxVertices: Int,
-    public val maxIndices: Int,
     private val session: Session,
 ) : AutoCloseable {
 
@@ -49,13 +47,35 @@ private constructor(
     }
 
     public companion object {
+        private fun getRtVertexAttribute(attribute: VertexAttribute): Int =
+            when (attribute) {
+                VertexAttribute.POSITION -> RtMeshBufferResource.VertexAttribute.POSITION
+                VertexAttribute.NORMAL -> RtMeshBufferResource.VertexAttribute.NORMAL
+                VertexAttribute.COLOR -> RtMeshBufferResource.VertexAttribute.COLOR
+                VertexAttribute.UV0 -> RtMeshBufferResource.VertexAttribute.UV0
+                VertexAttribute.UV1 -> RtMeshBufferResource.VertexAttribute.UV1
+                VertexAttribute.BONE_INDICES -> RtMeshBufferResource.VertexAttribute.BONE_INDICES
+                VertexAttribute.BONE_WEIGHTS -> RtMeshBufferResource.VertexAttribute.BONE_WEIGHTS
+                else -> throw IllegalArgumentException("Unknown VertexAttribute")
+            }
+
+        private fun getRtVertexAttributeType(type: VertexAttributeType): Int =
+            when (type) {
+                VertexAttributeType.FLOAT -> RtMeshBufferResource.VertexAttributeType.FLOAT
+                VertexAttributeType.FLOAT2 -> RtMeshBufferResource.VertexAttributeType.FLOAT2
+                VertexAttributeType.FLOAT3 -> RtMeshBufferResource.VertexAttributeType.FLOAT3
+                VertexAttributeType.FLOAT4 -> RtMeshBufferResource.VertexAttributeType.FLOAT4
+                VertexAttributeType.UBYTE4_NORM ->
+                    RtMeshBufferResource.VertexAttributeType.UBYTE4_NORM
+                VertexAttributeType.UBYTE -> RtMeshBufferResource.VertexAttributeType.UBYTE
+                else -> throw IllegalArgumentException("Unknown VertexAttributeType")
+            }
+
         /**
          * Creates a new [MeshBuffer].
          *
          * @param session The session to use for creating the MeshBuffer.
          * @param vertexLayout The layout of the vertices in the vertex buffer(s).
-         * @param maxVertices The maximum number of vertices the buffer can hold.
-         * @param maxIndices The maximum number of indices the buffer can hold.
          * @param vertexData The vertex data arrays, one for each buffer index used in the layout.
          * @param vertexDataSizes The sizes of the vertex data arrays in bytes.
          * @param indexData The index data.
@@ -66,12 +86,10 @@ private constructor(
         public fun create(
             session: Session,
             vertexLayout: VertexLayout,
-            maxVertices: Int,
-            maxIndices: Int,
-            vertexData: Array<ByteBuffer>? = null,
-            vertexDataSizes: IntArray? = null,
-            indexData: ByteBuffer? = null,
-            indexDataSize: Int = 0,
+            vertexData: Array<ByteBuffer>,
+            vertexDataSizes: IntArray,
+            indexData: ByteBuffer,
+            indexDataSize: Int,
         ): MeshBuffer {
             val runtime = session.renderingRuntime
 
@@ -81,8 +99,8 @@ private constructor(
 
             for (i in vertexLayout.attributes.indices) {
                 val attr = vertexLayout.attributes[i]
-                attributeIds[i] = attr.attribute.id
-                attributeTypes[i] = attr.type.id
+                attributeIds[i] = getRtVertexAttribute(attr.attribute)
+                attributeTypes[i] = getRtVertexAttributeType(attr.type)
                 bufferIndices[i] = attr.bufferIndex.toByte()
             }
 
@@ -91,15 +109,15 @@ private constructor(
                     attributeIds,
                     attributeTypes,
                     bufferIndices,
-                    maxVertices,
-                    maxIndices,
+                    0,
+                    0,
                     vertexData,
                     vertexDataSizes,
                     indexData,
                     indexDataSize,
                 )
 
-            return MeshBuffer(resource, vertexLayout, maxVertices, maxIndices, session)
+            return MeshBuffer(resource, vertexLayout, session)
         }
     }
 }

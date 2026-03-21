@@ -1157,6 +1157,13 @@ public class FakeImpressApiImpl : ImpressApi {
         meshBufferHandle: Long,
         subsetOffsets: IntArray,
         subsetCounts: IntArray,
+        subsetTopologies: IntArray,
+        centerX: Float,
+        centerY: Float,
+        centerZ: Float,
+        halfExtentX: Float,
+        halfExtentY: Float,
+        halfExtentZ: Float,
     ): CustomMesh {
         val handle = nextCustomMeshId++
         return CustomMesh.Builder().setImpressApi(this).setNativeCustomMesh(handle).build()
@@ -1164,17 +1171,11 @@ public class FakeImpressApiImpl : ImpressApi {
 
     override fun destroyCustomMesh(customMeshHandle: Long) {}
 
-    override fun setCustomMeshBoundingBox(
+    override fun createCustomMeshNode(
         customMeshHandle: Long,
-        centerX: Float,
-        centerY: Float,
-        centerZ: Float,
-        halfExtentX: Float,
-        halfExtentY: Float,
-        halfExtentZ: Float,
-    ) {}
-
-    override fun createCustomMeshNode(customMeshHandle: Long, materialHandles: LongArray): Int {
+        materialHandles: LongArray,
+        boneCount: Int,
+    ): Int {
         return nextNodeId++
     }
 

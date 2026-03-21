@@ -1367,6 +1367,13 @@ public interface ImpressApi {
         meshBufferHandle: Long,
         subsetOffsets: IntArray,
         subsetCounts: IntArray,
+        subsetTopologies: IntArray,
+        centerX: Float,
+        centerY: Float,
+        centerZ: Float,
+        halfExtentX: Float,
+        halfExtentY: Float,
+        halfExtentZ: Float,
     ): CustomMesh
 
     /**
@@ -1377,32 +1384,15 @@ public interface ImpressApi {
     public fun destroyCustomMesh(customMeshHandle: Long)
 
     /**
-     * This method sets the bounding box of the custom mesh.
-     *
-     * @param customMeshHandle The native handle of the custom mesh.
-     * @param centerX The x coordinate of the center of the bounding box.
-     * @param centerY The y coordinate of the center of the bounding box.
-     * @param centerZ The z coordinate of the center of the bounding box.
-     * @param halfExtentX The half extent of the bounding box along the x-axis.
-     * @param halfExtentY The half extent of the bounding box along the y-axis.
-     * @param halfExtentZ The half extent of the bounding box along the z-axis.
-     */
-    public fun setCustomMeshBoundingBox(
-        customMeshHandle: Long,
-        centerX: Float,
-        centerY: Float,
-        centerZ: Float,
-        halfExtentX: Float,
-        halfExtentY: Float,
-        halfExtentZ: Float,
-    )
-
-    /**
      * This method creates an Impress node with a custom mesh and returns the node handle.
      *
      * @param customMeshHandle The native handle of the custom mesh.
      * @param materialHandles The native handles of the materials.
      * @return An int handle for the created Impress node.
      */
-    public fun createCustomMeshNode(customMeshHandle: Long, materialHandles: LongArray): Int
+    public fun createCustomMeshNode(
+        customMeshHandle: Long,
+        materialHandles: LongArray,
+        boneCount: Int,
+    ): Int
 }
