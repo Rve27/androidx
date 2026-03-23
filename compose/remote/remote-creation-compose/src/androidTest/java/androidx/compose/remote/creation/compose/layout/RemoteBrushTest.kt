@@ -32,8 +32,8 @@ import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.painter.RemotePainter
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
-import androidx.compose.remote.creation.compose.shaders.bitmap
 import androidx.compose.remote.creation.compose.shaders.horizontalGradient
+import androidx.compose.remote.creation.compose.shaders.image
 import androidx.compose.remote.creation.compose.shaders.linearGradient
 import androidx.compose.remote.creation.compose.shaders.radialGradient
 import androidx.compose.remote.creation.compose.shaders.sweepGradient
@@ -228,7 +228,7 @@ class RemoteBrushTest {
                                 object : RemotePainter() {
                                     override fun RemoteDrawScope.onDraw() {
                                         val paint = RemotePaint {
-                                            with(RemoteBrush.bitmap(image)) {
+                                            with(RemoteBrush.image(image)) {
                                                 applyTo(this@RemotePaint, size, matrix33)
                                             }
                                         }
@@ -290,8 +290,8 @@ class RemoteBrushTest {
         val backgroundImage =
             rememberNamedRemoteBitmap(name = "background") { createImage(300, 400).asImageBitmap() }
         val backgroundBrush =
-            RemoteBrush.bitmap(
-                bitmap = backgroundImage,
+            RemoteBrush.image(
+                image = backgroundImage,
                 tileModeX = TileMode.Decal,
                 tileModeY = TileMode.Decal,
                 contentScale = contentScale,
