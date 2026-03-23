@@ -44,6 +44,8 @@ internal constructor(
     override val lifecycleManager: ProjectedManager,
     override val perceptionManager: ProjectedPerceptionManager,
 ) : PerceptionRuntime {
+    override var config: Config = Config()
+
     override fun initialize() {
         lifecycleManager.create()
     }
