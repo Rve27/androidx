@@ -17,6 +17,7 @@
 package androidx.camera.core;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.RestrictTo;
 import androidx.camera.core.ConcurrentCamera.SingleCameraConfig;
 import androidx.core.util.Pair;
 
@@ -100,19 +101,23 @@ public class CompositionSettings {
             .setAlpha(1.0f)
             .setOffset(0.0f, 0.0f)
             .setScale(1.0f, 1.0f)
+            .setZOrder(0)
             .build();
 
     private final float mAlpha;
     private final Pair<Float, Float> mOffset;
     private final Pair<Float, Float> mScale;
+    private final int mZOrder;
 
     private CompositionSettings(
             float alpha,
             Pair<Float, Float> offset,
-            Pair<Float, Float> scale) {
+            Pair<Float, Float> scale,
+            int zOrder) {
         mAlpha = alpha;
         mOffset = offset;
         mScale = scale;
+        mZOrder = zOrder;
     }
 
     /**
@@ -142,11 +147,22 @@ public class CompositionSettings {
         return mScale;
     }
 
+    /**
+     * Gets the z-order.
+     *
+     * @return z-order value.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public int getZOrder() {
+        return mZOrder;
+    }
+
     /** A builder for {@link CompositionSettings} instances. */
     public static final class Builder {
         private float mAlpha;
         private Pair<Float, Float> mOffset;
         private Pair<Float, Float> mScale;
+        private int mZOrder;
 
         /**
          * Creates a new {@link Builder}.
@@ -158,6 +174,7 @@ public class CompositionSettings {
             mAlpha = 1.0f;
             mOffset = Pair.create(0.0f, 0.0f);
             mScale = Pair.create(1.0f, 1.0f);
+            mZOrder = 0;
         }
 
         /**
@@ -198,6 +215,18 @@ public class CompositionSettings {
         }
 
         /**
+         * Sets the z-order. Larger z-order means rendered later (appears on top).
+         *
+         * @param zOrder z-order value.
+         * @return Builder instance.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public @NonNull Builder setZOrder(int zOrder) {
+            mZOrder = zOrder;
+            return this;
+        }
+
+        /**
          * Builds the {@link CompositionSettings}.
          *
          * @return {@link CompositionSettings}.
@@ -206,7 +235,8 @@ public class CompositionSettings {
             return new CompositionSettings(
                     mAlpha,
                     mOffset,
-                    mScale);
+                    mScale,
+                    mZOrder);
         }
     }
 }
