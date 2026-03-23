@@ -83,7 +83,7 @@ class PerceptionSpaceScenePoseImplTest {
     }
 
     @Test
-    fun getPoseInActivitySpace_returnsInverseOfActivitySpacePose() {
+    fun getActivitySpacePose_returnsInverseOfActivitySpaceMatrix() {
         val activitySpaceMatrix =
             fromTrs(
                 Vector3(1.0f, 2.0f, 3.0f),
@@ -93,11 +93,11 @@ class PerceptionSpaceScenePoseImplTest {
         sendTransformEvent(ShadowNodeTransform.create(Mat4f(activitySpaceMatrix.data)))
         fakeScheduledExecutor.runAll()
 
-        val poseInActivitySpace = mPerceptionSpaceScenePose!!.poseInActivitySpace
+        val activitySpacePose = mPerceptionSpaceScenePose!!.activitySpacePose
 
         val expectedPose = activitySpaceMatrix.inverse.toPose()
 
-        assertPose(poseInActivitySpace, expectedPose)
+        assertPose(activitySpacePose, expectedPose)
     }
 
     @Test
