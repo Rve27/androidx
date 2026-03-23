@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.wear.compose.integration.demos.common.Centralize
 import androidx.wear.compose.integration.demos.common.ComposableDemo
 import androidx.wear.compose.integration.demos.common.Material3DemoCategory
+import androidx.wear.compose.material3.RevealDirection.Companion.Bidirectional
 import androidx.wear.compose.material3.samples.AnimatedTextSample
 import androidx.wear.compose.material3.samples.AnimatedTextSampleButtonResponse
 import androidx.wear.compose.material3.samples.AnimatedTextSampleSharedFontRegistry
@@ -214,8 +215,16 @@ val WearMaterial3Demos =
                         ComposableDemo("In TLC") {
                             SwipeToRevealWithTransformingLazyColumnSample()
                         },
+                        ComposableDemo("In TLC, two actions") {
+                            SwipeToRevealTwoActionsWithTransformingLazyColumnDemo()
+                        },
                         ComposableDemo("In TLC, bi-directional") {
                             SwipeToRevealWithTransformingLazyColumnDemo()
+                        },
+                        ComposableDemo("In TLC, bi-directional, two actions") {
+                            SwipeToRevealTwoActionsWithTransformingLazyColumnDemo(
+                                revealDirection = Bidirectional
+                            )
                         },
                         ComposableDemo("In TLC, icon only") {
                             SwipeToRevealIconOnlyWithTransformingLazyColumnDemo()
