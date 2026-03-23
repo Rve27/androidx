@@ -291,6 +291,7 @@ package androidx.camera.core {
 
   public final class FocusMeteringAction {
     method public long getAutoCancelDurationInMillis();
+    method public int getLockingMode();
     method public java.util.List<androidx.camera.core.MeteringPoint!> getMeteringPointsAe();
     method public java.util.List<androidx.camera.core.MeteringPoint!> getMeteringPointsAf();
     method public java.util.List<androidx.camera.core.MeteringPoint!> getMeteringPointsAwb();
@@ -308,6 +309,7 @@ package androidx.camera.core {
     method public androidx.camera.core.FocusMeteringAction build();
     method public androidx.camera.core.FocusMeteringAction.Builder disableAutoCancel();
     method public androidx.camera.core.FocusMeteringAction.Builder setAutoCancelDuration(@IntRange(from=1) long, java.util.concurrent.TimeUnit);
+    method public androidx.camera.core.FocusMeteringAction.Builder setLockingMode(int);
   }
 
   public final class FocusMeteringResult {
