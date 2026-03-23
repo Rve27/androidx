@@ -118,7 +118,12 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
             _planesModelsMap.getOrPut(label) {
                 GltfModel.create(session, Paths.get("models", asset))
             }
-        val modelEntity = GltfModelEntity.create(session, _planesModelsMap[label]!!)
+        val modelEntity =
+            GltfModelEntity.create(
+                session,
+                _planesModelsMap[label]!!,
+                parent = session.scene.activitySpace,
+            )
 
         // The counter starts at max to trigger the resize on the first update loop since emulators
         // only

@@ -462,7 +462,7 @@ class GeospatialActivity : ComponentActivity() {
                 AnchorType.ROOFTOP -> surfaceAnchorModel
             }
         val entity =
-            GltfModelEntity.create(session, model).also {
+            GltfModelEntity.create(session, model, parent = session.scene.activitySpace).also {
                 it.setScale(0.3f)
                 it.setEnabled(false)
             }

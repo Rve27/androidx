@@ -163,18 +163,28 @@ class HandTrackingActivity : ComponentActivity() {
 
                             val leftHandJointEntityMap =
                                 HandJointType.entries.associateWith {
-                                    GltfModelEntity.create(session, xyzModel).also {
-                                        it.setScale(0.015f)
-                                        it.setEnabled(false)
-                                    }
+                                    GltfModelEntity.create(
+                                            session,
+                                            xyzModel,
+                                            parent = session.scene.activitySpace,
+                                        )
+                                        .also {
+                                            it.setScale(0.015f)
+                                            it.setEnabled(false)
+                                        }
                                 }
 
                             val rightHandJointEntityMap =
                                 HandJointType.entries.associateWith {
-                                    GltfModelEntity.create(session, xyzModel).also {
-                                        it.setScale(0.015f)
-                                        it.setEnabled(false)
-                                    }
+                                    GltfModelEntity.create(
+                                            session,
+                                            xyzModel,
+                                            parent = session.scene.activitySpace,
+                                        )
+                                        .also {
+                                            it.setScale(0.015f)
+                                            it.setEnabled(false)
+                                        }
                                 }
 
                             launch {
