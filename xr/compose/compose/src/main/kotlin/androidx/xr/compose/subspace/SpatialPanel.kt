@@ -779,6 +779,7 @@ public fun SpatialActivityPanel(
                                         corePanelEntity.size.run { IntSize2d(width, height) },
                                     name = entityName,
                                     pose = Pose.Identity,
+                                    parent = null,
                                 )
                             )
                             .apply {

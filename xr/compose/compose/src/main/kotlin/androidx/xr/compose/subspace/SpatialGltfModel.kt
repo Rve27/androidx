@@ -56,6 +56,7 @@ import androidx.xr.scenecore.GltfAnimationStartOptions
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.GltfModelNode
+import androidx.xr.scenecore.scene
 import java.nio.file.Path
 import java.util.Collections
 import java.util.function.Consumer
@@ -121,7 +122,8 @@ public fun SpatialGltfModel(
                 }
             ) {
                 val model = state.source.createModel(session)
-                val entity = GltfModelEntity.create(session, model)
+                val entity =
+                    GltfModelEntity.create(session, model, parent = session.scene.activitySpace)
                 coreModelEntity.attachEntity(entity)
                 state.setLoadResult(Result.success(coreModelEntity))
                 intrinsicSize = coreModelEntity.intrinsicSize
