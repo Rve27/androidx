@@ -145,9 +145,12 @@ package androidx.xr.arcore.playservices {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ArCoreRuntime implements androidx.xr.arcore.runtime.PerceptionRuntime {
+    method @InaccessibleFromKotlin public androidx.xr.runtime.Config getConfig();
     method @InaccessibleFromKotlin public androidx.xr.arcore.playservices.ArCoreManager getLifecycleManager();
     method @InaccessibleFromKotlin public androidx.xr.arcore.playservices.ArCorePerceptionManager getPerceptionManager();
+    method @InaccessibleFromKotlin public void setConfig(androidx.xr.runtime.Config);
     method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.time.ComparableTimeMark?>);
+    property public androidx.xr.runtime.Config config;
     property public androidx.xr.arcore.playservices.ArCoreManager lifecycleManager;
     property public androidx.xr.arcore.playservices.ArCorePerceptionManager perceptionManager;
   }

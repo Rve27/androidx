@@ -68,9 +68,12 @@ package androidx.xr.arcore.projected {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ProjectedRuntime implements androidx.xr.arcore.runtime.PerceptionRuntime {
+    method @InaccessibleFromKotlin public androidx.xr.runtime.Config getConfig();
     method @InaccessibleFromKotlin public androidx.xr.arcore.projected.ProjectedManager getLifecycleManager();
     method @InaccessibleFromKotlin public androidx.xr.arcore.projected.ProjectedPerceptionManager getPerceptionManager();
+    method @InaccessibleFromKotlin public void setConfig(androidx.xr.runtime.Config);
     method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.time.ComparableTimeMark?>);
+    property public androidx.xr.runtime.Config config;
     property public androidx.xr.arcore.projected.ProjectedManager lifecycleManager;
     property public androidx.xr.arcore.projected.ProjectedPerceptionManager perceptionManager;
   }

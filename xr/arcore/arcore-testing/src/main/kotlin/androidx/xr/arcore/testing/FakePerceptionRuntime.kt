@@ -36,6 +36,8 @@ public data class FakePerceptionRuntime(
     override val lifecycleManager: FakeLifecycleManager,
     override val perceptionManager: FakePerceptionManager,
 ) : PerceptionRuntime {
+    override var config: Config = Config()
+
     public var xrDevicePreferredDisplayBlendMode: DisplayBlendMode = DisplayBlendMode.NO_DISPLAY
 
     override fun initialize() {

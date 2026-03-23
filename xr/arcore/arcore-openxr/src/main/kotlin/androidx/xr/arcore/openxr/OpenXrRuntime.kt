@@ -44,6 +44,8 @@ internal constructor(
     override val lifecycleManager: OpenXrManager,
     override val perceptionManager: OpenXrPerceptionManager,
 ) : PerceptionRuntime {
+    override var config: Config = Config()
+
     override fun initialize() {
         lifecycleManager.create()
     }

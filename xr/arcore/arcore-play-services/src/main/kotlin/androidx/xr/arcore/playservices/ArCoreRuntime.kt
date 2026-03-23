@@ -41,6 +41,7 @@ internal constructor(
     override val lifecycleManager: ArCoreManager,
     override val perceptionManager: ArCorePerceptionManager,
 ) : PerceptionRuntime {
+    override var config: Config = Config()
 
     override fun initialize() {
         lifecycleManager.create()

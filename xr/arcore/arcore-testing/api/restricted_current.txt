@@ -106,11 +106,14 @@ package androidx.xr.arcore.testing {
     method public androidx.xr.arcore.testing.FakePerceptionManager component2();
     method public androidx.xr.arcore.testing.FakePerceptionRuntime copy(optional androidx.xr.arcore.testing.FakeLifecycleManager lifecycleManager, optional androidx.xr.arcore.testing.FakePerceptionManager perceptionManager);
     method @BytecodeOnly public static androidx.xr.arcore.testing.FakePerceptionRuntime! copy$default(androidx.xr.arcore.testing.FakePerceptionRuntime!, androidx.xr.arcore.testing.FakeLifecycleManager!, androidx.xr.arcore.testing.FakePerceptionManager!, int, Object!);
+    method @InaccessibleFromKotlin public androidx.xr.runtime.Config getConfig();
     method @InaccessibleFromKotlin public androidx.xr.arcore.testing.FakeLifecycleManager getLifecycleManager();
     method @InaccessibleFromKotlin public androidx.xr.arcore.testing.FakePerceptionManager getPerceptionManager();
     method @InaccessibleFromKotlin public androidx.xr.runtime.DisplayBlendMode getXrDevicePreferredDisplayBlendMode();
+    method @InaccessibleFromKotlin public void setConfig(androidx.xr.runtime.Config);
     method @InaccessibleFromKotlin public void setXrDevicePreferredDisplayBlendMode(androidx.xr.runtime.DisplayBlendMode);
     method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.time.ComparableTimeMark?>);
+    property public androidx.xr.runtime.Config config;
     property public androidx.xr.arcore.testing.FakeLifecycleManager lifecycleManager;
     property public androidx.xr.arcore.testing.FakePerceptionManager perceptionManager;
     property public androidx.xr.runtime.DisplayBlendMode xrDevicePreferredDisplayBlendMode;
