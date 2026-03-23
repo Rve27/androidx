@@ -85,6 +85,7 @@ object RoomTypeNames {
     val RAW_QUERY = XClassName.get(ROOM_PACKAGE, "RoomRawQuery")
     val ROOM_DB_CONSTRUCTOR = XClassName.get(ROOM_PACKAGE, "RoomDatabaseConstructor")
     val BYTE_ARRAY_WRAPPER = XClassName.get("$ROOM_PACKAGE.util", "ByteArrayWrapper")
+    val ANDROID_MARKER = XClassName.get("$ROOM_PACKAGE.util", "AndroidMarker")
 }
 
 object RoomAnnotationTypeNames {
