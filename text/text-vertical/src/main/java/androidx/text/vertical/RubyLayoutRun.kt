@@ -17,103 +17,11 @@
 package androidx.text.vertical
 
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.os.Build
 import android.text.Spanned
 import android.text.TextPaint
-import android.text.style.ReplacementSpan
 import androidx.annotation.RequiresApi
 import kotlin.math.max
-
-/**
- * A span used to specify ruby text for a portion of the text.
- *
- * Ruby text cannot be nested (i.e., ruby text cannot contain further ruby text). Ruby spans also
- * cannot overlap each other.
- *
- * This span is designed for use with [VerticalTextLayout].
- *
- * @property text The ruby text to be displayed adjacent to the base text.
- * @property orientation The text orientation of the ruby text. Defaults to [TextOrientation.MIXED].
- * @property textScale The text scale ratio of the ruby text relative to the base text. Defaults to
- *   0.5f.
- */
-public class RubySpan
-private constructor(
-    public val text: CharSequence,
-    @OrientationMode public val orientation: Int,
-    public val textScale: Float,
-) : ReplacementSpan() {
-    private val impl by lazy {
-        HorizontalSpanImpl(
-            { paint, text, start, end -> LayoutKey(start, end, text) },
-            { paint, bodyText, start, end ->
-                HorizontalRubySpanLayout(bodyText, start, end, text, paint, textScale)
-            },
-        )
-    }
-
-    /**
-     * Builder class for creating [RubySpan] instances.
-     *
-     * @param text The ruby text to be displayed adjacent to the base text.
-     */
-    public class Builder(private val text: CharSequence) {
-        private var _orientation: Int = TextOrientation.MIXED
-        private var _textScale: Float = 0.5f
-
-        /**
-         * Sets the text orientation for the ruby text.
-         *
-         * By default, [TextOrientation.MIXED] is used.
-         *
-         * @param orientation The text orientation to set.
-         * @return This [Builder] instance for method chaining.
-         */
-        public fun setOrientation(@OrientationMode orientation: Int): Builder = apply {
-            _orientation = orientation
-        }
-
-        /**
-         * Sets the text scale for the ruby text.
-         *
-         * By default, 0.5f is used, meaning the ruby text will be half the size of the base text.
-         *
-         * @param textScale The text scale to set.
-         * @return This [Builder] instance for method chaining.
-         */
-        public fun setTextScale(textScale: Float): Builder = apply { _textScale = textScale }
-
-        /**
-         * Builds and returns a new [RubySpan] instance.
-         *
-         * @return A new [RubySpan] instance.
-         */
-        public fun build(): RubySpan = RubySpan(text, _orientation, _textScale)
-    }
-
-    override fun getSize(
-        paint: Paint,
-        text: CharSequence?,
-        start: Int,
-        end: Int,
-        fm: Paint.FontMetricsInt?,
-    ): Int = impl.getSize(paint, text, start, end, fm)
-
-    override fun draw(
-        canvas: Canvas,
-        text: CharSequence?,
-        start: Int,
-        end: Int,
-        x: Float,
-        top: Int,
-        y: Int,
-        bottom: Int,
-        paint: Paint,
-    ) {
-        impl.draw(canvas, text, start, end, x, top, y, bottom, paint)
-    }
-}
 
 /**
  * Iterates through each RubySpan within a specified range of a CharSequence.
