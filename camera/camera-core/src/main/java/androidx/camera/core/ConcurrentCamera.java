@@ -18,7 +18,6 @@ package androidx.camera.core;
 
 import android.content.pm.PackageManager;
 
-import androidx.annotation.RestrictTo;
 import androidx.lifecycle.LifecycleOwner;
 
 import org.jspecify.annotations.NonNull;
@@ -97,7 +96,6 @@ public class ConcurrentCamera {
      * @param compositionSettings A list of {@link CompositionSettings} for the concurrent
      *                            cameras.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public void setCompositionSettings(
             @NonNull List<CompositionSettings> compositionSettings) {
         if (!mCameras.isEmpty()) {

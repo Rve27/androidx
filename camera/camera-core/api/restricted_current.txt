@@ -195,6 +195,7 @@ package androidx.camera.core {
     method public float getAlpha();
     method public androidx.core.util.Pair<java.lang.Float!,java.lang.Float!> getOffset();
     method public androidx.core.util.Pair<java.lang.Float!,java.lang.Float!> getScale();
+    method public int getZOrder();
     field public static final androidx.camera.core.CompositionSettings DEFAULT;
   }
 
@@ -204,11 +205,13 @@ package androidx.camera.core {
     method public androidx.camera.core.CompositionSettings.Builder setAlpha(@FloatRange(from=0, to=1) float);
     method public androidx.camera.core.CompositionSettings.Builder setOffset(@FloatRange(from=0xffffffff, to=1) float, @FloatRange(from=0xffffffff, to=1) float);
     method public androidx.camera.core.CompositionSettings.Builder setScale(float, float);
+    method public androidx.camera.core.CompositionSettings.Builder setZOrder(int);
   }
 
   public class ConcurrentCamera {
     ctor public ConcurrentCamera(java.util.List<androidx.camera.core.Camera!>);
     method public java.util.List<androidx.camera.core.Camera!> getCameras();
+    method public void setCompositionSettings(java.util.List<androidx.camera.core.CompositionSettings!>);
   }
 
   public static final class ConcurrentCamera.SingleCameraConfig {

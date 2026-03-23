@@ -17,7 +17,6 @@
 package androidx.camera.core;
 
 import androidx.annotation.FloatRange;
-import androidx.annotation.RestrictTo;
 import androidx.camera.core.ConcurrentCamera.SingleCameraConfig;
 import androidx.core.util.Pair;
 
@@ -152,7 +151,6 @@ public class CompositionSettings {
      *
      * @return z-order value.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public int getZOrder() {
         return mZOrder;
     }
@@ -220,7 +218,6 @@ public class CompositionSettings {
          * @param zOrder z-order value.
          * @return Builder instance.
          */
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public @NonNull Builder setZOrder(int zOrder) {
             mZOrder = zOrder;
             return this;
