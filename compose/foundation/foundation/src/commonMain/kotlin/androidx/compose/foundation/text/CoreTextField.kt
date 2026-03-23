@@ -595,6 +595,21 @@ internal fun CoreTextField(
                                             decorationBoxCoordinates =
                                                 prevProxy?.decorationBoxCoordinates,
                                         )
+                                    val showCursor =
+                                        manager.enabled &&
+                                            manager.editable &&
+                                            windowInfo.isWindowFocused &&
+                                            !state.hasHighlight()
+                                    if (
+                                        showCursor &&
+                                            state.hasFocus &&
+                                            prevResult?.layoutInput?.text != result.layoutInput.text
+                                    ) {
+                                        coroutineScope.launch {
+                                            val cursorRect = manager.getCursorRect()
+                                            bringIntoViewRequester.bringIntoView(cursorRect)
+                                        }
+                                    }
                                     onTextLayout(result)
                                     notifyFocusedRect(state, value, offsetMapping)
                                 }
