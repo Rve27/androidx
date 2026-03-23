@@ -122,11 +122,11 @@ public constructor(
         @RestrictTo(RestrictTo.Scope.LIBRARY)
         @Deprecated(
             message =
-                "unScaledGravityAlignedActivitySpace flag deprecated, scheduled for removal in future release."
+                "unscaledGravityAlignedActivitySpace flag deprecated, scheduled for removal in future release."
         )
         public fun create(
             activity: Activity,
-            coroutineContext: CoroutineContext,
+            coroutineContext: CoroutineContext = EmptyCoroutineContext,
             unscaledGravityAlignedActivitySpace: Boolean,
         ): SessionCreateResult =
             create(
