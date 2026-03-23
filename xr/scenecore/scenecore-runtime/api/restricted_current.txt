@@ -1545,7 +1545,6 @@ package androidx.xr.scenecore.runtime.impl {
     ctor public BaseScenePose();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getActivitySpacePose();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getActivitySpaceScale();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPoseInActivitySpace();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Vector3 getWorldSpaceScale();
     method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.scenecore.runtime.ScenePose.HitTestFilterValue int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.runtime.HitTestResult>);
     method public androidx.xr.runtime.math.Vector3 transformDirectionTo(androidx.xr.runtime.math.Vector3 direction, androidx.xr.scenecore.runtime.ScenePose destination);
@@ -1554,7 +1553,6 @@ package androidx.xr.scenecore.runtime.impl {
     method public androidx.xr.runtime.math.Vector3 transformVectorTo(androidx.xr.runtime.math.Vector3 vector, androidx.xr.scenecore.runtime.ScenePose destination);
     property public androidx.xr.runtime.math.Pose activitySpacePose;
     property public androidx.xr.runtime.math.Vector3 activitySpaceScale;
-    property public androidx.xr.runtime.math.Pose poseInActivitySpace;
     property public androidx.xr.runtime.math.Vector3 worldSpaceScale;
   }
 
