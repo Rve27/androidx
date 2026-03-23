@@ -18,12 +18,14 @@ package androidx.glance.wear
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.IntentFilter
 import android.os.Build
 import android.os.OutcomeReceiver
 import androidx.glance.wear.cache.WearWidgetCache
 import androidx.glance.wear.core.ActiveWearWidgetHandle
 import androidx.glance.wear.core.ContainerInfo
 import androidx.glance.wear.core.WearWidgetParams
+import androidx.glance.wear.core.WearWidgetProviderInfo
 import androidx.glance.wear.core.WidgetInstanceId
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -42,6 +44,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
@@ -147,6 +150,37 @@ class GlanceWearWidgetManagerTest {
 
         widgetManager.updateServiceMapping(service, service.widget)
 
+        verify(widgetCache).update(any())
+    }
+
+    @Test
+    @Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    fun fetchActiveWidgets_whenCacheEmpty_regeneratesMapping() = runTest {
+        whenever(tilesManager.getActiveTiles(any(), any())).thenAnswer { invocationOnMock ->
+            val executor = invocationOnMock.getArgument<Executor>(0)
+            val outcomeReceiver =
+                invocationOnMock.getArgument<OutcomeReceiver<List<TileInstance>, Exception>>(1)
+            executor.execute { outcomeReceiver.onResult(listOf(tileInstance1, tileInstance2)) }
+        }
+        whenever(widgetCache.getServiceToWidgetMapping()).thenReturn(emptyMap())
+        // Mock PackageManager to list our service in queries.
+        val shadowPackageManager = Shadows.shadowOf(context.packageManager)
+        val filter = IntentFilter(WearWidgetProviderInfo.ACTION_BIND_WIDGET_PROVIDER)
+        shadowPackageManager.addServiceIfNotPresent(component1)
+        shadowPackageManager.addIntentFilterForService(component1, filter)
+        shadowPackageManager.addServiceIfNotPresent(component2)
+        shadowPackageManager.addIntentFilterForService(component2, filter)
+
+        val widgets = widgetManager.fetchActiveWidgets(TestWidget1::class)
+
+        assertThat(widgets)
+            .containsExactly(
+                ActiveWearWidgetHandle(
+                    provider = component1,
+                    instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 1),
+                    containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
+                )
+            )
         verify(widgetCache).update(any())
     }
 }
