@@ -3091,12 +3091,14 @@ package androidx.compose.ui.layout {
     method @InaccessibleFromKotlin public boolean isAttached();
     method @InaccessibleFromKotlin public default boolean isDeactivated();
     method @InaccessibleFromKotlin public boolean isPlaced();
+    method @InaccessibleFromKotlin public default boolean isVirtual();
     property public abstract androidx.compose.ui.layout.LayoutCoordinates coordinates;
     property public abstract androidx.compose.ui.unit.Density density;
     property public abstract int height;
     property public abstract boolean isAttached;
     property public default boolean isDeactivated;
     property public abstract boolean isPlaced;
+    property public default boolean isVirtual;
     property public abstract androidx.compose.ui.unit.LayoutDirection layoutDirection;
     property public abstract androidx.compose.ui.layout.LayoutInfo? parentInfo;
     property public abstract int semanticsId;
