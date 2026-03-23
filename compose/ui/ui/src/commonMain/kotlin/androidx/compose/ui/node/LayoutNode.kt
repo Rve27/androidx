@@ -72,14 +72,11 @@ private val DefaultDensity = Density(1f)
 /** An element in the layout hierarchy, built with compose UI. */
 @OptIn(InternalComposeUiApi::class)
 internal class LayoutNode(
-    // Virtual LayoutNode is the temporary concept allows us to a node which is not a real node,
-    // but just a holder for its children - allows us to combine some children into something we
-    // can subcompose in(LayoutNode) without being required to define it as a real layout - we
-    // don't want to define the layout strategy for such nodes, instead the children of the
-    // virtual nodes will be treated as the direct children of the virtual node parent.
-    // This whole concept will be replaced with a proper subcomposition logic which allows to
-    // subcompose multiple times into the same LayoutNode and define offsets.
-    private val isVirtual: Boolean = false,
+    // Virtual LayoutNode is a node which is not a real layout node, but just a holder for its
+    // children. It allows combining children into a structure that can subcompose without
+    // being required to define it as a real layout. The children of the virtual node are treated
+    // as the direct children of the virtual node's parent.
+    override val isVirtual: Boolean = false,
     // The unique semantics ID that is used by all semantics modifiers attached to this LayoutNode.
     // TODO(b/281907968): Implement this with a getter that returns the compositeKeyHash.
     override var semanticsId: Int = generateSemanticsId(),
@@ -638,7 +635,7 @@ internal class LayoutNode(
 
     override fun toString(): String {
         return "${simpleIdentityToString(this, null)} children: ${children.size} " +
-            "measurePolicy: $measurePolicy deactivated: $isDeactivated"
+            "measurePolicy: $measurePolicy deactivated: $isDeactivated isVirtual: $isVirtual isPlaced: $isPlaced"
     }
 
     internal val hasFixedInnerContentConstraints: Boolean
