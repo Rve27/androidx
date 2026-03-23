@@ -32,8 +32,10 @@ import androidx.glance.wear.core.ActiveWearWidgetHandle
 import androidx.glance.wear.core.ContainerInfo
 import androidx.glance.wear.core.WearWidgetProviderInfo
 import androidx.glance.wear.core.WidgetInstanceId
+import androidx.wear.utils.WearApiVersionHelper
 import com.google.wear.Sdk
 import com.google.wear.services.tiles.TileInstance
+import com.google.wear.services.tiles.TileProvider
 import com.google.wear.services.tiles.TilesManager
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -165,9 +167,7 @@ public class GlanceWearWidgetManager {
                                     WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE,
                                     instance.id,
                                 ),
-                            // TODO: b/485487815 - Set container type correctly when Wear 7 SDK will
-                            // be available
-                            containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
+                            containerType = provider.getContainerTypeCompat(),
                         )
                     }
                 continuation.resume(widgets)
@@ -244,3 +244,20 @@ public class GlanceWearWidgetManager {
 private fun GlanceWearWidgetService.serviceName() = this.javaClass.name
 
 private fun GlanceWearWidget.canonicalName() = this.javaClass.canonicalName ?: this.javaClass.name
+
+@ContainerInfo.ContainerType
+private fun TileProvider.getContainerTypeCompat(): Int {
+    if (
+        Build.FINGERPRINT.equals("robolectric", ignoreCase = true) ||
+            WearApiVersionHelper.isApiVersionAtLeast(WearApiVersionHelper.WEAR_CINNAMON_BUN_0)
+    ) {
+        return when (containerType) {
+            TilesManager.WIDGET_CONTAINER_TYPE_LARGE -> ContainerInfo.CONTAINER_TYPE_LARGE
+            TilesManager.WIDGET_CONTAINER_TYPE_SMALL -> ContainerInfo.CONTAINER_TYPE_SMALL
+            TilesManager.WIDGET_CONTAINER_TYPE_FULLSCREEN ->
+                ContainerInfo.CONTAINER_TYPE_TILE_COMPAT
+            else -> throw IllegalArgumentException("Unknown containerType $containerType")
+        }
+    }
+    return ContainerInfo.CONTAINER_TYPE_TILE_COMPAT
+}
