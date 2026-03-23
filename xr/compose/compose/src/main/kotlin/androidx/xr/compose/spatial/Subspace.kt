@@ -459,7 +459,7 @@ public fun FollowingSubspace(
             }
         }
         val subspaceRootNode by remember {
-            disposableValueOf(CoreGroupEntity(subspaceRoot).apply { enabled = true }) {
+            disposableValueOf(CoreGroupEntity(subspaceRoot).apply { enabled = false }) {
                 it.dispose()
             }
         }
