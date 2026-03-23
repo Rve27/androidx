@@ -227,8 +227,6 @@ class MeshEntityActivity : ComponentActivity() {
                 MeshBuffer.create(
                     currentSession,
                     vertexLayout,
-                    24,
-                    indices.size,
                     vertexBuffers,
                     vertexBufferSizes,
                     indexBuffer,
@@ -248,7 +246,7 @@ class MeshEntityActivity : ComponentActivity() {
                     currentSession,
                     customMesh!!,
                     listOf(material!!),
-                    Pose(Vector3(2f, 0f, -1f)), // Place 2m to the right and 1m in front
+                    pose = Pose(Vector3(2f, 0f, -1f)), // Place 2m to the right and 1m in front
                 )
         }
     }

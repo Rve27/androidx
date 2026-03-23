@@ -563,23 +563,21 @@ public class FakeRenderingRuntime(
         meshBuffer: MeshBufferResource,
         subsetOffsets: IntArray,
         subsetCounts: IntArray,
-    ): CustomMeshResource = object : CustomMeshResource {}
-
-    override fun destroyCustomMesh(customMesh: CustomMeshResource) {}
-
-    override fun setCustomMeshBoundingBox(
-        customMesh: CustomMeshResource,
+        subsetTopologies: IntArray,
         centerX: Float,
         centerY: Float,
         centerZ: Float,
         halfExtentX: Float,
         halfExtentY: Float,
         halfExtentZ: Float,
-    ) {}
+    ): CustomMeshResource = object : CustomMeshResource {}
+
+    override fun destroyCustomMesh(customMesh: CustomMeshResource) {}
 
     override fun createMeshEntity(
         customMesh: CustomMeshResource,
         materials: List<MaterialResource>,
+        boneCount: Int,
         pose: Pose,
         parent: Entity?,
     ): MeshEntity {
