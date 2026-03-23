@@ -36,6 +36,7 @@ import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import androidx.pdf.PdfFeature
 import androidx.pdf.PdfPoint
 import androidx.pdf.selection.PdfSelectionMenuKeys.CopyKey
 import androidx.pdf.selection.Selection
@@ -456,7 +457,11 @@ class PdfViewerTest {
     @Test
     fun pdfViewerState_observeSelection() {
         val pdfDocument =
-            FakePdfDocument(List(10) { Point(425, 225) }, pageSelector = SIMPLE_SELECTOR)
+            FakePdfDocument(
+                List(10) { Point(425, 225) },
+                pageSelector = SIMPLE_SELECTOR,
+                supportedFeatures = setOf(PdfFeature.TEXT_SELECTION),
+            )
         val selections = mutableListOf<Selection?>()
 
         lateinit var pdfViewerState: PdfViewerState
@@ -500,7 +505,11 @@ class PdfViewerTest {
     @Test
     fun pdfViewerState_clearCurrentSelection() {
         val pdfDocument =
-            FakePdfDocument(List(10) { Point(425, 225) }, pageSelector = SIMPLE_SELECTOR)
+            FakePdfDocument(
+                List(10) { Point(425, 225) },
+                pageSelector = SIMPLE_SELECTOR,
+                supportedFeatures = setOf(PdfFeature.TEXT_SELECTION),
+            )
         val selections = mutableListOf<Selection?>()
 
         lateinit var pdfViewerState: PdfViewerState
