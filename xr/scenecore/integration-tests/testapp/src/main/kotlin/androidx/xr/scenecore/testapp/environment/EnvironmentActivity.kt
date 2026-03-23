@@ -224,7 +224,12 @@ class EnvironmentActivity : AppCompatActivity() {
 
         // handle animated with mesh override geometry
         findViewById<Button>(R.id.environment_button3_3).setOnClickListener {
-            val dragonEntity = GltfModelEntity.create(session!!, dragonGeometry)
+            val dragonEntity =
+                GltfModelEntity.create(
+                    session!!,
+                    dragonGeometry,
+                    parent = session!!.scene.activitySpace,
+                )
             geometryEntity = dragonEntity
             dragonEntity.setEnabled(false)
             dragonEntity.nodes.find { it.name == "Dragon" }?.setMaterialOverride(khronosPbrMaterial)

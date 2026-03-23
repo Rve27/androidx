@@ -206,6 +206,7 @@ class PerceivedResolutionManager(
                     pixelDimensions = IntSize2d(1000, 500),
                     name = "perceivedResolutionPanel",
                     pose = Pose(Vector3(0.5f, 0f, 0.1f)),
+                    parent = session.scene.activitySpace,
                 )
 
             mMovableComponent = MovableComponent.createSystemMovable(session)

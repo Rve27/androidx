@@ -583,7 +583,14 @@ class MovableComponentTest {
 
         val movableComponent = MovableComponent.createSystemMovable(session)
         val view = TextView(activity)
-        val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+        val panelEntity =
+            PanelEntity.create(
+                session,
+                view,
+                IntSize2d(720, 480),
+                "test",
+                parent = session.scene.activitySpace,
+            )
         assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
         assertThat(movableComponent.rtMovableComponent)
@@ -660,7 +667,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             val proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -718,7 +732,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             panelEntity.parent = null
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
@@ -780,7 +801,14 @@ class MovableComponentTest {
             val entityPose = Pose(Vector3(0f, -1f, 0f), Quaternion.Identity)
             val entity = Entity.create(session, "test", entityPose) as BaseEntity<*>
             (entity.rtScenePose as FakeScenePose).activitySpacePose = entityPose
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             panelEntity.parent = entity
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
@@ -846,7 +874,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             val proposedPose = Pose(Vector3(.5f, .5f, .5f), Quaternion.Identity)
@@ -904,7 +939,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             val proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -982,7 +1024,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             // Put the proposed position at 2 + half the MIN_PLANE_ANCHOR_DISTANCE above the origin.
@@ -1072,7 +1121,14 @@ class MovableComponentTest {
                 MovableComponent.createAnchorable(session, setOf(anchorPlacement))
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             val proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -1152,7 +1208,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             val entityScale = Vector3.One * 5f
             panelEntity.setScale(entityScale)
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
@@ -1220,7 +1283,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             val proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -1276,7 +1346,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             val proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -1332,7 +1409,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             val proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -1388,7 +1472,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             var proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -1495,7 +1586,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             val entityScale = Vector3.One * 5f
             panelEntity.setScale(entityScale)
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
@@ -1600,7 +1698,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             // Create a parent entity whose pose is below the activity space pose.
@@ -1707,7 +1812,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             var proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -1815,7 +1927,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             var proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -1930,7 +2049,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             val proposedPose = Pose(Vector3(1f, 1f, 1f), Quaternion.Identity)
@@ -1986,7 +2112,14 @@ class MovableComponentTest {
             val movableComponent = MovableComponent.createAnchorable(session)
             val view = TextView(activity)
 
-            val panelEntity = PanelEntity.create(session, view, IntSize2d(720, 480), "test")
+            val panelEntity =
+                PanelEntity.create(
+                    session,
+                    view,
+                    IntSize2d(720, 480),
+                    "test",
+                    parent = session.scene.activitySpace,
+                )
             assertThat(panelEntity.addComponent(movableComponent)).isTrue()
 
             // Put the proposed position at 5 above the origin. so it is far away from the plane.

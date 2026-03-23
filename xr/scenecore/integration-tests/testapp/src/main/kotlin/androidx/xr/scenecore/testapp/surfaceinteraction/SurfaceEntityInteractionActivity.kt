@@ -463,6 +463,7 @@ class SurfaceEntityInteractionActivity : AppCompatActivity() {
                     shape = shape,
                     stereoMode = stereoMode,
                     surfaceProtection = surfaceProtection,
+                    parent = session.scene.activitySpace,
                 )
             surfaceEntity.parent = parent
 

@@ -482,6 +482,7 @@ class SurfaceEntityCustomMeshActivity : ComponentActivity() {
                 IntSize2d(640, 480),
                 "playerControls",
                 Pose.Identity,
+                parent = session.scene.activitySpace,
             )
 
         // TODO: b/413478924 - Use controlPanelEntity.view when the api is available.
@@ -678,6 +679,7 @@ class SurfaceEntityCustomMeshActivity : ComponentActivity() {
                             stereoMode = stereoMode,
                             superSampling = SurfaceEntity.SuperSampling.PENTAGON,
                             surfaceProtection = surfaceContentLevel,
+                            parent = session.scene.activitySpace,
                         )
 
                     surfaceEntity?.parent = movieParent!!
