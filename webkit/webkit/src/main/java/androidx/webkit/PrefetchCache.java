@@ -58,6 +58,8 @@ public final class PrefetchCache {
      *
      * @param maxPrefetches the maximum number of prefetches to allow. Setting this value to
      *                      {@code null} will use the default value.
+     * @throws UnsupportedOperationException if the {@link WebViewFeature#PREFETCH_CACHE_V1}
+     *                                       feature is not supported.
      */
     @RequiresFeature(name = WebViewFeature.PREFETCH_CACHE_V1,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
@@ -88,6 +90,8 @@ public final class PrefetchCache {
      *
      * @param prefetchTtlSeconds the TTL in seconds. Setting this value to {@code null}
      *                           will use the default value.
+     * @throws UnsupportedOperationException if the {@link WebViewFeature#PREFETCH_CACHE_V1}
+     *                                       feature is not supported.
      */
     @RequiresFeature(name = WebViewFeature.PREFETCH_CACHE_V1,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")

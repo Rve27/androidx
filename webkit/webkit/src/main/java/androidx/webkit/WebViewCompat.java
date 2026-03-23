@@ -208,6 +208,9 @@ public class WebViewCompat {
      * @param requestId An id that will be returned in the callback to allow callers to match
      *                  requests with callbacks.
      * @param callback  The callback to be invoked.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#VISUAL_STATE_CALLBACK}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(name = WebViewFeature.VISUAL_STATE_CALLBACK,
@@ -248,6 +251,9 @@ public class WebViewCompat {
      * automatically, so there is no need to call this API. If called, this API will invoke
      * the {@code callback} immediately with {@code true}, given that Safe Browsing
      * is enabled and supported on the device.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#START_SAFE_BROWSING}
+     *                                       feature is not supported.
      */
     @AnyThread
     @Deprecated
@@ -293,6 +299,9 @@ public class WebViewCompat {
      *                 allowlist, {@code false} if any hosts are malformed. The callback will be
      *                 run on the UI
      *                 thread
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#SAFE_BROWSING_ALLOWLIST}
+     *                                       feature is not supported.
      */
     @AnyThread
     @RequiresFeature(name = WebViewFeature.SAFE_BROWSING_ALLOWLIST,
@@ -346,6 +355,9 @@ public class WebViewCompat {
      *                 . The callback
      *                 will be run on the UI thread
      * @deprecated Please use {@link #setSafeBrowsingAllowlist(Set, ValueCallback)} instead.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#SAFE_BROWSING_WHITELIST}
+     *                                       feature is not supported.
      */
     @AnyThread
     @Deprecated
@@ -365,6 +377,9 @@ public class WebViewCompat {
      * returns true for {@link WebViewFeature#SAFE_BROWSING_PRIVACY_POLICY_URL}.
      *
      * @return the url pointing to a privacy policy document which can be displayed to users.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#SAFE_BROWSING_PRIVACY_POLICY_URL}
+     *                                       feature is not supported.
      */
     @AnyThread
     @RequiresFeature(name = WebViewFeature.SAFE_BROWSING_PRIVACY_POLICY_URL,
@@ -493,6 +508,9 @@ public class WebViewCompat {
      * returns true for {@link WebViewFeature#CREATE_WEB_MESSAGE_CHANNEL}.
      *
      * @return an array of size two, containing the two message ports that form the message channel.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#CREATE_WEB_MESSAGE_CHANNEL}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(name = WebViewFeature.CREATE_WEB_MESSAGE_CHANNEL,
@@ -532,6 +550,9 @@ public class WebViewCompat {
      * @param webview The WebView to post to.
      * @param message the WebMessage
      * @param targetOrigin the target origin.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#POST_WEB_MESSAGE}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(name = WebViewFeature.POST_WEB_MESSAGE,
@@ -765,6 +786,9 @@ public class WebViewCompat {
      * @param listener           The {@link WebMessageListener WebMessageListener} to handle
      *                           postMessage() calls on the JavaScript object.
      * @throws IllegalArgumentException If one of the {@code allowedOriginRules} is invalid.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#WEB_MESSAGE_LISTENER}
+     *                                       feature is not supported.
      * @see JavaScriptReplyProxy
      * @see WebMessageListener
      */
@@ -799,6 +823,9 @@ public class WebViewCompat {
      * @param webview      The WebView object to remove from.
      * @param jsObjectName The JavaScript object's name that was previously passed to {@link
      *                     #addWebMessageListener(WebView, String, Set, WebMessageListener)}.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#WEB_MESSAGE_LISTENER}
+     *                                       feature is not supported.
      * @see #addWebMessageListener(WebView, String, Set, WebMessageListener)
      */
     // UI thread not currently enforced, but required
@@ -845,6 +872,9 @@ public class WebViewCompat {
      * @param allowedOriginRules A set of matching rules for the allowed origins.
      * @return the {@link ScriptHandler}, which is a handle for removing the script.
      * @throws IllegalArgumentException If one of the {@code allowedOriginRules} is invalid.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#DOCUMENT_START_SCRIPT}
+     *                                       feature is not supported.
      * @see #addWebMessageListener(WebView, String, Set, WebMessageListener)
      * @see ScriptHandler
      */
@@ -878,6 +908,9 @@ public class WebViewCompat {
      *
      * @param webview The WebView object to associate with the world.
      * @param name    The name of the execution world.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(
@@ -921,15 +954,16 @@ public class WebViewCompat {
      * @param webview            The {@link WebView} instance that we are interacting with.
      * @param script             The JavaScript script to be executed.
      * @param injectionEvent     The lifecycle event to inject the script: either
-     *                           {@link WebViewCompat.INJECTION_EVENT_DOCUMENT_START} or
-     *                           {@link WebViewCompat.INJECTION_EVENT_DOCUMENT_END}
+     *                           {@link WebViewCompat#INJECTION_EVENT_DOCUMENT_START} or
+     *                           {@link WebViewCompat#INJECTION_EVENT_DOCUMENT_END}
      * @param allowedOriginRules A set of matching rules for the allowed origins.
      * @param world              The execution world to inject the script.
      * @return the {@link ScriptHandler}, which is a handle for removing the script.
      * @throws IllegalArgumentException If one of the {@code allowedOriginRules} is invalid or if
      *                                  the {@code world} is invalid.
-     * @throws UnsupportedOperationException If the underlying webview does not support
-     *                                       this feature.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}
+     *                                       feature is not supported.
      * @see #addWebMessageListener(WebView, String, Set, WebMessageListener)
      * @see ScriptHandler
      */
@@ -975,6 +1009,9 @@ public class WebViewCompat {
      * @param world              The {@link JavaScriptExecutionWorld} in which to add the listener.
      * @param listener           The listener to receive messages.
      * @throws IllegalArgumentException If the {@code world} is invalid.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(
@@ -1012,6 +1049,9 @@ public class WebViewCompat {
      * @param webview      The {@link WebView} instance that we are interacting with.
      * @param world        The execution world from which to remove the listener.
      * @param jsObjectName The name of the JavaScript object that was previously added.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(
@@ -1040,6 +1080,9 @@ public class WebViewCompat {
      * returns true for {@link WebViewFeature#GET_WEB_VIEW_CLIENT}.
      *
      * @return the WebViewClient, or a default client if not yet set
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#GET_WEB_VIEW_CLIENT}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(name = WebViewFeature.GET_WEB_VIEW_CLIENT,
@@ -1065,6 +1108,9 @@ public class WebViewCompat {
      * returns true for {@link WebViewFeature#GET_WEB_CHROME_CLIENT}.
      *
      * @return the WebChromeClient, or {@code null} if not yet set
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#GET_WEB_CHROME_CLIENT}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(name = WebViewFeature.GET_WEB_CHROME_CLIENT,
@@ -1101,6 +1147,9 @@ public class WebViewCompat {
      * @return the {@link WebViewRenderProcess} renderer handle associated
      * with this {@link WebView}, or {@code null} if
      * WebView is not running in multiprocess mode.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#GET_WEB_VIEW_RENDERER}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(name = WebViewFeature.GET_WEB_VIEW_RENDERER,
@@ -1140,6 +1189,9 @@ public class WebViewCompat {
      *                                   callbacks.
      * @param webViewRenderProcessClient the {@link WebViewRenderProcessClient} to set for
      *                                   callbacks.
+     * @throws UnsupportedOperationException if the
+     *                                   {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}
+     *                                       feature is not supported.
      */
     // WebViewRenderProcessClient is a callback class, so it should be last. See
     // https://issuetracker.google.com/issues/139770271.
@@ -1184,6 +1236,9 @@ public class WebViewCompat {
      * @param webview                    the {@link WebView} on which to monitor responsiveness.
      * @param webViewRenderProcessClient the {@link WebViewRenderProcessClient} to set for
      *                                   callbacks.
+     * @throws UnsupportedOperationException if the
+     *                                   {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(name = WebViewFeature.WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE,
@@ -1214,6 +1269,9 @@ public class WebViewCompat {
      * one has been set via
      * {@link #setWebViewRenderProcessClient(WebView, WebViewRenderProcessClient)} or {@code null}
      * otherwise.
+     * @throws UnsupportedOperationException if the
+     *                                   {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(name = WebViewFeature.WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE,
@@ -1247,6 +1305,10 @@ public class WebViewCompat {
      * a sandboxed renderer process separate to the application process.
      * This renderer process may be shared with other WebViews in the
      * application, but is not shared with other application processes.
+     *
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#MULTI_PROCESS}
+     *                                       feature is not supported.
      */
     @AnyThread
     @RequiresFeature(name = WebViewFeature.MULTI_PROCESS,
@@ -1272,6 +1334,9 @@ public class WebViewCompat {
      *
      * @return the variations header. The string may be empty if the header is not available.
      * @see WebView#loadUrl(String, Map)
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#GET_VARIATIONS_HEADER}
+     *                                       feature is not supported.
      */
     @AnyThread
     @RequiresFeature(
@@ -1304,6 +1369,9 @@ public class WebViewCompat {
      * @throws IllegalStateException if {@link WebView#evaluateJavascript(String, ValueCallback)} is
      *                               called on the WebView before this method.
      * @throws IllegalStateException if the WebView has previously navigated to a web page.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#MULTI_PROFILE}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(
@@ -1329,6 +1397,9 @@ public class WebViewCompat {
      * @param webView the WebView to get the profile object associated with.
      * @return the profile object set to this WebView.
      * @throws IllegalStateException if the WebView has been destroyed.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#MULTI_PROFILE}
+     *                                       feature is not supported.
      */
     @UiThread
     @RequiresFeature(
@@ -1348,6 +1419,9 @@ public class WebViewCompat {
      *
      * @param webView the WebView for which to check mute status.
      * @return true if the WebView is muted, false otherwise.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#MUTE_AUDIO}
+     *                                       feature is not supported.
      */
     // UI thread not currently enforced, but required
     @UiThread
@@ -1367,6 +1441,9 @@ public class WebViewCompat {
      *
      * @param webView the WebView for which to control muting.
      * @param mute    true to mute the WebView; false to un-mute the WebView.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#MUTE_AUDIO}
+     *                                       feature is not supported.
      */
     // UI thread not currently enforced, but required
     @UiThread
@@ -1581,6 +1658,9 @@ public class WebViewCompat {
      *            are reserved and used internally by system services like
      *            {@link DownloadManager} when performing traffic on behalf of an
      *            application</em>.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#DEFAULT_TRAFFICSTATS_TAGGING}
+     *                                       feature is not supported.
      */
     @AnyThread
     @RequiresFeature(name = WebViewFeature.DEFAULT_TRAFFICSTATS_TAGGING,
@@ -1654,6 +1734,9 @@ public class WebViewCompat {
      * @param cancellationSignal used to trigger prerender cancellation.
      * @param callbackExecutor   the executor to resolve the callback with.
      * @param callback           callbacks for reporting result back to application.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#PRERENDER_WITH_URL}
+     *                                       feature is not supported.
      */
     @RequiresFeature(name = WebViewFeature.PRERENDER_WITH_URL,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
@@ -1690,6 +1773,9 @@ public class WebViewCompat {
      * @param params             parameters to customize the prerender request and its matching
      *                           behavior.
      * @param callback           callbacks for reporting result back to application.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#PRERENDER_WITH_URL}
+     *                                       feature is not supported.
      */
     @RequiresFeature(name = WebViewFeature.PRERENDER_WITH_URL,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
@@ -1728,6 +1814,9 @@ public class WebViewCompat {
      *                            forward in history (such as through {@link WebView#goForward()}.
      *                            Some apps don't give the user a way to go forward, so won't need
      *                            to save the forward history.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#SAVE_STATE}
+     *                                       feature is not supported.
      */
     @RequiresFeature(name = WebViewFeature.SAVE_STATE,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
