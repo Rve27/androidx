@@ -565,6 +565,7 @@ internal fun CoreTextField(
                         scrollerPosition = scrollerPosition,
                         textFieldValue = value,
                         visualTransformation = visualTransformation,
+                        overscrollEffect = overscrollEffect,
                         textLayoutResultProvider = { state.layoutResult },
                     )
                     .then(cursorModifier)
