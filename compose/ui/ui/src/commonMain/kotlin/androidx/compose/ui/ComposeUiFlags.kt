@@ -96,12 +96,6 @@ object ComposeUiFlags {
     @JvmField
     var isOptimizedFocusEventDispatchEnabled: Boolean = true
 
-    /** This flag enables setting the shape semantics property in the graphicsLayer modifiers. */
-    // TODO: b/455600081
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isGraphicsLayerShapeSemanticsEnabled: Boolean = true
-
     /**
      * Enables a fix where [androidx.compose.ui.node.TraversableNode] traversal method
      * [findNearestAncestor] will take into consideration any delegates that might also be
