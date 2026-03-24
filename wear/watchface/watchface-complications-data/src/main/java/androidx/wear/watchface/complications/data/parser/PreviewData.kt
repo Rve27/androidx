@@ -16,6 +16,7 @@
 
 package androidx.wear.watchface.complications.data.parser
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.res.Resources
@@ -89,8 +90,10 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
         private const val ATTR_MAX = "max"
         private const val ATTR_VALUE_TYPE = "valueType"
         private const val ATTR_MONOCHROMATIC_IMAGE = "monochromaticImage"
+        private const val ATTR_MONOCHROMATIC_IMAGE_TINT = "monochromaticImageTint"
         private const val ATTR_SMALL_IMAGE = "smallImage"
         private const val ATTR_SMALL_IMAGE_TYPE = "smallImageType"
+        private const val ATTR_SMALL_IMAGE_TINT = "smallImageTint"
         private const val ATTR_FORMAT = "format"
         private const val ATTR_INSTANT = "instant"
         private const val ATTR_TARGET_INSTANT = "targetInstant"
@@ -671,6 +674,8 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
             }
         }
 
+        @SuppressLint("NewApi")
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         private fun parseMonochromaticImage(
             parser: XmlResourceParser,
             providerContext: Context,
@@ -678,13 +683,26 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
             val imageResId =
                 getResourceIdFromAttribute(parser, ATTR_MONOCHROMATIC_IMAGE, providerContext)
             return if (imageResId != 0) {
-                MonochromaticImage.Builder(Icon.createWithResource(providerContext, imageResId))
-                    .build()
+                val icon =
+                    Icon.createWithResource(providerContext, imageResId).apply {
+                        val tintColorResId =
+                            getResourceIdFromAttribute(
+                                parser,
+                                ATTR_MONOCHROMATIC_IMAGE_TINT,
+                                providerContext,
+                            )
+                        if (tintColorResId != 0) {
+                            setTint(providerContext.getColor(tintColorResId))
+                        }
+                    }
+                MonochromaticImage.Builder(icon).build()
             } else {
                 null
             }
         }
 
+        @SuppressLint("NewApi")
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         private fun parseSmallImage(
             parser: XmlResourceParser,
             providerContext: Context,
@@ -692,11 +710,20 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
             val imageResId = getResourceIdFromAttribute(parser, ATTR_SMALL_IMAGE, providerContext)
             val imageType = parser.getAttributeValue(null, ATTR_SMALL_IMAGE_TYPE)
             return if (imageResId != 0 && imageType != null) {
-                SmallImage.Builder(
-                        Icon.createWithResource(providerContext, imageResId),
-                        mapSmallImageType(imageType),
-                    )
-                    .build()
+                val icon =
+                    Icon.createWithResource(providerContext, imageResId).apply {
+                        val tintColorResId =
+                            getResourceIdFromAttribute(
+                                parser,
+                                ATTR_SMALL_IMAGE_TINT,
+                                providerContext,
+                            )
+                        if (tintColorResId != 0) {
+                            val color = providerContext.getColor(tintColorResId)
+                            setTint(color)
+                        }
+                    }
+                SmallImage.Builder(icon, mapSmallImageType(imageType)).build()
             } else {
                 null
             }
@@ -1051,27 +1078,28 @@ class PreviewData internal constructor(private val data: Map<ComplicationType, C
             providerContext: Context,
         ): Int {
             val resValue = parser.getAttributeValue(null, attrName) ?: return 0
+
+            if (resValue.startsWith("@")) {
+                val idString = resValue.substring(1)
+                val numericId = idString.toIntOrNull()
+                if (numericId != null) return numericId
+            }
+
             val resources = providerContext.resources
             val packageName = providerContext.packageName
 
             return when {
-                resValue.startsWith("@") ->
+                resValue.startsWith("@") -> {
                     resources.getIdentifier(resValue.substring(1), null, packageName)
+                }
                 resValue.startsWith("?") -> {
-                    val attrFullName = resValue.substring(1)
-                    val attrNameOnly =
-                        if (attrFullName.startsWith("attr/")) {
-                            attrFullName.substring(5)
-                        } else {
-                            attrFullName
-                        }
+                    val attrNameOnly = resValue.substring(1).removePrefix("attr/")
                     val attrResId = resources.getIdentifier(attrNameOnly, "attr", packageName)
-                    if (attrResId == 0) {
-                        return 0
-                    }
+                    if (attrResId == 0) return 0
                     val typedValue = TypedValue()
-                    providerContext.theme.resolveAttribute(attrResId, typedValue, true)
-                    typedValue.resourceId
+                    if (providerContext.theme.resolveAttribute(attrResId, typedValue, true)) {
+                        typedValue.resourceId
+                    } else 0
                 }
                 else -> 0
             }
