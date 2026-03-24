@@ -25,6 +25,7 @@ import android.os.Build
 import android.os.Process
 import androidx.tracing.AbstractTraceDriver
 import androidx.tracing.AbstractTraceSink
+import androidx.tracing.TraceAttributes
 import androidx.tracing.TraceContext
 import androidx.tracing.Tracer
 
@@ -35,11 +36,26 @@ import androidx.tracing.Tracer
  * @param sink The [TraceSink] instance.
  * @param isEnabled Set this to `true` to emit trace events. `false` disables all tracing to lower
  *   overhead.
+ * @param attributes Collection of key value pairs to be attached to a trace to provide additional
+ *   context about any facet of the trace. This can include what data it contains, and properties of
+ *   the host / machine the trace was collected on, and other interesting information about a trace.
+ *   At the end of the [attributes] block, these key value pairs are dispatched to the designated
+ *   [AbstractTraceSink] to be serialized.
+ *
+ * Examples include:
+ * ```
+ * gradle_version = "9.0.10-alpha01"
+ * java_major_version = 24
+ * ```
  */
 public actual class TraceDriver
 @JvmOverloads
-constructor(context: Context, sink: AbstractTraceSink, isEnabled: Boolean = true) :
-    AbstractTraceDriver(sink = sink, isEnabled = isEnabled) {
+constructor(
+    context: Context,
+    sink: AbstractTraceSink,
+    isEnabled: Boolean = true,
+    attributes: (TraceAttributes.() -> Unit)? = null,
+) : AbstractTraceDriver(sink = sink, isEnabled = isEnabled) {
 
     private val applicationContext = context.applicationContext
     private val context = TraceContext(sink = sink, isEnabled = isEnabled)
@@ -52,7 +68,7 @@ constructor(context: Context, sink: AbstractTraceSink, isEnabled: Boolean = true
         // Eager populate the main thread track
         // For the main thread on Android pid = tid
         // Main thread
-        this.context.process.getOrCreateThreadTrack(id = pid, name = processName)
+        val mainTrack = this.context.process.getOrCreateThreadTrack(id = pid, name = processName)
         // Thread Tracks
         // There are multiple ways of obtaining tids.
         // You can use android.Os.gettid(). This makes a JNI call under the hood (libcore) [SLOW].
@@ -66,6 +82,12 @@ constructor(context: Context, sink: AbstractTraceSink, isEnabled: Boolean = true
         if (tid != pid) {
             val thread = Thread.currentThread()
             this.context.process.getOrCreateThreadTrack(id = tid, name = thread.name)
+        }
+        // Trace attributes
+        if (attributes != null) {
+            val attributes = mainTrack.traceAttributes()
+            attributes.attributes()
+            attributes.dispatchToTraceSink()
         }
     }
 
