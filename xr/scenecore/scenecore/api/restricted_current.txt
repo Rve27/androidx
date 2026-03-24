@@ -1182,6 +1182,7 @@ package androidx.xr.scenecore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SubspaceNodeEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.scenecore.runtime.SubspaceNodeEntity> {
+    method public static androidx.xr.scenecore.SubspaceNodeEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder, androidx.xr.runtime.math.FloatSize3d size);
     method public static androidx.xr.scenecore.SubspaceNodeEntity create(androidx.xr.runtime.Session session, com.android.extensions.xr.node.Node node, androidx.xr.runtime.math.FloatSize3d size);
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.FloatSize3d getSize();
     method @InaccessibleFromKotlin public void setSize(androidx.xr.runtime.math.FloatSize3d);
@@ -1190,6 +1191,7 @@ package androidx.xr.scenecore {
   }
 
   public static final class SubspaceNodeEntity.Companion {
+    method public androidx.xr.scenecore.SubspaceNodeEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder, androidx.xr.runtime.math.FloatSize3d size);
     method public androidx.xr.scenecore.SubspaceNodeEntity create(androidx.xr.runtime.Session session, com.android.extensions.xr.node.Node node, androidx.xr.runtime.math.FloatSize3d size);
   }
 
