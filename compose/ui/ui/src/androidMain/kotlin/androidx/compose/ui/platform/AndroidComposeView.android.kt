@@ -2381,7 +2381,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         if (areWindowInsetsRulersEnabled) {
             insetsListener.onViewAttachedToWindow(this)
         }
-        addNotificationForSysPropsChange(this)
         if (!composeViewContextIncrementedDuringInit) {
             composeViewContext.incrementViewCount()
         }
@@ -2401,6 +2400,11 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                 _autofill?.let { AutofillCallback.register(it) }
             }
         }
+        // Moving this work outside of frame this callback is not trivial. The initial value will be
+        // requested and read synchronously anyway.
+        val outOfFrameExecutor =
+            outOfFrameExecutor ?: error("Expected the view to be attached to window.")
+        outOfFrameExecutor.schedule { addNotificationForSysPropsChange(this) }
 
         val lifecycle: Lifecycle
         if (AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
@@ -3516,6 +3520,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         @Suppress("BanUncheckedReflection")
         private fun addNotificationForSysPropsChange(composeView: AndroidComposeView) {
             if (SDK_INT > 28) {
+                if (!composeView.isAttachedToWindow) return
                 // Removing the callback is prohibited on newer versions, so we should only add one
                 // callback and use it for all AndroidComposeViews
                 if (systemPropertiesChangedRunnable == null) {
