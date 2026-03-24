@@ -6396,7 +6396,7 @@ public class AccessibilityNodeInfoCompat {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @RequiresApi(37)
     @RequiresFlag("android.view.accessibility.a11y_selection_position_app_getters_api")
     private static class FlagA11ySelectionPositionAppGettersApiImpl {
         private FlagA11ySelectionPositionAppGettersApiImpl() {

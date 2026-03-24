@@ -5366,6 +5366,7 @@ public class NotificationCompat {
             }
         }
 
+        @RequiresApi(37)
         @RequiresFlag("android.app.api_metric_style")
         private static final class Api37FlaggedImpl {
             private Api37FlaggedImpl() { }
@@ -5391,6 +5392,7 @@ public class NotificationCompat {
                 }
             }
 
+            @RequiresApi(37)
             @RequiresFlag("android.app.api_notification_semantic_style")
             private static class Api37FlaggedSemanticStyleImpl {
                 private Api37FlaggedSemanticStyleImpl() { }
@@ -8464,6 +8466,7 @@ public class NotificationCompat {
              * were flag-added in API 37; these calls must be wrapped to avoid performance issues.
              * See the UnsafeNewApiCall lint rule for more details.
              */
+            @RequiresApi(37)
             @RequiresFlag("android.app.api_notification_action_custom")
             static class Api37FlaggedImpl {
                 private Api37FlaggedImpl() { }
