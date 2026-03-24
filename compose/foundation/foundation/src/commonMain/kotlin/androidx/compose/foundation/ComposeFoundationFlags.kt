@@ -60,7 +60,9 @@ object ComposeFoundationFlags {
      * context menu that has no public APIs will be used instead.
      */
     // TODO: b/455589857
-    @field:Suppress("MutableBareField") @JvmField var isNewContextMenuEnabled = true
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isNewContextMenuEnabled: Boolean = isNewContextMenuInitiallyEnabled
 
     /**
      * Whether to use the new smart selection feature in
@@ -195,3 +197,6 @@ object ComposeFoundationFlags {
     @JvmField
     var isReverseLayoutNestedScrollConnectionInPagerFixEnabled = true
 }
+
+/** The initial value of [ComposeFoundationFlags.isNewContextMenuEnabled] */
+internal expect val isNewContextMenuInitiallyEnabled: Boolean
