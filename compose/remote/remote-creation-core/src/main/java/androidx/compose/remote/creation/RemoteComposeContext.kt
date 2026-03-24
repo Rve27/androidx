@@ -161,9 +161,13 @@ public open class RemoteComposeContext {
         modifier: RecordingModifier = Modifier,
         horizontal: Int = RowLayout.START,
         vertical: Int = RowLayout.TOP,
+        maxItemsInEachRow: Int = Int.MAX_VALUE,
+        maxLines: Int = Int.MAX_VALUE,
         content: RemoteComposeContext.() -> Unit,
     ) {
-        mRemoteWriter.flow(modifier, horizontal, vertical) { content() }
+        mRemoteWriter.flow(modifier, horizontal, vertical, maxItemsInEachRow, maxLines) {
+            content()
+        }
     }
 
     public fun box(
