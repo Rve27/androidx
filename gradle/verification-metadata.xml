@@ -70,6 +70,7 @@
          <trust group="com.google.android.play" reason="b/255621183"/>
          <trust group="com.google.ar" name="impress" version="0.0.9" reason="b/378946732"/>
          <trust group="com.google.ar" name="impress" version="0.0.11" reason="b/378946732"/>
+         <trust group="com.google.ar" name="impress" version="0.0.12" reason="b/378946732"/>
          <trust group="com.google.ar" name="core" reason="b/378946732"/>
          <trust group="com.google.devsite" reason="developed by our own team, not signed yet"/>
          <trust group="com.google.firebase" reason="b/223907608"/>
