@@ -74,7 +74,6 @@ package androidx.compose.ui {
     property public boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     property public boolean isForceChildLayoutAfterMeasurementEnabled;
     property public boolean isFrameworkVelocityTrackerEnabled;
-    property public boolean isSharedAccessibilityManagerEnabled;
     property public boolean isSharedClipboardManagerEnabled;
     property public boolean isSharedDrawingEnabled;
     property public boolean isSharedFontEnabled;
@@ -85,7 +84,6 @@ package androidx.compose.ui {
     field public static boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
     field public static boolean isForceChildLayoutAfterMeasurementEnabled;
     field public static boolean isFrameworkVelocityTrackerEnabled;
-    field public static boolean isSharedAccessibilityManagerEnabled;
     field public static boolean isSharedClipboardManagerEnabled;
     field public static boolean isSharedDrawingEnabled;
     field public static boolean isSharedFontEnabled;

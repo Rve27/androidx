@@ -50,12 +50,6 @@ package androidx.compose.ui
  */
 @ExperimentalComposeUiApi
 object AndroidComposeUiFlags {
-    /** This moves AccessibilityManager into the shared ComposeViewContext. */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    // TODO: b/479845566
-    var isSharedAccessibilityManagerEnabled: Boolean = true
-
     /** This moves DrawScope and CanvasHolder into the shared ComposeViewContext. */
     // TODO: b/479849019
     @field:Suppress("MutableBareField") @JvmField var isSharedDrawingEnabled: Boolean = true
