@@ -51,7 +51,9 @@ import android.view.MotionEvent.ACTION_POINTER_DOWN
 import android.view.MotionEvent.ACTION_POINTER_UP
 import android.view.MotionEvent.ACTION_SCROLL
 import android.view.MotionEvent.ACTION_UP
+import android.view.MotionEvent.TOOL_TYPE_ERASER
 import android.view.MotionEvent.TOOL_TYPE_MOUSE
+import android.view.MotionEvent.TOOL_TYPE_STYLUS
 import android.view.ScrollCaptureTarget
 import android.view.View
 import android.view.ViewGroup
@@ -983,10 +985,19 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                     val resend = action != ACTION_HOVER_EXIT && action != ACTION_UP
                     if (resend) {
                         val newAction =
-                            if (action == ACTION_HOVER_MOVE || action == ACTION_HOVER_ENTER) {
-                                ACTION_HOVER_MOVE
-                            } else {
-                                ACTION_MOVE
+                            when (action) {
+                                ACTION_HOVER_MOVE,
+                                ACTION_HOVER_ENTER -> {
+                                    ACTION_HOVER_MOVE
+                                }
+                                ACTION_SCROLL -> {
+                                    // NOTE: resendMotionEventRunnable is only triggered on a
+                                    // scroll if no buttons are pressed.
+                                    ACTION_HOVER_ENTER
+                                }
+                                else -> {
+                                    ACTION_MOVE
+                                }
                             }
                         sendSimulatedEvent(
                             lastMotionEvent,
@@ -1027,13 +1038,17 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     private val resendMotionEventOnLayout: () -> Unit = {
         val lastEvent = previousMotionEvent
         if (lastEvent != null) {
-            when (lastEvent.actionMasked) {
-                // We currently only care about hover events being updated when layout changes
-                ACTION_HOVER_ENTER,
-                ACTION_HOVER_MOVE -> {
-                    relayoutTime = SystemClock.uptimeMillis()
-                    post(resendMotionEventRunnable)
-                }
+            // We currently only care about hover states being updated when layout changes (and
+            // this includes when the mouse, stylus, etc. scrolls and needs to update hover).
+            val isHoverOrScroll =
+                lastEvent.actionMasked in
+                    listOf(ACTION_HOVER_ENTER, ACTION_HOVER_MOVE, ACTION_SCROLL)
+
+            val isAnyButtonDown = previousMotionEvent?.buttonState != 0
+
+            if (isHoverOrScroll && !isAnyButtonDown) {
+                relayoutTime = SystemClock.uptimeMillis()
+                post(resendMotionEventRunnable)
             }
         }
         layoutChildViewsIfNeeded()
@@ -2751,6 +2766,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             recalculateWindowPosition(motionEvent)
             forceUseMatrixCache = true
             measureAndLayout(sendPointerUpdate = false)
+            var sendHoverEventsBeforeAndAfterScroll = false
             val result =
                 trace("AndroidOwner:onTouch") {
                     val action = motionEvent.actionMasked
@@ -2782,6 +2798,17 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                         // enter/exit.
                         sendSimulatedEvent(motionEvent, ACTION_HOVER_ENTER, motionEvent.eventTime)
                     }
+
+                    val hasAnyButtonDown = motionEvent.buttonState != 0
+
+                    if (
+                        action == ACTION_SCROLL &&
+                            !hasAnyButtonDown &&
+                            lastEvent?.isFromSource(InputDevice.SOURCE_TOUCHSCREEN) == false
+                    ) {
+                        sendHoverEventsBeforeAndAfterScroll = true
+                    }
+
                     lastEvent?.recycle()
 
                     // If the previous MotionEvent was an ACTION_HOVER_EXIT, we need to check if it
@@ -2849,8 +2876,19 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
                     previousMotionEvent = MotionEvent.obtainNoHistory(motionEvent)
 
+                    if (sendHoverEventsBeforeAndAfterScroll) {
+                        // Clear any hover state before scroll is moved
+                        sendSimulatedEvent(motionEvent, ACTION_HOVER_EXIT, motionEvent.eventTime)
+                    }
+
                     sendMotionEvent(motionEvent)
                 }
+            // No changes to the layout (which triggers the updated hover state), we force that here
+            if (!result.anyChangeConsumed && sendHoverEventsBeforeAndAfterScroll) {
+                pointerInputEventProcessor.clearPreviouslyHitModifierNodes()
+                sendSimulatedEvent(motionEvent, ACTION_HOVER_ENTER, motionEvent.eventTime)
+            }
+
             return result
         } finally {
             forceUseMatrixCache = false
