@@ -40,6 +40,11 @@ public abstract class SliceTrack(
     internal val traceEventScope: TraceEventScope =
         TraceEventScope().apply { owner = this@SliceTrack }
 
+    // Use a single shared trace scope to avoid allocations.
+    @JvmField
+    internal val traceAttributes: TraceAttributesImpl =
+        TraceAttributesImpl().apply { owner = this@SliceTrack }
+
     // Use a single shared instance of MetadataCloseable
     @JvmField internal val eventMetadataCloseable: EventMetadataCloseable = EventMetadataCloseable()
 
@@ -148,6 +153,14 @@ public abstract class SliceTrack(
         traceEventScope.event = event
         eventMetadataCloseable.metadata = traceEventScope
         return eventMetadataCloseable
+    }
+
+    public fun traceAttributes(): TraceAttributes {
+        if (!context.isEnabled) return EmptyTraceAttributes
+        val event = obtainTraceEvent()
+        event?.timestamp = nanoTime()
+        traceAttributes.event = event
+        return traceAttributes
     }
 
     override fun close() {

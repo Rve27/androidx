@@ -25,6 +25,7 @@ import androidx.tracing.TRACE_PACKET_BUFFER_SIZE
 import androidx.tracing.TRACE_PACKET_POOL_ARRAY_POOL_SIZE
 import androidx.tracing.Tracer
 import androidx.tracing.wire.protos.MutableCallstack
+import androidx.tracing.wire.protos.MutableTraceAttributes
 import androidx.tracing.wire.protos.MutableTracePacket
 import androidx.tracing.wire.protos.MutableTrackDescriptor
 import androidx.tracing.wire.protos.MutableTrackEvent
@@ -77,6 +78,9 @@ class TestSink : AbstractTraceSink() {
                             scratchCallStack = MutableCallstack(),
                             scratchFrames = mutableListOf(),
                             scratchFrameIndex = IntArray(size = 1) { _ -> -1 },
+                            scratchTraceAttributes = MutableTraceAttributes(),
+                            scratchAttributes = mutableListOf(),
+                            scratchAttributeIndex = IntArray(size = 1) { _ -> -1 },
                         )
                     }
             )
@@ -106,6 +110,23 @@ class TracingTest {
         sink.packets.clear()
         driver = TraceDriver(sink = sink, isEnabled = true)
         tracer = driver.tracer
+    }
+
+    @Test
+    internal fun testAttributes() {
+        // Add attributes
+        driver =
+            TraceDriver(
+                sink = sink,
+                isEnabled = true,
+                attributes = { addAttribute("isTest", "true") },
+            )
+        driver.use {
+            // Do nothing
+        }
+        val attributes = sink.attributes()
+        assertTrue { attributes.isNotEmpty() }
+        assertEquals(attributes["isTest"], "true")
     }
 
     @Test

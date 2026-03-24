@@ -89,7 +89,7 @@ class TracingBenchmark {
                 // 32 total events (or 16 begin/end pairs) will dispatch
                 // instead, we reset after 8 begin/end pairs so we only measure
                 // producer write cost without sending to sink
-                tracer.resetFillCount()
+                runWithMeasurementDisabled { tracer.resetTraceEvents() }
             }
         }
     }
@@ -103,7 +103,7 @@ class TracingBenchmark {
                     // 32 total events (or 16 begin/end pairs) will dispatch
                     // instead, we reset after 8 begin/end pairs so we only measure
                     // producer write cost without sending to sink
-                    runWithMeasurementDisabled { tracer.resetFillCount() }
+                    runWithMeasurementDisabled { tracer.resetTraceEvents() }
                 }
             }
         }

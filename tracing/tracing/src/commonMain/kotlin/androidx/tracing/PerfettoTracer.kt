@@ -30,8 +30,8 @@ public class PerfettoTracer(context: TraceContext) : Tracer(isEnabled = context.
 
     // Testing API
     @RestrictTo(Scope.LIBRARY_GROUP)
-    public fun resetFillCount() {
-        process.currentThreadTrack().resetFillCount()
+    public fun resetTraceEvents() {
+        process.currentThreadTrack().resetTraceEvents()
     }
 
     // Testing API
