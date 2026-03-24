@@ -170,6 +170,8 @@ internal class RemoteFlowRowNodeV2 : RemoteComposeNodeV2() {
             recordingModifier,
             horizontalArrangement.toRemote(layoutDirection),
             verticalArrangement.toRemote(),
+            Integer.MAX_VALUE,
+            Integer.MAX_VALUE,
         )
         renderChildren(
             creationState,

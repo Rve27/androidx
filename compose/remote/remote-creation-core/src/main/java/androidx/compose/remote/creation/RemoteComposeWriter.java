@@ -3104,19 +3104,23 @@ public class RemoteComposeWriter {
     }
 
     /**
-     * Add a flow layout
+     * Add a Flow layout
      *
-     * @param modifier   list of modifiers for the layout
-     * @param horizontal horizontal positioning
-     * @param vertical   vertical positioning
-     * @param content    content of the layout
+     * @param modifier          list of modifiers for the layout
+     * @param horizontal        horizontal positioning
+     * @param vertical          vertical positioning
+     * @param maxItemsInEachRow maximum number of items in each row
+     * @param maxLines          maximum number of lines
+     * @param content           content of the layout
      */
     public void flow(
             @NonNull RecordingModifier modifier,
             int horizontal,
             int vertical,
+            int maxItemsInEachRow,
+            int maxLines,
             @NonNull RemoteComposeWriterInterface content) {
-        startFlow(modifier, horizontal, vertical);
+        startFlow(modifier, horizontal, vertical, maxItemsInEachRow, maxLines);
         content.run();
         endFlow();
     }
@@ -3124,10 +3128,12 @@ public class RemoteComposeWriter {
     /**
      * Start a flow layout
      */
-    public void startFlow(@NonNull RecordingModifier modifier, int horizontal, int vertical) {
+    public void startFlow(@NonNull RecordingModifier modifier, int horizontal, int vertical,
+            int maxItemsInEachRow, int maxLines) {
         int componentId = modifier.getComponentId();
         float spacedBy = modifier.getSpacedBy();
-        mBuffer.addFlowStart(componentId, -1, horizontal, vertical, spacedBy);
+        mBuffer.addFlowStart(componentId, -1, horizontal, vertical, spacedBy,
+                maxItemsInEachRow, maxLines);
         for (RecordingModifier.Element m : modifier.getList()) {
             m.write(this);
         }
