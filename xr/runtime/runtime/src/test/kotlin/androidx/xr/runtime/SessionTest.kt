@@ -29,6 +29,7 @@ import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
 import androidx.xr.runtime.internal.ApkNotInstalledException
 import androidx.xr.runtime.internal.UnsupportedDeviceException
 import com.google.common.truth.Truth.assertThat
+import kotlin.coroutines.ContinuationInterceptor
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
@@ -84,7 +85,10 @@ class SessionTest {
         val result = Session.create(activity)
 
         assertThat(result).isInstanceOf(SessionCreateSuccess::class.java)
-        assertThat((result as SessionCreateSuccess).session).isNotNull()
+
+        val session = (result as SessionCreateSuccess).session
+        assertThat(session).isNotNull()
+        assertThat(session.lifecycleOwner).isEqualTo(activity)
     }
 
     @Test
@@ -124,6 +128,44 @@ class SessionTest {
 
         val context = activity.applicationContext
         val result = Session.create(context, activity, testDispatcher)
+
+        assertThat(result).isInstanceOf(SessionCreateSuccess::class.java)
+        assertThat((result as SessionCreateSuccess).session).isNotNull()
+    }
+
+    @Test
+    fun create_withActivityAndLifecycleOwner_usesProvidedLifecycleOwner() {
+        activityController.create()
+        val customLifecycleOwner =
+            object : LifecycleOwner {
+                override val lifecycle = LifecycleRegistry(this)
+            }
+
+        val result = Session.create(activity, lifecycleOwner = customLifecycleOwner)
+
+        val session = (result as SessionCreateSuccess).session
+        assertThat(session.lifecycleOwner).isEqualTo(customLifecycleOwner)
+    }
+
+    @Test
+    fun create_withActivityAndCoroutineContext_returnsSuccessResultWithNonNullSession() {
+        activityController.create()
+
+        val result = Session.create(activity, coroutineContext = testDispatcher)
+
+        assertThat(result).isInstanceOf(SessionCreateSuccess::class.java)
+        val session = (result as SessionCreateSuccess).session
+        assertThat(session).isNotNull()
+        assertThat(session.coroutineScope.coroutineContext[ContinuationInterceptor])
+            .isEqualTo(testDispatcher)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun create_withUnscaledGravityAlignedActivitySpace_returnsSuccessResultWithNonNullSession() {
+        activityController.create()
+
+        val result = Session.create(activity, unscaledGravityAlignedActivitySpace = false)
 
         assertThat(result).isInstanceOf(SessionCreateSuccess::class.java)
         assertThat((result as SessionCreateSuccess).session).isNotNull()
