@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.HiltViewModelFactory
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
@@ -43,7 +44,7 @@ public inline fun <reified VM : ViewModel> hiltViewModel(
         },
     key: String? = null,
 ): VM {
-    val factory = rememberHiltViewModelFactory(viewModelStoreOwner.defaultViewModelProviderFactory)
+    val factory = createHiltViewModelFactory(viewModelStoreOwner)
     return viewModel(viewModelStoreOwner, key, factory = factory)
 }
 
@@ -65,7 +66,7 @@ public inline fun <reified VM : ViewModel, reified VMF> hiltViewModel(
     return viewModel(
         viewModelStoreOwner = viewModelStoreOwner,
         key = key,
-        factory = rememberHiltViewModelFactory(viewModelStoreOwner.defaultViewModelProviderFactory),
+        factory = createHiltViewModelFactory(viewModelStoreOwner),
         extras =
             viewModelStoreOwner.defaultViewModelCreationExtras.withCreationCallback(
                 creationCallback
@@ -99,12 +100,16 @@ public fun rememberHiltViewModelFactory(
     return remember(context, delegateFactory) { HiltViewModelFactory(context, delegateFactory) }
 }
 
-/** @deprecated This function is kept purely to preserve binary compatibility. */
-@Deprecated("Replaced by `rememberHiltViewModelFactory`.")
-@Suppress("RedundantNullableReturnType")
 @Composable
 @PublishedApi
 internal fun createHiltViewModelFactory(
     viewModelStoreOwner: ViewModelStoreOwner
-): ViewModelProvider.Factory? =
-    rememberHiltViewModelFactory(viewModelStoreOwner.defaultViewModelProviderFactory)
+): ViewModelProvider.Factory? {
+    if (viewModelStoreOwner !is HasDefaultViewModelProviderFactory) {
+        // Use the default factory provided by the ViewModelStoreOwner
+        // and assume it is an @AndroidEntryPoint annotated fragment or activity
+        return null
+    }
+
+    return rememberHiltViewModelFactory(viewModelStoreOwner.defaultViewModelProviderFactory)
+}
