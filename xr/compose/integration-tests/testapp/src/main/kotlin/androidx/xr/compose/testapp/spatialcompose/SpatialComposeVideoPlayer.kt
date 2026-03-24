@@ -790,6 +790,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                         session = session,
                         pose = Pose(Vector3(0f, -0.45f, 0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
                         stereoMode = SurfaceEntity.StereoMode.TOP_BOTTOM,
+                        parent = session.scene.activitySpace,
                     )
                 // Make the video player movable (to make it easier to look at it from different
                 // angles and distances)
