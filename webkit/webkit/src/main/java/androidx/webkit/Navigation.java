@@ -210,6 +210,9 @@ public final class Navigation {
      *
      * @return The {@link WebResourceErrorCompat} object, or {@code null} if there is no
      * error for this navigation.
+     * @throws UnsupportedOperationException if the
+     *                                      {@link WebViewFeature#NAVIGATION_GET_WEB_RESOURCE_ERROR}
+     *                                       feature is not supported.
      */
     @RequiresFeature(name = WebViewFeature.NAVIGATION_GET_WEB_RESOURCE_ERROR,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
