@@ -50,11 +50,13 @@ import androidx.compose.remote.creation.compose.state.rs
 import androidx.compose.remote.creation.compose.state.rsp
 import androidx.compose.remote.tooling.preview.RemotePreview
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import java.text.DecimalFormat
 
 @Suppress("RestrictedApiAndroidX")
 @Composable
@@ -195,6 +197,7 @@ fun ScrollViewDemo() {
     val numElements = 12
     val scrollState = rememberRemoteScrollState(evenNotches = numElements)
     val dimensionCard = 280.rdp
+    val decimalFormat = remember { DecimalFormat("####0.00") }
     RemoteBox(modifier = RemoteModifier, contentAlignment = RemoteAlignment.BottomEnd) {
         val height = dimensionCard.toPx()
         val h2 = 280.rdp
@@ -203,7 +206,6 @@ fun ScrollViewDemo() {
                 RemoteModifier.fillMaxWidth()
                     .height(h2)
                     .clip(RemoteRectangleShape)
-                    // .background(Color.LightGray)
                     .verticalScroll(scrollState),
             verticalArrangement = RemoteArrangement.Center,
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
@@ -215,7 +217,6 @@ fun ScrollViewDemo() {
                             0.2f
                 val rotation =
                     (abs(scrollState.positionState - (height * i.toFloat())) / height) * 40f
-                //                Box(horizontalAlignment = Alignment.End) {
                 CanvasCalendarMonth(
                     modifier =
                         RemoteModifier.graphicsLayer(
@@ -225,14 +226,9 @@ fun ScrollViewDemo() {
                             )
                             .width(h2)
                             .height(h2)
-                            .padding(0.rdp)
-                    //    .background(Color.White)
-                    ,
+                            .padding(0.rdp),
                     i,
                 )
-                //                    val value = rememberRemoteString(scrollState.position.rf)
-                //                    RemoteText(value, fontSize = 34.sp, color = Color.Blue)
-                //                }
             }
         }
         val debug = false
@@ -243,15 +239,13 @@ fun ScrollViewDemo() {
             ) {
                 val blue = RemoteColor(Color.Blue.toArgb())
                 RemoteText(
-                    scrollState.positionState.toRemoteString(5),
+                    scrollState.positionState.toRemoteString(decimalFormat),
                     fontSize = 34.rsp,
                     color = blue,
                 )
-                RemoteText(height.toRemoteString(5), fontSize = 34.rsp, color = blue)
+                RemoteText(height.toRemoteString(decimalFormat), fontSize = 34.rsp, color = blue)
             }
         }
-        //            val value = rememberRemoteString(RemoteFloat(scrollState.position))
-        //            RemoteText(value, fontSize = 34.sp, color = Color.Blue)
     }
 }
 

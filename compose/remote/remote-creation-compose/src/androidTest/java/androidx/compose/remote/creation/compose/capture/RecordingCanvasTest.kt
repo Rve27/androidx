@@ -72,6 +72,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
 import androidx.test.screenshot.assertAgainstGolden
 import com.google.common.truth.Truth.assertThat
+import java.text.DecimalFormat
 import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -230,8 +231,8 @@ class RecordingCanvasTest {
         val tweenFactor = RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC) / 30f % 1f
         val colorRamp = tween(ComposeColor.Red.rc, ComposeColor.Blue.rc, tweenFactor)
         val hue = colorRamp.hue
-        val hueString1 = hue.toRemoteString(1)
-        val hueString2 = RemoteString("hue") + hue.toRemoteString(1)
+        val hueString1 = hue.toRemoteString(DecimalFormat("0.00"))
+        val hueString2 = RemoteString("hue") + hue.toRemoteString(DecimalFormat("0.00"))
         // Conditional drop shadow.
         recordingCanvas.drawConditionally(flag) {
             recordingCanvas.drawText(

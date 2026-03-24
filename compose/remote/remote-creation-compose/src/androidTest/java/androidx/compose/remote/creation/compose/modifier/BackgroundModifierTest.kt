@@ -48,6 +48,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.matchers.MSSIMMatcher
+import java.text.DecimalFormat
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -74,6 +75,8 @@ class BackgroundModifierTest {
             context.resources.displayMetrics.densityDpi,
         )
 
+    val hexDecimalFormat = DecimalFormat("0")
+
     fun RemoteInt.toHexDigit(): RemoteString {
         return eq(15.ri)
             .select(
@@ -91,7 +94,12 @@ class BackgroundModifierTest {
                                             .select(
                                                 "B".rs,
                                                 eq(10.ri)
-                                                    .select("A".rs, absoluteValue.toRemoteString(1)),
+                                                    .select(
+                                                        "A".rs,
+                                                        absoluteValue.toRemoteString(
+                                                            hexDecimalFormat
+                                                        ),
+                                                    ),
                                             ),
                                     ),
                             ),
