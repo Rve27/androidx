@@ -655,6 +655,15 @@ WARN: Couldn't resolve link: \[xrResources\.depthMap\] in .*\/docs-public\/build
 WARN: Couldn't resolve link: \[XrSpace\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/arcore\/openxr\/OpenXrAnchor\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
 WARN: Couldn't resolve link: \[XrSpaceLocationFlags\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/arcore\/openxr\/AnchorState\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
 WARN: Couldn't resolve link: \[XrTrackableANDROID\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/arcore\/openxr\/OpenXrPlane\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[Config.Mode\.isSupported\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/arcore\/Geospatial\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[DeviceTrackingMode\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/arcore\/RenderViewpoint\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[XrDevice\.getPreferredDisplayBlendMode\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/arcore\/testing\/FakePerceptionRuntime\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[Activity\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/arcore\/testing\/FakePerceptionRuntimeFactory\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[activity\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/arcore\/testing\/FakePerceptionRuntimeFactory\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[animationOptions\.seekStartTime\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/scenecore\/GltfAnimation\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[started\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/scenecore\/GltfAnimation\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[resumed\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/scenecore\/GltfAnimation\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
+WARN: Couldn't resolve link: \[GltfModelNode\] in .*\/docs-public\/build\/unzippedJvmSources\/androidx\/xr\/scenecore\/runtime\/GltfModelNodeFeature\.kt:[0-9]+:[0-9]+ \(androidx\/.*\)
 WARN: .*\/unzippedJvmSources\/android\/support\/v4\/media\/session\/MediaControllerCompat\.java:[0-9]+ Missing @param tag for parameter `context` in DFunction MediaControllerCompat
 WARN: .*\/unzippedJvmSources\/androidx\/appcompat\/app\/AppCompatDelegate\.java:[0-9]+ Missing @param tag for parameter `activity` in DFunction create
 WARN: .*\/unzippedJvmSources\/androidx\/appcompat\/app\/AppCompatDelegate\.java:[0-9]+ Missing @param tag for parameter `context` in DFunction create
