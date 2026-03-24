@@ -602,6 +602,7 @@ class NotificationCompatBuilder implements NotificationBuilderWithBuilderAccesso
         }
     }
 
+    @RequiresApi(37)
     @RequiresFlag("android.app.api_notification_action_custom")
     @SuppressLint("WrongConstant") // Platform <-> Compat @IntDef with same values.
     static final class Api37FlaggedImpl {
