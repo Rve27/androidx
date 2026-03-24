@@ -411,7 +411,7 @@ class SpatialGltfModelTest {
         assertThat(createdAssets).hasSize(0)
         val status = state.status
         assertIs<Failed>(status)
-        assertIs<IllegalStateException>(status.exception)
+        assertIs<GltfLoadException>(status.exception)
 
         // Change to a source that will load successfully
         state =
