@@ -40,10 +40,13 @@ interface PreviewWrapperProvider {
      * class CustomThemeWrapper : PreviewWrapperProvider {
      *     @Composable
      *     override fun Wrap(content: @Composable () -> Unit) {
-     *         // Apply your custom theme or environment here
-     *          MyTheme {
-     *            content()
-     *          }
+     *         // Apply a light theme and provide a full-screen Surface to set a default background
+     *         // color for the preview content.
+     *         MaterialTheme(colorScheme = lightColorScheme()) {
+     *             Surface(modifier = Modifier.fillMaxSize()) {
+     *                 content()
+     *             }
+     *         }
      *     }
      * }
      * ```
@@ -70,19 +73,21 @@ interface PreviewWrapperProvider {
  * **1. Basic Usage**
  *
  * ```kotlin
- * class SampleThemeWrapper : PreviewWrapperProvider {
+ * class SampleScaffoldWrapper : PreviewWrapperProvider {
  *     @Composable
  *     override fun Wrap(content: @Composable () -> Unit) {
- *         // Apply your custom theme here
- *          MyTheme {
- *              content()
- *          }
+ *         // Wrap the content in a Material3 Scaffold to provide a standard app structure
+ *         MaterialTheme {
+ *             Scaffold { padding ->
+ *                 Box(Modifier.padding(padding)) { content() }
+ *             }
+ *         }
  *     }
  * }
  *
  * @Preview
  * @Composable
- * @PreviewWrapper(wrapper = SampleThemeWrapper::class)
+ * @PreviewWrapper(wrapper = SampleScaffoldWrapper::class)
  * fun PreviewWrapperSample() {
  *     // Your component content here
  * }
@@ -97,7 +102,7 @@ interface PreviewWrapperProvider {
  *
  * @FontPreviews
  * @Composable
- * @PreviewWrapper(wrapper = SampleThemeWrapper::class)
+ * @PreviewWrapper(wrapper = SampleScaffoldWrapper::class)
  * fun PreviewWrapperMultiPreviewSample() {
  *     // Your component content here
  * }

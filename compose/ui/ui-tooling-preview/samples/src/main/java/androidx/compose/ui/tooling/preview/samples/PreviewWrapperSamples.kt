@@ -16,7 +16,15 @@
 
 package androidx.compose.ui.tooling.preview.samples
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.tooling.preview.PreviewWrapperProvider
@@ -32,10 +40,11 @@ fun PreviewWrapperProviderSample() {
     class CustomThemeWrapper : PreviewWrapperProvider {
         @Composable
         override fun Wrap(content: @Composable () -> Unit) {
-            // Apply your custom theme or environment here
-            // MyTheme {
-            content()
-            // }
+            // Apply a light theme and provide a full-screen Surface to set a default background
+            // color for the preview content.
+            MaterialTheme(colorScheme = lightColorScheme()) {
+                Surface(modifier = Modifier.fillMaxSize()) { content() }
+            }
         }
     }
 }
@@ -43,18 +52,16 @@ fun PreviewWrapperProviderSample() {
 /** Basic sample showing how to use [PreviewWrapper] to apply a custom wrapper to a preview. */
 @Preview
 @Composable
-@PreviewWrapper(wrapper = SampleThemeWrapper::class)
+@PreviewWrapper(wrapper = SampleScaffoldWrapper::class)
 fun PreviewWrapperSample() {
     // Your component content here
 }
 
-internal class SampleThemeWrapper : PreviewWrapperProvider {
+internal class SampleScaffoldWrapper : PreviewWrapperProvider {
     @Composable
     override fun Wrap(content: @Composable () -> Unit) {
-        // Apply your custom theme here
-        // MyTheme {
-        content()
-        // }
+        // Wrap the content in a Material3 Scaffold to provide a standard app structure
+        MaterialTheme { Scaffold { padding -> Box(Modifier.padding(padding)) { content() } } }
     }
 }
 
@@ -66,7 +73,7 @@ annotation class FontPreviews
 /** Sample showing [PreviewWrapper] used in conjunction with a MultiPreview annotation. */
 @FontPreviews
 @Composable
-@PreviewWrapper(wrapper = SampleThemeWrapper::class)
+@PreviewWrapper(wrapper = SampleScaffoldWrapper::class)
 fun PreviewWrapperMultiPreviewSample() {
     // Your component content here
 }
