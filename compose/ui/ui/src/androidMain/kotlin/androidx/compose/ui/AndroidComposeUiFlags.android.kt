@@ -113,4 +113,15 @@ object AndroidComposeUiFlags {
     /** This moves Font-related instances into the shared ComposeViewContext. */
     // TODO remove me b/479898293
     @field:Suppress("MutableBareField") @JvmField var isSharedFontEnabled: Boolean = true
+
+    /**
+     * When enabled, forces child views to layout after measurement. Compose allows measurement
+     * without layout, but Views require measurement to be followed by layout in order to clear the
+     * requestLayout() flag. If the layout doesn't happen, and a change in that View happens again,
+     * a requestLayout() will not trigger a remeasurement.
+     */
+    @field:Suppress("MutableBareField")
+    @JvmField
+    // TODO remove me b/491111451
+    var isForceChildLayoutAfterMeasurementEnabled: Boolean = true
 }

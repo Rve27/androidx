@@ -72,6 +72,7 @@ package androidx.compose.ui {
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class AndroidComposeUiFlags {
     property public boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
+    property public boolean isForceChildLayoutAfterMeasurementEnabled;
     property public boolean isSharedAccessibilityManagerEnabled;
     property public boolean isSharedClipboardManagerEnabled;
     property public boolean isSharedComposeViewContextEnabled;
@@ -83,6 +84,7 @@ package androidx.compose.ui {
     property public boolean isViewBasedSemanticsHandlerEnabled;
     field public static final androidx.compose.ui.AndroidComposeUiFlags INSTANCE;
     field public static boolean isAccessibilityShowOnScreenNestedScrollingEnabled;
+    field public static boolean isForceChildLayoutAfterMeasurementEnabled;
     field public static boolean isSharedAccessibilityManagerEnabled;
     field public static boolean isSharedClipboardManagerEnabled;
     field public static boolean isSharedComposeViewContextEnabled;
