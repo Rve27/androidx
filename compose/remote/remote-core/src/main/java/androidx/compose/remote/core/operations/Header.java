@@ -134,6 +134,9 @@ public class Header extends Operation implements RemoteComposeOperation {
     /** Support for origin-aware resizing animations */
     public static final short FEATURE_LT_RESIZE = 24;
 
+    /** Enable listener pattern for arrays in TextLookup */
+    public static final short FEATURE_ARRAY_LISTENERS = 25;
+
     /** The object is an integer */
     private static final short DATA_TYPE_INT = 0;
 
@@ -161,7 +164,8 @@ public class Header extends Operation implements RemoteComposeOperation {
             FEATURE_MEASURE_VERSION,
             FEATURE_TOUCH_VERSION,
             FEATURE_PRIORITY_FIX,
-            FEATURE_LT_RESIZE
+            FEATURE_LT_RESIZE,
+            FEATURE_ARRAY_LISTENERS
     };
     private static final String[] KEY_NAMES = {
             "DOC_WIDTH",
@@ -178,7 +182,8 @@ public class Header extends Operation implements RemoteComposeOperation {
             "MEASURE_VERSION",
             "TOUCH_VERSION",
             "PRIORITY_FIX",
-            "LT_RESIZE"
+            "LT_RESIZE",
+            "ARRAY_LISTENERS"
     };
 
     /**
