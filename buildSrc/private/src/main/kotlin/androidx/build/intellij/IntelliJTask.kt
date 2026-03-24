@@ -36,10 +36,7 @@ abstract class IntelliJTask : DefaultTask() {
             val studioTask =
                 when (ProjectLayoutType.from(this)) {
                     ProjectLayoutType.ANDROIDX -> RootIntelliJTask::class.java
-                    else ->
-                        error(
-                            "Launching IntelliJ in any other environment than AndroidX project layout type is not supported"
-                        )
+                    ProjectLayoutType.PLAYGROUND -> return
                 }
             tasks.register(INTELLIJ_TASK, studioTask)
         }
