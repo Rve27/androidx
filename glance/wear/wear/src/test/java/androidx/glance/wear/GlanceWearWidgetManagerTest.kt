@@ -51,16 +51,24 @@ import org.robolectric.annotation.Config
 class GlanceWearWidgetManagerTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val component1: ComponentName = ComponentName(context, TestWidgetService1::class.java)
-    private val tileProvider1: TileProvider = mock { on { componentName } doReturn component1 }
-    private val tileInstance1: TileInstance = mock {
-        on { tileProvider } doReturn tileProvider1
+    private val componentFullScreen: ComponentName =
+        ComponentName(context, TestWidgetService1::class.java)
+    private val tileProviderFullScreen: TileProvider = mock {
+        on { componentName } doReturn componentFullScreen
+        on { containerType } doReturn TilesManager.WIDGET_CONTAINER_TYPE_FULLSCREEN
+    }
+    private val tileInstanceFullScreen: TileInstance = mock {
+        on { tileProvider } doReturn tileProviderFullScreen
         on { id } doReturn 1
     }
-    private val component2: ComponentName = ComponentName(context, TestWidgetService2::class.java)
-    private val tileProvider2: TileProvider = mock { on { componentName } doReturn component2 }
-    private val tileInstance2: TileInstance = mock {
-        on { tileProvider } doReturn tileProvider2
+    private val componentLarge: ComponentName =
+        ComponentName(context, TestWidgetService2::class.java)
+    private val tileProviderLarge: TileProvider = mock {
+        on { componentName } doReturn componentLarge
+        on { containerType } doReturn TilesManager.WIDGET_CONTAINER_TYPE_LARGE
+    }
+    private val tileInstanceLarge: TileInstance = mock {
+        on { tileProvider } doReturn tileProviderLarge
         on { id } doReturn 2
     }
     private val tilesManager: TilesManager = mock()
@@ -70,7 +78,8 @@ class GlanceWearWidgetManagerTest {
     private val widgetManager: GlanceWearWidgetManager =
         GlanceWearWidgetManager(context, tilesManager, activeWidgetStore, widgetCache)
 
-    @After fun tearDown() = runTest { activeWidgetStore.markWidgetAsInactive(component1, 1) }
+    @After
+    fun tearDown() = runTest { activeWidgetStore.markWidgetAsInactive(componentFullScreen, 1) }
 
     @Test
     @Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -87,7 +96,9 @@ class GlanceWearWidgetManagerTest {
             val executor = invocationOnMock.getArgument<Executor>(0)
             val outcomeReceiver =
                 invocationOnMock.getArgument<OutcomeReceiver<List<TileInstance>, Exception>>(1)
-            executor.execute { outcomeReceiver.onResult(listOf(tileInstance1, tileInstance2)) }
+            executor.execute {
+                outcomeReceiver.onResult(listOf(tileInstanceFullScreen, tileInstanceLarge))
+            }
         }
 
         val widgets = widgetManager.fetchActiveWidgets()
@@ -95,14 +106,14 @@ class GlanceWearWidgetManagerTest {
         assertThat(widgets)
             .containsExactly(
                 ActiveWearWidgetHandle(
-                    provider = component1,
+                    provider = componentFullScreen,
                     instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 1),
                     containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
                 ),
                 ActiveWearWidgetHandle(
-                    provider = component2,
+                    provider = componentLarge,
                     instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 2),
-                    containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
+                    containerType = ContainerInfo.CONTAINER_TYPE_LARGE,
                 ),
             )
     }
@@ -129,7 +140,7 @@ class GlanceWearWidgetManagerTest {
                     TestWidgetService1::class.java.name to TestWidget1::class.java.canonicalName!!
                 )
             )
-        activeWidgetStore.markWidgetAsActive(component1, 1)
+        activeWidgetStore.markWidgetAsActive(componentFullScreen, 1)
 
         val widgets = widgetManager.fetchActiveWidgets()
 
@@ -137,7 +148,7 @@ class GlanceWearWidgetManagerTest {
         assertThat(widgets)
             .containsExactly(
                 ActiveWearWidgetHandle(
-                    provider = component1,
+                    provider = componentFullScreen,
                     instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 1),
                     containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
                 )
@@ -160,23 +171,25 @@ class GlanceWearWidgetManagerTest {
             val executor = invocationOnMock.getArgument<Executor>(0)
             val outcomeReceiver =
                 invocationOnMock.getArgument<OutcomeReceiver<List<TileInstance>, Exception>>(1)
-            executor.execute { outcomeReceiver.onResult(listOf(tileInstance1, tileInstance2)) }
+            executor.execute {
+                outcomeReceiver.onResult(listOf(tileInstanceFullScreen, tileInstanceLarge))
+            }
         }
         whenever(widgetCache.getServiceToWidgetMapping()).thenReturn(emptyMap())
         // Mock PackageManager to list our service in queries.
         val shadowPackageManager = Shadows.shadowOf(context.packageManager)
         val filter = IntentFilter(WearWidgetProviderInfo.ACTION_BIND_WIDGET_PROVIDER)
-        shadowPackageManager.addServiceIfNotPresent(component1)
-        shadowPackageManager.addIntentFilterForService(component1, filter)
-        shadowPackageManager.addServiceIfNotPresent(component2)
-        shadowPackageManager.addIntentFilterForService(component2, filter)
+        shadowPackageManager.addServiceIfNotPresent(componentFullScreen)
+        shadowPackageManager.addIntentFilterForService(componentFullScreen, filter)
+        shadowPackageManager.addServiceIfNotPresent(componentLarge)
+        shadowPackageManager.addIntentFilterForService(componentLarge, filter)
 
         val widgets = widgetManager.fetchActiveWidgets(TestWidget1::class)
 
         assertThat(widgets)
             .containsExactly(
                 ActiveWearWidgetHandle(
-                    provider = component1,
+                    provider = componentFullScreen,
                     instanceId = WidgetInstanceId(WidgetInstanceId.WIDGET_CAROUSEL_NAMESPACE, 1),
                     containerType = ContainerInfo.CONTAINER_TYPE_TILE_COMPAT,
                 )
