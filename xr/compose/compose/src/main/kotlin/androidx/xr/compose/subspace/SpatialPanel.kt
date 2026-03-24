@@ -885,10 +885,12 @@ internal fun buildSpatialPanelModifier(
                 minimumSize = resizePolicy.minimumSize,
                 maximumSize = resizePolicy.maximumSize,
                 maintainAspectRatio = resizePolicy.shouldMaintainAspectRatio,
-                onResizeStart = resizePolicy.onResizeStart,
-                onResizeUpdate = resizePolicy.onResizeUpdate,
-                onResizeEnd = resizePolicy.onResizeEnd,
-                onSizeChange = resizePolicy.onSizeChange,
+                onResizeStart = resizePolicy.onResizeStart ?: {},
+                onResizeUpdate = resizePolicy.onResizeUpdate ?: {},
+                onResizeEnd = { size ->
+                    resizePolicy.onResizeEnd?.let { it(size) }
+                    resizePolicy.onSizeChange?.let { it(size) } == true
+                },
             )
     }
 
