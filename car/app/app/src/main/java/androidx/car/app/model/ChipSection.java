@@ -29,11 +29,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * A section of {@link FilterChip}s. Only 1 FilterChipSection is allowed in the
+ * A section of {@link Chip}s. Only 1 ChipSection is allowed in the
  * {@link SectionedItemTemplate}.
  *
- * <p>A group of {@link FilterChip}s that help a user filter a template's content down to
- * more specific items.
+ * <p>A group of {@link Chip}s that typically help a user filter a template's content down to
+ * more specific items or dynamically suggest relevant actions for a user to take.
  *
  * <p>The host may limit the number of chips displayed to ensure driver safety.
  */
@@ -41,22 +41,22 @@ import java.util.Objects;
 @CarProtocol
 @RequiresCarApi(9)
 @KeepFields
-public final class FilterChipSection extends Section<FilterChip> {
+public final class ChipSection extends Section<Chip> {
     @Nullable
-    private final FilterChipStyle mStyle;
+    private final ChipStyle mStyle;
 
     /**
      * Returns the style of the section, or {@code null} if not set.
      */
     @Nullable
-    public FilterChipStyle getStyle() {
+    public ChipStyle getStyle() {
         return mStyle;
     }
 
     @Override
     @NonNull
     public String toString() {
-        return "FilterChipSection{"
+        return "ChipSection{"
                 + "items="
                 + getItemsDelegate()
                 + ", title="
@@ -76,58 +76,58 @@ public final class FilterChipSection extends Section<FilterChip> {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof FilterChipSection)) {
+        if (!(other instanceof ChipSection)) {
             return false;
         }
-        FilterChipSection otherSection = (FilterChipSection) other;
+        ChipSection otherSection = (ChipSection) other;
         return super.equals(otherSection) && Objects.equals(mStyle, otherSection.mStyle);
     }
 
-    FilterChipSection(Builder builder) {
+    ChipSection(Builder builder) {
         super(builder);
         mStyle = builder.mStyle;
     }
 
     /** Constructs an empty instance, used by serialization code. */
-    private FilterChipSection() {
+    private ChipSection() {
         super();
         mStyle = null;
     }
 
-    /** A builder of {@link FilterChipSection}. */
-    public static final class Builder extends BaseBuilder<FilterChip, Builder> {
+    /** A builder of {@link ChipSection}. */
+    public static final class Builder extends BaseBuilder<Chip, Builder> {
         @Nullable
-        FilterChipStyle mStyle;
+        ChipStyle mStyle;
 
         /**
          * Sets the style for all chips in this section.
          *
          * <p>Any fields not explicitly set here or in the
-         * individual chip styling of {@link FilterChip.Builder#setStyle} will fall back to host
+         * individual chip styling of {@link Chip.Builder#setStyle} will fall back to host
          * defaults. If the colors do not meet the contrast requirements, the host will set the
-         * chip styling to defaults based on the {@link FilterChip.Builder#setSelected(boolean)}
+         * chip styling to defaults based on the {@link Chip.Builder#setSelected(boolean)}
          * state.
          *
          * @throws NullPointerException if {@code style} is {@code null}
          */
         @NonNull
-        public Builder setStyle(@NonNull FilterChipStyle style) {
+        public Builder setStyle(@NonNull ChipStyle style) {
             mStyle = requireNonNull(style);
             return this;
         }
 
         /**
-         * Constructs the {@link FilterChipSection} defined by this builder.
+         * Constructs the {@link ChipSection} defined by this builder.
          *
          * @throws IllegalArgumentException if the section does not contain at least one item.
          */
         @NonNull
-        public FilterChipSection build() {
+        public ChipSection build() {
             if (mItems.isEmpty()) {
-                throw new IllegalArgumentException("FilterChipSection must contain at least one "
+                throw new IllegalArgumentException("ChipSection must contain at least one "
                         + "item");
             }
-            return new FilterChipSection(this);
+            return new ChipSection(this);
         }
 
         /**

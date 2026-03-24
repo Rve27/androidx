@@ -34,17 +34,17 @@ import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * A Filter Chip is a toggle-like button with text and/or an icon used to filter results
- * within a template.
+ * A Chip is a toggle-like button with text and/or leading/trailing icon(s).
  *
- * <p>Filter chips are used to filter content. They can contain text, a start icon, and an end icon.
- * They can also be selected or unselected.
+ * <p>Chips can, for example, be used to filter items in a {@link SectionedItemTemplate} when
+ * clicked on. A chip's style, content, and selected state can be changed in response to a user
+ * click.
  */
 @ExperimentalCarApi
 @CarProtocol
 @RequiresCarApi(9)
 @KeepFields
-public final class FilterChip implements Item {
+public final class Chip implements Item {
     @Nullable
     private final CarText mTitle;
     @Nullable
@@ -55,7 +55,7 @@ public final class FilterChip implements Item {
     @Nullable
     private final OnClickDelegate mOnClickDelegate;
     @Nullable
-    private final FilterChipStyle mStyle;
+    private final ChipStyle mStyle;
 
     /**
      * Returns the title of the chip, or {@code null} if not set.
@@ -100,14 +100,14 @@ public final class FilterChip implements Item {
      * Returns the style of the chip, or {@code null} if not set.
      */
     @Nullable
-    public FilterChipStyle getStyle() {
+    public ChipStyle getStyle() {
         return mStyle;
     }
 
     @Override
     @NonNull
     public String toString() {
-        return "FilterChip{"
+        return "Chip{"
                 + "title="
                 + mTitle
                 + ", startIcon="
@@ -134,10 +134,10 @@ public final class FilterChip implements Item {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof FilterChip)) {
+        if (!(other instanceof Chip)) {
             return false;
         }
-        FilterChip otherChip = (FilterChip) other;
+        Chip otherChip = (Chip) other;
         return Objects.equals(mTitle, otherChip.mTitle)
                 && Objects.equals(mStartIcon, otherChip.mStartIcon)
                 && Objects.equals(mEndIcon, otherChip.mEndIcon)
@@ -146,7 +146,7 @@ public final class FilterChip implements Item {
                 && Objects.equals(mStyle, otherChip.mStyle);
     }
 
-    FilterChip(Builder builder) {
+    Chip(Builder builder) {
         mTitle = builder.mTitle;
         mStartIcon = builder.mStartIcon;
         mEndIcon = builder.mEndIcon;
@@ -156,7 +156,7 @@ public final class FilterChip implements Item {
     }
 
     /** Constructs an empty instance, used by serialization code. */
-    private FilterChip() {
+    private Chip() {
         mTitle = null;
         mStartIcon = null;
         mEndIcon = null;
@@ -165,7 +165,7 @@ public final class FilterChip implements Item {
         mStyle = null;
     }
 
-    /** A builder of {@link FilterChip}. */
+    /** A builder of {@link Chip}. */
     public static final class Builder {
         @Nullable
         CarText mTitle;
@@ -177,7 +177,7 @@ public final class FilterChip implements Item {
         @Nullable
         OnClickDelegate mOnClickDelegate;
         @Nullable
-        FilterChipStyle mStyle;
+        ChipStyle mStyle;
 
 
 
@@ -244,9 +244,9 @@ public final class FilterChip implements Item {
          * <p>The icon will attempt to use the most specific tint supplied; this is, it will try to
          * use the first tint found in the following priority:
          * 1. {@link CarIcon.Builder#setTint}
-         * 2. {@link FilterChip.Builder#setStyle(FilterChipStyle)}
-         * {@link FilterChipStyle.Builder#setContentColor(CarColor)}
-         * 3. {@link FilterChipSection.Builder#setStyle(FilterChipStyle)} content color
+         * 2. {@link Chip.Builder#setStyle(ChipStyle)}
+         * {@link ChipStyle.Builder#setContentColor(CarColor)}
+         * 3. {@link ChipSection.Builder#setStyle(ChipStyle)} content color
          * 4. A host supplied color that matches the {@link #setSelected} state
          * Note that if the supplied color fails to meet contrast requirements,
          * a host-supplied fallback that matches the selected state will be used.
@@ -279,9 +279,9 @@ public final class FilterChip implements Item {
          * <p>The icon will attempt to use the most specific tint supplied; this is, it will try to
          * use the first tint found in the following priority:
          * 1. {@link CarIcon.Builder#setTint}
-         * 2. {@link FilterChip.Builder#setStyle(FilterChipStyle)}
-         * {@link FilterChipStyle.Builder#setContentColor(CarColor)}
-         * 3. {@link FilterChipSection.Builder#setStyle(FilterChipStyle)} content color
+         * 2. {@link Chip.Builder#setStyle(ChipStyle)}
+         * {@link ChipStyle.Builder#setContentColor(CarColor)}
+         * 3. {@link ChipSection.Builder#setStyle(ChipStyle)} content color
          * 4. A host supplied color that matches the {@link #setSelected} state
          * Note that if the supplied color fails to meet contrast requirements,
          * a host-supplied fallback that matches the selected state will be used.
@@ -305,10 +305,10 @@ public final class FilterChip implements Item {
          *
          * <p>If the selected state is not set, the default will be false
          *
-         * <p>If a custom style is provided through {@link #setStyle(FilterChipStyle)}, changing
+         * <p>If a custom style is provided through {@link #setStyle(ChipStyle)}, changing
          * this selected boolean value will not automatically change the
          * color of this chip. The custom style must also be updated to reflect the selected state.
-         * See {@link FilterChip.Builder#setStyle} or {@link FilterChipSection.Builder#setStyle}
+         * See {@link Chip.Builder#setStyle} or {@link ChipSection.Builder#setStyle}
          * for more details.
          */
         @NonNull
@@ -335,8 +335,8 @@ public final class FilterChip implements Item {
         /**
          * Sets the style of the chip.
          *
-         * <p>This style overrides the style set in the {@link FilterChipSection} if one is
-         * provided. Any fields not explicitly set here or in the {@link FilterChipSection}
+         * <p>This style overrides the style set in the {@link ChipSection} if one is
+         * provided. Any fields not explicitly set here or in the {@link ChipSection}
          * will fall back to the host's default colors. If the style is not set or if the colors
          * do not meet the contrast requirements, the host will set the chip styling to defaults
          * based on the {@link #setSelected(boolean)} state.
@@ -344,19 +344,19 @@ public final class FilterChip implements Item {
          * @throws NullPointerException if {@code style} is {@code null}
          */
         @NonNull
-        public Builder setStyle(@NonNull FilterChipStyle style) {
+        public Builder setStyle(@NonNull ChipStyle style) {
             mStyle = requireNonNull(style);
             return this;
         }
 
         /**
-         * Constructs the {@link FilterChip} defined by this builder.
+         * Constructs the {@link Chip} defined by this builder.
          *
          * @throws IllegalStateException if the chip does not have a title, start icon, or end icon.
          * @throws IllegalStateException if the chip does not have an {@link OnClickListener}.
          */
         @NonNull
-        public FilterChip build() {
+        public Chip build() {
             if (mTitle == null && mStartIcon == null && mEndIcon == null) {
                 throw new IllegalStateException(
                         "A title, start icon, or end icon must be set for the chip");
@@ -366,7 +366,7 @@ public final class FilterChip implements Item {
                 throw new IllegalStateException("An OnClickListener must be set");
             }
 
-            return new FilterChip(this);
+            return new Chip(this);
         }
     }
 }

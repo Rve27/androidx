@@ -34,15 +34,15 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.internal.DoNotInstrument;
 
-/** Tests for {@link FilterChip}. */
+/** Tests for {@link Chip}. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = {Config.TARGET_SDK})
 @DoNotInstrument
-public class FilterChipTest {
+public class ChipTest {
 
     @Test
     public void create_defaultValues() {
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle("Title")
                 .setOnClickListener(() -> {})
                 .build();
@@ -58,20 +58,20 @@ public class FilterChipTest {
     public void build_throws_ifNoContent() {
         assertThrows(
                 IllegalStateException.class,
-                () -> new FilterChip.Builder().setOnClickListener(() -> {}).build());
+                () -> new Chip.Builder().setOnClickListener(() -> {}).build());
     }
 
     @Test
     public void build_throws_ifNoOnClickListener() {
         assertThrows(
                 IllegalStateException.class,
-                () -> new FilterChip.Builder().setTitle("Title").build());
+                () -> new Chip.Builder().setTitle("Title").build());
     }
 
     @Test
     public void title_charSequence() {
         String title = "foo";
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle(title)
                 .setOnClickListener(() -> {})
                 .build();
@@ -83,7 +83,7 @@ public class FilterChipTest {
         CarText title = new CarText.Builder("Long Title")
                 .addVariant("Short")
                 .build();
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle(title)
                 .setOnClickListener(() -> {})
                 .build();
@@ -97,7 +97,7 @@ public class FilterChipTest {
         CharSequence title = TestUtils.getCharSequenceWithClickableSpan("Title");
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new FilterChip.Builder()
+                () -> new Chip.Builder()
                         .setTitle(title)
                         .setOnClickListener(() -> {})
                         .build()
@@ -105,13 +105,13 @@ public class FilterChipTest {
 
         // DurationSpan and DistanceSpan do not throw
         CharSequence title3 = TestUtils.getCharSequenceWithDistanceAndDurationSpans("Title");
-        new FilterChip.Builder().setTitle(title3).setOnClickListener(() -> {}).build();
+        new Chip.Builder().setTitle(title3).setOnClickListener(() -> {}).build();
     }
 
     @Test
     public void setStartIcon() {
         CarIcon icon = BACK;
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setStartIcon(icon)
                 .setOnClickListener(() -> {})
                 .build();
@@ -121,7 +121,7 @@ public class FilterChipTest {
     @Test
     public void setEndIcon() {
         CarIcon icon = ALERT;
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setEndIcon(icon)
                 .setOnClickListener(() -> {})
                 .build();
@@ -130,7 +130,7 @@ public class FilterChipTest {
 
     @Test
     public void setSelected() {
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle("Title")
                 .setSelected(true)
                 .setOnClickListener(() -> {})
@@ -141,7 +141,7 @@ public class FilterChipTest {
     @Test
     public void setOnClickListener() {
         OnClickListener onClickListener = mock(OnClickListener.class);
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle("Title")
                 .setOnClickListener(onClickListener)
                 .build();
@@ -153,8 +153,8 @@ public class FilterChipTest {
 
     @Test
     public void setStyle() {
-        FilterChipStyle style = new FilterChipStyle.Builder().build();
-        FilterChip chip = new FilterChip.Builder()
+        ChipStyle style = new ChipStyle.Builder().build();
+        Chip chip = new Chip.Builder()
                 .setTitle("Title")
                 .setStyle(style)
                 .setOnClickListener(() -> {})
@@ -164,33 +164,33 @@ public class FilterChipTest {
 
     @Test
     public void equals() {
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle("Title")
                 .setStartIcon(BACK)
                 .setEndIcon(ALERT)
                 .setSelected(true)
                 .setOnClickListener(() -> {})
-                .setStyle(new FilterChipStyle.Builder().build())
+                .setStyle(new ChipStyle.Builder().build())
                 .build();
 
-        assertThat(new FilterChip.Builder()
+        assertThat(new Chip.Builder()
                 .setTitle("Title")
                 .setStartIcon(BACK)
                 .setEndIcon(ALERT)
                 .setSelected(true)
                 .setOnClickListener(() -> {})
-                .setStyle(new FilterChipStyle.Builder().build())
+                .setStyle(new ChipStyle.Builder().build())
                 .build())
                 .isEqualTo(chip);
     }
 
     @Test
     public void notEquals_differentTitle() {
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle("Title")
                 .setOnClickListener(() -> {})
                 .build();
-        assertThat(new FilterChip.Builder()
+        assertThat(new Chip.Builder()
                 .setTitle("Other")
                 .setOnClickListener(() -> {})
                 .build()
@@ -199,11 +199,11 @@ public class FilterChipTest {
 
     @Test
     public void notEquals_differentStartIcon() {
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setStartIcon(BACK)
                 .setOnClickListener(() -> {})
                 .build();
-        assertThat(new FilterChip.Builder()
+        assertThat(new Chip.Builder()
                 .setStartIcon(ALERT)
                 .setOnClickListener(() -> {})
                 .build()
@@ -212,11 +212,11 @@ public class FilterChipTest {
 
     @Test
     public void notEquals_differentEndIcon() {
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setEndIcon(BACK)
                 .setOnClickListener(() -> {})
                 .build();
-        assertThat(new FilterChip.Builder()
+        assertThat(new Chip.Builder()
                 .setEndIcon(ALERT)
                 .setOnClickListener(() -> {})
                 .build()
@@ -225,12 +225,12 @@ public class FilterChipTest {
 
     @Test
     public void notEquals_differentSelected() {
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle("Title")
                 .setSelected(true)
                 .setOnClickListener(() -> {})
                 .build();
-        assertThat(new FilterChip.Builder()
+        assertThat(new Chip.Builder()
                 .setTitle("Title")
                 .setSelected(false)
                 .setOnClickListener(() -> {})
@@ -240,18 +240,18 @@ public class FilterChipTest {
 
     @Test
     public void notEquals_differentStyle() {
-        FilterChipStyle style1 = new FilterChipStyle.Builder()
+        ChipStyle style1 = new ChipStyle.Builder()
                 .setBackgroundColor(CarColor.RED)
                 .build();
-        FilterChipStyle style2 = new FilterChipStyle.Builder()
+        ChipStyle style2 = new ChipStyle.Builder()
                 .setBackgroundColor(CarColor.BLUE)
                 .build();
-        FilterChip chip = new FilterChip.Builder()
+        Chip chip = new Chip.Builder()
                 .setTitle("Title")
                 .setStyle(style1)
                 .setOnClickListener(() -> {})
                 .build();
-        assertThat(new FilterChip.Builder()
+        assertThat(new Chip.Builder()
                 .setTitle("Title")
                 .setStyle(style2)
                 .setOnClickListener(() -> {})
