@@ -356,7 +356,16 @@ public class TrackedDimensions(
     public val isRotationYTracked: Boolean = false,
     public val isRotationZTracked: Boolean = false,
 ) {
-    /** returns a copy of this object with the given values updated. */
+    /**
+     * returns a copy of this object with the given values updated.
+     *
+     * @param isTranslationXTracked Whether to track translation along the X axis.
+     * @param isTranslationYTracked Whether to track translation along the Y axis.
+     * @param isTranslationZTracked Whether to track translation along the Z axis.
+     * @param isRotationXTracked Whether to track rotation around the X axis.
+     * @param isRotationYTracked Whether to track rotation around the Y axis.
+     * @param isRotationZTracked Whether to track rotation around the Z axis.
+     */
     public fun copy(
         isTranslationXTracked: Boolean = this.isTranslationXTracked,
         isTranslationYTracked: Boolean = this.isTranslationYTracked,
