@@ -120,7 +120,7 @@ public fun RemoteButton(
         borderColor = borderColor,
         shape = shape,
         contentPadding = contentPadding,
-        labelFont = LocalRemoteTypography.current.labelMedium,
+        labelFont = RemoteMaterialTheme.typography.labelMedium,
         containerPainter = null,
         disabledContainerPainter = null,
         content = content,
@@ -182,7 +182,7 @@ public fun RemoteButton(
         contentPadding = contentPadding,
         border = border,
         borderColor = borderColor,
-        labelFont = LocalRemoteTypography.current.labelMedium,
+        labelFont = RemoteMaterialTheme.typography.labelMedium,
         content = content,
     )
 }
@@ -280,7 +280,7 @@ public fun RemoteButton(
         icon = icon,
         enabled = enabled,
         shape = shape,
-        labelFont = LocalRemoteTypography.current.labelMedium,
+        labelFont = RemoteMaterialTheme.typography.labelMedium,
         containerPainter = containerPainter,
         disabledContainerPainter = disabledContainerPainter,
         colors = colors,
@@ -290,7 +290,7 @@ public fun RemoteButton(
         labelContent =
             provideScopeContent(
                 contentColor = colors.contentColor(enabled),
-                textStyle = LocalRemoteTypography.current.labelMedium,
+                textStyle = RemoteMaterialTheme.typography.labelMedium,
                 textConfiguration =
                     TextConfiguration(
                         textAlign =
@@ -387,7 +387,7 @@ public fun RemoteCompactButton(
                 icon = icon,
                 enabled = enabled,
                 shape = shape,
-                labelFont = LocalRemoteTypography.current.labelSmall,
+                labelFont = RemoteMaterialTheme.typography.labelSmall,
                 containerPainter = null,
                 disabledContainerPainter = null,
                 colors = colors,
@@ -397,7 +397,7 @@ public fun RemoteCompactButton(
                 labelContent =
                     provideScopeContent(
                         contentColor = colors.contentColor(enabled),
-                        textStyle = LocalRemoteTypography.current.labelSmall,
+                        textStyle = RemoteMaterialTheme.typography.labelSmall,
                         textConfiguration =
                             TextConfiguration(
                                 textAlign = if (icon != null) TextAlign.Start else TextAlign.Center,
@@ -417,7 +417,7 @@ public fun RemoteCompactButton(
                         .width(RemoteButtonDefaults.IconOnlyCompactButtonWidth),
                 enabled = enabled,
                 shape = shape,
-                labelFont = LocalRemoteTypography.current.labelSmall,
+                labelFont = RemoteMaterialTheme.typography.labelSmall,
                 containerPainter = null,
                 disabledContainerPainter = null,
                 colors = colors,
