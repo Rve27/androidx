@@ -124,4 +124,10 @@ object AndroidComposeUiFlags {
     @JvmField
     // TODO remove me b/491111451
     var isForceChildLayoutAfterMeasurementEnabled: Boolean = true
+
+    /** This flag enables the Android Framework implementation of VelocityTracker. */
+    // TODO: b/483449576
+    @field:Suppress("MutableBareField")
+    @JvmField
+    var isFrameworkVelocityTrackerEnabled: Boolean = false
 }
