@@ -39,8 +39,8 @@ import androidx.compose.remote.creation.compose.layout.RemoteColumn
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteOffset
 import androidx.compose.remote.creation.compose.layout.RemoteRow
+import androidx.compose.remote.creation.compose.layout.RemoteStateLayout
 import androidx.compose.remote.creation.compose.layout.RemoteText
-import androidx.compose.remote.creation.compose.layout.StateLayout
 import androidx.compose.remote.creation.compose.layout.rememberStateMachine
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
@@ -60,10 +60,11 @@ import androidx.compose.remote.creation.compose.shaders.RemoteBrush
 import androidx.compose.remote.creation.compose.shaders.radialGradient
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteDp
-import androidx.compose.remote.creation.compose.state.RemoteInt
+import androidx.compose.remote.creation.compose.state.RemoteEnum
 import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
+import androidx.compose.remote.creation.compose.state.rememberMutableRemoteEnum
 import androidx.compose.remote.creation.compose.state.rememberMutableRemoteInt
 import androidx.compose.remote.creation.compose.state.rememberNamedRemoteString
 import androidx.compose.remote.creation.compose.state.rf
@@ -779,19 +780,18 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val checked = rememberMutableRemoteInt(0)
+                val checked = rememberMutableRemoteEnum<Checked>(Checked.Off)
                 val fsm = rememberStateMachine<Checked>(checked)
 
-                StateLayout(stateMachine = fsm, modifier = RemoteModifier.fillMaxSize()) { state ->
+                RemoteStateLayout(stateMachine = fsm, modifier = RemoteModifier.fillMaxSize()) {
+                    state ->
                     when (state) {
-                        Checked.Off.ordinal -> {
+                        Checked.Off ->
                             RemoteBox(modifier = RemoteModifier.size(60.rdp).background(Color.Red))
-                        }
-                        Checked.On.ordinal -> {
+                        Checked.On ->
                             RemoteBox(
                                 modifier = RemoteModifier.size(80.rdp).background(Color.Green)
                             )
-                        }
                     }
                 }
             }
@@ -831,19 +831,18 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val checked = rememberMutableRemoteInt(1)
-                val fsm = rememberStateMachine<Checked>(checked)
+                val checked = rememberMutableRemoteEnum(Checked.On)
+                val fsm = rememberStateMachine(checked)
 
-                StateLayout(stateMachine = fsm, modifier = RemoteModifier.fillMaxSize()) { state ->
+                RemoteStateLayout(stateMachine = fsm, modifier = RemoteModifier.fillMaxSize()) {
+                    state ->
                     when (state) {
-                        Checked.Off.ordinal -> {
+                        Checked.Off ->
                             RemoteBox(modifier = RemoteModifier.size(60.rdp).background(Color.Red))
-                        }
-                        Checked.On.ordinal -> {
+                        Checked.On ->
                             RemoteBox(
                                 modifier = RemoteModifier.size(80.rdp).background(Color.Green)
                             )
-                        }
                     }
                 }
             }
@@ -884,22 +883,22 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 verticalArrangement = RemoteArrangement.Center,
                 horizontalAlignment = RemoteAlignment.CenterHorizontally,
             ) {
-                val checked = rememberMutableRemoteInt(1).withGlobalScope()
-                val fsm = rememberStateMachine<Checked>(checked)
+                val checked = rememberMutableRemoteEnum(Checked.On).withGlobalScope()
+                val fsm = rememberStateMachine(checked)
 
-                StateLayout(
+                RemoteStateLayout(
                     stateMachine = fsm,
                     modifier =
                         RemoteModifier.fillMaxSize()
-                            .onTouchDown(ValueChange(checked, RemoteInt(value = 0)))
-                            .onTouchUp(ValueChange(checked, RemoteInt(value = 1)))
-                            .onTouchCancel(ValueChange(checked, RemoteInt(value = 1))),
+                            .onTouchDown(ValueChange(checked, RemoteEnum(Checked.Off)))
+                            .onTouchUp(ValueChange(checked, RemoteEnum(Checked.On)))
+                            .onTouchCancel(ValueChange(checked, RemoteEnum(Checked.On))),
                 ) { state ->
                     when (state) {
-                        Checked.Off.ordinal -> {
+                        Checked.Off -> {
                             RemoteBox(modifier = RemoteModifier.size(60.rdp).background(Color.Red))
                         }
-                        Checked.On.ordinal -> {
+                        Checked.On -> {
                             RemoteBox(
                                 modifier = RemoteModifier.size(80.rdp).background(Color.Green)
                             )
