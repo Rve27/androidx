@@ -841,13 +841,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                         it.viewScrollPositionFromFastScroller(
                             scrollY = eventY,
                             viewHeight = height,
-                            estimatedFullHeight = toViewCoord(contentHeight, zoom, scroll = 0),
+                            estimatedFullHeight = calculateEstimatedFullHeight(),
+                            paddingRect = paddingRect,
                         )
                     scrollTo(scrollX, updatedY)
                     invalidate()
                 }
             }
         }
+
+    private fun calculateEstimatedFullHeight(): Float = toViewCoord(contentHeight, zoom, scroll = 0)
 
     @VisibleForTesting
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -1199,17 +1202,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         // Fast scroller is non-content and shouldn't be affected by zoom. It's drawn after
         // restoring the Canvas to its unscaled state
         if (enableDefaultFastScrollerRendering) {
-            canvas.save()
-            // Adjust the canvas based on current scroll position to draw fast scroller in view
-            // coordinates.
-            canvas.translate(scrollX.toFloat(), scrollY.toFloat())
-            drawFastScroller(canvas)
-            canvas.restore()
+            drawFastScroller(canvas, Point(scrollX, scrollY))
         }
     }
 
     /** Draws the fast scroller UI in view coordinates. */
-    internal fun drawFastScroller(canvas: Canvas) {
+    internal fun drawFastScroller(canvas: Canvas, scrollOffset: Point = Point(0, 0)) {
+        canvas.save()
+        // Adjust the canvas based on current scroll position to draw fast scroller in view
+        // coordinates.
+        canvas.translate(scrollOffset.x.toFloat(), scrollOffset.y + paddingTop.toFloat())
+
         val documentPageCount = pdfDocument?.pageCount ?: 0
         if (documentPageCount > 1) {
             fastScroller?.drawScroller(
@@ -1218,11 +1221,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 viewWidth = width,
                 viewHeight = height,
                 visiblePages = fullyVisiblePages,
-                estimatedFullHeight =
-                    toViewCoord(contentCoord = contentHeight, zoom = zoom, scroll = 0),
+                estimatedFullHeight = calculateEstimatedFullHeight(),
+                paddingRect = paddingRect,
             )
         }
+        canvas.restore()
     }
+
+    private val paddingRect: Rect
+        get() = Rect(paddingLeft, paddingTop, paddingRight, paddingBottom)
 
     private val onPdfContentInvalidatedListener =
         object : PdfDocument.OnPdfContentInvalidatedListener {
@@ -1252,7 +1259,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         parent?.requestDisallowInterceptTouchEvent(true)
 
         var handled =
-            event?.let { fastScrollGestureDetector?.handleEvent(it, parent, width) } ?: false
+            event?.let { fastScrollGestureDetector?.handleEvent(it, parent, width, paddingTop) }
+                ?: false
         handled = handled || event?.let { externalInputManager.handleMouseEvent(event) } ?: false
         handled = handled || maybeDragSelection(event)
         handled =
@@ -1633,7 +1641,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     override fun computeVerticalScrollRange(): Int {
         // Note we provide scroll = 0 here, as we shouldn't consider the current scroll position
         // to compute the maximum scroll position. Scroll position is absolute, not relative
-        val contentHeightPx = toViewCoord(contentHeight, zoom, scroll = 0) + paddingTop
+        val contentHeightPx =
+            toViewCoord(contentHeight, zoom, scroll = 0) + paddingTop + paddingBottom
         return if (contentHeightPx < height && verticalAlignment == VERTICAL_ALIGNMENT_TOP) {
             0
         } else if (contentHeightPx < height) {
