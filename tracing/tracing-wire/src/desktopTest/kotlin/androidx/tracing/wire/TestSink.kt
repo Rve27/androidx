@@ -16,6 +16,7 @@
 
 package androidx.tracing.wire
 
+import androidx.tracing.wire.protos.MutableTraceAttributes
 import androidx.tracing.wire.protos.MutableTracePacket
 import androidx.tracing.wire.protos.MutableTrackEvent
 
@@ -40,6 +41,21 @@ internal fun TestSink.firstStartStopWithName(
     }
     check(end != null) { "Cannot find an end marker for a trace packet with $name" }
     return start to end
+}
+
+internal fun TestSink.attributes(): Map<String, Any?> {
+    val attributes: List<MutableTraceAttributes> =
+        packets.mapNotNull { packet -> packet.trace_attributes }
+    val attributeMap = mutableMapOf<String, Any?>()
+    attributes.forEach { traceAttributes ->
+        traceAttributes.attribute.forEach { attribute ->
+            val key = attribute.key
+            if (key != null) {
+                attributeMap[key] = attribute.string_value ?: attribute.long_value
+            }
+        }
+    }
+    return attributeMap
 }
 
 internal fun TestSink.firstStartStopWithName(
