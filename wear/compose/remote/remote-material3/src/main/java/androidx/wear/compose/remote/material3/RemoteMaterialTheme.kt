@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 
 package androidx.wear.compose.remote.material3
 
-import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ProvidableCompositionLocal
@@ -45,6 +42,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
  * @param colorScheme A complete definition of the Material Color theme for this hierarchy
  * @param shapes A set of shapes to be used as this hierarchy's shape system
  * @param typography A set of text styles to be used as this hierarchy's typography system
+ * @param content The content inheriting this theme
  */
 @Composable
 @RemoteComposable
@@ -56,7 +54,7 @@ public fun RemoteMaterialTheme(
 ) {
     val theme = RemoteMaterialTheme.Values(colorScheme, typography, shapes)
 
-    CompositionLocalProvider(_localRemoteMaterialTheme provides theme) {
+    CompositionLocalProvider(LocalRemoteMaterialTheme provides theme) {
         ProvideRemoteTextStyle(value = typography.bodyLarge, content = content)
     }
 }
@@ -65,7 +63,6 @@ public fun RemoteMaterialTheme(
  * Contains functions to access the current theme values provided at the call site's
  * `RemoteMaterialTheme` context.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RemoteMaterialTheme {
     public val colorScheme: RemoteColorScheme
         @Composable @RemoteComposable get() = LocalRemoteMaterialTheme.current.colorScheme
@@ -87,10 +84,10 @@ public object RemoteMaterialTheme {
      * @property shapes [RemoteShapes] used by material components
      */
     @Immutable
-    public class Values(
-        public val colorScheme: RemoteColorScheme = RemoteColorScheme(),
-        public val typography: RemoteTypography = RemoteTypography(),
-        public val shapes: RemoteShapes = RemoteShapes(),
+    internal class Values(
+        val colorScheme: RemoteColorScheme = RemoteColorScheme(),
+        val typography: RemoteTypography = RemoteTypography(),
+        val shapes: RemoteShapes = RemoteShapes(),
     ) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -118,20 +115,7 @@ public object RemoteMaterialTheme {
     }
 }
 
-/** Use [LocalRemoteMaterialTheme] to access this publicly. */
-@Suppress("CompositionLocalNaming")
-private val _localRemoteMaterialTheme: ProvidableCompositionLocal<RemoteMaterialTheme.Values> =
+private val LocalRemoteMaterialTheme: ProvidableCompositionLocal<RemoteMaterialTheme.Values> =
     staticCompositionLocalOf {
         RemoteMaterialTheme.Values()
     }
-
-/**
- * [CompositionLocal] providing MaterialThemeSubsystems throughout the hierarchy. You can use
- * properties in the companion object to access specific subsystems, for example
- * [RemoteMaterialTheme.colorScheme]. To provide a new value for this, use [RemoteMaterialTheme].
- * This API is exposed to allow retrieving values from inside CompositionLocalConsumerModifierNode
- * implementations - in most cases you should use [RemoteMaterialTheme.colorScheme] and other
- * properties directly.
- */
-public val LocalRemoteMaterialTheme: CompositionLocal<RemoteMaterialTheme.Values>
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get() = _localRemoteMaterialTheme
