@@ -2489,6 +2489,7 @@ class ScrollableTest {
         rule.onNodeWithTag("childScrollable").performTouchInput {
             down(centerLeft)
             moveBy(Offset(100f, 0f))
+            advanceEventTime(3000L) // Prevent fling gesture.
             up()
         }
 
@@ -2903,6 +2904,7 @@ class ScrollableTest {
         rule.onNodeWithTag(scrollableBoxTag).performTouchInput {
             down(this.center)
             moveBy(Offset(115f, 0f))
+            advanceEventTime(3000L) // Prevent fling gesture.
             up()
         }
         assertThat(flingCalled).isEqualTo(1)
@@ -3689,6 +3691,7 @@ class ScrollableTest {
         rule.onRoot().performTouchInput {
             down(center)
             moveBy(Offset(scrollDelta, 0f))
+            advanceEventTime(3000L) // Prevent fling gesture.
             up()
         }
 
@@ -4099,8 +4102,7 @@ class ScrollableTest {
                 moveBy(Offset(0f, delta), delayMillis = 8L)
                 previousScrollValue += delta.toInt()
             }
-            // stop for a moment
-            advanceEventTime(3000L)
+            advanceEventTime(3000L) // Prevent fling gesture.
             up()
         }
 
