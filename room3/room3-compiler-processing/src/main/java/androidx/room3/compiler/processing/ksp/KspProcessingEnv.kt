@@ -396,26 +396,30 @@ private class KspResolver(val env: KspProcessingEnv, val resolver: Resolver) {
      * public wrap functions make that decision.
      */
     fun wrap(ksType: KSType, allowPrimitives: Boolean): KspType {
-        val declaration = ksType.declaration
-        if (declaration is KSTypeAlias) {
-            return wrap(
-                    ksType = ksType.replaceTypeAliases(resolver),
-                    allowPrimitives = allowPrimitives && ksType.nullability == Nullability.NOT_NULL,
-                )
-                .copyWithTypeAlias(ksType)
-        }
-        val qName = ksType.declaration.qualifiedName?.asString()
-        if (declaration is KSTypeParameter) {
-            return KspTypeVariableType(env, declaration, ksType)
-        }
-        if (allowPrimitives && qName != null && ksType.nullability == Nullability.NOT_NULL) {
-            // check for primitives
-            val javaPrimitive = KspTypeMapper.getPrimitiveJavaTypeName(qName)
-            if (javaPrimitive != null) {
-                return KspPrimitiveType(env, ksType)
+        // Expand type aliases before trying to determine which specific implementation to create.
+        val expandedKsType =
+            if (ksType.declaration is KSTypeAlias) {
+                ksType.replaceTypeAliases(resolver)
+            } else {
+                ksType
             }
+        return if (expandedKsType.declaration is KSTypeParameter) {
+            KspTypeVariableType(env, ksType)
+        } else if (allowPrimitives && expandedKsType.isPrimitiveType()) {
+            KspPrimitiveType(env, ksType)
+        } else if (arrayTypeFactory.isArrayType(expandedKsType)) {
+            arrayTypeFactory.create(ksType)
+        } else {
+            DefaultKspType(env, ksType)
         }
-        return arrayTypeFactory.createIfArray(ksType) ?: DefaultKspType(env, ksType)
+    }
+
+    private fun KSType.isPrimitiveType(): Boolean {
+        if (nullability != Nullability.NOT_NULL) {
+            return false
+        }
+        val qName = declaration.qualifiedName?.asString() ?: return false
+        return KspTypeMapper.getPrimitiveJavaTypeName(qName) != null
     }
 
     fun wrapKSFile(file: KSFile): KspMemberContainer {

@@ -33,8 +33,7 @@ internal class KspVoidType(
     ksType: KSType,
     val boxed: Boolean,
     scope: KSTypeVarianceResolverScope? = null,
-    typeAlias: KSType? = null,
-) : KspType(env, ksType, scope, typeAlias) {
+) : KspType(env, ksType, scope) {
     override fun resolveJTypeName(): JTypeName {
         return if (boxed || nullability == XNullability.NULLABLE) {
             JTypeName.VOID.box()
@@ -51,20 +50,10 @@ internal class KspVoidType(
         return if (boxed) {
             this
         } else {
-            KspVoidType(
-                env = env,
-                ksType = ksType,
-                boxed = true,
-                scope = scope,
-                typeAlias = typeAlias,
-            )
+            KspVoidType(env = env, ksType = ksType, boxed = true, scope = scope)
         }
     }
 
-    override fun copy(
-        env: KspProcessingEnv,
-        ksType: KSType,
-        scope: KSTypeVarianceResolverScope?,
-        typeAlias: KSType?,
-    ) = KspVoidType(env, ksType, boxed, scope, typeAlias)
+    override fun copy(env: KspProcessingEnv, ksType: KSType, scope: KSTypeVarianceResolverScope?) =
+        KspVoidType(env, ksType, boxed, scope)
 }
