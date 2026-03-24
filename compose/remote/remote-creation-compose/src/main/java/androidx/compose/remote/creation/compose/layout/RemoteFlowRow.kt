@@ -38,6 +38,8 @@ internal class RemoteComposeFlowRowModifier(
                 canvas.toRecordingModifier(modifier),
                 horizontalArrangement.toRemote(this.layoutDirection),
                 verticalArrangement.toRemote(),
+                Integer.MAX_VALUE,
+                Integer.MAX_VALUE,
             )
             this@draw.drawContent()
             canvas.document.endFlow()
