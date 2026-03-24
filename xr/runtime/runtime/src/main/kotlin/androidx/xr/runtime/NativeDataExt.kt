@@ -16,12 +16,11 @@
 
 @file:JvmName("NativeDataExt")
 
-package androidx.xr.arcore
+package androidx.xr.runtime
 
 import androidx.lifecycle.Lifecycle
-import androidx.xr.arcore.openxr.OpenXrManager
-import androidx.xr.arcore.runtime.PerceptionRuntime
-import androidx.xr.runtime.Session
+import androidx.xr.runtime.interfaces.Feature
+import androidx.xr.runtime.openxr.OpenXrInstanceManager
 
 @RequiresOptIn(
     "Access to native pointers is discouraged and the data returned by this API may change in the future."
@@ -33,9 +32,9 @@ public annotation class UnstableNativeResourceApi
  * Returns a [NativeData] class containing pointers to native resources if available. This is a
  * dangerous API and can put the JXR Session in a bad state if used incorrectly.
  *
- * The pointers are owned by the ARCore runtime and should only be used to access APIs only
+ * The pointers are owned by the underlying runtime and should only be used to access APIs only
  * available in the native C++ spec for the relevant runtime. Any lifecycle events should be handled
- * only by the ARCore runtime.
+ * only by the runtime.
  *
  * @throws [IllegalStateException] if the session is not using a runtime backed by a native session
  *   or the session has been destroyed.
@@ -47,23 +46,23 @@ public fun Session.getNativeData(): NativeData {
     }
 
     // TODO(b/467096822) - Add support for getting the ARCore 1.x session once it is a dependency.
-    val manager =
-        this.runtimes.filterIsInstance<PerceptionRuntime>().singleOrNull()?.lifecycleManager
+    val sessionPointer =
+        this.runtimes.firstNotNullOfOrNull { it.sessionPointer }
             ?: throw IllegalStateException(
-                "The provided session is not backed by a PerceptionRuntime."
-            )
-    return when (manager) {
-        is OpenXrManager -> NativeData(manager.sessionPointer, manager.instancePointer)
-        else ->
-            throw IllegalStateException(
                 "The provided session is not using an OpenXR-enabled runtime." +
                     " Native handle access is only supported for OpenXR" +
                     " sessions."
             )
-    }
+
+    val instancePointer =
+        if (getDeviceContextFeatures(context).contains(Feature.OPEN_XR))
+            OpenXrInstanceManager.getXrInstanceHandle(context)
+        else null
+
+    return NativeData(sessionPointer, instancePointer)
 }
 
-/** Class containing pointers to the native perception resources backing the ARCore runtime. */
+/** Class containing pointers to the native resources backing the XR runtime. */
 public class NativeData
 internal constructor(
     /**
