@@ -248,7 +248,7 @@ package androidx.xr.runtime {
     property public String libraryName;
   }
 
-  public abstract sealed exhaustive class SessionConfigureResult {
+  public abstract sealed nonexhaustive class SessionConfigureResult {
   }
 
   public final class SessionConfigureSuccess extends androidx.xr.runtime.SessionConfigureResult {
@@ -267,7 +267,7 @@ package androidx.xr.runtime {
     property public String requiredApk;
   }
 
-  public abstract sealed exhaustive class SessionCreateResult {
+  public abstract sealed nonexhaustive class SessionCreateResult {
   }
 
   public final class SessionCreateSuccess extends androidx.xr.runtime.SessionCreateResult {
