@@ -50,6 +50,7 @@ import androidx.xr.runtime.math.Vector3
  * @param depthAlignment The default depth alignment for child elements within the column.
  * @param verticalArrangement The vertical arrangement of the children.
  * @param content The composable content to be laid out vertically.
+ * @sample androidx.xr.compose.samples.SpatialColumnSample
  */
 @Composable
 @SubspaceComposable
