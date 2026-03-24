@@ -37,6 +37,7 @@ import com.google.wear.services.tiles.TileInstance
 import com.google.wear.services.tiles.TilesManager
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.reflect.KClass
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -111,6 +112,26 @@ public class GlanceWearWidgetManager {
         } else {
             activeWidgetStore.value.getActiveWidgets()
         }
+
+    /**
+     * Returns all currently active widgets instances associated with the specified [widget] class.
+     *
+     * A widget instance is active when it was added by the user to a widget surface.
+     *
+     * **Legacy Behavior (Pre-API 34):** On SDKs prior to Android 14 (U), this method uses a
+     * best-effort approach to approximate platform behavior and may be incomplete. Results may omit
+     * pre-installed widgets, widgets not visited within the last 60 days, or all widgets if the
+     * user has cleared app data. Conversely, widgets removed via an app update may incorrectly
+     * persist as "active" for up to 60 days post-removal.
+     */
+    public suspend fun fetchActiveWidgets(
+        widget: KClass<out GlanceWearWidget>
+    ): List<ActiveWearWidgetHandle> {
+        val serviceToWidgetMapping = state.getServiceToWidgetMapping()
+        return fetchActiveWidgets().filter {
+            serviceToWidgetMapping[it.provider] == widget.qualifiedName
+        }
+    }
 
     internal suspend fun updateServiceMapping(
         service: GlanceWearWidgetService,
