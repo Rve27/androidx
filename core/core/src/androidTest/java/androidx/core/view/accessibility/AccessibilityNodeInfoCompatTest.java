@@ -667,6 +667,48 @@ public class AccessibilityNodeInfoCompatTest extends
         assertThat(containerNodeCompat.getSelection()).isNull();
     }
 
+    @Test
+    public void testSelectionPositionCompat_equals() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        TextView textView = new TextView(context);
+        SelectionPositionCompat position1 = new SelectionPositionCompat(textView, 0);
+        SelectionPositionCompat position2 = new SelectionPositionCompat(textView, 0);
+        SelectionPositionCompat position3 = new SelectionPositionCompat(textView, 1);
+
+        assertThat(position1).isEqualTo(position1);
+        assertThat(position1).isNotEqualTo(position3);
+
+        if (BuildCompat.isAtLeastB_1()) {
+            // Relies on the platform's underlying implementation of equals.
+            assertThat(position1).isEqualTo(position2);
+        } else {
+            assertThat(position1).isNotEqualTo(position2);
+        }
+    }
+
+    @Test
+    public void testSelectionCompat_equals() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        TextView textView = new TextView(context);
+        SelectionPositionCompat start = new SelectionPositionCompat(textView, 0);
+        SelectionPositionCompat end1 = new SelectionPositionCompat(textView, 1);
+        SelectionPositionCompat end2 = new SelectionPositionCompat(textView, 2);
+
+        SelectionCompat selection1 = new SelectionCompat(start, end1);
+        SelectionCompat selection2 = new SelectionCompat(start, end1);
+        SelectionCompat selection3 = new SelectionCompat(start, end2);
+
+        assertThat(selection1).isEqualTo(selection1);
+        assertThat(selection1).isNotEqualTo(selection3);
+
+        if (BuildCompat.isAtLeastB_1()) {
+            // Relies on the platform's underlying implementation of equals.
+            assertThat(selection1).isEqualTo(selection2);
+        } else {
+            assertThat(selection1).isNotEqualTo(selection2);
+        }
+    }
+
     @SmallTest
     @Test
     @SdkSuppress(minSdkVersion = 30)

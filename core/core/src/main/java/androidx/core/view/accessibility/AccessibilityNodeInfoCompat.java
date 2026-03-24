@@ -1896,15 +1896,21 @@ public class AccessibilityNodeInfoCompat {
         /**
          * Compatibility:
          * <ul>
-         *     <li>API &lt: 36.1: Always returns {@code false}</li>
+         *     <li>API &lt: 36.1: Returns {@code true} if this object is identical to {@code other},
+         *     else {@code false}</li>
          * </ul>
          */
         @Override
         public boolean equals(Object other) {
             if (BuildCompat.isAtLeastB_1()) {
-                return mPosition != null ? mPosition.equals(other) : false;
+                if (!(other instanceof SelectionPositionCompat)) {
+                    return false;
+                }
+                return mPosition != null
+                        ? mPosition.equals(((SelectionPositionCompat) other).mPosition)
+                        : false;
             } else {
-                return false;
+                return this == other;
             }
         }
     }
@@ -2012,15 +2018,21 @@ public class AccessibilityNodeInfoCompat {
         /**
          * Compatibility:
          * <ul>
-         *     <li>API &lt: 36.1: Always returns {@code false}</li>
+         *     <li>API &lt: 36.1: Returns {@code true} if this object is identical to {@code obj},
+         *     else {@code false}</li>
          * </ul>
          */
         @Override
         public boolean equals(Object obj) {
             if (BuildCompat.isAtLeastB_1()) {
-                return mSelection != null ? mSelection.equals(obj) : false;
+                if (!(obj instanceof SelectionCompat)) {
+                    return false;
+                }
+                return mSelection != null
+                        ? mSelection.equals(((SelectionCompat) obj).mSelection)
+                        : false;
             } else {
-                return false;
+                return this == obj;
             }
         }
     }
