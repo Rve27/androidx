@@ -20,6 +20,7 @@ import android.os.ParcelFileDescriptor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.Description
 import org.junit.runner.RunWith
@@ -28,6 +29,25 @@ import org.junit.runners.model.Statement
 @RunWith(AndroidJUnit4::class)
 class AnimationSystemSettingsTestRuleTest {
     private val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
+
+    @Test
+    fun testExecutesStatementWithInitialValue() {
+        val initialValue = getCurrentSetting()
+        val rule = AnimationSystemSettingsTestRule(initialValue.toFloat())
+
+        var wasEvaluated = false
+
+        val testStatement =
+            object : Statement() {
+                override fun evaluate() {
+                    wasEvaluated = true
+                }
+            }
+
+        rule.apply(testStatement, Description.EMPTY).evaluate()
+
+        assertTrue(wasEvaluated)
+    }
 
     @Test
     fun testRestoresValueAfterExecution() {
