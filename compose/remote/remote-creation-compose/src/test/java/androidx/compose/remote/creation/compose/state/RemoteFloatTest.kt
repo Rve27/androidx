@@ -24,7 +24,6 @@ import androidx.compose.remote.core.RemoteContext
 import androidx.compose.remote.core.RemoteContext.ID_CONTINUOUS_SEC
 import androidx.compose.remote.core.VariableSupport
 import androidx.compose.remote.core.operations.FloatExpression
-import androidx.compose.remote.core.operations.TextFromFloat
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
@@ -394,7 +393,8 @@ class RemoteFloatTest {
             )
             .isTrue()
         assertThat(RemoteFloat(21.5f).plus(RemoteInt(10).toRemoteFloat()).hasConstantValue).isTrue()
-        assertThat(RemoteFloat(21.5f).toRemoteString(2).hasConstantValue).isTrue()
+        assertThat(RemoteFloat(21.5f).toRemoteString(DecimalFormat("#0.00")).hasConstantValue)
+            .isTrue()
         assertThat(RemoteInt(10).toRemoteFloat().hasConstantValue).isTrue()
     }
 
@@ -409,7 +409,9 @@ class RemoteFloatTest {
             .isFalse()
         assertThat(RemoteFloat.createNamedRemoteFloat("value", 1f).hasConstantValue).isFalse()
         assertThat(
-                RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC).toRemoteString(2).hasConstantValue
+                RemoteFloat(RemoteContext.FLOAT_CONTINUOUS_SEC)
+                    .toRemoteString(DecimalFormat("#0.00"))
+                    .hasConstantValue
             )
             .isFalse()
     }
@@ -611,48 +613,12 @@ class RemoteFloatTest {
         assertThat(context.getFloat(longExpressionId)).isEqualTo(expected)
     }
 
-    fun testTextFromFloat(
-        expected: String,
-        value: RemoteFloat,
-        before: Int,
-        after: Int = 2,
-        flags: Int = TextFromFloat.PAD_AFTER_ZERO,
-    ) {
-        val constantFloatString = value.toRemoteString(before, after, flags)
-
-        val constantStringId = constantFloatString.getIdForCreationState(creationState)
-
-        // ensure we have an id to look up
-        val variableFloat = value.createReference()
-        val variableFloatId = variableFloat.getIdForCreationState(creationState)
-        val variableFloatString = variableFloat.toRemoteString(before, after, flags)
-        val variableStringId = variableFloatString.getIdForCreationState(creationState)
-
-        makeAndPaintCoreDocument()
-
-        assertThat(context.getFloat(variableFloatId)).isEqualTo(value.constantValue)
-        assertThat(context.getText(constantStringId)).isEqualTo(expected)
-        assertThat(context.getText(variableStringId)).isEqualTo(expected)
-    }
-
     @Test
     fun textFromFloat() {
-        testTextFromFloat(".50", 0.5f.rf, 0)
-        testTextFromFloat("-.50", (-0.5f).rf, 0)
-        testTextFromFloat(
-            "00.5000",
-            0.5f.rf,
-            2,
-            4,
-            TextFromFloat.PAD_AFTER_ZERO or TextFromFloat.PAD_PRE_ZERO,
-        )
-        testTextFromFloat(
-            "5000000",
-            5000000.rf,
-            10,
-            0,
-            TextFromFloat.PAD_PRE_NONE or TextFromFloat.PAD_AFTER_NONE,
-        )
+        testTextFromFloat("0.50", 0.5f.rf, DecimalFormat("#.00"))
+        testTextFromFloat("-0.50", (-0.5f).rf, DecimalFormat("#.00"))
+        testTextFromFloat("00.5000", 0.5f.rf, DecimalFormat("00.0000"))
+        testTextFromFloat("5000000", 5000000.rf, DecimalFormat("#######0"))
     }
 
     fun testTextFromFloat(expected: String, value: RemoteFloat, formatter: DecimalFormat) {
