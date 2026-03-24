@@ -685,6 +685,7 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.runtime.SoundEffectPoolComponent createSoundEffectPoolComponent(androidx.xr.scenecore.runtime.SoundEffectPool soundEffectPool);
     method public androidx.xr.scenecore.runtime.SoundFieldAudioComponent createSoundFieldAudioComponent(android.content.Context context, androidx.xr.scenecore.runtime.SoundFieldAttributes rtSoundFieldAttributes);
     method public androidx.xr.scenecore.runtime.SpatialPointerComponent createSpatialPointerComponent();
+    method public androidx.xr.scenecore.runtime.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder, androidx.xr.scenecore.runtime.Dimensions size);
     method public androidx.xr.scenecore.runtime.SubspaceNodeEntity createSubspaceNodeEntity(androidx.xr.scenecore.testing.FakeNode node, androidx.xr.scenecore.runtime.Dimensions size);
     method public androidx.xr.scenecore.runtime.SurfaceEntity createSurfaceEntity(androidx.xr.scenecore.runtime.SurfaceFeature feature, androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.runtime.Entity? parentEntity);
     method public void enablePanelDepthTest(boolean enabled);
