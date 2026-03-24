@@ -728,29 +728,19 @@ private constructor(
         meshBuffer: MeshBufferResource,
         subsetOffsets: IntArray,
         subsetCounts: IntArray,
-    ): CustomMeshResource {
-        return impressApi.createCustomMesh(
-            (meshBuffer as MeshBuffer).nativeHandle,
-            subsetOffsets,
-            subsetCounts,
-        )
-    }
-
-    override fun destroyCustomMesh(customMesh: CustomMeshResource) {
-        (customMesh as CustomMesh).destroy()
-    }
-
-    override fun setCustomMeshBoundingBox(
-        customMesh: CustomMeshResource,
+        subsetTopologies: IntArray,
         centerX: Float,
         centerY: Float,
         centerZ: Float,
         halfExtentX: Float,
         halfExtentY: Float,
         halfExtentZ: Float,
-    ) {
-        impressApi.setCustomMeshBoundingBox(
-            (customMesh as CustomMesh).nativeHandle,
+    ): CustomMeshResource {
+        return impressApi.createCustomMesh(
+            (meshBuffer as MeshBuffer).nativeHandle,
+            subsetOffsets,
+            subsetCounts,
+            subsetTopologies,
             centerX,
             centerY,
             centerZ,
@@ -760,9 +750,14 @@ private constructor(
         )
     }
 
+    override fun destroyCustomMesh(customMesh: CustomMeshResource) {
+        (customMesh as CustomMesh).destroy()
+    }
+
     override fun createMeshEntity(
         customMesh: CustomMeshResource,
         materials: List<MaterialResource>,
+        boneCount: Int,
         pose: Pose,
         parent: Entity?,
     ): MeshEntity {
@@ -777,6 +772,7 @@ private constructor(
             impressApi.createCustomMeshNode(
                 (customMesh as CustomMesh).nativeHandle,
                 materialHandles,
+                boneCount,
             )
         val impressNode = ImpressNode(impressNodeId)
 

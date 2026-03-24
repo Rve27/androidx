@@ -20,8 +20,6 @@ import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.BoundingBox
-import androidx.xr.runtime.math.FloatSize3d
-import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.CustomMeshResource as RtCustomMeshResource
 
 /**
@@ -36,24 +34,9 @@ private constructor(
     private val resource: RtCustomMeshResource,
     public val meshBuffer: MeshBuffer,
     public val subsets: List<MeshSubset>,
+    public val bounds: BoundingBox?,
     private val session: Session,
 ) : AutoCloseable {
-
-    /** User-supplied bounding box for culling. */
-    public var bounds: BoundingBox =
-        BoundingBox.fromCenterAndHalfExtents(Vector3.Zero, FloatSize3d())
-        set(value) {
-            field = value
-            session.renderingRuntime.setCustomMeshBoundingBox(
-                resource,
-                value.center.x,
-                value.center.y,
-                value.center.z,
-                value.halfExtents.width,
-                value.halfExtents.height,
-                value.halfExtents.depth,
-            )
-        }
 
     @MainThread
     override fun close() {
@@ -65,12 +48,21 @@ private constructor(
     }
 
     public companion object {
+        private fun getRtMeshSubsetTopology(topology: MeshSubsetTopology): Int =
+            when (topology) {
+                MeshSubsetTopology.TRIANGLES -> RtCustomMeshResource.Topology.TRIANGLES
+                MeshSubsetTopology.TRIANGLE_STRIP -> RtCustomMeshResource.Topology.TRIANGLE_STRIP
+                else -> throw IllegalArgumentException("Unknown MeshSubsetTopology")
+            }
+
         /**
          * Creates a new [CustomMesh].
          *
          * @param session The session to use for creating the CustomMesh.
          * @param meshBuffer The [MeshBuffer] containing the vertex and index data.
          * @param subsets The list of [MeshSubset]s defining the parts of the mesh.
+         * @param boundingBox Optional user-supplied bounding box for culling. If not provided, the
+         *   auto-computed bounding box of the entire [MeshBuffer] will be used.
          * @return A new [CustomMesh].
          */
         @MainThread
@@ -78,21 +70,42 @@ private constructor(
             session: Session,
             meshBuffer: MeshBuffer,
             subsets: List<MeshSubset>,
+            boundingBox: BoundingBox? = null,
         ): CustomMesh {
             val runtime = session.renderingRuntime
 
             val subsetOffsets = IntArray(subsets.size)
             val subsetCounts = IntArray(subsets.size)
+            val subsetTopologies = IntArray(subsets.size)
 
             for (i in subsets.indices) {
                 subsetOffsets[i] = subsets[i].indexOffset
                 subsetCounts[i] = subsets[i].indexCount
+                subsetTopologies[i] = getRtMeshSubsetTopology(subsets[i].topology)
             }
 
-            val resource =
-                runtime.createCustomMesh(meshBuffer.getResource(), subsetOffsets, subsetCounts)
+            val centerX = boundingBox?.center?.x ?: 0f
+            val centerY = boundingBox?.center?.y ?: 0f
+            val centerZ = boundingBox?.center?.z ?: 0f
+            val halfExtentX = boundingBox?.halfExtents?.width ?: -1f
+            val halfExtentY = boundingBox?.halfExtents?.height ?: -1f
+            val halfExtentZ = boundingBox?.halfExtents?.depth ?: -1f
 
-            return CustomMesh(resource, meshBuffer, subsets, session)
+            val resource =
+                runtime.createCustomMesh(
+                    meshBuffer.getResource(),
+                    subsetOffsets,
+                    subsetCounts,
+                    subsetTopologies,
+                    centerX,
+                    centerY,
+                    centerZ,
+                    halfExtentX,
+                    halfExtentY,
+                    halfExtentZ,
+                )
+
+            return CustomMesh(resource, meshBuffer, subsets, boundingBox, session)
         }
     }
 }

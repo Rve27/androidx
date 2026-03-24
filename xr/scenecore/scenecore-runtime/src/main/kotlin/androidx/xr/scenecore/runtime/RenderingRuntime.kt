@@ -665,12 +665,26 @@ public interface RenderingRuntime : JxrRuntime {
      * @param meshBuffer The MeshBuffer resource.
      * @param subsetOffsets The subset offsets.
      * @param subsetCounts The subset counts.
+     * @param subsetTopologies The subset topologies.
+     * @param centerX The x coordinate of the center of the bounding box.
+     * @param centerY The y coordinate of the center of the bounding box.
+     * @param centerZ The z coordinate of the center of the bounding box.
+     * @param halfExtentX The half extent of the bounding box along the x axis.
+     * @param halfExtentY The half extent of the bounding box along the y axis.
+     * @param halfExtentZ The half extent of the bounding box along the z axis.
      * @return A CustomMesh resource.
      */
     public fun createCustomMesh(
         meshBuffer: MeshBufferResource,
         subsetOffsets: IntArray,
         subsetCounts: IntArray,
+        subsetTopologies: IntArray,
+        centerX: Float,
+        centerY: Float,
+        centerZ: Float,
+        halfExtentX: Float,
+        halfExtentY: Float,
+        halfExtentZ: Float,
     ): CustomMeshResource
 
     /**
@@ -681,31 +695,11 @@ public interface RenderingRuntime : JxrRuntime {
     public fun destroyCustomMesh(customMesh: CustomMeshResource)
 
     /**
-     * Sets the bounding box of the custom mesh.
-     *
-     * @param customMesh The CustomMesh resource.
-     * @param centerX The x coordinate of the center of the bounding box.
-     * @param centerY The y coordinate of the center of the bounding box.
-     * @param centerZ The z coordinate of the center of the bounding box.
-     * @param halfExtentX The half extent of the bounding box along the x axis.
-     * @param halfExtentY The half extent of the bounding box along the y axis.
-     * @param halfExtentZ The half extent of the bounding box along the z axis.
-     */
-    public fun setCustomMeshBoundingBox(
-        customMesh: CustomMeshResource,
-        centerX: Float,
-        centerY: Float,
-        centerZ: Float,
-        halfExtentX: Float,
-        halfExtentY: Float,
-        halfExtentZ: Float,
-    )
-
-    /**
      * Creates a MeshEntity.
      *
      * @param customMesh The CustomMesh resource.
      * @param materials The list of materials.
+     * @param boneCount The number of bones.
      * @param pose The initial pose.
      * @param parent The parent entity.
      * @return A MeshEntity.
@@ -713,6 +707,7 @@ public interface RenderingRuntime : JxrRuntime {
     public fun createMeshEntity(
         customMesh: CustomMeshResource,
         materials: List<MaterialResource>,
+        boneCount: Int,
         pose: Pose,
         parent: Entity?,
     ): MeshEntity

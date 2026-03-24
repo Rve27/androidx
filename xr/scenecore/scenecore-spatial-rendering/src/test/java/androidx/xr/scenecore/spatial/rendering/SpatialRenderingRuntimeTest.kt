@@ -347,7 +347,18 @@ class SpatialRenderingRuntimeTest {
                 0,
             )
         val customMesh =
-            renderingRuntime.createCustomMesh(meshBuffer, intArrayOf(0), intArrayOf(10))
+            renderingRuntime.createCustomMesh(
+                meshBuffer,
+                intArrayOf(0),
+                intArrayOf(10),
+                intArrayOf(1),
+                0f,
+                0f,
+                0f,
+                1f,
+                1f,
+                1f,
+            )
         assertThat(customMesh).isNotNull()
         assertThat(customMesh)
             .isInstanceOf(androidx.xr.scenecore.impl.impress.CustomMesh::class.java)
@@ -368,7 +379,18 @@ class SpatialRenderingRuntimeTest {
                 0,
             )
         val customMesh =
-            renderingRuntime.createCustomMesh(meshBuffer, intArrayOf(0), intArrayOf(10))
+            renderingRuntime.createCustomMesh(
+                meshBuffer,
+                intArrayOf(0),
+                intArrayOf(10),
+                intArrayOf(1),
+                0f,
+                0f,
+                0f,
+                1f,
+                1f,
+                1f,
+            )
         renderingRuntime.destroyCustomMesh(customMesh)
         // No exception means success
     }
