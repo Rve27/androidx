@@ -295,6 +295,7 @@ class TransformableTest {
         rule.onNodeWithTag(TEST_TAG).performTouchInput {
             down(1, center)
             moveBy(1, expected)
+            advanceEventTime(3000L) // Prevent fling gesture.
             up(1)
         }
 
