@@ -16,12 +16,11 @@
 
 package androidx.compose.foundation
 
+import androidx.annotation.CallSuper
 import androidx.collection.mutableLongObjectMapOf
 import androidx.compose.foundation.ComposeFoundationFlags.isDelayPressesUsingGestureConsumptionEnabled
-import androidx.compose.foundation.gestures.PressGestureScope
 import androidx.compose.foundation.gestures.ScrollableContainerNode
 import androidx.compose.foundation.gestures.changedToDownIgnoreConsumed
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.isChangedToDown
 import androidx.compose.foundation.gestures.isDeepPress
 import androidx.compose.foundation.interaction.HoverInteraction
@@ -50,7 +49,6 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
 import androidx.compose.ui.input.pointer.isOutOfBounds
@@ -86,8 +84,6 @@ import androidx.compose.ui.util.fastForEach
 import kotlin.math.abs
 import kotlin.math.max
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -1090,9 +1086,6 @@ private class CombinedClickableNode(
 
     private val longKeyPressJobs = mutableLongObjectMapOf<Job>()
     private val doubleKeyClickStates = mutableLongObjectMapOf<DoubleKeyClickState>()
-    @OptIn(ExperimentalFoundationApi::class)
-    private val isSuspendingPointerInputEnabled =
-        !ComposeFoundationFlags.isNonSuspendingPointerInputInCombinedClickableEnabled
     private var downEvent: PointerInputChange? = null
     private var longPressJob: Job? = null
     private var tapJob: Job? = null
@@ -1109,40 +1102,6 @@ private class CombinedClickableNode(
     private var indirectFirstTapUpTime = -1L
     private var indirectIgnoreNextUp = false
 
-    override fun createPointerInputNodeIfNeeded(): SuspendingPointerInputModifierNode? {
-        if (isSuspendingPointerInputEnabled) {
-            return SuspendingPointerInputModifierNode {
-                detectTapGestures(
-                    onDoubleTap =
-                        if (enabled && onDoubleClick != null) {
-                            { onDoubleClick?.invoke() }
-                        } else null,
-                    onLongPress =
-                        if (enabled && onLongClick != null) {
-                            {
-                                onLongClick?.invoke()
-                                if (hapticFeedbackEnabled) {
-                                    currentValueOf(LocalHapticFeedback)
-                                        .performHapticFeedback(HapticFeedbackType.LongPress)
-                                }
-                            }
-                        } else null,
-                    onPress = { offset ->
-                        if (enabled) {
-                            handlePressInteraction(offset)
-                        }
-                    },
-                    onTap = {
-                        if (enabled) {
-                            onClick()
-                        }
-                    },
-                )
-            }
-        }
-        return null
-    }
-
     @OptIn(ExperimentalFoundationApi::class)
     override fun onPointerEvent(
         pointerEvent: PointerEvent,
@@ -1150,7 +1109,6 @@ private class CombinedClickableNode(
         bounds: IntSize,
     ) {
         super.onPointerEvent(pointerEvent, pass, bounds)
-        if (isSuspendingPointerInputEnabled) return
 
         if (pass == PointerEventPass.Main) {
             if (downEvent == null) {
@@ -1544,7 +1502,6 @@ private class CombinedClickableNode(
         )
 
         if (resetPointerInputHandling) {
-            resetPointerInputHandler()
             cancelInput(indirectPointer = false)
             cancelInput(indirectPointer = true)
         }
@@ -1710,7 +1667,6 @@ internal abstract class AbstractClickableNode(
 
     private var localIndicationNodeFactory: IndicationNodeFactory? = null
 
-    private var pointerInputNode: SuspendingPointerInputModifierNode? = null
     private var gestureNode: DelegatableNode? = null
     private var indicationNode: DelegatableNode? = null
 
@@ -1729,14 +1685,6 @@ internal abstract class AbstractClickableNode(
     private var lazilyCreateIndication = shouldLazilyCreateIndication()
 
     private fun shouldLazilyCreateIndication() = userProvidedInteractionSource == null
-
-    /**
-     * Handles subclass-specific click related pointer input logic. Hover is already handled
-     * elsewhere, so this should only handle clicks.
-     *
-     * TODO(b/477836055) Migrate to non-suspending API.
-     */
-    open fun createPointerInputNodeIfNeeded(): SuspendingPointerInputModifierNode? = null
 
     open fun SemanticsPropertyReceiver.applyAdditionalSemantics() {}
 
@@ -1813,6 +1761,7 @@ internal abstract class AbstractClickableNode(
         return Size(horizontal, vertical)
     }
 
+    @CallSuper
     override fun onIndirectPointerEvent(event: IndirectPointerEvent, pass: PointerEventPass) {
         initializeIndicationAndInteractionSourceIfNeeded()
         if (enabled) {
@@ -1942,6 +1891,7 @@ internal abstract class AbstractClickableNode(
         }
     }
 
+    @CallSuper
     override fun onPointerEvent(
         pointerEvent: PointerEvent,
         pass: PointerEventPass,
@@ -1958,15 +1908,9 @@ internal abstract class AbstractClickableNode(
                 }
             }
         }
-        if (pointerInputNode == null) {
-            val node = createPointerInputNodeIfNeeded()
-            if (node != null) {
-                pointerInputNode = delegate(node)
-            }
-        }
-        pointerInputNode?.onPointerEvent(pointerEvent, pass, bounds)
     }
 
+    @CallSuper
     override fun onCancelPointerInput() {
         // Press cancellation is handled as part of detecting presses
         interactionSource?.let { interactionSource ->
@@ -1976,7 +1920,6 @@ internal abstract class AbstractClickableNode(
             }
         }
         hoverInteraction = null
-        pointerInputNode?.onCancelPointerInput()
     }
 
     final override fun onKeyEvent(event: KeyEvent): Boolean {
@@ -2056,8 +1999,6 @@ internal abstract class AbstractClickableNode(
         }
         applyAdditionalSemantics()
     }
-
-    protected fun resetPointerInputHandler() = pointerInputNode?.resetPointerInputHandler()
 
     private var delayJob: Job? = null
 
@@ -2219,52 +2160,6 @@ internal abstract class AbstractClickableNode(
             if (indirectPointer) {
                 indirectPointerPressInteraction = null
             } else {
-                pressInteraction = null
-            }
-        }
-    }
-
-    @OptIn(ExperimentalFoundationApi::class)
-    protected suspend fun PressGestureScope.handlePressInteraction(offset: Offset) {
-        interactionSource?.let { interactionSource ->
-            coroutineScope {
-                val delayJob = launch {
-                    val shouldDelayPress =
-                        if (isDelayPressesUsingGestureConsumptionEnabled) {
-                            delayPressInteraction(null)
-                        } else {
-                            delayPressInteraction()
-                        }
-                    if (shouldDelayPress) {
-                        delay(TapIndicationDelay)
-                    }
-                    val press = PressInteraction.Press(offset)
-                    interactionSource.emit(press)
-                    pressInteraction = press
-                }
-                val success = tryAwaitRelease()
-                if (delayJob.isActive) {
-                    delayJob.cancelAndJoin()
-                    // The press released successfully, before the timeout duration - emit the press
-                    // interaction instantly. No else branch - if the press was cancelled before the
-                    // timeout, we don't want to emit a press interaction.
-                    if (success) {
-                        val press = PressInteraction.Press(offset)
-                        val release = PressInteraction.Release(press)
-                        interactionSource.emit(press)
-                        interactionSource.emit(release)
-                    }
-                } else {
-                    pressInteraction?.let { pressInteraction ->
-                        val endInteraction =
-                            if (success) {
-                                PressInteraction.Release(pressInteraction)
-                            } else {
-                                PressInteraction.Cancel(pressInteraction)
-                            }
-                        interactionSource.emit(endInteraction)
-                    }
-                }
                 pressInteraction = null
             }
         }

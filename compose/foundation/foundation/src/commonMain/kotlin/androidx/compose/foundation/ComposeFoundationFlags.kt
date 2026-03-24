@@ -163,15 +163,6 @@ object ComposeFoundationFlags {
     var isNestedDraggablesTouchConflictFixEnabled = true
 
     /**
-     * With this flag on we don't use suspend pointer input as part of Modifier.combinedClickable
-     * implementation as an optimization.
-     */
-    // TODO: b/485966320
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isNonSuspendingPointerInputInCombinedClickableEnabled = true
-
-    /**
      * This flag controls performance optimizations related to
      * [androidx.compose.foundation.text.BasicTextField]'s internal min height calculations.
      */
