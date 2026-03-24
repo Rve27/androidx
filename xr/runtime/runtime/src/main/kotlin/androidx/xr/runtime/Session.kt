@@ -122,11 +122,11 @@ public constructor(
         @RestrictTo(RestrictTo.Scope.LIBRARY)
         @Deprecated(
             message =
-                "unScaledGravityAlignedActivitySpace flag deprecated, scheduled for removal in future release."
+                "unscaledGravityAlignedActivitySpace flag deprecated, scheduled for removal in future release."
         )
         public fun create(
             activity: Activity,
-            coroutineContext: CoroutineContext,
+            coroutineContext: CoroutineContext = EmptyCoroutineContext,
             unscaledGravityAlignedActivitySpace: Boolean,
         ): SessionCreateResult =
             create(
@@ -414,8 +414,12 @@ public constructor(
         "Session.activity is an unsafe reference and may not resolve in the future. Please keep a reference to the activity outside of the Session."
     )
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public val activity: Activity?
-        get() = context as? Activity
+    public val activity: Activity
+        get() {
+            check(lifecycleOwner.lifecycle.currentState != Lifecycle.State.DESTROYED)
+            check(context is Activity)
+            return context
+        }
 
     private val Activity.lifecycle: Lifecycle
         get() = (this as LifecycleOwner).lifecycle
