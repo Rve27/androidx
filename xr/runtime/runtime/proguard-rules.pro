@@ -1,13 +1,15 @@
 # androidx.xr.runtime.DisplayBlendMode is referenced by native code.
 -keep class androidx.xr.runtime.DisplayBlendMode { *; }
 -keep class androidx.xr.runtime.DisplayBlendMode$Companion { *; }
-# androidx.xr.runtime.FieldOfView is referenced by native code.
+# androidx.xr.runtime.FieldOfView is referenced by native code (legacy).
 -keep class androidx.xr.runtime.FieldOfView { *; }
 # androidx.xr.runtime.Log is referenced by native code.
 -keep class androidx.xr.runtime.Log { *; }
 # androidx.xr.runtime.TrackingState is referenced by native code.
 -keep class androidx.xr.runtime.TrackingState { *; }
 -keep class androidx.xr.runtime.TrackingState$Companion { *; }
+# androidx.xr.runtime.math.FieldOfView is referenced by native code.
+-keep class androidx.xr.runtime.math.FieldOfView { *; }
 # androidx.xr.runtime.math.FloatSize2d is referenced by native code.
 -keep class androidx.xr.runtime.math.FloatSize2d { *; }
 # androidx.xr.runtime.math.FloatSize3d is referenced by native code.
