@@ -17,7 +17,8 @@
 
 package androidx.compose.ui
 
-import androidx.compose.ui.node.findNearestAncestor
+import androidx.compose.ui.ComposeUiFlags.isInitialFocusOnFocusableAvailable
+import androidx.compose.ui.ComposeUiFlags.isViewFocusFixEnabled
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 
@@ -95,16 +96,6 @@ object ComposeUiFlags {
     @field:Suppress("MutableBareField")
     @JvmField
     var isOptimizedFocusEventDispatchEnabled: Boolean = true
-
-    /**
-     * Enables a fix where [androidx.compose.ui.node.TraversableNode] traversal method
-     * [findNearestAncestor] will take into consideration any delegates that might also be
-     * traversable.
-     */
-    // TODO: b/485962494
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isTraversableDelegatesFixEnabled: Boolean = true
 
     /**
      * Enables a change where off-screen children of the partially visible merging nodes (e.g. a
