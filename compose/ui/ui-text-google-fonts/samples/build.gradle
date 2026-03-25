@@ -38,6 +38,6 @@ androidx {
 }
 
 android {
-    compileSdk { version = release(35) }
+    compileSdk { version = preview("Baklava") }
     namespace = "androidx.compose.ui.text.googlefonts.samples"
 }
