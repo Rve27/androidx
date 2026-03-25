@@ -32,6 +32,7 @@ import androidx.glance.wear.core.ActiveWearWidgetHandle
 import androidx.glance.wear.core.ContainerInfo
 import androidx.glance.wear.core.WearWidgetProviderInfo
 import androidx.glance.wear.core.WidgetInstanceId
+import androidx.glance.wear.util.isRobolectricBuild
 import androidx.wear.utils.WearApiVersionHelper
 import com.google.wear.Sdk
 import com.google.wear.services.tiles.TileInstance
@@ -248,7 +249,7 @@ private fun GlanceWearWidget.canonicalName() = this.javaClass.canonicalName ?: t
 @ContainerInfo.ContainerType
 private fun TileProvider.getContainerTypeCompat(): Int {
     if (
-        Build.FINGERPRINT.equals("robolectric", ignoreCase = true) ||
+        isRobolectricBuild() ||
             WearApiVersionHelper.isApiVersionAtLeast(WearApiVersionHelper.WEAR_CINNAMON_BUN_0)
     ) {
         return when (containerType) {
