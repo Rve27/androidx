@@ -49,7 +49,7 @@ public sealed class WearWidgetBrush {
      * Returns a [WearWidgetBrush] representing this brush followed by [other] in sequence.
      */
     internal open infix fun then(other: WearWidgetBrush): WearWidgetBrush =
-        if (other === WearWidgetBrush) this else Combined(this, other)
+        if (other.isEmpty()) this else Combined(this, other)
 
     /** A single element contained within a [WearWidgetBrush] chain. */
     internal data class Element(internal val brush: RemoteBrush) : WearWidgetBrush() {
@@ -143,3 +143,6 @@ public fun WearWidgetBrush.horizontalGradient(colors: List<RemoteColor>): WearWi
             )
         )
     )
+
+/** Returns `true` if this [WearWidgetBrush] is empty (contains no elements), false otherwise. */
+internal fun WearWidgetBrush.isEmpty(): Boolean = this === WearWidgetBrush
