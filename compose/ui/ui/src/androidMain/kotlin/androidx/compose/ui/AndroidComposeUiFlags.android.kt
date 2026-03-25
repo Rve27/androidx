@@ -50,12 +50,6 @@ package androidx.compose.ui
  */
 @ExperimentalComposeUiApi
 object AndroidComposeUiFlags {
-    /** This moves ViewConfiguration into the shared ComposeViewContext. */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    // TODO: b/479890645
-    var isSharedViewConfigurationEnabled: Boolean = true
-
     /** This moves Clipboard-related instances into the shared ComposeViewContext. */
     @field:Suppress("MutableBareField")
     @JvmField

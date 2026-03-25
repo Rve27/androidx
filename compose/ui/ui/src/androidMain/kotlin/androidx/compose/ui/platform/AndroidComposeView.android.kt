@@ -539,14 +539,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     private val canvasHolder: CanvasHolder
         get() = composeViewContext.canvasHolder
 
-    override val viewConfiguration: ViewConfiguration =
-        // TODO: when removing the flag, change this to a get() block
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (AndroidComposeUiFlags.isSharedViewConfigurationEnabled) {
-            composeViewContext.viewConfiguration
-        } else {
-            AndroidViewConfiguration(android.view.ViewConfiguration.get(context))
-        }
+    override val viewConfiguration: ViewConfiguration
+        get() = composeViewContext.viewConfiguration
 
     val insetsListener = InsetsListener(this)
 
