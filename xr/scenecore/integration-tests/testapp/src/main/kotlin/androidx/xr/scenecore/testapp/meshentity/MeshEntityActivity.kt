@@ -23,11 +23,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.setViewTreeLifecycleOwner
@@ -35,6 +39,7 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
+import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
@@ -234,20 +239,17 @@ class MeshEntityActivity : ComponentActivity() {
                 setViewTreeViewModelStoreOwner(this@MeshEntityActivity)
                 setViewTreeSavedStateRegistryOwner(this@MeshEntityActivity)
                 setContent {
-                    androidx.compose.material3.Surface(
-                        color = Color.White,
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
+                    Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
                         Column(
                             modifier = Modifier.fillMaxSize().padding(16.dp),
                             verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
                                 text = text,
                                 color = Color.Black,
                                 fontSize = 48.sp,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                textAlign = TextAlign.Center,
                             )
                         }
                     }
@@ -261,7 +263,7 @@ class MeshEntityActivity : ComponentActivity() {
                 name = "Panel_$text",
                 pose = pose,
             )
-        panel.size = androidx.xr.runtime.math.FloatSize2d(0.8f, 0.4f)
+        panel.size = FloatSize2d(0.8f, 0.4f)
     }
 
     private fun createMeshEntities() {
@@ -506,6 +508,49 @@ class MeshEntityActivity : ComponentActivity() {
         )
     }
 
+    private fun createSwapMaterialsPanel(session: Session, pose: Pose) {
+        val composeView =
+            ComposeView(this).apply {
+                setViewTreeLifecycleOwner(this@MeshEntityActivity)
+                setViewTreeViewModelStoreOwner(this@MeshEntityActivity)
+                setViewTreeSavedStateRegistryOwner(this@MeshEntityActivity)
+                setContent {
+                    Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Button(
+                                onClick = {
+                                    twoMaterialsEntity?.let { entity ->
+                                        val materials = entity.materials
+                                        if (materials.size >= 2) {
+                                            val mat0 = materials[0]
+                                            val mat1 = materials[1]
+                                            entity.setMaterial(mat1, 0)
+                                            entity.setMaterial(mat0, 1)
+                                        }
+                                    }
+                                }
+                            ) {
+                                Text("Swap Materials", fontSize = 48.sp)
+                            }
+                        }
+                    }
+                }
+            }
+        val panel =
+            PanelEntity.create(
+                session,
+                view = composeView,
+                pixelDimensions = IntSize2d(1600, 400),
+                name = "Panel_SwapMaterials",
+                pose = pose,
+            )
+        panel.size = FloatSize2d(0.8f, 0.2f)
+    }
+
     private fun createTest5_TwoMaterials(
         currentSession: Session,
         vertexLayout: VertexLayout,
@@ -554,6 +599,7 @@ class MeshEntityActivity : ComponentActivity() {
             "Two Materials: One mesh with two subsets using different materials.",
             Pose(Vector3(2f, 0.7f, -1.5f)),
         )
+        createSwapMaterialsPanel(currentSession, Pose(Vector3(2f, -0.7f, -1.5f)))
     }
 
     @Composable
