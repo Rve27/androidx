@@ -16,5 +16,6 @@
 
 package androidx.xr.arcore
 
+/** A simple summary of the normal vector of a [Plane]. */
 @Suppress("DEPRECATION")
 public typealias PlaneType = Plane.Type
