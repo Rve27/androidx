@@ -78,7 +78,7 @@ public class FontShearSpan(public val fontShear: Float = DEFAULT_FONT_SHEAR) :
  *   drawn as a solid shape. When `false`, it will be drawn as an outline.
  */
 public class EmphasisSpan(
-    @EmphasisStyleType public val style: Int = DEFAULT_EMPHASIS_STYLE,
+    @param:EmphasisStyleType public val style: Int = DEFAULT_EMPHASIS_STYLE,
     public val isFilled: Boolean = DEFAULT_EMPHASIS_FILL,
     public val scale: Float = DEFAULT_SCALE,
 ) : ReplacementSpan() {
