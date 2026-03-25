@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-@file:JvmName("RxJava3Geospatial")
-@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+package androidx.xr.arcore
 
-package androidx.xr.arcore.rxjava3
-
-import androidx.xr.arcore.Geospatial
-import androidx.xr.arcore.GeospatialState
-import io.reactivex.rxjava3.core.Flowable
-import kotlinx.coroutines.rx3.asFlowable
-
-/** The current [State] of [Geospatial]. */
-public val Geospatial.stateAsFlowable: Flowable<GeospatialState>
-    @SuppressWarnings("ReferencesDeprecated") get() = state.asFlowable()
+@Suppress("DEPRECATION")
+public typealias GeospatialState = Geospatial.State

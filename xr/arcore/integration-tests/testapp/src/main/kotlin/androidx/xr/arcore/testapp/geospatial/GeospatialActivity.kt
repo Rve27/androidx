@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 
 package androidx.xr.arcore.testapp.geospatial
 
@@ -56,6 +57,7 @@ import androidx.xr.arcore.CreateGeospatialPoseFromPoseNotTracking
 import androidx.xr.arcore.CreateGeospatialPoseFromPoseResult
 import androidx.xr.arcore.CreateGeospatialPoseFromPoseSuccess
 import androidx.xr.arcore.Geospatial
+import androidx.xr.arcore.GeospatialState
 import androidx.xr.arcore.Plane
 import androidx.xr.arcore.hitTest
 import androidx.xr.arcore.testapp.common.BackToMainActivityButton
@@ -95,6 +97,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+@Suppress("DEPRECATION")
 class GeospatialActivity : ComponentActivity() {
 
     private enum class AnchorType {
@@ -161,7 +164,7 @@ class GeospatialActivity : ComponentActivity() {
 
                         // Wait for Geospatial to be running before loading anchors.
                         val geospatial = Geospatial.getInstance(session)
-                        geospatial.state.first { it == Geospatial.State.RUNNING }
+                        geospatial.state.first { it == GeospatialState.RUNNING }
                         loadAnchorsFromSharedPreferences()
                     }
 
@@ -215,10 +218,10 @@ class GeospatialActivity : ComponentActivity() {
                 modifier =
                     Modifier.padding(innerPadding).background(color = Color.White).fillMaxSize()
             ) {
-                Text("Geospatial State: $geospatialState")
+                Text("Geospatial GeospatialState: $geospatialState")
                 Text("VPS Availability: ${vpsAvailabilityToString(vpsAvailability)}")
                 Text(localizationStatusText)
-                if (geospatialState == Geospatial.State.RUNNING) {
+                if (geospatialState == GeospatialState.RUNNING) {
                     Text("Tap on a plane to create an anchor.")
                 }
                 Text("Anchor type:")
@@ -249,7 +252,7 @@ class GeospatialActivity : ComponentActivity() {
         }
 
         LaunchedEffect(geospatialState) {
-            if (geospatialState == Geospatial.State.RUNNING) {
+            if (geospatialState == GeospatialState.RUNNING) {
                 val poseResult =
                     snapshotFlow { arDeviceState }
                         .map { geospatial.createGeospatialPoseFromPose(it.devicePose) }
@@ -271,7 +274,7 @@ class GeospatialActivity : ComponentActivity() {
 
         LaunchedEffect(geospatialState) {
             while (true) {
-                if (geospatialState == Geospatial.State.RUNNING) {
+                if (geospatialState == GeospatialState.RUNNING) {
                     try {
                         val result =
                             geospatial.createGeospatialPoseFromPose(arDeviceState.devicePose)
@@ -337,7 +340,7 @@ class GeospatialActivity : ComponentActivity() {
             return
         }
         val geospatial = Geospatial.getInstance(session)
-        if (geospatial.state.value != Geospatial.State.RUNNING) {
+        if (geospatial.state.value != GeospatialState.RUNNING) {
             logAndShowToast("Geospatial not running, cannot create anchor.")
             return
         }
