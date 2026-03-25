@@ -25,10 +25,8 @@ import androidx.xr.arcore.AnchorCreateIllegalState
 import androidx.xr.arcore.AnchorCreateResourcesExhausted
 import androidx.xr.arcore.AnchorCreateResult
 import androidx.xr.arcore.Geospatial
-import androidx.xr.arcore.Geospatial.State
 import androidx.xr.arcore.Geospatial.Surface
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.VpsAvailabilityNotAuthorized
 import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.Quaternion
@@ -51,14 +49,16 @@ import com.google.common.util.concurrent.ListenableFuture
  * surface anchors at time. Attempting to resolve more than 100 surface anchors will return an
  * [AnchorCreateResourcesExhausted] result.
  *
- * Creating a Terrain anchor requires an active Geospatial which is [State.RUNNING]. If it is not,
- * then this function returns an [AnchorCreateIllegalState] result. This call also requires a
- * working internet connection to communicate with the ARCore API on Google Cloud. ARCore will
- * continue to retry if it is unable to establish a connection to the ARCore service.
+ * Creating a Terrain anchor requires an active Geospatial which is
+ * [androidx.xr.arcore.Geospatial.State.RUNNING]. If it is not, then this function returns an
+ * [AnchorCreateIllegalState] result. This call also requires a working internet connection to
+ * communicate with the ARCore API on Google Cloud. ARCore will continue to retry if it is unable to
+ * establish a connection to the ARCore service.
  *
- * A Terrain anchor's tracking state will be [TrackingState.PAUSED] if Geospatial is not actively
- * tracking. Its tracking state will permanently become [TrackingState.STOPPED] if
- * [androidx.xr.runtime.GeospatialMode] is disabled, or if another full-space app uses Geospatial.
+ * A Terrain anchor's tracking state will be [androidx.xr.runtime.TrackingState.PAUSED] if
+ * Geospatial is not actively tracking. Its tracking state will permanently become
+ * [androidx.xr.runtime.TrackingState.STOPPED] if [androidx.xr.runtime.GeospatialMode] is disabled,
+ * or if another full-space app uses Geospatial.
  *
  * Latitude and longitude are defined by the
  * [WGS84 specification](https://en.wikipedia.org/wiki/World_Geodetic_System), and the altitude

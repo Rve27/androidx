@@ -51,6 +51,7 @@ public class RxJava3GeospatialTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void geospatial_stateAsFlowable_returnsGeospatialState() {
         createTestSessionAndRunTest(
                 () -> {
