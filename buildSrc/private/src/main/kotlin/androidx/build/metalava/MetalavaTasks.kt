@@ -29,7 +29,7 @@ import androidx.build.checkapi.getRequiredCompatibilityApiLocation
 import androidx.build.uptodatedness.cacheEvenIfNoOutputs
 import androidx.build.version
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -41,7 +41,7 @@ internal object MetalavaTasks {
     fun setupProject(
         project: Project,
         compilationInputs: CompilationInputs,
-        generateApiDependencies: Configuration,
+        generateApiDependencies: FileCollection,
         extension: AndroidXExtension,
         androidManifest: Provider<RegularFile>?,
         baselinesApiLocation: ApiBaselinesLocation,
@@ -213,11 +213,11 @@ internal object MetalavaTasks {
     private fun applyInputs(
         inputs: CompilationInputs,
         task: SourceMetalavaTask,
-        generateApiDependencies: Configuration,
+        generateApiDependencies: FileCollection?,
         androidManifest: Provider<RegularFile>?,
     ) {
         task.sourcePaths = inputs.sourcePaths
-        task.compiledSources = generateApiDependencies
+        task.compiledSources.from(generateApiDependencies)
         task.bootClasspath = inputs.bootClasspath
         androidManifest?.let { task.manifestPath.set(it) }
         if (inputs is MultiplatformCompilationInputs) {

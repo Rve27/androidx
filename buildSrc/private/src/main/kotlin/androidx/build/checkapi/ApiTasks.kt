@@ -112,7 +112,7 @@ fun Project.configureProjectForApiTasks(config: ApiTaskConfig, extension: Androi
         MetalavaTasks.setupProject(
             project,
             compilationInputs,
-            generateApiDependencies,
+            project.files(generateApiDependencies),
             extension,
             androidManifest,
             baselinesApiLocation,

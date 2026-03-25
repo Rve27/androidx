@@ -88,7 +88,7 @@ internal abstract class SourceMetalavaTask(workerExecutor: WorkerExecutor) :
     var sourcePaths: FileCollection = project.files()
 
     /** Class files compiled from sourcePaths */
-    @get:Classpath var compiledSources: FileCollection = project.files()
+    @get:Classpath abstract val compiledSources: ConfigurableFileCollection
 
     @get:[Optional InputFile PathSensitive(PathSensitivity.NONE)]
     abstract val manifestPath: RegularFileProperty
@@ -125,7 +125,12 @@ internal abstract class SourceMetalavaTask(workerExecutor: WorkerExecutor) :
         val sourceSets = sourceSets.get()
         check(sourceSets.isNotEmpty()) { "Project must have at least one source set." }
         val outputFile = File(temporaryDir, "project.xml")
-        ProjectXml.create(sourceSets, bootClasspath.files, compiledSources.singleFile, outputFile)
+        ProjectXml.create(
+            sourceSets,
+            bootClasspath.files,
+            compiledSources.singleOrNull(),
+            outputFile,
+        )
         return outputFile
     }
 }
