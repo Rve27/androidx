@@ -53,13 +53,22 @@ public fun Session.getNativeData(): NativeData {
                     " Native handle access is only supported for OpenXR" +
                     " sessions."
             )
-
     val instancePointer =
-        if (getDeviceContextFeatures(context).contains(Feature.OPEN_XR))
+        if (getDeviceContextFeatures(context).contains(Feature.OPEN_XR)) {
             OpenXrInstanceManager.getXrInstanceHandle(context)
-        else null
+        } else {
+            null
+        }
+    val functionTablePointer =
+        if (
+            instancePointer != null && getDeviceContextFeatures(context).contains(Feature.OPEN_XR)
+        ) {
+            OpenXrInstanceManager.getXrInstanceProcAddr()
+        } else {
+            null
+        }
 
-    return NativeData(sessionPointer, instancePointer)
+    return NativeData(sessionPointer, instancePointer, functionTablePointer)
 }
 
 /** Class containing pointers to the native resources backing the XR runtime. */
@@ -82,4 +91,11 @@ internal constructor(
      * For Play Services runtimes this is null.
      */
     @get:Suppress("AutoBoxing") public val nativeInstancePointer: Long?,
+    /**
+     * For OpenXR runtimes, this is the function pointer for
+     * [xrGetInstanceProcAddr](https://registry.khronos.org/OpenXR/specs/1.0/man/html/xrGetInstanceProcAddr.html).
+     *
+     * For Play Services runtimes this is null.
+     */
+    @get:Suppress("AutoBoxing") public val nativeFunctionTablePointer: Long? = null,
 )
