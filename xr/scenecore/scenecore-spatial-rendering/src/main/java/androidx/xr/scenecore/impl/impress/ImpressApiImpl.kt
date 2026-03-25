@@ -1733,6 +1733,19 @@ public class ImpressApiImpl : ImpressApi {
             boneCount,
         )
 
+    override fun setCustomMeshNodeMaterial(
+        impressNode: ImpressNode,
+        submeshIndex: Int,
+        materialHandle: Long,
+    ) {
+        nSetCustomMeshNodeMaterial(
+            getViewNativeHandle(view),
+            impressNode.handle,
+            submeshIndex,
+            materialHandle,
+        )
+    }
+
     private fun getViewNativeHandle(view: View?): Long {
         if (view != null) {
             return view.nativeHandle
@@ -2499,4 +2512,11 @@ public class ImpressApiImpl : ImpressApi {
         materialHandles: LongArray,
         boneCount: Int,
     ): Int
+
+    private external fun nSetCustomMeshNodeMaterial(
+        view: Long,
+        nodeId: Int,
+        submeshIndex: Int,
+        materialHandle: Long,
+    )
 }
