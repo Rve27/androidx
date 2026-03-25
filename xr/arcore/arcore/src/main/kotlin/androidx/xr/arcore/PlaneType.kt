@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 
-package androidx.xr.arcore.testapp.helloar.rendering
+package androidx.xr.arcore
 
-import androidx.xr.arcore.Plane
-import androidx.xr.arcore.PlaneType
-import androidx.xr.scenecore.GltfModelEntity
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.StateFlow
-
-data class PlaneModel(
-    val id: Int,
-    val planeType: PlaneType,
-    val stateFlow: StateFlow<Plane.State>,
-    internal val modelEntity: GltfModelEntity,
-    internal val renderJob: Job?,
-) {}
+@Suppress("DEPRECATION")
+public typealias PlaneType = Plane.Type
