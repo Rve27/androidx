@@ -160,6 +160,10 @@ constructor(
         return frameGraphBuffers.attach(streamIds, parameters, capacity)
     }
 
+    override fun drain(streamId: StreamId) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun acquireSession(): FrameGraph.Session {
         return createSession(cameraGraph.acquireSession())
     }
