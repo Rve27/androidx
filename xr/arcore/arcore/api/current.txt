@@ -418,23 +418,23 @@ package androidx.xr.arcore {
     method public androidx.xr.arcore.Geospatial getInstance(androidx.xr.runtime.Session session);
   }
 
-  public static final class Geospatial.State {
-    field public static final androidx.xr.arcore.Geospatial.State.Companion Companion;
-    field public static final androidx.xr.arcore.Geospatial.State ERROR_INTERNAL;
-    field public static final androidx.xr.arcore.Geospatial.State ERROR_NOT_AUTHORIZED;
-    field public static final androidx.xr.arcore.Geospatial.State ERROR_RESOURCE_EXHAUSTED;
-    field public static final androidx.xr.arcore.Geospatial.State NOT_RUNNING;
-    field public static final androidx.xr.arcore.Geospatial.State PAUSED;
-    field public static final androidx.xr.arcore.Geospatial.State RUNNING;
+  @Deprecated public static final class Geospatial.State {
+    field @Deprecated public static final androidx.xr.arcore.Geospatial.State.Companion Companion;
+    field @Deprecated public static final androidx.xr.arcore.Geospatial.State ERROR_INTERNAL;
+    field @Deprecated public static final androidx.xr.arcore.Geospatial.State ERROR_NOT_AUTHORIZED;
+    field @Deprecated public static final androidx.xr.arcore.Geospatial.State ERROR_RESOURCE_EXHAUSTED;
+    field @Deprecated public static final androidx.xr.arcore.Geospatial.State NOT_RUNNING;
+    field @Deprecated public static final androidx.xr.arcore.Geospatial.State PAUSED;
+    field @Deprecated public static final androidx.xr.arcore.Geospatial.State RUNNING;
   }
 
-  public static final class Geospatial.State.Companion {
-    property public androidx.xr.arcore.Geospatial.State ERROR_INTERNAL;
-    property public androidx.xr.arcore.Geospatial.State ERROR_NOT_AUTHORIZED;
-    property public androidx.xr.arcore.Geospatial.State ERROR_RESOURCE_EXHAUSTED;
-    property public androidx.xr.arcore.Geospatial.State NOT_RUNNING;
-    property public androidx.xr.arcore.Geospatial.State PAUSED;
-    property public androidx.xr.arcore.Geospatial.State RUNNING;
+  @Deprecated public static final class Geospatial.State.Companion {
+    property @Deprecated public androidx.xr.arcore.Geospatial.State ERROR_INTERNAL;
+    property @Deprecated public androidx.xr.arcore.Geospatial.State ERROR_NOT_AUTHORIZED;
+    property @Deprecated public androidx.xr.arcore.Geospatial.State ERROR_RESOURCE_EXHAUSTED;
+    property @Deprecated public androidx.xr.arcore.Geospatial.State NOT_RUNNING;
+    property @Deprecated public androidx.xr.arcore.Geospatial.State PAUSED;
+    property @Deprecated public androidx.xr.arcore.Geospatial.State RUNNING;
   }
 
   public static final class Geospatial.Surface {
@@ -674,6 +674,8 @@ package androidx.xr.arcore {
     method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
     property public abstract androidx.xr.runtime.TrackingState trackingState;
   }
+
+  public typealias GeospatialState = androidx.xr.arcore.Geospatial.State;
 
 }
 

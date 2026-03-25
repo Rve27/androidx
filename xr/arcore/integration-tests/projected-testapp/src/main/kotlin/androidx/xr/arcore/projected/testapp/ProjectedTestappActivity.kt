@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 
 package androidx.xr.arcore.projected.testapp
 
@@ -29,6 +30,7 @@ import androidx.xr.arcore.ArDevice
 import androidx.xr.arcore.CreateGeospatialPoseFromPoseSuccess
 import androidx.xr.arcore.CreatePoseFromGeospatialPoseSuccess
 import androidx.xr.arcore.Geospatial
+import androidx.xr.arcore.GeospatialState
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import androidx.xr.projected.permissions.ProjectedPermissionsRequestParams
 import androidx.xr.projected.permissions.ProjectedPermissionsResultContract
@@ -56,6 +58,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /** Test app which tests projected perception API surface. */
+@Suppress("DEPRECATION")
 class ProjectedTestAppActivity : ComponentActivity() {
     private lateinit var session: Session
     private lateinit var geospatial: Geospatial
@@ -257,7 +260,8 @@ class ProjectedTestAppActivity : ComponentActivity() {
                 )
                 val comparisonMessage = testGeospatialConversions(currentGeospatialPose)
 
-                var text = "\nGeospatial State: ${getGeospatialStateMessage(geospatialState)}"
+                var text =
+                    "\nGeospatial GeospatialState: ${getGeospatialStateMessage(geospatialState)}"
                 text += "\nGeospatialPose: ${currentGeospatialPose}"
                 text += "\nVPS availability: $vpsStatusMessage"
                 text += "\nComparison:\n$comparisonMessage"
@@ -281,14 +285,14 @@ class ProjectedTestAppActivity : ComponentActivity() {
         }
     }
 
-    private fun getGeospatialStateMessage(geospatialState: Geospatial.State?): String {
+    private fun getGeospatialStateMessage(geospatialState: GeospatialState?): String {
         return when (geospatialState) {
-            Geospatial.State.RUNNING -> "Running"
-            Geospatial.State.NOT_RUNNING -> "Not Running"
-            Geospatial.State.ERROR_INTERNAL -> "Internal Error"
-            Geospatial.State.ERROR_NOT_AUTHORIZED -> "Not Authorized"
-            Geospatial.State.ERROR_RESOURCE_EXHAUSTED -> "Resource Exhausted"
-            Geospatial.State.PAUSED -> "Paused"
+            GeospatialState.RUNNING -> "Running"
+            GeospatialState.NOT_RUNNING -> "Not Running"
+            GeospatialState.ERROR_INTERNAL -> "Internal Error"
+            GeospatialState.ERROR_NOT_AUTHORIZED -> "Not Authorized"
+            GeospatialState.ERROR_RESOURCE_EXHAUSTED -> "Resource Exhausted"
+            GeospatialState.PAUSED -> "Paused"
             else -> "Checking..."
         }
     }
