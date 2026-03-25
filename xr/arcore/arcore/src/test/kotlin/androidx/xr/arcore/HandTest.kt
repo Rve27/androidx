@@ -217,7 +217,7 @@ class HandTest {
     fun getHandedness_settingNotConfigured_returnsUnknown() {
         ShadowContentResolver.reset()
 
-        assertThat(Hand.getPrimaryHandSide(mockContentResolver)).isEqualTo(Hand.HandSide.UNKNOWN)
+        assertThat(Hand.getPrimaryHandSide(mockContentResolver)).isEqualTo(HandSide.UNKNOWN)
     }
 
     @Test
@@ -225,10 +225,10 @@ class HandTest {
         ShadowContentResolver.reset()
 
         Settings.System.putInt(mockContentResolver, Hand.PRIMARY_HAND_SETTING_NAME, 1)
-        assertThat(Hand.getPrimaryHandSide(mockContentResolver)).isEqualTo(Hand.HandSide.RIGHT)
+        assertThat(Hand.getPrimaryHandSide(mockContentResolver)).isEqualTo(HandSide.RIGHT)
 
         Settings.System.putInt(mockContentResolver, Hand.PRIMARY_HAND_SETTING_NAME, 0)
-        assertThat(Hand.getPrimaryHandSide(mockContentResolver)).isEqualTo(Hand.HandSide.LEFT)
+        assertThat(Hand.getPrimaryHandSide(mockContentResolver)).isEqualTo(HandSide.LEFT)
     }
 
     private fun generateTestBuffer(handJoints: Map<HandJointType, Pose>): FloatBuffer {
