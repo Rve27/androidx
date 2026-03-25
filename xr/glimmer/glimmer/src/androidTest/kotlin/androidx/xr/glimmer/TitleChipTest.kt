@@ -101,7 +101,7 @@ class TitleChipTest {
         lateinit var actualTextStyle: TextStyle
         lateinit var expectedTextStyle: TextStyle
         rule.setGlimmerThemeContent {
-            expectedTextStyle = GlimmerTheme.typography.titleSmall
+            expectedTextStyle = GlimmerTheme.typography.caption
             TitleChip { actualTextStyle = LocalTextStyle.current }
         }
 
@@ -143,7 +143,7 @@ class TitleChipTest {
         var actualLeadingIconSize: Dp? = null
         var expectedIconSize: Dp? = null
         rule.setGlimmerThemeContent {
-            expectedIconSize = GlimmerTheme.iconSizes.medium
+            expectedIconSize = GlimmerTheme.iconSizes.small
             TitleChip(leadingIcon = { actualLeadingIconSize = LocalIconSize.current }) {}
         }
 
@@ -152,9 +152,9 @@ class TitleChipTest {
 
     @Test
     fun positioning() {
-        var smallSpacing: Dp by Delegates.notNull()
+        var extraSmallSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
-            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            extraSmallSpacing = GlimmerTheme.componentSpacingValues.extraSmall
             TitleChip(modifier = Modifier.testTag("titleChip")) {
                 Text("Messages", modifier = Modifier.testTag("text"))
             }
@@ -166,23 +166,23 @@ class TitleChipTest {
             rule.onNodeWithTag("text", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (textBounds.left - titleChipBounds.left).assertIsEqualTo(
-            smallSpacing * 2,
+            extraSmallSpacing * 2,
             "padding between the start of the titleChip and the start of the text.",
         )
 
         (titleChipBounds.right - textBounds.right).assertIsEqualTo(
-            smallSpacing * 2,
+            extraSmallSpacing * 2,
             "padding between the end of the text and the end of the titleChip.",
         )
 
-        titleChipBounds.height.assertIsEqualTo(56.dp, "height of titleChip.")
+        titleChipBounds.height.assertIsEqualTo(44.dp, "height of titleChip.")
     }
 
     @Test
     fun positioning_withIcon() {
-        var smallSpacing: Dp by Delegates.notNull()
+        var extraSmallSpacing: Dp by Delegates.notNull()
         rule.setGlimmerThemeContent {
-            smallSpacing = GlimmerTheme.componentSpacingValues.small
+            extraSmallSpacing = GlimmerTheme.componentSpacingValues.extraSmall
             TitleChip(
                 modifier = Modifier.testTag("titleChip"),
                 leadingIcon = {
@@ -205,21 +205,21 @@ class TitleChipTest {
             rule.onNodeWithTag("titleChip", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
         (leadingIconBounds.left - titleChipBounds.left).assertIsEqualTo(
-            smallSpacing,
+            extraSmallSpacing,
             "Padding between start of titleChip and start of leading icon.",
         )
 
         (textBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            smallSpacing,
+            extraSmallSpacing,
             "Padding between end of leading icon and start of text.",
         )
 
         (titleChipBounds.right - textBounds.right).assertIsEqualTo(
-            smallSpacing * 2,
+            extraSmallSpacing * 2,
             "padding between the end of the text and the end of the titleChip.",
         )
 
-        titleChipBounds.height.assertIsEqualTo(56.dp, "height of titleChip.")
+        titleChipBounds.height.assertIsEqualTo(44.dp, "height of titleChip.")
     }
 
     @Test
