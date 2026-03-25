@@ -104,6 +104,8 @@ internal constructor(
     public class State
     internal constructor(
         public override val trackingState: TrackingState,
+        @Suppress("DEPRECATION")
+        @get:SuppressWarnings("ReferencesDeprecated")
         public val label: Label,
         public val centerPose: Pose,
         public val extents: FloatSize2d,
@@ -133,6 +135,8 @@ internal constructor(
     }
 
     /** A simple summary of the normal vector of a [Plane]. */
+    @Deprecated("Use PlaneType instead.", replaceWith = ReplaceWith("PlaneType"))
+    @Suppress("DEPRECATION")
     public class Type private constructor(private val value: Int) {
         public companion object {
             /** A horizontal plane facing upward (e.g. floor or tabletop). */
@@ -155,6 +159,8 @@ internal constructor(
     }
 
     /** A semantic description of a [Plane]. */
+    @Deprecated("Use PlaneLabel instead.", replaceWith = ReplaceWith("PlaneLabel"))
+    @Suppress("DEPRECATION")
     public class Label private constructor(private val value: Int) {
         public companion object {
             /** The plane represents an unknown type. */
@@ -197,7 +203,9 @@ internal constructor(
 
     public override val state: StateFlow<Plane.State> = _state.asStateFlow()
 
-    public val type: Type
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+    @get:SuppressWarnings("ReferencesDeprecated")
+    public val type: PlaneType
         get() = typeFromRuntimeType()
 
     /**
@@ -239,22 +247,24 @@ internal constructor(
         )
     }
 
-    private fun typeFromRuntimeType(): Type =
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+    private fun typeFromRuntimeType(): PlaneType =
         when (runtimePlane.type) {
-            RuntimePlane.Type.HORIZONTAL_UPWARD_FACING -> Type.HORIZONTAL_UPWARD_FACING
-            RuntimePlane.Type.HORIZONTAL_DOWNWARD_FACING -> Type.HORIZONTAL_DOWNWARD_FACING
-            RuntimePlane.Type.VERTICAL -> Type.VERTICAL
-            else -> Type.HORIZONTAL_UPWARD_FACING
+            RuntimePlane.Type.HORIZONTAL_UPWARD_FACING -> PlaneType.HORIZONTAL_UPWARD_FACING
+            RuntimePlane.Type.HORIZONTAL_DOWNWARD_FACING -> PlaneType.HORIZONTAL_DOWNWARD_FACING
+            RuntimePlane.Type.VERTICAL -> PlaneType.VERTICAL
+            else -> PlaneType.HORIZONTAL_UPWARD_FACING
         }
 
-    private fun labelFromRuntimeType(): Label =
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+    private fun labelFromRuntimeType(): PlaneLabel =
         when (runtimePlane.label) {
-            RuntimePlane.Label.UNKNOWN -> Label.UNKNOWN
-            RuntimePlane.Label.WALL -> Label.WALL
-            RuntimePlane.Label.FLOOR -> Label.FLOOR
-            RuntimePlane.Label.CEILING -> Label.CEILING
-            RuntimePlane.Label.TABLE -> Label.TABLE
-            else -> Label.UNKNOWN
+            RuntimePlane.Label.UNKNOWN -> PlaneLabel.UNKNOWN
+            RuntimePlane.Label.WALL -> PlaneLabel.WALL
+            RuntimePlane.Label.FLOOR -> PlaneLabel.FLOOR
+            RuntimePlane.Label.CEILING -> PlaneLabel.CEILING
+            RuntimePlane.Label.TABLE -> PlaneLabel.TABLE
+            else -> PlaneLabel.UNKNOWN
         }
 
     private fun subsumedByFromRuntimePlane(): Plane? =

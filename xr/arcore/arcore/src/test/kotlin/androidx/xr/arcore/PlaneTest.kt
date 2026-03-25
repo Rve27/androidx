@@ -85,6 +85,7 @@ class PlaneTest {
     }
 
     @Test
+    @Suppress("DEPRECATION")
     fun constructor_convertsRuntimePlaneType() {
         val plane1 =
             Plane(
@@ -98,12 +99,13 @@ class PlaneTest {
             )
         val plane3 = Plane(FakeRuntimePlane(type = RuntimePlane.Type.VERTICAL), xrResourcesManager)
 
-        assertThat(plane1.type).isEqualTo(Plane.Type.HORIZONTAL_UPWARD_FACING)
-        assertThat(plane2.type).isEqualTo(Plane.Type.HORIZONTAL_DOWNWARD_FACING)
-        assertThat(plane3.type).isEqualTo(Plane.Type.VERTICAL)
+        assertThat(plane1.type).isEqualTo(PlaneType.HORIZONTAL_UPWARD_FACING)
+        assertThat(plane2.type).isEqualTo(PlaneType.HORIZONTAL_DOWNWARD_FACING)
+        assertThat(plane3.type).isEqualTo(PlaneType.VERTICAL)
     }
 
     @Test
+    @Suppress("DEPRECATION")
     fun constructor_convertsRuntimePlaneLabel() {
         val plane1 = Plane(FakeRuntimePlane(label = RuntimePlane.Label.UNKNOWN), xrResourcesManager)
         val plane2 = Plane(FakeRuntimePlane(label = RuntimePlane.Label.WALL), xrResourcesManager)
@@ -111,11 +113,11 @@ class PlaneTest {
         val plane4 = Plane(FakeRuntimePlane(label = RuntimePlane.Label.CEILING), xrResourcesManager)
         val plane5 = Plane(FakeRuntimePlane(label = RuntimePlane.Label.TABLE), xrResourcesManager)
 
-        assertThat(plane1.state.value.label).isEqualTo(Plane.Label.UNKNOWN)
-        assertThat(plane2.state.value.label).isEqualTo(Plane.Label.WALL)
-        assertThat(plane3.state.value.label).isEqualTo(Plane.Label.FLOOR)
-        assertThat(plane4.state.value.label).isEqualTo(Plane.Label.CEILING)
-        assertThat(plane5.state.value.label).isEqualTo(Plane.Label.TABLE)
+        assertThat(plane1.state.value.label).isEqualTo(PlaneLabel.UNKNOWN)
+        assertThat(plane2.state.value.label).isEqualTo(PlaneLabel.WALL)
+        assertThat(plane3.state.value.label).isEqualTo(PlaneLabel.FLOOR)
+        assertThat(plane4.state.value.label).isEqualTo(PlaneLabel.CEILING)
+        assertThat(plane5.state.value.label).isEqualTo(PlaneLabel.TABLE)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -280,24 +282,6 @@ class PlaneTest {
         assertThat(underTest.state.value.subsumedBy).isEqualTo(subsumingPlaneWrapper)
         assertThat(underTest.state.value.subsumedBy!!.runtimePlane)
             .isEqualTo(subsumedByRuntimePlane)
-    }
-
-    @Test
-    fun labelToString_returnsCorrectString() {
-        assertThat(Plane.Label.WALL.toString()).isEqualTo("WALL")
-        assertThat(Plane.Label.FLOOR.toString()).isEqualTo("FLOOR")
-        assertThat(Plane.Label.CEILING.toString()).isEqualTo("CEILING")
-        assertThat(Plane.Label.TABLE.toString()).isEqualTo("TABLE")
-        assertThat(Plane.Label.UNKNOWN.toString()).isEqualTo("UNKNOWN")
-    }
-
-    @Test
-    fun typeToString_returnsCorrectString() {
-        assertThat(Plane.Type.HORIZONTAL_UPWARD_FACING.toString())
-            .isEqualTo("HORIZONTAL_UPWARD_FACING")
-        assertThat(Plane.Type.HORIZONTAL_DOWNWARD_FACING.toString())
-            .isEqualTo("HORIZONTAL_DOWNWARD_FACING")
-        assertThat(Plane.Type.VERTICAL.toString()).isEqualTo("VERTICAL")
     }
 
     private fun getFakePerceptionManager(): FakePerceptionManager {
