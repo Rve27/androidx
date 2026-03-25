@@ -1207,6 +1207,11 @@ public open class RemoteComposeContext {
         mRemoteWriter.drawComponentContent()
     }
 
+    /** Alias for [drawComponentContent] to match Compose API. */
+    public fun drawContent() {
+        drawComponentContent()
+    }
+
     public fun startCanvas(modifier: RecordingModifier) {
         mRemoteWriter.startCanvas(modifier)
     }
@@ -2008,4 +2013,23 @@ public fun RecordingModifier.computePosition(
     block: ComponentLayoutChanges.() -> Unit
 ): RecordingModifier {
     return then(ComponentLayoutComputeModifier(LayoutComputeOperation.TYPE_POSITION, block))
+}
+
+/**
+ * Creates a [RecordingModifier] that allows drawing with the component's content.
+ *
+ * @param onDraw The drawing block that provides access to [RemoteComposeContext].
+ */
+public fun RecordingModifier.drawWithContent(
+    onDraw: RemoteComposeContext.() -> Unit
+): RecordingModifier = then(DrawWithContentModifier(onDraw))
+
+internal class DrawWithContentModifier(private val onDraw: RemoteComposeContext.() -> Unit) :
+    RecordingModifier.Element {
+    override fun write(writer: RemoteComposeWriter) {
+        val context = RemoteComposeContext(writer)
+        context.mRemoteWriter.startCanvasOperations()
+        context.onDraw()
+        context.mRemoteWriter.endCanvasOperations()
+    }
 }

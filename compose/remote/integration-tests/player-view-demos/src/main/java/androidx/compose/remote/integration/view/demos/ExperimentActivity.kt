@@ -84,6 +84,7 @@ import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponent
 import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents4
 import androidx.compose.remote.integration.view.demos.examples.RcCanvasComponents5
 import androidx.compose.remote.integration.view.demos.examples.RcCollapsiblePriority
+import androidx.compose.remote.integration.view.demos.examples.RcDrawWithContent
 import androidx.compose.remote.integration.view.demos.examples.RcFitBox
 import androidx.compose.remote.integration.view.demos.examples.RcFlow
 import androidx.compose.remote.integration.view.demos.examples.RcRatio
@@ -312,6 +313,7 @@ class ExperimentActivity : ComponentActivity() {
                     getpc("RcRatio") { RcRatio() },
                     getpc("RcScrollViewport") { RcScrollview() },
                     getpc("RcFlow") { RcFlow() },
+                    getpc("RcDrawWithContent") { RcDrawWithContent() },
                     getpc("RcCollapsiblePriority") { RcCollapsiblePriority() },
                     getpc("RcFitBox") { RcFitBox() },
                     getpc("Stock") { RcTicker(applicationContext) },
