@@ -31,7 +31,7 @@ private const val SPAN_FLAG = SpannableString.SPAN_INCLUSIVE_EXCLUSIVE
 
 @RunWith(JUnit4::class)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA)
-class RubyTest {
+class RubyLayoutRunTest {
     private val PREFIX = "PREFIX_PREFIX_PREFIX"
     private val SUFFIX = "SUFFIX_SUFFIX_SUFFIX"
     private val LATIN_TEXT = "abcde"
@@ -87,28 +87,6 @@ class RubyTest {
             super.drawText(text, start, end, x, y, paint)
             invocations.add(DrawTextRunCall(text, start, end, Paint(paint)))
         }
-    }
-
-    @Test
-    fun rubySpan_Builder_BuildAndGetDefault() {
-        RubySpan.Builder(RUBY_TEXT).build().run {
-            assertThat(text).isEqualTo(RUBY_TEXT)
-            assertThat(orientation).isEqualTo(TextOrientation.MIXED)
-            assertThat(textScale).isEqualTo(0.5f)
-        }
-    }
-
-    @Test
-    fun rubySpan_Builder_BuildAndGetCustomize() {
-        RubySpan.Builder(RUBY_TEXT)
-            .setOrientation(TextOrientation.UPRIGHT)
-            .setTextScale(0.3f)
-            .build()
-            .run {
-                assertThat(text).isEqualTo(RUBY_TEXT)
-                assertThat(orientation).isEqualTo(TextOrientation.UPRIGHT)
-                assertThat(textScale).isEqualTo(0.3f)
-            }
     }
 
     @Test
