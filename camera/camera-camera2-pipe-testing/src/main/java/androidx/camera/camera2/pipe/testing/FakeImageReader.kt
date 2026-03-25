@@ -94,6 +94,10 @@ private constructor(
         // NoOp
     }
 
+    override fun discardFreeBuffers() {
+        // NoOp
+    }
+
     override fun <T : Any> unwrapAs(type: KClass<T>): T? {
         // Fake objects cannot be unwrapped.
         return null

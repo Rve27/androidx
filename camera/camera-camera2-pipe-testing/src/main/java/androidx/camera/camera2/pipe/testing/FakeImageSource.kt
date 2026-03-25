@@ -57,6 +57,14 @@ private constructor(
 
     override fun toString(): String = "FakeImageSource-$debugId"
 
+    override fun flush() {
+        fakeImageReader.flush()
+    }
+
+    override fun discardFreeBuffers() {
+        fakeImageReader.discardFreeBuffers()
+    }
+
     public companion object {
         private val debugIds = atomic(0)
 

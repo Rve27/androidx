@@ -79,6 +79,10 @@ private constructor(
         // discardFreeBuffers to ensure we release as much memory as possible.
         imageReader.acquireLatestImage()?.close()
 
+        discardFreeBuffers()
+    }
+
+    override fun discardFreeBuffers() {
         // ImageReaders are pools of shared memory that is not actively released until the
         // ImageReader is closed. This method call actively frees these unused buffers from the
         // internal buffer pool.
@@ -291,6 +295,10 @@ public class AndroidMultiResolutionImageReader(
         // ImageReader is closed. This method call actively frees these unused buffers from the
         // internal buffer pool(s).
         multiResolutionImageReader.flush()
+    }
+
+    override fun discardFreeBuffers() {
+        // TODO: implement discardFreeBuffers in AndroidMultiResolutionImageReader
     }
 
     @Suppress("UNCHECKED_CAST")
