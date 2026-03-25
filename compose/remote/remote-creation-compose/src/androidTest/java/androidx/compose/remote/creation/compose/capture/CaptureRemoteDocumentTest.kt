@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
-
 package androidx.compose.remote.creation.compose.capture
 
 import android.content.Context
@@ -24,7 +22,6 @@ import androidx.compose.remote.core.Operations
 import androidx.compose.remote.core.RcProfiles
 import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.creation.RemoteComposeWriterAndroid
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteCanvas

@@ -20,8 +20,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
-import androidx.compose.remote.creation.compose.RemoteComposeCreationComposeFlags
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteBox
@@ -42,13 +40,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalRemoteCreationComposeApi::class)
 @SuppressLint("RestrictedApiAndroidX")
 class MyWidget : RemoteComposeWidget() {
-    init {
-        RemoteComposeCreationComposeFlags.isRemoteApplierEnabled = false
-    }
-
     @RemoteComposable
     @Composable
     fun Button(text: String, modifier: RemoteModifier = RemoteModifier, onClick: () -> Unit) {
