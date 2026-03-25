@@ -174,6 +174,119 @@ class RemoteRowTest {
             )
         }
 
+    @Test
+    fun spacedByAbsolute() =
+        composeTestRule.runScreenshotTest {
+            gridScreenshotUI.GridContent(
+                listOf(
+                    "rdp Start" to
+                        {
+                            TestSpacedByAbsoluteRemoteDp(alignment = RemoteAlignment.Start)
+                        },
+                    "rdp Center" to
+                        {
+                            TestSpacedByAbsoluteRemoteDp(
+                                alignment = RemoteAlignment.CenterHorizontally
+                            )
+                        },
+                    "rdp End" to { TestSpacedByAbsoluteRemoteDp(alignment = RemoteAlignment.End) },
+                    "rdp Left" to
+                        {
+                            TestSpacedByAbsoluteRemoteDp(alignment = RemoteAbsoluteAlignment.Left)
+                        },
+                    "Blank" to { Blank() },
+                    "rdp Right" to
+                        {
+                            TestSpacedByAbsoluteRemoteDp(alignment = RemoteAbsoluteAlignment.Right)
+                        },
+                    "rf Start" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(alignment = RemoteAlignment.Start)
+                        },
+                    "rf Center" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(
+                                alignment = RemoteAlignment.CenterHorizontally
+                            )
+                        },
+                    "rf End" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(alignment = RemoteAlignment.End)
+                        },
+                    "rf Left" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(
+                                alignment = RemoteAbsoluteAlignment.Left
+                            )
+                        },
+                    "Blank" to { Blank() },
+                    "rf Right" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(
+                                alignment = RemoteAbsoluteAlignment.Right
+                            )
+                        },
+                )
+            )
+        }
+
+    @Test
+    fun spacedByAbsoluteRtl() =
+        composeTestRule.runScreenshotTest {
+            gridScreenshotUI.GridContent(
+                listOf(
+                    "rdp Start" to
+                        {
+                            TestSpacedByAbsoluteRemoteDp(alignment = RemoteAlignment.Start)
+                        },
+                    "rdp Center" to
+                        {
+                            TestSpacedByAbsoluteRemoteDp(
+                                alignment = RemoteAlignment.CenterHorizontally
+                            )
+                        },
+                    "rdp End" to { TestSpacedByAbsoluteRemoteDp(alignment = RemoteAlignment.End) },
+                    "rdp Left" to
+                        {
+                            TestSpacedByAbsoluteRemoteDp(alignment = RemoteAbsoluteAlignment.Left)
+                        },
+                    "Blank" to { Blank() },
+                    "rdp Right" to
+                        {
+                            TestSpacedByAbsoluteRemoteDp(alignment = RemoteAbsoluteAlignment.Right)
+                        },
+                    "rf Start" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(alignment = RemoteAlignment.Start)
+                        },
+                    "rf Center" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(
+                                alignment = RemoteAlignment.CenterHorizontally
+                            )
+                        },
+                    "rf End" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(alignment = RemoteAlignment.End)
+                        },
+                    "rf Left" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(
+                                alignment = RemoteAbsoluteAlignment.Left
+                            )
+                        },
+                    "Blank" to { Blank() },
+                    "rf Right" to
+                        {
+                            TestSpacedByAbsoluteRemoteFloat(
+                                alignment = RemoteAbsoluteAlignment.Right
+                            )
+                        },
+                ),
+                layoutDirection = LayoutDirection.Rtl,
+            )
+        }
+
     private fun getLayoutAlignmentUIs(
         arrangements: List<RemoteArrangement.Horizontal> = this.arrangements
     ): List<Pair<String, @RemoteComposable @Composable () -> Unit>> =
@@ -319,6 +432,54 @@ class RemoteRowTest {
             // TODO(b/447100988): replace size by fillMaxSize
             modifier = RemoteModifier.size(DefaultContainerSize),
             horizontalArrangement = spacedBy(space = 10f.rf, alignment = alignment),
+            verticalAlignment = RemoteAlignment.CenterVertically,
+        ) {
+            RemoteBox(
+                modifier =
+                    RemoteModifier.width(20.rdp).fillMaxHeight().background(Color(0xFF6200EE))
+            )
+            RemoteBox(
+                modifier =
+                    RemoteModifier.width(20.rdp).fillMaxHeight().background(Color(0xFF03DAC6))
+            )
+            RemoteBox(
+                modifier =
+                    RemoteModifier.width(20.rdp).fillMaxHeight().background(Color(0xFFBB86FC))
+            )
+        }
+    }
+
+    @RemoteComposable @Composable private fun Blank() {}
+
+    @RemoteComposable
+    @Composable
+    private fun TestSpacedByAbsoluteRemoteDp(alignment: RemoteAlignment.Horizontal) {
+        RemoteRow(
+            modifier = RemoteModifier.size(DefaultContainerSize),
+            horizontalArrangement = Absolute.spacedBy(space = 5.rdp, alignment = alignment),
+            verticalAlignment = RemoteAlignment.CenterVertically,
+        ) {
+            RemoteBox(
+                modifier =
+                    RemoteModifier.width(20.rdp).fillMaxHeight().background(Color(0xFF6200EE))
+            )
+            RemoteBox(
+                modifier =
+                    RemoteModifier.width(20.rdp).fillMaxHeight().background(Color(0xFF03DAC6))
+            )
+            RemoteBox(
+                modifier =
+                    RemoteModifier.width(20.rdp).fillMaxHeight().background(Color(0xFFBB86FC))
+            )
+        }
+    }
+
+    @RemoteComposable
+    @Composable
+    private fun TestSpacedByAbsoluteRemoteFloat(alignment: RemoteAlignment.Horizontal) {
+        RemoteRow(
+            modifier = RemoteModifier.size(DefaultContainerSize),
+            horizontalArrangement = Absolute.spacedBy(space = 10f.rf, alignment = alignment),
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {
             RemoteBox(
