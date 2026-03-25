@@ -470,6 +470,15 @@ public class RemoteComposeView extends FrameLayout implements View.OnAttachState
     }
 
     /**
+     * Get the animation time
+     *
+     * @return the animation time
+     */
+    public float getAnimationTime() {
+        return mARContext.getAnimationTime();
+    }
+
+    /**
      * Set a local named float
      *
      * @param name    name of the float
