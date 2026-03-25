@@ -31,6 +31,13 @@ import androidx.xr.arcore.CreateGeospatialPoseFromPoseSuccess
 import androidx.xr.arcore.CreatePoseFromGeospatialPoseSuccess
 import androidx.xr.arcore.Geospatial
 import androidx.xr.arcore.GeospatialState
+import androidx.xr.arcore.VpsAvailabilityAvailable
+import androidx.xr.arcore.VpsAvailabilityErrorInternal
+import androidx.xr.arcore.VpsAvailabilityNetworkError
+import androidx.xr.arcore.VpsAvailabilityNotAuthorized
+import androidx.xr.arcore.VpsAvailabilityResourceExhausted
+import androidx.xr.arcore.VpsAvailabilityResult
+import androidx.xr.arcore.VpsAvailabilityUnavailable
 import androidx.xr.projected.experimental.ExperimentalProjectedApi
 import androidx.xr.projected.permissions.ProjectedPermissionsRequestParams
 import androidx.xr.projected.permissions.ProjectedPermissionsResultContract
@@ -43,13 +50,6 @@ import androidx.xr.runtime.SessionConfigureSuccess
 import androidx.xr.runtime.SessionCreateApkRequired
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.SessionCreateUnsupportedDevice
-import androidx.xr.runtime.VpsAvailabilityAvailable
-import androidx.xr.runtime.VpsAvailabilityErrorInternal
-import androidx.xr.runtime.VpsAvailabilityNetworkError
-import androidx.xr.runtime.VpsAvailabilityNotAuthorized
-import androidx.xr.runtime.VpsAvailabilityResourceExhausted
-import androidx.xr.runtime.VpsAvailabilityResult
-import androidx.xr.runtime.VpsAvailabilityUnavailable
 import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.math.GeospatialPose
 import kotlinx.coroutines.CompletableDeferred

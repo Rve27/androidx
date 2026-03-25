@@ -56,8 +56,8 @@ import androidx.xr.runtime.HandTrackingMode;
 import androidx.xr.runtime.PlaneTrackingMode;
 import androidx.xr.runtime.Session;
 import androidx.xr.runtime.SessionCreateSuccess;
-import androidx.xr.runtime.VpsAvailabilityAvailable;
-import androidx.xr.runtime.VpsAvailabilityResult;
+import androidx.xr.arcore.VpsAvailabilityAvailable;
+import androidx.xr.arcore.VpsAvailabilityResult;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 

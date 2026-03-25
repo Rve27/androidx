@@ -23,9 +23,9 @@ import androidx.test.rule.GrantPermissionRule
 import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.runtime.Anchor.PersistenceState
 import androidx.xr.arcore.runtime.ExportableAnchor
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.arcore.testing.FakeRuntimeAnchor
 import androidx.xr.runtime.NodeHolder
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion

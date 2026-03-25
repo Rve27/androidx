@@ -18,7 +18,7 @@ package androidx.xr.arcore.playservices
 
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Anchor
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import com.google.ar.core.Anchor as ARCore1xAnchor
 import java.util.UUID

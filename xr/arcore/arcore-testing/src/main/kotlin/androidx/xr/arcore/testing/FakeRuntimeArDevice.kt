@@ -18,7 +18,7 @@ package androidx.xr.arcore.testing
 
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.ArDevice as RuntimeArDevice
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 
 /** Fake implementation of [ArDevice][RuntimeArDevice] for testing purposes. */

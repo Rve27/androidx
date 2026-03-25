@@ -6,12 +6,12 @@ package androidx.xr.arcore.playservices {
     method public void detach();
     method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.Anchor.PersistenceState getPersistenceState();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getPose();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
+    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.TrackingState getTrackingState();
     method @InaccessibleFromKotlin public java.util.UUID? getUuid();
     method public void persist();
     property public androidx.xr.arcore.runtime.Anchor.PersistenceState persistenceState;
     property public androidx.xr.runtime.math.Pose pose;
-    property public androidx.xr.runtime.TrackingState trackingState;
+    property public androidx.xr.arcore.runtime.TrackingState trackingState;
     property public java.util.UUID? uuid;
   }
 
@@ -32,23 +32,10 @@ package androidx.xr.arcore.playservices {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ArCoreDevice implements androidx.xr.arcore.runtime.ArDevice {
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getDevicePose();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
+    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.TrackingState getTrackingState();
     method public void update(com.google.ar.core.Frame frame);
     property public androidx.xr.runtime.math.Pose devicePose;
-    property public androidx.xr.runtime.TrackingState trackingState;
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ArCoreEarth implements androidx.xr.arcore.runtime.Geospatial {
-    method public suspend Object? checkVpsAvailability(double latitude, double longitude, kotlin.coroutines.Continuation<? super androidx.xr.runtime.VpsAvailabilityResult>);
-    method public androidx.xr.arcore.runtime.Anchor createAnchor(double latitude, double longitude, double altitude, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion);
-    method public suspend Object? createAnchorOnSurface(double latitude, double longitude, double altitudeAboveSurface, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion, androidx.xr.arcore.runtime.Geospatial.Surface surface, kotlin.coroutines.Continuation<? super androidx.xr.arcore.runtime.Anchor>);
-    method public androidx.xr.arcore.runtime.Geospatial.GeospatialPoseResult createGeospatialPoseFromPose(androidx.xr.runtime.math.Pose pose);
-    method public androidx.xr.runtime.math.Pose createPoseFromGeospatialPose(androidx.xr.runtime.math.GeospatialPose geospatialPose);
-    method @InaccessibleFromKotlin public com.google.ar.core.Earth? getArCoreEarth();
-    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.Geospatial.State getState();
-    method public void update(com.google.ar.core.Session session);
-    property public com.google.ar.core.Earth? arCoreEarth;
-    property public androidx.xr.arcore.runtime.Geospatial.State state;
+    property public androidx.xr.arcore.runtime.TrackingState trackingState;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ArCoreFace implements androidx.xr.arcore.runtime.Face {
@@ -60,7 +47,7 @@ package androidx.xr.arcore.playservices {
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getForeheadRightPose();
     method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.Mesh getMesh();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Pose getNoseTipPose();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
+    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.TrackingState getTrackingState();
     method @InaccessibleFromKotlin public boolean isValid();
     property public float[]? blendShapeValues;
     property public androidx.xr.runtime.math.Pose centerPose;
@@ -70,7 +57,7 @@ package androidx.xr.arcore.playservices {
     property public boolean isValid;
     property public androidx.xr.arcore.runtime.Mesh mesh;
     property public androidx.xr.runtime.math.Pose noseTipPose;
-    property public androidx.xr.runtime.TrackingState trackingState;
+    property public androidx.xr.arcore.runtime.TrackingState trackingState;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ArCoreManager implements androidx.xr.runtime.internal.LifecycleManager {
@@ -89,7 +76,6 @@ package androidx.xr.arcore.playservices {
     method public androidx.xr.arcore.runtime.Anchor createAnchor(androidx.xr.runtime.math.Pose pose);
     method public void dispose();
     method @InaccessibleFromKotlin public androidx.xr.arcore.playservices.ArCoreDevice getArDevice();
-    method @InaccessibleFromKotlin public androidx.xr.arcore.playservices.ArCoreEarth getGeospatial();
     method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.DepthMap? getLeftDepthMap();
     method @InaccessibleFromKotlin @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.arcore.runtime.Eye? getLeftEye();
     method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.Hand? getLeftHand();
@@ -110,7 +96,6 @@ package androidx.xr.arcore.playservices {
     method public void setDisplayRotation(int rotation, int width, int height);
     method public void unpersistAnchor(java.util.UUID uuid);
     property public androidx.xr.arcore.playservices.ArCoreDevice arDevice;
-    property public androidx.xr.arcore.playservices.ArCoreEarth geospatial;
     property public androidx.xr.arcore.runtime.DepthMap? leftDepthMap;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.arcore.runtime.Eye? leftEye;
     property public androidx.xr.arcore.runtime.Hand? leftHand;
@@ -132,14 +117,14 @@ package androidx.xr.arcore.playservices {
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.FloatSize2d getExtents();
     method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.Plane.Label getLabel();
     method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.Plane? getSubsumedBy();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
+    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.TrackingState getTrackingState();
     method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.Plane.Type getType();
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.runtime.math.Vector2> getVertices();
     property public androidx.xr.runtime.math.Pose centerPose;
     property public androidx.xr.runtime.math.FloatSize2d extents;
     property public androidx.xr.arcore.runtime.Plane.Label label;
     property public androidx.xr.arcore.runtime.Plane? subsumedBy;
-    property public androidx.xr.runtime.TrackingState trackingState;
+    property public androidx.xr.arcore.runtime.TrackingState trackingState;
     property public androidx.xr.arcore.runtime.Plane.Type type;
     property public java.util.List<androidx.xr.runtime.math.Vector2> vertices;
   }
@@ -168,7 +153,7 @@ package androidx.xr.arcore.playservices {
     method @InaccessibleFromKotlin public android.hardware.HardwareBuffer? getHardwareBuffer();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Matrix4? getProjectionMatrix();
     method @InaccessibleFromKotlin public kotlin.time.ComparableTimeMark getTimeMark();
-    method @InaccessibleFromKotlin public androidx.xr.runtime.TrackingState getTrackingState();
+    method @InaccessibleFromKotlin public androidx.xr.arcore.runtime.TrackingState getTrackingState();
     method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<java.nio.FloatBuffer,java.nio.FloatBuffer>? getTransformCoordinates2D();
     method @InaccessibleFromKotlin public androidx.xr.runtime.math.Matrix4? getViewMatrix();
     property public androidx.xr.runtime.math.Pose? cameraPose;
@@ -176,7 +161,7 @@ package androidx.xr.arcore.playservices {
     property public android.hardware.HardwareBuffer? hardwareBuffer;
     property public androidx.xr.runtime.math.Matrix4? projectionMatrix;
     property public kotlin.time.ComparableTimeMark timeMark;
-    property public androidx.xr.runtime.TrackingState trackingState;
+    property public androidx.xr.arcore.runtime.TrackingState trackingState;
     property public kotlin.jvm.functions.Function1<java.nio.FloatBuffer,java.nio.FloatBuffer>? transformCoordinates2D;
     property public androidx.xr.runtime.math.Matrix4? viewMatrix;
   }

@@ -141,6 +141,7 @@ internal constructor(private val timeSource: OpenXrTimeSource) : PerceptionManag
     override val userFace: Face?
         get() = xrResources.userFace
 
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
     override val geospatial: OpenXrGeospatial = xrResources.geospatial
 
     override val leftDepthMap: DepthMap?

@@ -411,7 +411,7 @@ package androidx.xr.arcore {
   }
 
   public final class Geospatial {
-    method public suspend Object? checkVpsAvailability(double latitude, double longitude, kotlin.coroutines.Continuation<? super androidx.xr.runtime.VpsAvailabilityResult>);
+    method public suspend Object? checkVpsAvailability(double latitude, double longitude, kotlin.coroutines.Continuation<? super androidx.xr.arcore.VpsAvailabilityResult>);
     method public androidx.xr.arcore.AnchorCreateResult createAnchor(double latitude, double longitude, double altitude, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion);
     method public suspend Object? createAnchorOnSurface(double latitude, double longitude, double altitudeAboveSurface, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion, androidx.xr.arcore.GeospatialSurface surface, kotlin.coroutines.Continuation<? super androidx.xr.arcore.AnchorCreateResult>);
     method public androidx.xr.arcore.CreateGeospatialPoseFromPoseResult createGeospatialPoseFromPose(androidx.xr.runtime.math.Pose pose);
@@ -702,11 +702,40 @@ package androidx.xr.arcore {
     property public abstract androidx.xr.runtime.TrackingState trackingState;
   }
 
+  public final class VpsAvailabilityAvailable extends androidx.xr.arcore.VpsAvailabilityResult {
+    ctor public VpsAvailabilityAvailable();
+  }
+
+  public final class VpsAvailabilityErrorInternal extends androidx.xr.arcore.VpsAvailabilityResult {
+    ctor public VpsAvailabilityErrorInternal();
+  }
+
+  public final class VpsAvailabilityNetworkError extends androidx.xr.arcore.VpsAvailabilityResult {
+    ctor public VpsAvailabilityNetworkError();
+  }
+
+  public final class VpsAvailabilityNotAuthorized extends androidx.xr.arcore.VpsAvailabilityResult {
+    ctor public VpsAvailabilityNotAuthorized();
+  }
+
+  public final class VpsAvailabilityResourceExhausted extends androidx.xr.arcore.VpsAvailabilityResult {
+    ctor public VpsAvailabilityResourceExhausted();
+  }
+
+  public abstract sealed exhaustive class VpsAvailabilityResult {
+  }
+
+  public final class VpsAvailabilityUnavailable extends androidx.xr.arcore.VpsAvailabilityResult {
+    ctor public VpsAvailabilityUnavailable();
+  }
+
   public typealias GeospatialState = androidx.xr.arcore.Geospatial.State;
 
   public typealias PlaneLabel = androidx.xr.arcore.Plane.Label;
 
   public typealias PlaneType = androidx.xr.arcore.Plane.Type;
+
+  public typealias TrackingState = androidx.xr.runtime.TrackingState;
 
 }
 

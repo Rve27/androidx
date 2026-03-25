@@ -21,7 +21,7 @@ import androidx.xr.arcore.runtime.Anchor as RuntimeAnchor
 import androidx.xr.arcore.runtime.Plane as RuntimePlane
 import androidx.xr.arcore.runtime.Plane.Label
 import androidx.xr.arcore.runtime.Plane.Type
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector2
@@ -33,7 +33,7 @@ import androidx.xr.runtime.math.Vector2
  * in the environment.
  *
  * For example, for a FakeRuntimePlane with [Label.WALL], [Type.VERTICAL] and
- * [TrackingState.PAUSED]:
+ * [androidx.xr.runtime.TrackingState.PAUSED]:
  * ```
  * val plane = FakeRuntimePlane(type = RuntimePlane.Type.VERTICAL,
  *                              label = RuntimePlane.Label.WALL,

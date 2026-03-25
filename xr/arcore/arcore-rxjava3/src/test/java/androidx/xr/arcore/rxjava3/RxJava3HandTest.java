@@ -26,9 +26,9 @@ import androidx.activity.ComponentActivity;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.xr.arcore.Hand;
+import androidx.xr.runtime.TrackingState;
 import androidx.xr.runtime.Session;
 import androidx.xr.runtime.SessionCreateSuccess;
-import androidx.xr.runtime.TrackingState;
 
 import io.reactivex.rxjava3.subscribers.TestSubscriber;
 

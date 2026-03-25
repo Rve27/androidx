@@ -18,8 +18,8 @@ package androidx.xr.arcore.openxr
 
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.AugmentedObject
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.AugmentedObjectCategory
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 

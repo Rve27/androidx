@@ -17,7 +17,7 @@
 package androidx.xr.arcore.testing
 
 import androidx.xr.arcore.runtime.Eye
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 
 /** Fake implementation of [Eye] for testing purposes. */

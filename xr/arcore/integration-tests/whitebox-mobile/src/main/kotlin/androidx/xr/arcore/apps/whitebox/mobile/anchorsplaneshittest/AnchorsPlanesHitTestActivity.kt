@@ -57,6 +57,7 @@ import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.AnchorCreateSuccess
 import androidx.xr.arcore.HitResult
 import androidx.xr.arcore.Plane
+import androidx.xr.arcore.TrackingState
 import androidx.xr.arcore.apps.whitebox.mobile.common.ArCoreVerificationHelper
 import androidx.xr.arcore.apps.whitebox.mobile.common.BackToMainActivityButton
 import androidx.xr.arcore.apps.whitebox.mobile.common.SessionLifecycleHelper
@@ -75,7 +76,6 @@ import androidx.xr.arcore.playservices.cameraState
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose

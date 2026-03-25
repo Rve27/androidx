@@ -20,8 +20,8 @@ import android.hardware.HardwareBuffer
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.CoreState
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose
 import java.nio.FloatBuffer

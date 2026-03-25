@@ -18,8 +18,8 @@ package androidx.xr.arcore.testing
 
 import androidx.kruth.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.AugmentedObjectCategory
-import androidx.xr.runtime.TrackingState
 import org.junit.Test
 import org.junit.runner.RunWith
 

@@ -23,7 +23,6 @@ import androidx.xr.arcore.runtime.Hand as RuntimeHand
 import androidx.xr.arcore.runtime.HandJointType as RuntimeHandJoint
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
@@ -124,7 +123,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) :
      * respectively. The order of the joints within the array follows the order in which the joints
      * are defined in [HandJointType].
      *
-     * @property trackingState the current [TrackingState] of the hand
+     * @property trackingState the current [androidx.xr.runtime.TrackingState] of the hand
      * @property handJointsBuffer the [FloatBuffer] containing the current state of the hand
      * @property handJoints a map of [HandJointType] to [Pose] representing the current pose of each
      *   joint in the hand
@@ -143,7 +142,10 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) :
                 get() =
                     (if (trackingState == TrackingState.TRACKING) {
                         convertRuntimeHandJointToHandJoint(
-                                RuntimeHand.parseHandJoint(trackingState, handJointsBuffer)
+                                RuntimeHand.parseHandJoint(
+                                    trackingState.toRuntimeTrackingState(),
+                                    handJointsBuffer,
+                                )
                             )
                             .entries
                             .toSet()
@@ -230,7 +232,9 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) :
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override suspend fun update() {
-        _state.emit(State(runtimeHand.trackingState, runtimeHand.handJointsBuffer))
+        _state.emit(
+            State(runtimeHand.trackingState.toTrackingState(), runtimeHand.handJointsBuffer)
+        )
     }
 
     override fun equals(other: Any?): Boolean {
