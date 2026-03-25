@@ -47,6 +47,7 @@ internal object MetalavaTasks {
         baselinesApiLocation: ApiBaselinesLocation,
         builtApiLocation: ApiLocation,
         outputApiLocations: List<ApiLocation>,
+        hasJvmOrAndroidTarget: Boolean,
     ) {
         val metalavaClasspath = project.getMetalavaClasspath()
         val version = project.version()
@@ -70,6 +71,7 @@ internal object MetalavaTasks {
                 task.targetsJavaConsumers.set(targetsJavaConsumers)
                 task.kotlinSourceLevel.set(kotlinSourceLevel)
                 task.multiplatform.set(multiplatform)
+                task.hasJvmOrAndroidTarget.set(hasJvmOrAndroidTarget)
 
                 // Arguments needed for generating the API levels JSON
                 task.projectApiDirectory = project.layout.projectDirectory.dir("api")
@@ -80,7 +82,10 @@ internal object MetalavaTasks {
                 // using it to validate the generated api
                 task.mustRunAfter("updateApiLintBaseline")
             }
-        project.registerVersionMetadataComponent(generateApi)
+        // TODO(b/491425901): KMP version metadata isn't generated
+        if (hasJvmOrAndroidTarget) {
+            project.registerVersionMetadataComponent(generateApi)
+        }
 
         // Policy: If the artifact has previously been released, e.g. has a beta or later API file
         // checked in, then we must verify "release compatibility" against the work-in-progress
@@ -130,6 +135,7 @@ internal object MetalavaTasks {
                 task.targetsJavaConsumers.set(targetsJavaConsumers)
                 task.kotlinSourceLevel.set(kotlinSourceLevel)
                 task.multiplatform.set(multiplatform)
+                task.hasJvmOrAndroidTarget.set(hasJvmOrAndroidTarget)
                 applyInputs(compilationInputs, task, generateApiDependencies, androidManifest)
             }
 
