@@ -151,7 +151,13 @@ internal class AnchorRenderer(
     }
 
     private fun createAnchorModel(anchor: Anchor): AnchorModel {
-        val entity = GltfModelEntity.create(session, gltfAnchorModel, Pose())
+        val entity =
+            GltfModelEntity.create(
+                session,
+                gltfAnchorModel,
+                Pose(),
+                parent = session.scene.activitySpace,
+            )
         entity.setScale(.1f)
         val renderJob =
             coroutineScope.launch(updateJob) {

@@ -203,6 +203,7 @@ class GltfModelMaterialTextureActivity : AppCompatActivity() {
                             session!!,
                             dragonModel,
                             Pose(translation = DRAGON_TRANSLATION),
+                            parent = session!!.scene.activitySpace,
                         )
                     dragonModelEntity?.setScale(DRAGON_SCALE)
 
