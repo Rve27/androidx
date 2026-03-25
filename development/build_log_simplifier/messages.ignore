@@ -1043,3 +1043,5 @@ java\.lang\.IllegalStateException: The following LookupSymbols are not yet conve
 \^
 # Fixed in next AGP alpha via ag/38589626
 \-\-XuseK2Uast is no longer in effect, and will be an error in the next release\.
+# b/495870981
+(?:Lint found no errors or warnings.*|[0-9]+ errors/warnings were listed in the baseline file \(\$SUPPORT/.*lint\-baseline\.xml\) but not found in the project; perhaps they have been fixed\?)
