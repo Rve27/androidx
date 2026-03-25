@@ -25,6 +25,7 @@ import androidx.opengl.EGLExt
 import androidx.opengl.EGLImageKHR
 import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.Plane
+import androidx.xr.arcore.TrackingState
 import androidx.xr.arcore.apps.whitebox.mobile.samplerender.Framebuffer
 import androidx.xr.arcore.apps.whitebox.mobile.samplerender.Mesh
 import androidx.xr.arcore.apps.whitebox.mobile.samplerender.SampleRender
@@ -36,7 +37,6 @@ import androidx.xr.arcore.apps.whitebox.mobile.samplerender.renderers.PlaneRende
 import androidx.xr.arcore.playservices.ArCoreRuntime
 import androidx.xr.arcore.playservices.cameraState
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose

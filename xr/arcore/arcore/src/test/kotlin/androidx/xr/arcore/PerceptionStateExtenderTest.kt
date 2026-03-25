@@ -32,7 +32,6 @@ import androidx.xr.arcore.testing.FakeRuntimeHand
 import androidx.xr.arcore.testing.FakeRuntimePlane
 import androidx.xr.runtime.CoreState
 import androidx.xr.runtime.FieldOfView
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
@@ -134,7 +133,7 @@ class PerceptionStateExtenderTest {
 
         // act
         timeSource += 10.milliseconds
-        runtimeTrackable.trackingState = TrackingState.STOPPED
+        runtimeTrackable.trackingState = TrackingState.STOPPED.toRuntimeTrackingState()
         val coreState2 = CoreState(timeSource.markNow())
         underTest.extend(coreState2)
 
@@ -176,9 +175,9 @@ class PerceptionStateExtenderTest {
         val leftRuntimeHand = fakePerceptionRuntime.perceptionManager.leftHand!! as FakeRuntimeHand
         val rightRuntimeHand =
             fakePerceptionRuntime.perceptionManager.rightHand!! as FakeRuntimeHand
-        leftRuntimeHand.trackingState = TrackingState.TRACKING
+        leftRuntimeHand.trackingState = TrackingState.TRACKING.toRuntimeTrackingState()
         leftRuntimeHand.handJointsBuffer = generateTestBuffer(handJoints)
-        rightRuntimeHand.trackingState = TrackingState.TRACKING
+        rightRuntimeHand.trackingState = TrackingState.TRACKING.toRuntimeTrackingState()
         rightRuntimeHand.handJointsBuffer = generateTestBuffer(handJoints)
         val coreState2 = CoreState(timeSource.markNow())
         underTest.extend(coreState2)
@@ -354,7 +353,7 @@ class PerceptionStateExtenderTest {
         // act
         timeSource += 10.milliseconds
         val runtimeFace = fakePerceptionRuntime.perceptionManager.userFace!! as FakeRuntimeFace
-        runtimeFace.trackingState = TrackingState.TRACKING
+        runtimeFace.trackingState = TrackingState.TRACKING.toRuntimeTrackingState()
         val expectedBlendShapeValues = floatArrayOf(0.1f, 0.2f, 0.3f)
         val expectedConfidenceValues = floatArrayOf(0.4f, 0.5f, 0.6f)
         runtimeFace.blendShapeValues = expectedBlendShapeValues

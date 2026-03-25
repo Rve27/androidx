@@ -26,9 +26,9 @@ import androidx.xr.arcore.AnchorCreateResourcesExhausted
 import androidx.xr.arcore.AnchorCreateResult
 import androidx.xr.arcore.Geospatial
 import androidx.xr.arcore.GeospatialSurface
+import androidx.xr.arcore.VpsAvailabilityNotAuthorized
+import androidx.xr.arcore.VpsAvailabilityResult
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.VpsAvailabilityNotAuthorized
-import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.Quaternion
 import com.google.common.util.concurrent.ListenableFuture
 

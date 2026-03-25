@@ -339,31 +339,31 @@ package androidx.xr.runtime {
   @SuppressCompatibility @kotlin.RequiresOptIn(message="Access to native pointers is discouraged and the data returned by this API may change in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface UnstableNativeResourceApi {
   }
 
-  public final class VpsAvailabilityAvailable extends androidx.xr.runtime.VpsAvailabilityResult {
-    ctor public VpsAvailabilityAvailable();
+  @Deprecated public final class VpsAvailabilityAvailable extends androidx.xr.runtime.VpsAvailabilityResult {
+    ctor @Deprecated public VpsAvailabilityAvailable();
   }
 
-  public final class VpsAvailabilityErrorInternal extends androidx.xr.runtime.VpsAvailabilityResult {
-    ctor public VpsAvailabilityErrorInternal();
+  @Deprecated public final class VpsAvailabilityErrorInternal extends androidx.xr.runtime.VpsAvailabilityResult {
+    ctor @Deprecated public VpsAvailabilityErrorInternal();
   }
 
-  public final class VpsAvailabilityNetworkError extends androidx.xr.runtime.VpsAvailabilityResult {
-    ctor public VpsAvailabilityNetworkError();
+  @Deprecated public final class VpsAvailabilityNetworkError extends androidx.xr.runtime.VpsAvailabilityResult {
+    ctor @Deprecated public VpsAvailabilityNetworkError();
   }
 
-  public final class VpsAvailabilityNotAuthorized extends androidx.xr.runtime.VpsAvailabilityResult {
-    ctor public VpsAvailabilityNotAuthorized();
+  @Deprecated public final class VpsAvailabilityNotAuthorized extends androidx.xr.runtime.VpsAvailabilityResult {
+    ctor @Deprecated public VpsAvailabilityNotAuthorized();
   }
 
-  public final class VpsAvailabilityResourceExhausted extends androidx.xr.runtime.VpsAvailabilityResult {
-    ctor public VpsAvailabilityResourceExhausted();
+  @Deprecated public final class VpsAvailabilityResourceExhausted extends androidx.xr.runtime.VpsAvailabilityResult {
+    ctor @Deprecated public VpsAvailabilityResourceExhausted();
   }
 
-  public abstract sealed exhaustive class VpsAvailabilityResult {
+  @Deprecated public abstract sealed exhaustive class VpsAvailabilityResult {
   }
 
-  public final class VpsAvailabilityUnavailable extends androidx.xr.runtime.VpsAvailabilityResult {
-    ctor public VpsAvailabilityUnavailable();
+  @Deprecated public final class VpsAvailabilityUnavailable extends androidx.xr.runtime.VpsAvailabilityResult {
+    ctor @Deprecated public VpsAvailabilityUnavailable();
   }
 
   public final class XrDevice {

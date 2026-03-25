@@ -25,7 +25,6 @@ import androidx.xr.arcore.runtime.Geospatial as RuntimeGeospatial
 import androidx.xr.arcore.runtime.GeospatialPoseNotTrackingException
 import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.VpsAvailabilityResult
 import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -169,7 +168,7 @@ internal constructor(
         latitude: Double,
         longitude: Double,
     ): VpsAvailabilityResult {
-        return runtimeGeospatial.checkVpsAvailability(latitude, longitude)
+        return runtimeGeospatial.checkVpsAvailability(latitude, longitude).toVpsAvailabilityResult()
     }
 
     /**
