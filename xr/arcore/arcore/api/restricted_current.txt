@@ -458,7 +458,7 @@ package androidx.xr.arcore {
   }
 
   public final class Hand implements androidx.xr.arcore.Trackable<androidx.xr.arcore.Hand.State> {
-    method public static androidx.xr.arcore.Hand.HandSide getPrimaryHandSide(android.content.ContentResolver resolver);
+    method public static androidx.xr.arcore.HandSide getPrimaryHandSide(android.content.ContentResolver resolver);
     method @InaccessibleFromKotlin public kotlinx.coroutines.flow.StateFlow<androidx.xr.arcore.Hand.State> getState();
     method public static androidx.xr.arcore.Hand? left(androidx.xr.runtime.Session session);
     method public static androidx.xr.arcore.Hand? right(androidx.xr.runtime.Session session);
@@ -468,15 +468,15 @@ package androidx.xr.arcore {
   }
 
   public static final class Hand.Companion {
-    method public androidx.xr.arcore.Hand.HandSide getPrimaryHandSide(android.content.ContentResolver resolver);
+    method public androidx.xr.arcore.HandSide getPrimaryHandSide(android.content.ContentResolver resolver);
     method public androidx.xr.arcore.Hand? left(androidx.xr.runtime.Session session);
     method public androidx.xr.arcore.Hand? right(androidx.xr.runtime.Session session);
   }
 
-  public enum Hand.HandSide {
-    enum_constant public static final androidx.xr.arcore.Hand.HandSide LEFT;
-    enum_constant public static final androidx.xr.arcore.Hand.HandSide RIGHT;
-    enum_constant public static final androidx.xr.arcore.Hand.HandSide UNKNOWN;
+  @Deprecated public enum Hand.HandSide {
+    enum_constant @Deprecated public static final androidx.xr.arcore.Hand.HandSide LEFT;
+    enum_constant @Deprecated public static final androidx.xr.arcore.Hand.HandSide RIGHT;
+    enum_constant @Deprecated public static final androidx.xr.arcore.Hand.HandSide UNKNOWN;
   }
 
   public static final class Hand.State implements androidx.xr.arcore.Trackable.State {
@@ -523,6 +523,12 @@ package androidx.xr.arcore {
   public static final class HandJointType.Companion {
     property @Deprecated public androidx.xr.arcore.HandJointType HAND_JOINT_TYPE_INDEX_TIP;
     property @Deprecated public androidx.xr.arcore.HandJointType HAND_JOINT_TYPE_THUMB_TIP;
+  }
+
+  public enum HandSide {
+    enum_constant public static final androidx.xr.arcore.HandSide LEFT;
+    enum_constant public static final androidx.xr.arcore.HandSide RIGHT;
+    enum_constant public static final androidx.xr.arcore.HandSide UNKNOWN;
   }
 
   public final class HitResult {
