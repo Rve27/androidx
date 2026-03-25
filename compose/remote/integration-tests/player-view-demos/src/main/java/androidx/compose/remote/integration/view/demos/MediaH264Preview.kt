@@ -21,6 +21,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ColorSpace
 import android.graphics.PixelFormat
+import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
 import android.media.MediaCodec
@@ -28,6 +29,7 @@ import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.media.MediaMuxer
 import android.os.Bundle
+import android.view.SurfaceView
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -42,10 +44,7 @@ import androidx.compose.remote.core.CoreDocument
 import androidx.compose.remote.core.RemoteClock
 import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.creation.CreationDisplayInfo
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
-import androidx.compose.remote.creation.compose.capture.RememberRemoteDocumentInline
-import androidx.compose.remote.creation.compose.capture.rememberVirtualDisplay
-import androidx.compose.remote.creation.profile.RcPlatformProfiles
+import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.player.compose.RemoteDocumentPlayer
 import androidx.compose.remote.player.core.RemoteDocument
 import androidx.compose.runtime.Composable
@@ -61,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
@@ -392,7 +392,6 @@ private class VideoEncodeThread(
     }
 }
 
-@OptIn(ExperimentalRemoteCreationComposeApi::class)
 @Suppress("RestrictedApiAndroidX", "COMPOSE_APPLIER_CALL_MISMATCH")
 @androidx.compose.runtime.ComposableTarget(applier = "androidx.compose.ui.UiComposable")
 @Composable
@@ -423,19 +422,10 @@ fun mediaH264Preview(
 
     // Use a cleaner capture mechanism that disposes itself properly
     if (sample is DumperSample.ComposableSample && videoDocument == null) {
-        RememberRemoteDocumentInline(
-            profile = RcPlatformProfiles.ANDROIDX,
-            onDocument = { doc ->
-                val wireBuffer = doc.buffer.buffer
-                val bytes = wireBuffer.getBuffer().copyOf(wireBuffer.size())
-                val vDoc = CoreDocument(ManualRemoteClock())
-                vDoc.initFromBuffer(
-                    RemoteComposeBuffer.fromInputStream(ByteArrayInputStream(bytes))
-                )
-                videoDocument = RemoteDocument(vDoc)
-            },
-            content = { sample.content() },
-        )
+        LaunchedEffect(sample) {
+            val doc = captureSingleRemoteDocument(context, creationDisplayInfo) { sample.content() }
+            videoDocument = RemoteDocument(ByteArrayInputStream(doc.bytes), ManualRemoteClock())
+        }
     } else if (sample is DumperSample.Context && videoDocument == null) {
         LaunchedEffect(sample) {
             val rcContext = sample.getContext()
@@ -495,4 +485,31 @@ fun mediaH264Preview(
     }
 
     return outputData
+}
+
+@Composable
+fun rememberVirtualDisplay(creationDisplayInfo: CreationDisplayInfo): VirtualDisplay {
+    val context = LocalContext.current
+    val virtualDisplay = remember { DisplayPool.allocate(context, creationDisplayInfo) }
+    DisposableEffect(Unit) { onDispose { DisplayPool.release(virtualDisplay) } }
+    return virtualDisplay
+}
+
+/** API for managing a pool of [VirtualDisplay] objects. The current implementation does not */
+object DisplayPool {
+    fun allocate(context: Context, creationDisplayInfo: CreationDisplayInfo): VirtualDisplay {
+        val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+        return displayManager.createVirtualDisplay(
+            "Projection",
+            creationDisplayInfo.width,
+            creationDisplayInfo.height,
+            creationDisplayInfo.densityDpi,
+            SurfaceView(context).holder.surface,
+            0,
+        )
+    }
+
+    public fun release(virtualDisplay: VirtualDisplay) {
+        virtualDisplay.release()
+    }
 }

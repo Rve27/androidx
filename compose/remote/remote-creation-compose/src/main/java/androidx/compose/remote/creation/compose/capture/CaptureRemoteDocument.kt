@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
-
 package androidx.compose.remote.creation.compose.capture
 
 import android.content.Context
 import androidx.compose.remote.creation.CreationDisplayInfo
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
-import androidx.compose.remote.creation.compose.RemoteComposeCreationComposeFlags
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.creation.compose.v2.captureSingleRemoteDocumentV2
 import androidx.compose.remote.creation.profile.Profile
 import androidx.compose.remote.creation.profile.RcPlatformProfiles
 import androidx.compose.runtime.Composable
-import kotlin.coroutines.resume
-import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
  * Capture a RemoteCompose document by rendering the specified [content] Composable in a virtual
@@ -54,49 +48,16 @@ public suspend fun captureSingleRemoteDocument(
 ): CapturedDocument {
     val layoutDirection = toLayoutDirection(context.resources.configuration.layoutDirection)
 
-    if (RemoteComposeCreationComposeFlags.isRemoteApplierEnabled) {
-        // Make part of the API above when v1 path removed
-        val remoteDensity =
-            RemoteDensity(
-                creationDisplayInfo.density.rf,
-                context.resources.configuration.fontScale.rf,
-            )
+    // Make part of the API above when v1 path removed
+    val remoteDensity =
+        RemoteDensity(creationDisplayInfo.density.rf, context.resources.configuration.fontScale.rf)
 
-        return captureSingleRemoteDocumentV2(
-            creationDisplayInfo = creationDisplayInfo,
-            remoteDensity = remoteDensity,
-            layoutDirection = layoutDirection,
-            profile = profile,
-            content = content,
-            context = context,
-        )
-    }
-
-    return suspendCancellableCoroutine { continuation ->
-        val virtualDisplay = DisplayPool.allocate(context, creationDisplayInfo)
-
-        val writerEvents = WriterEvents()
-
-        RemoteComposeCapture(
-            context = context,
-            virtualDisplay = virtualDisplay,
-            creationDisplayInfo = creationDisplayInfo,
-            layoutDirection = layoutDirection,
-            immediateCapture = true,
-            onPaint = { _, writer ->
-                if (continuation.isActive) {
-                    val docBytes = writer.encodeToByteArray()
-                    continuation.resume(CapturedDocument(docBytes, writerEvents.pendingIntents))
-                    DisplayPool.release(virtualDisplay)
-                }
-                true
-            },
-            onCaptureReady = @Composable {},
-            profile = profile,
-            writerEvents = writerEvents,
-            content = content,
-        )
-
-        continuation.invokeOnCancellation { DisplayPool.release(virtualDisplay) }
-    }
+    return captureSingleRemoteDocumentV2(
+        creationDisplayInfo = creationDisplayInfo,
+        remoteDensity = remoteDensity,
+        layoutDirection = layoutDirection,
+        profile = profile,
+        content = content,
+        context = context,
+    )
 }
