@@ -39,18 +39,18 @@ import android.text.style.ReplacementSpan
  *
  * @property text The ruby text to be displayed adjacent to the base text.
  * @property position The position of ruby text relative to the base text. Defaults to
- *   [AnnotationPosition.BEFORE].
- * @property orientation The text orientation of the ruby text. Defaults to [TextOrientation.MIXED].
+ *   [AnnotationPosition.Before].
+ * @property orientation The text orientation of the ruby text. Defaults to [TextOrientation.Mixed].
  * @property textScale The text scale ratio of the ruby text relative to the base text. Defaults to
  *   0.5f.
  */
-@Suppress("BanParcelableUsage")
+@Suppress("BanParcelableUsage", "ValueClassUsageFromConstructor")
 public class RubySpan
 @JvmOverloads
 constructor(
     @JvmField public val text: CharSequence,
-    @JvmField public val position: AnnotationPosition = DEFAULT_POSITION,
-    @param:OrientationMode public val orientation: Int = DEFAULT_ORIENTATION,
+    @get:JvmName("position") public val position: AnnotationPosition = DEFAULT_POSITION,
+    public val orientation: TextOrientation = DEFAULT_ORIENTATION,
     public val textScale: Float = 0.5f,
 ) : ReplacementSpan(), Parcelable {
 
@@ -61,46 +61,6 @@ constructor(
                 HorizontalRubySpanLayout(bodyText, start, end, text, paint, textScale)
             },
         )
-    }
-
-    // TODO(b/493693386): remove Builder
-    /**
-     * Builder class for creating [RubySpan] instances.
-     *
-     * @param text The ruby text to be displayed adjacent to the base text.
-     */
-    public class Builder(private val text: CharSequence) {
-        private var _orientation: Int = DEFAULT_ORIENTATION
-        private var _textScale: Float = DEFAULT_TEXT_SCALE
-
-        /**
-         * Sets the text orientation for the ruby text.
-         *
-         * By default, [TextOrientation.MIXED] is used.
-         *
-         * @param orientation The text orientation to set.
-         * @return This [Builder] instance for method chaining.
-         */
-        public fun setOrientation(@OrientationMode orientation: Int): Builder = apply {
-            _orientation = orientation
-        }
-
-        /**
-         * Sets the text scale for the ruby text.
-         *
-         * By default, 0.5f is used, meaning the ruby text will be half the size of the base text.
-         *
-         * @param textScale The text scale to set.
-         * @return This [Builder] instance for method chaining.
-         */
-        public fun setTextScale(textScale: Float): Builder = apply { _textScale = textScale }
-
-        /**
-         * Builds and returns a new [RubySpan] instance.
-         *
-         * @return A new [RubySpan] instance.
-         */
-        public fun build(): RubySpan = RubySpan(text, DEFAULT_POSITION, _orientation, _textScale)
     }
 
     override fun getSize(
@@ -134,7 +94,7 @@ constructor(
             Bundle().apply {
                 putCharSequence(FIELD_TEXT, text)
                 putInt(FIELD_POSITION, position.value)
-                putInt(FIELD_ORIENTATION, orientation)
+                putInt(FIELD_ORIENTATION, orientation.ordinal)
                 putFloat(FIELD_TEXT_SCALE, textScale)
             }
         parcel.writeBundle(bundle)
@@ -149,8 +109,8 @@ constructor(
         private const val FIELD_ORIENTATION: String = "orientation"
         private const val FIELD_TEXT_SCALE: String = "textScale"
 
-        private val DEFAULT_POSITION: AnnotationPosition = AnnotationPosition.BEFORE
-        private const val DEFAULT_ORIENTATION: Int = TextOrientation.MIXED
+        private val DEFAULT_POSITION: AnnotationPosition = AnnotationPosition.Before
+        private val DEFAULT_ORIENTATION: TextOrientation = TextOrientation.Mixed
         private const val DEFAULT_TEXT_SCALE: Float = 0.5f
 
         @JvmField
@@ -163,18 +123,19 @@ constructor(
                     // crashes.
                     val bundle = source.readBundle(RubySpan::class.java.classLoader)
 
-                    // Explicitly set the ClassLoader to ensure the inner Parcelable ArrayList
-                    // (updates) can be unparceled correctly.
-                    bundle?.classLoader = RubySpan::class.java.classLoader
-
+                    val positionVal =
+                        bundle?.getInt(FIELD_POSITION, DEFAULT_POSITION.value)
+                            ?: DEFAULT_POSITION.value
+                    val orientationVal =
+                        bundle?.getInt(FIELD_ORIENTATION, DEFAULT_ORIENTATION.ordinal)
+                            ?: DEFAULT_ORIENTATION.ordinal
+                    val scaleVal =
+                        bundle?.getFloat(FIELD_TEXT_SCALE, DEFAULT_TEXT_SCALE) ?: DEFAULT_TEXT_SCALE
                     return RubySpan(
                         text = bundle?.getCharSequence(FIELD_TEXT) ?: "",
-                        position =
-                            AnnotationPosition.fromInt(
-                                bundle?.getInt(FIELD_POSITION) ?: DEFAULT_POSITION.value
-                            ),
-                        orientation = bundle?.getInt(FIELD_ORIENTATION) ?: DEFAULT_ORIENTATION,
-                        textScale = bundle?.getFloat(FIELD_TEXT_SCALE) ?: DEFAULT_TEXT_SCALE,
+                        position = AnnotationPosition.fromInt(positionVal),
+                        orientation = TextOrientation.fromInt(orientationVal),
+                        textScale = scaleVal,
                     )
                 }
 

@@ -61,7 +61,7 @@ internal class RubyLayoutRun(
     text: CharSequence,
     start: Int,
     end: Int,
-    @OrientationMode textOrientation: Int,
+    textOrientation: TextOrientation,
     paint: TextPaint,
     rubySpan: RubySpan,
 ) : LayoutRun(text, start, end) {

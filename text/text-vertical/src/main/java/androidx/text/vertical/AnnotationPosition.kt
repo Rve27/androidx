@@ -16,38 +16,41 @@
 
 package androidx.text.vertical
 
-/**
- * Properties of a text annotation (i.e. ruby and emphasis marks).
- *
- * @property value The integer value
- */
-public enum class AnnotationPosition private constructor(@JvmField public val value: Int) {
-    /** The text annotation position is unknown. */
-    UNKNOWN(-1),
-    /**
-     * For horizontal text, the text annotation should be positioned above the base text.
-     *
-     * For vertical text, it should be positioned to the right. See the
-     * [tts:rubyPosition](https://www.w3.org/TR/ttml2/#style-attribute-rubyPosition) attribute in
-     * TTML2 for more information.
-     */
-    BEFORE(0),
-    /**
-     * For horizontal text, the text annotation should be positioned below the base text.
-     *
-     * For vertical text, it should be positioned to the left, See the
-     * [tts:rubyPosition](https://www.w3.org/TR/ttml2/#style-attribute-rubyPosition) attribute in
-     * TTML2 for more information.
-     */
-    AFTER(1);
-
+/** Properties of a text annotation (i.e. ruby and emphasis marks). */
+public sealed class AnnotationPosition(@JvmField public val value: Int) {
     public companion object {
+        /** The text annotation position is unknown. */
+        @JvmField public val Unknown: AnnotationPosition = UnknownImpl
+        /**
+         * For horizontal text, the text annotation should be positioned above the base text.
+         *
+         * For vertical text, it should be positioned to the right. See the
+         * [tts:rubyPosition](https://www.w3.org/TR/ttml2/#style-attribute-rubyPosition) attribute
+         * in TTML2 for more information.
+         */
+        @JvmField public val Before: AnnotationPosition = BeforeImpl
+        /**
+         * For horizontal text, the text annotation should be positioned below the base text.
+         *
+         * For vertical text, it should be positioned to the left, See the
+         * [tts:rubyPosition](https://www.w3.org/TR/ttml2/#style-attribute-rubyPosition) attribute
+         * in TTML2 for more information.
+         */
+        @JvmField public val After: AnnotationPosition = AfterImpl
+
         @JvmStatic
+        @JvmName("fromInt")
         public fun fromInt(value: Int): AnnotationPosition =
             when (value) {
-                BEFORE.value -> BEFORE
-                AFTER.value -> AFTER
-                else -> UNKNOWN
+                Before.value -> Before
+                After.value -> After
+                else -> Unknown
             }
     }
 }
+
+private object UnknownImpl : AnnotationPosition(-1)
+
+private object BeforeImpl : AnnotationPosition(0)
+
+private object AfterImpl : AnnotationPosition(1)
