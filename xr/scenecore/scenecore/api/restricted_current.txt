@@ -593,6 +593,8 @@ package androidx.xr.scenecore {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class MeshEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.scenecore.runtime.MeshEntity> {
     method @InaccessibleFromKotlin public java.util.List<androidx.xr.scenecore.Material> getMaterials();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.CustomMesh getMesh();
+    method @MainThread public void setMaterial(androidx.xr.scenecore.Material material, optional int subsetIndex);
+    method @BytecodeOnly @MainThread public static void setMaterial$default(androidx.xr.scenecore.MeshEntity!, androidx.xr.scenecore.Material!, int, int, Object!);
     property public java.util.List<androidx.xr.scenecore.Material> materials;
     property public androidx.xr.scenecore.CustomMesh mesh;
     field public static final androidx.xr.scenecore.MeshEntity.Companion Companion;

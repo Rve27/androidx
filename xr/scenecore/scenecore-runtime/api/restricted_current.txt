@@ -467,9 +467,11 @@ package androidx.xr.scenecore.runtime {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MeshEntity extends androidx.xr.scenecore.runtime.Entity {
+    method public void setMaterial(androidx.xr.scenecore.runtime.MaterialResource material, int subsetIndex);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MeshFeature extends androidx.xr.scenecore.runtime.RenderingFeature {
+    method public void setMaterial(androidx.xr.scenecore.runtime.MaterialResource material, int subsetIndex);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MovableComponent extends androidx.xr.scenecore.runtime.Component {

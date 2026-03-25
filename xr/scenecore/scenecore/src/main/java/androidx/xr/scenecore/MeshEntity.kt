@@ -34,8 +34,29 @@ private constructor(
     rtEntity: RtMeshEntity,
     entityRegistry: EntityRegistry,
     public val mesh: CustomMesh,
-    public val materials: List<Material>,
+    private val _materials: MutableList<Material>,
 ) : BaseEntity<RtMeshEntity>(rtEntity, entityRegistry) {
+
+    /** The list of materials used to render this entity's custom mesh. */
+    public val materials: List<Material>
+        get() = _materials.toList()
+
+    /**
+     * Sets a material for a mesh subset.
+     *
+     * @param material The new [Material] to apply to the mesh subset.
+     * @param subsetIndex The zero-based index for the mesh subset. Default is the first subset of
+     *   the mesh.
+     */
+    @MainThread
+    public fun setMaterial(material: Material, subsetIndex: Int = 0) {
+        checkNotDisposed()
+        require(subsetIndex >= 0 && subsetIndex < _materials.size) {
+            "Subset index $subsetIndex is out of bounds for the number of subsets (${_materials.size})."
+        }
+        _materials[subsetIndex] = material
+        rtEntity!!.setMaterial(material.material, subsetIndex)
+    }
 
     public companion object {
         /**
@@ -77,7 +98,7 @@ private constructor(
                     parentEntity.rtEntity,
                 )
 
-            return MeshEntity(rtEntity, entityRegistry, mesh, materials)
+            return MeshEntity(rtEntity, entityRegistry, mesh, materials.toMutableList())
         }
     }
 }
