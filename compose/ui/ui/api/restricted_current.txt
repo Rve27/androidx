@@ -177,7 +177,6 @@ package androidx.compose.ui {
     property public boolean isOptimizedFocusEventDispatchEnabled;
     property public boolean isSkipNonImportantSemanticsNodesHitTestEnabled;
     property public boolean isTrackpadGestureHandlingEnabled;
-    property public boolean isTraversableDelegatesFixEnabled;
     property public boolean isViewFocusFixEnabled;
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
     field public static boolean isAccessibilityShouldIncludeOffscreenChildrenEnabled;
@@ -189,7 +188,6 @@ package androidx.compose.ui {
     field public static boolean isOptimizedFocusEventDispatchEnabled;
     field public static boolean isSkipNonImportantSemanticsNodesHitTestEnabled;
     field public static boolean isTrackpadGestureHandlingEnabled;
-    field public static boolean isTraversableDelegatesFixEnabled;
     field public static boolean isViewFocusFixEnabled;
   }
 
