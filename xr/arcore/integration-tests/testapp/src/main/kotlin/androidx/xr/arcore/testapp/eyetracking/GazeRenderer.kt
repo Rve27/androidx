@@ -58,9 +58,8 @@ class GazeRenderer {
                         false -> "BoundingBoxBlue.glb"
                     }
                 val model = GltfModel.create(session, Paths.get("models", assetName))
-                val modelEntity = GltfModelEntity.create(session, model)
+                val modelEntity = GltfModelEntity.create(session, model, parent = offsetEntity)
                 modelEntity.setScale(PANEL_SIZE)
-                offsetEntity.addChild(modelEntity)
                 return EyeWidget(session, rootEntity, modelEntity, isLeft)
             }
 

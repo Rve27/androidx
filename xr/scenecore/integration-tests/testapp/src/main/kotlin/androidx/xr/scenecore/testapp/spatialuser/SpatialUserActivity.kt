@@ -122,6 +122,7 @@ class SpatialUserActivity : AppCompatActivity() {
                 IntSize2d(640, 480),
                 "Spatial User Test Panel",
                 Pose(Vector3(0f, 0f, 0.5f)),
+                parent = session!!.scene.activitySpace,
             )
         spatialUserPanel.parent = session!!.scene.activitySpace
 
