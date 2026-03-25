@@ -37,7 +37,7 @@ dependencies {
 
     implementation(project(":xr:runtime:runtime-interfaces"))
     implementation("androidx.lifecycle:lifecycle-common:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-process:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime:2.8.7")
 
     androidTestImplementation(libs.kotlinCoroutinesTest)
     androidTestImplementation(libs.junit)
