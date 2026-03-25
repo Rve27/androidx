@@ -760,13 +760,10 @@ package androidx.xr.compose.subspace.layout {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier gravityAligned(androidx.xr.compose.subspace.layout.SubspaceModifier);
   }
 
-  public final class InteractionPolicy {
-    ctor @BytecodeOnly public InteractionPolicy(boolean, kotlin.jvm.functions.Function1!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    ctor public InteractionPolicy(optional boolean isEnabled, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SpatialInputEvent,kotlin.Unit> onInputEvent);
-    method @InaccessibleFromKotlin public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialInputEvent,kotlin.Unit> getOnInputEvent();
+  public interface InteractionPolicy {
     method @InaccessibleFromKotlin public boolean isEnabled();
-    property public boolean isEnabled;
-    property public kotlin.jvm.functions.Function1<androidx.xr.compose.subspace.layout.SpatialInputEvent,kotlin.Unit> onInputEvent;
+    method public void onInputEvent(androidx.xr.compose.subspace.layout.SpatialInputEvent event);
+    property public abstract boolean isEnabled;
     field public static final androidx.xr.compose.subspace.layout.InteractionPolicy.Companion Companion;
   }
 
