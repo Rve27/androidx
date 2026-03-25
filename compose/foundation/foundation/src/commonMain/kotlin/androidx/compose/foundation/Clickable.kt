@@ -18,8 +18,6 @@ package androidx.compose.foundation
 
 import androidx.annotation.CallSuper
 import androidx.collection.mutableLongObjectMapOf
-import androidx.compose.foundation.ComposeFoundationFlags.isDelayPressesUsingGestureConsumptionEnabled
-import androidx.compose.foundation.gestures.ScrollableContainerNode
 import androidx.compose.foundation.gestures.changedToDownIgnoreConsumed
 import androidx.compose.foundation.gestures.isChangedToDown
 import androidx.compose.foundation.gestures.isDeepPress
@@ -64,7 +62,6 @@ import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.invalidateSemantics
 import androidx.compose.ui.node.observeReads
 import androidx.compose.ui.node.requireDensity
-import androidx.compose.ui.node.traverseAncestors
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalViewConfiguration
@@ -651,10 +648,6 @@ internal expect val TapIndicationDelay: Long
  * nothing in the Compose part of the hierarchy is scrollable, if the View itself is in a scrollable
  * container, we still want to delay presses in case presses in Compose convert to a scroll outside
  * of Compose.
- *
- * Combine this with [hasScrollableContainer], which returns whether a [Modifier] is within a
- * scrollable Compose layout, to calculate whether this modifier is within some form of scrollable
- * container, and hence should delay presses.
  */
 internal expect fun DelegatableNode.isComposeRootInScrollableContainer(): Boolean
 
@@ -926,11 +919,7 @@ internal open class ClickableNode(
         down.consume()
         this.downEvent = down
         if (enabled) {
-            if (isDelayPressesUsingGestureConsumptionEnabled) {
-                handlePressInteractionStart(down)
-            } else {
-                handlePressInteractionStart(down.position, false)
-            }
+            handlePressInteractionStart(down)
         }
     }
 
@@ -939,11 +928,7 @@ internal open class ClickableNode(
         down.consume()
         this.indirectDownEvent = down
         if (enabled) {
-            if (isDelayPressesUsingGestureConsumptionEnabled) {
-                handlePressInteractionStart(down)
-            } else {
-                handlePressInteractionStart(down.position, true)
-            }
+            handlePressInteractionStart(down)
         }
     }
 
@@ -1219,11 +1204,7 @@ private class CombinedClickableNode(
             }
             longPressTriggered = false
 
-            if (isDelayPressesUsingGestureConsumptionEnabled) {
-                handlePressInteractionStart(down)
-            } else {
-                handlePressInteractionStart(down.position, false)
-            }
+            handlePressInteractionStart(down)
 
             if (onLongClick != null) {
                 longPressJob =
@@ -1264,11 +1245,7 @@ private class CombinedClickableNode(
             }
             indirectLongPressTriggered = false
 
-            if (isDelayPressesUsingGestureConsumptionEnabled) {
-                handlePressInteractionStart(down)
-            } else {
-                handlePressInteractionStart(down.position, true)
-            }
+            handlePressInteractionStart(down)
 
             if (onLongClick != null) {
                 indirectLongPressJob =
@@ -1885,7 +1862,6 @@ internal abstract class AbstractClickableNode(
 
     @OptIn(ExperimentalFoundationApi::class)
     private fun initializeGestureCoordination() {
-        if (!isDelayPressesUsingGestureConsumptionEnabled) return
         if (gestureNode == null) {
             gestureNode = delegate(gestureNode(this))
         }
@@ -2037,38 +2013,6 @@ internal abstract class AbstractClickableNode(
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
-    protected fun handlePressInteractionStart(offset: Offset, indirectPointer: Boolean) {
-        interactionSource?.let { interactionSource ->
-            val press = PressInteraction.Press(offset)
-            val shouldDelayPress =
-                if (isDelayPressesUsingGestureConsumptionEnabled) {
-                    delayPressInteraction(null)
-                } else {
-                    delayPressInteraction()
-                }
-            if (shouldDelayPress) {
-                delayJob =
-                    coroutineScope.launch {
-                        delay(TapIndicationDelay)
-                        interactionSource.emit(press)
-                        if (indirectPointer) {
-                            indirectPointerPressInteraction = press
-                        } else {
-                            pressInteraction = press
-                        }
-                    }
-            } else {
-                if (indirectPointer) {
-                    indirectPointerPressInteraction = press
-                } else {
-                    pressInteraction = press
-                }
-                coroutineScope.launch { interactionSource.emit(press) }
-            }
-        }
-    }
-
     /**
      * Handles emitting a [PressInteraction.Release].
      *
@@ -2165,17 +2109,8 @@ internal abstract class AbstractClickableNode(
         }
     }
 
-    private fun delayPressInteraction(): Boolean =
-        hasScrollableContainer() || isComposeRootInScrollableContainer()
-
-    private fun delayPressInteraction(event: PointerInputChange?): Boolean {
-        val hasInterestedParent =
-            if (event == null) {
-                parentGestureConnection != null
-            } else {
-                hasInterestedParent(event)
-            }
-        return hasInterestedParent || isComposeRootInScrollableContainer()
+    private fun delayPressInteraction(event: PointerInputChange): Boolean {
+        return hasInterestedParent(event) || isComposeRootInScrollableContainer()
     }
 
     private fun delayPressInteraction(event: IndirectPointerInputChange): Boolean =
@@ -2224,15 +2159,6 @@ internal fun DelegatingNode.hasInterestedParent(event: PointerInputChange): Bool
         !hasInterestedParent
     }
     return hasInterestedParent
-}
-
-internal fun TraversableNode.hasScrollableContainer(): Boolean {
-    var hasScrollable = false
-    traverseAncestors(ScrollableContainerNode.TraverseKey) { node ->
-        hasScrollable = hasScrollable || (node as ScrollableContainerNode).enabled
-        !hasScrollable
-    }
-    return hasScrollable
 }
 
 private fun unsupportedIndicationExceptionMessage(indication: Indication): String {
