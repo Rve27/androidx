@@ -317,6 +317,7 @@ package androidx.xr.arcore.runtime {
     property public abstract androidx.xr.runtime.Config config;
     property public abstract androidx.xr.runtime.internal.LifecycleManager lifecycleManager;
     property public abstract androidx.xr.arcore.runtime.PerceptionManager perceptionManager;
+    property public default Long? sessionPointer;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Plane extends androidx.xr.arcore.runtime.Anchorable {

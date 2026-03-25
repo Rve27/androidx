@@ -147,6 +147,7 @@ package androidx.xr.arcore.openxr {
     method public void configure(androidx.xr.runtime.Config config);
     method public void create();
     method @InaccessibleFromKotlin public androidx.xr.runtime.Config getConfig();
+    method @InaccessibleFromKotlin public long getInstancePointer();
     method public void pause();
     method public void resume();
     method public void stop();
