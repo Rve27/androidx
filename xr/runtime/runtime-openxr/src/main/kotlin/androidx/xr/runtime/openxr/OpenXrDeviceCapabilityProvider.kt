@@ -19,9 +19,17 @@ package androidx.xr.runtime.openxr
 import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.xr.runtime.interfaces.DisplayBlendMode
 import androidx.xr.runtime.interfaces.XrDeviceCapabilityProvider
 
 internal class OpenXrDeviceCapabilityProvider(override val context: Context) :
     XrDeviceCapabilityProvider {
     override val lifecycle: Lifecycle = ProcessLifecycleOwner.get().lifecycle
+
+    override fun getPreferredDisplayBlendMode(): DisplayBlendMode {
+        return nativeGetPreferredBlendMode(OpenXrInstanceManager.nativePointer)
+            ?: throw IllegalStateException("Failed to get preferred blend mode.")
+    }
+
+    private external fun nativeGetPreferredBlendMode(nativePointer: Long): DisplayBlendMode?
 }
