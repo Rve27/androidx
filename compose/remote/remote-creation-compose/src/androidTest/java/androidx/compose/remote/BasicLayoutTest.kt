@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
 
 package androidx.compose.remote
 
@@ -25,11 +24,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.remote.core.CoreDocument
+import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.creation.CreationDisplayInfo
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.action.HostAction
 import androidx.compose.remote.creation.compose.action.ValueChange
-import androidx.compose.remote.creation.compose.capture.rememberAsyncRemoteDocument
+import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.creation.compose.capture.rememberRemoteDocument
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
@@ -77,6 +76,7 @@ import androidx.compose.remote.player.view.RemoteComposePlayer
 import androidx.compose.remote.serialization.yaml.YAMLSerializer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -106,6 +106,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
+import java.io.ByteArrayInputStream
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Ignore
 import org.junit.Rule
@@ -131,11 +132,20 @@ class BasicLayoutTest {
 
     @Composable
     fun rememberAsyncRemoteDocumentFixedDensity(
-        content: @Composable (MutableState<Boolean>) -> Unit
+        content: @Composable () -> Unit
     ): MutableState<CoreDocument?> {
-        return rememberAsyncRemoteDocument(creationDisplayInfo = creationDisplayInfo) {
-            content(it)
+        val result = remember { mutableStateOf<CoreDocument?>(null) }
+        val context = LocalContext.current
+        LaunchedEffect(Unit) {
+            val captured = captureSingleRemoteDocument(context, creationDisplayInfo) { content() }
+            result.value =
+                CoreDocument().apply {
+                    this.initFromBuffer(
+                        RemoteComposeBuffer.fromInputStream(ByteArrayInputStream(captured.bytes))
+                    )
+                }
         }
+        return result
     }
 
     @Composable
@@ -308,13 +318,10 @@ class BasicLayoutTest {
         contentPaint.assertTextMatches(drawResult)
     }
 
-    fun testAsyncLayout(
-        result: String,
-        content: @Composable @RemoteComposable (MutableState<Boolean>) -> Unit,
-    ) {
+    fun testAsyncLayout(result: String, content: @Composable @RemoteComposable () -> Unit) {
         composeTestRule.setContent {
             WithFixedDensity {
-                val doc = rememberAsyncRemoteDocumentFixedDensity { content(it) }
+                val doc = rememberAsyncRemoteDocumentFixedDensity { content() }
                 Column {
                     var documentWidth by remember { mutableStateOf(260) }
                     var documentHeight by remember { mutableStateOf(300) }

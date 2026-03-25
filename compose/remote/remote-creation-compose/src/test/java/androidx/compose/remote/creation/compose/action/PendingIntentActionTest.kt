@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalRemoteCreationComposeApi::class)
-
 package androidx.compose.remote.creation.compose.action
 
 import android.app.PendingIntent
 import android.content.Intent
 import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.actions.HostAction
-import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.action.PendingIntentAction.Companion.ACTION_NAME
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.WriterEvents

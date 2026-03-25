@@ -29,10 +29,10 @@ import androidx.compose.remote.creation.compose.layout.RemoteContentDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteSpaced
 import androidx.compose.remote.creation.compose.layout.encode
-import androidx.compose.remote.creation.compose.layout.find
 import androidx.compose.remote.creation.compose.layout.toImageScalingInt
 import androidx.compose.remote.creation.compose.modifier.DrawWithContentModifier
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.modifier.find
 import androidx.compose.remote.creation.compose.modifier.toRecordingModifier
 import androidx.compose.remote.creation.compose.state.RemoteBitmap
 import androidx.compose.remote.creation.compose.state.RemoteColor
