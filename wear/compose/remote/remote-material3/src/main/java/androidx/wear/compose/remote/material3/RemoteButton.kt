@@ -378,7 +378,8 @@ public fun RemoteCompactButton(
                 .semantics(mergeDescendants = true) { role = Role.Button }
                 .compactButtonModifier()
                 .padding(tapPadding)
-                .clickable(onClick, enabled = enabled.constantValueOrNull ?: false)
+                .clickable(onClick, enabled = enabled.constantValueOrNull ?: false),
+        contentAlignment = RemoteAlignment.Center,
     ) {
         if (label != null) {
             RemoteButtonImpl(
@@ -400,7 +401,7 @@ public fun RemoteCompactButton(
                         textStyle = RemoteMaterialTheme.typography.labelSmall,
                         textConfiguration =
                             TextConfiguration(
-                                textAlign = if (icon != null) TextAlign.Start else TextAlign.Center,
+                                textAlign = TextAlign.Start,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 3,
                             ),
