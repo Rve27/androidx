@@ -76,10 +76,10 @@ public fun TitleChip(
     content: @Composable RowScope.() -> Unit,
 ) {
     val colors = GlimmerTheme.colors
-    val iconSize = GlimmerTheme.iconSizes.medium
-    val horizontalInnerContentPadding = GlimmerTheme.componentSpacingValues.small
+    val iconSize = GlimmerTheme.iconSizes.small
+    val horizontalInnerContentPadding = GlimmerTheme.componentSpacingValues.extraSmall
 
-    CompositionLocalProvider(LocalTextStyle provides GlimmerTheme.typography.titleSmall) {
+    CompositionLocalProvider(LocalTextStyle provides GlimmerTheme.typography.caption) {
         Row(
             modifier
                 .surface(
@@ -112,7 +112,7 @@ public fun TitleChip(
 public object TitleChipDefaults {
     /** Default content padding for a [TitleChip]. */
     public val contentPadding: PaddingValues
-        @Composable get() = PaddingValues(GlimmerTheme.componentSpacingValues.small)
+        @Composable get() = PaddingValues(GlimmerTheme.componentSpacingValues.extraSmall)
 
     /**
      * Default spacing between the bottom of a [TitleChip] and content associated with this title
@@ -126,7 +126,7 @@ public object TitleChipDefaults {
 }
 
 /** Default minimum height for a [TitleChip] */
-private val MinimumHeight = 56.dp
+private val MinimumHeight = 44.dp
 
 /** Default maximum width for a [TitleChip] */
 private val MaximumWidth = 352.dp
