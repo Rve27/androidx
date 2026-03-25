@@ -4,6 +4,9 @@
 -if class androidx.xr.arcore.Anchor
 -keep class androidx.xr.arcore.openxr.AnchorStateKt { *; }
 
+-if class androidx.xr.arcore.ArDevice
+-keep class androidx.xr.arcore.openxr.DeviceState { *; }
+
 -if class androidx.xr.arcore.AugmentedObject
 -keep class androidx.xr.arcore.openxr.AugmentedObjectState { *; }
 
