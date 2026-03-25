@@ -16,5 +16,6 @@
 
 package androidx.xr.arcore
 
+/** A semantic description of a [Plane]. */
 @Suppress("DEPRECATION")
 public typealias PlaneLabel = Plane.Label
