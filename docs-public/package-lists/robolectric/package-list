@@ -1,3 +1,4 @@
+android.webkit
 org.robolectric
 org.robolectric.android
 org.robolectric.android.controller
@@ -39,3 +40,4 @@ org.robolectric.shadows.util
 org.robolectric.util
 org.robolectric.util.inject
 org.robolectric.util.reflector
+org.robolectric.versioning
