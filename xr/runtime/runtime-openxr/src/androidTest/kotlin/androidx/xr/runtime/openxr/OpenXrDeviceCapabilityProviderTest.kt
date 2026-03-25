@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SdkSuppress
+import androidx.xr.runtime.interfaces.DisplayBlendMode
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.Test
 import org.junit.Before
@@ -42,5 +43,11 @@ class OpenXrDeviceCapabilityProviderTest {
     @Test
     fun getLifecycle_returnsApplicationLifecycle() {
         assertThat(underTest.lifecycle).isEqualTo(ProcessLifecycleOwner.get().lifecycle)
+    }
+
+    @Test
+    fun getPreferredDisplayBlendMode_returnBlendMode() {
+        // DisplayBlendMode value comes from third_party/jetpack_xr_natives/common/openxr_stub.cc.
+        assertThat(underTest.getPreferredDisplayBlendMode()).isEqualTo(DisplayBlendMode.ADDITIVE)
     }
 }

@@ -32,7 +32,6 @@ import org.robolectric.android.controller.ActivityController
 @Suppress("deprecation")
 class XrDeviceTest {
 
-    private lateinit var session: Session
     private lateinit var activityController: ActivityController<ComponentActivity>
     private lateinit var activity: ComponentActivity
     private lateinit var testDispatcher: TestDispatcher
@@ -47,19 +46,6 @@ class XrDeviceTest {
         StubPerceptionRuntime.TestPermissions.forEach { permission ->
             shadowApplication.grantPermissions(permission)
         }
-    }
-
-    @Test
-    fun getPreferredDisplayBlendMode_returnsGivenDisplayBlendMode() {
-        activityController.create()
-        session = createSession()
-        session.runtimes
-            .filterIsInstance<StubPerceptionRuntime>()
-            .single()
-            .xrDevicePreferredDisplayBlendMode = DisplayBlendMode.ADDITIVE
-
-        assertThat(XrDevice.getCurrentDevice(session).getPreferredDisplayBlendMode())
-            .isEqualTo(DisplayBlendMode.ADDITIVE)
     }
 
     @OptIn(ExperimentalXrDeviceLifecycleApi::class)
