@@ -1320,6 +1320,42 @@ public class CoreDocument implements Serializable {
     }
 
     /**
+     * Passing a long click event to the document.
+     *
+     * @return true if the event was handled
+     */
+    public boolean onLongPress(@NonNull RemoteContext context, float x, float y) {
+        if (context.isBasicDebug()) {
+            System.out.println("[RC] LongPress at " + x + ", " + y);
+        }
+        boolean handled = false;
+        if (mRootLayoutComponent != null) {
+            if (mRootLayoutComponent.onLongPress(context, this, x, y)) {
+                handled = true;
+            }
+        }
+        return handled;
+    }
+
+    /**
+     * Passing a double click event to the document.
+     *
+     * @return true if the event was handled
+     */
+    public boolean onDoubleClick(@NonNull RemoteContext context, float x, float y) {
+        if (context.isBasicDebug()) {
+            System.out.println("[RC] DoubleClick at " + x + ", " + y);
+        }
+        boolean handled = false;
+        if (mRootLayoutComponent != null) {
+            if (mRootLayoutComponent.onDoubleClick(context, this, x, y)) {
+                handled = true;
+            }
+        }
+        return handled;
+    }
+
+    /**
      * Programmatically trigger the click response for the given id
      *
      * @param context  the context

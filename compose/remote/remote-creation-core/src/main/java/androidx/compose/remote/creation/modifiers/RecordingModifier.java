@@ -17,6 +17,7 @@ package androidx.compose.remote.creation.modifiers;
 
 import androidx.annotation.RestrictTo;
 import androidx.compose.remote.core.RemoteComposeBuffer;
+import androidx.compose.remote.core.operations.layout.MultiClickModifier;
 import androidx.compose.remote.core.operations.layout.modifiers.DimensionModifierOperation;
 import androidx.compose.remote.creation.Rc;
 import androidx.compose.remote.creation.RemoteComposeWriter;
@@ -659,6 +660,30 @@ public class RecordingModifier {
      */
     public @NonNull RecordingModifier onClick(Action @NonNull ... actions) {
         mList.add(new ClickActionModifier(Arrays.asList(actions)));
+        return this;
+    }
+
+    /**
+     * Adds a long click modifier
+     *
+     * @param actions list of actions to execute on long click
+     * @return
+     */
+    public @NonNull RecordingModifier onLongClick(Action @NonNull ... actions) {
+        mList.add(new ClickActionModifier(Arrays.asList(actions),
+                MultiClickModifier.CLICK_TYPE_LONG));
+        return this;
+    }
+
+    /**
+     * Adds a double click modifier
+     *
+     * @param actions list of actions to execute on double click
+     * @return
+     */
+    public @NonNull RecordingModifier onDoubleClick(Action @NonNull ... actions) {
+        mList.add(new ClickActionModifier(Arrays.asList(actions),
+                MultiClickModifier.CLICK_TYPE_DOUBLE));
         return this;
     }
 

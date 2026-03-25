@@ -112,6 +112,7 @@ import androidx.compose.remote.core.operations.layout.ImpulseOperation;
 import androidx.compose.remote.core.operations.layout.ImpulseProcess;
 import androidx.compose.remote.core.operations.layout.LayoutComponentContent;
 import androidx.compose.remote.core.operations.layout.LoopOperation;
+import androidx.compose.remote.core.operations.layout.MultiClickModifier;
 import androidx.compose.remote.core.operations.layout.RootLayoutComponent;
 import androidx.compose.remote.core.operations.layout.TouchCancelModifierOperation;
 import androidx.compose.remote.core.operations.layout.TouchDownModifierOperation;
@@ -2863,6 +2864,14 @@ public class RemoteComposeBuffer {
 
     /**
      * Add a click modifier operation
+     * @param clickType type of click (0=single, 1=long, 2=double)
+     */
+    public void addClickModifierOperation(int clickType) {
+        MultiClickModifier.apply(mBuffer, clickType);
+    }
+
+    /**
+     * Add a click modifier operation (single click)
      */
     public void addClickModifierOperation() {
         ClickModifierOperation.apply(mBuffer);
