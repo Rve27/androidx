@@ -4110,9 +4110,10 @@ package androidx.compose.ui.platform {
     method @BytecodeOnly public static androidx.compose.ui.platform.ComposeViewContext! copy$default(androidx.compose.ui.platform.ComposeViewContext!, android.view.View!, androidx.compose.runtime.CompositionContext!, androidx.lifecycle.LifecycleOwner!, androidx.savedstate.SavedStateRegistryOwner!, androidx.lifecycle.ViewModelStoreOwner!, int, Object!);
   }
 
-  @SuppressCompatibility public final class ComposeView_androidKt {
+  public final class ComposeView_androidKt {
     method @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public static void disableWindowInsetsRulers(androidx.compose.ui.platform.ComposeView.Companion);
     method @SuppressCompatibility @androidx.compose.ui.platform.ExperimentalComposeViewContextApi public static androidx.compose.ui.platform.ComposeViewContext? findViewTreeComposeViewContext(android.view.View);
+    method public static void setAutofillDebugEnabled(androidx.compose.ui.platform.ComposeView.Companion, boolean enabled);
   }
 
   public final class CompositionLocalsKt {
