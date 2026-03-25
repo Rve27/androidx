@@ -28,6 +28,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.layout.RemoteContentDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteDrawScope
 import androidx.compose.remote.creation.compose.layout.RemoteSpaced
+import androidx.compose.remote.creation.compose.layout.RemoteSpacedAbsoluteHorizontalArrangement
 import androidx.compose.remote.creation.compose.layout.encode
 import androidx.compose.remote.creation.compose.layout.toImageScalingInt
 import androidx.compose.remote.creation.compose.modifier.DrawWithContentModifier
@@ -434,10 +435,12 @@ private fun shouldReverse(
     layoutDirection: LayoutDirection,
 ): Boolean =
     if (layoutDirection == LayoutDirection.Rtl) {
-        if (horizontalArrangement is HorizontalArrangement) {
-            !horizontalArrangement.isAbsolute()
-        } else {
-            true
+        when (horizontalArrangement) {
+            is HorizontalArrangement -> !horizontalArrangement.isAbsolute()
+
+            is RemoteSpacedAbsoluteHorizontalArrangement -> false
+
+            else -> true
         }
     } else {
         false
