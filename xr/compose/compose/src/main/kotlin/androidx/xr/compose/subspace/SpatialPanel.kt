@@ -898,7 +898,7 @@ internal fun buildSpatialPanelModifier(
         finalModifier =
             finalModifier.interactable(
                 enabled = interactionPolicy.isEnabled,
-                onInputEvent = interactionPolicy.onInputEvent,
+                onInputEvent = { interactionPolicy.onInputEvent(it) },
             )
     }
 

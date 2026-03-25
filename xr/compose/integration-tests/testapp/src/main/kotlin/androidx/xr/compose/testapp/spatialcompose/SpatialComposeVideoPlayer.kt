@@ -90,6 +90,7 @@ import androidx.xr.compose.subspace.draw.alpha
 import androidx.xr.compose.subspace.draw.spatialSmoothFeatheringEffect
 import androidx.xr.compose.subspace.layout.InteractionPolicy
 import androidx.xr.compose.subspace.layout.SpatialAlignment
+import androidx.xr.compose.subspace.layout.SpatialInputEvent
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.height
@@ -256,8 +257,10 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                         if (useDrmState.value) SpatialExternalSurfaceProtection.Protected
                         else SpatialExternalSurfaceProtection.None,
                     interactionPolicy =
-                        InteractionPolicy(
-                            onInputEvent = { event ->
+                        object : InteractionPolicy {
+                            override val isEnabled: Boolean = true
+
+                            override fun onInputEvent(event: SpatialInputEvent) {
                                 isVideoHovered =
                                     !(event.action == Action.HOVER_EXIT ||
                                         event.action == Action.CANCEL)
@@ -272,7 +275,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
 
                                 Log.i(TAG, "onInputEvent: $event")
                             }
-                        ),
+                        },
                 ) {
                     onSurfaceCreated {
                         val player = ExoPlayer.Builder(this@SpatialComposeVideoPlayer).build()
@@ -300,8 +303,10 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                         if (useDrmState.value) SpatialExternalSurfaceProtection.Protected
                         else SpatialExternalSurfaceProtection.None,
                     interactionPolicy =
-                        InteractionPolicy(
-                            onInputEvent = { event ->
+                        object : InteractionPolicy {
+                            override val isEnabled: Boolean = true
+
+                            override fun onInputEvent(event: SpatialInputEvent) {
                                 isVideoHovered =
                                     !(event.action == Action.HOVER_EXIT ||
                                         event.action == Action.CANCEL)
@@ -314,7 +319,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                                     }
                                 }
                             }
-                        ),
+                        },
                 ) {
                     onSurfaceCreated {
                         val player = ExoPlayer.Builder(this@SpatialComposeVideoPlayer).build()
