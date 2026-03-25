@@ -16,5 +16,13 @@
 
 package androidx.xr.arcore
 
+import androidx.xr.arcore.Geospatial.State.Companion.PAUSED
+import androidx.xr.arcore.Geospatial.State.Companion.RUNNING
+
+/**
+ * Describes the state of Geospatial. The State must be [RUNNING] to use Geospatial functionality.
+ * If Geospatial has entered an error state other than [PAUSED], Geospatial must be disabled and
+ * re-enabled to use Geospatial again.
+ */
 @Suppress("DEPRECATION")
 public typealias GeospatialState = Geospatial.State
