@@ -17,6 +17,7 @@
 package androidx.build.intellij
 
 import androidx.build.ProjectLayoutType
+import androidx.build.studio.StudioTask.Companion.validateEnvironment
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
@@ -26,6 +27,7 @@ import org.gradle.work.DisableCachingByDefault
 abstract class IntelliJTask : DefaultTask() {
     @TaskAction
     fun intellijw() {
+        validateEnvironment("IntelliJ")
         println("ran intellij task")
     }
 
@@ -33,12 +35,12 @@ abstract class IntelliJTask : DefaultTask() {
         private const val INTELLIJ_TASK = "intellij"
 
         fun Project.registerIntelliJTask() {
-            val studioTask =
+            val intellijTask =
                 when (ProjectLayoutType.from(this)) {
                     ProjectLayoutType.ANDROIDX -> RootIntelliJTask::class.java
                     ProjectLayoutType.PLAYGROUND -> return
                 }
-            tasks.register(INTELLIJ_TASK, studioTask)
+            tasks.register(INTELLIJ_TASK, intellijTask)
         }
     }
 }
