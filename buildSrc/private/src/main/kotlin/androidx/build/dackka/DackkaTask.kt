@@ -326,7 +326,9 @@ constructor(private val workerExecutor: WorkerExecutor, private val objects: Obj
      * contains the list of packages documented at that site.
      */
     private fun loadPackageLists(packageLists: File): List<DokkaInputModels.GlobalDocsLink> {
-        return packageLists.listFiles().map { dir ->
+        return packageLists.listFiles().mapNotNull { dir ->
+            // Skip non-directory files like the README.
+            if (!dir.isDirectory) return@mapNotNull null
             val packageList = File(dir, "package-list")
             val urlFile = File(dir, "url")
             DokkaInputModels.GlobalDocsLink(
