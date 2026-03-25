@@ -743,7 +743,7 @@ public class CoreDocument implements Serializable {
      * @param type the type of haptic pre-defined effect
      */
     public void haptic(int type) {
-        if (mHapticEngine != null) {
+        if (mHapticEngine != null && Limits.ENABLE_HAPTIC_FEEDBACK) {
             mHapticEngine.haptic(type);
         }
     }
