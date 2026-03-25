@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
@@ -35,6 +36,28 @@ fun GoogleFontSample() {
                 googleFont = GoogleFont("Lobster Two"),
                 weight = FontWeight.W600,
                 style = FontStyle.Italic,
+            )
+        )
+
+    Text("Hello World", style = TextStyle(fontFamily = fontFamily))
+}
+
+@Sampled
+@Composable
+fun GoogleFontWithVariationSettingsSample() {
+    val fontVariationSettings =
+        FontVariation.Settings(
+            FontVariation.grade(0),
+            FontVariation.weight(900),
+            FontVariation.slant(0f),
+            FontVariation.width(100f),
+        )
+
+    val fontFamily =
+        FontFamily(
+            Font(
+                googleFont = GoogleFont("Google Sans Flex"),
+                variationSettings = fontVariationSettings,
             )
         )
 
