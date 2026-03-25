@@ -273,8 +273,10 @@ package androidx.xr.runtime {
   }
 
   public final class NativeData {
+    method @InaccessibleFromKotlin public Long? getNativeFunctionTablePointer();
     method @InaccessibleFromKotlin public Long? getNativeInstancePointer();
     method @InaccessibleFromKotlin public long getNativeSessionPointer();
+    property public Long? nativeFunctionTablePointer;
     property public Long? nativeInstancePointer;
     property public long nativeSessionPointer;
   }
