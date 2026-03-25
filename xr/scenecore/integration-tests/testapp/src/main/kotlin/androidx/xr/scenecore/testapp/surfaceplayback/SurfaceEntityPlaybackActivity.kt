@@ -293,6 +293,7 @@ class SurfaceEntityPlaybackActivity : ComponentActivity() {
                 IntSize2d(640, 480),
                 "playerControls",
                 Pose.Identity,
+                parent = session.scene.activitySpace,
             )
 
         // TODO: b/413478924 - Use controlPanelEntity.view when the api is available.
@@ -598,6 +599,7 @@ class SurfaceEntityPlaybackActivity : ComponentActivity() {
                             stereoMode = stereoMode,
                             superSampling = superSamplingMode,
                             surfaceProtection = surfaceContentLevel,
+                            parent = session.scene.activitySpace,
                         )
 
                     surfaceEntity?.parent = movieParent!!

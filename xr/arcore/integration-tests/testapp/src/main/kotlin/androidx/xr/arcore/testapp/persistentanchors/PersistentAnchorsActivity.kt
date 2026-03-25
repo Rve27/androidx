@@ -208,8 +208,8 @@ class PersistentAnchorsActivity : ComponentActivity() {
                 IntSize2d(640, 640),
                 "movableEntity",
                 movableEntityOffset,
+                session.scene.activitySpace,
             )
-        movableEntity.parent = session.scene.activitySpace
         configureComposeView(composeView, this)
     }
 
@@ -440,8 +440,8 @@ class PersistentAnchorsActivity : ComponentActivity() {
                             IntSize2d(640, 640),
                             "anchorEntity ${anchor.hashCode()}",
                             Pose(),
+                            parent = anchorEntity,
                         )
-                    panelEntity.parent = anchorEntity
                     composeView.setContent { AnchorPanel(anchor, panelEntity) }
                     configureComposeView(composeView, activity)
                     cancel()

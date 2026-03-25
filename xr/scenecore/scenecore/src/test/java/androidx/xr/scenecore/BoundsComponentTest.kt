@@ -92,6 +92,7 @@ class BoundsComponentTest {
                 fakeRenderingRuntime,
                 session.scene.entityRegistry,
                 gltfModel,
+                parent = session.scene.activitySpace,
             )
     }
 
@@ -110,6 +111,7 @@ class BoundsComponentTest {
                 view = TextView(activity),
                 pixelDimensions = IntSize2d(720, 480),
                 name = "test",
+                parent = session.scene.activitySpace,
             )
         val anchorEntity =
             AnchorEntity.create(
@@ -119,7 +121,13 @@ class BoundsComponentTest {
                 PlaneSemanticType.ANY,
                 10.seconds.toJavaDuration(),
             )
-        val activityPanelEntity = ActivityPanelEntity.create(session, IntSize2d(640, 480), "test")
+        val activityPanelEntity =
+            ActivityPanelEntity.create(
+                session,
+                IntSize2d(640, 480),
+                "test",
+                parent = session.scene.activitySpace,
+            )
         val entity = Entity.create(session, "test")
         val surfaceEntity =
             SurfaceEntity.create(
@@ -127,6 +135,7 @@ class BoundsComponentTest {
                 Pose.Identity,
                 SurfaceEntity.Shape.Quad(FloatSize2d(1.0f, 1.0f)),
                 SurfaceEntity.StereoMode.SIDE_BY_SIDE,
+                parent = session.scene.activitySpace,
             )
         val boundsComponent = BoundsComponent.create(session)
 
