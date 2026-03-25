@@ -18,6 +18,9 @@ package androidx.compose.foundation.style
 
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.runtime.CompositionLocalAccessorScope
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -25,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -1374,4 +1378,46 @@ fun StyleScope.fillSize() {
 @ExperimentalFoundationStyleApi
 fun StyleScope.apply(style: Style) {
     with(style) { this@apply.applyStyle() }
+}
+
+/**
+ * Sets the padding for the component's content. Content padding is the space between the
+ * component's border (if any) and its content. The width/height of the component includes content
+ * padding.
+ *
+ * This property is *not* inherited
+ *
+ * @param paddingValues The [PaddingValues] to apply to the content.
+ * @see contentPadding
+ * @see androidx.compose.foundation.layout.padding
+ */
+@ExperimentalFoundationStyleApi
+fun StyleScope.contentPadding(paddingValues: PaddingValues) {
+    contentPadding(
+        start = paddingValues.calculateStartPadding(LocalLayoutDirection.currentValue),
+        top = paddingValues.calculateTopPadding(),
+        end = paddingValues.calculateEndPadding(LocalLayoutDirection.currentValue),
+        bottom = paddingValues.calculateBottomPadding(),
+    )
+}
+
+/**
+ * Sets the external padding for the component. The external padding is the space between the edge
+ * of the component and its border (if any). The width/height of the component includes external
+ * padding.
+ *
+ * This property is *not* inherited
+ *
+ * @param paddingValues The [PaddingValues] to apply to the external padding.
+ * @see externalPadding
+ * @see androidx.compose.foundation.layout.padding
+ */
+@ExperimentalFoundationStyleApi
+fun StyleScope.externalPadding(paddingValues: PaddingValues) {
+    externalPadding(
+        start = paddingValues.calculateStartPadding(LocalLayoutDirection.currentValue),
+        top = paddingValues.calculateTopPadding(),
+        end = paddingValues.calculateEndPadding(LocalLayoutDirection.currentValue),
+        bottom = paddingValues.calculateBottomPadding(),
+    )
 }
