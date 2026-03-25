@@ -106,17 +106,6 @@ object ComposeFoundationFlags {
     var isBringIntoViewRltBouncyBehaviorInPagerFixEnabled: Boolean = true
 
     /**
-     * If this flag is enabled, for lazy layout implementations that use
-     * [androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow], if the dataset changes, the
-     * window mechanism will understand that it needs to re-fill the window from scratch. This is
-     * because there is no good way for the window to know that a possible non-visible item has
-     * changed. For instance, if C and D are 2 items in the cache window and later they're removed
-     * from the dataset, the cache window won't know it until it tries to prefetch them.
-     */
-    // TODO: b/485967875
-    @field:Suppress("MutableBareField") @JvmField var isCacheWindowRefillFixEnabled = true
-
-    /**
      * With this flag enabled,
      * [androidx.compose.foundation.gestures.AnchoredDraggableState.targetValue] correctly returns
      * the [androidx.compose.foundation.gestures.AnchoredDraggableState.currentValue] when no
