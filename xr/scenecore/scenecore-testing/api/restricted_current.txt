@@ -264,10 +264,12 @@ package androidx.xr.scenecore.testing {
     ctor public FakeMeshEntity();
     ctor public FakeMeshEntity(optional androidx.xr.scenecore.runtime.MeshFeature? feature);
     ctor @BytecodeOnly public FakeMeshEntity(androidx.xr.scenecore.runtime.MeshFeature!, int, kotlin.jvm.internal.DefaultConstructorMarker!);
+    method public void setMaterial(androidx.xr.scenecore.runtime.MaterialResource material, int subsetIndex);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMeshFeature extends androidx.xr.scenecore.testing.FakeBaseRenderingFeature implements androidx.xr.scenecore.runtime.MeshFeature {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeMeshFeature extends androidx.xr.scenecore.testing.FakeBaseRenderingFeature implements androidx.xr.scenecore.runtime.MeshFeature {
     ctor public FakeMeshFeature(androidx.xr.runtime.NodeHolder<? extends java.lang.Object?> nodeHolder);
+    method public void setMaterial(androidx.xr.scenecore.runtime.MaterialResource material, int subsetIndex);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMovableComponent extends androidx.xr.scenecore.testing.FakeComponent implements androidx.xr.scenecore.runtime.MovableComponent {

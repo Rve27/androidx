@@ -1395,4 +1395,17 @@ public interface ImpressApi {
         materialHandles: LongArray,
         boneCount: Int,
     ): Int
+
+    /**
+     * Sets the material of a custom mesh node subset.
+     *
+     * @param impressNode The impress node to update.
+     * @param submeshIndex The zero-based index of the submesh.
+     * @param materialHandle The native handle of the material.
+     */
+    public fun setCustomMeshNodeMaterial(
+        impressNode: ImpressNode,
+        submeshIndex: Int,
+        materialHandle: Long,
+    )
 }

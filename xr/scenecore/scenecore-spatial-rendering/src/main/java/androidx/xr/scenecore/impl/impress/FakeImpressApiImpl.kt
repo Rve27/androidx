@@ -1179,6 +1179,14 @@ public class FakeImpressApiImpl : ImpressApi {
         return nextNodeId++
     }
 
+    override fun setCustomMeshNodeMaterial(
+        impressNode: ImpressNode,
+        submeshIndex: Int,
+        materialHandle: Long,
+    ) {
+        // Test stub.
+    }
+
     /** Returns the map of texture image tokens to their associated Texture object. */
     public fun getTextureImages(): MutableMap<Long, Texture> {
         return textureImages
