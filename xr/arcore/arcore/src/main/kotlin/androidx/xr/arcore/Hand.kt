@@ -87,9 +87,13 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) :
          *   returns [HandSide.UNKNOWN].
          */
         @JvmStatic
-        public fun getPrimaryHandSide(resolver: ContentResolver): HandSide =
-            HandSide.values()[
-                    System.getInt(resolver, PRIMARY_HAND_SETTING_NAME, HandSide.UNKNOWN.ordinal)]
+        public fun getPrimaryHandSide(resolver: ContentResolver): androidx.xr.arcore.HandSide =
+            androidx.xr.arcore.HandSide.entries[
+                    System.getInt(
+                        resolver,
+                        PRIMARY_HAND_SETTING_NAME,
+                        androidx.xr.arcore.HandSide.UNKNOWN.ordinal,
+                    )]
 
         private fun getPerceptionStateExtender(session: Session): PerceptionStateExtender {
             val perceptionStateExtender: PerceptionStateExtender? =
@@ -99,7 +103,11 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) :
         }
     }
 
-    /** The handedness of the user's hand. */
+    /** @deprecated Use [HandSide][androidx.xr.arcore.HandSide] instead. */
+    @Deprecated(
+        "Use androidx.xr.arcore.HandSide instead.",
+        ReplaceWith("androidx.xr.arcore.HandSide"),
+    )
     public enum class HandSide {
         LEFT,
         RIGHT,
