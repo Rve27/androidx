@@ -19,7 +19,7 @@ package androidx.xr.arcore.playservices
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Face
 import androidx.xr.arcore.runtime.Mesh
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import com.google.ar.core.AugmentedFace
 

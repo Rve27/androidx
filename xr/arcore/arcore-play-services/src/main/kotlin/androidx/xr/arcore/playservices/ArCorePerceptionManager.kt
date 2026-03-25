@@ -187,7 +187,7 @@ internal constructor(private val timeSource: ArCoreTimeSource) : PerceptionManag
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) override val userFace: Face? = null
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY)
     override val geospatial: ArCoreEarth = xrResources.geospatial
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)

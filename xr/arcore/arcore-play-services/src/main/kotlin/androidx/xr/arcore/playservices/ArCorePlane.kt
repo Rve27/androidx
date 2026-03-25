@@ -21,7 +21,7 @@ import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.runtime.AnchorNotTrackingException
 import androidx.xr.arcore.runtime.Plane
 import androidx.xr.arcore.runtime.Trackable
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector2

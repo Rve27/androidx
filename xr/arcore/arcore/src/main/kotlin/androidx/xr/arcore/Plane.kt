@@ -22,7 +22,6 @@ import androidx.xr.arcore.runtime.AnchorResourcesExhaustedException
 import androidx.xr.arcore.runtime.Plane as RuntimePlane
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector2
@@ -49,9 +48,9 @@ internal constructor(
         /**
          * Emits the planes that are currently being tracked in the [session].
          *
-         * Only [Plane]s that are [TrackingState.TRACKING] will be emitted in the [Collection].
-         * Instances of the same [Plane] will remain between subsequent emits to the [StateFlow] as
-         * long as they remain tracking.
+         * Only [Plane]s that are [androidx.xr.runtime.TrackingState.TRACKING] will be emitted in
+         * the [Collection]. Instances of the same [Plane] will remain between subsequent emits to
+         * the [StateFlow] as long as they remain tracking.
          *
          * @param session the [Session] to track planes from
          * @throws [IllegalStateException] if [Session.config] is set to
@@ -192,7 +191,7 @@ internal constructor(
     private val _state =
         MutableStateFlow(
             State(
-                runtimePlane.trackingState,
+                runtimePlane.trackingState.toTrackingState(),
                 labelFromRuntimeType(),
                 runtimePlane.centerPose,
                 runtimePlane.extents,
@@ -237,7 +236,7 @@ internal constructor(
     override suspend fun update() {
         _state.emit(
             State(
-                trackingState = runtimePlane.trackingState,
+                trackingState = runtimePlane.trackingState.toTrackingState(),
                 label = labelFromRuntimeType(),
                 centerPose = runtimePlane.centerPose,
                 extents = runtimePlane.extents,

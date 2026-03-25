@@ -95,7 +95,7 @@ public interface PerceptionManager {
     public val rightRenderViewpoint: RenderViewpoint?
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val monoRenderViewpoint: RenderViewpoint?
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val geospatial: Geospatial
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val geospatial: Geospatial
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val leftDepthMap: DepthMap?
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val rightDepthMap: DepthMap?
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val monoDepthMap: DepthMap?

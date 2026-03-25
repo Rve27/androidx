@@ -17,10 +17,10 @@ package androidx.xr.arcore.projected
 
 import android.app.Activity
 import androidx.xr.arcore.runtime.Geospatial
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.GeospatialMode
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3

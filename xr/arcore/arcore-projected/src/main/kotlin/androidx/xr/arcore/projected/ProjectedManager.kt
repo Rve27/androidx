@@ -25,10 +25,10 @@ import android.content.pm.ResolveInfo
 import android.os.IBinder
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Geospatial
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.DeviceTrackingMode
 import androidx.xr.runtime.GeospatialMode
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.math.Pose

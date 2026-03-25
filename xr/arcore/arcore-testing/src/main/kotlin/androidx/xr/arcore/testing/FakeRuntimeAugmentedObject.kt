@@ -18,8 +18,8 @@ package androidx.xr.arcore.testing
 
 import androidx.xr.arcore.runtime.Anchor as RuntimeAnchor
 import androidx.xr.arcore.runtime.AugmentedObject as RuntimeObject
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.AugmentedObjectCategory
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 

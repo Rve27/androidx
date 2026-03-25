@@ -21,7 +21,7 @@ import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.runtime.AnchorInvalidUuidException
 import androidx.xr.arcore.runtime.Anchorable
 import androidx.xr.arcore.runtime.HitResult
-import androidx.xr.runtime.TrackingState
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Ray
 import androidx.xr.runtime.math.Vector3

@@ -20,8 +20,8 @@ package androidx.xr.scenecore
 
 import androidx.xr.arcore.AnchorCreateSuccess
 import androidx.xr.arcore.Plane
+import androidx.xr.arcore.TrackingState
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3

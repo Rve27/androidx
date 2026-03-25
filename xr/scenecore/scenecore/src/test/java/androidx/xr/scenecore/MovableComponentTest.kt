@@ -20,6 +20,7 @@ import android.os.SystemClock
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.xr.arcore.runtime.Plane
+import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.arcore.testing.FakeLifecycleManager
 import androidx.xr.arcore.testing.FakePerceptionManager
 import androidx.xr.arcore.testing.FakePerceptionRuntime
@@ -28,7 +29,6 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
-import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d

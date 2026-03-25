@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime
+package androidx.xr.arcore.runtime
+
+import androidx.annotation.RestrictTo
 
 /** Describes the state of the tracking performed. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class TrackingState private constructor(private val value: Int) {
     public companion object {
         /** The trackable is currently tracked and its pose is current. */
@@ -31,13 +34,4 @@ public class TrackingState private constructor(private val value: Int) {
         /** Tracking is valid but the quality is degraded. */
         @JvmField public val TRACKING_DEGRADED: TrackingState = TrackingState(3)
     }
-
-    public override fun toString(): String =
-        when (this) {
-            TRACKING -> "TRACKING"
-            PAUSED -> "PAUSED"
-            STOPPED -> "STOPPED"
-            TRACKING_DEGRADED -> "TRACKING_DEGRADED"
-            else -> "UNKNOWN"
-        }
 }
