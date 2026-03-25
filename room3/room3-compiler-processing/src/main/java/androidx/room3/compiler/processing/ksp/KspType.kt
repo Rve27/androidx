@@ -24,7 +24,6 @@ import androidx.room3.compiler.processing.isArray
 import androidx.room3.compiler.processing.tryBox
 import androidx.room3.compiler.processing.tryUnbox
 import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeArgument
@@ -48,8 +47,6 @@ import kotlin.reflect.KClass
 internal abstract class KspType(
     env: KspProcessingEnv,
     val ksType: KSType,
-    // This is needed as a workaround until https://github.com/google/ksp/issues/1376 is fixed.
-    val originalKSAnnotations: Sequence<KSAnnotation>,
     /** Type resolver to convert KSType into its JVM representation. */
     val scope: KSTypeVarianceResolverScope?,
     /** The `typealias` that was resolved to get the [ksType], or null if none exists. */
@@ -75,7 +72,6 @@ internal abstract class KspType(
                         copy(
                             env = env,
                             ksType = ksType.replace(it.arguments),
-                            originalKSAnnotations = originalKSAnnotations,
                             scope = scope,
                             typeAlias = typeAlias,
                         )
@@ -250,7 +246,7 @@ internal abstract class KspType(
         }
     }
 
-    override val ksAnnotations = originalKSAnnotations
+    override val ksAnnotations = ksType.annotations
 
     override fun isNone(): Boolean {
         // even void is converted to Unit so we don't have none type in KSP
@@ -308,23 +304,19 @@ internal abstract class KspType(
     abstract fun copy(
         env: KspProcessingEnv,
         ksType: KSType,
-        originalKSAnnotations: Sequence<KSAnnotation>,
         scope: KSTypeVarianceResolverScope?,
         typeAlias: KSType?,
     ): KspType
 
-    fun copyWithScope(scope: KSTypeVarianceResolverScope) =
-        copy(env, ksType, originalKSAnnotations, scope, typeAlias)
+    fun copyWithScope(scope: KSTypeVarianceResolverScope) = copy(env, ksType, scope, typeAlias)
 
-    fun copyWithTypeAlias(typeAlias: KSType) =
-        copy(env, ksType, originalKSAnnotations, scope, typeAlias)
+    fun copyWithTypeAlias(typeAlias: KSType) = copy(env, ksType, scope, typeAlias)
 
     private fun copyWithNullability(nullability: XNullability): KspType =
         boxed()
             .copy(
                 env = env,
                 ksType = ksType.withNullability(nullability),
-                originalKSAnnotations = originalKSAnnotations,
                 scope = scope,
                 typeAlias = typeAlias,
             )
