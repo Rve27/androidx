@@ -225,16 +225,6 @@ internal constructor(
         }
     }
 
-    /** The type of surface on which to create an anchor. */
-    public class Surface private constructor(private val value: Int) {
-        public companion object {
-            /** The terrain surface. */
-            @JvmField public val TERRAIN: Surface = Surface(0)
-            /** The rooftop surface. */
-            @JvmField public val ROOFTOP: Surface = Surface(1)
-        }
-    }
-
     /**
      * Creates a new [Anchor] at the specified geospatial location and orientation relative to the
      * Earth.
@@ -243,7 +233,7 @@ internal constructor(
      * [WGS84 specification](https://en.wikipedia.org/wiki/World_Geodetic_System), and the altitude
      * value is defined by the elevation above the WGS84 ellipsoid in meters. To create an anchor
      * using an altitude relative to the Earth's terrain instead of altitude above the WGS84
-     * ellipsoid, use [Geospatial.createAnchorOnTerrain].
+     * ellipsoid, use [Geospatial.createAnchorOnSurface].
      *
      * The rotation quaternion provided is with respect to an east-up-south coordinate frame. An
      * identity rotation will have the anchor oriented such that X+ points to the east, Y+ points up
@@ -294,9 +284,10 @@ internal constructor(
      * whereas specifying a positive altitude will position the anchor above the surface, against
      * the direction of gravity.
      *
-     * [Surface.TERRAIN] refers to the Earth's terrain (or floor) and [Surface.ROOFTOP] refers to
-     * the top of a building at the given horizontal location. If there is no building at the given
-     * location, then the rooftop surface is interpreted to be the terrain instead.
+     * [GeospatialSurface.TERRAIN] refers to the Earth's terrain (or floor) and
+     * [GeospatialSurface.ROOFTOP] refers to the top of a building at the given horizontal location.
+     * If there is no building at the given location, then the rooftop surface is interpreted to be
+     * the terrain instead.
      *
      * You may resolve multiple anchors at a time, but a session cannot be tracking more than 100
      * surface anchors at time. Attempting to resolve more than 100 surface anchors will return an
@@ -324,7 +315,7 @@ internal constructor(
      * @param longitude the longitude of the anchor
      * @param altitudeAboveSurface the altitude of the anchor above the given surface
      * @param eastUpSouthQuaternion the rotation quaternion of the anchor
-     * @param surface the [Surface] on which to create the anchor
+     * @param surface the [GeospatialSurface] on which to create the anchor
      * @return an [AnchorCreateResult] with the result of the anchor creation
      * @throws IllegalArgumentException if the latitude is outside the allowable range
      */
@@ -333,7 +324,7 @@ internal constructor(
         longitude: Double,
         altitudeAboveSurface: Double,
         eastUpSouthQuaternion: Quaternion,
-        surface: Surface,
+        surface: GeospatialSurface,
     ): AnchorCreateResult {
         checkGeospatialModeEnabled()
         return try {
@@ -391,10 +382,10 @@ internal constructor(
         }
     }
 
-    private fun surfaceToRuntimeSurface(surface: Surface): RuntimeGeospatial.Surface {
+    private fun surfaceToRuntimeSurface(surface: GeospatialSurface): RuntimeGeospatial.Surface {
         return when (surface) {
-            Surface.TERRAIN -> RuntimeGeospatial.Surface.TERRAIN
-            Surface.ROOFTOP -> RuntimeGeospatial.Surface.ROOFTOP
+            GeospatialSurface.TERRAIN -> RuntimeGeospatial.Surface.TERRAIN
+            GeospatialSurface.ROOFTOP -> RuntimeGeospatial.Surface.ROOFTOP
             else -> throw IllegalStateException("Unknown Surface: $surface")
         }
     }

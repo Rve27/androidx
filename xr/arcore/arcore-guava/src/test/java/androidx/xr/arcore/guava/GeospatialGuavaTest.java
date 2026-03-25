@@ -36,6 +36,7 @@ import androidx.xr.arcore.AnchorCreateResult;
 import androidx.xr.arcore.AnchorCreateSuccess;
 import androidx.xr.arcore.AnchorCreateUnsupportedLocation;
 import androidx.xr.arcore.Geospatial;
+import androidx.xr.arcore.GeospatialSurface;
 import androidx.xr.arcore.SessionExtKt;
 import androidx.xr.arcore.XrResourcesManager;
 import androidx.xr.arcore.runtime.AnchorNotAuthorizedException;
@@ -106,7 +107,7 @@ public class GeospatialGuavaTest {
                                     LONGITUDE,
                                     ALTITUDE_ABOVE_SURFACE,
                                     EUS_QUATERNION,
-                                    Geospatial.Surface.TERRAIN);
+                                    GeospatialSurface.TERRAIN);
                     mTestDispatcher.getScheduler().advanceUntilIdle();
                     try {
                         AnchorCreateResult result = resultFuture.get();
@@ -138,7 +139,7 @@ public class GeospatialGuavaTest {
                                     LONGITUDE,
                                     ALTITUDE_ABOVE_SURFACE,
                                     EUS_QUATERNION,
-                                    Geospatial.Surface.TERRAIN);
+                                    GeospatialSurface.TERRAIN);
                     mTestDispatcher.getScheduler().advanceUntilIdle();
                     try {
                         AnchorCreateResult result = resultFuture.get();
@@ -165,7 +166,7 @@ public class GeospatialGuavaTest {
                                     LONGITUDE,
                                     ALTITUDE_ABOVE_SURFACE,
                                     EUS_QUATERNION,
-                                    Geospatial.Surface.TERRAIN);
+                                    GeospatialSurface.TERRAIN);
                     mTestDispatcher.getScheduler().advanceUntilIdle();
                     try {
                         AnchorCreateResult result = resultFuture.get();
@@ -192,7 +193,7 @@ public class GeospatialGuavaTest {
                                     LONGITUDE,
                                     ALTITUDE_ABOVE_SURFACE,
                                     EUS_QUATERNION,
-                                    Geospatial.Surface.TERRAIN);
+                                    GeospatialSurface.TERRAIN);
                     mTestDispatcher.getScheduler().advanceUntilIdle();
                     try {
                         AnchorCreateResult result = resultFuture.get();
@@ -219,7 +220,7 @@ public class GeospatialGuavaTest {
                                     LONGITUDE,
                                     ALTITUDE_ABOVE_SURFACE,
                                     EUS_QUATERNION,
-                                    Geospatial.Surface.TERRAIN);
+                                    GeospatialSurface.TERRAIN);
                     mTestDispatcher.getScheduler().advanceUntilIdle();
                     try {
                         AnchorCreateResult result = resultFuture.get();
@@ -249,7 +250,7 @@ public class GeospatialGuavaTest {
                                         LONGITUDE,
                                         ALTITUDE_ABOVE_SURFACE,
                                         EUS_QUATERNION,
-                                        Geospatial.Surface.TERRAIN);
+                                        GeospatialSurface.TERRAIN);
                         mTestDispatcher.getScheduler().advanceUntilIdle();
                         resultFuture.get();
                         fail("Invalid latitude provided.");
