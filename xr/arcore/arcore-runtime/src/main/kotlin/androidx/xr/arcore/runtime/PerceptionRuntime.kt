@@ -61,4 +61,7 @@ public interface PerceptionRuntime : JxrRuntime {
     override fun destroy() {
         lifecycleManager.stop()
     }
+
+    override val sessionPointer: Long?
+        get() = lifecycleManager.sessionPointer
 }

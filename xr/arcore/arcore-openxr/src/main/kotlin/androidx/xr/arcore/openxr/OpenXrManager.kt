@@ -74,7 +74,7 @@ internal constructor(
         private set
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override var instancePointer: Long = 0L
+    public var instancePointer: Long = 0L
         private set
 
     internal var instanceProcAddr: Long = 0L

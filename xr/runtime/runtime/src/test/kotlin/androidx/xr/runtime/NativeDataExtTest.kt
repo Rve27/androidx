@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore
+package androidx.xr.runtime
 
 import androidx.activity.ComponentActivity
 import androidx.kruth.assertThrows
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.xr.runtime.Session
-import androidx.xr.runtime.SessionCreateSuccess
 import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -272,6 +272,17 @@ package androidx.xr.runtime {
     property @Deprecated public androidx.xr.runtime.Log.Level WARN;
   }
 
+  public final class NativeData {
+    method @InaccessibleFromKotlin public Long? getNativeInstancePointer();
+    method @InaccessibleFromKotlin public long getNativeSessionPointer();
+    property public Long? nativeInstancePointer;
+    property public long nativeSessionPointer;
+  }
+
+  @SuppressCompatibility public final class NativeDataExt {
+    method @SuppressCompatibility @androidx.xr.runtime.UnstableNativeResourceApi public static androidx.xr.runtime.NativeData getNativeData(androidx.xr.runtime.Session);
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class NodeHolder<T> extends androidx.xr.runtime.TypeHolder<T> {
     ctor public NodeHolder(T node, Class<? extends java.lang.Object?> type);
   }
@@ -492,6 +503,9 @@ package androidx.xr.runtime {
     method public <T, U extends androidx.xr.runtime.TypeHolder<T>> U? safeCast(androidx.xr.runtime.TypeHolder<? extends java.lang.Object?> anyTypeHolder, Class<T> targetType);
   }
 
+  @SuppressCompatibility @kotlin.RequiresOptIn(message="Access to native pointers is discouraged and the data returned by this API may change in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface UnstableNativeResourceApi {
+  }
+
   public final class VpsAvailabilityAvailable extends androidx.xr.runtime.VpsAvailabilityResult {
     ctor public VpsAvailabilityAvailable();
   }
@@ -641,11 +655,13 @@ package androidx.xr.runtime.internal {
     method public default void configure(androidx.xr.runtime.Config config);
     method public default void destroy();
     method public default androidx.xr.runtime.DisplayBlendMode getPreferredDisplayBlendMode();
+    method @InaccessibleFromKotlin public default Long? getSessionPointer();
     method public default void initialize();
     method public default boolean isSupported(androidx.xr.runtime.Config.ConfigMode configMode);
     method public default void pause();
     method public default void resume();
     method public default suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.time.ComparableTimeMark?>);
+    property public default Long? sessionPointer;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class LibraryNotLinkedException extends androidx.xr.runtime.internal.LifecycleException {
@@ -664,14 +680,12 @@ package androidx.xr.runtime.internal {
     method public void configure(androidx.xr.runtime.Config config);
     method public void create();
     method @InaccessibleFromKotlin public androidx.xr.runtime.Config getConfig();
-    method @InaccessibleFromKotlin public default Long? getInstancePointer();
     method @InaccessibleFromKotlin public default Long? getSessionPointer();
     method public void pause();
     method public void resume();
     method public void stop();
     method public suspend Object? update(kotlin.coroutines.Continuation<? super kotlin.time.ComparableTimeMark>);
     property public abstract androidx.xr.runtime.Config config;
-    property public default Long? instancePointer;
     property public default Long? sessionPointer;
   }
 
