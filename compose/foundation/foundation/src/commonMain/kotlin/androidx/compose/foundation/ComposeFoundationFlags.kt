@@ -123,15 +123,6 @@ object ComposeFoundationFlags {
     var isTrackpadGestureHandlingEnabled: Boolean = true
 
     /**
-     * With this flag on, nested draggable components (e.g. Lists, Pagers, Grids) will handle
-     * conflicting gestures by deciding which has a higher priority.
-     */
-    // TODO: b/485966180
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isNestedDraggablesTouchConflictFixEnabled = true
-
-    /**
      * This flag controls performance optimizations related to
      * [androidx.compose.foundation.text.BasicTextField]'s internal min height calculations.
      */

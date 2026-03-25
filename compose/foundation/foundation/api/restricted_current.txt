@@ -154,7 +154,6 @@ package androidx.compose.foundation {
     property public boolean isBasicTextFieldMinSizeOptimizationEnabled;
     property public boolean isCacheWindowForPagerEnabled;
     property public boolean isInheritedTextStyleEnabled;
-    property public boolean isNestedDraggablesTouchConflictFixEnabled;
     property public boolean isNewContextMenuEnabled;
     property public boolean isPausableCompositionInPrefetchEnabled;
     property public boolean isReverseLayoutNestedScrollConnectionInPagerFixEnabled;
@@ -166,7 +165,6 @@ package androidx.compose.foundation {
     field public static boolean isBasicTextFieldMinSizeOptimizationEnabled;
     field public static boolean isCacheWindowForPagerEnabled;
     field public static boolean isInheritedTextStyleEnabled;
-    field public static boolean isNestedDraggablesTouchConflictFixEnabled;
     field public static boolean isNewContextMenuEnabled;
     field public static boolean isPausableCompositionInPrefetchEnabled;
     field public static boolean isReverseLayoutNestedScrollConnectionInPagerFixEnabled;
