@@ -43,6 +43,7 @@ import androidx.compose.remote.integration.view.demos.examples.DemoPaths;
 import androidx.compose.remote.integration.view.demos.examples.DemoTextTransformKt;
 import androidx.compose.remote.integration.view.demos.examples.DemoThemeKt;
 import androidx.compose.remote.integration.view.demos.examples.DemoTouchKt;
+import androidx.compose.remote.integration.view.demos.examples.DemotSystemVarKt;
 import androidx.compose.remote.integration.view.demos.examples.ExampleNumbersKt;
 import androidx.compose.remote.integration.view.demos.examples.ExampleTimerKt;
 import androidx.compose.remote.integration.view.demos.examples.FontCheckKt;
@@ -148,8 +149,8 @@ public abstract class DemosCreation {
     public static @NonNull ArrayList<RCDoc> getDemos(@NonNull Activity activity) {
         Bitmap bitmap = simpleBitmap(100);
         return new ArrayList<>(Arrays.asList(
+                getp("0/0/00DemotSystemVarKt", DemotSystemVarKt::sysVar),
                 getp("0/0/skip", DemoMemorySkipKt::skip1),
-
                 getp("8/0/DemoTheme", DemoThemeKt::theme1),
                 getpc("0/0/0Shade1", SimpleShaderKt::createShaderDoc1),
                 getpc("0/0/0Shade2", () -> SimpleShaderKt.createShaderDoc2(bitmap)),
