@@ -50,12 +50,6 @@ package androidx.compose.ui
  */
 @ExperimentalComposeUiApi
 object AndroidComposeUiFlags {
-    /** This moves Clipboard-related instances into the shared ComposeViewContext. */
-    @field:Suppress("MutableBareField")
-    @JvmField
-    // TODO: b/479895130
-    var isSharedClipboardManagerEnabled: Boolean = true
-
     /**
      * This flag enables support for walking up nested scrolling in response to
      * android.R.id.accessibilityActionShowOnScreen from Accessibility.
