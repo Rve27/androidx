@@ -1,33 +1,58 @@
-# androidx.xr.arcore.openxr.AnchorState is referenced by native code.
+-if class androidx.xr.arcore.Anchor
 -keep class androidx.xr.arcore.openxr.AnchorState { *; }
+
+-if class androidx.xr.arcore.Anchor
 -keep class androidx.xr.arcore.openxr.AnchorStateKt { *; }
-# androidx.xr.arcore.openxr.AugmentedObjectState is referenced by native code.
+
+-if class androidx.xr.arcore.AugmentedObject
 -keep class androidx.xr.arcore.openxr.AugmentedObjectState { *; }
-# androidx.xr.arcore.openxr.EyeData is referenced by native code.
+
+-if class androidx.xr.arcore.Eye
 -keep class androidx.xr.arcore.openxr.EyeData { *; }
+
+-if class androidx.xr.arcore.Eye
 -keep class androidx.xr.arcore.openxr.EyeDataKt { *; }
-# androidx.xr.arcore.openxr.EyeStatus is referenced by native code.
+
+-if class androidx.xr.arcore.Eye
 -keep class androidx.xr.arcore.openxr.EyeStatus { *; }
+
+-if class androidx.xr.arcore.Eye
 -keep class androidx.xr.arcore.openxr.EyeStatus$Companion { *; }
-# androidx.xr.arcore.openxr.EyeTrackingState is referenced by native code.
+
+-if class androidx.xr.arcore.Eye
 -keep class androidx.xr.arcore.openxr.EyeTrackingState { *; }
+
+-if class androidx.xr.arcore.Eye
 -keep class androidx.xr.arcore.openxr.EyeTrackingState$Companion { *; }
-# androidx.xr.arcore.openxr.EyesInfo is referenced by native code.
+
+-if class androidx.xr.arcore.Eye
 -keep class androidx.xr.arcore.openxr.EyesInfo { *; }
+
+-if class androidx.xr.arcore.Eye
 -keep class androidx.xr.arcore.openxr.EyesInfoKt { *; }
-# androidx.xr.arcore.openxr.FaceState is referenced by native code.
+
+-if class androidx.xr.arcore.Face
 -keep class androidx.xr.arcore.openxr.FaceState { *; }
+
+-if class androidx.xr.arcore.Face
 -keep class androidx.xr.arcore.openxr.FaceStateKt { *; }
-# androidx.xr.arcore.openxr.HitData is referenced by native code.
+
 -keep class androidx.xr.arcore.openxr.HitData { *; }
-# androidx.xr.arcore.openxr.OpenXrAnchor is referenced by native code.
+
+-if class androidx.xr.arcore.Anchor
 -keep class androidx.xr.arcore.openxr.OpenXrAnchorKt { *; }
-# androidx.xr.arcore.openxr.OpenXrPlane is referenced by native code.
+
+-if class androidx.xr.arcore.Plane
 -keep class androidx.xr.arcore.openxr.OpenXrPlaneKt { *; }
-# androidx.xr.arcore.openxr.OpenXrRuntime is referenced by native code.
--keep class androidx.xr.arcore.openxr.OpenXrRuntime { *; }
-# androidx.xr.arcore.openxr.PlaneState is referenced by native code.
+
+-if class androidx.xr.arcore.Plane
 -keep class androidx.xr.arcore.openxr.PlaneState { *; }
+
+-if class androidx.xr.arcore.Plane
 -keep class androidx.xr.arcore.openxr.PlaneStateKt { *; }
-# androidx.xr.arcore.openxr.ViewCameraState is referenced by native code.
+
+-if class androidx.xr.arcore.RenderViewpoint
+-keep class androidx.xr.arcore.openxr.OpenXrRenderViewpoint { *; }
+
+-if class androidx.xr.arcore.RenderViewpoint
 -keep class androidx.xr.arcore.openxr.ViewCameraState { *; }
