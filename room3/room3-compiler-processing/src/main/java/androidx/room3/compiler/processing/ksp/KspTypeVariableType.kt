@@ -18,7 +18,6 @@ package androidx.room3.compiler.processing.ksp
 
 import androidx.room3.compiler.processing.XType
 import androidx.room3.compiler.processing.XTypeVariableType
-import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.squareup.kotlinpoet.javapoet.JTypeName
@@ -35,9 +34,8 @@ internal class KspTypeVariableType(
     env: KspProcessingEnv,
     val ksTypeVariable: KSTypeParameter,
     ksType: KSType,
-    originalKSAnnotations: Sequence<KSAnnotation> = ksTypeVariable.annotations,
     scope: KSTypeVarianceResolverScope? = null,
-) : KspType(env, ksType, originalKSAnnotations, scope, null), XTypeVariableType {
+) : KspType(env, ksType, scope, null), XTypeVariableType {
 
     override fun resolveJTypeName(): JTypeName {
         return ksTypeVariable.asJTypeName(env.resolver)
@@ -56,17 +54,9 @@ internal class KspTypeVariableType(
     override fun copy(
         env: KspProcessingEnv,
         ksType: KSType,
-        originalKSAnnotations: Sequence<KSAnnotation>,
         scope: KSTypeVarianceResolverScope?,
         typeAlias: KSType?,
-    ) =
-        KspTypeVariableType(
-            env,
-            ksType.declaration as KSTypeParameter,
-            ksType,
-            originalKSAnnotations,
-            scope,
-        )
+    ) = KspTypeVariableType(env, ksType.declaration as KSTypeParameter, ksType, scope)
 
     override val equalityItems: Array<out Any?> by lazy { arrayOf(ksTypeVariable) }
 }

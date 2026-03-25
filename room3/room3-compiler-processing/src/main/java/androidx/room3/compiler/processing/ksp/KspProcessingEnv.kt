@@ -162,12 +162,6 @@ internal class KspProcessingEnv(
     fun wrap(ksType: KSType, allowPrimitives: Boolean): KspType =
         kspResolver.wrap(ksType, allowPrimitives)
 
-    fun wrap(
-        originalAnnotations: Sequence<KSAnnotation>,
-        ksType: KSType,
-        allowPrimitives: Boolean,
-    ): KspType = kspResolver.wrap(originalAnnotations, ksType, allowPrimitives)
-
     fun wrapDeclaration(declaration: KSDeclaration): KspElement =
         kspResolver.wrapDeclaration(declaration)
 
@@ -370,7 +364,6 @@ private class KspResolver(val env: KspProcessingEnv, val resolver: Resolver) {
      */
     fun wrap(originatingReference: KSTypeReference, ksType: KSType): KspType {
         return wrap(
-            originalAnnotations = originatingReference.annotations,
             ksType = ksType,
             allowPrimitives = !originatingReference.isTypeParameterReference(),
         )
@@ -386,19 +379,11 @@ private class KspResolver(val env: KspProcessingEnv, val resolver: Resolver) {
             val declaration = typeRef.resolve().declaration
             // inline classes can't be non-invariant.
             if (declaration.isValueClass()) {
-                return KspValueClassArgumentType(
-                    env = env,
-                    typeArg = ksTypeArgument,
-                    originalKSAnnotations = ksTypeArgument.annotations,
-                )
+                return KspValueClassArgumentType(env = env, typeArg = ksTypeArgument)
             }
 
             // fully resolved type argument, return regular type.
-            return wrap(
-                ksTypeArgument.annotations,
-                ksType = typeRef.resolve(),
-                allowPrimitives = false,
-            )
+            return wrap(ksType = typeRef.resolve(), allowPrimitives = false)
         }
         return KspTypeArgumentType.create(env, ksTypeArgument)
     }
@@ -411,18 +396,9 @@ private class KspResolver(val env: KspProcessingEnv, val resolver: Resolver) {
      * public wrap functions make that decision.
      */
     fun wrap(ksType: KSType, allowPrimitives: Boolean): KspType {
-        return wrap(ksType.annotations, ksType, allowPrimitives)
-    }
-
-    fun wrap(
-        originalAnnotations: Sequence<KSAnnotation>,
-        ksType: KSType,
-        allowPrimitives: Boolean,
-    ): KspType {
         val declaration = ksType.declaration
         if (declaration is KSTypeAlias) {
             return wrap(
-                    originalAnnotations = originalAnnotations,
                     ksType = ksType.replaceTypeAliases(resolver),
                     allowPrimitives = allowPrimitives && ksType.nullability == Nullability.NOT_NULL,
                 )
@@ -430,17 +406,16 @@ private class KspResolver(val env: KspProcessingEnv, val resolver: Resolver) {
         }
         val qName = ksType.declaration.qualifiedName?.asString()
         if (declaration is KSTypeParameter) {
-            return KspTypeVariableType(env, declaration, ksType, originalAnnotations)
+            return KspTypeVariableType(env, declaration, ksType)
         }
         if (allowPrimitives && qName != null && ksType.nullability == Nullability.NOT_NULL) {
             // check for primitives
             val javaPrimitive = KspTypeMapper.getPrimitiveJavaTypeName(qName)
             if (javaPrimitive != null) {
-                return KspPrimitiveType(env, ksType, originalAnnotations)
+                return KspPrimitiveType(env, ksType)
             }
         }
-        return arrayTypeFactory.createIfArray(ksType)
-            ?: DefaultKspType(env, ksType, originalAnnotations)
+        return arrayTypeFactory.createIfArray(ksType) ?: DefaultKspType(env, ksType)
     }
 
     fun wrapKSFile(file: KSFile): KspMemberContainer {
