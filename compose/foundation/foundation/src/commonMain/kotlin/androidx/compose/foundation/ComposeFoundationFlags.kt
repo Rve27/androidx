@@ -97,15 +97,6 @@ object ComposeFoundationFlags {
     @field:Suppress("MutableBareField") @JvmField var isCacheWindowForPagerEnabled = true
 
     /**
-     * When Pager was used with a keyboard in RTL the pages would bounce indefinitely due to the
-     * bring into view animation. If this flag is off the fix for that behavior will be disabled.
-     */
-    // TODO: b/485967682
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isBringIntoViewRltBouncyBehaviorInPagerFixEnabled: Boolean = true
-
-    /**
      * With this flag enabled,
      * [androidx.compose.foundation.gestures.AnchoredDraggableState.targetValue] correctly returns
      * the [androidx.compose.foundation.gestures.AnchoredDraggableState.currentValue] when no
