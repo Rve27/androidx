@@ -25,7 +25,7 @@ import androidx.xr.arcore.AnchorCreateIllegalState
 import androidx.xr.arcore.AnchorCreateResourcesExhausted
 import androidx.xr.arcore.AnchorCreateResult
 import androidx.xr.arcore.Geospatial
-import androidx.xr.arcore.Geospatial.Surface
+import androidx.xr.arcore.GeospatialSurface
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.VpsAvailabilityNotAuthorized
 import androidx.xr.runtime.VpsAvailabilityResult
@@ -41,9 +41,10 @@ import com.google.common.util.concurrent.ListenableFuture
  * Specifying an altitude of 0 will position the anchor directly on the surface whereas specifying a
  * positive altitude will position the anchor above the surface, against the direction of gravity.
  *
- * [Surface.TERRAIN] refers to the Earth's terrain (or floor) and [Surface.ROOFTOP] refers to the
- * top of a building at the given horizontal location. If there is no building at the given
- * location, then the rooftop surface is interpreted to be the terrain instead.
+ * [GeospatialSurface.TERRAIN] refers to the Earth's terrain (or floor) and
+ * [GeospatialSurface.ROOFTOP] refers to the top of a building at the given horizontal location. If
+ * there is no building at the given location, then the rooftop surface is interpreted to be the
+ * terrain instead.
  *
  * You may resolve multiple anchors at a time, but a session cannot be tracking more than 100
  * surface anchors at time. Attempting to resolve more than 100 surface anchors will return an
@@ -73,7 +74,7 @@ import com.google.common.util.concurrent.ListenableFuture
  * @param longitude the longitude of the anchor
  * @param altitudeAboveSurface the altitude of the anchor above the given surface
  * @param eastUpSouthQuaternion the rotation [Quaternion] of the anchor
- * @param surface the [Surface] the anchor is attached to
+ * @param surface the [GeospatialSurface] the anchor is attached to
  * @return a [ListenableFuture] that will complete with the [AnchorCreateResult]
  * @throws IllegalArgumentException if the latitude is outside the allowable range
  */
@@ -84,7 +85,7 @@ public fun Geospatial.createAnchorOnSurfaceAsync(
     longitude: Double,
     altitudeAboveSurface: Double,
     eastUpSouthQuaternion: Quaternion,
-    surface: Surface,
+    surface: GeospatialSurface,
 ): ListenableFuture<AnchorCreateResult> =
     SuspendToFutureAdapter.launchFuture(
         context = session.coroutineScope.coroutineContext,
