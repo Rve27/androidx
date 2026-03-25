@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -935,6 +936,18 @@ class RectListIntegrationTest {
         rule.runOnIdle { shouldPlace = false }
 
         assertThat(rule.onNodeWithTag("foo").addedToRectList).isFalse()
+    }
+
+    @Test
+    @SmallTest
+    fun testRectListDuringAlignment() {
+        rule.setContent {
+            Row {
+                Row(Modifier.alignByBaseline()) {
+                    BasicText("text", Modifier.size(10.dp).alignByBaseline())
+                }
+            }
+        }
     }
 
     /**
