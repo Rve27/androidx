@@ -296,10 +296,8 @@ class RemoteRowTest {
                         yield(
                             "${alignment.propertyName()} ${arrangement.propertyName()}" to
                                 @RemoteComposable @Composable {
-                                    // TODO(b/447100988): replace size by fillMaxSize in all
-                                    // those RemoteRows
                                     RemoteRow(
-                                        modifier = RemoteModifier.size(DefaultContainerSize),
+                                        modifier = RemoteModifier.fillMaxSize(),
                                         horizontalArrangement = arrangement,
                                         verticalAlignment = alignment,
                                     ) {
@@ -356,9 +354,8 @@ class RemoteRowTest {
     @RemoteComposable
     @Composable
     private fun TestSpacedByRemoteDp() {
-        // TODO(b/447100988): replace size by fillMaxSize
         RemoteRow(
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalArrangement = spacedBy(5.rdp),
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {
@@ -381,8 +378,7 @@ class RemoteRowTest {
     @Composable
     private fun TestSpacedByRemoteFloat() {
         RemoteRow(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalArrangement = spacedBy(10f.rf),
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {
@@ -404,9 +400,8 @@ class RemoteRowTest {
     @RemoteComposable
     @Composable
     private fun TestSpacedByRemoteDp(alignment: RemoteAlignment.Horizontal) {
-        // TODO(b/447100988): replace size by fillMaxSize
         RemoteRow(
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalArrangement = spacedBy(space = 5.rdp, alignment = alignment),
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {
@@ -429,8 +424,7 @@ class RemoteRowTest {
     @Composable
     private fun TestSpacedByRemoteFloat(alignment: RemoteAlignment.Horizontal) {
         RemoteRow(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalArrangement = spacedBy(space = 10f.rf, alignment = alignment),
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {
