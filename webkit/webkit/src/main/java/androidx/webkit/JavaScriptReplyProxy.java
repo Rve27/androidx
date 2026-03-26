@@ -45,6 +45,11 @@ public abstract class JavaScriptReplyProxy {
      * Post a String message to the injected JavaScript object which sent this {@link
      * JavaScriptReplyProxy}.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#WEB_MESSAGE_LISTENER}.
+     *
      * @param message The String data to send to the JavaScript context.
      * @throws UnsupportedOperationException if the
      *                                       {@link WebViewFeature#WEB_MESSAGE_LISTENER}
@@ -58,6 +63,11 @@ public abstract class JavaScriptReplyProxy {
      * Post a ArrayBuffer message to the injected JavaScript object which sent this
      * {@link JavaScriptReplyProxy}. Be aware that large byte buffers can lead to out-of-memory
      * crashes on low-end devices.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#WEB_MESSAGE_ARRAY_BUFFER}.
      *
      * @param arrayBuffer The ArrayBuffer to send to the JavaScript context. An empty ArrayBuffer
      *                    is supported.
@@ -73,9 +83,10 @@ public abstract class JavaScriptReplyProxy {
      * Executes JavaScript in the frame and world that sent this {@link JavaScriptReplyProxy}. The
      * result of the JavaScript execution will be passed to the {@link WebViewOutcomeReceiver}
      * callback.
-     *
-     * <p>This method should only be called if {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
      *
      * @param script   The JavaScript to execute.
      * @param receiver The {@link WebViewOutcomeReceiver} to receive the result of the JavaScript

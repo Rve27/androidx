@@ -56,8 +56,14 @@ public interface Profile {
     String DEFAULT_PROFILE_NAME = "Default";
 
     /**
+     * Returns the name of this Profile.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MULTI_PROFILE}.
+     *
      * @return the name of this Profile which was used to create the Profile from
-     * ProfileStore create methods.
+     *         ProfileStore create methods.
      * @throws UnsupportedOperationException if the {@link WebViewFeature#MULTI_PROFILE}
      *                                       feature is not supported.
      */
@@ -71,6 +77,10 @@ public interface Profile {
      * Returns the profile's cookie manager.
      * <p>
      * Can be called from any thread.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MULTI_PROFILE}.
      *
      * @throws IllegalStateException if the profile has been deleted by
      *                               {@link ProfileStore#deleteProfile(String)}}.
@@ -87,6 +97,10 @@ public interface Profile {
      * Returns the profile's web storage.
      * <p>
      * Can be called from any thread.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MULTI_PROFILE}.
      *
      * @throws IllegalStateException if the profile has been deleted by
      *                               {@link ProfileStore#deleteProfile(String)}}.
@@ -103,6 +117,10 @@ public interface Profile {
      *
      * Returns the {@link PrefetchCache} associated with this {@link Profile}.
      * Can be called from any thread.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#PREFETCH_CACHE_V1}.
      *
      * @throws IllegalStateException if the profile has been deleted by
      *                               {@link ProfileStore#deleteProfile(String)}}.
@@ -127,6 +145,10 @@ public interface Profile {
      * Returns the geolocation permissions of the profile.
      * <p>
      * Can be called from any thread.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MULTI_PROFILE}.
      *
      * @throws IllegalStateException if the profile has been deleted by
      *                               {@link ProfileStore#deleteProfile(String)}}.
@@ -143,6 +165,10 @@ public interface Profile {
      * Returns the service worker controller of the profile.
      * <p>
      * Can be called from any thread.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MULTI_PROFILE}.
      *
      * @throws IllegalStateException if the profile has been deleted by
      *                               {@link ProfileStore#deleteProfile(String)}}.
@@ -190,6 +216,10 @@ public interface Profile {
      * profile is created).
      * <p>
      * Only supports HTTPS scheme.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#PROFILE_URL_PREFETCH}.
      *
      * @param url                the url associated with the prefetch request.
      * @param cancellationSignal will make the best effort to cancel an
@@ -235,6 +265,10 @@ public interface Profile {
      * profile is created).
      * <p>
      * Only supports HTTPS scheme.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#PROFILE_URL_PREFETCH}.
      *
      * @param url                          the url associated with the prefetch request.
      * @param cancellationSignal           will make the best effort to cancel an
@@ -267,6 +301,9 @@ public interface Profile {
      * a prerender request. This applies specifically to WebViews that are
      * associated with this Profile.
      * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#SPECULATIVE_LOADING_CONFIG}.
      *
      * @param speculativeLoadingConfig the config to set for this profile session.
      * @deprecated use {@link Profile#setMaxPrerenders(Integer)},
@@ -291,6 +328,9 @@ public interface Profile {
      * <p>
      * These configurations will be applied to WebViews that are associated with this Profile.
      * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#SET_MAX_PRERENDERS_V1}.
      *
      * @param maxPrerenders the prerender value to update. Setting this value {@code null} will
      *                      use the default value of maximum prerenders.
@@ -328,6 +368,12 @@ public interface Profile {
      * renderer will be fully started by the time it returns.
      * <p>
      * This can be used to reduce perceived latency when a renderer is needed shortly after.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#WARM_UP_RENDERER_PROCESS}.
+     *
      * @throws UnsupportedOperationException if the {@link WebViewFeature#WARM_UP_RENDERER_PROCESS}
      *                                       feature is not supported.
      */
@@ -361,6 +407,10 @@ public interface Profile {
      * <p>
      * Calling this method again with the same {@code headerName} parameter will overwrite any
      * previously set mapping.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#ORIGIN_MATCHED_HEADERS}.
      *
      * @param headerName  A
      *                    <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.2">valid HTTP header name string</a>
@@ -382,6 +432,10 @@ public interface Profile {
      * Returns true if the profile has a value set for the given header name.
      *
      * <p>This method is case sensitive.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#ORIGIN_MATCHED_HEADERS}.
      *
      * @param headerName A
      *                   <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.2">valid HTTP header name string</a>
@@ -404,6 +458,10 @@ public interface Profile {
      * {@link #setOriginMatchedHeader(String, String, Set)}
      *
      * <p>This method is case sensitive.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#ORIGIN_MATCHED_HEADERS}.
      *
      * @param headerName Header to remove.
      * @see #setOriginMatchedHeader(String, String, Set)
@@ -418,6 +476,10 @@ public interface Profile {
 
     /**
      * Remove any currently set headers from being applied to network requests.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#ORIGIN_MATCHED_HEADERS}.
      *
      * @see #setOriginMatchedHeader(String, String, Set)
      * @throws UnsupportedOperationException if the {@link WebViewFeature#ORIGIN_MATCHED_HEADERS}
@@ -454,6 +516,10 @@ public interface Profile {
      * <a href="https://www.rfc-editor.org/rfc/rfc9110.html#name-field-names">RFC 9110</a>,
      * which states that "field names are case insensitive".
      * This API will use the casing of the first custom header encountered.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}.
      *
      * @param header The header to add.
      * @throws UnsupportedOperationException if the {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}
@@ -470,6 +536,10 @@ public interface Profile {
      * Returns true if the profile has a value set for the given header name.
      *
      * <p>This method is case insensitive.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}.
      *
      * @param headerName A
      *                   <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.2">valid HTTP header name string</a>
@@ -490,7 +560,10 @@ public interface Profile {
     /**
      * Returns all custom headers set with {@link #addCustomHeader(CustomHeader)} or
      * {@link #setOriginMatchedHeader(String, String, Set)}.
-     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}.
      * @throws UnsupportedOperationException if the {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}
      *                                       feature is not supported.
      */
@@ -508,6 +581,10 @@ public interface Profile {
      * {@link #setOriginMatchedHeader(String, String, Set)} which have the specified {@code name}.
      *
      * <p>This method is case insensitive.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}.
      *
      * @param name Name of headers to get. Case sensitive.
      * @throws UnsupportedOperationException if the {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}
@@ -528,6 +605,10 @@ public interface Profile {
      * and {@code value}.
      *
      * <p>This method is case insensitive for {@code name} but case-sensitive for {@code value}.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}.
      *
      * @param name  Name of headers to get. Case sensitive.
      * @param value Value of headers to get. Case sensitive.
@@ -553,6 +634,10 @@ public interface Profile {
      * {@link #setOriginMatchedHeader(String, String, Set)}.
      *
      * <p>This method is case insensitive.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}.
      *
      * @param headerName Header to remove.
      * @see #addCustomHeader(CustomHeader)
@@ -576,6 +661,10 @@ public interface Profile {
      * {@link #setOriginMatchedHeader(String, String, Set)}.
      *
      * <p>This method is case insensitive for {@code name} but case-sensitive for {@code value}.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}.
      *
      * @param headerName  Header name to remove.
      * @param headerValue Header value to remove.
@@ -593,6 +682,10 @@ public interface Profile {
 
     /**
      * Remove any currently set headers from being applied to network requests.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#CUSTOM_REQUEST_HEADERS}.
      *
      * @see #addCustomHeader(CustomHeader)
      * @see #setOriginMatchedHeader(String, String, Set)
@@ -637,6 +730,10 @@ public interface Profile {
      * <p>
      * See:
      * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/preconnect">HTML Preconnect Specification</a>
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#PRECONNECT}.
      *
      * @param url A url containing the origin to open a connection to.
      * @throws UnsupportedOperationException if the
@@ -681,6 +778,10 @@ public interface Profile {
      * This method can be called multiple times and the result is additive - QUIC hints are applied
      * to all of the origins provided to all calls. Providing the same origin multiple times has no
      * further effect.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#ADD_QUIC_HINTS_V1}.
      *
      * @param urls A set of urls representing origins that support the QUIC protocol.
      * @throws UnsupportedOperationException if the

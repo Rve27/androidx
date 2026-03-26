@@ -96,6 +96,10 @@ public class WebViewCompat {
     public interface VisualStateCallback {
         /**
          * Invoked when the visual state is ready to be drawn in the next {@link WebView#onDraw}.
+         * <p>
+         * This method should only be called if
+         * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+         * {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}.
          *
          * @param requestId The identifier passed to {@link #postVisualStateCallback} when this
          *                  callback was posted.
@@ -202,7 +206,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#VISUAL_STATE_CALLBACK}.
+     * returns {@code true} for {@link WebViewFeature#VISUAL_STATE_CALLBACK}.
      *
      * @param webview   The WebView to post to.
      * @param requestId An id that will be returned in the callback to allow callers to match
@@ -242,7 +246,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#START_SAFE_BROWSING}.
+     * returns {@code true} for {@link WebViewFeature#START_SAFE_BROWSING}.
      *
      * @param context  Application Context.
      * @param callback will be called on the UI thread with {@code true} if initialization is
@@ -292,7 +296,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SAFE_BROWSING_ALLOWLIST}.
+     * returns {@code true} for {@link WebViewFeature#SAFE_BROWSING_ALLOWLIST}.
      *
      * @param hosts    the set of hosts for which to skip Safe Browsing checks
      * @param callback will be called with {@code true} if hosts are successfully added to the
@@ -347,7 +351,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SAFE_BROWSING_WHITELIST}.
+     * returns {@code true} for {@link WebViewFeature#SAFE_BROWSING_WHITELIST}.
      *
      * @param hosts    the list of hosts
      * @param callback will be called with {@code true} if hosts are successfully added to the
@@ -374,7 +378,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SAFE_BROWSING_PRIVACY_POLICY_URL}.
+     * returns {@code true} for {@link WebViewFeature#SAFE_BROWSING_PRIVACY_POLICY_URL}.
      *
      * @return the url pointing to a privacy policy document which can be displayed to users.
      * @throws UnsupportedOperationException if the
@@ -505,7 +509,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#CREATE_WEB_MESSAGE_CHANNEL}.
+     * returns {@code true} for {@link WebViewFeature#CREATE_WEB_MESSAGE_CHANNEL}.
      *
      * @return an array of size two, containing the two message ports that form the message channel.
      * @throws UnsupportedOperationException if the
@@ -532,7 +536,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#POST_WEB_MESSAGE}.
+     * returns {@code true} for {@link WebViewFeature#POST_WEB_MESSAGE}.
      *
      * <p>
      * When posting a {@link WebMessageCompat} with type {@link WebMessageCompat#TYPE_ARRAY_BUFFER},
@@ -777,7 +781,7 @@ public class WebViewCompat {
      *
      * <p>
      * This method should only be called if {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_MESSAGE_LISTENER}.
+     * returns {@code true} for {@link WebViewFeature#WEB_MESSAGE_LISTENER}.
      *
      * @param webView            The {@link WebView} instance that we are interacting with.
      * @param jsObjectName       The name for the injected JavaScript object for this {@link
@@ -818,7 +822,7 @@ public class WebViewCompat {
      *
      * <p>
      * This method should only be called if {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_MESSAGE_LISTENER}.
+     * returns {@code true} for {@link WebViewFeature#WEB_MESSAGE_LISTENER}.
      *
      * @param webview      The WebView object to remove from.
      * @param jsObjectName The JavaScript object's name that was previously passed to {@link
@@ -865,7 +869,7 @@ public class WebViewCompat {
      * of the {@code allowedOriginRules} parameter.
      *
      * <p>This method should only be called if {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#DOCUMENT_START_SCRIPT}.
+     * returns {@code true} for {@link WebViewFeature#DOCUMENT_START_SCRIPT}.
      *
      * @param webview            The {@link WebView} instance that we are interacting with.
      * @param script             The JavaScript script to be executed.
@@ -904,7 +908,7 @@ public class WebViewCompat {
      * WebView with another WebView will throw an exception.
      *
      * <p>This method should only be called if {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
+     * returns {@code true} for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
      *
      * @param webview The WebView object to associate with the world.
      * @param name    The name of the execution world.
@@ -949,7 +953,7 @@ public class WebViewCompat {
      * of the {@code allowedOriginRules} parameter.
      *
      * <p>This method should only be called if {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
+     * returns {@code true} for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
      *
      * @param webview            The {@link WebView} instance that we are interacting with.
      * @param script             The JavaScript script to be executed.
@@ -1001,7 +1005,7 @@ public class WebViewCompat {
      * same {@code jsObjectName} to 2 or more worlds.
      *
      * <p>This method should only be called if {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
+     * returns {@code true} for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
      *
      * @param webView            The {@link WebView} instance that we are interacting with.
      * @param jsObjectName       The name of the JavaScript object to be injected.
@@ -1044,7 +1048,7 @@ public class WebViewCompat {
      * {@code jsObjectName} in the world, this will be a no-op.
      *
      * <p>This method should only be called if {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
+     * returns {@code true} for {@link WebViewFeature#JS_INJECTION_IN_FRAME_AND_WORLD}.
      *
      * @param webview      The {@link WebView} instance that we are interacting with.
      * @param world        The execution world from which to remove the listener.
@@ -1077,7 +1081,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#GET_WEB_VIEW_CLIENT}.
+     * returns {@code true} for {@link WebViewFeature#GET_WEB_VIEW_CLIENT}.
      *
      * @return the WebViewClient, or a default client if not yet set
      * @throws UnsupportedOperationException if the
@@ -1105,7 +1109,7 @@ public class WebViewCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#GET_WEB_CHROME_CLIENT}.
+     * returns {@code true} for {@link WebViewFeature#GET_WEB_CHROME_CLIENT}.
      *
      * @return the WebChromeClient, or {@code null} if not yet set
      * @throws UnsupportedOperationException if the
@@ -1142,7 +1146,7 @@ public class WebViewCompat {
      *
      * <p>This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#GET_WEB_VIEW_RENDERER}.
+     * returns {@code true} for {@link WebViewFeature#GET_WEB_VIEW_RENDERER}.
      *
      * @return the {@link WebViewRenderProcess} renderer handle associated
      * with this {@link WebView}, or {@code null} if
@@ -1182,7 +1186,7 @@ public class WebViewCompat {
      *
      * <p>This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}.
+     * returns {@code true} for {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}.
      *
      * @param webview                    the {@link WebView} on which to monitor responsiveness.
      * @param executor                   the {@link Executor} that will be used to execute
@@ -1231,7 +1235,7 @@ public class WebViewCompat {
      *
      * <p>This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}.
+     * returns {@code true} for {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}.
      *
      * @param webview                    the {@link WebView} on which to monitor responsiveness.
      * @param webViewRenderProcessClient the {@link WebViewRenderProcessClient} to set for
@@ -1263,7 +1267,7 @@ public class WebViewCompat {
      *
      * <p>This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}.
+     * returns {@code true} for {@link WebViewFeature#WEB_VIEW_RENDERER_CLIENT_BASIC_USAGE}.
      *
      * @return the {@link WebViewRenderProcessClient} object associated with this WebView, if
      * one has been set via
@@ -1329,8 +1333,12 @@ public class WebViewCompat {
      * variations metadata, such as requests to Google web properties. The returned string will be a
      * base64 encoded ClientVariations proto:
      * <a href="https://source.chromium.org/chromium/chromium/src/+/main:components/variations/proto/client_variations.proto">
-     * https://source.chromium.org/chromium/chromium/src/+/main:components/variations/proto
-     * /client_variations.proto</a>
+     * https://source.chromium.org/chromium/chromium/src/+/main:components/variations/proto/client_variations.proto</a>
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#GET_VARIATIONS_HEADER}.
      *
      * @return the variations header. The string may be empty if the header is not available.
      * @see WebView#loadUrl(String, Map)
@@ -1359,6 +1367,10 @@ public class WebViewCompat {
      * <li> This should be only called if WebView is to use a Profile other than the default.
      * <li> This method will create the profile if it doesn't exist.
      * </ul>
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MULTI_PROFILE}.
      *
      * @param webView     the WebView to modify.
      * @param profileName the name of the profile to use in the passed {@code webView}.
@@ -1393,6 +1405,10 @@ public class WebViewCompat {
      * Gets the profile object set on this WebView using
      * {@link WebViewCompat#setProfile(WebView, String)}, or the default profile if it has not
      * been changed.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MULTI_PROFILE}.
      *
      * @param webView the WebView to get the profile object associated with.
      * @return the profile object set to this WebView.
@@ -1417,6 +1433,11 @@ public class WebViewCompat {
     /**
      * Returns whether this WebView is muted.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MUTE_AUDIO}.
+     *
      * @param webView the WebView for which to check mute status.
      * @return true if the WebView is muted, false otherwise.
      * @throws UnsupportedOperationException if the
@@ -1438,6 +1459,11 @@ public class WebViewCompat {
 
     /**
      * Mute or un-mute this WebView.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MUTE_AUDIO}.
      *
      * @param webView the WebView for which to control muting.
      * @param mute    true to mute the WebView; false to un-mute the WebView.
@@ -1653,6 +1679,11 @@ public class WebViewCompat {
      * of multiplexed sockets (e.g. HTTP/2 and QUIC) will only be allowed if all requests have
      * the same socket tag. To minimize impact, you should not change the value of this tag often.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#DEFAULT_TRAFFICSTATS_TAGGING}.
+     *
      * @param tag the tag value used when accounting for socket traffic caused by the WebView
      *            library in your app. <em>Tags between {@code 0xFFFFFF00} and {@code 0xFFFFFFFF}
      *            are reserved and used internally by system services like
@@ -1729,6 +1760,11 @@ public class WebViewCompat {
      * The {@link CancellationSignal} will make the best effort to cancel an
      * in-flight prerender request; however cancellation it is not guaranteed.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#PRERENDER_WITH_URL}.
+     *
      * @param webView            the WebView for which we trigger the prerender request.
      * @param url                the url associated with the prerender request.
      * @param cancellationSignal used to trigger prerender cancellation.
@@ -1765,6 +1801,11 @@ public class WebViewCompat {
      * behavior, taking precedence over the default behavior or any {@code No-Vary-Search} header
      * sent by the server. See {@link SpeculativeLoadingParameters} for more details on how to
      * configure the matching algorithm.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#PRERENDER_WITH_URL}.
      *
      * @param webView            the WebView for which we trigger the prerender request.
      * @param url                the url associated with the prerender request.
@@ -1804,6 +1845,11 @@ public class WebViewCompat {
      * {@link WebView#saveState(Bundle)} and the returned state can be restored through
      * {@link WebView#restoreState(Bundle)}.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#SAVE_STATE}.
+     *
      * @param webView             the {@link WebView} whose state is to be saved.
      * @param outState            the {@link Bundle} to store the state in.
      * @param maxSizeBytes        the maximum size (in bytes) that the returned state can be. If the
@@ -1839,6 +1885,11 @@ public class WebViewCompat {
      * <p>A listener can only be added to a WebView once. Attempting to add the same listener to the
      * same WebView twice will result in an {@link IllegalStateException}.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#NAVIGATION_LISTENER}.
+     *
      * @param webView  The {@link WebView} to set the client for.
      * @param executor {@link Executor} where callbacks to the {@code listener} will be executed.
      * @param listener The {@link NavigationListener} to add.
@@ -1871,6 +1922,11 @@ public class WebViewCompat {
      * {@link Looper#getMainLooper()}. To specify the execution thread, use
      * {@link #addNavigationListener(WebView, Executor, NavigationListener)}.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#NAVIGATION_LISTENER}.
+     *
      * @param webView  The {@link WebView} to set the client for.
      * @param listener The {@link NavigationListener} to add.
      * @throws UnsupportedOperationException if the
@@ -1893,6 +1949,11 @@ public class WebViewCompat {
      *
      * <p>This method does nothing, if the {@code listener} has not previously been added with
      * {@link #addNavigationListener(WebView, Executor, NavigationListener)}.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#NAVIGATION_LISTENER}.
      *
      * @param webView  The {@link WebView} to set the client for.
      * @param listener The {@link NavigationListener} to remove.

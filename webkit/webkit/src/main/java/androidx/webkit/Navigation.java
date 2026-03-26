@@ -206,7 +206,7 @@ public final class Navigation {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#NAVIGATION_LISTENER}.
+     * returns {@code true} for {@link WebViewFeature#NAVIGATION_LISTENER}.
      *
      * @return The {@link WebResourceErrorCompat} object, or {@code null} if there is no
      * error for this navigation.

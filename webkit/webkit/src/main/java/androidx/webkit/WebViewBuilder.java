@@ -117,6 +117,11 @@ public final class WebViewBuilder {
      * <p>If the profile does not exist, it will be created when {@link WebViewBuilder#build} is
      * called, as per {@link ProfileStore#getOrCreateProfile(String)}.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#MULTI_PROFILE}.
+     *
      * @param profileName The name of the profile to use.
      * @throws UnsupportedOperationException if the
      *                                       {@link WebViewFeature#MULTI_PROFILE}
@@ -149,6 +154,10 @@ public final class WebViewBuilder {
 
     /**
      * Constructs a new WebView with all the properties defined.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#WEBVIEW_BUILDER_EXPERIMENTAL_V1}.
      *
      * @param context The Activity Context for the WebView.
      * @throws WebViewBuilderException if there was an issue with validation or constructing the
@@ -188,6 +197,10 @@ public final class WebViewBuilder {
      * <p>It is not permitted to call any other WebView APIs on the WebView before this. A WebView
      * may only have a builder configuration applied at most once. This API may not be used with
      * WebViews that were built with {@link WebViewBuilder#build(Context)}.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#WEBVIEW_BUILDER_EXPERIMENTAL_V2}.
      *
      * @param webview The WebView to apply the config to.
      * @throws WebViewBuilderException if there was an issue with validation or constructing the
