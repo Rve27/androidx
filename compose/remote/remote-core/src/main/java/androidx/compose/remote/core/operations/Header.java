@@ -137,6 +137,13 @@ public class Header extends Operation implements RemoteComposeOperation {
     /** Enable listener pattern for arrays in TextLookup */
     public static final short FEATURE_ARRAY_LISTENERS = 25;
 
+    /**
+     * Modify click behavior
+     * The default is support for single click, double-click and long press,
+     * setting FEATURE_CLICK_VERSION to 1 will only support single click.
+     */
+    public static final short FEATURE_CLICK_VERSION = 26;
+
     /** The object is an integer */
     private static final short DATA_TYPE_INT = 0;
 
@@ -165,7 +172,8 @@ public class Header extends Operation implements RemoteComposeOperation {
             FEATURE_TOUCH_VERSION,
             FEATURE_PRIORITY_FIX,
             FEATURE_LT_RESIZE,
-            FEATURE_ARRAY_LISTENERS
+            FEATURE_ARRAY_LISTENERS,
+            FEATURE_CLICK_VERSION,
     };
     private static final String[] KEY_NAMES = {
             "DOC_WIDTH",
@@ -183,7 +191,8 @@ public class Header extends Operation implements RemoteComposeOperation {
             "TOUCH_VERSION",
             "PRIORITY_FIX",
             "LT_RESIZE",
-            "ARRAY_LISTENERS"
+            "ARRAY_LISTENERS",
+            "CLICK_VERSION"
     };
 
     /**

@@ -4471,6 +4471,14 @@ public class RemoteComposeWriter {
 
     /**
      * Add a click modifier operation
+     * @param clickType type of click (0=single, 1=long, 2=double)
+     */
+    public void addClickModifierOperation(int clickType) {
+        mBuffer.addClickModifierOperation(clickType);
+    }
+
+    /**
+     * Add a click modifier operation
      */
     public void addClickModifierOperation() {
         mBuffer.addClickModifierOperation();
