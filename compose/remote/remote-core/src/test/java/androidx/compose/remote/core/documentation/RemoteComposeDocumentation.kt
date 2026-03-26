@@ -106,6 +106,7 @@ import androidx.compose.remote.core.operations.layout.ImpulseOperation
 import androidx.compose.remote.core.operations.layout.ImpulseProcess
 import androidx.compose.remote.core.operations.layout.LayoutComponentContent
 import androidx.compose.remote.core.operations.layout.LoopOperation
+import androidx.compose.remote.core.operations.layout.MultiClickModifier
 import androidx.compose.remote.core.operations.layout.RootLayoutComponent
 import androidx.compose.remote.core.operations.layout.TouchCancelModifierOperation
 import androidx.compose.remote.core.operations.layout.TouchDownModifierOperation
@@ -510,6 +511,7 @@ class RemoteComposeDocumentation(val title: String) : DocumentationBuilder {
         )
         operationsMap.put(Operations.CLICK_AREA, ClickArea::documentation)
         operationsMap.put(Operations.MODIFIER_CLICK, ClickModifierOperation::documentation)
+        operationsMap.put(Operations.MODIFIER_MULTI_CLICK, MultiClickModifier::documentation)
         operationsMap.put(Operations.MODIFIER_TOUCH_DOWN, TouchDownModifierOperation::documentation)
         operationsMap.put(Operations.MODIFIER_TOUCH_UP, TouchUpModifierOperation::documentation)
         operationsMap.put(
