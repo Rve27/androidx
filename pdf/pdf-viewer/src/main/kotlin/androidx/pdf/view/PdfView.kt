@@ -1386,9 +1386,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
          * scroll position which then will be restored in [onLayout].
          */
         if (newConfig?.orientation != lastOrientation) {
-            val contentCenterX = toContentX(viewportWidth.toFloat() / 2f)
+            val contentCenterX = toContentX(paddingLeft + viewportWidth.toFloat() / 2f)
             // Keep scroll at top if previously at top.
-            val contentCenterY = if (scrollY <= 0) 0F else toContentY(viewportHeight.toFloat() / 2f)
+            val contentCenterY =
+                if (scrollY <= 0) 0F else toContentY(paddingTop + viewportHeight.toFloat() / 2f)
             scrollPositionToRestore = PointF(contentCenterX, contentCenterY)
 
             lastOrientation = newConfig?.orientation ?: ORIENTATION_UNDEFINED
@@ -1538,8 +1539,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         val state = PdfViewSavedState(superState)
         state.zoom = zoom
         state.viewWidth = width
-        state.contentCenterX = toContentX(viewportWidth.toFloat() / 2f)
-        state.contentCenterY = toContentY(viewportHeight.toFloat() / 2f)
+        state.contentCenterX = toContentX(paddingLeft + viewportWidth.toFloat() / 2f)
+        state.contentCenterY = toContentY(paddingTop + viewportHeight.toFloat() / 2f)
         // Keep scroll at top if previously at top.
         if (scrollY <= 0) {
             state.contentCenterY = 0F
