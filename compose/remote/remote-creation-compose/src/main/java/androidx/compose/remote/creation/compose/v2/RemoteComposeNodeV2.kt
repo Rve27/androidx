@@ -17,8 +17,6 @@
 package androidx.compose.remote.creation.compose.v2
 
 import androidx.annotation.RestrictTo
-import androidx.compose.remote.core.Operations
-import androidx.compose.remote.core.operations.layout.managers.TextLayout
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.HorizontalArrangement
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
@@ -308,85 +306,51 @@ internal class RemoteTextNodeV2 : RemoteComposeNodeV2() {
     }
 
     override fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas) {
-        val useCoreTextComponent =
-            creationState.profile.supportedOperations.contains(Operations.CORE_TEXT)
+        val textIdValue = text.getIdForCreationState(creationState)
 
-        if (useCoreTextComponent) {
-            val textIdValue = text.getIdForCreationState(creationState)
+        val colorInt = color.constantValueOrNull?.toArgb() ?: Color.Black.toArgb()
+        val colorId =
+            if (!color.hasConstantValue) {
+                color.getIdForCreationState(creationState)
+            } else {
+                -1
+            }
 
-            val colorInt = color.constantValueOrNull?.toArgb() ?: Color.Black.toArgb()
-            val colorId =
-                if (!color.hasConstantValue) {
-                    color.getIdForCreationState(creationState)
-                } else {
-                    -1
-                }
+        val (fontAxisNames, fontAxisValues) = extractFontSettings(fontVariationSettings?.settings)
 
-            val (fontAxisNames, fontAxisValues) =
-                extractFontSettings(fontVariationSettings?.settings)
+        val fontSizePx = fontSize.getFloatIdForCreationState(creationState)
+        val letterSpacingId = letterSpacing.getFloatIdForCreationState(creationState)
+        val lineHeightMultiplyId = lineHeightMultiply.getFloatIdForCreationState(creationState)
 
-            val fontSizePx = fontSize.getFloatIdForCreationState(creationState)
-            val letterSpacingId = letterSpacing.getFloatIdForCreationState(creationState)
-            val lineHeightMultiplyId = lineHeightMultiply.getFloatIdForCreationState(creationState)
-
-            creationState.document.startTextComponent(
-                with(modifier) { creationState.toRecordingModifier() },
-                textIdValue,
-                -1,
-                colorInt,
-                colorId,
-                fontSizePx,
-                minFontSize ?: -1f,
-                maxFontSize ?: -1f,
-                fontStyle.encode(),
-                fontWeight.getFloatIdForCreationState(creationState),
-                fontFamily,
-                textAlign.encode(),
-                overflow.encode(),
-                maxLines,
-                letterSpacingId,
-                lineHeightAdd ?: 0f,
-                lineHeightMultiplyId,
-                0, // lineBreakStrategy
-                0, // hyphenationFrequency
-                0, // justificationMode
-                textDecoration.contains(TextDecoration.Underline),
-                textDecoration.contains(TextDecoration.LineThrough),
-                fontAxisNames,
-                fontAxisValues,
-                false, // autosize
-                0, // flags
-            )
-            creationState.document.endTextComponent()
-        } else {
-            val textId = text.getIdForCreationState(creationState)
-
-            val colorValue =
-                color.constantValueOrNull?.toArgb() ?: color.getIdForCreationState(creationState)
-
-            val flags =
-                if (color.hasConstantValue) {
-                    0.toShort()
-                } else {
-                    TextLayout.FLAG_IS_DYNAMIC_COLOR.toShort()
-                }
-
-            val fontSizePx = fontSize.getFloatIdForCreationState(creationState)
-            creationState.document.startTextComponent(
-                with(modifier) { creationState.toRecordingModifier() },
-                textId,
-                colorValue,
-                fontSizePx,
-                fontStyle.encode(),
-                fontWeight.constantValueOrNull ?: 400f,
-                fontFamily,
-                flags,
-                textAlign.encode().toShort(),
-                overflow.encode(),
-                maxLines,
-            )
-            creationState.document.endTextComponent()
-        }
+        creationState.document.startTextComponent(
+            with(modifier) { creationState.toRecordingModifier() },
+            textIdValue,
+            -1,
+            colorInt,
+            colorId,
+            fontSizePx,
+            minFontSize ?: -1f,
+            maxFontSize ?: -1f,
+            fontStyle.encode(),
+            fontWeight.getFloatIdForCreationState(creationState),
+            fontFamily,
+            textAlign.encode(),
+            overflow.encode(),
+            maxLines,
+            letterSpacingId,
+            lineHeightAdd ?: 0f,
+            lineHeightMultiplyId,
+            0, // lineBreakStrategy
+            0, // hyphenationFrequency
+            0, // justificationMode
+            textDecoration.contains(TextDecoration.Underline),
+            textDecoration.contains(TextDecoration.LineThrough),
+            fontAxisNames,
+            fontAxisValues,
+            false, // autosize
+            0, // flags
+        )
+        creationState.document.endTextComponent()
     }
 }
 
