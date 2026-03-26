@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.AndroidComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.R
@@ -681,7 +680,7 @@ fun ComposeView.Companion.disableWindowInsetsRulers() {
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeViewContextApi::class)
 private fun View.findViewTreeComposeViewRoot(): View {
-    if (!isAttachedToWindow || !AndroidComposeUiFlags.isSharedComposeViewContextEnabled) return this
+    if (!isAttachedToWindow) return this
 
     val lifecycleOwnerDepth =
         findDepthToTag(androidx.lifecycle.runtime.R.id.view_tree_lifecycle_owner)
