@@ -159,6 +159,7 @@
             <trusting group="com.google.ads.interactivemedia.v3"/>
             <trusting group="com.google.android.gms"/>
             <trusting group="com.google.android.libraries.identity.googleid"/>
+            <trusting group="com.google.ar"/>
             <trusting group="^androidx\..*" regex="true"/>
          </trusted-key>
          <trusted-key id="0F07D1201BDDAB67CFB84EB479752DB6C966F0B8" group="com.google.android"/>
