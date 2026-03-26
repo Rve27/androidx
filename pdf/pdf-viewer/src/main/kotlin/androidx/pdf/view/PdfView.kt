@@ -1160,7 +1160,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         super.onDraw(canvas)
         val localPageLayoutManager = pageLayoutManager ?: return
         canvas.save()
-        // View itself translates the Canvas by scroll position, so we don't have to
+        if (clipToPadding) {
+            canvas.clipRect(
+                scrollX + paddingLeft.toFloat(),
+                scrollY + paddingTop.toFloat(),
+                scrollX + (width.toFloat() - paddingRight),
+                scrollY + (height.toFloat() - paddingBottom),
+            )
+        }
+        // View itself translates the Canvas by scroll position, so we don't have to, but
+        // we need to adjust the translation for padding since it's not automatically accounted for.
+        canvas.translate(paddingLeft.toFloat(), paddingTop.toFloat())
         canvas.scale(zoom, zoom)
         val selectionModel = selectionStateManager?.selectionModel
         for (i in visiblePages.lower..visiblePages.upper) {
@@ -1623,7 +1633,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     override fun computeVerticalScrollRange(): Int {
         // Note we provide scroll = 0 here, as we shouldn't consider the current scroll position
         // to compute the maximum scroll position. Scroll position is absolute, not relative
-        val contentHeightPx = toViewCoord(contentHeight, zoom, scroll = 0)
+        val contentHeightPx = toViewCoord(contentHeight, zoom, scroll = 0) + paddingTop
         return if (contentHeightPx < height && verticalAlignment == VERTICAL_ALIGNMENT_TOP) {
             0
         } else if (contentHeightPx < height) {
@@ -2367,7 +2377,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      * Converts a Y coordinate in View space (scaled) to a Y coordinate in content space (unscaled)
      */
     internal fun toContentY(viewY: Float): Float {
-        return toContentCoord(viewY, zoom, scrollY)
+        return toContentCoord(viewY, zoom, scrollY - paddingTop)
+    }
+
+    internal fun toViewX(contentX: Float): Float {
+        return toViewCoord(contentX, zoom, scrollX)
+    }
+
+    internal fun toViewY(contentY: Float): Float {
+        return toViewCoord(contentY, zoom, scrollY - paddingTop)
     }
 
     internal val contentWidth: Float
@@ -2380,16 +2398,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     internal fun toViewRect(contentRect: RectF): Rect =
         toViewRect(contentRect.left, contentRect.top, contentRect.right, contentRect.bottom)
 
-    /** Returns a new [Rect] representing [contentRect] in View coordinates */
-    internal fun toViewRect(contentRect: Rect): Rect =
-        toViewRect(contentRect.left, contentRect.top, contentRect.right, contentRect.bottom)
-
     private fun toViewRect(left: Number, top: Number, right: Number, bottom: Number): Rect {
         return Rect(
-            toViewCoord(left.toFloat(), zoom, scrollX).roundToInt(),
-            toViewCoord(top.toFloat(), zoom, scrollY).roundToInt(),
-            toViewCoord(right.toFloat(), zoom, scrollX).roundToInt(),
-            toViewCoord(bottom.toFloat(), zoom, scrollY).roundToInt(),
+            toViewX(left.toFloat()).roundToInt(),
+            toViewY(top.toFloat()).roundToInt(),
+            toViewX(right.toFloat()).roundToInt(),
+            toViewY(bottom.toFloat()).roundToInt(),
         )
     }
 
