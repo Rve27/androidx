@@ -246,11 +246,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import androidx.lifecycle.get
-import androidx.savedstate.SavedStateRegistryOwner
-import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import java.lang.reflect.Method
 import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
@@ -379,16 +375,9 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
 
     override val dragAndDropManager = AndroidDragAndDropManager(::startDrag)
 
-    private val _windowInfo: LazyWindowInfo = LazyWindowInfo()
-
     @OptIn(ExperimentalComposeUiApi::class)
     override val windowInfo: WindowInfo
-        get() =
-            if (AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-                composeViewContext.windowInfo
-            } else {
-                _windowInfo
-            }
+        get() = composeViewContext.windowInfo
 
     // This is only needed because the existing XR implementation is lacking. It is currently
     // relying on the derivedStateOf() notification change. This can be removed when
@@ -806,17 +795,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     // Used to track whether or not there was an exception while creating an MRenderNode
     // so that we don't have to continue using try/catch after fails once.
     private var isRenderNodeCompatible = true
-
-    private var _viewTreeOwners: ViewTreeOwners? by mutableStateOf(null)
-
-    // Having an extra derived state here (instead of directly using _viewTreeOwners) is a
-    // workaround for b/271579465 to avoid unnecessary extra recompositions when this is mutated
-    // before setContent is called.
-    /**
-     * Current [ViewTreeOwners]. Use [setOnViewTreeOwnersAvailable] if you want to execute your code
-     * when the object will be created.
-     */
-    val viewTreeOwners: ViewTreeOwners? by derivedStateOf { _viewTreeOwners }
 
     private var onReadyForComposition: ((ComposeViewContext) -> Unit)? = null
 
@@ -1500,10 +1478,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     }
 
     override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (!AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-            _windowInfo.isWindowFocused = hasWindowFocus
-        }
         keyboardModifiersRequireUpdate = true
         super.onWindowFocusChanged(hasWindowFocus)
 
@@ -1548,13 +1522,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         if (isFocused) {
             // Focus lies within the Compose hierarchy, so we dispatch the key event to the
             // appropriate place.
-            @OptIn(ExperimentalComposeUiApi::class)
-            if (AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-                composeViewContext.windowInfo.keyboardModifiers =
-                    PointerKeyboardModifiers(event.metaState)
-            } else {
-                _windowInfo.keyboardModifiers = PointerKeyboardModifiers(event.metaState)
-            }
+            composeViewContext.windowInfo.keyboardModifiers =
+                PointerKeyboardModifiers(event.metaState)
             // If the event is not consumed, use the default implementation.
             focusOwner.dispatchKeyEvent(KeyEvent(event)) || super.dispatchKeyEvent(event)
         } else {
@@ -2333,24 +2302,13 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
      * ready.
      */
     fun setOnReadyForComposition(callback: (ComposeViewContext) -> Unit) {
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-            // Use a derivedStateOf so that the caller is notified when the attachment state
-            // changes. This is relied on by XR.
-            derivedIsAttached
-            if (isAttachedToWindow || composeViewContextIncrementedDuringInit) {
-                callback(composeViewContext)
-            } else {
-                onReadyForComposition = callback
-            }
+        // Use a derivedStateOf so that the caller is notified when the attachment state
+        // changes. This is relied on by XR.
+        derivedIsAttached
+        if (isAttachedToWindow || composeViewContextIncrementedDuringInit) {
+            callback(composeViewContext)
         } else {
-            val viewTreeOwners = viewTreeOwners
-            if (viewTreeOwners != null) {
-                callback(composeViewContext)
-            }
-            if (!isAttachedToWindow) {
-                onReadyForComposition = callback
-            }
+            onReadyForComposition = callback
         }
     }
 
@@ -2397,11 +2355,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             composeViewContext.incrementViewCount()
         }
         composeViewContextIncrementedDuringInit = false
-        if (!AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-            _windowInfo.isWindowFocused = hasWindowFocus()
-            _windowInfo.setOnInitializeContainerSize { calculateWindowSize(this) }
-            updateWindowMetrics()
-        }
         invalidateLayoutNodeMeasurement(root)
         invalidateLayers(root)
         snapshotObserver.startObserving()
@@ -2418,68 +2371,18 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             outOfFrameExecutor ?: error("Expected the view to be attached to window.")
         outOfFrameExecutor.schedule { addNotificationForSysPropsChange(this) }
 
-        val lifecycle: Lifecycle
-        if (AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-            retainedValuesStore =
-                installLocalRetainedValuesStore(
-                    composeViewContext.lifecycleOwner,
-                    composeViewContext.viewModelStoreOwner,
-                ) ?: ForgetfulRetainedValuesStore
+        retainedValuesStore =
+            installLocalRetainedValuesStore(
+                composeViewContext.lifecycleOwner,
+                composeViewContext.viewModelStoreOwner,
+            ) ?: ForgetfulRetainedValuesStore
 
-            onReadyForComposition?.let {
-                it(composeViewContext)
-                onReadyForComposition = null
-            }
-
-            lifecycle = composeViewContext.lifecycleOwner.lifecycle
-        } else {
-            val lifecycleOwner = findViewTreeLifecycleOwner()
-            val savedStateRegistryOwner = findViewTreeSavedStateRegistryOwner()
-            val viewModelStoreOwner = findViewTreeViewModelStoreOwner()
-
-            retainedValuesStore =
-                installLocalRetainedValuesStore(lifecycleOwner, viewModelStoreOwner)
-                    ?: ForgetfulRetainedValuesStore
-
-            val oldViewTreeOwners = viewTreeOwners
-            // We need to change the ViewTreeOwner if there isn't one yet (null)
-            // or if either the lifecycleOwner, savedStateRegistryOwner, viewModelStoreOwner has
-            // changed.
-            val resetViewTreeOwner =
-                oldViewTreeOwners == null ||
-                    ((lifecycleOwner != null && savedStateRegistryOwner != null) &&
-                        (lifecycleOwner !== oldViewTreeOwners.lifecycleOwner ||
-                            savedStateRegistryOwner !== oldViewTreeOwners.savedStateRegistryOwner ||
-                            viewModelStoreOwner !== oldViewTreeOwners.viewModelStoreOwner))
-            if (resetViewTreeOwner) {
-                if (lifecycleOwner == null) {
-                    throw IllegalStateException(
-                        "Composed into the View which doesn't propagate ViewTreeLifecycleOwner!"
-                    )
-                }
-                if (savedStateRegistryOwner == null) {
-                    throw IllegalStateException(
-                        "Composed into the View which doesn't propagate" +
-                            "ViewTreeSavedStateRegistryOwner!"
-                    )
-                }
-                oldViewTreeOwners?.lifecycleOwner?.lifecycle?.removeObserver(this)
-                lifecycleOwner.lifecycle.addObserver(this)
-                val viewTreeOwners =
-                    ViewTreeOwners(
-                        lifecycleOwner = lifecycleOwner,
-                        savedStateRegistryOwner = savedStateRegistryOwner,
-                        viewModelStoreOwner = viewModelStoreOwner,
-                    )
-                _viewTreeOwners = viewTreeOwners
-                onReadyForComposition?.invoke(composeViewContext)
-                onReadyForComposition = null
-            }
-            lifecycle =
-                checkPreconditionNotNull(viewTreeOwners?.lifecycleOwner?.lifecycle) {
-                    "No lifecycle owner exists"
-                }
+        onReadyForComposition?.let {
+            it(composeViewContext)
+            onReadyForComposition = null
         }
+
+        val lifecycle = composeViewContext.lifecycleOwner.lifecycle
         lifecycle.addObserver(this)
         lifecycle.addObserver(contentCaptureManager)
         _inputModeManager.inputMode = if (isInTouchMode) Touch else Keyboard
@@ -2535,16 +2438,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         removeNotificationForSysPropsChange(this)
         composeViewContext.decrementViewCount()
         snapshotObserver.stopObserving()
-        val lifecycle: Lifecycle
-        if (AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-            lifecycle = composeViewContext.lifecycleOwner.lifecycle
-        } else {
-            _windowInfo.setOnInitializeContainerSize(null)
-            lifecycle =
-                checkPreconditionNotNull(viewTreeOwners?.lifecycleOwner?.lifecycle) {
-                    "No lifecycle owner exists"
-                }
-        }
+        val lifecycle = composeViewContext.lifecycleOwner.lifecycle
         lifecycle.removeObserver(contentCaptureManager)
         lifecycle.removeObserver(this)
         ifAutofillDebug {
@@ -2919,12 +2813,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     private fun sendMotionEvent(motionEvent: MotionEvent): ProcessResult {
         if (keyboardModifiersRequireUpdate) {
             keyboardModifiersRequireUpdate = false
-            if (AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-                composeViewContext.windowInfo.keyboardModifiers =
-                    PointerKeyboardModifiers(motionEvent.metaState)
-            } else {
-                _windowInfo.keyboardModifiers = PointerKeyboardModifiers(motionEvent.metaState)
-            }
+            composeViewContext.windowInfo.keyboardModifiers =
+                PointerKeyboardModifiers(motionEvent.metaState)
         }
         val pointerInputEvent = motionEventAdapter.convertToPointerInputEvent(motionEvent, this)
         val action = motionEvent.actionMasked
@@ -3111,10 +3001,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         viewToWindowMatrix.invertTo(windowToViewMatrix)
     }
 
-    private fun updateWindowMetrics() {
-        _windowInfo.updateContainerSizeIfObserved { calculateWindowSize(this) }
-    }
-
     override fun onCheckIsTextEditor(): Boolean {
         val parentSession =
             textInputSessionMutex.currentSession
@@ -3187,9 +3073,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
                 oldConfig.densityDpi != newConfig.densityDpi
         ) {
             density = Density(context)
-        }
-        if (oldConfig.diffForWindowMetricsChanged(newConfig)) {
-            updateWindowMetrics()
         }
         // Update the font family resolver if the font weight adjustment changed
         @OptIn(ExperimentalComposeUiApi::class)
@@ -3405,16 +3288,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     }
 
     override val isLifecycleInResumedState: Boolean
-        get() {
-            val lifecycleOwner =
-                @OptIn(ExperimentalComposeUiApi::class)
-                if (AndroidComposeUiFlags.isSharedWindowInfoEnabled) {
-                    composeViewContext.lifecycleOwner
-                } else {
-                    viewTreeOwners?.lifecycleOwner
-                }
-            return lifecycleOwner?.lifecycle?.currentState == Lifecycle.State.RESUMED
-        }
+        get() = composeViewContext.lifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED
 
     override fun shouldDelayChildPressedState(): Boolean = false
 
@@ -3617,16 +3491,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
             } catch (_: Exception) {}
         }
     }
-
-    /** Combines objects populated via ViewTree*Owner */
-    class ViewTreeOwners(
-        /** The [LifecycleOwner] associated with this owner. */
-        val lifecycleOwner: LifecycleOwner,
-        /** The [SavedStateRegistryOwner] associated with this owner. */
-        val savedStateRegistryOwner: SavedStateRegistryOwner,
-        /** The [ViewModelStoreOwner] associated with this owner. */
-        val viewModelStoreOwner: ViewModelStoreOwner?,
-    )
 
     private inner class RootModifierNode :
         Modifier.Node(),

@@ -50,10 +50,6 @@ package androidx.compose.ui
  */
 @ExperimentalComposeUiApi
 object AndroidComposeUiFlags {
-    /** This moves WindowInfo into the shared ComposeViewContext. */
-    // TODO: b/479837249
-    @field:Suppress("MutableBareField") @JvmField var isSharedWindowInfoEnabled: Boolean = true
-
     /** This moves AccessibilityManager into the shared ComposeViewContext. */
     @field:Suppress("MutableBareField")
     @JvmField
