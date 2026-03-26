@@ -199,10 +199,18 @@ class RemoteComposeScreenshotTestRule(
         composeTestRule.verifyScreenshot(screenshotName, screenshotRule)
     }
 
-    private fun setContent(
+    fun verifyScreenshot(suffix: String? = null, screenshotName: Description = testDescription) {
+        composeTestRule.verifyScreenshot(
+            testName = screenshotName,
+            screenshotRule = screenshotRule,
+            suffix = suffix,
+        )
+    }
+
+    fun setContent(
         creationDisplayInfo: CreationDisplayInfo = displayInfo,
         layoutDirection: LayoutDirection? = null,
-        backgroundColor: Color?,
+        backgroundColor: Color? = null,
         deviceConfigurationOverride: DeviceConfigurationOverride? = null,
         profile: Profile? = null,
         outerContent:
@@ -292,8 +300,9 @@ class RemoteComposeScreenshotTestRule(
     fun ComposeContentTestRule.verifyScreenshot(
         testName: Description,
         screenshotRule: AndroidXScreenshotTestRule,
+        suffix: String? = null,
     ) {
-        val goldenScreenshotName = testName.goldenIdentifier()
+        val goldenScreenshotName = testName.goldenIdentifier() + (suffix ?: "")
         val screenshot = onRoot().captureToImage()
         if (matcher != null) {
             screenshot.assertAgainstGolden(screenshotRule, goldenScreenshotName, matcher)
