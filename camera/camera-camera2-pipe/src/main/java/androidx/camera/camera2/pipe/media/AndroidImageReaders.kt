@@ -35,6 +35,7 @@ import androidx.camera.camera2.pipe.compat.Api28Compat
 import androidx.camera.camera2.pipe.compat.Api29Compat
 import androidx.camera.camera2.pipe.compat.Api33Compat
 import androidx.camera.camera2.pipe.core.Log
+import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executor
 import kotlin.reflect.KClass
 import kotlinx.atomicfu.atomic
@@ -221,6 +222,7 @@ public class AndroidMultiResolutionImageReader(
     private val concurrentOutputsEnabled: Boolean,
 ) : ImageReaderWrapper, ImageReader.OnImageAvailableListener, CameraOnActiveOutputSurfacesListener {
     private val singleOutputIdSets = surfaceToOutputIdMap.mapValues { setOf(it.value) }
+    private val imageReaderSet = CopyOnWriteArraySet<ImageReader>()
 
     override val surface: Surface
         get() = multiResolutionImageReader.surface
@@ -231,6 +233,7 @@ public class AndroidMultiResolutionImageReader(
         atomic(null)
 
     override fun onImageAvailable(reader: ImageReader?) {
+        if (reader != null) imageReaderSet.add(reader)
         val image = reader?.acquireNextImage()
         if (image != null) {
             val imageListener = onImageListener
@@ -298,7 +301,9 @@ public class AndroidMultiResolutionImageReader(
     }
 
     override fun discardFreeBuffers() {
-        // TODO: implement discardFreeBuffers in AndroidMultiResolutionImageReader
+        for (imageReader in imageReaderSet) {
+            imageReader.discardFreeBuffers()
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
