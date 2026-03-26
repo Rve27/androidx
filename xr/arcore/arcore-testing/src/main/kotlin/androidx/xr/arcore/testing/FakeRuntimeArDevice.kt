@@ -24,6 +24,9 @@ import androidx.xr.runtime.math.Pose
 /** Fake implementation of [ArDevice][RuntimeArDevice] for testing purposes. */
 // TODO: b/326481788 - Add more functionality to FakeRuntimeArDevice
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
 public class FakeRuntimeArDevice(
     override var devicePose: Pose = Pose(),
     override var trackingState: TrackingState = TrackingState.STOPPED,

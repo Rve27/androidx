@@ -52,6 +52,10 @@ import androidx.xr.runtime.math.Vector2
  *   plane
  */
 @SuppressWarnings("HiddenSuperclass")
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
+@Suppress("DEPRECATION")
 public class FakeRuntimePlane(
     override val type: Type = RuntimePlane.Type.HORIZONTAL_UPWARD_FACING,
     override val label: Label = RuntimePlane.Label.FLOOR,
@@ -64,6 +68,7 @@ public class FakeRuntimePlane(
 ) : RuntimePlane, AnchorHolder {
 
     /** Creates a new [FakeRuntimeAnchor] and adds it to [anchors]. */
+    @Suppress("DEPRECATION")
     override fun createAnchor(pose: Pose): RuntimeAnchor {
         val anchor = FakeRuntimeAnchor(centerPose.compose(pose), this)
         anchors.add(anchor)

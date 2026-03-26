@@ -21,6 +21,9 @@ import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
 /** Fake implementation of [DepthMap][RuntimeDepthMap] for testing purposes. */
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
 public class FakeRuntimeDepthMap(
     override var width: Int = 0,
     override var height: Int = 0,

@@ -24,7 +24,6 @@ import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.runtime.Anchor.PersistenceState
 import androidx.xr.arcore.runtime.ExportableAnchor
 import androidx.xr.arcore.runtime.TrackingState
-import androidx.xr.arcore.testing.FakeRuntimeAnchor
 import androidx.xr.runtime.NodeHolder
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose
@@ -370,10 +369,12 @@ class AnchorEntityImplTest : SystemSpaceEntityImplTest() {
     }
 
     @Test
+    @Suppress("DEPRECATION")
+    // TODO: b/494308962 remove references to arcore-testing Fakes
     fun setAnchor_nonExportableAnchor_remainsUnanchored() {
         val anchorEntity = createAnchorEntity()
         anchorEntity.setOnStateChangedListener(anchorStateListener)
-        val runtimeAnchor = FakeRuntimeAnchor(Pose.Identity, null, true)
+        val runtimeAnchor = androidx.xr.arcore.testing.FakeRuntimeAnchor(Pose.Identity, true)
         anchorEntity.setAnchor(Anchor(runtimeAnchor))
         executor.runAll()
 
