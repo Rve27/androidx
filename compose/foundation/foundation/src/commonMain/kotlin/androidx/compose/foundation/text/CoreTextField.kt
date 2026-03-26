@@ -112,6 +112,7 @@ import androidx.compose.ui.text.input.TextInputSession
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
@@ -554,8 +555,16 @@ internal fun CoreTextField(
                     // min height is set for maxLines == 1 in order to prevent text cuts for single
                     // line
                     // TextFields
-                    .heightIn(min = state.minHeightForSingleLineField)
-                    .heightInLines(textStyle = textStyle, minLines = minLines, maxLines = maxLines)
+                    .run {
+                        val height = state.heightForSingleLineField
+                        heightIn(min = height, max = if (height == 0.dp) Dp.Unspecified else height)
+                    }
+                    .heightInLines(
+                        textStyle = textStyle,
+                        minLines = minLines,
+                        maxLines = maxLines,
+                        softWrap = softWrap,
+                    )
                     .textFieldScroll(
                         scrollerPosition = scrollerPosition,
                         textFieldValue = value,
@@ -622,7 +631,7 @@ internal fun CoreTextField(
                                 // constant characters therefore if the user enters a character that
                                 // is
                                 // longer (i.e. emoji or a tall script) the text is cut
-                                state.minHeightForSingleLineField =
+                                state.heightForSingleLineField =
                                     with(density) {
                                         when (maxLines) {
                                             1 -> result.getLineBottom(0).ceilToIntPx()
@@ -753,7 +762,7 @@ internal class LegacyTextFieldState(
     var hasFocus by mutableStateOf(false)
 
     /** Set to a non-zero value for single line TextFields in order to prevent text cuts. */
-    var minHeightForSingleLineField by mutableStateOf(0.dp)
+    var heightForSingleLineField by mutableStateOf(0.dp)
 
     /**
      * The last layout coordinates for the inner text field LayoutNode, used by selection and
