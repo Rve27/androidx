@@ -25,9 +25,7 @@ internal class DefaultKspType(
     env: KspProcessingEnv,
     ksType: KSType,
     scope: KSTypeVarianceResolverScope? = null,
-    typeAlias: KSType? = null,
-) : KspType(env, ksType, scope, typeAlias) {
-
+) : KspType(env, ksType, scope) {
     override fun resolveJTypeName(): JTypeName {
         // Always box these unless for inline value classes. For primitives, typeName might return
         // the primitive type but if we wanted it to be a primitive, we would've resolved it to
@@ -50,10 +48,6 @@ internal class DefaultKspType(
         return this
     }
 
-    override fun copy(
-        env: KspProcessingEnv,
-        ksType: KSType,
-        scope: KSTypeVarianceResolverScope?,
-        typeAlias: KSType?,
-    ) = DefaultKspType(env, ksType, scope, typeAlias)
+    override fun copy(env: KspProcessingEnv, ksType: KSType, scope: KSTypeVarianceResolverScope?) =
+        DefaultKspType(env, ksType, scope)
 }

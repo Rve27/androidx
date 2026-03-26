@@ -33,8 +33,7 @@ internal class KspValueClassArgumentType(
     // Using KSTypeArgument rather than resolved type to indicate do not inline in type name.
     val typeArg: KSTypeArgument,
     scope: KSTypeVarianceResolverScope? = null,
-    typeAlias: KSType? = null,
-) : KspType(env = env, ksType = typeArg.requireType(), scope = scope, typeAlias = typeAlias) {
+) : KspType(env, typeArg.requireType(), scope) {
     override fun resolveJTypeName(): JTypeName {
         return typeArg.asJTypeName(env.resolver)
     }
@@ -47,17 +46,11 @@ internal class KspValueClassArgumentType(
         return this
     }
 
-    override fun copy(
-        env: KspProcessingEnv,
-        ksType: KSType,
-        scope: KSTypeVarianceResolverScope?,
-        typeAlias: KSType?,
-    ) =
+    override fun copy(env: KspProcessingEnv, ksType: KSType, scope: KSTypeVarianceResolverScope?) =
         KspValueClassArgumentType(
             env = env,
             typeArg = DelegatingTypeArg(typeArg, type = ksType.createTypeReference()),
             scope = scope,
-            typeAlias = typeAlias,
         )
 
     private class DelegatingTypeArg(
