@@ -21,6 +21,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteArrangement.Absolut
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement.spacedBy
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
+import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
 import androidx.compose.remote.creation.compose.modifier.height
 import androidx.compose.remote.creation.compose.modifier.size
@@ -180,10 +181,8 @@ class RemoteCollapsibleColumnTest {
                         yield(
                             "${arrangement.propertyName()} ${alignment.propertyName()}" to
                                 @RemoteComposable @Composable {
-                                    // TODO(b/447100988): replace size by fillMaxSize in all those
-                                    // RemoteCollapsibleColumn
                                     RemoteCollapsibleColumn(
-                                        modifier = RemoteModifier.size(DefaultContainerSize),
+                                        modifier = RemoteModifier.fillMaxSize(),
                                         horizontalAlignment = alignment,
                                         verticalArrangement = arrangement,
                                     ) {
@@ -211,10 +210,7 @@ class RemoteCollapsibleColumnTest {
         modifier: RemoteModifier,
         content: @Composable @RemoteComposable () -> Unit,
     ) {
-        // TODO(b/447100988): replace size by fillMaxSize in all those RemoteCollapsibleColumn
-        RemoteCollapsibleColumn(
-            modifier = modifier.size(DefaultContainerSize).background(Color.Red)
-        ) {
+        RemoteCollapsibleColumn(modifier = modifier.fillMaxSize().background(Color.Red)) {
             content()
         }
     }
@@ -226,8 +222,7 @@ class RemoteCollapsibleColumnTest {
     @Composable
     private fun TestSpacedByRemoteDp() {
         RemoteCollapsibleColumn(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
             verticalArrangement = spacedBy(5.rdp),
         ) {
@@ -250,8 +245,7 @@ class RemoteCollapsibleColumnTest {
     @Composable
     private fun TestSpacedByRemoteFloat() {
         RemoteCollapsibleColumn(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
             verticalArrangement = spacedBy(10f.rf),
         ) {
@@ -274,8 +268,7 @@ class RemoteCollapsibleColumnTest {
     @Composable
     private fun TestSpacedByRemoteDp(alignment: RemoteAlignment.Vertical) {
         RemoteCollapsibleColumn(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
             verticalArrangement = spacedBy(space = 5.rdp, alignment = alignment),
         ) {
@@ -298,8 +291,7 @@ class RemoteCollapsibleColumnTest {
     @Composable
     private fun TestSpacedByRemoteFloat(alignment: RemoteAlignment.Vertical) {
         RemoteCollapsibleColumn(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
             verticalArrangement = spacedBy(space = 10f.rf, alignment = alignment),
         ) {
