@@ -19,6 +19,7 @@ import static androidx.compose.remote.core.documentation.DocumentedOperation.FLO
 import static androidx.compose.remote.core.documentation.DocumentedOperation.INT;
 
 import androidx.annotation.RestrictTo;
+import androidx.compose.remote.core.CoreDocument;
 import androidx.compose.remote.core.Operation;
 import androidx.compose.remote.core.Operations;
 import androidx.compose.remote.core.PaintContext;
@@ -201,7 +202,11 @@ public class ColumnLayout extends LayoutManager {
             }
         }
         if (!mChildrenComponents.isEmpty()) {
-            size.setHeight(size.getHeight() + (mSpacedBy * (visibleChildrens - 1)));
+            float spacedBy = mSpacedBy;
+            if (context.getDensityBehavior() == CoreDocument.DENSITY_BEHAVIOR_DP) {
+                spacedBy *= context.getDensity();
+            }
+            size.setHeight(size.getHeight() + (spacedBy * (visibleChildrens - 1)));
         }
         DebugLog.e();
     }
@@ -387,7 +392,11 @@ public class ColumnLayout extends LayoutManager {
             childrenHeight += childMeasure.getH();
             visibleChildrens++;
         }
-        childrenHeight += mSpacedBy * (visibleChildrens - 1);
+        float spacedBy = mSpacedBy;
+        if (context.getDensityBehavior() == CoreDocument.DENSITY_BEHAVIOR_DP) {
+            spacedBy *= context.getDensity();
+        }
+        childrenHeight += spacedBy * (visibleChildrens - 1);
 
         float tx = 0f;
         float ty = 0f;
@@ -467,7 +476,7 @@ public class ColumnLayout extends LayoutManager {
                     || mVerticalPositioning == SPACE_EVENLY) {
                 ty += verticalGap;
             }
-            ty += mSpacedBy;
+            ty += spacedBy;
         }
         DebugLog.e();
     }

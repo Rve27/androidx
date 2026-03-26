@@ -20,6 +20,7 @@ import static androidx.compose.remote.core.documentation.DocumentedOperation.FLO
 import static androidx.compose.remote.core.documentation.DocumentedOperation.INT;
 
 import androidx.annotation.RestrictTo;
+import androidx.compose.remote.core.CoreDocument;
 import androidx.compose.remote.core.Operation;
 import androidx.compose.remote.core.Operations;
 import androidx.compose.remote.core.PaintContext;
@@ -239,7 +240,11 @@ public class FlowLayout extends RowLayout {
                 currentRowMaxHeight = 0;
             }
             currentRow.add(c);
-            currentWidth += componentWidth + mSpacedBy;
+            float spacedBy = mSpacedBy;
+            if (context.getDensityBehavior() == CoreDocument.DENSITY_BEHAVIOR_DP) {
+                spacedBy *= context.getDensity();
+            }
+            currentWidth += componentWidth + spacedBy;
             currentRowMaxHeight = Math.max(currentRowMaxHeight, componentHeight);
         }
         DebugLog.s(() -> "COMPUTED " + rows.size() + " SEGMENTS OF ROWS for " + this + " ("
