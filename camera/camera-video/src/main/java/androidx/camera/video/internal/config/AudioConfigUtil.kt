@@ -105,31 +105,85 @@ public object AudioConfigUtil {
     /**
      * Resolves the audio source settings into an [AudioSettings].
      *
-     * @param audioMimeInfo the audio mime info.
      * @param audioSpec the audio spec.
+     * @param compatibleAudioProfile the compatible audio profile.
      * @param captureToEncodeRatio the capture to encode sample rate ratio.
      * @return an AudioSettings.
      */
     @JvmStatic
     public fun resolveAudioSettings(
-        audioMimeInfo: AudioMimeInfo,
         audioSpec: AudioSpec,
-        captureToEncodeRatio: Rational?,
+        compatibleAudioProfile: AudioProfileProxy? = null,
+        captureToEncodeRatio: Rational? = null,
     ): AudioSettings {
-        val settingsSupplier =
-            if (audioMimeInfo.compatibleAudioProfile != null) {
-                AudioSettingsAudioProfileResolver(
+        return if (compatibleAudioProfile != null) {
+                resolveAudioSettings(
                     audioSpec = audioSpec,
-                    audioProfile = audioMimeInfo.compatibleAudioProfile,
+                    baseChannelCount = compatibleAudioProfile.channels,
+                    baseSampleRate = compatibleAudioProfile.sampleRate,
                     captureToEncodeRatio = captureToEncodeRatio,
                 )
             } else {
-                AudioSettingsDefaultResolver(
+                resolveAudioSettings(
                     audioSpec = audioSpec,
+                    baseChannelCount = AUDIO_CHANNEL_COUNT_DEFAULT,
+                    baseSampleRate = AUDIO_SAMPLE_RATE_DEFAULT,
                     captureToEncodeRatio = captureToEncodeRatio,
                 )
             }
-        return settingsSupplier.get()
+            .also {
+                Logger.d(
+                    TAG,
+                    "Resolved AUDIO settings: $it " +
+                        "[audioSpec: $audioSpec, compatibleAudioProfile: $compatibleAudioProfile, " +
+                        "captureToEncodeRatio: $captureToEncodeRatio]",
+                )
+            }
+    }
+
+    private fun resolveAudioSettings(
+        audioSpec: AudioSpec,
+        baseChannelCount: Int,
+        baseSampleRate: Int,
+        captureToEncodeRatio: Rational?,
+    ): AudioSettings {
+        // Resolve audio source
+        val resolvedAudioSource = resolveAudioSource(audioSpec)
+
+        // Resolve source format
+        val resolvedSourceFormat = resolveAudioSourceFormat(audioSpec)
+
+        // Resolve channel count
+        val resolvedChannelCount =
+            if (audioSpec.channelCount != AudioSpec.CHANNEL_COUNT_UNSPECIFIED) {
+                audioSpec.channelCount
+            } else {
+                baseChannelCount
+            }
+
+        // Resolve sample rate
+        val targetSampleRate =
+            if (audioSpec.sampleRate != AudioSpec.SAMPLE_RATE_UNSPECIFIED) {
+                audioSpec.sampleRate
+            } else {
+                baseSampleRate
+            }
+
+        val resolvedSampleRates =
+            resolveSampleRates(
+                targetEncodeSampleRate = targetSampleRate,
+                channelCount = resolvedChannelCount,
+                sourceFormat = resolvedSourceFormat,
+                captureToEncodeRatio = captureToEncodeRatio,
+            )
+
+        return AudioSettings.builder()
+            .setAudioSource(resolvedAudioSource)
+            .setAudioFormat(resolvedSourceFormat)
+            .setChannelCount(resolvedChannelCount)
+            .setCaptureSampleRate(resolvedSampleRates.captureRate)
+            .setEncodeSampleRate(resolvedSampleRates.encodeRate)
+            .build()
     }
 
     /**
