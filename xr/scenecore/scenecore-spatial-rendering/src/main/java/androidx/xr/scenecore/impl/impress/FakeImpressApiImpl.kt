@@ -1169,6 +1169,8 @@ public class FakeImpressApiImpl : ImpressApi {
         return CustomMesh.Builder().setImpressApi(this).setNativeCustomMesh(handle).build()
     }
 
+    override fun getCustomMeshAabb(customMeshHandle: Long, outAabb: FloatArray) {}
+
     override fun destroyCustomMesh(customMeshHandle: Long) {}
 
     override fun createCustomMeshNode(
