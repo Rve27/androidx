@@ -54,7 +54,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 
 @RemoteComposable
 @Composable
@@ -124,7 +123,7 @@ fun WeatherHeader() {
     RemoteRow(
         modifier =
             RemoteModifier.widthIn(min = 100.rdp)
-                .heightIn(min = rowHeightDp)
+                .heightIn(min = rowHeight)
                 .padding(8.rdp), // .background(Color.Red),
         verticalAlignment = RemoteAlignment.CenterVertically,
     ) {
@@ -137,8 +136,7 @@ fun WeatherHeader() {
 @Preview @Composable private fun WeatherHeaderPreview() = RemotePreview { WeatherHeader() }
 
 val rowHeight = 90.rdp
-val rowHeightDp = 90.dp
-val rowHeight2 = 122.dp
+val rowHeight2 = 122.rdp
 
 @RemoteComposable
 @Composable
