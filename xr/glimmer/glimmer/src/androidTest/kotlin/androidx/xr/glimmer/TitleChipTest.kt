@@ -110,11 +110,9 @@ class TitleChipTest {
 
     @Test
     fun setsContentColor() {
-        var primary = Color.Unspecified
         var leadingIconContentColor = Color.Unspecified
         var contentContentColor = Color.Unspecified
         rule.setGlimmerThemeContent {
-            primary = GlimmerTheme.colors.primary
             TitleChip(
                 leadingIcon = {
                     Box(
@@ -133,7 +131,7 @@ class TitleChipTest {
         }
 
         rule.runOnIdle {
-            assertThat(leadingIconContentColor).isEqualTo(primary)
+            assertThat(leadingIconContentColor).isEqualTo(Color.White)
             assertThat(contentContentColor).isEqualTo(Color.White)
         }
     }
