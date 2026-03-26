@@ -871,7 +871,14 @@ private val hiddenPackages =
 
 // Set of packages to exclude from Java refdoc generation
 private val hiddenPackagesJava =
-    setOf("androidx.*compose.*", "androidx.*glance.*", "androidx\\.tv\\..*")
+    setOf(
+        "androidx.*compose.*",
+        "androidx.*glance.*",
+        "androidx\\.tv\\..*",
+        "androidx\\.xr\\.glimmer.*",
+        "androidx\\..*navigation3.*",
+        "androidx\\.media3\\.cast",
+    )
 
 // List of annotations which should not be displayed in the docs
 private val hiddenAnnotations: List<String> =
