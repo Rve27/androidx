@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.testing
+package androidx.xr.arcore.testing.internal
 
 import androidx.kruth.assertThat
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.FaceTrackingMode
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.test.runTest
@@ -28,9 +27,10 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
+@Suppress("DEPRECATION")
 class FakeLifecycleManagerTest {
 
-    lateinit var underTest: FakeLifecycleManager
+    private lateinit var underTest: FakeLifecycleManager
 
     @Before
     fun setUp() {
@@ -77,13 +77,6 @@ class FakeLifecycleManagerTest {
     }
 
     @Test
-    fun create_hasMissingPermission_throwsSecurityException() {
-        underTest.hasCreatePermission = false
-
-        assertFailsWith<SecurityException> { underTest.create() }
-    }
-
-    @Test
     fun configure_beforeCreate_doesNotThrowsIllegalStateException() {
         underTest.configure(Config())
     }
@@ -94,23 +87,6 @@ class FakeLifecycleManagerTest {
         underTest.stop()
 
         assertFailsWith<IllegalStateException> { underTest.configure(Config()) }
-    }
-
-    @Test
-    fun configure_hasMissingPermission_throwsSecurityException() {
-        underTest.create()
-        underTest.hasMissingPermission = true
-
-        assertFailsWith<SecurityException> { underTest.configure(Config()) }
-    }
-
-    @Test
-    fun configure_withFaceTrackingEnabled_doesNotSupportFaceTracking_throwsUnsupportedOperationException() {
-        underTest.create()
-        underTest.shouldSupportFaceTracking = false
-        assertFailsWith<UnsupportedOperationException> {
-            underTest.configure(Config(faceTracking = FaceTrackingMode.BLEND_SHAPES))
-        }
     }
 
     @Test

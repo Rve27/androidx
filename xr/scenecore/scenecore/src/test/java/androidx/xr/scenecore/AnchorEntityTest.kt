@@ -26,10 +26,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.AnchorCreateSuccess
 import androidx.xr.arcore.runtime.Plane
-import androidx.xr.arcore.testing.FakeLifecycleManager
-import androidx.xr.arcore.testing.FakePerceptionManager
-import androidx.xr.arcore.testing.FakePerceptionRuntime
-import androidx.xr.arcore.testing.FakeRuntimePlane
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
@@ -70,9 +66,13 @@ class AnchorEntityTest {
     private lateinit var entityRegistry: EntityRegistry
     private lateinit var session: Session
     private lateinit var anchor: Anchor
-    private lateinit var mFakeRuntime: FakePerceptionRuntime
-    private lateinit var mFakeLifecycleManager: FakeLifecycleManager
-    private lateinit var mFakePerceptionManager: FakePerceptionManager
+    // TODO: b/494308962 Remove references to arcore-testing Fakes
+    @Suppress("DEPRECATION")
+    private lateinit var mFakeRuntime: androidx.xr.arcore.testing.FakePerceptionRuntime
+    @Suppress("DEPRECATION")
+    private lateinit var mFakeLifecycleManager: androidx.xr.arcore.testing.FakeLifecycleManager
+    @Suppress("DEPRECATION")
+    private lateinit var mFakePerceptionManager: androidx.xr.arcore.testing.FakePerceptionManager
     private lateinit var activityController: ActivityController<ComponentActivity>
     private lateinit var activity: ComponentActivity
     private lateinit var testDispatcher: TestDispatcher
@@ -80,12 +80,17 @@ class AnchorEntityTest {
     private var mCurrentTimeMillis: Long = 1000000000L
 
     @Before
+    @Suppress("DEPRECATION")
+    // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun setup() {
         testDispatcher = StandardTestDispatcher()
         activityController = Robolectric.buildActivity(ComponentActivity::class.java)
         activity = activityController.get()
         createSession()
-        mFakeRuntime = session.runtimes.filterIsInstance<FakePerceptionRuntime>().first()
+        mFakeRuntime =
+            session.runtimes
+                .filterIsInstance<androidx.xr.arcore.testing.FakePerceptionRuntime>()
+                .first()
         mFakeLifecycleManager = mFakeRuntime.lifecycleManager
         mFakePerceptionManager = mFakeRuntime.perceptionManager
         timeSource = mFakeLifecycleManager.timeSource
@@ -122,8 +127,14 @@ class AnchorEntityTest {
     }
 
     @Test
+    @Suppress("DEPRECATION")
+    // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun createViaSemantic_noViablePlanes_returnsUnanchoredEntity() {
-        val plane = FakeRuntimePlane(type = Plane.Type.VERTICAL, label = Plane.Label.WALL)
+        val plane =
+            androidx.xr.arcore.testing.FakeRuntimePlane(
+                type = Plane.Type.VERTICAL,
+                label = Plane.Label.WALL,
+            )
         mFakePerceptionManager.addTrackable(plane)
         val anchorEntity =
             AnchorEntity.create(
@@ -139,11 +150,13 @@ class AnchorEntityTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    @Suppress("DEPRECATION")
+    // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun createViaSemantic_withinTimeout_returnAnchoredEntity() {
         runTest(testDispatcher) {
             activityController.create().start().resume()
             val plane =
-                FakeRuntimePlane(
+                androidx.xr.arcore.testing.FakeRuntimePlane(
                     type = Plane.Type.HORIZONTAL_DOWNWARD_FACING,
                     label = Plane.Label.CEILING,
                     extents = FloatSize2d(1.0f, 1.0f),
@@ -165,11 +178,13 @@ class AnchorEntityTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    @Suppress("DEPRECATION")
+    // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun createViaSemantic_twice_doesNotReanchor() {
         runTest(testDispatcher) {
             activityController.create().start().resume()
             val plane1 =
-                FakeRuntimePlane(
+                androidx.xr.arcore.testing.FakeRuntimePlane(
                     type = Plane.Type.HORIZONTAL_DOWNWARD_FACING,
                     label = Plane.Label.CEILING,
                     extents = FloatSize2d(1.0f, 1.0f),
@@ -192,7 +207,7 @@ class AnchorEntityTest {
 
             // Add another matching plane
             val plane2 =
-                FakeRuntimePlane(
+                androidx.xr.arcore.testing.FakeRuntimePlane(
                     type = Plane.Type.HORIZONTAL_DOWNWARD_FACING,
                     label = Plane.Label.CEILING,
                     extents = FloatSize2d(1.0f, 1.0f),
@@ -208,11 +223,13 @@ class AnchorEntityTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    @Suppress("DEPRECATION")
+    // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun createViaSemantic_pastTimeout_returnsTimedOutAnchorEntity() {
         runTest(testDispatcher) {
             activityController.create().start().resume()
             val plane =
-                FakeRuntimePlane(
+                androidx.xr.arcore.testing.FakeRuntimePlane(
                     type = Plane.Type.HORIZONTAL_DOWNWARD_FACING,
                     label = Plane.Label.CEILING,
                     extents = FloatSize2d(1.0f, 1.0f),
@@ -241,6 +258,8 @@ class AnchorEntityTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    @Suppress("DEPRECATION")
+    // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun createViaSemantic_zeroTimeout_keepsSearching() {
         runTest(testDispatcher) {
             val anchorAttempts = 100

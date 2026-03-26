@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("DEPRECATION")
 
-package androidx.xr.arcore.testing
+package androidx.xr.arcore.testing.internal
 
 import androidx.activity.ComponentActivity
 import androidx.kruth.assertThat
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.arcore.runtime.PerceptionRuntime
+import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import org.junit.Rule
@@ -34,9 +36,10 @@ class FakePerceptionRuntimeFactoryTest {
 
     @Test
     fun createRuntime_createsFakeRuntime() {
+        FakePerceptionRuntimeFactory.createNewFakeRuntime = true
         activityRule.scenario.onActivity {
             assertThat(
-                    (Session.Companion.create(it) as SessionCreateSuccess)
+                    (Session.create(it) as SessionCreateSuccess)
                         .session
                         .runtimes
                         .filterIsInstance<PerceptionRuntime>()

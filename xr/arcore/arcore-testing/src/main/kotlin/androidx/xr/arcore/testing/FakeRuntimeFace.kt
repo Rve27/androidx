@@ -26,6 +26,9 @@ import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
 /** Fake implementation of [Face][RuntimeFace] for testing purposes. */
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
 public class FakeRuntimeFace(
     override var trackingState: TrackingState = TrackingState.PAUSED,
     override var isValid: Boolean = true,

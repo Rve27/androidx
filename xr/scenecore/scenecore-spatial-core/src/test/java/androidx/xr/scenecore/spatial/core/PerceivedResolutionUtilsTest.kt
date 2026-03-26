@@ -17,7 +17,6 @@
 package androidx.xr.scenecore.spatial.core
 
 import androidx.core.app.ComponentActivity
-import androidx.xr.arcore.testing.FakePerceptionRuntimeFactory
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.FieldOfView
 import androidx.xr.runtime.math.Pose
@@ -56,7 +55,10 @@ class PerceivedResolutionUtilsTest {
     private lateinit var session: Session
     private lateinit var fakeSceneRuntime: FakeSceneRuntime
 
-    private val fakePerceptionRuntimeFactory = FakePerceptionRuntimeFactory()
+    @Suppress("DEPRECATION")
+    // TODO: b/494308962 Remove references to arcore-testing Fakes
+    private val fakePerceptionRuntimeFactory =
+        androidx.xr.arcore.testing.FakePerceptionRuntimeFactory()
 
     @Before
     fun setUp() {

@@ -59,7 +59,8 @@ class PerceptionStateExtenderTest {
 
     @Before
     fun setUp() {
-        fakePerceptionRuntime = FakePerceptionRuntimeFactory().createRuntime(Activity())
+        fakePerceptionRuntime =
+            FakePerceptionRuntimeFactory().createRuntime(Activity()) as FakePerceptionRuntime
         timeSource = fakePerceptionRuntime.lifecycleManager.timeSource
         underTest = PerceptionStateExtender()
     }

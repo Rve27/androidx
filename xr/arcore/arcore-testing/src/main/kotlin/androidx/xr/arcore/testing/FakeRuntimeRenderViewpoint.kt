@@ -28,6 +28,9 @@ import androidx.xr.runtime.math.Pose
 /** Fake implementation of [RenderViewpoint] for testing purposes */
 // TODO: b/326481788 - Add more functionality to FakeRuntimeArDevice
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
 public class FakeRuntimeRenderViewpoint(
     override var pose: Pose = Pose(),
     @Deprecated(message = "Convert to androidx.xr.runtime.math.FieldOfView")
