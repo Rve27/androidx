@@ -73,6 +73,11 @@ public class WebMessageCompat {
     /**
      * Creates a WebMessage with JavaScript ArrayBuffer payload.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#WEB_MESSAGE_ARRAY_BUFFER}.
+     *
      * @param arrayBuffer the array buffer data of the message.
      * @throws UnsupportedOperationException if the
      *                                       {@link WebViewFeature#WEB_MESSAGE_ARRAY_BUFFER}
@@ -86,6 +91,11 @@ public class WebMessageCompat {
 
     /**
      * Creates a WebMessage with JavaScript ArrayBuffer payload.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#WEB_MESSAGE_ARRAY_BUFFER}.
      *
      * @param arrayBuffer the array buffer data of the message.
      * @param ports       the ports that are sent with the message.

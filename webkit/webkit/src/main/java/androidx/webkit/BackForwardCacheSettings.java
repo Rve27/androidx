@@ -54,9 +54,10 @@ public class BackForwardCacheSettings {
 
     /**
      * Returns the timeout for pages in the back-forward cache, in seconds.
+     *
      * <p>
      * This method should only be called if
-     * {@link WebViewFeature#isFeatureSupported(String)} returns true for
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
      * {@link WebViewFeature#BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3}.
      *
      * @throws UnsupportedOperationException if the
@@ -77,9 +78,10 @@ public class BackForwardCacheSettings {
 
     /**
      * Sets the timeout for pages in the back-forward cache.
+     *
      * <p>
      * This method should only be called if
-     * {@link WebViewFeature#isFeatureSupported(String)} returns true for
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
      * {@link WebViewFeature#BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3}.
      *
      * @param timeoutSeconds The timeout in seconds.
@@ -101,9 +103,10 @@ public class BackForwardCacheSettings {
 
     /**
      * Returns the maximum number of pages that can be stored in the back-forward cache.
+     *
      * <p>
      * This method should only be called if
-     * {@link WebViewFeature#isFeatureSupported(String)} returns true for
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
      * {@link WebViewFeature#BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3}.
      *
      * @throws UnsupportedOperationException if the
@@ -124,9 +127,10 @@ public class BackForwardCacheSettings {
 
     /**
      * Sets the maximum number of pages that can be stored in the back-forward cache.
+     *
      * <p>
      * This method should only be called if
-     * {@link WebViewFeature#isFeatureSupported(String)} returns true for
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
      * {@link WebViewFeature#BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3}.
      *
      * @param maxPagesInCache The maximum number of pages.
