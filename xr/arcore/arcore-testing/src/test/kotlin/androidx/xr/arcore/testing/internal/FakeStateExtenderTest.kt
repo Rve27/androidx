@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.testing
+package androidx.xr.arcore.testing.internal
 
 import androidx.kruth.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -31,7 +31,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class FakeStateExtenderTest {
 
-    lateinit var underTest: FakeStateExtender
+    private lateinit var underTest: FakeStateExtender
 
     @Before
     fun setUp() {

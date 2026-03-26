@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package androidx.xr.arcore.testing
 
+import android.annotation.SuppressLint
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.runtime.AnchorInvalidUuidException
@@ -45,6 +46,10 @@ import java.util.UUID
  * @property isTrackingAvailable a flag to represent available tracking state of the camera
  */
 @SuppressWarnings("HiddenSuperclass")
+@Suppress("DEPRECATION")
+@Deprecated(
+    "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
+)
 public class FakePerceptionManager : PerceptionManager, AnchorHolder {
 
     public val anchors: MutableList<Anchor> = mutableListOf<Anchor>()
@@ -60,17 +65,21 @@ public class FakePerceptionManager : PerceptionManager, AnchorHolder {
     override val rightHand: Hand? = FakeRuntimeHand()
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @get:SuppressLint("HiddenTypeParameter", "UnavailableSymbol")
     override val arDevice: FakeRuntimeArDevice = FakeRuntimeArDevice()
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @get:SuppressLint("HiddenTypeParameter", "UnavailableSymbol")
     override val leftRenderViewpoint: FakeRuntimeRenderViewpoint? =
         FakeRuntimeRenderViewpoint(Pose(Vector3(1f, 0f, 0f), Quaternion.Companion.Identity))
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @get:SuppressLint("HiddenTypeParameter", "UnavailableSymbol")
     override val rightRenderViewpoint: FakeRuntimeRenderViewpoint? =
         FakeRuntimeRenderViewpoint(Pose(Vector3(0f, 1f, 0f), Quaternion.Companion.Identity))
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @get:SuppressLint("HiddenTypeParameter", "UnavailableSymbol")
     override val monoRenderViewpoint: FakeRuntimeRenderViewpoint? =
         FakeRuntimeRenderViewpoint(Pose(Vector3(0f, 0f, 1f), Quaternion.Companion.Identity))
 

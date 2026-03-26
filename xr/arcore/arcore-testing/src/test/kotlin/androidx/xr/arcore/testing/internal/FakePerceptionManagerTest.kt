@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore.testing
+package androidx.xr.arcore.testing.internal
 
 import androidx.kruth.assertThat
-import androidx.xr.arcore.runtime.Anchor
 import androidx.xr.arcore.runtime.AnchorInvalidUuidException
-import androidx.xr.arcore.runtime.Anchorable
-import androidx.xr.arcore.runtime.HitResult
 import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
-import androidx.xr.runtime.math.Ray
 import androidx.xr.runtime.math.Vector3
 import java.util.UUID
 import org.junit.Assert.assertThrows
@@ -35,7 +31,7 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class FakePerceptionManagerTest {
 
-    lateinit var underTest: FakePerceptionManager
+    private lateinit var underTest: FakePerceptionManager
 
     @Before
     fun setUp() {
@@ -87,45 +83,6 @@ class FakePerceptionManagerTest {
     }
 
     @Test
-    fun hitTest_returnsAddedHitResult() {
-        val ray = Ray(Vector3(1f, 2f, 3f), Vector3(4f, 5f, 6f))
-        val hitResult = HitResult(distance = 1f, Pose(), createStubTrackable())
-        underTest.addHitResult(hitResult)
-
-        assertThat(underTest.hitTest(ray)).containsExactly(hitResult)
-    }
-
-    @Test
-    fun clearHitResults_removesAllHitResults() {
-        val ray = Ray(Vector3(1f, 2f, 3f), Vector3(4f, 5f, 6f))
-        val hitResult = HitResult(distance = 1f, Pose(), createStubTrackable())
-        underTest.addHitResult(hitResult)
-
-        underTest.clearHitResults()
-
-        assertThat(underTest.hitTest(ray)).isEmpty()
-    }
-
-    @Test
-    fun addTrackable_addsTrackableToTrackables() {
-        val trackable = createStubTrackable()
-
-        underTest.addTrackable(trackable)
-
-        assertThat(underTest.trackables).containsExactly(trackable)
-    }
-
-    @Test
-    fun clearTrackables_removesAllTrackables() {
-        val trackable = createStubTrackable()
-        underTest.addTrackable(trackable)
-
-        underTest.clearTrackables()
-
-        assertThat(underTest.trackables).isEmpty()
-    }
-
-    @Test
     fun getPersistedAnchorUuids_returnsOneUuid() {
         val anchor = underTest.createAnchor(Pose())
         anchor.persist()
@@ -171,19 +128,4 @@ class FakePerceptionManagerTest {
             underTest.unpersistAnchor(UUID(0L, 0L))
         }
     }
-
-    private fun createStubTrackable() =
-        object : Anchorable, AnchorHolder {
-            override fun createAnchor(pose: Pose): Anchor = underTest.createAnchor(pose)
-
-            override fun detachAnchor(anchor: Anchor) {
-                underTest.detachAnchor(anchor)
-            }
-
-            override fun onAnchorPersisted(anchor: Anchor) {
-                underTest.onAnchorPersisted(anchor)
-            }
-
-            override val trackingState = TrackingState.TRACKING
-        }
 }

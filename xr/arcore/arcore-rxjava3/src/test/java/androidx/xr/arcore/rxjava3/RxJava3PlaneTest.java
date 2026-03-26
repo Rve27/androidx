@@ -31,7 +31,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.xr.arcore.Plane;
 import androidx.xr.arcore.SessionExtKt;
 import androidx.xr.arcore.XrResourcesManager;
-import androidx.xr.arcore.testing.FakeRuntimePlane;
 import androidx.xr.runtime.Config;
 import androidx.xr.runtime.PlaneTrackingMode;
 import androidx.xr.runtime.Session;
@@ -61,10 +60,14 @@ public class RxJava3PlaneTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void plane_stateFlowable_returnsPlaneState() {
         createTestSessionAndRunTest(
                 () -> {
-                    Plane underTest = new Plane(new FakeRuntimePlane(), mXrResourcesManager);
+                    Plane underTest =
+                            new Plane(
+                                    new androidx.xr.arcore.testing.FakeRuntimePlane(),
+                                    mXrResourcesManager);
                     TestSubscriber<Plane.State> testSubscriber = new TestSubscriber<>();
 
                     getStateAsFlowable(underTest).subscribe(testSubscriber);
