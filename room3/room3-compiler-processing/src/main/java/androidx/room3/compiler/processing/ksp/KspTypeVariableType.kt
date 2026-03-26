@@ -32,10 +32,12 @@ import com.squareup.kotlinpoet.javapoet.KTypeName
  */
 internal class KspTypeVariableType(
     env: KspProcessingEnv,
-    val ksTypeVariable: KSTypeParameter,
     ksType: KSType,
     scope: KSTypeVarianceResolverScope? = null,
-) : KspType(env, ksType, scope, null), XTypeVariableType {
+) : KspType(env, ksType, scope), XTypeVariableType {
+    val ksTypeVariable: KSTypeParameter =
+        this.ksType.declaration as? KSTypeParameter
+            ?: error("${this.ksType} is not a type variable")
 
     override fun resolveJTypeName(): JTypeName {
         return ksTypeVariable.asJTypeName(env.resolver)
@@ -51,12 +53,8 @@ internal class KspTypeVariableType(
         return this
     }
 
-    override fun copy(
-        env: KspProcessingEnv,
-        ksType: KSType,
-        scope: KSTypeVarianceResolverScope?,
-        typeAlias: KSType?,
-    ) = KspTypeVariableType(env, ksType.declaration as KSTypeParameter, ksType, scope)
+    override fun copy(env: KspProcessingEnv, ksType: KSType, scope: KSTypeVarianceResolverScope?) =
+        KspTypeVariableType(env, ksType, scope)
 
     override val equalityItems: Array<out Any?> by lazy { arrayOf(ksTypeVariable) }
 }

@@ -31,9 +31,8 @@ private constructor(
     env: KspProcessingEnv,
     val typeArg: KSTypeArgument,
     scope: KSTypeVarianceResolverScope? = null,
-    typeAlias: KSType? = null,
     ksType: KSType = typeArg.requireType(),
-) : KspType(env = env, ksType = ksType, scope = scope, typeAlias = typeAlias) {
+) : KspType(env, ksType, scope) {
     /**
      * When KSP resolves classes, it always resolves to the upper bound. Hence, the ksType we pass
      * to super is actually our extendsBound. Note that an unbound type argument will resolve to
@@ -58,17 +57,11 @@ private constructor(
 
     override fun boxed() = this
 
-    override fun copy(
-        env: KspProcessingEnv,
-        ksType: KSType,
-        scope: KSTypeVarianceResolverScope?,
-        typeAlias: KSType?,
-    ) =
+    override fun copy(env: KspProcessingEnv, ksType: KSType, scope: KSTypeVarianceResolverScope?) =
         KspTypeArgumentType(
             env = env,
             typeArg = DelegatingTypeArg(typeArg, type = ksType.createTypeReference()),
             scope = scope,
-            typeAlias = typeAlias,
         )
 
     internal class DelegatingTypeArg(

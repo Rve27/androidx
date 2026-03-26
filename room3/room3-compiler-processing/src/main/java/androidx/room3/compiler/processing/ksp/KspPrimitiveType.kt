@@ -28,8 +28,8 @@ import com.squareup.kotlinpoet.javapoet.KTypeName
  * a kotlin.Int might be non-null but still be non primitive if it is derived from a generic type
  * argument or is part of type parameters.
  */
-internal class KspPrimitiveType(env: KspProcessingEnv, ksType: KSType, typeAlias: KSType? = null) :
-    KspType(env, ksType, null, typeAlias) {
+internal class KspPrimitiveType(env: KspProcessingEnv, ksType: KSType) :
+    KspType(env, ksType, null) {
     override fun resolveJTypeName(): JTypeName {
         return ksType.asJTypeName(env.resolver).tryUnbox()
     }
@@ -42,10 +42,6 @@ internal class KspPrimitiveType(env: KspProcessingEnv, ksType: KSType, typeAlias
         return env.wrap(ksType = ksType, allowPrimitives = false)
     }
 
-    override fun copy(
-        env: KspProcessingEnv,
-        ksType: KSType,
-        scope: KSTypeVarianceResolverScope?,
-        typeAlias: KSType?,
-    ) = KspPrimitiveType(env, ksType, typeAlias)
+    override fun copy(env: KspProcessingEnv, ksType: KSType, scope: KSTypeVarianceResolverScope?) =
+        KspPrimitiveType(env, ksType)
 }
