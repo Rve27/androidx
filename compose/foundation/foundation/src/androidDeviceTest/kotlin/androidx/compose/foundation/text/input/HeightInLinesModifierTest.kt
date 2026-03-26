@@ -155,14 +155,28 @@ class HeightInLinesModifierTest {
     @Test(expected = IllegalArgumentException::class)
     fun minLines_invalidValue() {
         rule.setContent {
-            Box(modifier = Modifier.heightInLines(textStyle = TextStyle.Default, minLines = 0))
+            Box(
+                modifier =
+                    Modifier.heightInLines(
+                        textStyle = TextStyle.Default,
+                        minLines = 0,
+                        softWrap = true,
+                    )
+            )
         }
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun maxLines_invalidValue() {
         rule.setContent {
-            Box(modifier = Modifier.heightInLines(textStyle = TextStyle.Default, maxLines = 0))
+            Box(
+                modifier =
+                    Modifier.heightInLines(
+                        textStyle = TextStyle.Default,
+                        maxLines = 0,
+                        softWrap = true,
+                    )
+            )
         }
     }
 
@@ -175,6 +189,7 @@ class HeightInLinesModifierTest {
                         textStyle = TextStyle.Default,
                         minLines = 2,
                         maxLines = 1,
+                        softWrap = true,
                     )
             )
         }
@@ -289,8 +304,12 @@ class HeightInLinesModifierTest {
         isDebugInspectorInfoEnabled = true
 
         val modifier =
-            Modifier.heightInLines(textStyle = TextStyle.Default, minLines = 5, maxLines = 10)
-                as InspectableValue
+            Modifier.heightInLines(
+                textStyle = TextStyle.Default,
+                minLines = 5,
+                maxLines = 10,
+                softWrap = true,
+            ) as InspectableValue
         assertThat(modifier.nameFallback).isEqualTo("heightInLines")
         assertThat(modifier.inspectableElements.asIterable())
             .containsExactly(
@@ -399,6 +418,32 @@ class HeightInLinesModifierTest {
         }
     }
 
+    @Test
+    fun heightInLines_returnsOriginalModifier_whenSingleLine() {
+        val style = TextStyle.Default
+        val modifier = Modifier
+        val result =
+            modifier.heightInLines(textStyle = style, minLines = 1, maxLines = 1, softWrap = false)
+        assertThat(result).isSameInstanceAs(modifier)
+    }
+
+    @Test
+    fun heightInLines_returnsOriginalModifier_multiLine_whenMinLinesAndMaxLinesAreOne() {
+        val style = TextStyle.Default
+        val modifier = Modifier
+        val result =
+            modifier.heightInLines(textStyle = style, minLines = 1, maxLines = 1, softWrap = true)
+        assertThat(result).isNotSameInstanceAs(modifier)
+    }
+
+    @Test
+    fun heightInLines_returnsOriginalModifier_whenDefaults() {
+        val style = TextStyle.Default
+        val modifier = Modifier
+        val result = modifier.heightInLines(textStyle = style, softWrap = true)
+        assertThat(result).isSameInstanceAs(modifier)
+    }
+
     private fun setTextFieldWithMaxLines(
         text: String,
         lines: MultiLine,
@@ -429,7 +474,7 @@ class HeightInLinesModifierTest {
         onGloballyPositioned: (LayoutCoordinates) -> Unit = {},
         onTextLayoutResult: Density.(getResult: () -> TextLayoutResult?) -> Unit,
         text: String,
-        lineLimits: MultiLine,
+        lineLimits: TextFieldLineLimits,
         textStyle: TextStyle = TextStyle.Default,
     ) {
         Box(
