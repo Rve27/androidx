@@ -85,7 +85,14 @@ class CaptureRemoteDocumentTest {
                 CoreDocument.DOCUMENT_API_LEVEL,
                 RcProfiles.PROFILE_ANDROID_NATIVE,
                 AndroidxRcPlatformServices(),
-                { setOf(Operations.DRAW_TEXT_ON_CIRCLE) },
+                {
+                    Operations.getOperations(
+                            CoreDocument.DOCUMENT_API_LEVEL,
+                            RcProfiles.PROFILE_ANDROIDX,
+                        )
+                        ?.keySet()
+                        .orEmpty() + setOf(Operations.DRAW_TEXT_ON_CIRCLE)
+                },
             ) { creationDisplayInfo, profile, callback ->
                 RemoteComposeWriterAndroid(creationDisplayInfo, null, profile, callback)
             }
