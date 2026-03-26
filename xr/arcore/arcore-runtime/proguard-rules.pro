@@ -27,3 +27,6 @@
 
 -keep class androidx.xr.arcore.runtime.PerceptionRuntime { *; }
 -keep class * implements androidx.xr.arcore.runtime.PerceptionRuntime { *; }
+
+# androidx.xr.arcore.runtime.TrackingState is referenced by native code.
+-keep class androidx.xr.arcore.runtime.TrackingState { *; }
