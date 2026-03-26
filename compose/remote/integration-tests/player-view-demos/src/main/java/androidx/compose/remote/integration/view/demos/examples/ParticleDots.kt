@@ -58,7 +58,7 @@ fun particleDots2(): RemoteComposeContext {
          */
         droppingEngine3(
             writer as RemoteComposeWriterAndroid,
-            ContinuousSec().toFloat(),
+            0f,
             width,
             height,
             centerX,
@@ -128,7 +128,7 @@ fun particleDots(): RemoteComposeContext {
                      */
                     droppingEngine3(
                         writer as RemoteComposeWriterAndroid,
-                        ContinuousSec().toFloat(),
+                        0f,
                         width,
                         height,
                         centerX,
