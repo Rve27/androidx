@@ -24,7 +24,6 @@ import androidx.compose.remote.creation.compose.layout.RemoteBox
 import androidx.compose.remote.creation.compose.layout.RemoteComposable
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
-import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.painter.painterRemoteBitmap
 import androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape
 import androidx.compose.remote.creation.compose.state.RemoteColor
@@ -107,7 +106,6 @@ fun RemoteButtonWithIcon() {
                 imageVector = TestImageVectors.VolumeUp,
                 contentDescription = null,
                 tint = RemoteButtonDefaults.buttonColors().iconColor,
-                modifier = RemoteModifier.size(24.rdp),
             )
         },
         label = { RemoteText("label".rs) },
@@ -131,7 +129,6 @@ fun RemoteButtonWithIconAndSecondaryLabel() {
                 imageVector = TestImageVectors.VolumeUp,
                 contentDescription = null,
                 tint = RemoteButtonDefaults.buttonColors().iconColor,
-                modifier = RemoteModifier.size(24.rdp),
             )
         },
         secondaryLabel = { RemoteText("secondaryLabel".rs) },
