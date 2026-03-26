@@ -235,7 +235,9 @@ internal class MovableComponentImpl(
     private fun updateReformsForGltfEntity(): Boolean {
         (entity as GltfEntity).setReformAffordanceEnabled(
             enabled = true,
-            systemMovable = systemMovable && !userAnchorable,
+            // Ensure system movable is not handled in api-bindings.
+            // TODO(b/495927805): Remove system movable flag from the SVXR forked component.
+            systemMovable = false,
         )
         (entity as AndroidXrEntity).addInputEventListener(runtimeExecutor, inputEventListener)
         return true
