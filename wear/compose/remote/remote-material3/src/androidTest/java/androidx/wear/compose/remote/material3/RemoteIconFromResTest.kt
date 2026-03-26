@@ -21,7 +21,6 @@ import androidx.compose.remote.creation.CreationDisplayInfo
 import androidx.compose.remote.creation.compose.layout.RemoteRow
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.padding
-import androidx.compose.remote.creation.compose.modifier.size
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
 import androidx.compose.remote.player.compose.test.utils.screenshot.rule.RemoteComposeScreenshotTestRule
@@ -63,10 +62,7 @@ class RemoteIconFromResTest {
     }
 
     @Composable
-    private fun Icon(
-        modifier: RemoteModifier = RemoteModifier.padding(8.rdp).size(24.rdp),
-        resId: Int,
-    ) {
+    private fun Icon(modifier: RemoteModifier = RemoteModifier.padding(8.rdp), resId: Int) {
         RemoteIcon(
             modifier = modifier,
             imageVector = ImageVector.vectorResource(resId),
