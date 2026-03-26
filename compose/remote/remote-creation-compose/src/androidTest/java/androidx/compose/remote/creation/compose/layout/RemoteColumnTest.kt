@@ -21,6 +21,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteArrangement.Absolut
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement.spacedBy
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
+import androidx.compose.remote.creation.compose.modifier.fillMaxSize
 import androidx.compose.remote.creation.compose.modifier.fillMaxWidth
 import androidx.compose.remote.creation.compose.modifier.height
 import androidx.compose.remote.creation.compose.modifier.size
@@ -174,10 +175,8 @@ class RemoteColumnTest {
                         yield(
                             "${arrangement.propertyName()} ${alignment.propertyName()}" to
                                 @RemoteComposable @Composable {
-                                    // TODO(b/447100988): replace size by fillMaxSize in all
-                                    // those RemoteColumns
                                     RemoteColumn(
-                                        modifier = RemoteModifier.size(DefaultContainerSize),
+                                        modifier = RemoteModifier.fillMaxSize(),
                                         horizontalAlignment = alignment,
                                         verticalArrangement = arrangement,
                                     ) {
@@ -203,8 +202,7 @@ class RemoteColumnTest {
     @Composable
     private fun TestSpacedByRemoteDp() {
         RemoteColumn(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
             verticalArrangement = spacedBy(5.rdp),
         ) {
@@ -227,8 +225,7 @@ class RemoteColumnTest {
     @Composable
     private fun TestSpacedByRemoteFloat() {
         RemoteColumn(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
             verticalArrangement = spacedBy(10f.rf),
         ) {
@@ -251,8 +248,7 @@ class RemoteColumnTest {
     @Composable
     private fun TestSpacedByRemoteDp(alignment: RemoteAlignment.Vertical) {
         RemoteColumn(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
             verticalArrangement = spacedBy(space = 5.rdp, alignment = alignment),
         ) {
@@ -275,8 +271,7 @@ class RemoteColumnTest {
     @Composable
     private fun TestSpacedByRemoteFloat(alignment: RemoteAlignment.Vertical) {
         RemoteColumn(
-            // TODO(b/447100988): replace size by fillMaxSize
-            modifier = RemoteModifier.size(DefaultContainerSize),
+            modifier = RemoteModifier.fillMaxSize(),
             horizontalAlignment = RemoteAlignment.CenterHorizontally,
             verticalArrangement = spacedBy(space = 10f.rf, alignment = alignment),
         ) {
