@@ -18,7 +18,6 @@ package androidx.xr.glimmer
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -58,7 +57,7 @@ import androidx.compose.ui.unit.dp
  * @param shape the [Shape] used to clip this title chip, and also used to draw the background and
  *   border
  * @param color background color of this title chip
- * @param contentColor content color used by components inside [content]
+ * @param contentColor content color used by components inside [content] and [leadingIcon].
  * @param border the border to draw around this title chip
  * @param contentPadding the spacing values to apply internally between the container and the
  *   content
@@ -75,7 +74,6 @@ public fun TitleChip(
     contentPadding: PaddingValues = TitleChipDefaults.contentPadding,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val colors = GlimmerTheme.colors
     val iconSize = GlimmerTheme.iconSizes.small
     val horizontalInnerContentPadding = GlimmerTheme.componentSpacingValues.extraSmall
 
@@ -97,9 +95,7 @@ public fun TitleChip(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (leadingIcon != null) {
-                Box(Modifier.contentColorProvider(colors.primary)) {
-                    CompositionLocalProvider(LocalIconSize provides iconSize, content = leadingIcon)
-                }
+                CompositionLocalProvider(LocalIconSize provides iconSize, content = leadingIcon)
             }
             Spacer(Modifier.width(horizontalInnerContentPadding))
             content()
