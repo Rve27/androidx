@@ -56,7 +56,7 @@ public abstract class ServiceWorkerControllerCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_BASIC_USAGE}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_BASIC_USAGE}.
      *
      * @return the default ServiceWorkerController instance
      * @throws UnsupportedOperationException if the

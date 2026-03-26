@@ -58,6 +58,11 @@ public final class WebStorageCompat {
      * Deletion is not an atomic operation, so it may also delete data that is stored
      * during deletion, but this is not guaranteed.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#DELETE_BROWSING_DATA}.
+     *
      * @param instance     WebStorage instance to delete all data in.
      * @param executor     Executor to run the {@code doneCallback}.
      * @param doneCallback callback that will be invoked when deletion is complete.
@@ -85,6 +90,11 @@ public final class WebStorageCompat {
      * <p>
      * This method functions as {@link #deleteBrowsingData(WebStorage, Executor, Runnable)},
      * but invokes the {@code doneCallback} on the UI thread.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#DELETE_BROWSING_DATA}.
      *
      * @see #deleteBrowsingData(WebStorage, Executor, Runnable)
      * @throws UnsupportedOperationException if the
@@ -119,6 +129,11 @@ public final class WebStorageCompat {
      * Deletion is not an atomic operation, so it may also delete data that is stored
      * during deletion, but this is not guaranteed.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#DELETE_BROWSING_DATA}.
+     *
      * @param instance     WebStorage instance to delete all data in.
      * @param site         The site to delete for. This can be a domain name, or a full URL.
      * @param executor     Executor to run the {@code doneCallback}.
@@ -151,6 +166,11 @@ public final class WebStorageCompat {
      * This method functions as
      * {@link #deleteBrowsingDataForSite(WebStorage, String, Executor, Runnable)},
      * but invokes the {@code doneCallback} on the UI thread.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#DELETE_BROWSING_DATA}.
      *
      * @see #deleteBrowsingDataForSite(WebStorage, String, Executor, Runnable)
      * @throws UnsupportedOperationException if the

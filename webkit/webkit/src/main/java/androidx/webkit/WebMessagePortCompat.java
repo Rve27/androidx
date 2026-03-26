@@ -93,7 +93,7 @@ public abstract class WebMessagePortCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_MESSAGE_PORT_POST_MESSAGE}.
+     * returns {@code true} for {@link WebViewFeature#WEB_MESSAGE_PORT_POST_MESSAGE}.
      *
      * <p>
      * When posting a {@link WebMessageCompat} with type {@link WebMessageCompat#TYPE_ARRAY_BUFFER},
@@ -125,7 +125,7 @@ public abstract class WebMessagePortCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_MESSAGE_PORT_CLOSE}.
+     * returns {@code true} for {@link WebViewFeature#WEB_MESSAGE_PORT_CLOSE}.
      *
      * @throws UnsupportedOperationException if the
      *                                       {@link WebViewFeature#WEB_MESSAGE_PORT_CLOSE}
@@ -141,7 +141,7 @@ public abstract class WebMessagePortCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_MESSAGE_PORT_SET_MESSAGE_CALLBACK}.
+     * returns {@code true} for {@link WebViewFeature#WEB_MESSAGE_PORT_SET_MESSAGE_CALLBACK}.
      *
      * @param callback  the message callback.
      * @throws UnsupportedOperationException if the
@@ -160,7 +160,7 @@ public abstract class WebMessagePortCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#WEB_MESSAGE_PORT_SET_MESSAGE_CALLBACK}.
+     * returns {@code true} for {@link WebViewFeature#WEB_MESSAGE_PORT_SET_MESSAGE_CALLBACK}.
      *
      * @param handler   the handler to receive the message events.
      * @param callback  the message callback.

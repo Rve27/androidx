@@ -66,7 +66,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_CACHE_MODE}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_CACHE_MODE}.
      *
      * @param mode the mode to use. One of {@link WebSettings#LOAD_DEFAULT},
      *             {@link WebSettings#LOAD_CACHE_ELSE_NETWORK}, {@link WebSettings#LOAD_NO_CACHE}
@@ -88,7 +88,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_CACHE_MODE}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_CACHE_MODE}.
      *
      * @return the current setting for overriding the cache mode
      * @see #setCacheMode
@@ -106,7 +106,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_CONTENT_ACCESS}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_CONTENT_ACCESS}.
      *
      * @see WebSettings#setAllowContentAccess
      * @see #getAllowContentAccess
@@ -124,7 +124,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_CONTENT_ACCESS}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_CONTENT_ACCESS}.
      *
      * @see #setAllowContentAccess
      * @throws UnsupportedOperationException if the
@@ -141,7 +141,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_FILE_ACCESS}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_FILE_ACCESS}.
      *
      * @see WebSettings#setAllowFileAccess
      * @see #getAllowContentAccess
@@ -159,7 +159,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_FILE_ACCESS}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_FILE_ACCESS}.
      *
      * @see #setAllowFileAccess
      * @throws UnsupportedOperationException if the
@@ -176,7 +176,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_BLOCK_NETWORK_LOADS}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_BLOCK_NETWORK_LOADS}.
      *
      * @param flag {@code true} means block network loads by the Service Workers
      * @see WebSettings#setBlockNetworkLoads
@@ -195,7 +195,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * This method should only be called if
      * {@link WebViewFeature#isFeatureSupported(String)}
-     * returns true for {@link WebViewFeature#SERVICE_WORKER_BLOCK_NETWORK_LOADS}.
+     * returns {@code true} for {@link WebViewFeature#SERVICE_WORKER_BLOCK_NETWORK_LOADS}.
      *
      * @return {@code true} if the Service Workers are not allowed to load any resources from the
      * network
@@ -218,6 +218,11 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * <p>
      * The format of the strings in the allow-list follows the origin rules of
      * {@link WebViewCompat#addWebMessageListener(WebView, String, Set, WebViewCompat.WebMessageListener)}.
+     *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#REQUESTED_WITH_HEADER_ALLOW_LIST}.
      *
      * @return The configured set of allow-listed origins.
      * @see #setRequestedWithHeaderOriginAllowList(Set)
@@ -251,6 +256,11 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * The format of the strings in the allow-list follows the origin rules of
      * {@link WebViewCompat#addWebMessageListener(WebView, String, Set, WebViewCompat.WebMessageListener)}.
      *
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#REQUESTED_WITH_HEADER_ALLOW_LIST}.
+     *
      * @param allowList Set of origins to allow-list.
      * @throws IllegalArgumentException if the allow-list contains a malformed origin.
      * @see WebSettingsCompat#setRequestedWithHeaderOriginAllowList(WebSettings, Set)
@@ -279,7 +289,7 @@ public abstract class ServiceWorkerWebSettingsCompat {
      * the correct set of cookies for the request.
      *
      * <p>This method should only be called if
-     * {@link WebViewFeature#isFeatureSupported(String)} returns true for
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
      * {@link WebViewFeature#COOKIE_INTERCEPT}.
      *
      * @param enabled Whether cookie access during request intercept should be enabled.
@@ -293,9 +303,10 @@ public abstract class ServiceWorkerWebSettingsCompat {
 
     /**
      * Returns whether cookie access during request intercept is enabled.
+     *
      * <p>
      * This method should only be called if
-     * {@link WebViewFeature#isFeatureSupported(String)} returns true for
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
      * {@link WebViewFeature#COOKIE_INTERCEPT}.
      *
      * @see #setIncludeCookiesOnShouldInterceptRequestEnabled(boolean)
