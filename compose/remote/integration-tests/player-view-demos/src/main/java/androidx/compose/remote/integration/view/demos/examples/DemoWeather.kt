@@ -78,7 +78,7 @@ fun WeatherDemo() {
                 RemoteCollapsibleColumn(
                     modifier =
                         RemoteModifier.fillMaxWidth()
-                            .widthIn(min = 50.dp)
+                            .widthIn(min = 50.rdp)
                             .clip(RemoteRoundedCornerShape(24.rdp))
                             .background(Color(219, 247, 239))
                 ) {
@@ -123,13 +123,13 @@ fun WeatherHeader() {
     }
     RemoteRow(
         modifier =
-            RemoteModifier.widthIn(min = 100.dp)
+            RemoteModifier.widthIn(min = 100.rdp)
                 .heightIn(min = rowHeightDp)
                 .padding(8.rdp), // .background(Color.Red),
         verticalAlignment = RemoteAlignment.CenterVertically,
     ) {
         WeatherBox()
-        RemoteBox(RemoteModifier.weight(1f).widthIn(min = 0.dp))
+        RemoteBox(RemoteModifier.weight(1f).widthIn(min = 0.rdp))
         WeatherBox2()
     }
 }
@@ -251,7 +251,7 @@ fun WeatherDay(day: String, precipitation: String, image: Int, temperature: Stri
     }
     FitBox(modifier = RemoteModifier.fillMaxWidth()) {
         RemoteRow(
-            modifier = RemoteModifier.fillMaxWidth().widthIn(min = 200.dp),
+            modifier = RemoteModifier.fillMaxWidth().widthIn(min = 200.rdp),
             verticalAlignment = RemoteAlignment.CenterVertically,
         ) {
             RemoteBox(
@@ -286,7 +286,7 @@ private fun Temp(
     image: ImageBitmap,
     temperature: String,
 ) {
-    RemoteBox(modWeight.widthIn(min = 0.dp))
+    RemoteBox(modWeight.widthIn(min = 0.rdp))
     RemoteRow(
         modifier = RemoteModifier.width(70.rdp),
         horizontalArrangement = RemoteArrangement.End,
@@ -297,7 +297,7 @@ private fun Temp(
         }
         RemoteImage(image, RemoteString(""), RemoteModifier.size(24.rdp))
     }
-    RemoteBox(modWeight.widthIn(min = 0.dp))
+    RemoteBox(modWeight.widthIn(min = 0.rdp))
     RemoteBox(modifier = RemoteModifier.width(60.rdp), contentAlignment = RemoteAlignment.Center) {
         RemoteText(temperature)
     }
