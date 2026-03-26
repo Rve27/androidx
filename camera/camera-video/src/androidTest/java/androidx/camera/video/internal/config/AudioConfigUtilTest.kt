@@ -38,6 +38,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import androidx.test.rule.GrantPermissionRule
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import java.util.concurrent.TimeUnit
 import org.junit.After
 import org.junit.Assume
@@ -145,12 +146,23 @@ class AudioConfigUtilTest(private val implName: String, private val cameraConfig
     }
 
     @Test
-    fun resolveAudioSettings_nonDefaultAudioSpec_resolvesToSupportedSampleRate() {
+    fun resolveAudioSettings_nonDefaultAudioSpec_resolvesToSupportedSettings() {
         val audioSpecs =
             listOf(
                 AudioSpec.builder().setSampleRate(1000).build(),
                 AudioSpec.builder().setSampleRate(10000).build(),
+                AudioSpec.builder().setSampleRate(44100).build(),
+                AudioSpec.builder().setSampleRate(48000).build(),
                 AudioSpec.builder().setSampleRate(100000).build(),
+                AudioSpec.builder().setChannelCount(1).build(),
+                AudioSpec.builder().setChannelCount(2).build(),
+                AudioSpec.builder().setSampleRate(1000).setChannelCount(1).build(),
+                AudioSpec.builder().setSampleRate(10000).setChannelCount(2).build(),
+                AudioSpec.builder().setSampleRate(44100).setChannelCount(1).build(),
+                AudioSpec.builder().setSampleRate(44100).setChannelCount(2).build(),
+                AudioSpec.builder().setSampleRate(48000).setChannelCount(1).build(),
+                AudioSpec.builder().setSampleRate(48000).setChannelCount(2).build(),
+                AudioSpec.builder().setSampleRate(100000).setChannelCount(2).build(),
             )
 
         val resolvedSettings =
@@ -160,16 +172,25 @@ class AudioConfigUtilTest(private val implName: String, private val cameraConfig
                 if (audioProfile == null) {
                     emptyList()
                 } else {
-                    audioSpecs.map { AudioConfigUtil.resolveAudioSettings(it, audioProfile) }
+                    audioSpecs.map { spec ->
+                        spec to AudioConfigUtil.resolveAudioSettings(spec, audioProfile)
+                    }
                 }
             }
 
-        resolvedSettings.forEach {
-            assertThat(
+        resolvedSettings.forEach { (spec, settings) ->
+            assertWithMessage(
+                    "Combination failed: spec[sampleRate=${spec.sampleRate}, " +
+                        "channelCount=${spec.channelCount}], " +
+                        "resolved[captureSampleRate=${settings.captureSampleRate}, " +
+                        "channelCount=${settings.channelCount}, " +
+                        "audioFormat=${settings.audioFormat}]"
+                )
+                .that(
                     AudioSource.isSettingsSupported(
-                        it.captureSampleRate,
-                        it.channelCount,
-                        it.audioFormat,
+                        settings.captureSampleRate,
+                        settings.channelCount,
+                        settings.audioFormat,
                     )
                 )
                 .isTrue()
