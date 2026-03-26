@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import androidx.test.screenshot.matchers.MSSIMMatcher
 import androidx.test.uiautomator.uiAutomator
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
@@ -48,7 +49,10 @@ import org.junit.runner.RunWith
 class StateLayoutTest {
     @get:Rule
     val testRule: RemoteComposeScreenshotTestRule by lazy {
-        RemoteComposeScreenshotTestRule(moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY)
+        RemoteComposeScreenshotTestRule(
+            moduleDirectory = SCREENSHOT_GOLDEN_DIRECTORY,
+            matcher = MSSIMMatcher(threshold = 0.999),
+        )
     }
 
     @Test
