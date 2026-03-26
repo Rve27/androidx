@@ -50,16 +50,6 @@ package androidx.compose.ui
  */
 @ExperimentalComposeUiApi
 object AndroidComposeUiFlags {
-    /**
-     * This flag enables ComposeViewContext to be created automatically and used across ComposeViews
-     * within the same hierarchy. With the flag disabled, ComposeViewContext will only be created
-     * when explicitly provided to a ComposeView.
-     */
-    // TODO: b/479834257
-    @field:Suppress("MutableBareField")
-    @JvmField
-    var isSharedComposeViewContextEnabled: Boolean = true
-
     /** This moves WindowInfo into the shared ComposeViewContext. */
     // TODO: b/479837249
     @field:Suppress("MutableBareField") @JvmField var isSharedWindowInfoEnabled: Boolean = true
