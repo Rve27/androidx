@@ -150,4 +150,55 @@ public class BackForwardCacheSettings {
         }
     }
 
+    /**
+     * Returns whether to keep forward cache entries when the back-forward cache is enabled.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4}.
+     *
+     * @throws UnsupportedOperationException if the
+     *                            {@link WebViewFeature#BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4}
+     *                                       feature is not supported.
+     */
+    @RequiresFeature(name = WebViewFeature.BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4,
+            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @WebSettingsCompat.ExperimentalBackForwardCacheSettings
+    public boolean getKeepForwardEntries() {
+        final ApiFeature.NoFramework feature =
+                WebViewFeatureInternal.BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4;
+        if (feature.isSupportedByWebView()) {
+            return mAdapter.getBackForwardCacheKeepForwardEntries();
+        } else {
+            throw WebViewFeatureInternal.getUnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Sets whether to keep forward cache entries when the back-forward cache is enabled.
+     * <p>
+     * This method should only be called if
+     * {@link WebViewFeature#isFeatureSupported(String)} returns {@code true} for
+     * {@link WebViewFeature#BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4}.
+     *
+     * @param keepForwardEntries Whether to keep forward cache entries.
+     * @throws UnsupportedOperationException if the
+     *                            {@link WebViewFeature#BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4}
+     *                                       feature is not supported.
+     */
+    @RequiresFeature(name = WebViewFeature.BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4,
+            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @WebSettingsCompat.ExperimentalBackForwardCacheSettings
+    public void setKeepForwardEntries(boolean keepForwardEntries) {
+        final ApiFeature.NoFramework feature =
+                WebViewFeatureInternal.BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4;
+        if (feature.isSupportedByWebView()) {
+            mAdapter.setBackForwardCacheKeepForwardEntries(keepForwardEntries);
+        } else {
+            throw WebViewFeatureInternal.getUnsupportedOperationException();
+        }
+    }
+
 }
