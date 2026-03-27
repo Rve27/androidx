@@ -18,6 +18,7 @@ package androidx.compose.remote.core.operations.layout.modifiers;
 import static androidx.compose.remote.core.documentation.DocumentedOperation.FLOAT;
 
 import androidx.annotation.RestrictTo;
+import androidx.compose.remote.core.CoreDocument;
 import androidx.compose.remote.core.Operation;
 import androidx.compose.remote.core.Operations;
 import androidx.compose.remote.core.PaintContext;
@@ -81,7 +82,7 @@ public class OffsetModifierOperation extends DecoratorModifierOperation implemen
     /**
      * Serialize the string
      *
-     * @param indent padding to display
+     * @param indent     padding to display
      * @param serializer append the string
      */
     @Override
@@ -97,7 +98,14 @@ public class OffsetModifierOperation extends DecoratorModifierOperation implemen
 
     @Override
     public void paint(@NonNull PaintContext context) {
-        context.translate(mXValue, mYValue);
+        float x = mXValue;
+        float y = mYValue;
+        if (context.getDensityBehavior() == CoreDocument.DENSITY_BEHAVIOR_DP) {
+            float density = context.getDensity();
+            x *= density;
+            y *= density;
+        }
+        context.translate(x, y);
     }
 
     @Override
@@ -128,8 +136,8 @@ public class OffsetModifierOperation extends DecoratorModifierOperation implemen
      * Write the operation to the buffer
      *
      * @param buffer a WireBuffer
-     * @param x x offset
-     * @param y y offset
+     * @param x      x offset
+     * @param y      y offset
      */
     public static void apply(@NonNull WireBuffer buffer, float x, float y) {
         buffer.start(OP_CODE);
@@ -140,7 +148,7 @@ public class OffsetModifierOperation extends DecoratorModifierOperation implemen
     /**
      * Read this operation and add it to the list of operations
      *
-     * @param buffer the buffer to read
+     * @param buffer     the buffer to read
      * @param operations the list of operations that will be added to
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
@@ -167,7 +175,8 @@ public class OffsetModifierOperation extends DecoratorModifierOperation implemen
             @NonNull RemoteContext context,
             @NonNull Component component,
             float width,
-            float height) {}
+            float height) {
+    }
 
     @Override
     public void serialize(@NonNull MapSerializer serializer) {

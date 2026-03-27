@@ -19,6 +19,7 @@ import static androidx.compose.remote.core.documentation.DocumentedOperation.FLO
 import static androidx.compose.remote.core.documentation.DocumentedOperation.INT;
 
 import androidx.annotation.RestrictTo;
+import androidx.compose.remote.core.CoreDocument;
 import androidx.compose.remote.core.Operation;
 import androidx.compose.remote.core.Operations;
 import androidx.compose.remote.core.PaintContext;
@@ -219,7 +220,11 @@ public class RowLayout extends LayoutManager {
         }
 
         if (!components.isEmpty()) {
-            size.setWidth(size.getWidth() + (mSpacedBy * (visibleChildrens - 1)));
+            float spacedBy = mSpacedBy;
+            if (context.getDensityBehavior() == CoreDocument.DENSITY_BEHAVIOR_DP) {
+                spacedBy *= context.getDensity();
+            }
+            size.setWidth(size.getWidth() + (spacedBy * (visibleChildrens - 1)));
         }
         DebugLog.e();
     }
@@ -427,7 +432,11 @@ public class RowLayout extends LayoutManager {
             }
         }
 
-        childrenWidth += mSpacedBy * (visibleChildrens - 1);
+        float spacedBy = mSpacedBy;
+        if (context.getDensityBehavior() == CoreDocument.DENSITY_BEHAVIOR_DP) {
+            spacedBy *= context.getDensity();
+        }
+        childrenWidth += spacedBy * (visibleChildrens - 1);
 
         float tx = 0f;
         float ty = 0f;
@@ -527,7 +536,7 @@ public class RowLayout extends LayoutManager {
                     || mHorizontalPositioning == SPACE_EVENLY) {
                 tx += horizontalGap;
             }
-            tx += mSpacedBy;
+            tx += spacedBy;
         }
         if (size != null) {
             size.setWidth(childrenWidth);
