@@ -323,14 +323,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         IndirectPointerEventPrimaryDirectionalMotionAxis? =
         null
 
-    override val sharedDrawScope =
-        // TODO: when removing the flag, change this to a get() block
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (AndroidComposeUiFlags.isSharedDrawingEnabled) {
-            composeViewContext.sharedDrawScope
-        } else {
-            LayoutNodeDrawScope()
-        }
+    override val sharedDrawScope: LayoutNodeDrawScope
+        get() = composeViewContext.sharedDrawScope
 
     override val view: View
         get() = this
@@ -542,14 +536,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         return null
     }
 
-    private val canvasHolder: CanvasHolder =
-        // TODO: when removing the flag, change this to a get() block
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (AndroidComposeUiFlags.isSharedDrawingEnabled) {
-            composeViewContext.canvasHolder
-        } else {
-            CanvasHolder()
-        }
+    private val canvasHolder: CanvasHolder
+        get() = composeViewContext.canvasHolder
 
     override val viewConfiguration: ViewConfiguration =
         // TODO: when removing the flag, change this to a get() block
@@ -608,14 +596,8 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     /**
      * Provide accessibility manager to the user. Use the Android version of accessibility manager.
      */
-    override val accessibilityManager =
-        // TODO: when removing the flag, change this to a get() block
-        @OptIn(ExperimentalComposeUiApi::class)
-        if (AndroidComposeUiFlags.isSharedAccessibilityManagerEnabled) {
-            composeViewContext.accessibilityManager
-        } else {
-            AndroidAccessibilityManager(context)
-        }
+    override val accessibilityManager: AccessibilityManager
+        get() = composeViewContext.accessibilityManager
 
     /**
      * Provide access to a GraphicsContext instance used to create GraphicsLayers for providing
