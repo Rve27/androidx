@@ -108,6 +108,7 @@ import androidx.compose.remote.integration.view.demos.examples.ScrollViewDemo
 import androidx.compose.remote.integration.view.demos.examples.ShaderCalendar
 import androidx.compose.remote.integration.view.demos.examples.SimplePath
 import androidx.compose.remote.integration.view.demos.examples.SwitchWidgetDemo
+import androidx.compose.remote.integration.view.demos.examples.TestDrawContentDemo
 import androidx.compose.remote.integration.view.demos.examples.WeatherDemo
 import androidx.compose.remote.integration.view.demos.examples.countDown
 import androidx.compose.remote.integration.view.demos.examples.cube3d
@@ -303,6 +304,7 @@ class ExperimentActivity : ComponentActivity() {
         mapOf<String, List<RemoteComposeFunc>>(
             "Frontend..." to
                 listOf(
+                    get("DrawContent") { TestDrawContentDemo() },
                     get("SimplePath") { SimplePath() },
                     get("WeatherDemo") { WeatherDemo() },
                     get("Simple Clock") { RcSimpleClock1() },
