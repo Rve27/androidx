@@ -474,51 +474,6 @@ public interface ImpressApi {
     /**
      * This method creates an Impress node with a stereo panel and returns the node object. Note
      * that the StereoSurfaceEntity will not render anything until the canvas shape is set.
-     * Furthermore, the surface cannot be used to render secure content.
-     *
-     * @param stereoMode The [Int] stereoMode to apply. Must be a member of StereoMode.
-     * @return An int impress node ID which can be used for updating the surface later
-     * @throws IllegalArgumentException if stereoMode is invalid.
-     */
-    // TODO - b/411225487: Remove this method.
-    public fun createStereoSurface(@StereoMode stereoMode: Int): ImpressNode
-
-    /**
-     * This method creates an Impress node with a stereo panel and returns the node object. Note
-     * that the StereoSurfaceEntity will not render anything until the canvas shape is set.
-     *
-     * @param stereoMode The [Int] stereoMode to apply. Must be a member of StereoMode.
-     * @param contentSecurityLevel The [Int] contentSecurityLevel to apply. Must be a member of
-     *   ContentSecurityLevel.
-     * @return An int impress node ID which can be used for updating the surface later
-     * @throws IllegalArgumentException if stereoMode or contentSecurityLevel are invalid.
-     */
-    public fun createStereoSurface(
-        @StereoMode stereoMode: Int,
-        @ContentSecurityLevel contentSecurityLevel: Int,
-    ): ImpressNode
-
-    /**
-     * This method creates an Impress node with a stereo panel and returns the node object. Note
-     * that the StereoSurfaceEntity will not render anything until the canvas shape is set.
-     *
-     * @param stereoMode The [Int] stereoMode to apply. Must be a member of StereoMode.
-     * @param contentSecurityLevel The [Int] contentSecurityLevel to apply. Must be a member of
-     *   ContentSecurityLevel.
-     * @param useSuperSampling This [Boolean] specifies if the super sampling filter is enabled when
-     *   rendering the surface.
-     * @return An int impress node ID which can be used for updating the surface later
-     * @throws IllegalArgumentException if stereoMode or contentSecurityLevel are invalid.
-     */
-    public fun createStereoSurface(
-        @StereoMode stereoMode: Int,
-        @ContentSecurityLevel contentSecurityLevel: Int,
-        useSuperSampling: Boolean,
-    ): ImpressNode
-
-    /**
-     * This method creates an Impress node with a stereo panel and returns the node object. Note
-     * that the StereoSurfaceEntity will not render anything until the canvas shape is set.
      *
      * @param stereoMode The [Int] stereoMode to apply. Must be a member of StereoMode.
      * @param mediaBlendingMode The [Int] mediaBlendingMode to apply. Must be a member of
