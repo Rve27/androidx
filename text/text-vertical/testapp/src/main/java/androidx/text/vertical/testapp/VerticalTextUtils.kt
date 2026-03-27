@@ -49,7 +49,7 @@ class VerticalTextBuilder {
 
     @Composable
     fun <R : Any> ruby(ruby: CharSequence, block: @Composable VerticalTextBuilder.() -> R): R =
-        withSpan(RubySpan.Builder(ruby).build(), block)
+        withSpan(RubySpan(ruby), block)
 
     fun text(text: CharSequence, rubyMap: Map<String, String> = emptyMap()) {
         val textStartOffset = result.length
@@ -59,7 +59,7 @@ class VerticalTextBuilder {
             var searchOffset = textStartOffset
             var found = result.indexOf(key, searchOffset)
             while (found != -1) {
-                result.setSpan(RubySpan.Builder(ruby).build(), found, found + key.length, SPAN_FLAG)
+                result.setSpan(RubySpan(ruby), found, found + key.length, SPAN_FLAG)
                 searchOffset = found + key.length
                 found = result.indexOf(key, searchOffset)
             }
