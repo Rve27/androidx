@@ -123,10 +123,22 @@ public final class GLUtils {
         protected int mProgramHandle;
         protected int mTransMatrixLoc = -1;
         protected int mAlphaScaleLoc = -1;
+        protected int mCornerRadiusRatioLoc = -1;
+        protected int mAspectRatioLoc = -1;
+        protected int mBorderWidthLoc = -1;
+        protected int mBorderColorLoc = -1;
         protected int mPositionLoc = -1;
+        protected final boolean mHasAdvancedStyling;
 
         protected Program2D(@NonNull String vertexShaderSource,
                 @NonNull String fragmentShaderSource) {
+            this(vertexShaderSource, fragmentShaderSource, false);
+        }
+
+        protected Program2D(@NonNull String vertexShaderSource,
+                @NonNull String fragmentShaderSource,
+                boolean hasAdvancedStyling) {
+            mHasAdvancedStyling = hasAdvancedStyling;
             int vertexShader = -1;
             int fragmentShader = -1;
             int program = -1;
@@ -183,6 +195,10 @@ public final class GLUtils {
             // Set to default value for single camera case
             updateTransformMatrix(create4x4IdentityMatrix());
             updateAlpha(1.0f);
+            if (mHasAdvancedStyling) {
+                updateCornerRadiusRatio(0.0f, 1.0f);
+                updateBorderWidth(0.0f, new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+            }
         }
 
         /** Updates the global transform matrix */
@@ -197,6 +213,24 @@ public final class GLUtils {
         public void updateAlpha(float alpha) {
             GLES20.glUniform1f(mAlphaScaleLoc, alpha);
             checkGlErrorOrThrow("glUniform1f");
+        }
+
+        /** Updates the corner radius and aspect ratio of the drawn frame */
+        public void updateCornerRadiusRatio(float cornerRadiusRatio, float aspectRatio) {
+            if (!mHasAdvancedStyling) return;
+            GLES20.glUniform1f(mCornerRadiusRatioLoc, cornerRadiusRatio);
+            checkGlErrorOrThrow("glUniform1f");
+            GLES20.glUniform1f(mAspectRatioLoc, aspectRatio);
+            checkGlErrorOrThrow("glUniform1f");
+        }
+
+        /** Updates the border width and color of the drawn frame */
+        public void updateBorderWidth(float borderWidth, float @NonNull [] borderColor) {
+            if (!mHasAdvancedStyling) return;
+            GLES20.glUniform1f(mBorderWidthLoc, borderWidth);
+            checkGlErrorOrThrow("glUniform1f");
+            GLES20.glUniform4fv(mBorderColorLoc, 1, borderColor, 0);
+            checkGlErrorOrThrow("glUniform4fv");
         }
 
         /**
@@ -215,6 +249,18 @@ public final class GLUtils {
             checkLocationOrThrow(mTransMatrixLoc, "uTransMatrix");
             mAlphaScaleLoc = GLES20.glGetUniformLocation(mProgramHandle, "uAlphaScale");
             checkLocationOrThrow(mAlphaScaleLoc, "uAlphaScale");
+
+            if (mHasAdvancedStyling) {
+                mCornerRadiusRatioLoc = GLES20.glGetUniformLocation(
+                        mProgramHandle, "uCornerRadiusRatio");
+                checkLocationOrThrow(mCornerRadiusRatioLoc, "uCornerRadiusRatio");
+                mAspectRatioLoc = GLES20.glGetUniformLocation(mProgramHandle, "uAspectRatio");
+                checkLocationOrThrow(mAspectRatioLoc, "uAspectRatio");
+                mBorderWidthLoc = GLES20.glGetUniformLocation(mProgramHandle, "uBorderWidth");
+                checkLocationOrThrow(mBorderWidthLoc, "uBorderWidth");
+                mBorderColorLoc = GLES20.glGetUniformLocation(mProgramHandle, "uBorderColor");
+                checkLocationOrThrow(mBorderColorLoc, "uBorderColor");
+            }
         }
     }
 
@@ -227,15 +273,34 @@ public final class GLUtils {
                 @NonNull DynamicRange dynamicRange,
                 @NonNull InputFormat inputFormat
         ) {
-            this(dynamicRange, resolveDefaultShaderProvider(dynamicRange, inputFormat));
+            this(dynamicRange, inputFormat, /* hasAdvancedStyling */ false);
+        }
+
+        public SamplerShaderProgram(
+                @NonNull DynamicRange dynamicRange,
+                @NonNull InputFormat inputFormat,
+                boolean hasAdvancedStyling
+        ) {
+            this(dynamicRange,
+                    ShaderProviders.resolveDefaultShaderProvider(
+                            dynamicRange, inputFormat, hasAdvancedStyling),
+                    hasAdvancedStyling);
         }
 
         public SamplerShaderProgram(
                 @NonNull DynamicRange dynamicRange,
                 @NonNull ShaderProvider shaderProvider) {
+            this(dynamicRange, shaderProvider, /* hasAdvancedStyling */ false);
+        }
+
+        public SamplerShaderProgram(
+                @NonNull DynamicRange dynamicRange,
+                @NonNull ShaderProvider shaderProvider,
+                boolean hasAdvancedStyling) {
             super(dynamicRange.is10BitHdr() ? ShaderProviders.HDR_VERTEX_SHADER
                             : ShaderProviders.DEFAULT_VERTEX_SHADER,
-                    getFragmentShaderSource(shaderProvider));
+                    getFragmentShaderSource(shaderProvider),
+                    hasAdvancedStyling);
 
             loadLocations();
         }
@@ -273,21 +338,6 @@ public final class GLUtils {
             checkLocationOrThrow(mTexCoordLoc, "aTextureCoord");
             mTexMatrixLoc = GLES20.glGetUniformLocation(mProgramHandle, "uTexMatrix");
             checkLocationOrThrow(mTexMatrixLoc, "uTexMatrix");
-        }
-
-        private static ShaderProvider resolveDefaultShaderProvider(
-                @NonNull DynamicRange dynamicRange,
-                @Nullable InputFormat inputFormat) {
-            if (dynamicRange.is10BitHdr()) {
-                Preconditions.checkArgument(inputFormat != InputFormat.UNKNOWN,
-                        "No default sampler shader available for" + inputFormat);
-                if (inputFormat == InputFormat.YUV) {
-                    return ShaderProviders.SHADER_PROVIDER_HDR_YUV;
-                }
-                return ShaderProviders.SHADER_PROVIDER_HDR_DEFAULT;
-            } else {
-                return ShaderProviders.SHADER_PROVIDER_DEFAULT;
-            }
         }
     }
 
@@ -396,16 +446,27 @@ public final class GLUtils {
     public static @NonNull Map<InputFormat, Program2D> createPrograms(
             @NonNull DynamicRange dynamicRange,
             @NonNull Map<InputFormat, ShaderProvider> shaderProviderOverrides) {
+        return createPrograms(dynamicRange, shaderProviderOverrides, false);
+    }
+
+    /**
+     * Creates program objects based on shaders which are appropriate for each input format.
+     */
+    public static @NonNull Map<InputFormat, Program2D> createPrograms(
+            @NonNull DynamicRange dynamicRange,
+            @NonNull Map<InputFormat, ShaderProvider> shaderProviderOverrides,
+            boolean hasAdvancedStyling) {
         HashMap<InputFormat, Program2D> programs = new HashMap<>();
         for (InputFormat inputFormat : InputFormat.values()) {
             ShaderProvider shaderProviderOverride = shaderProviderOverrides.get(inputFormat);
             Program2D program;
             if (shaderProviderOverride != null) {
                 // Always use the overridden shader provider if present
-                program = new SamplerShaderProgram(dynamicRange, shaderProviderOverride);
+                program = new SamplerShaderProgram(dynamicRange, shaderProviderOverride,
+                        hasAdvancedStyling);
             } else if (inputFormat == InputFormat.YUV || inputFormat == InputFormat.DEFAULT) {
                 // Use a default sampler shader for DEFAULT or YUV
-                program = new SamplerShaderProgram(dynamicRange, inputFormat);
+                program = new SamplerShaderProgram(dynamicRange, inputFormat, hasAdvancedStyling);
             } else {
                 Preconditions.checkState(inputFormat == InputFormat.UNKNOWN,
                         "Unhandled input format: " + inputFormat);
@@ -421,9 +482,10 @@ public final class GLUtils {
                             shaderProviderOverrides.get(InputFormat.DEFAULT);
                     if (defaultShaderProviderOverride != null) {
                         program = new SamplerShaderProgram(dynamicRange,
-                                defaultShaderProviderOverride);
+                                defaultShaderProviderOverride, hasAdvancedStyling);
                     } else {
-                        program = new SamplerShaderProgram(dynamicRange, InputFormat.DEFAULT);
+                        program = new SamplerShaderProgram(dynamicRange, InputFormat.DEFAULT,
+                                hasAdvancedStyling);
                     }
                 }
             }

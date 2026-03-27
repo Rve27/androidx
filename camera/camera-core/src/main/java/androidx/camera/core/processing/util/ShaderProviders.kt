@@ -24,7 +24,8 @@ import androidx.core.util.Preconditions
 /** Default shader providers for [GLUtils]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal object ShaderProviders {
-    @JvmField val DEFAULT_VERTEX_SHADER = createVertexShader(GLUtils.VAR_TEXTURE_COORD, isHdr = false)
+    @JvmField
+    val DEFAULT_VERTEX_SHADER = createVertexShader(GLUtils.VAR_TEXTURE_COORD, isHdr = false)
 
     @JvmField val HDR_VERTEX_SHADER = createVertexShader(GLUtils.VAR_TEXTURE_COORD, isHdr = true)
 
@@ -50,9 +51,21 @@ internal object ShaderProviders {
         """
             .trimIndent()
 
-    @JvmField
-    val SHADER_PROVIDER_DEFAULT =
-        object : ShaderProvider {
+    @JvmStatic
+    fun resolveDefaultShaderProvider(
+        dynamicRange: DynamicRange,
+        inputFormat: GLUtils.InputFormat,
+        hasAdvancedStyling: Boolean,
+    ): ShaderProvider {
+        if (dynamicRange.is10BitHdr) {
+            Preconditions.checkArgument(
+                inputFormat != GLUtils.InputFormat.UNKNOWN,
+                "No default sampler shader available for " + inputFormat,
+            )
+        }
+        val isHdr = dynamicRange.is10BitHdr
+        val isYuvHdr = (inputFormat == GLUtils.InputFormat.YUV && isHdr)
+        return object : ShaderProvider {
             override fun createFragmentShader(
                 samplerVarName: String,
                 fragCoordsVarName: String,
@@ -60,42 +73,15 @@ internal object ShaderProviders {
                 return createFragmentShaderInternal(
                     samplerVarName,
                     fragCoordsVarName,
-                    isHdr = false,
+                    isHdr = isHdr,
+                    isYuvHdr = isYuvHdr,
+                    hasAdvancedStyling,
                 )
             }
         }
+    }
 
-    @JvmField
-    val SHADER_PROVIDER_HDR_DEFAULT =
-        object : ShaderProvider {
-            override fun createFragmentShader(
-                samplerVarName: String,
-                fragCoordsVarName: String,
-            ): String {
-                return createFragmentShaderInternal(samplerVarName, fragCoordsVarName, isHdr = true)
-            }
-        }
-
-    @JvmField
-    val SHADER_PROVIDER_HDR_YUV =
-        object : ShaderProvider {
-            override fun createFragmentShader(
-                samplerVarName: String,
-                fragCoordsVarName: String,
-            ): String {
-                return createFragmentShaderInternal(
-                    samplerVarName,
-                    fragCoordsVarName,
-                    isHdr = true,
-                    isYuv = true,
-                )
-            }
-        }
-
-    private fun createVertexShader(
-        fragCoordsVarName: String,
-        isHdr: Boolean
-    ): String {
+    private fun createVertexShader(fragCoordsVarName: String, isHdr: Boolean): String {
         val version = if (isHdr) "#version 300 es" else ""
         val attr = if (isHdr) "in" else "attribute"
         val varying = if (isHdr) "out" else "varying"
@@ -107,22 +93,90 @@ internal object ShaderProviders {
             uniform mat4 uTexMatrix;
             uniform mat4 uTransMatrix;
             $varying vec2 $fragCoordsVarName;
+            $varying vec2 vPosition;
             void main() {
               gl_Position = uTransMatrix * aPosition;
               $fragCoordsVarName = (uTexMatrix * aTextureCoord).xy;
+              vPosition = aPosition.xy;
             }
         """
             .trimIndent()
             .trim()
     }
 
-    private fun createFragmentShaderInternal(
+    @JvmStatic
+    fun createFragmentShaderInternal(
         samplerVarName: String,
         fragCoordsVarName: String,
         isHdr: Boolean,
-        isYuv: Boolean = false,
+        isYuvHdr: Boolean = false,
+        hasAdvancedStyling: Boolean = false,
     ): String {
-        if (isYuv) {
+        val isGlEs30 = isHdr || isYuvHdr
+        val outVarName = if (isGlEs30) "outColor" else "gl_FragColor"
+        val textureFunc = if (isGlEs30) "texture" else "texture2D"
+
+        val compositionUniforms =
+            if (hasAdvancedStyling)
+                """
+                uniform float uCornerRadiusRatio;
+                uniform float uAspectRatio;
+                uniform float uBorderWidth;
+                uniform vec4 uBorderColor;
+                """
+                    .trimIndent()
+            else ""
+
+        val roundCornerAndBorderLogic =
+            if (hasAdvancedStyling)
+                """
+            vec2 abs_pos = abs(vPosition);
+            float cornerDist = 0.0;
+            if (uCornerRadiusRatio > 0.0) {
+                // Calculate corner radius in NDC space
+                vec2 rxry = vec2(uCornerRadiusRatio);
+                if (uAspectRatio > 1.0) {
+                    rxry.x /= uAspectRatio;
+                } else {
+                    rxry.y *= uAspectRatio;
+                }
+
+                // Calculate distance to the corner
+                vec2 dist = max(abs_pos - (1.0 - rxry), 0.0);
+                cornerDist = length(dist / rxry);
+
+                // 1. Clip the outer edge
+                if (cornerDist > 1.0) {
+                    discard;
+                    return;
+                }
+           }
+           // 2. Draw the border
+           if (uBorderWidth > 0.0) {
+                // Straight edges border check
+                vec2 bt = vec2(uBorderWidth);
+                if (uAspectRatio > 1.0) {
+                     bt.x /= uAspectRatio;
+                } else {
+                     bt.y *= uAspectRatio;
+                }
+                bool isStraightBorder = (abs_pos.x > (1.0 - bt.x)) || (abs_pos.y > (1.0 - bt.y));
+                // Curved corner border check
+                bool isCurvedBorder = false;
+                if (uCornerRadiusRatio > 0.0) {
+                     float borderThreshold = max(1.0 - (uBorderWidth / uCornerRadiusRatio), 0.0);
+                     isCurvedBorder = cornerDist > borderThreshold;
+                }
+                if (isStraightBorder || isCurvedBorder) {
+                     $outVarName = uBorderColor;
+                     return;
+                }
+           }
+        """
+                    .trimIndent()
+            else ""
+
+        if (isYuvHdr) {
             // TODO(b/502166517): This yuvToRgb matrix assumes a specific YUV color space (BT.709).
             //  The matrix should be selected based on the actual input color space, similar to
             //  how it's done in Transformer.
@@ -132,7 +186,9 @@ internal object ShaderProviders {
                 precision mediump float;
                 uniform __samplerExternal2DY2YEXT $samplerVarName;
                 uniform float uAlphaScale;
+                $compositionUniforms
                 in vec2 $fragCoordsVarName;
+                in vec2 vPosition;
                 out vec4 outColor;
 
                 vec3 yuvToRgb(vec3 yuv) {
@@ -146,6 +202,7 @@ internal object ShaderProviders {
                 }
 
                 void main() {
+                  $roundCornerAndBorderLogic
                   vec3 srcYuv = texture($samplerVarName, $fragCoordsVarName).xyz;
                   vec3 srcRgb = yuvToRgb(srcYuv);
                   outColor = vec4(srcRgb, uAlphaScale);
@@ -155,17 +212,15 @@ internal object ShaderProviders {
                 .trim()
         }
 
-        val version = if (isHdr) "#version 300 es" else ""
+        val version = if (isGlEs30) "#version 300 es" else ""
         val extension =
-            if (isHdr) {
+            if (isGlEs30) {
                 "#extension GL_OES_EGL_image_external_essl3 : require"
             } else {
                 "#extension GL_OES_EGL_image_external : require"
             }
-        val varying = if (isHdr) "in" else "varying"
-        val outVar = if (isHdr) "out vec4 outColor;" else ""
-        val textureFunc = if (isHdr) "texture" else "texture2D"
-        val fragColor = if (isHdr) "outColor" else "gl_FragColor"
+        val varying = if (isGlEs30) "in" else "varying"
+        val outVarDeclaration = if (isGlEs30) "out vec4 outColor;" else ""
 
         return """
             $version
@@ -173,11 +228,14 @@ internal object ShaderProviders {
             precision mediump float;
             uniform samplerExternalOES $samplerVarName;
             uniform float uAlphaScale;
+            $compositionUniforms
             $varying vec2 $fragCoordsVarName;
-            $outVar
+            $varying vec2 vPosition;
+            $outVarDeclaration
             void main() {
+                $roundCornerAndBorderLogic
                 vec4 src = $textureFunc($samplerVarName, $fragCoordsVarName);
-                $fragColor = vec4(src.rgb, src.a * uAlphaScale);
+                $outVarName = vec4(src.rgb, src.a * uAlphaScale);
             }
         """
             .trimIndent()
