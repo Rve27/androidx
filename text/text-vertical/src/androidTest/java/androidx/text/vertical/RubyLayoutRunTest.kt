@@ -91,8 +91,8 @@ class RubyLayoutRunTest {
 
     @Test
     fun rubyLayoutRun_CreateRubyShorterThanBaseText() {
-        val rubySpan = RubySpan.Builder(RUBY_TEXT).build()
-        RubyLayoutRun(TEXT, LATIN_START, LATIN_END, TextOrientation.MIXED, PAINT, rubySpan).run {
+        val rubySpan = RubySpan(RUBY_TEXT)
+        RubyLayoutRun(TEXT, LATIN_START, LATIN_END, TextOrientation.Mixed, PAINT, rubySpan).run {
             assertThat(start).isEqualTo(LATIN_START)
             assertThat(end).isEqualTo(LATIN_END)
             assertThat(width).isEqualTo(ONE_EM * 1.5f) // 1em for base text, 0.5em for ruby.
@@ -126,8 +126,8 @@ class RubyLayoutRunTest {
     @Test
     fun rubyLayoutRun_CreateRubyLongerThanBaseText() {
         val LONG_RUBY_TEXT = RUBY_TEXT.repeat(10)
-        val rubySpan = RubySpan.Builder(LONG_RUBY_TEXT).build()
-        RubyLayoutRun(TEXT, LATIN_START, LATIN_END, TextOrientation.MIXED, PAINT, rubySpan).run {
+        val rubySpan = RubySpan(LONG_RUBY_TEXT)
+        RubyLayoutRun(TEXT, LATIN_START, LATIN_END, TextOrientation.Mixed, PAINT, rubySpan).run {
             assertThat(start).isEqualTo(LATIN_START)
             assertThat(end).isEqualTo(LATIN_END)
             assertThat(width).isEqualTo(ONE_EM * 1.5f) // 1em for base text, 0.5em for ruby.
@@ -161,13 +161,12 @@ class RubyLayoutRunTest {
     @Test
     fun rubyLayoutRun_CreateRubyUprightOrientation() {
         val LONG_RUBY_TEXT = RUBY_TEXT.repeat(10)
-        val rubySpan =
-            RubySpan.Builder(LONG_RUBY_TEXT).setOrientation(TextOrientation.UPRIGHT).build()
-        RubyLayoutRun(TEXT, LATIN_START, LATIN_END, TextOrientation.MIXED, PAINT, rubySpan).run {
+        val rubySpan = RubySpan(LONG_RUBY_TEXT, orientation = TextOrientation.Upright)
+        RubyLayoutRun(TEXT, LATIN_START, LATIN_END, TextOrientation.Mixed, PAINT, rubySpan).run {
             assertThat(start).isEqualTo(LATIN_START)
             assertThat(end).isEqualTo(LATIN_END)
             assertThat(width).isEqualTo(ONE_EM * 1.5f) // 1em for base text, 0.5em for ruby.
-            // The ruby text is layout with UPRIGHT orientation. Therefore, the vertical advance
+            // The ruby text is layout with Upright orientation. Therefore, the vertical advance
             // is used for the height.
             assertThat(height).isEqualTo(getVerticalAdvance(LONG_RUBY_TEXT, 0.5f /* scale */))
             assertThat(leftSideOffset).isEqualTo(-HALF_EM) // leftSide is half of 1em
@@ -198,12 +197,12 @@ class RubyLayoutRunTest {
     @Test
     fun rubyLayoutRun_CreateRubyScale() {
         val LONG_RUBY_TEXT = RUBY_TEXT.repeat(10)
-        val rubySpan = RubySpan.Builder(LONG_RUBY_TEXT).setTextScale(0.3f).build()
-        RubyLayoutRun(TEXT, LATIN_START, LATIN_END, TextOrientation.MIXED, PAINT, rubySpan).run {
+        val rubySpan = RubySpan(LONG_RUBY_TEXT, textScale = 0.3f)
+        RubyLayoutRun(TEXT, LATIN_START, LATIN_END, TextOrientation.Mixed, PAINT, rubySpan).run {
             assertThat(start).isEqualTo(LATIN_START)
             assertThat(end).isEqualTo(LATIN_END)
             assertThat(width).isEqualTo(ONE_EM * 1.3f) // 1em for base text, 0.5em for ruby.
-            // The ruby text is layout with UPRIGHT orientation. Therefore, the vertical advance
+            // The ruby text is layout with Upright orientation. Therefore, the vertical advance
             // is used for the height.
             assertThat(height).isEqualTo(getHorizontalAdvance(LONG_RUBY_TEXT, 0.3f /* scale */))
             assertThat(leftSideOffset).isEqualTo(-HALF_EM) // leftSide is half of 1em

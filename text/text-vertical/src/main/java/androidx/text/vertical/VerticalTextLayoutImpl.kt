@@ -37,7 +37,7 @@ internal class VerticalTextLayoutApi36Impl(
     public val end: Int,
     public val paint: TextPaint,
     @param:Px public val height: Float,
-    @param:OrientationMode public val orientation: Int,
+    public val orientation: TextOrientation,
     private val result: LineBreaker.Result =
         LineBreaker.breakTextIntoLines(text, start, end, paint, height, orientation),
 ) : VerticalTextLayoutImpl {
