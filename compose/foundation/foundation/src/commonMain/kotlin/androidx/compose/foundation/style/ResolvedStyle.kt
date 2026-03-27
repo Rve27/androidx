@@ -955,6 +955,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
         span.fontWeight?.let { fontWeight(it) }
         span.textDecoration?.let { textDecoration(it) }
         span.fontSynthesis?.let { fontSynthesis(it) }
+        span.fontFamily?.let { fontFamily(it) }
 
         val p = value.toParagraphStyle()
         p.textIndent?.let { textIndent(it) }
