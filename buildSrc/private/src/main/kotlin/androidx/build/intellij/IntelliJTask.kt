@@ -17,8 +17,10 @@
 package androidx.build.intellij
 
 import androidx.build.ProjectLayoutType
-import androidx.build.studio.StudioTask.Companion.validateEnvironment
+import androidx.build.getSdkPath
+import androidx.build.getSupportRootFolder
 import androidx.build.getVersionByName
+import androidx.build.studio.StudioTask.Companion.validateEnvironment
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -72,10 +74,22 @@ abstract class IntelliJTask : DefaultTask() {
         File("$intelliJInstallationDir/INTELLIJW_LICENSE_ACCEPTED")
     }
 
+    private val intelliJConfigBaseDir =
+        File(project.providers.environmentVariable("HOME").get(), ".IntelliJAndroidX/config").also {
+            it.mkdirs()
+        }
+
+    private val intelliJOptionsDir = File(intelliJConfigBaseDir, "options").also { it.mkdirs() }
+
+    /** The path to the SDK directory used by IntelliJ. */
+    @get:Internal
+    open val localSdkPath = project.getSdkPath().relativeTo(project.getSupportRootFolder())
+
     @TaskAction
     fun intellijw() {
         validateEnvironment("IntelliJ")
         install()
+        writeAndroidSdkPath()
     }
 
     private val platformUtilities by lazy {
@@ -135,6 +149,21 @@ abstract class IntelliJTask : DefaultTask() {
         platformUtilities.extractArchive(fromPath, toPath, execOperations)
         // Remove intellij archive once done
         File(intelliJArchivePath).delete()
+    }
+
+    // TODO(b/443681166) Remove when fixed
+    private fun writeAndroidSdkPath() {
+        val sdkPathFile = File(intelliJOptionsDir, "android.sdk.path.xml")
+        sdkPathFile.writeText(
+            """
+                <application>
+                  <component name="AndroidSdkPathStore">
+                    <option name="androidSdkAbsolutePath" value="${localSdkPath.path}" />
+                  </component>
+                </application>
+                        """
+                .trimIndent()
+        )
     }
 
     companion object {
