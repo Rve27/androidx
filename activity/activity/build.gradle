@@ -13,7 +13,7 @@ plugins {
 }
 
 android {
-    compileSdk { version = preview("Baklava") }
+    compileSdk { version = release(37) }
     namespace = "androidx.activity"
 }
 
