@@ -26,8 +26,8 @@ dependencies {
 
     implementation(libs.kotlinReflect)
 
-    implementation(project(":activity:activity"))
-    implementation(project(":activity:activity-compose"))
+    implementation("androidx.activity:activity:1.12.1")
+    implementation("androidx.activity:activity-compose:1.12.1")
     implementation("androidx.core:core-ktx:1.15.0")
     implementation(project(":compose:foundation:foundation"))
     implementation(project(":compose:foundation:foundation-layout"))

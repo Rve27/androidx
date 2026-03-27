@@ -264,6 +264,7 @@ package androidx.core.app {
 
   public class NotificationCompat {
     ctor @Deprecated public NotificationCompat();
+    method public static android.text.ParcelableSpan createSemanticStyleAnnotation(int);
     method public static androidx.core.app.NotificationCompat.Action? getAction(android.app.Notification, int);
     method public static int getActionCount(android.app.Notification);
     method public static boolean getAllowSystemGeneratedContextualActions(android.app.Notification);
@@ -363,6 +364,7 @@ package androidx.core.app {
     field public static final String EXTRA_PICTURE = "android.picture";
     field public static final String EXTRA_PICTURE_CONTENT_DESCRIPTION = "android.pictureContentDescription";
     field public static final String EXTRA_PICTURE_ICON = "android.pictureIcon";
+    field public static final String EXTRA_PREFER_SMALL_ICON = "android.app.preferSmallIcon";
     field public static final String EXTRA_PROGRESS = "android.progress";
     field public static final String EXTRA_PROGRESS_END_ICON = "android.progressEndIcon";
     field public static final String EXTRA_PROGRESS_INDETERMINATE = "android.progressIndeterminate";
@@ -414,6 +416,11 @@ package androidx.core.app {
     field public static final int PRIORITY_LOW = -1; // 0xffffffff
     field public static final int PRIORITY_MAX = 2; // 0x2
     field public static final int PRIORITY_MIN = -2; // 0xfffffffe
+    field public static final int SEMANTIC_STYLE_CAUTION = 3; // 0x3
+    field public static final int SEMANTIC_STYLE_DANGER = 4; // 0x4
+    field public static final int SEMANTIC_STYLE_INFO = 1; // 0x1
+    field public static final int SEMANTIC_STYLE_SAFE = 2; // 0x2
+    field public static final int SEMANTIC_STYLE_UNSPECIFIED = 0; // 0x0
     field public static final int STREAM_DEFAULT = -1; // 0xffffffff
     field public static final int VISIBILITY_PRIVATE = 0; // 0x0
     field public static final int VISIBILITY_PUBLIC = 1; // 0x1
@@ -426,15 +433,20 @@ package androidx.core.app {
     method public android.app.PendingIntent? getActionIntent();
     method public boolean getAllowGeneratedReplies();
     method public androidx.core.app.RemoteInput![]? getDataOnlyRemoteInputs();
+    method public int getEmphasisHint();
     method public android.os.Bundle getExtras();
     method @Deprecated public int getIcon();
     method public androidx.core.graphics.drawable.IconCompat? getIconCompat();
     method public androidx.core.app.RemoteInput![]? getRemoteInputs();
     method @androidx.core.app.NotificationCompat.Action.SemanticAction public int getSemanticAction();
     method public boolean getShowsUserInterface();
+    method public int getStyleHint();
     method public CharSequence? getTitle();
     method public boolean isAuthenticationRequired();
     method public boolean isContextual();
+    field public static final int EMPHASIS_AUTO = 0; // 0x0
+    field public static final int EMPHASIS_PRIMARY = 1; // 0x1
+    field public static final int EMPHASIS_SECONDARY = 2; // 0x2
     field public static final int SEMANTIC_ACTION_ARCHIVE = 5; // 0x5
     field public static final int SEMANTIC_ACTION_CALL = 10; // 0xa
     field public static final int SEMANTIC_ACTION_DELETE = 4; // 0x4
@@ -442,10 +454,17 @@ package androidx.core.app {
     field public static final int SEMANTIC_ACTION_MARK_AS_UNREAD = 3; // 0x3
     field public static final int SEMANTIC_ACTION_MUTE = 6; // 0x6
     field public static final int SEMANTIC_ACTION_NONE = 0; // 0x0
+    field public static final int SEMANTIC_ACTION_PAUSE = 14; // 0xe
+    field public static final int SEMANTIC_ACTION_PLAY = 13; // 0xd
     field public static final int SEMANTIC_ACTION_REPLY = 1; // 0x1
+    field public static final int SEMANTIC_ACTION_STOP = 15; // 0xf
     field public static final int SEMANTIC_ACTION_THUMBS_DOWN = 9; // 0x9
     field public static final int SEMANTIC_ACTION_THUMBS_UP = 8; // 0x8
     field public static final int SEMANTIC_ACTION_UNMUTE = 7; // 0x7
+    field public static final int STYLE_AUTO = 0; // 0x0
+    field public static final int STYLE_ICON_AND_TEXT = 2; // 0x2
+    field public static final int STYLE_ICON_ONLY = 3; // 0x3
+    field public static final int STYLE_TEXT_ONLY = 1; // 0x1
     field public android.app.PendingIntent? actionIntent;
     field @Deprecated public int icon;
     field public CharSequence? title;
@@ -463,15 +482,17 @@ package androidx.core.app {
     method public androidx.core.app.NotificationCompat.Action.Builder setAllowGeneratedReplies(boolean);
     method public androidx.core.app.NotificationCompat.Action.Builder setAuthenticationRequired(boolean);
     method public androidx.core.app.NotificationCompat.Action.Builder setContextual(boolean);
+    method public androidx.core.app.NotificationCompat.Action.Builder setEmphasisHint(int);
     method public androidx.core.app.NotificationCompat.Action.Builder setSemanticAction(@androidx.core.app.NotificationCompat.Action.SemanticAction int);
     method public androidx.core.app.NotificationCompat.Action.Builder setShowsUserInterface(boolean);
+    method public androidx.core.app.NotificationCompat.Action.Builder setStyleHint(int);
   }
 
   public static interface NotificationCompat.Action.Extender {
     method public androidx.core.app.NotificationCompat.Action.Builder extend(androidx.core.app.NotificationCompat.Action.Builder);
   }
 
-  @IntDef({androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_NONE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_REPLY, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_MARK_AS_READ, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_MARK_AS_UNREAD, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_DELETE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_ARCHIVE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_MUTE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_UNMUTE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_THUMBS_UP, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_THUMBS_DOWN, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_CALL}) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE) public static @interface NotificationCompat.Action.SemanticAction {
+  @IntDef({androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_NONE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_REPLY, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_MARK_AS_READ, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_MARK_AS_UNREAD, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_DELETE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_ARCHIVE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_MUTE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_UNMUTE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_THUMBS_UP, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_THUMBS_DOWN, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_CALL, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_PLAY, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_PAUSE, androidx.core.app.NotificationCompat.Action.SEMANTIC_ACTION_STOP}) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.SOURCE) public static @interface NotificationCompat.Action.SemanticAction {
   }
 
   public static final class NotificationCompat.Action.WearableExtender implements androidx.core.app.NotificationCompat.Action.Extender {
@@ -725,6 +746,86 @@ package androidx.core.app {
     method public androidx.core.app.NotificationCompat.MessagingStyle.Message setData(String?, android.net.Uri?);
   }
 
+  @RequiresApi(26) public static final class NotificationCompat.Metric {
+    ctor public NotificationCompat.Metric(androidx.core.app.NotificationCompat.Metric.MetricValue, CharSequence);
+    ctor public NotificationCompat.Metric(androidx.core.app.NotificationCompat.Metric.MetricValue, CharSequence, int);
+    method public CharSequence getLabel();
+    method public int getSemanticStyle();
+    method public androidx.core.app.NotificationCompat.Metric.MetricValue getValue();
+  }
+
+  public static final class NotificationCompat.Metric.FixedDate extends androidx.core.app.NotificationCompat.Metric.MetricValue {
+    ctor public NotificationCompat.Metric.FixedDate(java.time.LocalDate);
+    ctor public NotificationCompat.Metric.FixedDate(java.time.LocalDate, int);
+    method public int getFormat();
+    method public java.time.LocalDate getValue();
+    field public static final int FORMAT_AUTOMATIC = 0; // 0x0
+    field public static final int FORMAT_LONG_DATE = 1; // 0x1
+    field public static final int FORMAT_SHORT_DATE = 2; // 0x2
+  }
+
+  public static final class NotificationCompat.Metric.FixedFloat extends androidx.core.app.NotificationCompat.Metric.MetricValue {
+    ctor public NotificationCompat.Metric.FixedFloat(float);
+    ctor public NotificationCompat.Metric.FixedFloat(float, CharSequence?);
+    ctor public NotificationCompat.Metric.FixedFloat(float, CharSequence?, @IntRange(from=0x0, to=0x6) int, @IntRange(from=0x0, to=0x6) int);
+    method @IntRange(from=0x0, to=0x6) public int getMaxFractionDigits();
+    method @IntRange(from=0x0, to=0x6) public int getMinFractionDigits();
+    method public CharSequence? getUnit();
+    method public float getValue();
+  }
+
+  public static final class NotificationCompat.Metric.FixedInt extends androidx.core.app.NotificationCompat.Metric.MetricValue {
+    ctor public NotificationCompat.Metric.FixedInt(int);
+    ctor public NotificationCompat.Metric.FixedInt(int, CharSequence?);
+    method public CharSequence? getUnit();
+    method public int getValue();
+  }
+
+  public static final class NotificationCompat.Metric.FixedText extends androidx.core.app.NotificationCompat.Metric.MetricValue {
+    ctor public NotificationCompat.Metric.FixedText(CharSequence);
+    ctor public NotificationCompat.Metric.FixedText(CharSequence, CharSequence?);
+    method public CharSequence? getUnit();
+    method public CharSequence getValue();
+  }
+
+  public static final class NotificationCompat.Metric.FixedTime extends androidx.core.app.NotificationCompat.Metric.MetricValue {
+    ctor public NotificationCompat.Metric.FixedTime(java.time.LocalTime);
+    method public java.time.LocalTime getValue();
+  }
+
+  public abstract static class NotificationCompat.Metric.MetricValue {
+  }
+
+  public static final class NotificationCompat.Metric.TimeDifference extends androidx.core.app.NotificationCompat.Metric.MetricValue {
+    method @RequiresApi(37) public static androidx.core.app.NotificationCompat.Metric.TimeDifference forPausedStopwatch(java.time.Duration, int);
+    method @RequiresApi(37) public static androidx.core.app.NotificationCompat.Metric.TimeDifference forPausedTimer(java.time.Duration, int);
+    method @RequiresApi(37) public static androidx.core.app.NotificationCompat.Metric.TimeDifference forStopwatch(java.time.Instant, int);
+    method @RequiresApi(37) public static androidx.core.app.NotificationCompat.Metric.TimeDifference forStopwatch(long, int);
+    method @RequiresApi(37) public static androidx.core.app.NotificationCompat.Metric.TimeDifference forTimer(java.time.Instant, int);
+    method @RequiresApi(37) public static androidx.core.app.NotificationCompat.Metric.TimeDifference forTimer(long, int);
+    method public int getFormat();
+    method public java.time.Duration? getPausedDuration();
+    method public Long? getZeroElapsedRealtime();
+    method public java.time.Instant? getZeroTime();
+    method public boolean isStopwatch();
+    method public boolean isTimer();
+    field public static final int FORMAT_ADAPTIVE = 1; // 0x1
+    field public static final int FORMAT_CHRONOMETER = 2; // 0x2
+  }
+
+  @RequiresApi(26) public static final class NotificationCompat.MetricStyle extends androidx.core.app.NotificationCompat.Style {
+    ctor @RequiresApi(37) public NotificationCompat.MetricStyle();
+    method public void addCompatExtras(android.os.Bundle);
+    method public androidx.core.app.NotificationCompat.MetricStyle addMetric(androidx.core.app.NotificationCompat.Metric);
+    method protected void clearCompatExtraKeys(android.os.Bundle);
+    method public androidx.core.app.NotificationCompat.Metric? getCriticalMetric();
+    method public java.util.List<androidx.core.app.NotificationCompat.Metric!> getMetrics();
+    method protected void restoreFromCompatExtras(android.os.Bundle);
+    method public androidx.core.app.NotificationCompat.MetricStyle setCriticalMetric(int);
+    method public androidx.core.app.NotificationCompat.MetricStyle setMetrics(java.util.List<androidx.core.app.NotificationCompat.Metric!>);
+    field public static final int METRIC_INDEX_NONE = -1; // 0xffffffff
+  }
+
   public static class NotificationCompat.ProgressStyle extends androidx.core.app.NotificationCompat.Style {
     ctor public NotificationCompat.ProgressStyle();
     method public androidx.core.app.NotificationCompat.ProgressStyle addProgressPoint(androidx.core.app.NotificationCompat.ProgressStyle.Point);
@@ -753,8 +854,10 @@ package androidx.core.app {
     method @ColorInt public int getColor();
     method public int getId();
     method @IntRange(from=1) public int getPosition();
+    method public int getSemanticStyle();
     method public androidx.core.app.NotificationCompat.ProgressStyle.Point setColor(@ColorInt int);
     method public androidx.core.app.NotificationCompat.ProgressStyle.Point setId(int);
+    method public androidx.core.app.NotificationCompat.ProgressStyle.Point setSemanticStyle(int);
   }
 
   public static final class NotificationCompat.ProgressStyle.Segment {
@@ -762,8 +865,10 @@ package androidx.core.app {
     method @ColorInt public int getColor();
     method public int getId();
     method @IntRange(from=1) public int getLength();
+    method public int getSemanticStyle();
     method public androidx.core.app.NotificationCompat.ProgressStyle.Segment setColor(@ColorInt int);
     method public androidx.core.app.NotificationCompat.ProgressStyle.Segment setId(int);
+    method public androidx.core.app.NotificationCompat.ProgressStyle.Segment setSemanticStyle(int);
   }
 
   public static final class NotificationCompat.ProjectedExtender implements androidx.core.app.NotificationCompat.Extender {
@@ -2011,7 +2116,7 @@ package androidx.core.os {
 
   public final class BuildCompat {
     method @ChecksSdkIntAtLeast(api=36, codename="Baklava") public static boolean isAtLeastB();
-    method public static boolean isAtLeastB_1();
+    method @ChecksSdkIntAtLeast(api=android.os.Build.VERSION_CODES_FULL.BAKLAVA_1) public static boolean isAtLeastB_1();
     method @Deprecated @ChecksSdkIntAtLeast(api=android.os.Build.VERSION_CODES.N) public static boolean isAtLeastN();
     method @Deprecated @ChecksSdkIntAtLeast(api=android.os.Build.VERSION_CODES.N_MR1) public static boolean isAtLeastNMR1();
     method @Deprecated @ChecksSdkIntAtLeast(api=android.os.Build.VERSION_CODES.O) public static boolean isAtLeastO();
@@ -3940,7 +4045,7 @@ package androidx.core.view.accessibility {
     field public static final String ACTION_ARGUMENT_ROW_INT = "android.view.accessibility.action.ARGUMENT_ROW_INT";
     field public static final String ACTION_ARGUMENT_SCROLL_AMOUNT_FLOAT = "androidx.core.view.accessibility.action.ARGUMENT_SCROLL_AMOUNT_FLOAT";
     field public static final String ACTION_ARGUMENT_SELECTION_END_INT = "ACTION_ARGUMENT_SELECTION_END_INT";
-    field public static final String ACTION_ARGUMENT_SELECTION_PARCELABLE = "androidx.core.view.accessibility.action.ARGUMENT_SELECTION_PARCELABLE";
+    field public static final String ACTION_ARGUMENT_SELECTION_PARCELABLE = "android.view.accessibility.action.ARGUMENT_SELECTION_PARCELABLE";
     field public static final String ACTION_ARGUMENT_SELECTION_START_INT = "ACTION_ARGUMENT_SELECTION_START_INT";
     field public static final String ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE = "ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE";
     field public static final int ACTION_CLEAR_ACCESSIBILITY_FOCUS = 128; // 0x80
@@ -4118,6 +4223,7 @@ package androidx.core.view.accessibility {
     ctor public AccessibilityNodeInfoCompat.SelectionCompat(androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat, androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat);
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat? getEnd();
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionPositionCompat? getStart();
+    method public android.view.accessibility.AccessibilityNodeInfo.Selection? unwrap();
   }
 
   public static final class AccessibilityNodeInfoCompat.SelectionPositionCompat {
@@ -4127,6 +4233,8 @@ package androidx.core.view.accessibility {
     ctor public AccessibilityNodeInfoCompat.SelectionPositionCompat(androidx.core.view.accessibility.AccessibilityNodeInfoCompat, int);
     method public androidx.core.view.accessibility.AccessibilityNodeInfoCompat? getNode();
     method public int getOffset();
+    method public android.view.View? getView();
+    method public int getVirtualDescendantId();
   }
 
   public static final class AccessibilityNodeInfoCompat.TouchDelegateInfoCompat {

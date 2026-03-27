@@ -48,9 +48,11 @@ import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.OptIn;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresFlag;
 import androidx.annotation.RestrictTo;
 import androidx.core.R;
 import androidx.core.accessibilityservice.AccessibilityServiceInfoCompat;
+import androidx.core.flagging.Flags;
 import androidx.core.os.BuildCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityViewCommand.CommandArguments;
@@ -753,7 +755,7 @@ public class AccessibilityNodeInfoCompat {
          *  SelectionCompat selection = new SelectionCompat(null, null);
          *  arguments.setParcelable(
          *          AccessibilityNodeInfoCompat.ACTION_ARGUMENT_SELECTION_PARCELABLE,
-         *          selection.mSelection);
+         *          selection.unwrap());
          *  info.performAction(
          *          AccessibilityActionCompat.ACTION_SET_EXTENDED_SELECTION.getId(), arguments);
          * </pre></code>
@@ -1837,6 +1839,46 @@ public class AccessibilityNodeInfoCompat {
         }
 
         /**
+         * @return The view associated with {@code this} {@link SelectionPositionCompat}.
+         *     Will return null if the view is not attached to a window.
+         *
+         * Compatibility:
+         * <ul>
+         *     <li>API &lt: 36.1: Always returns {@code null}</li>
+         * </ul>
+         */
+        public @Nullable View getView() {
+            if (BuildCompat.isAtLeastB_1()
+                    && Flags.getBooleanFlagValue(
+                            "android.view.accessibility",
+                            "a11y_selection_position_app_getters_api")) {
+                return FlagA11ySelectionPositionAppGettersApiImpl.getView(mPosition);
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * @return A value representing the virtual descendant id of the
+         *     {@link SelectionPositionCompat}
+         *
+         * Compatibility:
+         * <ul>
+         *     <li>API &lt: 36.1: Always returns {@code -1}</li>
+         * </ul>
+         */
+        public int getVirtualDescendantId() {
+            if (BuildCompat.isAtLeastB_1()
+                    && Flags.getBooleanFlagValue(
+                            "android.view.accessibility",
+                            "a11y_selection_position_app_getters_api")) {
+                return FlagA11ySelectionPositionAppGettersApiImpl.getVirtualDescendantId(mPosition);
+            } else {
+                return -1;
+            }
+        }
+
+        /**
          * Compatibility:
          * <ul>
          *     <li>API &lt: 36.1: Always returns {@code 0}</li>
@@ -1854,15 +1896,21 @@ public class AccessibilityNodeInfoCompat {
         /**
          * Compatibility:
          * <ul>
-         *     <li>API &lt: 36.1: Always returns {@code false}</li>
+         *     <li>API &lt: 36.1: Returns {@code true} if this object is identical to {@code other},
+         *     else {@code false}</li>
          * </ul>
          */
         @Override
         public boolean equals(Object other) {
             if (BuildCompat.isAtLeastB_1()) {
-                return mPosition != null ? mPosition.equals(other) : false;
+                if (!(other instanceof SelectionPositionCompat)) {
+                    return false;
+                }
+                return mPosition != null
+                        ? mPosition.equals(((SelectionPositionCompat) other).mPosition)
+                        : false;
             } else {
-                return false;
+                return this == other;
             }
         }
     }
@@ -1943,6 +1991,16 @@ public class AccessibilityNodeInfoCompat {
         }
 
         /**
+         * Returns the underlying platform {@link Selection} object.
+         *
+         * @return The platform {@link Selection} object, or {@code null} if the compat object
+         *     was created on an API level lower than 36.1.
+         */
+        public @Nullable Selection unwrap() {
+            return mSelection;
+        }
+
+        /**
          * Compatibility:
          * <ul>
          *     <li>API &lt: 36.1: Always returns {@code 0}</li>
@@ -1960,15 +2018,21 @@ public class AccessibilityNodeInfoCompat {
         /**
          * Compatibility:
          * <ul>
-         *     <li>API &lt: 36.1: Always returns {@code false}</li>
+         *     <li>API &lt: 36.1: Returns {@code true} if this object is identical to {@code obj},
+         *     else {@code false}</li>
          * </ul>
          */
         @Override
         public boolean equals(Object obj) {
             if (BuildCompat.isAtLeastB_1()) {
-                return mSelection != null ? mSelection.equals(obj) : false;
+                if (!(obj instanceof SelectionCompat)) {
+                    return false;
+                }
+                return mSelection != null
+                        ? mSelection.equals(((SelectionCompat) obj).mSelection)
+                        : false;
             } else {
-                return false;
+                return this == obj;
             }
         }
     }
@@ -2327,8 +2391,9 @@ public class AccessibilityNodeInfoCompat {
      *
      * @see AccessibilityActionCompat#ACTION_SET_EXTENDED_SELECTION
      */
+    @SuppressLint("ActionValue")
     public static final String ACTION_ARGUMENT_SELECTION_PARCELABLE =
-            "androidx.core.view.accessibility.action.ARGUMENT_SELECTION_PARCELABLE";
+            "android.view.accessibility.action.ARGUMENT_SELECTION_PARCELABLE";
 
     /**
      * Argument for whether when moving at granularity to extend the selection
@@ -6340,6 +6405,22 @@ public class AccessibilityNodeInfoCompat {
 
         public static AccessibilityNodeInfo.AccessibilityAction getActionSetExtendedSelection() {
             return AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_EXTENDED_SELECTION;
+        }
+    }
+
+    @RequiresApi(37)
+    @RequiresFlag("android.view.accessibility.a11y_selection_position_app_getters_api")
+    private static class FlagA11ySelectionPositionAppGettersApiImpl {
+        private FlagA11ySelectionPositionAppGettersApiImpl() {
+            // This class is non instantiable.
+        }
+
+        static View getView(SelectionPosition selectionPosition) {
+            return selectionPosition.getView();
+        }
+
+        static int getVirtualDescendantId(SelectionPosition selectionPosition) {
+            return selectionPosition.getVirtualDescendantId();
         }
     }
 }
