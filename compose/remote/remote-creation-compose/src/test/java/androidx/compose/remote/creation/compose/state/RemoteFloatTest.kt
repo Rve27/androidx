@@ -441,6 +441,81 @@ class RemoteFloatTest {
     }
 
     @Test
+    fun cubicEasing_constant() {
+        // Linear: 1, 1, 0, 0
+        val x1 = RemoteFloat(1f)
+        val y1 = RemoteFloat(1f)
+        val x2 = RemoteFloat(0f)
+        val y2 = RemoteFloat(0f)
+        val progress = RemoteFloat(0.5f)
+        val result = cubicEasing(x1, y1, x2, y2, progress)
+
+        assertThat(result.constantValue).isWithin(0.01f).of(0.5f)
+    }
+
+    @Test
+    fun cubicEasing_expression() {
+        val x1 = RemoteFloat(1f)
+        val y1 = RemoteFloat(1f)
+        val x2 = RemoteFloat(0f)
+        val y2 = RemoteFloat(0f)
+        val progress = RemoteFloat(RemoteContext.FLOAT_TIME_IN_SEC) // non-constant
+        val result = cubicEasing(x1, y1, x2, y2, progress)
+        val resultId = result.getIdForCreationState(creationState)
+
+        makeAndUpdateCoreDocument() { context.loadFloat(RemoteContext.ID_TIME_IN_SEC, 0.5f) }
+
+        assertThat(context.getFloat(resultId)).isWithin(0.01f).of(0.5f)
+    }
+
+    @Test
+    fun evalSpline_constant() {
+        val points = RemoteFloatArray(listOf(0f.rf, 0f.rf, 1f.rf, 1f.rf))
+        val result = evalSpline(points, loop = false, progress = 0.5f.rf)
+
+        makeAndPaintCoreDocument()
+
+        assertThat(result.constantValue).isWithin(0.01f).of(0.5f)
+    }
+
+    @Test
+    fun evalSpline_expression() {
+        val points = RemoteFloatArray(listOf(0f.rf, 0f.rf, 1f.rf, 1f.rf))
+        val progress = RemoteFloat(RemoteContext.FLOAT_TIME_IN_SEC) // non-constant
+        val result = evalSpline(points, loop = false, progress)
+        val resultId = result.getIdForCreationState(creationState)
+
+        makeAndUpdateCoreDocument() { context.loadFloat(RemoteContext.ID_TIME_IN_SEC, 0.5f) }
+
+        assertThat(context.getFloat(resultId)).isWithin(0.01f).of(0.5f)
+    }
+
+    @Test
+    fun evalSpline_loop_constant() {
+        val points = RemoteFloatArray(listOf(0f.rf, 1f.rf, 0f.rf))
+        // 1.5 should be equivalent to 0.5 because of loop
+        val result = evalSpline(points, loop = true, progress = 1.5f.rf)
+
+        assertThat(result.constantValue).isWithin(0.01f).of(1.0f)
+    }
+
+    @Test
+    fun evalSpline_loop_expression() {
+        val points = RemoteFloatArray(listOf(0f.rf, 1f.rf, 0f.rf))
+        val progress = RemoteFloat(RemoteContext.FLOAT_TIME_IN_SEC) // non-constant
+        val result = evalSpline(points, loop = true, progress)
+        val resultId = result.getIdForCreationState(creationState)
+
+        makeAndUpdateCoreDocument() {
+            // 1.5 should be equivalent to 0.5 because of loop
+            context.loadFloat(RemoteContext.ID_TIME_IN_SEC, 1.5f)
+        }
+
+        // For (0, 1, 0) at 0.5, it should be 1.0
+        assertThat(context.getFloat(resultId)).isWithin(0.01f).of(1.0f)
+    }
+
+    @Test
     fun toDeg() {
         val rad = RemoteFloat(Math.PI.toFloat())
         val deg = toDeg(rad)
