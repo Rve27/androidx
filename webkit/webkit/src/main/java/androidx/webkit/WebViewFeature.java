@@ -681,6 +681,17 @@ public class WebViewFeature {
     public static final String BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3 =
             "BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V3";
 
+    /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers
+     * {@link BackForwardCacheSettings#setKeepForwardEntries(boolean)}
+     * {@link BackForwardCacheSettings#getKeepForwardEntries()}
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @WebSettingsCompat.ExperimentalBackForwardCacheSettings
+    public static final String BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4 =
+            "BACK_FORWARD_CACHE_SETTINGS_EXPERIMENTAL_V4";
+
 
     /**
      * Feature for {@link #isFeatureSupported(String)}.
