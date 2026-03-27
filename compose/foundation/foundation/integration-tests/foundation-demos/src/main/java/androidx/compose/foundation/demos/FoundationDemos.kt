@@ -38,6 +38,7 @@ import androidx.compose.foundation.samples.StyleAnimationSample
 import androidx.compose.foundation.samples.StyleForegroundBackgroundSample
 import androidx.compose.foundation.samples.StyleStateKeySample
 import androidx.compose.foundation.samples.StyleStateSample
+import androidx.compose.foundation.samples.TextStyleTextMotionSample
 import androidx.compose.foundation.samples.VerticalScrollExample
 import androidx.compose.integration.demos.common.ComposableDemo
 import androidx.compose.integration.demos.common.DemoCategory
@@ -79,6 +80,7 @@ private val StyleDemos =
         ComposableDemo("Style State") { StyleStateSample() },
         ComposableDemo("Style Animation") { StyleAnimationSample() },
         ComposableDemo("Style Foreground and Background") { StyleForegroundBackgroundSample() },
+        ComposableDemo("Style TextMotion Animated") { TextStyleTextMotionSample() },
         ComposableDemo("Style State Key") { StyleStateKeySample() },
     )
 

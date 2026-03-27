@@ -20,6 +20,7 @@
 package androidx.compose.foundation.samples
 
 import androidx.annotation.Sampled
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -37,7 +38,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 @Sampled
@@ -180,3 +183,26 @@ fun StyleStateKeySample() {
 @Suppress("UNUSED_PARAMETER")
 @Composable
 fun MediaPlayer(url: String, modifier: Modifier = Modifier, style: Style = Style) {}
+
+@Composable
+fun TextStyleTextMotionSample() {
+    val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource)
+
+    // Use TextMotion.Animated to create smoother text animations when scaling.
+    val style = Style {
+        textMotion(TextMotion.Animated)
+        fontSize(20.sp)
+        pressed {
+            // Animate to a larger font size when pressed
+            animate(spec = tween(1000)) { fontSize(40.sp) }
+        }
+    }
+
+    Box(
+        Modifier.clickable(interactionSource = interactionSource, indication = null, onClick = {})
+            .styleable(styleState = styleState, style = style)
+    ) {
+        BasicText("Animated Smooth Text")
+    }
+}

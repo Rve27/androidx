@@ -21,6 +21,8 @@ package androidx.compose.foundation.style
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import kotlin.test.Test
@@ -475,6 +477,20 @@ class StyleTest {
             MutableStyleState(null).also { it.isSelected = false },
         ) {
             assertEquals(Color.Blue, contentColor)
+        }
+    }
+
+    @Test
+    fun resolve_textStyle_textMotion() {
+        resolved({ textStyle(TextStyle(textMotion = TextMotion.Animated)) }) {
+            assertEquals(TextMotion.Animated, textMotion)
+        }
+    }
+
+    @Test
+    fun resolve_textMotion() {
+        resolved({ textMotion(TextMotion.Animated) }) {
+            assertEquals(TextMotion.Animated, textMotion)
         }
     }
 }

@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.text.style.isSpecified
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -149,6 +150,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
 
     // text style, affects text layout
     internal var fontFamily: FontFamily? = null
+    internal var textMotion: TextMotion? = null
     internal var textIndent: TextIndent? = null
     internal var fontSize: TextUnit = TextUnit.Unspecified
     internal var lineHeight: TextUnit = TextUnit.Unspecified
@@ -254,6 +256,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
         if (checkFor and TextLayoutFlag != 0) {
             if (
                 fontFamily != other.fontFamily ||
+                    textMotion != other.textMotion ||
                     textIndent != other.textIndent ||
                     fontSize != other.fontSize ||
                     lineHeight != other.lineHeight ||
@@ -282,6 +285,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
         target.contentColor = contentColor
         target.contentBrush = contentBrush
         target.fontFamily = fontFamily
+        target.textMotion = textMotion
         target.textIndent = textIndent
         target.fontSize = fontSize
         target.lineHeight = lineHeight
@@ -377,6 +381,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
         contentColor = source.contentColor.takeOrElse(contentColor)
         contentBrush = source.contentBrush ?: contentBrush
         fontFamily = source.fontFamily ?: fontFamily
+        textMotion = source.textMotion ?: textMotion
         textIndent = source.textIndent ?: textIndent
         fontSize = source.fontSize.takeOrElse(fontSize)
         lineHeight = source.lineHeight.takeOrElse(lineHeight)
@@ -423,7 +428,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
                 lineHeightStyle = fallback.lineHeightStyle,
                 lineBreak = lineBreak.takeOrElse(fallback.lineBreak),
                 hyphens = if (hyphens != default.hyphens) hyphens else fallback.hyphens,
-                textMotion = fallback.textMotion,
+                textMotion = textMotion ?: fallback.textMotion,
             )
             .let { if (contentBrush != null) it.copy(brush = contentBrush) else it }
     }
@@ -477,6 +482,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
             if (default.contentColor.isSpecified) add("contentColor", contentColor)
             if (default.contentBrush != backgroundBrush) add("contentBrush", contentBrush)
             if (default.fontFamily != fontFamily) add("fontFamily", fontFamily)
+            if (default.textMotion != textMotion) add("textMotion", textMotion)
             if (default.textIndent != textIndent) add("textIndent", textIndent)
             if (default.fontSize != fontSize) add("fontSize", fontSize)
             if (default.lineHeight != lineHeight) add("lineHeight", lineHeight)
@@ -957,6 +963,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
         if (p.hyphens.isSpecified) hyphens(p.hyphens)
         if (p.textDirection.isSpecified) textDirection(p.textDirection)
         if (p.textAlign.isSpecified) textAlign(p.textAlign)
+        p.textMotion?.let { textMotion(it) }
     }
 
     internal val fontStyle: FontStyle
@@ -1015,6 +1022,11 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
         // TODO: should we deal with async differently?
         flags = flags or TextLayoutFlag
         fontFamily = value
+    }
+
+    override fun textMotion(value: TextMotion) {
+        flags = flags or TextLayoutFlag
+        textMotion = value
     }
 
     override fun textIndent(value: TextIndent) {
@@ -1274,6 +1286,7 @@ internal fun lerpTextLayout(a: ResolvedStyle, b: ResolvedStyle, t: Float, result
         }
 
         fontFamily = if (t < 0.5f) a.fontFamily else b.fontFamily
+        textMotion = if (t < 0.5f) a.textMotion else b.textMotion
         textIndent = if (t < 0.5f) a.textIndent else b.textIndent
         baselineShift = if (t < 0.5f) a.baselineShift else b.baselineShift
         lineBreak = if (t < 0.5f) a.lineBreak else b.lineBreak
@@ -1396,6 +1409,7 @@ internal val TextDefaultsResolvedStyle =
         fontFamily(FontFamily.Default)
         baselineShift(BaselineShift.None)
         textDecoration(TextDecoration.None)
+        textMotion(TextMotion.Static)
     }
 
 // Packing (offset, length)
