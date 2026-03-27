@@ -61,8 +61,8 @@ class PackageListEntry(private val dir: File) {
                 ?: downloadFile(duplicateLastSegment(baseDownloadUrl), "package-list")
                 ?: return run {
                     println(
-                        "ERROR: Could not download `package-list` or `allpackages-index.html` " +
-                            "from $baseDownloadUrl for $name"
+                        "ERROR: Could not download `package-list` or `element-list` from " +
+                            "$baseDownloadUrl for $name"
                     )
                     false
                 }
