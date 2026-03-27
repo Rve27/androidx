@@ -120,6 +120,7 @@ public open class RemoteComposeContext {
         content: RemoteComposeContext.() -> Unit,
     ) {
         mRemoteWriter = RemoteComposeWriter(platform, *tags)
+        content()
     }
 
     /** Create a new matrix expression. */
