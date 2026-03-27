@@ -32,6 +32,7 @@ import androidx.compose.foundation.style.hovered
 import androidx.compose.foundation.style.pressed
 import androidx.compose.foundation.style.rememberUpdatedStyleState
 import androidx.compose.foundation.style.styleable
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -119,6 +120,38 @@ fun StyleAnimationSample() {
             hovered { animate { background(Color.Yellow) } }
             pressed { animate { background(Color.Red) } }
             disabled { animate { background(Color.Gray) } }
+        },
+    )
+}
+
+@Composable
+fun StyleForegroundBackgroundSample() {
+    // Create a styleable clickable box
+    @Composable
+    fun ClickableStyleableBox(
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        style: Style = Style,
+    ) {
+        val interactionSource = remember { MutableInteractionSource() }
+        val styleState = rememberUpdatedStyleState(interactionSource)
+        Box(
+            modifier =
+                modifier
+                    .clickable(interactionSource = interactionSource, onClick = onClick)
+                    .styleable(styleState, style)
+        ) {
+            BasicText("Hello")
+        }
+    }
+
+    ClickableStyleableBox(
+        onClick = {},
+        style = {
+            size(150.dp)
+            background(Color.Blue)
+            // A semi-transparent overlay that appears when the box is pressed
+            pressed { animate { foreground(Color.Black.copy(alpha = 0.4f)) } }
         },
     )
 }

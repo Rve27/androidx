@@ -213,6 +213,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
                     borderBrush != other.borderBrush ||
                     backgroundColor != other.backgroundColor ||
                     backgroundBrush != other.backgroundBrush ||
+                    foregroundColor != other.foregroundColor ||
                     foregroundBrush != other.foregroundBrush ||
                     innerShadow != other.innerShadow ||
                     dropShadow != other.dropShadow ||
@@ -326,6 +327,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
         target.borderBrush = borderBrush
         target.backgroundColor = backgroundColor
         target.backgroundBrush = backgroundBrush
+        target.foregroundColor = foregroundColor
         target.foregroundBrush = foregroundBrush
         target.dropShadow = dropShadow
         target.innerShadow = innerShadow
@@ -468,6 +470,7 @@ internal class ResolvedStyle internal constructor() : StyleScope, InspectableVal
             if (default.borderBrush != borderBrush) add("borderBrush", borderBrush)
             if (default.backgroundColor != backgroundColor) add("backgroundColor", backgroundColor)
             if (default.backgroundBrush != backgroundBrush) add("backgroundBrush", backgroundBrush)
+            if (default.foregroundColor != foregroundColor) add("foregroundColor", foregroundColor)
             if (default.foregroundBrush != foregroundBrush) add("foregroundBrush", foregroundBrush)
             if (default.clip != clip) add("clip", clip)
             if (default.shape != shape) add("shape", shape)
@@ -1188,8 +1191,9 @@ internal fun lerpDraw(a: ResolvedStyle, b: ResolvedStyle, t: Float, result: Reso
         backgroundColor = lerp(a.backgroundColor, b.backgroundColor, t)
         backgroundBrush =
             lerp(a.backgroundBrush, a.backgroundColor, b.backgroundBrush, b.backgroundColor, t)
+        foregroundColor = lerp(a.foregroundColor, b.foregroundColor, t)
         foregroundBrush =
-            lerp(a.foregroundBrush, Color.Unspecified, b.foregroundBrush, Color.Unspecified, t)
+            lerp(a.foregroundBrush, a.foregroundColor, b.foregroundBrush, b.foregroundColor, t)
         innerShadow = lerpShadows(a.innerShadow, b.innerShadow, t)
         dropShadow = lerpShadows(a.dropShadow, b.dropShadow, t)
     }

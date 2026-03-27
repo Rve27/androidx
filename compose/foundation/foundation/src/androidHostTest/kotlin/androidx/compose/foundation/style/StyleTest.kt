@@ -220,6 +220,40 @@ class StyleTest {
     }
 
     @Test
+    fun resolve_foreground_color_brush() {
+        val brush = Brush.linearGradient()
+        resolved(Style({ foreground(Color.Blue) }, { foreground(brush) })) {
+            assertEquals(Color.Unspecified, foregroundColor)
+            assertEquals(brush, foregroundBrush)
+        }
+    }
+
+    @Test
+    fun resolve_foreground_brush_color() {
+        val brush = Brush.linearGradient()
+        resolved(Style({ foreground(brush) }, { foreground(Color.Blue) })) {
+            assertEquals(Color.Blue, foregroundColor)
+            assertEquals(null, foregroundBrush)
+        }
+    }
+
+    @Test
+    fun diff_foregroundColor() {
+        val style1 = ResolvedStyle()
+        style1.resolveForTesting({ foreground(Color.Red) }, Density(1f), false)
+
+        val style2 = ResolvedStyle()
+        style2.resolveForTesting({ foreground(Color.Blue) }, Density(1f), false)
+
+        val changes = style1.diff(style2)
+        assertEquals(
+            DrawFlag,
+            changes and DrawFlag,
+            "DrawFlag should be set when foregroundColor changes",
+        )
+    }
+
+    @Test
     fun resolve_pressed() {
         resolved(
             {
