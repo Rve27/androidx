@@ -59,7 +59,7 @@ androidx {
 
 android {
     compileSdk {
-        version = preview("Baklava")
+        version = release(37)
     }
     namespace = "androidx.activity.compose.samples"
 }

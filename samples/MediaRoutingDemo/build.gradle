@@ -32,7 +32,7 @@ android {
         }
     }
     compileSdk {
-        version = preview("Baklava")
+        version = release(37)
     }
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
