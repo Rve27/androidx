@@ -20,6 +20,10 @@ package androidx.compose.remote.creation.compose.state
 import androidx.annotation.RestrictTo
 import androidx.compose.remote.core.RemoteComposeBuffer
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression
+import androidx.compose.remote.core.operations.utilities.easing.CubicEasing
+import androidx.compose.remote.core.operations.utilities.easing.MonotonicSpline
+import androidx.compose.ui.util.fastAll
+import androidx.compose.ui.util.fastMap
 import kotlin.math.abs
 import kotlin.math.acos
 import kotlin.math.asin
@@ -395,6 +399,95 @@ public fun clamp(value: RemoteFloat, min: Float, max: Float): RemoteFloat {
             )
         },
     )
+}
+
+/**
+ * Cubic easing function similar to CSS cubic-bezier, given two control point x1,y1 and x2,y2 the
+ * function is defined as: f(x) = (1-x)^3 * x1 + 3 * (1-x)^2 * x * y1 + 3 * (1-x) * x^2 * y2 + x^3 *
+ * y2
+ *
+ * @param x1 the x-coordinate of the first control point
+ * @param y1 the y-coordinate of the first control point
+ * @param x2 the x-coordinate of the second control point
+ * @param y2 the y-coordinate of the second control point
+ * @param progress A value between 0 and 1
+ * @return The computed cubic easing for the given [progress]
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun cubicEasing(
+    x1: RemoteFloat,
+    y1: RemoteFloat,
+    x2: RemoteFloat,
+    y2: RemoteFloat,
+    progress: RemoteFloat,
+): RemoteFloat {
+    if (
+        x1.hasConstantValue &&
+            y1.hasConstantValue &&
+            x2.hasConstantValue &&
+            y2.hasConstantValue &&
+            progress.hasConstantValue
+    ) {
+        val easing = CubicEasing()
+        easing.setup(x1.constantValue, y1.constantValue, x2.constantValue, y2.constantValue)
+        return RemoteFloat(easing.get(progress.constantValue))
+    }
+
+    return RemoteFloatExpression(
+        constantValueOrNull = null,
+        cacheKey =
+            RemoteOperationCacheKey.create(RemoteFloat.OperationKey.Cubic, x1, y1, x2, y2, progress),
+    ) { creationState ->
+        combineToFloatArray(
+            creationState,
+            arrayOf(x1, y1, x2, y2, progress),
+            AnimatedFloatExpression.CUBIC,
+        )
+    }
+}
+
+/**
+ * @param controlPoints The [RemoteFloatArray] that defines the spline control points
+ * @param loop Whether or not the last control point should be treated as looping round to the first
+ *   one
+ * @param progress A value between 0 and 1
+ * @return The computed spline for the given [progress]
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun evalSpline(
+    controlPoints: RemoteFloatArray,
+    loop: Boolean,
+    progress: RemoteFloat,
+): RemoteFloat {
+    if (controlPoints.hasConstantValue && progress.hasConstantValue) {
+        val constants = controlPoints.constantValue
+        if (constants.fastAll { it.hasConstantValue }) {
+            val spline =
+                MonotonicSpline(null, constants.fastMap { it.constantValue }.toFloatArray())
+            var p = progress.constantValue
+            if (loop) {
+                p -= p.toInt().toFloat()
+                if (p < 0) p += 1f
+            }
+            return RemoteFloat(spline.getPos(p))
+        }
+    }
+
+    return RemoteFloatExpression(
+        constantValueOrNull = null,
+        cacheKey =
+            RemoteOperationCacheKey.create(
+                if (loop) RemoteFloat.OperationKey.SplineLoop else RemoteFloat.OperationKey.Spline,
+                controlPoints,
+                progress,
+            ),
+    ) { creationState ->
+        floatArrayOf(
+            controlPoints.getFloatIdForCreationState(creationState),
+            progress.getFloatIdForCreationState(creationState),
+            if (loop) AnimatedFloatExpression.A_SPLINE_LOOP else AnimatedFloatExpression.A_SPLINE,
+        )
+    }
 }
 
 /**

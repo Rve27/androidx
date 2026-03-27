@@ -121,6 +121,9 @@ public abstract class RemoteFloat internal constructor() : BaseRemoteState<Float
         CompareGT(Float.NaN),
         CompareGE(Float.NaN),
         Anim(Float.NaN),
+        Cubic(AnimatedFloatExpression.CUBIC),
+        Spline(AnimatedFloatExpression.A_SPLINE),
+        SplineLoop(AnimatedFloatExpression.A_SPLINE_LOOP),
     }
 
     internal fun arrayForCreationState(creationState: RemoteComposeCreationState): FloatArray {
