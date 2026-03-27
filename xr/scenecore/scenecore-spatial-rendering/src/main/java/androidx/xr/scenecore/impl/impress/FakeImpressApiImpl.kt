@@ -524,35 +524,6 @@ public class FakeImpressApiImpl : ImpressApi {
     public fun getChannelAnimations(impressNode: ImpressNode): Map<Int, AnimationInProgress>? =
         channelAnimations[impressNode]
 
-    override fun createStereoSurface(@StereoMode stereoMode: Int): ImpressNode {
-        return createStereoSurface(
-            stereoMode,
-            ContentSecurityLevel.NONE,
-            /* useSuperSampling= */ false,
-        )
-    }
-
-    // TODO - b/410899125: Set the content security level properly.
-    override fun createStereoSurface(
-        @StereoMode stereoMode: Int,
-        @ContentSecurityLevel contentSecurityLevel: Int,
-    ): ImpressNode {
-        return createStereoSurface(stereoMode, contentSecurityLevel, /* useSuperSampling= */ false)
-    }
-
-    override fun createStereoSurface(
-        @StereoMode stereoMode: Int,
-        @ContentSecurityLevel contentSecurityLevel: Int,
-        useSuperSampling: Boolean,
-    ): ImpressNode {
-        return createStereoSurface(
-            stereoMode,
-            MediaBlendingMode.TRANSPARENT,
-            contentSecurityLevel,
-            useSuperSampling,
-        )
-    }
-
     override fun createStereoSurface(
         @StereoMode stereoMode: Int,
         @MediaBlendingMode mediaBlendingMode: Int,

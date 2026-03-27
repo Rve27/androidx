@@ -683,27 +683,6 @@ public class ImpressApiImpl : ImpressApi {
         )
     }
 
-    override fun createStereoSurface(@StereoMode stereoMode: Int): ImpressNode =
-        createStereoSurface(stereoMode, ContentSecurityLevel.NONE)
-
-    override fun createStereoSurface(
-        @StereoMode stereoMode: Int,
-        @ContentSecurityLevel contentSecurityLevel: Int,
-    ): ImpressNode =
-        createStereoSurface(stereoMode, contentSecurityLevel, /* useSuperSampling= */ false)
-
-    override fun createStereoSurface(
-        @StereoMode stereoMode: Int,
-        @ContentSecurityLevel contentSecurityLevel: Int,
-        useSuperSampling: Boolean,
-    ): ImpressNode =
-        createStereoSurface(
-            stereoMode,
-            MediaBlendingMode.TRANSPARENT,
-            contentSecurityLevel,
-            useSuperSampling,
-        )
-
     override fun createStereoSurface(
         @StereoMode stereoMode: Int,
         @MediaBlendingMode mediaBlendingMode: Int,
