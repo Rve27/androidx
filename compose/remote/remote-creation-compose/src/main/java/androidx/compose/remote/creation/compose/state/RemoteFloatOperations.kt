@@ -46,6 +46,55 @@ import kotlin.math.tan
 
 private const val FP_TO_RAD = 57.29578f // 180/PI
 private const val FP_TO_DEG = 0.017453292f // 180/PI
+private val PI_RF = Math.PI.toFloat().rf
+
+private fun easeOutBounce(x: RemoteFloat): RemoteFloat {
+    val n1 = 7.5625f.rf
+    val d1 = 2.75f.rf
+
+    return selectIfLt(
+        x,
+        0f.rf,
+        0f.rf,
+        selectIfLt(
+            x,
+            1f.rf / d1,
+            1f.rf / (1f.rf + 1f.rf / d1) * (n1 * x * x + x),
+            selectIfLt(
+                x,
+                2f.rf / d1,
+                n1 * (x - 1.5f.rf / d1) * (x - 1.5f.rf / d1) + 0.75f.rf,
+                selectIfLt(
+                    x,
+                    2.5f.rf / d1,
+                    n1 * (x - 2.25f.rf / d1) * (x - 2.25f.rf / d1) + 0.9375f.rf,
+                    selectIfLt(
+                        x,
+                        1f.rf,
+                        n1 * (x - 2.625f.rf / d1) * (x - 2.625f.rf / d1) + 0.984375f.rf,
+                        1f.rf,
+                    ),
+                ),
+            ),
+        ),
+    )
+}
+
+private fun easeOutElastic(x: RemoteFloat): RemoteFloat {
+    val c4 = (2f.rf * PI_RF) / 3f.rf
+
+    return selectIfLt(
+        x,
+        0f.rf,
+        0f.rf,
+        selectIfLt(
+            x,
+            1f.rf,
+            pow(2f.rf, -10f.rf * x) * sin((x * 10f.rf - 0.75f.rf) * c4) + 1f.rf,
+            1f.rf,
+        ),
+    )
+}
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun max(a: RemoteFloat, b: Float): RemoteFloat =
@@ -488,6 +537,62 @@ public fun evalSpline(
             if (loop) AnimatedFloatExpression.A_SPLINE_LOOP else AnimatedFloatExpression.A_SPLINE,
         )
     }
+}
+
+/**
+ * Calculates the interpolated RemoteFloat given a progress value from 0.0 to 1.0.
+ *
+ * @param progress A RemoteFloat progressing from 0.0 to 1.0.
+ * @param initialValue The starting value of the animation.
+ * @param targetValue The target value to animate towards.
+ * @param type The type of animation curve to apply.
+ * @param spec Parameters for custom curves (e.g., [x1, y1, x2, y2] for CUBIC_CUSTOM).
+ * @param wrap Optional wrapping bound (e.g., 360 for angles) to ensure shortest-path interpolation.
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun interpolateRemoteFloat(
+    progress: RemoteFloat,
+    initialValue: RemoteFloat,
+    targetValue: RemoteFloat,
+    @AnimationType type: Int = CUBIC_STANDARD,
+    spec: RemoteFloatArray? = null,
+    wrap: RemoteFloat? = null,
+): RemoteFloat {
+    val easedProgress =
+        when (type) {
+            CUBIC_STANDARD -> cubicEasing(0.4f.rf, 0.0f.rf, 0.2f.rf, 1f.rf, progress)
+            CUBIC_ACCELERATE -> cubicEasing(0.4f.rf, 0.05f.rf, 0.8f.rf, 0.7f.rf, progress)
+            CUBIC_DECELERATE -> cubicEasing(0.0f.rf, 0.0f.rf, 0.2f.rf, 0.95f.rf, progress)
+            CUBIC_LINEAR -> progress
+            CUBIC_ANTICIPATE -> cubicEasing(0.36f.rf, 0f.rf, 0.66f.rf, -0.56f.rf, progress)
+            CUBIC_OVERSHOOT -> cubicEasing(0.34f.rf, 1.56f.rf, 0.64f.rf, 1f.rf, progress)
+            CUBIC_CUSTOM -> {
+                if (spec != null && (spec.constantValueOrNull?.size ?: 0) >= 4) {
+                    cubicEasing(spec[0], spec[1], spec[2], spec[3], progress)
+                } else {
+                    throw IllegalArgumentException("spec is either null or its size isn't 4")
+                }
+            }
+            SPLINE_CUSTOM -> {
+                if (spec != null) {
+                    evalSpline(spec, loop = false, progress)
+                } else {
+                    progress
+                }
+            }
+            EASE_OUT_BOUNCE -> easeOutBounce(progress)
+            EASE_OUT_ELASTIC -> easeOutElastic(progress)
+            else -> progress
+        }
+
+    var diff = targetValue - initialValue
+    if (wrap != null) {
+        // shortest path interpolation: diff = (((diff + wrap/2) % wrap + wrap) % wrap) - wrap/2
+        val halfWrap = wrap / 2f.rf
+        diff = ((diff + halfWrap) % wrap + wrap) % wrap - halfWrap
+    }
+
+    return initialValue + diff * easedProgress
 }
 
 /**

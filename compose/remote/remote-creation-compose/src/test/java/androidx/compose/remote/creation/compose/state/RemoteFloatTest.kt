@@ -536,6 +536,137 @@ class RemoteFloatTest {
     }
 
     @Test
+    fun interpolateRemoteFloat_linear() {
+        val result =
+            interpolateRemoteFloat(
+                progress = RemoteFloat(0.5f),
+                initialValue = RemoteFloat(100f),
+                targetValue = RemoteFloat(200f),
+                CUBIC_LINEAR,
+            )
+
+        val resultId = result.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getFloat(resultId)).isWithin(0.01f).of(150f)
+    }
+
+    @Test
+    fun interpolateRemoteFloat_standard() {
+        val result =
+            interpolateRemoteFloat(
+                progress = RemoteFloat(0.5f),
+                initialValue = RemoteFloat(100f),
+                targetValue = RemoteFloat(200f),
+                CUBIC_STANDARD,
+            )
+
+        val resultId = result.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getFloat(resultId)).isFinite()
+    }
+
+    @Test
+    fun interpolateRemoteFloat_wrap() {
+        // Shortest path between 350 and 10 is 20 degrees, so at 0.5 it should be 360 (or 0)
+        val result =
+            interpolateRemoteFloat(
+                progress = RemoteFloat(0.5f),
+                initialValue = RemoteFloat(350f),
+                targetValue = RemoteFloat(10f),
+                CUBIC_LINEAR,
+                wrap = RemoteFloat(360f),
+            )
+
+        val resultId = result.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        val value = context.getFloat(resultId)
+        assertThat(value).isWithin(0.01f).of(360f)
+    }
+
+    @Test
+    fun interpolateRemoteFloat_bounce() {
+        val result =
+            interpolateRemoteFloat(
+                progress = RemoteFloat(0.5f),
+                initialValue = RemoteFloat(0f),
+                targetValue = RemoteFloat(100f),
+                EASE_OUT_BOUNCE,
+            )
+
+        val resultId = result.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        val value = context.getFloat(resultId)
+        // In BounceCurve.java, at t=0.5 (which is between 1/2.75=0.36 and 2/2.75=0.72)
+        // t = 0.5 - 1.5/2.75 = 0.5 - 0.545454... = -1/22
+        // result = 7.5625 * (-1/22)^2 + 0.75 = (121/16) * (1/484) + 0.75 = 1/64 + 0.75 = 0.015625 +
+        // 0.75 = 0.765625
+        assertThat(value).isWithin(0.01f).of(76.5625f)
+    }
+
+    @Test
+    fun interpolateRemoteFloat_elastic() {
+        val result =
+            interpolateRemoteFloat(
+                progress = RemoteFloat(0.5f),
+                initialValue = RemoteFloat(0f),
+                targetValue = RemoteFloat(100f),
+                EASE_OUT_ELASTIC,
+            )
+
+        val resultId = result.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        val value = context.getFloat(resultId)
+        // In ElasticOutCurve.java, at x=0.5:
+        // result = 2^(-10*0.5) * sin((0.5*10 - 0.75) * (2*PI/3)) + 1
+        // result = 2^-5 * sin(4.25 * 2*PI/3) + 1 = 1/32 * sin(2.833 * PI) + 1
+        // sin(2.833 * PI) = sin(0.833 * PI) = sin(150 deg) = 0.5
+        // result = 1/32 * 0.5 + 1 = 1/64 + 1 = 1.015625
+        assertThat(value).isWithin(0.01f).of(101.56f)
+    }
+
+    @Test
+    fun interpolateRemoteFloat_custom() {
+        // Custom linear: 1, 1, 0, 0
+        val spec = RemoteFloatArray(listOf(1f.rf, 1f.rf, 0f.rf, 0f.rf))
+        val result =
+            interpolateRemoteFloat(
+                progress = RemoteFloat(0.5f),
+                initialValue = RemoteFloat(0f),
+                targetValue = RemoteFloat(100f),
+                CUBIC_CUSTOM,
+                spec = spec,
+            )
+
+        val resultId = result.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getFloat(resultId)).isWithin(0.01f).of(50f)
+    }
+
+    @Test
+    fun interpolateRemoteFloat_spline() {
+        // Simple linear spline: 0, 1
+        val result =
+            interpolateRemoteFloat(
+                progress = RemoteFloat(0.5f),
+                initialValue = RemoteFloat(0f),
+                targetValue = RemoteFloat(100f),
+                SPLINE_CUSTOM,
+                spec = RemoteFloatArray(listOf(0f.rf, 1f.rf)),
+            )
+
+        val resultId = result.getIdForCreationState(creationState)
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getFloat(resultId)).isWithin(0.1f).of(50f)
+    }
+
+    @Test
     fun timeOfReferenceInSeconds() {
         val result = timeOfReferenceInSeconds(JUN_06_2025_UTC)
         val resultId = result.getIdForCreationState(creationState)
