@@ -76,6 +76,11 @@ public class CompositionSettingsTest {
         assertThat(settings.getZOrder()).isEqualTo(10);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void setZOrderWithNegativeValue_throwsException() {
+        new CompositionSettings.Builder().setZOrder(-1);
+    }
+
     @Test
     public void staticDefaultIsCorrect() {
         CompositionSettings settings = CompositionSettings.DEFAULT;

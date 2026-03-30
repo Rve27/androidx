@@ -17,8 +17,10 @@
 package androidx.camera.core;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
 import androidx.camera.core.ConcurrentCamera.SingleCameraConfig;
 import androidx.core.util.Pair;
+import androidx.core.util.Preconditions;
 
 import org.jspecify.annotations.NonNull;
 
@@ -151,7 +153,7 @@ public class CompositionSettings {
      *
      * @return z-order value.
      */
-    public int getZOrder() {
+    public @IntRange(from = 0) int getZOrder() {
         return mZOrder;
     }
 
@@ -213,12 +215,14 @@ public class CompositionSettings {
         }
 
         /**
-         * Sets the z-order. Larger z-order means rendered later (appears on top).
+         * Sets the z-order. Larger z-order means rendered later (appears on top). Must be
+         * non-negative.
          *
          * @param zOrder z-order value.
          * @return Builder instance.
          */
-        public @NonNull Builder setZOrder(int zOrder) {
+        public @NonNull Builder setZOrder(@IntRange(from = 0) int zOrder) {
+            Preconditions.checkArgument(zOrder >= 0, "z-order must be non-negative.");
             mZOrder = zOrder;
             return this;
         }
