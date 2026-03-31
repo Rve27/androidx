@@ -454,7 +454,10 @@ class SelectionStateManagerTest {
 
         // Drag the start handle by 5px in both x and y
         val newStartPosition =
-            PointF(insideStartHandle).apply { offset(/* dx= */ 5F, /* dy= */ 5F) }
+            PointF(insideStartHandle.x, insideStartHandle.y).apply {
+                offset(/* dx= */ 5F, /* dy= */ 5F)
+            }
+
         assertThat(
                 selectionStateManager.maybeDragSelection(
                     MotionEvent.ACTION_MOVE,

@@ -51,6 +51,7 @@ import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.core.animation.addListener
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.toRectF
 import androidx.core.os.HandlerCompat
 import androidx.core.util.Pools
@@ -78,6 +79,7 @@ import androidx.pdf.selection.model.ImageSelection
 import androidx.pdf.util.Accessibility
 import androidx.pdf.util.MathUtils
 import androidx.pdf.util.ZoomUtils
+import androidx.pdf.util.getDisplaySize
 import androidx.pdf.util.isImageSelectionAvailableInSdk
 import androidx.pdf.view.PdfView.Companion.GESTURE_STATE_IDLE
 import androidx.pdf.view.PdfView.Companion.GESTURE_STATE_INTERACTING
@@ -1960,16 +1962,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /** Start using the [PdfDocument] to present PDF content */
     // Display.width and height are deprecated in favor of WindowMetrics, but in this case we
     // actually want to use the size of the display and not the size of the window.
-    @Suppress("deprecation")
     private fun onDocumentSet() {
         val localPdfDocument = pdfDocument ?: return
+
         // No pages to render, return without processing document further.
         if (localPdfDocument.pageCount <= 0) return
         /* We use the maximum pixel dimension of the display as the maximum pixel dimension for any
         single Bitmap we render, i.e. the threshold for tiled rendering. This is an arbitrary,
         but reasonable threshold to use that does not depend on volatile state like the current
         screen orientation or the current size of our application's Window. */
-        val maxBitmapDimensionPx = max(context.display.width, context.display.height)
+        val displaySize = getDisplaySize(context)
+        val maxBitmapDimensionPx = max(displaySize.x, displaySize.y)
 
         pageManager =
             PageManager(
@@ -1985,8 +1988,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 this.formFillingEditText = formFillingEditText
             }
 
+        val mainExecutor = ContextCompat.getMainExecutor(context)
         localPdfDocument.addOnPdfContentInvalidatedListener(
-            context.mainExecutor,
+            mainExecutor,
             onPdfContentInvalidatedListener,
         )
 
