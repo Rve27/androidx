@@ -24,6 +24,7 @@ import static androidx.core.app.NotificationCompat.GROUP_ALERT_ALL;
 import static androidx.core.app.NotificationCompat.GROUP_ALERT_CHILDREN;
 import static androidx.core.app.NotificationCompat.GROUP_ALERT_SUMMARY;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.content.Context;
 import android.content.LocusId;
@@ -34,8 +35,10 @@ import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresFlag;
 import androidx.annotation.RestrictTo;
 import androidx.collection.ArraySet;
+import androidx.core.flagging.Flags;
 import androidx.core.graphics.drawable.IconCompat;
 
 import org.jspecify.annotations.Nullable;
@@ -362,6 +365,12 @@ class NotificationCompatBuilder implements NotificationBuilderWithBuilderAccesso
             Api31Impl.setAuthenticationRequired(actionBuilder,
                     action.isAuthenticationRequired());
         }
+        if (Flags.getBooleanFlagValue(
+                AndroidAppFlags.PACKAGE,
+                AndroidAppFlags.FLAG_API_NOTIFICATION_ACTION_CUSTOM)) {
+            Api37FlaggedImpl.setEmphasisHint(actionBuilder, action.getEmphasisHint());
+            Api37FlaggedImpl.setStyleHint(actionBuilder, action.getStyleHint());
+        }
 
         actionExtras.putBoolean(NotificationCompat.Action.EXTRA_SHOWS_USER_INTERFACE,
                 action.getShowsUserInterface());
@@ -590,6 +599,23 @@ class NotificationCompatBuilder implements NotificationBuilderWithBuilderAccesso
         static Notification.Builder setShortCriticalText(
                 Notification.Builder builder, String shortCriticalText) {
             return builder.setShortCriticalText(shortCriticalText);
+        }
+    }
+
+    @RequiresApi(37)
+    @RequiresFlag("android.app.api_notification_action_custom")
+    @SuppressLint("WrongConstant") // Platform <-> Compat @IntDef with same values.
+    static final class Api37FlaggedImpl {
+        private Api37FlaggedImpl() { }
+
+        static Notification.Action.Builder setEmphasisHint(Notification.Action.Builder builder,
+                @NotificationCompat.Action.Emphasis int emphasis) {
+            return builder.setEmphasisHint(emphasis);
+        }
+
+        static Notification.Action.Builder setStyleHint(Notification.Action.Builder builder,
+                @NotificationCompat.Action.Style int style) {
+            return builder.setStyleHint(style);
         }
     }
 }
