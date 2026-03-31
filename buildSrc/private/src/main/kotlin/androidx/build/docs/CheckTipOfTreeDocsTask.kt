@@ -21,6 +21,8 @@ import androidx.build.SoftwareType
 import androidx.build.addToBuildOnServer
 import androidx.build.checkapi.shouldConfigureApiTasks
 import androidx.build.getSupportRootFolder
+import androidx.build.hasAndroidTarget
+import androidx.build.hasJvmTarget
 import androidx.build.multiplatformExtension
 import androidx.build.uptodatedness.cacheEvenIfNoOutputs
 import org.gradle.api.DefaultTask
@@ -92,10 +94,15 @@ abstract class CheckTipOfTreeDocsTask : DefaultTask() {
         fun Project.setUpCheckDocsTask(extension: AndroidXExtension) {
             val docsTypeProvider =
                 extension.type.map { softwareType ->
+                    val kmpExtension = multiplatformExtension
                     if (softwareType == SoftwareType.SAMPLES) {
                         DocsType.SAMPLES
-                    } else if (multiplatformExtension != null) {
-                        DocsType.KMP
+                    } else if (kmpExtension != null) {
+                        if (!kmpExtension.hasJvmTarget() && !kmpExtension.hasAndroidTarget()) {
+                            DocsType.KMP_WITHOUT_API_SINCE
+                        } else {
+                            DocsType.KMP
+                        }
                     } else {
                         DocsType.STANDARD
                     }
@@ -121,6 +128,7 @@ abstract class CheckTipOfTreeDocsTask : DefaultTask() {
         enum class DocsType(val prefix: String) {
             STANDARD("docs"),
             KMP("kmpDocs"),
+            KMP_WITHOUT_API_SINCE("kmpDocsWithoutApiSince"),
             SAMPLES("samples"),
         }
 
