@@ -31,7 +31,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Looper
 import android.os.Parcelable
-import android.os.ext.SdkExtensions
 import android.util.AttributeSet
 import android.util.Range
 import android.util.SparseArray
@@ -79,6 +78,7 @@ import androidx.pdf.selection.model.ImageSelection
 import androidx.pdf.util.Accessibility
 import androidx.pdf.util.MathUtils
 import androidx.pdf.util.ZoomUtils
+import androidx.pdf.util.isImageSelectionAvailableInSdk
 import androidx.pdf.view.PdfView.Companion.GESTURE_STATE_IDLE
 import androidx.pdf.view.PdfView.Companion.GESTURE_STATE_INTERACTING
 import androidx.pdf.view.PdfView.Companion.GESTURE_STATE_SETTLING
@@ -282,7 +282,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     public var isImageSelectionEnabled: Boolean = false
         set(value) {
             if (field == value) return
-            val isApiReqSatisfied = isSdkExtensionGreaterEqualTo(19)
+            val isApiReqSatisfied = isImageSelectionAvailableInSdk()
             if (!isApiReqSatisfied) return
 
             field = value
@@ -382,7 +382,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         if (
             typedArray.hasValue(R.styleable.PdfView_isImageSelectionEnabled) &&
-                isSdkExtensionGreaterEqualTo(19)
+                isImageSelectionAvailableInSdk()
         ) {
             isImageSelectionEnabled =
                 typedArray.getBoolean(R.styleable.PdfView_isImageSelectionEnabled, false)
@@ -1551,7 +1551,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
         state.isFormFillingEnabled = isFormFillingEnabled
         state.isFormFillingTooltipEnabled = isFormFillingTooltipEnabled
-        if (isSdkExtensionGreaterEqualTo(19)) {
+        if (isImageSelectionAvailableInSdk()) {
             state.isImageSelectionEnabled = isImageSelectionEnabled
         }
         state.pagesPerRow = pagesPerRow
@@ -1729,7 +1729,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         isFormFillingEnabled = localStateToRestore.isFormFillingEnabled
         isFormFillingTooltipEnabled = localStateToRestore.isFormFillingTooltipEnabled
-        if (isSdkExtensionGreaterEqualTo(19)) {
+        if (isImageSelectionAvailableInSdk()) {
             isImageSelectionEnabled = localStateToRestore.isImageSelectionEnabled
         }
         setAccessibility()
@@ -2011,7 +2011,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     .apply { onViewportChanged() }
 
             val isImageSelectionAvailable =
-                isSdkExtensionGreaterEqualTo(19) && isImageSelectionEnabled
+                isImageSelectionAvailableInSdk() && isImageSelectionEnabled
             selectionStateManager =
                 SelectionStateManager(
                     pdfDocument = localPdfDocument,
@@ -2873,8 +2873,4 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             return (contentCoord * zoom) - scroll
         }
     }
-}
-
-private fun isSdkExtensionGreaterEqualTo(sdkExtension: Int): Boolean {
-    return SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= sdkExtension
 }

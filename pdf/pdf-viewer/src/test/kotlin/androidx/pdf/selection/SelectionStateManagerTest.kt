@@ -37,7 +37,7 @@ import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.selection.model.ImageSelection
 import androidx.pdf.selection.model.TextSelection
 import androidx.pdf.util.CONTENT_SELECTION_REQUEST_NAME
-import androidx.pdf.utils.isRequiredSdkExtensionAvailable
+import androidx.pdf.util.isImageSelectionAvailableInSdk
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertNull
@@ -124,7 +124,7 @@ class SelectionStateManagerTest {
 
     @Test
     fun maybeSelectImageAtPoint_imageSelectionDisabled() = runTest {
-        if (!isRequiredSdkExtensionAvailable(19)) return@runTest
+        if (!isImageSelectionAvailableInSdk()) return@runTest
 
         val pageNumber = 0
         val selectionPoint = PointF(100F, 200F)
@@ -140,7 +140,7 @@ class SelectionStateManagerTest {
 
     @Test
     fun maybeSelectImageAtPoint_imagePresent() = runTest {
-        if (!isRequiredSdkExtensionAvailable(19)) return@runTest
+        if (!isImageSelectionAvailableInSdk()) return@runTest
 
         val pageNumber = 0
         val selectionPoint = PointF(100F, 200F)
@@ -170,7 +170,7 @@ class SelectionStateManagerTest {
 
     @Test
     fun maybeSelectImageAtPoint_imageNotPresent() = runTest {
-        if (!isRequiredSdkExtensionAvailable(19)) return@runTest
+        if (!isImageSelectionAvailableInSdk()) return@runTest
 
         val pageNumber = -1
         val selectionPoint = PointF(100F, 200F)
@@ -188,7 +188,7 @@ class SelectionStateManagerTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun maybeSelectImageAtPoint_imageAndTextBothPresent() = runTest {
-        if (!isRequiredSdkExtensionAvailable(19)) return@runTest
+        if (!isImageSelectionAvailableInSdk()) return@runTest
 
         val pageNumber = 10
         val selectionPoint = PointF(150F, 265F)
