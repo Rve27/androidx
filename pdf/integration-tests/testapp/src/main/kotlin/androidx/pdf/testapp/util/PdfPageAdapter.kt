@@ -45,7 +45,10 @@ public class PdfPageAdapter {
     }
 
     fun render(bitmap: Bitmap) {
-        if (pdfRendererPage != null && Build.VERSION.SDK_INT >= 35) {
+        if (
+            pdfRendererPage != null &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+        ) {
             pdfRendererPage?.render(bitmap, null, null, getRenderParams())
         } else {
             checkAndExecute { pdfRendererPreVPage?.render(bitmap, null, null, getRenderParams()) }
@@ -53,7 +56,10 @@ public class PdfPageAdapter {
     }
 
     fun getWidth(): Int {
-        return if (pdfRendererPage != null && Build.VERSION.SDK_INT >= 35) {
+        return if (
+            pdfRendererPage != null &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+        ) {
             pdfRendererPage?.width ?: 0
         } else {
             checkAndExecute { pdfRendererPreVPage?.width ?: 0 }
@@ -61,7 +67,10 @@ public class PdfPageAdapter {
     }
 
     fun getHeight(): Int {
-        return if (pdfRendererPage != null && Build.VERSION.SDK_INT >= 35) {
+        return if (
+            pdfRendererPage != null &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+        ) {
             pdfRendererPage?.height ?: 0
         } else {
             checkAndExecute { pdfRendererPreVPage?.height ?: 0 }
@@ -79,18 +88,11 @@ public class PdfPageAdapter {
         }
     }
 
-    /*
-     *  fun addPageObject(pdfPageObject: PdfPageObject): Int {
-     *      return if (pdfRendererPage != null && Build.VERSION.SDK_INT >= 35) {
-     *          pdfRendererPage?.addPageObject(pdfPageObject) ?: 0
-     *      } else {
-     *          checkAndExecute { pdfRendererPreVPage?.addPageObject(pdfPageObject) ?: 0 }
-     *      }
-     *  }
-     */
-
     fun close() {
-        if (pdfRendererPage != null && Build.VERSION.SDK_INT >= 35) {
+        if (
+            pdfRendererPage != null &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+        ) {
             pdfRendererPage?.close()
             pdfRendererPage = null
         } else {

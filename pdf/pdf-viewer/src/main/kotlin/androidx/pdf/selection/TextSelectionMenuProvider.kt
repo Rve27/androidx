@@ -19,7 +19,6 @@ import android.app.ActivityOptions
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
-import android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM
 import android.os.LocaleList
 import android.view.textclassifier.TextClassificationManager
 import android.view.textclassifier.TextClassifier
@@ -96,9 +95,9 @@ internal class TextSelectionMenuProvider(private val context: Context) :
         }
 
     private fun sendIntentAllowBackgroundActivityStart(pendingIntent: PendingIntent) {
-        if (Build.VERSION.SDK_INT < 34) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return
         val intent =
-            if (Build.VERSION.SDK_INT > VANILLA_ICE_CREAM) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
                 // For API 36 and above, MODE_BACKGROUND_ACTIVITY_START_ALLOWED is deprecated.
                 // Use MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS to grant background start
                 // privileges.
@@ -116,7 +115,7 @@ internal class TextSelectionMenuProvider(private val context: Context) :
     }
 
     private fun sendPendingIntent(pendingIntent: PendingIntent) {
-        if (Build.VERSION.SDK_INT >= 34) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             sendIntentAllowBackgroundActivityStart(pendingIntent)
         } else {
             pendingIntent.send()
