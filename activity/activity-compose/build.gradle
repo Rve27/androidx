@@ -29,7 +29,6 @@ plugins {
 }
 
 dependencies {
-
     implementation(libs.kotlinCoroutinesCore)
     api("androidx.compose.runtime:runtime:1.7.0")
     api("androidx.compose.runtime:runtime-saveable:1.7.0")
@@ -79,6 +78,8 @@ androidx {
 }
 
 android {
-    compileSdk { version = release(36) }
+    compileSdk {
+        version = release(37)
+    }
     namespace = "androidx.activity.compose"
 }

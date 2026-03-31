@@ -27,6 +27,7 @@ import static org.mockito.Mockito.verify;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.app.UiAutomation;
+import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.Build;
@@ -35,7 +36,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityNodeProvider;
+import android.widget.TextView;
 
+import androidx.core.os.BuildCompat;
 import androidx.core.view.ViewCompatActivity;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.SelectionCompat;
@@ -664,6 +667,70 @@ public class AccessibilityNodeInfoCompatTest extends
         assertThat(containerNodeCompat.getSelection()).isNull();
     }
 
+    @Test
+    public void testSelectionPositionCompat_equals() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        TextView textView = new TextView(context);
+        SelectionPositionCompat position1 = new SelectionPositionCompat(textView, 0);
+        SelectionPositionCompat position2 = new SelectionPositionCompat(textView, 0);
+        SelectionPositionCompat position3 = new SelectionPositionCompat(textView, 1);
+
+        assertThat(position1).isEqualTo(position1);
+        assertThat(position1).isNotEqualTo(position3);
+
+        if (BuildCompat.isAtLeastB_1()) {
+            // Relies on the platform's underlying implementation of equals.
+            assertThat(position1).isEqualTo(position2);
+        } else {
+            assertThat(position1).isNotEqualTo(position2);
+        }
+    }
+
+    @Test
+    public void testSelectionCompat_equals() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        TextView textView = new TextView(context);
+        SelectionPositionCompat start = new SelectionPositionCompat(textView, 0);
+        SelectionPositionCompat end1 = new SelectionPositionCompat(textView, 1);
+        SelectionPositionCompat end2 = new SelectionPositionCompat(textView, 2);
+
+        SelectionCompat selection1 = new SelectionCompat(start, end1);
+        SelectionCompat selection2 = new SelectionCompat(start, end1);
+        SelectionCompat selection3 = new SelectionCompat(start, end2);
+
+        assertThat(selection1).isEqualTo(selection1);
+        assertThat(selection1).isNotEqualTo(selection3);
+
+        if (BuildCompat.isAtLeastB_1()) {
+            // Relies on the platform's underlying implementation of equals.
+            assertThat(selection1).isEqualTo(selection2);
+        } else {
+            assertThat(selection1).isNotEqualTo(selection2);
+        }
+    }
+
+    @SmallTest
+    @Test
+    @SdkSuppress(minSdkVersion = 30)
+    public void testSelectionCompat_unwrap() {
+        final Activity activity = mActivityTestRule.getActivity();
+        final View root = activity.findViewById(androidx.core.test.R.id.view);
+        assertThat(root).isNotNull();
+        AccessibilityNodeInfoCompat nodeCompat =
+                AccessibilityNodeInfoCompat.wrap(new AccessibilityNodeInfo(root, 1));
+        SelectionPositionCompat start = new SelectionPositionCompat(nodeCompat, 0);
+        SelectionPositionCompat end = new SelectionPositionCompat(nodeCompat, 5);
+        SelectionCompat selectionCompat = new SelectionCompat(start, end);
+
+        if (BuildCompat.isAtLeastB_1()) {
+            assertThat(selectionCompat.unwrap()).isNotNull();
+            assertThat(selectionCompat.unwrap()).isInstanceOf(
+                    AccessibilityNodeInfo.Selection.class);
+        } else {
+            assertThat(selectionCompat.unwrap()).isNull();
+        }
+    }
+
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
     @SmallTest
     @Test
@@ -674,6 +741,40 @@ public class AccessibilityNodeInfoCompatTest extends
                 android.R.id.accessibilityActionSetExtendedSelection);
         assertThat(actionCompat.toString()).isEqualTo("AccessibilityActionCompat: "
                 + "ACTION_SET_EXTENDED_SELECTION");
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @SmallTest
+    @Test
+    public void testActionArgumentSelectionParcelableValue() {
+        assertThat(AccessibilityNodeInfoCompat.ACTION_ARGUMENT_SELECTION_PARCELABLE)
+                .isEqualTo(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_PARCELABLE);
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @Test
+    public void testSelectionPositionCompat_getViewAndVirtualDescendantId() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        TextView textView = new TextView(context);
+        AccessibilityNodeInfoCompat.SelectionPositionCompat selectionPositionCompat =
+                new AccessibilityNodeInfoCompat.SelectionPositionCompat(textView, 0);
+
+        assertThat(selectionPositionCompat.getView()).isEqualTo(textView);
+        assertThat(selectionPositionCompat.getVirtualDescendantId()).isEqualTo(
+                AccessibilityNodeProviderCompat.HOST_VIEW_ID);
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES_FULL.BAKLAVA_1)
+    @Test
+    public void testSelectionPositionCompat_getViewAndVirtualDescendantId_withVirtualId() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        TextView textView = new TextView(context);
+        int virtualId = 1;
+        AccessibilityNodeInfoCompat.SelectionPositionCompat selectionPositionCompat =
+                new AccessibilityNodeInfoCompat.SelectionPositionCompat(textView, virtualId, 0);
+
+        assertThat(selectionPositionCompat.getView()).isEqualTo(textView);
+        assertThat(selectionPositionCompat.getVirtualDescendantId()).isEqualTo(virtualId);
     }
 
     private static class LabelNodeProviderTest extends AccessibilityNodeProvider {
