@@ -287,8 +287,7 @@ internal class ResizableNode(
         val placeable =
             if (userSize == null) {
                 measurable.measure(constraints).also {
-                    originalSize =
-                        IntVolumeSize(it.measuredWidth, it.measuredHeight, it.measuredDepth)
+                    originalSize = IntVolumeSize(it.width, it.height, it.depth)
                 }
             } else {
                 // Measuring this node using userSize as the constraints to force the rendered size.
@@ -305,11 +304,7 @@ internal class ResizableNode(
             }
 
         component.affordanceSize =
-            IntVolumeSize(
-                    placeable.measuredWidth,
-                    placeable.measuredHeight,
-                    placeable.measuredDepth,
-                )
+            IntVolumeSize(placeable.width, placeable.height, placeable.depth)
                 .toDimensionsInMeters(Density(density))
 
         // We use the original size of the component here, before any user changes were made. This

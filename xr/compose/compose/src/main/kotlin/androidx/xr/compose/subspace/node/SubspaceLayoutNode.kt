@@ -474,6 +474,8 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         }
 
         private fun measureJustThis(constraints: VolumeConstraints): SubspacePlaceable {
+            measurementConstraints = constraints
+
             subspaceMeasureResult =
                 with(measurePolicy) {
                     LayoutSubspaceMeasureScope(this@SubspaceLayoutNode)
@@ -483,9 +485,9 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
                         )
                 }
 
-            measuredWidth = subspaceMeasureResult!!.width
-            measuredHeight = subspaceMeasureResult!!.height
-            measuredDepth = subspaceMeasureResult!!.depth
+            measuredWidth = subspaceMeasureResult?.width ?: 0
+            measuredHeight = subspaceMeasureResult?.height ?: 0
+            measuredDepth = subspaceMeasureResult?.depth ?: 0
 
             owner?.logger?.nodeMeasured(this, constraints, size)
 
@@ -518,7 +520,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
             owner?.logger?.nodePlaced(this, pose)
 
             coreEntity?.updatePoseFromLayout()
-            coreEntity?.size = IntVolumeSize(measuredWidth, measuredHeight, measuredDepth)
+            coreEntity?.size = IntVolumeSize(width, height, depth)
 
             subspaceMeasureResult?.placeChildren(
                 object : SubspacePlacementScope() {
