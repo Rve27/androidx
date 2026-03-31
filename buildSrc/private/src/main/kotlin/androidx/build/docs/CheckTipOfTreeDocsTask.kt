@@ -53,7 +53,6 @@ abstract class CheckTipOfTreeDocsTask : DefaultTask() {
     @TaskAction
     fun exec() {
         if (!requiresDocs.get()) return
-
         val projectPath = projectPathProvider.get()
         // Make sure not to allow a partial project path match, e.g. ":activity:activity" shouldn't
         // match ":activity:activity-ktx", both need to be listed separately.
@@ -76,8 +75,7 @@ abstract class CheckTipOfTreeDocsTask : DefaultTask() {
                         "'$fullExpectedText'."
                 } else {
                     "Project $projectPath not found in docs-tip-of-tree/build.gradle\n\n" +
-                        "Use the project creation script (development/project-creator/" +
-                        "create_project.py) when setting up a project to make sure all required " +
+                        "Use the project creation script (https://g3doc.corp.google.com/company/teams/androidx/api_guidelines/modules.md#module-creation) when setting up a project to make sure all required " +
                         "steps are complete.\n\n" +
                         "The project should be added to docs-tip-of-tree/build.gradle as " +
                         "\'$fullExpectedText\'.\n\n" +
@@ -112,6 +110,9 @@ abstract class CheckTipOfTreeDocsTask : DefaultTask() {
                     task.projectPathProvider.set(path)
                     task.type.set(docsTypeProvider)
                     task.requiresDocs.set(extension.requiresDocs())
+                    task.group = "Verification"
+                    task.description =
+                        "Verifies that the project exists in docs-tip-of-tree/build.gradle"
                     task.cacheEvenIfNoOutputs()
                 }
             project.addToBuildOnServer(checkDocs)
