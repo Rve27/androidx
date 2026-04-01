@@ -38,7 +38,7 @@ internal class PdfDocumentRendererFactoryImpl : PdfDocumentRendererFactory {
         ) {
             PdfDocumentRendererPreVAdapter(pfd, password.orEmpty())
         } else {
-            throw UnsupportedOperationException("Operation supported above S")
+            PdfRendererCompatAdapter(pfd)
         }
     }
 }

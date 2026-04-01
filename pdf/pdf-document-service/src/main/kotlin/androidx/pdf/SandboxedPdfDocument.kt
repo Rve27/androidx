@@ -26,6 +26,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.DeadObjectException
 import android.os.ParcelFileDescriptor
+import android.os.ext.SdkExtensions
 import android.util.Size
 import android.util.SparseArray
 import androidx.annotation.RequiresExtension
@@ -145,7 +146,7 @@ public class SandboxedPdfDocument(
 
             // Check if the INCLUDE_FORM_WIDGET_INFO flag is set
             val formWidgetInfo =
-                if (pageInfoFlags and PdfDocument.PAGE_INFO_INCLUDE_FORM_WIDGET != 0L) {
+                if ((pageInfoFlags and PdfDocument.PAGE_INFO_INCLUDE_FORM_WIDGET) != 0L) {
                     document.getFormWidgetInfos(pageNumber).map { it.toContentClass() }
                 } else {
                     emptyList()
@@ -169,6 +170,15 @@ public class SandboxedPdfDocument(
         return pageRange.map { getPageInfo(pageNumber = it) }
     }
 
+    /**
+     * Returns page info for a given range with additional metadata.
+     *
+     * Requires either:
+     * - Android 15 (API level 35 / VANILLA_ICE_CREAM) or
+     * - Android 12 (API level 31) with SDK extension 13+
+     *
+     * @throws UnsupportedOperationException if called on unsupported SDK versions.
+     */
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun getPageInfos(
         pageRange: IntRange,
@@ -341,6 +351,23 @@ public class SandboxedPdfDocument(
                 onEditsAppliedListenerEntries.remove(onEditsAppliedListener)
                 break
             }
+        }
+    }
+
+    override fun isFeatureSupported(feature: PdfFeature): Boolean {
+        return when (feature) {
+            PdfFeature.TEXT_SELECTION,
+            PdfFeature.SEARCH,
+            PdfFeature.TEXT_EXTRACTION,
+            PdfFeature.IMAGE_EXTRACTION,
+            PdfFeature.LINKS,
+            PdfFeature.FORM_FILLING ->
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 13
+            PdfFeature.ANNOTATIONS ->
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 18
+            else -> false
         }
     }
 
