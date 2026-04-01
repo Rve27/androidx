@@ -47,6 +47,7 @@ import androidx.pdf.annotation.models.PdfObject
 import androidx.pdf.annotation.processor.PageAnnotationsPaginator
 import androidx.pdf.annotation.processor.PdfRendererAnnotationsProcessor
 import androidx.pdf.models.Dimensions
+import androidx.pdf.utils.isAnnotationsFeatureAvailable
 import androidx.pdf.utils.toPdfObject
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -58,11 +59,12 @@ internal class PdfDocumentRemoteImpl(
     private lateinit var rendererAnnotationsProcessor: PdfRendererAnnotationsProcessor
     private var pageAnnotationsPaginator: PageAnnotationsPaginator? = null
 
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
     override fun openPdfDocument(pfd: ParcelFileDescriptor, password: String?): Int {
         try {
             rendererAdapter = adapterFactory.create(pfd, password)
-            rendererAnnotationsProcessor = PdfRendererAnnotationsProcessor(rendererAdapter)
+            if (isAnnotationsFeatureAvailable()) {
+                rendererAnnotationsProcessor = PdfRendererAnnotationsProcessor(rendererAdapter)
+            }
             return PdfLoadingStatus.SUCCESS.ordinal
         } catch (exception: SecurityException) {
             return PdfLoadingStatus.WRONG_PASSWORD.ordinal
@@ -78,7 +80,14 @@ internal class PdfDocumentRemoteImpl(
     }
 
     override fun getPageDimensions(pageNum: Int): Dimensions? {
-        return rendererAdapter.withPage(pageNum) { page -> Dimensions(page.width, page.height) }
+        return try {
+            rendererAdapter.withPage(pageNum) { page -> Dimensions(page.width, page.height) }
+        } catch (_: IllegalStateException) {
+            // Pre-S devices throw IllegalStateException for corrupted pages via
+            // PdfRenderer.openPage().
+            // Catching it here prevents crashes and lets getPageInfo() fall back to DEFAULT_PAGE.
+            null
+        }
     }
 
     override fun getPageBitmap(

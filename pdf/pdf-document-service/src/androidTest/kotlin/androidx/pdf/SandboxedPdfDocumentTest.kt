@@ -36,10 +36,12 @@ import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.service.connect.FakePdfServiceConnection
 import androidx.pdf.service.connect.PdfServiceConnection
-import androidx.pdf.utils.AnnotationUtilsTest.Companion.isRequiredSdkExtensionAvailable
 import androidx.pdf.utils.TestUtils
+import androidx.pdf.utils.arePdfContentFeaturesAvailable
 import androidx.pdf.utils.createStampAnnotationWithPath
 import androidx.pdf.utils.getSampleStampAnnotation
+import androidx.pdf.utils.isAnnotationsFeatureAvailable
+import androidx.pdf.utils.isGetTopObjectAvailable
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -363,7 +365,7 @@ class SandboxedPdfDocumentTest {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 19)
     @Test
     fun getPageTopObject_validImageObject_fetchLargeImage() = runTest {
-        if (!isRequiredSdkExtensionAvailable(19)) return@runTest
+        if (!isGetTopObjectAvailable()) return@runTest
 
         withDocument(PDF_DOCUMENT_WITH_TEXT_AND_IMAGE) { document ->
             val pageNumber = 0
@@ -386,7 +388,7 @@ class SandboxedPdfDocumentTest {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 19)
     @Test
     fun getPageTopObject_validImageObject_fetchMediumImage() = runTest {
-        if (!isRequiredSdkExtensionAvailable(19)) return@runTest
+        if (!isGetTopObjectAvailable()) return@runTest
 
         withDocument(PDF_DOCUMENT_WITH_IMAGE) { document ->
             val pageNumber = 0
@@ -408,7 +410,7 @@ class SandboxedPdfDocumentTest {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 19)
     @Test
     fun getPageTopObject_validImageObject_fetchSmallImage() = runTest {
-        if (!isRequiredSdkExtensionAvailable(19)) return@runTest
+        if (!isGetTopObjectAvailable()) return@runTest
 
         withDocument(PDF_DOCUMENT_WITH_LINKS) { document ->
             val pageNumber = 0
@@ -430,7 +432,7 @@ class SandboxedPdfDocumentTest {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 19)
     @Test
     fun getPageTopObject_validImageObject_notPresent() = runTest {
-        if (!isRequiredSdkExtensionAvailable(19)) return@runTest
+        if (!isGetTopObjectAvailable()) return@runTest
 
         withDocument(PDF_DOCUMENT_WITH_LINKS) { document ->
             val pageNumber = 0
@@ -507,6 +509,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun write_modifiedFormFields_returnsModifiedDocument() = runTest {
+        if (!arePdfContentFeaturesAvailable()) return@runTest
         val document = openDocument("click_form.pdf")
         val pageNum = 0
         val editableFormWidget =
@@ -566,7 +569,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun applyEdits_emptyAnnotations_returnsEmptyResult() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
+        if (!isAnnotationsFeatureAvailable()) return@runTest
 
         withEditableDocument(PDF_DOCUMENT) { editablePdfDocument ->
             val emptyDraft = MutableEditsDraft().toEditsDraft()
@@ -579,7 +582,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun applyEdits_addAnnotations_singleBatch_returnsSuccess() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
+        if (!isAnnotationsFeatureAvailable()) return@runTest
 
         withEditableDocument(PDF_DOCUMENT) { editablePdfDocument ->
             val pageNum = 1
@@ -601,7 +604,7 @@ class SandboxedPdfDocumentTest {
     // the annotations over IPC.
     @Test
     fun applyEdits_addAnnotations_multipleBatches_returnsSuccess() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
+        if (!isAnnotationsFeatureAvailable()) return@runTest
 
         withEditableDocument(PDF_DOCUMENT) { editablePdfDocument ->
             val numAnnots = 20
@@ -619,7 +622,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun applyEdits_addAnnotations_singleInvalidAnnotation_throwsException() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
+        if (!isAnnotationsFeatureAvailable()) return@runTest
 
         withEditableDocument(PDF_DOCUMENT) { editablePdfDocument ->
             val pageNum = 1
@@ -649,7 +652,7 @@ class SandboxedPdfDocumentTest {
     @Test
     fun applyEdits_addAnnotations_multipleBatches__singleInvalidAnnotation_throwsException() =
         runTest {
-            if (!isRequiredSdkExtensionAvailable()) return@runTest
+            if (!isAnnotationsFeatureAvailable()) return@runTest
 
             withEditableDocument(PDF_DOCUMENT) { editablePdfDocument ->
                 val numAnnots = 19
@@ -674,7 +677,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun addOnEditsAppliedListener_singleListener_isNotified() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
+        if (!isAnnotationsFeatureAvailable()) return@runTest
 
         val appliedEdits = mutableListOf<BatchPdfAnnotationsProcessor.AppliedEdit>()
         val listener =
@@ -705,7 +708,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun addOnEditsAppliedListener_multipleListeners_sameNotification() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
+        if (!isAnnotationsFeatureAvailable()) return@runTest
 
         val appliedEdits1 = mutableListOf<BatchPdfAnnotationsProcessor.AppliedEdit>()
         val appliedEdits2 = mutableListOf<BatchPdfAnnotationsProcessor.AppliedEdit>()
@@ -746,7 +749,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun removeOnEditsAppliedListener_singleListener_isEmpty() = runTest {
-        if (!isRequiredSdkExtensionAvailable()) return@runTest
+        if (!isAnnotationsFeatureAvailable()) return@runTest
 
         val appliedEdits = mutableListOf<BatchPdfAnnotationsProcessor.AppliedEdit>()
         val listener =

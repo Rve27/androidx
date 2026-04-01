@@ -50,6 +50,10 @@ internal fun List<PathInput>.getPathFromPathInputs(): Path {
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public fun Path.getPathInputsFromPath(): List<PathInput> {
     val pathInputs = mutableListOf<PathInput>()
+    if (!isAnnotationsFeatureAvailable()) {
+        return pathInputs
+    }
+
     // Approx array for a path is in the format [fraction, x0, y0, fraction, x1, y1...]
     val approx: FloatArray = this.approximate(ACCEPTABLE_TOLERANCE_IN_PATH)
 

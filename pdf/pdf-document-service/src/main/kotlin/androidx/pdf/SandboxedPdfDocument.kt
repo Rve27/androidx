@@ -130,10 +130,12 @@ public class SandboxedPdfDocument(
     private val isDocumentClosedExplicitly = AtomicBoolean(false)
 
     @Suppress("WrongConstant")
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun getPageInfo(pageNumber: Int): PdfDocument.PageInfo {
         return getPageInfo(pageNumber, PdfDocument.PAGE_INFO_EXCLUDE_FORM_WIDGETS)
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun getPageInfo(pageNumber: Int, pageInfoFlags: Long): PdfDocument.PageInfo {
         return withDocument { document ->
             // TODO(b/407777410): Update the logic so that callers can refetch the information in
@@ -162,10 +164,12 @@ public class SandboxedPdfDocument(
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun getPageInfos(pageRange: IntRange): List<PdfDocument.PageInfo> {
         return pageRange.map { getPageInfo(pageNumber = it) }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun getPageInfos(
         pageRange: IntRange,
         pageInfoFlags: Long,
@@ -173,6 +177,7 @@ public class SandboxedPdfDocument(
         return pageRange.map { getPageInfo(pageNumber = it, pageInfoFlags = pageInfoFlags) }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun searchDocument(
         query: String,
         pageRange: IntRange,
@@ -231,6 +236,7 @@ public class SandboxedPdfDocument(
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun getPageContent(pageNumber: Int): PdfPageContent {
         return withDocument { document ->
             val textContents =
@@ -241,6 +247,7 @@ public class SandboxedPdfDocument(
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun getPageLinks(pageNumber: Int): PdfDocument.PdfPageLinks {
         return withDocument { document ->
             val gotoLinks =
@@ -253,6 +260,7 @@ public class SandboxedPdfDocument(
 
     override fun getPageBitmapSource(pageNumber: Int): BitmapSource = PageBitmapSource(pageNumber)
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun getFormWidgetInfos(pageNum: Int, types: Long): List<FormWidgetInfo> {
         return withDocument { document ->
             document.getFormWidgetInfosOfType(pageNum, getFormWidgetTypesArray(types)).map {

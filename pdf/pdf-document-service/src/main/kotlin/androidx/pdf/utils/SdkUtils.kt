@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.pdf.util
+package androidx.pdf.utils
 
 import android.os.Build
 import android.os.ext.SdkExtensions
@@ -26,7 +26,16 @@ private fun isRequiredSdkExtensionAvailable(extensionVersion: Int): Boolean =
         SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= extensionVersion
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun isImageSelectionAvailableInSdk(): Boolean = isRequiredSdkExtensionAvailable(19)
+public fun isAnnotationsFeatureAvailable(): Boolean = isRequiredSdkExtensionAvailable(18)
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun isAnnotationFeatureAvailableInSdk(): Boolean = isRequiredSdkExtensionAvailable(18)
+public fun isRenderFormContentModeAvailable(): Boolean = isRequiredSdkExtensionAvailable(19)
+
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public fun isGetTopObjectAvailable(): Boolean = isRequiredSdkExtensionAvailable(19)
+
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public fun arePdfContentFeaturesAvailable(): Boolean = isRequiredSdkExtensionAvailable(13)
+
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public fun isLinearizationStatusAvailable(): Boolean = isRequiredSdkExtensionAvailable(13)

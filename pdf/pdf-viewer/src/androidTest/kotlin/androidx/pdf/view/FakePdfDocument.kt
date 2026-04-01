@@ -30,6 +30,7 @@ import androidx.annotation.OpenForTesting
 import androidx.annotation.RequiresExtension
 import androidx.pdf.PdfDocument
 import androidx.pdf.PdfDocument.Companion.LINEARIZATION_STATUS_UNKNOWN
+import androidx.pdf.PdfFeature
 import androidx.pdf.RenderParams
 import androidx.pdf.annotation.KeyedPdfAnnotation
 import androidx.pdf.annotation.models.PdfObject
@@ -150,6 +151,10 @@ internal open class FakePdfDocument(
         listener: PdfDocument.OnPdfContentInvalidatedListener
     ) {
         return
+    }
+
+    override fun isFeatureSupported(feature: PdfFeature): Boolean {
+        return true
     }
 
     override suspend fun getPageLinks(pageNumber: Int): PdfDocument.PdfPageLinks {
