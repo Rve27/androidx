@@ -31,6 +31,7 @@ import androidx.xr.runtime.FaceTrackingMode
 import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
+import androidx.xr.runtime.QrCodeTrackingMode
 import androidx.xr.runtime.XrDevice
 import androidx.xr.runtime.getNativeInstanceData
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
@@ -92,6 +93,7 @@ internal class OpenXrRuntime(
             AnchorPersistenceMode.LOCAL,
             augmentedObjectCategories = setOf(),
             augmentedImageDatabase = null,
+            qrCodeTracking = QrCodeTrackingMode.DISABLED,
         )
         private set(value) {
             field = value
@@ -151,6 +153,10 @@ internal class OpenXrRuntime(
             perceptionManager.updateAugmentedImages(xrTime)
         }
 
+        if (config.qrCodeTracking != QrCodeTrackingMode.DISABLED) {
+            perceptionManager.updateQrCode(xrTime)
+        }
+
         perceptionManager.update(xrTime)
         // Block the call for a time that is appropriate for OpenXR devices.
         // TODO: b/359871229 - Implement dynamic delay. We start with a fixed 20ms delay as it is
@@ -206,6 +212,24 @@ internal class OpenXrRuntime(
             }
         }
 
+        if (config.qrCodeTracking != QrCodeTrackingMode.DISABLED) {
+            if (
+                config.qrCodeSizeMeters < 0f ||
+                    (config.qrCodeSizeMeters == 0f &&
+                        !perceptionManager.isQrCodeSizeEstimationSupported)
+            ) {
+                throw IllegalArgumentException(
+                    "Failed to configure session: " +
+                        if (config.qrCodeSizeMeters < 0f) {
+                            "qrCodeSizeMeters must be a non-negative value."
+                        } else {
+                            "the device does not support QR code size estimation and " +
+                                "qrCodeSizeMeters is 0, which requires size estimation."
+                        }
+                )
+            }
+        }
+
         val objectLabels: MutableList<Long> = mutableListOf()
         var objectMode: Int = 0
 
@@ -234,6 +258,8 @@ internal class OpenXrRuntime(
                         config.augmentedImageDatabase?.let {
                             OpenXrAugmentedImageDatabase.fromAugmentedImageDatabase(it)
                         },
+                    qrCodeTracking = config.qrCodeTracking.mode,
+                    qrCodeSizeMeters = config.qrCodeSizeMeters,
                 )
             ) {
                 -2L ->
@@ -387,6 +413,8 @@ internal class OpenXrRuntime(
         objectLabels: LongArray,
         geospatial: Int,
         augmentedImageDatabase: OpenXrAugmentedImageDatabase? = null,
+        qrCodeTracking: Int,
+        qrCodeSizeMeters: Float = 0f,
     ): Long
 
     private external fun nativeGetFaceTrackerCalibration(): Boolean

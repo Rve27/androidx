@@ -18,25 +18,25 @@ package androidx.xr.arcore.testing
 
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.runtime.Anchor as RuntimeAnchor
-import androidx.xr.arcore.runtime.AugmentedImage as RuntimeImage
+import androidx.xr.arcore.runtime.QrCode as RuntimeQrCode
 import androidx.xr.arcore.runtime.TrackingState
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 
 /**
- * Test-only implementation of [RuntimeImage]
+ * Test-only implementation of [RuntimeQrCode]
  *
- * The properties of the [FakeRuntimeAugmentedImage] can be set manually in order to simulate a
- * runtime image in the environment.
+ * The properties of the [FakeRuntimeQrCode] can be set manually in order to simulate a runtime qr
+ * code in the environment.
  *
- * For example, for a [FakeRuntimeAugmentedImage] with [TrackingState.PAUSED]:
+ * For example, for a [FakeRuntimeQrCode] with [TrackingState.PAUSED]:
  * ```
- * val image = FakeRuntimeImage(trackingState = TrackingState.PAUSED)
+ * val qrCode = FakeRuntimeQrCode(trackingState = TrackingState.PAUSED)
  * ```
  *
  * And to modify the properties during the test:
  * ```
- * augmentedImage.apply {
+ * qrCode.apply {
  *     trackingState = TrackingState.TRACKING
  *     centerPose = Pose(Vector3(1f, 2f, 3f), Quaternion(0f, 0f, 0f, 1f))
  * }
@@ -47,11 +47,11 @@ import androidx.xr.runtime.math.Pose
     "arcore-testing fakes have been moved internal and should no longer be used by unit tests."
 )
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public class FakeRuntimeAugmentedImage(
+public class FakeRuntimeQrCode(
     override var trackingState: TrackingState = TrackingState.TRACKING,
     override var centerPose: Pose = Pose(),
     override var extents: FloatSize2d = FloatSize2d(),
-    override var index: Int = 0,
-    /** The anchors that are attached to this image. */
+    override var data: String = "",
+    /** The anchors that are attached to this qr code. */
     public val anchors: MutableCollection<RuntimeAnchor> = mutableListOf(),
-) : RuntimeImage {}
+) : RuntimeQrCode {}
