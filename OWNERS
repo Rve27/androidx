@@ -50,5 +50,8 @@ per-file *libraryversions.toml = anuragadarsh@google.com, bhavyajain@google.com,
 # Camera *
 per-file *libraryversions.toml = wujulie@google.com, scottnien@google.com, trevormcguire@google.com
 
+# Agents
+per-file AGENTS.md = file:/TAG_OWNERS
+
 # Copybara can self-approve CLs within synced docs.
 per-file docs/** = copybara-worker-blackhole@google.com
