@@ -66,6 +66,7 @@ internal open class FakeEditablePdfDocument(
     private val pageLinks: Map<Int, PdfDocument.PdfPageLinks> = mapOf(),
     private val textContents: List<PdfPageTextContent> = emptyList(),
     private val pageFormWidgetInfos: Map<Int, List<FormWidgetInfo>> = mapOf(),
+    private val supportedFeatures: Set<PdfFeature> = setOf(),
     initialEdits: List<PdfAnnotation> = emptyList(),
     override val linearizationStatus: Int = LINEARIZATION_STATUS_UNKNOWN,
 ) : EditablePdfDocument {
@@ -156,7 +157,7 @@ internal open class FakeEditablePdfDocument(
                 }
                 is RemoveDraftEditOperation -> {
                     val pageEdits = edits[operation.pageNum]
-                    val removed = pageEdits?.removeIf { it.key == operation.id } ?: false
+                    val removed = pageEdits?.removeAll { it.key == operation.id } ?: false
                     if (removed) {
                         results.add(operation.id)
                     }
@@ -320,6 +321,10 @@ internal open class FakeEditablePdfDocument(
     override fun removeOnPdfContentInvalidatedListener(
         listener: PdfDocument.OnPdfContentInvalidatedListener
     ) {}
+
+    override fun isFeatureSupported(feature: PdfFeature): Boolean {
+        return supportedFeatures.contains(feature)
+    }
 
     override fun createWriteHandle(): PdfWriteHandle {
         return object : PdfWriteHandle {

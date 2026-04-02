@@ -23,6 +23,7 @@ import android.net.Uri
 import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.SavedStateHandle
 import androidx.pdf.FakeEditablePdfDocument
+import androidx.pdf.PdfFeature
 import androidx.pdf.SandboxedPdfLoader
 import androidx.pdf.annotation.models.AnnotationsDisplayState
 import androidx.pdf.annotation.models.PathPdfObject
@@ -79,6 +80,7 @@ class EditableDocumentViewModelTest {
             FakeEditablePdfDocument(
                 uri = defaultDocumentUri,
                 pages = listOf(android.graphics.Point(100, 200), android.graphics.Point(100, 200)),
+                supportedFeatures = setOf(PdfFeature.ANNOTATIONS),
             )
 
         savedStateHandle = SavedStateHandle()
