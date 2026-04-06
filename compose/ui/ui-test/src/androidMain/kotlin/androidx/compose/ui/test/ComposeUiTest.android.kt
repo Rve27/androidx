@@ -844,6 +844,10 @@ internal constructor(
             return runOnUiThread(action)
         }
 
+        override fun <T> runWithoutImplicitWait(block: () -> T): T {
+            return testOwner.withImplicitWaitSuppression(isSuppressed = true, block = block)
+        }
+
         override fun waitForIdle() {
             waitForIdle(atLeastOneRootExpected = true)
             throwPendingException()
@@ -942,6 +946,21 @@ internal constructor(
         }
     }
 
+    /** Executes the given [block] while temporarily setting the implicit wait suppression state. */
+    private inline fun <T> TestOwner.withImplicitWaitSuppression(
+        isSuppressed: Boolean,
+        block: () -> T,
+    ): T {
+        val previousState = this.isImplicitWaitSuppressed
+        this.isImplicitWaitSuppressed = isSuppressed
+        return try {
+            block()
+        } finally {
+            // Always restore the original synchronization state
+            this.isImplicitWaitSuppressed = previousState
+        }
+    }
+
     private fun throwPendingException() {
         pendingThrowable?.let {
             pendingThrowable = null
@@ -950,13 +969,17 @@ internal constructor(
     }
 
     private inner class AndroidTestOwner : TestOwner {
+        override var isImplicitWaitSuppressed: Boolean = false
+
         override val mainClock: MainTestClock
             get() = mainClockImpl
 
         override fun <T> runOnUiThread(action: () -> T): T = testReceiverScope.runOnUiThread(action)
 
         override fun getRoots(atLeastOneRootExpected: Boolean): Set<RootForTest> {
-            waitForIdle(atLeastOneRootExpected)
+            if (!isImplicitWaitSuppressed) {
+                waitForIdle(atLeastOneRootExpected)
+            }
             return composeRootRegistry.getRegisteredComposeRoots()
         }
 
@@ -1040,6 +1063,8 @@ actual sealed interface ComposeUiTest : SemanticsNodeInteractionsProvider {
     actual fun setContent(composable: @Composable () -> Unit)
 
     actual fun hasPendingWork(): Boolean
+
+    actual fun <T> runWithoutImplicitWait(block: () -> T): T
 }
 
 /**

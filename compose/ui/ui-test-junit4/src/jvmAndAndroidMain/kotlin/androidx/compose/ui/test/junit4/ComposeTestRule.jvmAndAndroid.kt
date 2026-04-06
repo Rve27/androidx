@@ -82,6 +82,34 @@ interface ComposeTestRule : TestRule, SemanticsNodeInteractionsProvider {
     fun <T> runOnIdle(action: () -> T): T
 
     /**
+     * Executes the given [block] with implicit synchronization suppressed. [block] should contain
+     * read-only assertions, and any actions that mutate state should be performed outside of this
+     * block.
+     *
+     * To ensure stability of the UI tree while running assertions in this block, make sure to call
+     * this on the UI thread, such as with [runOnUiThread]. If you run this block off the UI thread,
+     * state might change in the background and be reflected in the UI while the block is executing.
+     * This exposes your test to race conditions, flakiness, and may cause you to read stale or
+     * inconsistent state.
+     *
+     * Standard node queries (like `onNodeWithTag` or `fetchSemanticsNode`) normally trigger a
+     * `waitForIdle()` under the hood. In animation tests that manually step through frames in a
+     * loop, these implicit waits impose a severe performance penalty.
+     *
+     * This API acts as a performance optimization for motion tests that assert UI state across
+     * multiple frames. It is primarily designed for use when mainClock.autoAdvance is set to false
+     * and the UI is known to be in a stable state at the specific frame being tested (for example,
+     * by calling waitForIdle() before this block).
+     *
+     * @see runOnUiThread
+     * @see hasPendingWork
+     */
+    // TODO(b/503573187): Add samples here
+    fun <T> runWithoutImplicitWait(block: () -> T): T {
+        throw NotImplementedError("runWithoutImplicitWait is not implemented.")
+    }
+
+    /**
      * Waits for the UI to become idle. Quiescence is reached when there are no more pending changes
      * (e.g. pending recompositions or a pending draw call) and all [IdlingResource]s are idle.
      *

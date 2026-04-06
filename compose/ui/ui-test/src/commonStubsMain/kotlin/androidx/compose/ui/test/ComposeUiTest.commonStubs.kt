@@ -60,4 +60,6 @@ actual sealed interface ComposeUiTest : SemanticsNodeInteractionsProvider {
     actual fun setContent(composable: @Composable () -> Unit)
 
     actual fun hasPendingWork(): Boolean
+
+    actual fun <T> runWithoutImplicitWait(block: () -> T): T
 }
