@@ -47,10 +47,6 @@ actual sealed interface ComposeUiTest : SemanticsNodeInteractionsProvider {
 
     actual fun <T> runOnIdle(action: () -> T): T
 
-    actual fun <T> runWhenIdle(action: () -> T): T
-
-    actual suspend fun <T> awaitAndRunWhenIdle(action: () -> T): T
-
     actual fun waitForIdle()
 
     actual suspend fun awaitIdle()

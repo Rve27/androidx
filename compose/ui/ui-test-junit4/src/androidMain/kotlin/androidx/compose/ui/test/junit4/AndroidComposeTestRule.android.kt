@@ -477,11 +477,6 @@ private constructor(
 
     override fun <T> runOnIdle(action: () -> T): T = composeTest.runOnIdle(action)
 
-    override fun <T> runWhenIdle(action: () -> T): T = composeTest.runWhenIdle(action)
-
-    override suspend fun <T> awaitAndRunWhenIdle(action: () -> T): T =
-        composeTest.awaitAndRunWhenIdle(action)
-
     override fun waitForIdle() = composeTest.waitForIdle()
 
     override suspend fun awaitIdle() = composeTest.awaitIdle()
