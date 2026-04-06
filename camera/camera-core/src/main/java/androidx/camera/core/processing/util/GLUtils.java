@@ -41,7 +41,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -68,114 +67,6 @@ public final class GLUtils {
     public static final int[] HLG_SURFACE_ATTRIBS = {
             EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_BT2020_HLG_EXT,
             EGL14.EGL_NONE
-    };
-
-    public static final String DEFAULT_VERTEX_SHADER = String.format(Locale.US,
-            "uniform mat4 uTexMatrix;\n"
-                    + "uniform mat4 uTransMatrix;\n"
-                    + "attribute vec4 aPosition;\n"
-                    + "attribute vec4 aTextureCoord;\n"
-                    + "varying vec2 %s;\n"
-                    + "void main() {\n"
-                    + "    gl_Position = uTransMatrix * aPosition;\n"
-                    + "    %s = (uTexMatrix * aTextureCoord).xy;\n"
-                    + "}\n", VAR_TEXTURE_COORD, VAR_TEXTURE_COORD);
-
-    public static final String HDR_VERTEX_SHADER = String.format(Locale.US,
-            "#version 300 es\n"
-                    + "in vec4 aPosition;\n"
-                    + "in vec4 aTextureCoord;\n"
-                    + "uniform mat4 uTexMatrix;\n"
-                    + "uniform mat4 uTransMatrix;\n"
-                    + "out vec2 %s;\n"
-                    + "void main() {\n"
-                    + "  gl_Position = uTransMatrix * aPosition;\n"
-                    + "  %s = (uTexMatrix * aTextureCoord).xy;\n"
-                    + "}\n", VAR_TEXTURE_COORD, VAR_TEXTURE_COORD);
-
-    public static final String BLANK_VERTEX_SHADER =
-            "uniform mat4 uTransMatrix;\n"
-                    + "attribute vec4 aPosition;\n"
-                    + "void main() {\n"
-                    + "    gl_Position = uTransMatrix * aPosition;\n"
-                    + "}\n";
-
-    public static final String BLANK_FRAGMENT_SHADER =
-            "precision mediump float;\n"
-                    + "uniform float uAlphaScale;\n"
-                    + "void main() {\n"
-                    + "    gl_FragColor = vec4(0.0, 0.0, 0.0, uAlphaScale);\n"
-                    + "}\n";
-
-    private static final ShaderProvider SHADER_PROVIDER_DEFAULT = new ShaderProvider() {
-        @Override
-        public @NonNull String createFragmentShader(@NonNull String samplerVarName,
-                @NonNull String fragCoordsVarName) {
-            return String.format(Locale.US,
-                    "#extension GL_OES_EGL_image_external : require\n"
-                            + "precision mediump float;\n"
-                            + "varying vec2 %s;\n"
-                            + "uniform samplerExternalOES %s;\n"
-                            + "uniform float uAlphaScale;\n"
-                            + "void main() {\n"
-                            + "    vec4 src = texture2D(%s, %s);\n"
-                            + "    gl_FragColor = vec4(src.rgb, src.a * uAlphaScale);\n"
-                            + "}\n",
-                    fragCoordsVarName, samplerVarName, samplerVarName, fragCoordsVarName);
-        }
-    };
-
-    private static final ShaderProvider SHADER_PROVIDER_HDR_DEFAULT = new ShaderProvider() {
-        @Override
-        public @NonNull String createFragmentShader(@NonNull String samplerVarName,
-                @NonNull String fragCoordsVarName) {
-            return String.format(Locale.US,
-                    "#version 300 es\n"
-                            + "#extension GL_OES_EGL_image_external_essl3 : require\n"
-                            + "precision mediump float;\n"
-                            + "uniform samplerExternalOES %s;\n"
-                            + "uniform float uAlphaScale;\n"
-                            + "in vec2 %s;\n"
-                            + "out vec4 outColor;\n"
-                            + "\n"
-                            + "void main() {\n"
-                            + "  vec4 src = texture(%s, %s);\n"
-                            + "  outColor = vec4(src.rgb, src.a * uAlphaScale);\n"
-                            + "}",
-                    samplerVarName, fragCoordsVarName, samplerVarName, fragCoordsVarName);
-        }
-    };
-
-    private static final ShaderProvider SHADER_PROVIDER_HDR_YUV = new ShaderProvider() {
-        @Override
-        public @NonNull String createFragmentShader(@NonNull String samplerVarName,
-                @NonNull String fragCoordsVarName) {
-            return String.format(Locale.US,
-                    "#version 300 es\n"
-                            + "#extension GL_EXT_YUV_target : require\n"
-                            + "precision mediump float;\n"
-                            + "uniform __samplerExternal2DY2YEXT %s;\n"
-                            + "uniform float uAlphaScale;\n"
-                            + "in vec2 %s;\n"
-                            + "out vec4 outColor;\n"
-                            + "\n"
-                            + "vec3 yuvToRgb(vec3 yuv) {\n"
-                            + "  const vec3 yuvOffset = vec3(0.0625, 0.5, 0.5);\n"
-                            + "  const mat3 yuvToRgbColorMat = mat3(\n"
-                            + "    1.1689f, 1.1689f, 1.1689f,\n"
-                            + "    0.0000f, -0.1881f, 2.1502f,\n"
-                            + "    1.6853f, -0.6530f, 0.0000f\n"
-                            + "  );\n"
-                            + "  return clamp(yuvToRgbColorMat * (yuv - yuvOffset), 0.0, 1.0);\n"
-                            + "}\n"
-                            + "\n"
-                            + "void main() {\n"
-                            + "  vec3 srcYuv = texture(%s, %s).xyz;\n"
-                            + "  vec3 srcRgb = yuvToRgb(srcYuv);\n"
-                            + "  outColor = vec4(srcRgb, uAlphaScale);\n"
-                            + "}",
-                    samplerVarName, fragCoordsVarName, samplerVarName, fragCoordsVarName);
-        }
     };
 
     public static final float[] VERTEX_COORDS = {
@@ -342,7 +233,8 @@ public final class GLUtils {
         public SamplerShaderProgram(
                 @NonNull DynamicRange dynamicRange,
                 @NonNull ShaderProvider shaderProvider) {
-            super(dynamicRange.is10BitHdr() ? HDR_VERTEX_SHADER : DEFAULT_VERTEX_SHADER,
+            super(dynamicRange.is10BitHdr() ? ShaderProviders.HDR_VERTEX_SHADER
+                            : ShaderProviders.DEFAULT_VERTEX_SHADER,
                     getFragmentShaderSource(shaderProvider));
 
             loadLocations();
@@ -390,18 +282,19 @@ public final class GLUtils {
                 Preconditions.checkArgument(inputFormat != InputFormat.UNKNOWN,
                         "No default sampler shader available for" + inputFormat);
                 if (inputFormat == InputFormat.YUV) {
-                    return SHADER_PROVIDER_HDR_YUV;
+                    return ShaderProviders.SHADER_PROVIDER_HDR_YUV;
                 }
-                return SHADER_PROVIDER_HDR_DEFAULT;
+                return ShaderProviders.SHADER_PROVIDER_HDR_DEFAULT;
             } else {
-                return SHADER_PROVIDER_DEFAULT;
+                return ShaderProviders.SHADER_PROVIDER_DEFAULT;
             }
         }
     }
 
     public static class BlankShaderProgram extends Program2D {
         public BlankShaderProgram() {
-            super(BLANK_VERTEX_SHADER, BLANK_FRAGMENT_SHADER);
+            super(ShaderProviders.BLANK_VERTEX_SHADER,
+                    ShaderProviders.BLANK_FRAGMENT_SHADER);
         }
     }
 
