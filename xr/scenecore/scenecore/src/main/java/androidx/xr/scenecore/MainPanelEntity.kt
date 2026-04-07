@@ -155,8 +155,8 @@ internal constructor(
             MainPanelEntity(lifecycleManager, sceneRuntime, perceptionSpace, entityRegistry)
     }
 
-    override fun dispose() {
+    override fun disposeInternal() {
         perceivedResolutionListeners.keys.forEach { removePerceivedResolutionChangedListener(it) }
-        super.dispose()
+        super.disposeInternal()
     }
 }

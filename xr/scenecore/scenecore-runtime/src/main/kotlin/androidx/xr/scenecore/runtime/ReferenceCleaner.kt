@@ -21,6 +21,7 @@ import java.lang.ref.PhantomReference
 import java.lang.ref.ReferenceQueue
 import java.util.Collections
 import java.util.concurrent.Executor
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Manages the lifecycle of objects by hooking into the JVM Garbage Collector using PhantomReference
@@ -51,6 +52,19 @@ public abstract class ReferenceCleaner {
 
         /** Returns the singleton instance of [ReferenceCleaner]. */
         @JvmStatic public fun getInstance(): ReferenceCleaner = sInstance
+    }
+}
+
+/** A [Runnable] that executes a given cleanup function at most once. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public open class CleanupAction(private val cleanupFunc: () -> Unit) : Runnable {
+    private val isRun = AtomicBoolean(false)
+
+    override fun run() {
+        if (isRun.getAndSet(true)) {
+            return
+        }
+        cleanupFunc()
     }
 }
 

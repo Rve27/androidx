@@ -212,6 +212,7 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY) public constructor() : 
                 entityRegistry,
             )
         keyEntity = mainPanelEntity
+
         sceneRuntime.spatialModeChangeListener =
             RtSpatialModeChangeListener { recommendedPose, recommendedScale ->
                 lastRecommendedPose = recommendedPose
@@ -242,6 +243,7 @@ public class Scene @RestrictTo(RestrictTo.Scope.LIBRARY) public constructor() : 
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     override fun close() {
+        entityRegistry.getAllEntities().forEach { (it as BaseEntity<*>).disposeInternal() }
         entityRegistry.clear()
         sceneRuntime.removeSpatialCapabilitiesChangedListener(rtSpatialCapabilitiesListener)
         sceneRuntime.clearSpatialVisibilityChangedListener()

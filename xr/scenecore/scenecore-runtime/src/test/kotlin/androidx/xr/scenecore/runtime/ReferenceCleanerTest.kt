@@ -22,6 +22,8 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -236,5 +238,17 @@ class ReferenceCleanerTest {
         )
 
         executor.shutdown()
+    }
+
+    @Test
+    fun cleanupActionExecutesAtMostOnce() {
+        val counter = AtomicInteger(0)
+        val cleanupAction = CleanupAction { counter.incrementAndGet() }
+
+        cleanupAction.run()
+        cleanupAction.run()
+        cleanupAction.run()
+
+        assertEquals("Cleanup action should have executed exactly once.", 1, counter.get())
     }
 }
