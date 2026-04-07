@@ -36,13 +36,21 @@ class StateReadRecord(
     val trace: Exception,
 )
 
-/** Invalidations and state reads for a composable that was recomposed once. */
+/**
+ * Observations for a recomposition.
+ *
+ * @param reads the state reads for this recomposition
+ * @param invalidations the valueInstance (hashCode of state variable) that were invalidated.
+ */
 data class ObservedStateReads(
-    // The [StateRead]s recorded for this recomposition.
-    val reads: MutableList<StateReadRecord> = mutableListOf(),
-    // The valueInstance (hashCode of state variable) that were invalidated.
+    private val reads: MutableList<StateReadRecord> = mutableListOf(),
     private var invalidations: MutableIntSet? = null,
 ) {
+    val readSize: Int
+        get() = reads.size
+
+    fun toObservedReadResult(recomposition: Int) = ObservedReadResult(recomposition, reads)
+
     fun addStateRead(value: Any?, trace: Exception) {
         // Use [Snapshot.withoutReadObservation] to avoid another callback when we read
         // the value.

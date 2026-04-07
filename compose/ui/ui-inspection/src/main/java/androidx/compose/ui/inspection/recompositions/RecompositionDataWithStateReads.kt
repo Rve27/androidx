@@ -129,7 +129,7 @@ class RecompositionDataWithStateReads : RecompositionData() {
             // being recorded, make a copy:
             stateRead = stateRead?.copy()
         }
-        return stateRead?.let { ObservedReadResult(actual, it.reads) }
+        return stateRead?.toObservedReadResult(actual)
     }
 
     fun clearStateReads(): IntObjectMap<ObservedStateReads>? {
