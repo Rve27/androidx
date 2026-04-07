@@ -29,6 +29,7 @@ import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.AnchorEntity as RtAnchorEntity
+import androidx.xr.scenecore.runtime.HandlerExecutor
 import java.time.Duration
 import java.util.concurrent.Executor
 import java.util.function.Consumer

@@ -26,6 +26,7 @@ import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Vector2
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.runtime.HandlerExecutor
 import androidx.xr.scenecore.runtime.PixelDimensions as RtPixelDimensions
 import androidx.xr.scenecore.runtime.SceneRuntime
 import androidx.xr.scenecore.testing.FakePanelEntity
