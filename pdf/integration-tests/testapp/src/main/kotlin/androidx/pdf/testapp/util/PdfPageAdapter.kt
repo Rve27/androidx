@@ -24,7 +24,6 @@ import android.graphics.pdf.PdfRenderer
 import android.graphics.pdf.PdfRendererPreV
 import android.graphics.pdf.RenderParams
 import android.os.Build
-import android.os.ext.SdkExtensions
 import androidx.core.util.Supplier
 
 public class PdfPageAdapter {
@@ -38,7 +37,7 @@ public class PdfPageAdapter {
     }
 
     constructor(pdfRendererPreV: PdfRendererPreV, pageNum: Int) {
-        if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 13) {
+        if (arePdfContentFeaturesAvailable()) {
             this.pageNum = pageNum
             pdfRendererPreVPage = pdfRendererPreV.openPage(pageNum)
         }
@@ -103,16 +102,8 @@ public class PdfPageAdapter {
         }
     }
 
-    private fun checkAndExecute(block: Runnable) {
-        if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 13) {
-            block.run()
-            return
-        }
-        throw UnsupportedOperationException("Operation support above S")
-    }
-
     private fun <T> checkAndExecute(block: Supplier<T>): T {
-        return if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 13) {
+        return if (arePdfContentFeaturesAvailable()) {
             block.get()
         } else {
             throw UnsupportedOperationException("Operation support above S")
