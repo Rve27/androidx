@@ -204,7 +204,7 @@ public interface Entity : ScenePose {
      * Disposes of any system resources held by this Entity, and transitively calls dispose() on all
      * its children. Once disposed, this Entity is invalid and cannot be used again.
      */
-    public fun dispose()
+    public fun dispose() {}
 
     /**
      * Adds a Component to this Entity.
