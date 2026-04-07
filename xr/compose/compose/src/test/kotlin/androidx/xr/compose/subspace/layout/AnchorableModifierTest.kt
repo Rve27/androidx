@@ -279,7 +279,7 @@ class AnchorableModifierTest {
     }
 
     @Test
-    fun anchorable_columnEntity_noComponentWhenAnchorableIsEnabled() {
+    fun anchorable_columnEntity_oneComponentWhenAnchorableIsEnabled() {
         composeTestRule.setContent {
             Subspace {
                 SpatialColumn(
@@ -294,7 +294,7 @@ class AnchorableModifierTest {
                 }
             }
         }
-        assertMovableComponentDoesNotExist("column")
+        assertMovableComponentDoesExist("column")
     }
 
     @Test
@@ -333,7 +333,7 @@ class AnchorableModifierTest {
     }
 
     @Test
-    fun anchorable_rowEntity_noComponentWhenAnchorableIsEnabled() {
+    fun anchorable_rowEntity_oneComponentWhenAnchorableIsEnabled() {
         composeTestRule.setContent {
             Subspace {
                 SpatialRow(
@@ -348,7 +348,7 @@ class AnchorableModifierTest {
                 }
             }
         }
-        assertMovableComponentDoesNotExist("row")
+        assertMovableComponentDoesExist("row")
     }
 
     @Test
@@ -758,6 +758,13 @@ class AnchorableModifierTest {
             composeTestRule.onSubspaceNodeWithTag(testTag).fetchSemanticsNode().components
         assertNotNull(components)
         assertEquals(0, components.size)
+    }
+
+    private fun assertMovableComponentDoesExist(testTag: String = "panel") {
+        val components =
+            composeTestRule.onSubspaceNodeWithTag(testTag).fetchSemanticsNode().components
+        assertNotNull(components)
+        assertEquals(1, components.size)
     }
 
     private companion object {

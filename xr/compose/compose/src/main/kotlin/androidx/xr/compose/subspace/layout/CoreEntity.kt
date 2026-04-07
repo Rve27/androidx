@@ -243,7 +243,7 @@ internal class CoreGroupEntity(entity: Entity) : CoreEntity(entity)
  * from SceneCore.
  */
 internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) :
-    CoreEntity(panelEntity), MovableCoreEntity, ResizableCoreEntity, InteractableCoreEntity {
+    CoreEntity(panelEntity), InteractableCoreEntity {
     // Density set from setShape.
     private var shapeDensity: Density? = null
 
@@ -341,7 +341,7 @@ internal class CoreMainPanelEntity(session: Session) :
 internal class CoreSurfaceEntity(
     internal val surfaceEntity: SurfaceEntity,
     private val localDensity: Density,
-) : CoreEntity(surfaceEntity), ResizableCoreEntity, MovableCoreEntity, InteractableCoreEntity {
+) : CoreEntity(surfaceEntity), InteractableCoreEntity {
     private var pendingOnSurfaceDestroyed: ((Surface) -> Unit)? = null
 
     internal var stereoMode: SurfaceEntity.StereoMode
@@ -570,12 +570,6 @@ internal class CoreModelEntity() : CoreEntity() {
         onEntityAttached { entity -> (entity as GltfModelEntity).action() }
     }
 }
-
-/** [CoreEntity] types that implement this interface may have the ResizableComponent attached. */
-internal interface ResizableCoreEntity
-
-/** [CoreEntity] types that implement this interface may have the MovableComponent attached. */
-internal interface MovableCoreEntity
 
 /** [CoreEntity] types that implement this interface may have the InteractableComponent attached. */
 internal interface InteractableCoreEntity
