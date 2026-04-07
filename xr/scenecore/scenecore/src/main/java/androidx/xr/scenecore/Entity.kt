@@ -212,6 +212,10 @@ public interface Entity : ScenePose {
      * Disposes of any system resources held by this Entity, and transitively calls dispose() on all
      * its children. Once disposed, this Entity is invalid and cannot be used again.
      */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @Deprecated(
+        "Entity instances are reclaimed automatically. Instead of `dispose()`, use `parent = null` to detach entities from the scene graph."
+    )
     public fun dispose() {}
 
     /**
