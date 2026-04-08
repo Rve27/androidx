@@ -304,6 +304,7 @@ public class SandboxedPdfDocument(
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override suspend fun applyEdit(record: FormEditInfo) {
         val dirtyAreas = withDocument { document ->
             document.applyEdit(record.pageNumber, record.toAndroidClass())
@@ -313,6 +314,7 @@ public class SandboxedPdfDocument(
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
     override suspend fun applyEdits(editsDraft: EditsDraft): List<String> {
         return batchPdfAnnotationsProcessor.process(editsDraft) { appliedBatchEdits ->
             appliedBatchEdits.forEach { appliedEdit ->
@@ -330,11 +332,13 @@ public class SandboxedPdfDocument(
      *
      * @return A [PdfWriteHandle] for the document.
      */
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override fun createWriteHandle(): PdfWriteHandle {
         refCount.incrementAndGet()
         return PdfWriteHandleImpl(this)
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
     override suspend fun getAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> =
         getKeyedAnnotationsForPage(pageNum)
 
@@ -519,6 +523,7 @@ public class SandboxedPdfDocument(
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
     private suspend fun getKeyedAnnotationsForPage(pageNum: Int): List<KeyedPdfAnnotation> {
         val firstBatch = withDocument { it.getPageAnnotations(pageNum) } ?: return emptyList()
         if (firstBatch.totalBatchCount <= 1) {

@@ -130,7 +130,7 @@ internal open class FakePdfDocument(
     }
 
     override fun isFeatureSupported(feature: PdfFeature): Boolean {
-        return false
+        return true
     }
 
     override suspend fun getPageLinks(pageNumber: Int): PdfDocument.PdfPageLinks {
