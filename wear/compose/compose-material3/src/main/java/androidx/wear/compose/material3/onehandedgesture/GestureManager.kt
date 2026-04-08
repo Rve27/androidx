@@ -457,13 +457,14 @@ internal class SdkGestureInputManagerImpl : SdkGestureInputManager {
     private fun createSdkWearManagerIfNeeded(context: Context) {
         if (gestureInputManagerAttemptedToBeCreated) return
 
-        if (Sdk.hasApiFeature(Sdk.FEATURE_WEAR_GESTURE_DETECTION)) {
-            try {
+        // Do not crash if either Wear SDK or GestureInputManager are missing
+        try {
+            if (Sdk.hasApiFeature(Sdk.FEATURE_WEAR_GESTURE_DETECTION)) {
                 gestureInputManager =
                     Sdk.getWearManager(context.applicationContext, GestureInputManager::class.java)
                         as GestureInputManager
-            } catch (t: Throwable) {}
-        }
+            }
+        } catch (t: Throwable) {}
         gestureInputManagerAttemptedToBeCreated = true
     }
 }

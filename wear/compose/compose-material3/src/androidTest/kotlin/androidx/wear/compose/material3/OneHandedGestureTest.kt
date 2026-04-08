@@ -23,6 +23,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -39,11 +42,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.pager.HorizontalPager
 import androidx.wear.compose.foundation.pager.rememberPagerState
+import androidx.wear.compose.material3.lazy.rememberTransformationSpec
+import androidx.wear.compose.material3.lazy.transformedHeight
 import androidx.wear.compose.material3.onehandedgesture.GestureAction
 import androidx.wear.compose.material3.onehandedgesture.GestureManagerImpl
 import androidx.wear.compose.material3.onehandedgesture.GesturePriority
@@ -346,6 +352,146 @@ class OneHandedGestureTest {
         }
     }
 
+    @Test
+    fun alert_dialog_edge_button() {
+        val sdkGestureInputManager = SdkGestureInputManagerMock(false)
+        var edgeButtonClicked = false
+
+        rule.setContentWithTheme {
+            MockSdkGestureInputManager(sdkGestureInputManager) {
+                AlertDialog(
+                    visible = true,
+                    onDismissRequest = {},
+                    title = {},
+                    edgeButton = {
+                        AlertDialogDefaults.EdgeButton(onClick = { edgeButtonClicked = true })
+                    },
+                )
+            }
+        }
+
+        sdkGestureInputManager.performGesture(sdkActionPrimary)
+        rule.runOnIdle { assert(edgeButtonClicked) }
+    }
+
+    @Test
+    fun alert_dialog_confirm_and_dismiss() {
+        val sdkGestureInputManager = SdkGestureInputManagerMock(false)
+        var confirmButtonClicked = false
+        rule.setContentWithTheme {
+            val transformationSpec = rememberTransformationSpec()
+            MockSdkGestureInputManager(sdkGestureInputManager) {
+                AlertDialog(
+                    visible = true,
+                    onDismissRequest = {},
+                    icon = {
+                        Icon(
+                            Icons.Rounded.AccountCircle,
+                            modifier = Modifier.size(32.dp),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    },
+                    title = { Text("Title") },
+                    transformationSpec = transformationSpec,
+                    confirmButton = {
+                        AlertDialogDefaults.ConfirmButton(onClick = { confirmButtonClicked = true })
+                    },
+                ) {
+                    item { Text(text = "This is a text which has to be scrolled through") }
+                    item { Button(onClick = {}) { Text(text = "Random button") } }
+                }
+            }
+        }
+
+        // Scroll through alert dialog with one-handed gestures until confirm button is gestured
+        for (i in 0..10) {
+            sdkGestureInputManager.performGesture(sdkActionPrimary)
+            rule.waitForIdle()
+            if (confirmButtonClicked) {
+                break
+            }
+        }
+        assert(confirmButtonClicked)
+    }
+
+    @Test
+    fun alert_dialog_content_groups_edge_button() {
+        val sdkGestureInputManager = SdkGestureInputManagerMock(false)
+        var edgeButtonClicked = false
+
+        rule.setContentWithTheme {
+            MockSdkGestureInputManager(sdkGestureInputManager) {
+                val transformationSpec = rememberTransformationSpec()
+                AlertDialog(
+                    visible = true,
+                    onDismissRequest = {},
+                    title = { Text("Title") },
+                    transformationSpec = transformationSpec,
+                    edgeButton = {
+                        AlertDialogDefaults.EdgeButton(onClick = { edgeButtonClicked = true }) {
+                            Text("Share once")
+                        }
+                    },
+                ) {
+                    item {
+                        SwitchButton(
+                            modifier =
+                                Modifier.fillMaxWidth().transformedHeight(this, transformationSpec),
+                            checked = true,
+                            onCheckedChange = {},
+                            label = { Text("Weather") },
+                            transformation = SurfaceTransformation(transformationSpec),
+                        )
+                    }
+                    item {
+                        SwitchButton(
+                            modifier =
+                                Modifier.fillMaxWidth().transformedHeight(this, transformationSpec),
+                            checked = true,
+                            onCheckedChange = {},
+                            label = { Text("Calendar") },
+                            transformation = SurfaceTransformation(transformationSpec),
+                        )
+                    }
+                    item { AlertDialogDefaults.GroupSeparator() }
+                    item {
+                        FilledTonalButton(
+                            modifier =
+                                Modifier.fillMaxWidth().transformedHeight(this, transformationSpec),
+                            onClick = {},
+                            label = {
+                                Text(modifier = Modifier.fillMaxWidth(), text = "Never share")
+                            },
+                            transformation = SurfaceTransformation(transformationSpec),
+                        )
+                    }
+                    item {
+                        FilledTonalButton(
+                            modifier =
+                                Modifier.fillMaxWidth().transformedHeight(this, transformationSpec),
+                            onClick = {},
+                            label = {
+                                Text(modifier = Modifier.fillMaxWidth(), text = "Share always")
+                            },
+                            transformation = SurfaceTransformation(transformationSpec),
+                        )
+                    }
+                }
+            }
+        }
+
+        // Scroll through alert dialog with one-handed gestures until edge button is gestured
+        for (i in 0..10) {
+            sdkGestureInputManager.performGesture(sdkActionPrimary)
+            rule.waitForIdle()
+            if (edgeButtonClicked) {
+                break
+            }
+        }
+        assert(edgeButtonClicked)
+    }
+
     @Composable
     private fun MockSdkGestureInputManager(
         sdkGestureInputManager: SdkGestureInputManager,
@@ -359,7 +505,8 @@ class OneHandedGestureTest {
         CompositionLocalProvider(LocalGestureManager provides gestureManager) { content() }
     }
 
-    private class SdkGestureInputManagerMock : SdkGestureInputManager {
+    private class SdkGestureInputManagerMock(private val showIndicator: Boolean = true) :
+        SdkGestureInputManager {
         override fun isAvailable(context: Context): Boolean = true
 
         override fun subscribeToSdkGestureAction(
@@ -377,7 +524,8 @@ class OneHandedGestureTest {
 
         override fun notifyGestureConsumed(key: String, sdkGestureAction: Int) {}
 
-        override fun shouldShowIndicator(key: String, sdkGestureAction: Int): Boolean = true
+        override fun shouldShowIndicator(key: String, sdkGestureAction: Int): Boolean =
+            showIndicator
 
         override fun notifyIndicatorShown(key: String, sdkGestureAction: Int) {}
 
