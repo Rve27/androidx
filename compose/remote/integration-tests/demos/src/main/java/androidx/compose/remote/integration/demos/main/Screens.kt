@@ -21,6 +21,7 @@ import androidx.compose.remote.integration.demos.layout.RemoteBoxAlignmentsDemo
 import androidx.compose.remote.integration.demos.layout.RemoteStateLayoutSimpleDemo
 import androidx.compose.remote.integration.demos.modifier.ClickableDemo
 import androidx.compose.remote.integration.demos.modifier.CombinedClickableDemo
+import androidx.compose.remote.integration.demos.modifier.PaddingDemo
 import androidx.compose.remote.integration.demos.modifier.TouchActionDemo
 import androidx.compose.remote.integration.demos.player.BitmapLoaderDemo
 import androidx.compose.remote.integration.demos.settings.SettingsScreen
@@ -31,6 +32,7 @@ private object ScreenKeys {
     const val REMOTE_STATE_LAYOUT = "REMOTE_STATE_LAYOUT"
     const val CLICKABLE = "CLICKABLE"
     const val COMBINED_CLICKABLE = "COMBINED_CLICKABLE"
+    const val PADDING = "PADDING"
     const val TOUCH_ACTION = "TOUCH_ACTION"
     const val BITMAP_LOADER = "BITMAP_LOADER"
     const val SETTINGS = "SETTINGS"
@@ -41,6 +43,7 @@ fun ComposableScreenNavigation(key: String, onNavigateUp: () -> Unit) {
     when (key) {
         ScreenKeys.REMOTE_BOX_ALIGNMENT -> RemoteBoxAlignmentsDemo()
         ScreenKeys.REMOTE_STATE_LAYOUT -> RemoteStateLayoutSimpleDemo()
+        ScreenKeys.PADDING -> PaddingDemo()
         ScreenKeys.CLICKABLE -> ClickableDemo()
         ScreenKeys.COMBINED_CLICKABLE -> CombinedClickableDemo()
         ScreenKeys.TOUCH_ACTION -> TouchActionDemo()
@@ -76,6 +79,7 @@ val Screens =
                     title = "Modifier",
                     screens =
                         listOf(
+                            ComposableScreen(key = ScreenKeys.PADDING, title = "Padding"),
                             ComposableScreen(key = ScreenKeys.CLICKABLE, title = "Clickable"),
                             ComposableScreen(
                                 key = ScreenKeys.COMBINED_CLICKABLE,
