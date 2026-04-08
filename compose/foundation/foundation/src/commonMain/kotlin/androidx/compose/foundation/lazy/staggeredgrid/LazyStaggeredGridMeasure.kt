@@ -323,6 +323,7 @@ private fun LazyStaggeredGridMeasureContext.measure(
                 density = this,
                 scrollBackAmount = 0f,
                 coroutineScope = coroutineScope,
+                reverseLayout = reverseLayout,
             )
         }
 
@@ -996,6 +997,7 @@ private fun LazyStaggeredGridMeasureContext.measure(
             spanProvider = itemProvider.spanProvider,
             density = this,
             coroutineScope = coroutineScope,
+            reverseLayout = reverseLayout,
         )
     }
 }
