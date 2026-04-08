@@ -16,9 +16,7 @@
 
 package androidx.camera.compose
 
-import android.annotation.SuppressLint
 import android.view.Surface
-import androidx.annotation.RestrictTo
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.core.SurfaceRequest.Result.RESULT_SURFACE_ALREADY_PROVIDED
 import androidx.camera.core.SurfaceRequest.TransformationInfo as CXTransformationInfo
@@ -27,32 +25,20 @@ import androidx.camera.viewfinder.compose.Viewfinder
 import androidx.camera.viewfinder.core.ImplementationMode
 import androidx.camera.viewfinder.core.TransformationInfo
 import androidx.camera.viewfinder.core.ViewfinderSurfaceRequest
-import androidx.camera.viewfinder.core.ZoomGestureDetector
-import androidx.camera.viewfinder.core.ZoomGestureDetector.ZoomEvent
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.util.fastAny
-import androidx.compose.ui.util.fastForEach
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
-import kotlin.math.max
-import kotlin.math.min
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.awaitCancellation
@@ -105,7 +91,6 @@ import kotlinx.coroutines.withContext
  *   used to fit the camera feed in the bounds of the [CameraXViewfinder]. Defaults to
  *   [ContentScale.Crop].
  */
-@SuppressLint("RestrictedApiAndroidX")
 @Composable
 public fun CameraXViewfinder(
     surfaceRequest: SurfaceRequest,
@@ -276,114 +261,6 @@ public fun CameraXViewfinder(
     }
 }
 
-/**
- * An adapter composable that displays frames from CameraX by completing provided [SurfaceRequest]s.
- *
- * This is a wrapper around [Viewfinder] that will convert a CameraX [SurfaceRequest] internally
- * into a [ViewfinderSurfaceRequest]. Additionally, all interactions normally handled through the
- * [ViewfinderSurfaceRequest] will be derived from the [SurfaceRequest].
- *
- * If [implementationMode] is changed while the provided [surfaceRequest] has been fulfilled, the
- * surface request will be invalidated as if [SurfaceRequest.invalidate] has been called. This will
- * allow CameraX to know that a new surface request is required since the underlying viewfinder
- * implementation will be providing a new surface.
- *
- * Example usage:
- *
- * @sample androidx.camera.compose.samples.CameraXViewfinderSample
- * @param surfaceRequest The surface request from CameraX
- * @param state The [CameraXViewfinderState] to be used by this viewfinder.
- * @param modifier The [Modifier] to be applied to this viewfinder
- * @param onZoomRatioChanged A callback to be invoked when the zoom ratio changes.
- * @param implementationMode The [ImplementationMode] to be used by this viewfinder. By default,
- *   this is chosen automatically based on the device's capabilities.
- * @param coordinateTransformer The [MutableCoordinateTransformer] used to map offsets of this
- *   viewfinder to the source coordinates of the data being provided to the surface that fulfills
- *   [surfaceRequest]
- * @param alignment Optional alignment parameter used to place the camera feed in the given bounds
- *   of the [CameraXViewfinder]. Defaults to [Alignment.Center].
- * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
- *   used to fit the camera feed in the bounds of the [CameraXViewfinder]. Defaults to
- *   [ContentScale.Crop].
- */
-@SuppressLint("RestrictedApiAndroidX")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-@Composable
-public fun CameraXViewfinder(
-    surfaceRequest: SurfaceRequest,
-    state: CameraXViewfinderState,
-    modifier: Modifier = Modifier,
-    onZoomRatioChanged: (Float) -> Unit = {},
-    implementationMode: ImplementationMode =
-        CameraImplementationModeCompat.chooseCompatibleMode(surfaceRequest.camera.cameraInfo),
-    coordinateTransformer: MutableCoordinateTransformer? = null,
-    alignment: Alignment = Alignment.Center,
-    contentScale: ContentScale = ContentScale.Crop,
-) {
-    val camera = remember(surfaceRequest) { surfaceRequest.camera }
-    val currentOnZoomRatioChanged by rememberUpdatedState(onZoomRatioChanged)
-
-    val context = LocalContext.current
-    val isZooming = remember { mutableStateOf(false) }
-    val zoomGestureDetector =
-        remember(camera) {
-            ZoomGestureDetector(context) { zoomEvent ->
-                when (zoomEvent) {
-                    is ZoomEvent.Move -> {
-                        val zoomState =
-                            camera.cameraInfo.zoomState.value ?: return@ZoomGestureDetector true
-                        val incremental = zoomEvent.incrementalScaleFactor
-                        val speedUp = speedUpZoomBy2X(incremental)
-                        val currentCameraRatio = zoomState.zoomRatio
-                        val targetRatio = currentCameraRatio * speedUp
-                        val minRatio = zoomState.minZoomRatio
-                        val maxRatio = zoomState.maxZoomRatio
-                        val clampedRatio = min(max(targetRatio, minRatio), maxRatio)
-                        camera.cameraControl.setZoomRatio(clampedRatio)
-                        currentOnZoomRatioChanged.invoke(clampedRatio)
-                    }
-                    is ZoomEvent.Begin -> {
-                        isZooming.value = true
-                    }
-                    is ZoomEvent.End -> {
-                        isZooming.value = false
-                    }
-                }
-                true
-            }
-        }
-
-    val pinchToZoomEnabled = state.isPinchToZoomEnabled
-    Box(
-        modifier =
-            modifier.fillMaxSize().pointerInput(zoomGestureDetector, pinchToZoomEnabled) {
-                if (!pinchToZoomEnabled) return@pointerInput
-                awaitEachGesture {
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val motionEvent = event.motionEvent
-                        if (motionEvent != null) {
-                            zoomGestureDetector.onTouchEvent(motionEvent)
-                            if (isZooming.value) {
-                                event.changes.fastForEach { it.consume() }
-                            }
-                        }
-                        if (!event.changes.fastAny { it.pressed }) break
-                    }
-                }
-            }
-    ) {
-        CameraXViewfinder(
-            surfaceRequest = surfaceRequest,
-            modifier = Modifier.fillMaxSize(),
-            implementationMode = implementationMode,
-            coordinateTransformer = coordinateTransformer,
-            alignment = alignment,
-            contentScale = contentScale,
-        )
-    }
-}
-
 @Stable
 private class SurfaceRequestScope(val viewfinderSurfaceRequest: ViewfinderSurfaceRequest) {
     val requestChannel =
@@ -441,11 +318,3 @@ private data class ViewfinderArgs(
     val implementationMode: ImplementationMode,
     val transformationInfo: TransformationInfo,
 )
-
-private fun speedUpZoomBy2X(scaleFactor: Float): Float {
-    return if (scaleFactor > 1f) {
-        1.0f + (scaleFactor - 1.0f) * 2
-    } else {
-        1.0f - (1.0f - scaleFactor) * 2
-    }
-}
