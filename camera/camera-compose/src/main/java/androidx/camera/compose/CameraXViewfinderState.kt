@@ -17,11 +17,9 @@
 package androidx.camera.compose
 
 import androidx.annotation.RestrictTo
-import androidx.camera.core.FocusMeteringAction
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,12 +30,6 @@ import androidx.compose.runtime.setValue
 public interface CameraXViewfinderState {
     /** Input/Config: Enablement for pinch-to-zoom. */
     public var isPinchToZoomEnabled: Boolean
-
-    /** Input/Config: Enablement for tap-to-focus. */
-    public var isTapToFocusEnabled: Boolean
-
-    /** Input/Config: Duration in milliseconds for tap-to-focus to auto-cancel. */
-    public var tapToFocusAutoCancelDurationMillis: Long
 }
 
 /** Creates a [CameraXViewfinderState] that is remembered across recompositions. */
@@ -49,7 +41,4 @@ public fun rememberCameraXViewfinderState(): CameraXViewfinderState {
 
 internal class CameraXViewfinderStateImpl : CameraXViewfinderState {
     override var isPinchToZoomEnabled: Boolean by mutableStateOf(false)
-    override var isTapToFocusEnabled: Boolean by mutableStateOf(false)
-    override var tapToFocusAutoCancelDurationMillis: Long by
-        mutableLongStateOf(FocusMeteringAction.DEFAULT_AUTO_CANCEL_DURATION_MILLIS)
 }
