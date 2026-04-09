@@ -9,10 +9,5 @@ package androidx.xr.scenecore.runtime.extensions {
     field public static final androidx.xr.scenecore.runtime.extensions.XrExtensionsHolderAccessor INSTANCE;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class XrExtensionsProvider {
-    method public static com.android.extensions.xr.XrExtensions? getXrExtensions();
-    field public static final androidx.xr.scenecore.runtime.extensions.XrExtensionsProvider INSTANCE;
-  }
-
 }
 
