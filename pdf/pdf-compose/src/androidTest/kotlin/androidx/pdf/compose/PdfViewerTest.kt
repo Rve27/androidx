@@ -570,7 +570,9 @@ class PdfViewerTest {
         assertThat(resIdsThumbBitmap.sameAs(resIdsAndDpThumbBitmap)).isTrue()
     }
 
-    @SdkSuppress(maxSdkVersion = 35)
+    // On SDK < 25: Extra menu options collapses into an overflow menu.
+    // For SDK 25+: Full menu options are displayed by default.
+    @SdkSuppress(minSdkVersion = 25, maxSdkVersion = 35)
     @Test
     fun testCommentMenuItemAppended() {
         val pdfDocument =
