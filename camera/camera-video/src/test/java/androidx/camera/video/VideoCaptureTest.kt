@@ -173,6 +173,8 @@ class VideoCaptureTest {
     private lateinit var surfaceManager: FakeCameraDeviceSurfaceManager
     private lateinit var camera: FakeCamera
     private var surfaceRequestsToRelease = mutableListOf<SurfaceRequest>()
+    private val surfaceTexturesToRelease = mutableListOf<SurfaceTexture>()
+    private val surfacesToRelease = mutableListOf<Surface>()
     private val handlersToRelease = mutableListOf<Handler>()
     private val testImplementationOption: androidx.camera.core.impl.Config.Option<Int> =
         androidx.camera.core.impl.Config.Option.create(
@@ -198,6 +200,8 @@ class VideoCaptureTest {
             // If the request is already provided, then this is no-op.
             it.willNotProvideSurface()
         }
+        surfacesToRelease.forEach { it.release() }
+        surfaceTexturesToRelease.forEach { it.release() }
         CameraXUtil.shutdown().get(10, TimeUnit.SECONDS)
         for (handler in handlersToRelease) {
             handler.looper.quitSafely()
@@ -988,9 +992,9 @@ class VideoCaptureTest {
 
         var surfaceResult: SurfaceRequest.Result? = null
         val videoOutput = createVideoOutput { surfaceRequest, _ ->
-            surfaceRequest.provideSurface(Surface(SurfaceTexture(0)), directExecutor()) {
-                surfaceResult = it
-            }
+            val surfaceTexture = SurfaceTexture(0).also { surfaceTexturesToRelease.add(it) }
+            val surface = Surface(surfaceTexture).also { surfacesToRelease.add(it) }
+            surfaceRequest.provideSurface(surface, directExecutor()) { surfaceResult = it }
         }
         val videoCapture = createVideoCapture(videoOutput)
 
@@ -1017,9 +1021,9 @@ class VideoCaptureTest {
 
         var surfaceResult: SurfaceRequest.Result? = null
         val videoOutput = createVideoOutput { surfaceRequest, _ ->
-            surfaceRequest.provideSurface(Surface(SurfaceTexture(0)), directExecutor()) {
-                surfaceResult = it
-            }
+            val surfaceTexture = SurfaceTexture(0).also { surfaceTexturesToRelease.add(it) }
+            val surface = Surface(surfaceTexture).also { surfacesToRelease.add(it) }
+            surfaceRequest.provideSurface(surface, directExecutor()) { surfaceResult = it }
         }
         val videoCapture = createVideoCapture(videoOutput)
 
@@ -1507,10 +1511,9 @@ class VideoCaptureTest {
         val videoOutput =
             createVideoOutput(
                 surfaceRequestListener = { surfaceRequest, _ ->
-                    surfaceRequest.provideSurface(
-                        Surface(SurfaceTexture(0)),
-                        mainThreadExecutor(),
-                    ) {
+                    val surfaceTexture = SurfaceTexture(0).also { surfaceTexturesToRelease.add(it) }
+                    val surface = Surface(surfaceTexture).also { surfacesToRelease.add(it) }
+                    surfaceRequest.provideSurface(surface, mainThreadExecutor()) {
                         appSurfaceReadyToRelease = true
                     }
                 }
