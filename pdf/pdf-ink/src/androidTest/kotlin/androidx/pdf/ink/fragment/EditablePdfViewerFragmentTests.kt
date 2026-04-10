@@ -19,6 +19,7 @@ package androidx.pdf.ink.fragment
 import android.content.pm.ActivityInfo
 import android.graphics.PointF
 import android.os.Build
+import android.os.ext.SdkExtensions
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
@@ -40,7 +41,6 @@ import androidx.pdf.util.ToolbarMatchers.matchesToolbarMask
 import androidx.pdf.util.ToolbarMatchers.withDockState
 import androidx.pdf.util.ToolbarViewActions
 import androidx.pdf.util.ToolbarViewActions.performDragAndDrop
-import androidx.pdf.util.isAnnotationFeatureAvailableInSdk
 import androidx.pdf.view.PdfView
 import androidx.pdf.viewer.fragment.R as PdfFragmentR
 import androidx.test.espresso.Espresso.onIdle
@@ -95,6 +95,11 @@ class EditablePdfViewerFragmentTests {
     fun cleanup() {
         if (!::scenario.isInitialized) return
 
+        // Advance the lifecycle state to CREATED (or RESUMED) before teardown.
+        // This ensures onCreate() has run and the ViewModelStore is available,
+        // preventing the onSaveInstanceState crash on API 23-26 when close() is called.
+        scenario.moveToState(Lifecycle.State.CREATED)
+
         scenario.onFragment { fragment ->
             IdlingRegistry.getInstance()
                 .unregister(fragment.pdfLoadingIdlingResource.countingIdlingResource)
@@ -128,7 +133,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_annotationToolbar_dockedAtBottom_andCanDragToStart() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment()
         enterEditMode()
@@ -159,7 +164,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_annotationToolbar_persistsDockStateThroughRotation() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment()
         enterEditMode()
@@ -184,7 +189,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_toolbarMovement_updatesWetStrokesMaskPath() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment()
         enterEditMode()
@@ -211,7 +216,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_annotationToolbar_reExpands_onLongPressWithoutMove() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment()
         enterEditMode()
@@ -230,7 +235,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_editablePdfFragment_restoresViewportChanged_onForceReload() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment()
         enterEditMode()
@@ -257,7 +262,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_editablePdfFragment_clearsSelection_onEnterEditMode() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment()
 
@@ -280,7 +285,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun testEditTextDoesNotDisappearWhenTyping() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         var pdfView: PdfView? = null
 
@@ -317,7 +322,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_annotationToolbarHidden_onSearchActive() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment()
         enterEditMode()
@@ -348,7 +353,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_annotationInteractionDisabled_onSearchActive() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment()
         enterEditMode()
@@ -375,7 +380,7 @@ class EditablePdfViewerFragmentTests {
 
     @Test
     fun test_annotationToolbar_isHidden_forFormFilling() {
-        if (!isAnnotationFeatureAvailableInSdk()) return
+        if (!isAnnotationsFeatureAvailable()) return
 
         loadDocumentAndSetupFragment(file = FORM_WITH_CHECKBOX_PDF)
 
@@ -411,5 +416,9 @@ class EditablePdfViewerFragmentTests {
         private const val TEST_DOCUMENT_FILE = "sample.pdf"
         private const val FORM_PDF = "text_form.pdf"
         private const val FORM_WITH_CHECKBOX_PDF = "sample_form.pdf"
+
+        fun isAnnotationsFeatureAvailable(): Boolean =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+                SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 18
     }
 }

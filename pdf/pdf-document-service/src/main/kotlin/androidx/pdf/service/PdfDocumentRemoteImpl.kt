@@ -31,6 +31,7 @@ import android.graphics.pdf.models.selection.PageSelection
 import android.graphics.pdf.models.selection.SelectionBoundary
 import android.os.Build
 import android.os.ParcelFileDescriptor
+import android.os.ext.SdkExtensions
 import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.pdf.DraftEditOperation
@@ -101,7 +102,16 @@ internal class PdfDocumentRemoteImpl(
         // guarantee a specific background color by default.
         output.eraseColor(Color.WHITE)
         // TODO (b/464133165): Update renderPage to use renderParams
-        rendererAdapter.openPage(pageNum, useCache = true).renderPage(output, renderParams)
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+                SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 13
+        ) {
+            rendererAdapter.openPage(pageNum, useCache = true).renderPage(output, renderParams)
+        } else {
+            // Pre-S or devices with ext-13 or lower throw IllegalStateException "Current page not
+            // closed" when keeping page open in cache using rendererAdapter.openPage
+            rendererAdapter.withPage(pageNum) { page -> page.renderPage(output, renderParams) }
+        }
         return output
     }
 
@@ -123,9 +133,20 @@ internal class PdfDocumentRemoteImpl(
         // Latency optimization: Keep pages open to avoid re-initializing native objects
         // for subsequent rendering calls within the same user-visible portion.
         // TODO (b/464133165): Update renderTile to use renderParams
-        rendererAdapter
-            .openPage(pageNum, useCache = true)
-            .renderTile(output, offsetX, offsetY, pageWidth, pageHeight, renderParams)
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+                SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 13
+        ) {
+            rendererAdapter
+                .openPage(pageNum, useCache = true)
+                .renderTile(output, offsetX, offsetY, pageWidth, pageHeight, renderParams)
+        } else {
+            // Pre-S or devices with ext-13 or lower throw IllegalStateException "Current page not
+            // closed" when keeping page open in cache using rendererAdapter.openPage
+            rendererAdapter.withPage(pageNum) { page ->
+                page.renderTile(output, offsetX, offsetY, pageWidth, pageHeight, renderParams)
+            }
+        }
         return output
     }
 

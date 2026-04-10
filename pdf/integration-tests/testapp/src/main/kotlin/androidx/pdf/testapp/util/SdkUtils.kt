@@ -18,12 +18,13 @@ package androidx.pdf.testapp.util
 
 import android.os.Build
 import android.os.ext.SdkExtensions
-import androidx.annotation.RestrictTo
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 private fun isRequiredSdkExtensionAvailable(extensionVersion: Int): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
         SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= extensionVersion
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-fun arePdfContentFeaturesAvailable(): Boolean = isRequiredSdkExtensionAvailable(13)
+internal fun isAnnotationsFeatureAvailable(): Boolean = isRequiredSdkExtensionAvailable(18)
+
+internal fun arePdfContentFeaturesAvailable(): Boolean = isRequiredSdkExtensionAvailable(13)
+
+internal fun isGetTopObjectAvailable(): Boolean = isRequiredSdkExtensionAvailable(19)

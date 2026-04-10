@@ -37,10 +37,11 @@ import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.service.connect.FakePdfServiceConnection
 import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.TestUtils
-import androidx.pdf.utils.arePdfContentFeaturesAvailable
+import androidx.pdf.utils.areCorePdfApisAvailableInSdk
 import androidx.pdf.utils.createStampAnnotationWithPath
 import androidx.pdf.utils.getSampleStampAnnotation
 import androidx.pdf.utils.isAnnotationsFeatureAvailable
+import androidx.pdf.utils.isFormFillingAvailable
 import androidx.pdf.utils.isGetTopObjectAvailable
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -509,7 +510,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun write_modifiedFormFields_returnsModifiedDocument() = runTest {
-        if (!arePdfContentFeaturesAvailable()) return@runTest
+        if (!isFormFillingAvailable()) return@runTest
         val document = openDocument("click_form.pdf")
         val pageNum = 0
         val editableFormWidget =
@@ -776,6 +777,7 @@ class SandboxedPdfDocumentTest {
 
     @Test
     fun documentClosesConnection_whenAllHandlesAreClosed() = runTest {
+        if (!areCorePdfApisAvailableInSdk()) return@runTest
         val context = ApplicationProvider.getApplicationContext<Context>()
         var isServiceConnected = false
 

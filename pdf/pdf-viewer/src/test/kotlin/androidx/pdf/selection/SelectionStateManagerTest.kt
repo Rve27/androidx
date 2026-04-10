@@ -27,6 +27,7 @@ import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import androidx.pdf.FakePdfDocument
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfFeature
 import androidx.pdf.PdfPoint
 import androidx.pdf.PdfRect
 import androidx.pdf.annotation.models.ImagePdfObject
@@ -57,6 +58,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -73,6 +75,7 @@ class SelectionStateManagerTest {
     // TODO(b/385407478) replace with FakePdfDocument when we're able to share it more broadly
     private val pdfDocument =
         mock<PdfDocument> {
+            on { isFeatureSupported(feature = PdfFeature.TEXT_SELECTION) } doReturn true
             onBlocking { getSelectionBounds(any<Int>(), any<PointF>(), any<PointF>()) } doAnswer
                 { invocation ->
                     val startPoint = invocation.getArgument<PointF>(1)

@@ -18,15 +18,7 @@ package androidx.pdf.util
 
 import android.os.Build
 import android.os.ext.SdkExtensions
-import androidx.annotation.RestrictTo
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-private fun isRequiredSdkExtensionAvailable(extensionVersion: Int): Boolean =
+internal fun isImageSelectionAvailableInSdk(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
-        SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= extensionVersion
-
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun isImageSelectionAvailableInSdk(): Boolean = isRequiredSdkExtensionAvailable(19)
-
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun isAnnotationFeatureAvailableInSdk(): Boolean = isRequiredSdkExtensionAvailable(18)
+        SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= 19

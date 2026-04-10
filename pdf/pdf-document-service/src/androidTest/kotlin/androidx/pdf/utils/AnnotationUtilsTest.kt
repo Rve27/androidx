@@ -45,6 +45,10 @@ class AnnotationUtilsTest {
         path.lineTo(15f, 15f)
 
         val pathInputs = path.getPathInputsFromPath()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            assertThat(pathInputs).isEmpty()
+            return
+        }
 
         // Assert MOVE_TO commands: Identifying the start of each contour
         val moveTos = pathInputs.filter { it.command == PathInput.MOVE_TO }

@@ -17,6 +17,7 @@
 package androidx.pdf.utils
 
 import android.graphics.Path
+import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.models.PathPdfObject.PathInput
 
@@ -49,10 +50,12 @@ internal fun List<PathInput>.getPathFromPathInputs(): Path {
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public fun Path.getPathInputsFromPath(): List<PathInput> {
-    val pathInputs = mutableListOf<PathInput>()
-    if (!isAnnotationsFeatureAvailable()) {
-        return pathInputs
+    // Path.approximate is not available below sdk spi 26
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        return emptyList()
     }
+
+    val pathInputs = mutableListOf<PathInput>()
 
     // Approx array for a path is in the format [fraction, x0, y0, fraction, x1, y1...]
     val approx: FloatArray = this.approximate(ACCEPTABLE_TOLERANCE_IN_PATH)

@@ -66,7 +66,6 @@ internal open class FakeEditablePdfDocument(
     private val pageLinks: Map<Int, PdfDocument.PdfPageLinks> = mapOf(),
     private val textContents: List<PdfPageTextContent> = emptyList(),
     private val pageFormWidgetInfos: Map<Int, List<FormWidgetInfo>> = mapOf(),
-    private val supportedFeatures: Set<PdfFeature> = setOf(),
     initialEdits: List<PdfAnnotation> = emptyList(),
     override val linearizationStatus: Int = LINEARIZATION_STATUS_UNKNOWN,
 ) : EditablePdfDocument {
@@ -323,7 +322,7 @@ internal open class FakeEditablePdfDocument(
     ) {}
 
     override fun isFeatureSupported(feature: PdfFeature): Boolean {
-        return supportedFeatures.contains(feature)
+        return true
     }
 
     override fun createWriteHandle(): PdfWriteHandle {

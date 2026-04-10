@@ -59,6 +59,7 @@ import androidx.core.util.keyIterator
 import androidx.core.util.valueIterator
 import androidx.core.view.ViewCompat
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfFeature
 import androidx.pdf.PdfPoint
 import androidx.pdf.R
 import androidx.pdf.content.ExternalLink
@@ -255,22 +256,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             invalidate()
         }
 
-    /** Enables / Disables the form- filling feature surface. */
+    /** Enables / Disables the form-filling feature surface. */
     public var isFormFillingEnabled: Boolean = false
         set(value) {
             if (field == value) return
             field = value
-
-            if (value) {
-                formWidgetMetadataLoader?.let { loader ->
-                    pageManager?.maybeLoadFormWidgetMetadata(loader)
-                }
+            if (pdfDocument?.isFeatureSupported(PdfFeature.FORM_FILLING) == true) {
+                setupFormFilling()
             } else {
                 // remove any existing edit text
                 formFillingEditText = null
+                invalidate()
             }
-            invalidate()
         }
+
+    private fun setupFormFilling() {
+        formWidgetMetadataLoader?.let { loader -> pageManager?.maybeLoadFormWidgetMetadata(loader) }
+        invalidate()
+    }
 
     /**
      * Enable or disable the image-selection feature surface.
@@ -904,7 +907,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     /** Selects all text on the current selected page range asynchronously. */
     internal fun selectAllText() {
-        selectionStateManager?.selectAllText()
+        if (pdfDocument?.isFeatureSupported(PdfFeature.TEXT_SELECTION) == true) {
+            selectionStateManager?.selectAllText()
+        }
     }
 
     /**
@@ -1994,6 +1999,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             onPdfContentInvalidatedListener,
         )
 
+        if (localPdfDocument.isFeatureSupported(PdfFeature.FORM_FILLING) && isFormFillingEnabled) {
+            setupFormFilling()
+        }
         setupFastScroller()
         // set initial visibility of fast scroller
         maybeHideFastScroller()

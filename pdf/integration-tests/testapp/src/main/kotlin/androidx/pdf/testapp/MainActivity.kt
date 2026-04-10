@@ -35,7 +35,7 @@ import androidx.pdf.testapp.ui.XmlStyledPdfFragment
 import androidx.pdf.testapp.ui.scenarios.PageObjectPdfFragment
 import androidx.pdf.testapp.ui.v2.TabbedPdfViewerFragment
 import androidx.pdf.testapp.ui.v2.compose.PdfComposeFragment
-import androidx.pdf.utils.isAnnotationsFeatureAvailable
+import androidx.pdf.testapp.util.isAnnotationsFeatureAvailable
 import com.google.android.material.button.MaterialButton
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)

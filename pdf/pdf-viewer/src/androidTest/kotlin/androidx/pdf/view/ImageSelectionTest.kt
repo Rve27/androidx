@@ -18,8 +18,6 @@ package androidx.pdf.view
 
 import android.annotation.SuppressLint
 import android.graphics.Point
-import android.os.Build
-import android.os.ext.SdkExtensions
 import android.view.ViewGroup
 import androidx.pdf.util.isImageSelectionAvailableInSdk
 import androidx.test.core.app.ActivityScenario
@@ -79,7 +77,7 @@ class ImageSelectionTest {
     fun enablingImageSelection_onTestDeviceWithSdkExt_smallerThan19() = runTest {
         kotlin.test.assertFalse(pdfView.isImageSelectionEnabled)
 
-        if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) < 19) {
+        if (isImageSelectionAvailableInSdk()) {
             pdfView.isImageSelectionEnabled = true
         }
 

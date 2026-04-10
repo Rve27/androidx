@@ -574,7 +574,11 @@ class PdfViewerTest {
     @Test
     fun testCommentMenuItemAppended() {
         val pdfDocument =
-            FakePdfDocument(List(10) { Point(425, 225) }, pageSelector = SIMPLE_SELECTOR)
+            FakePdfDocument(
+                List(10) { Point(425, 225) },
+                pageSelector = SIMPLE_SELECTOR,
+                supportedFeatures = setOf(PdfFeature.TEXT_SELECTION),
+            )
         val selections = mutableListOf<Selection?>()
 
         lateinit var pdfViewerState: PdfViewerState
@@ -623,7 +627,11 @@ class PdfViewerTest {
     @Test
     fun testCopyMenuItemFiltered() {
         val pdfDocument =
-            FakePdfDocument(List(10) { Point(425, 225) }, pageSelector = SIMPLE_SELECTOR)
+            FakePdfDocument(
+                List(10) { Point(425, 225) },
+                pageSelector = SIMPLE_SELECTOR,
+                supportedFeatures = setOf(PdfFeature.TEXT_SELECTION),
+            )
         val selections = mutableListOf<Selection?>()
 
         lateinit var pdfViewerState: PdfViewerState

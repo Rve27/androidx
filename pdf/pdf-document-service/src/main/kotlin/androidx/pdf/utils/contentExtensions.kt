@@ -237,7 +237,7 @@ public fun RenderParams.toAndroidClass(): android.graphics.pdf.RenderParams =
     }
 
 private inline fun <T> requirePdfContentFeatures(block: () -> T): T {
-    return if (arePdfContentFeaturesAvailable()) {
+    return if (areCorePdfApisAvailableInSdk()) {
         block()
     } else {
         throw UnsupportedOperationException("Operation supported above S")

@@ -405,7 +405,6 @@ public open class PdfViewerFragment constructor() : Fragment() {
         }
 
         setupPdfView()
-        setupSearchView(_pdfSearchView)
         setupToolbox()
 
         lifecycleScope.launch { collectFragmentUiScreenState() }
@@ -485,10 +484,6 @@ public open class PdfViewerFragment constructor() : Fragment() {
      * @param searchView The [PdfSearchView] instance to be configured.
      */
     private fun setupSearchView(searchView: PdfSearchView) {
-        if (pdfView.pdfDocument?.isFeatureSupported(PdfFeature.SEARCH) == false) {
-            return
-        }
-
         pdfSearchViewManager = PdfSearchViewManager(_pdfSearchView)
         setupSearchViewListeners(searchView)
         val windowManager = activity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -645,20 +640,24 @@ public open class PdfViewerFragment constructor() : Fragment() {
         _toolboxView.setOnCurrentPageRequested { _pdfView.visiblePages.getCenter() }
     }
 
-    private fun collectViewStates() {
-        searchStateCollector = collectFlowOnLifecycleScope {
-            documentViewModel.searchViewUiState.collect { uiState ->
-                pdfSearchViewManager.setState(uiState)
+    private fun collectViewStates(document: PdfDocument) {
+        if (document.isFeatureSupported(PdfFeature.SEARCH)) {
+            searchStateCollector = collectFlowOnLifecycleScope {
+                documentViewModel.searchViewUiState.collect { uiState ->
+                    pdfSearchViewManager.setState(uiState)
 
-                /** Clear selection when we start a search session. Also hide the fast scroller. */
-                if (uiState !is SearchViewUiState.Closed) {
-                    _pdfView.apply {
-                        clearCurrentSelection()
-                        fastScrollVisibility = PdfView.FastScrollVisibility.ALWAYS_HIDE
+                    /**
+                     * Clear selection when we start a search session. Also hide the fast scroller.
+                     */
+                    if (uiState !is SearchViewUiState.Closed) {
+                        _pdfView.apply {
+                            clearCurrentSelection()
+                            fastScrollVisibility = PdfView.FastScrollVisibility.ALWAYS_HIDE
+                        }
+                    } else {
+                        // Let PdfView internally control fast scroller visibility.
+                        _pdfView.fastScrollVisibility = PdfView.FastScrollVisibility.AUTO_HIDE
                     }
-                } else {
-                    // Let PdfView internally control fast scroller visibility.
-                    _pdfView.fastScrollVisibility = PdfView.FastScrollVisibility.AUTO_HIDE
                 }
             }
         }
@@ -772,8 +771,11 @@ public open class PdfViewerFragment constructor() : Fragment() {
         _toolboxView.setPdfDocument(uiState.pdfDocument)
         setAnnotationIntentResolvability(uiState.pdfDocument.uri)
         setViewVisibility(pdfView = VISIBLE, loadingView = GONE, errorView = GONE)
+        if (uiState.pdfDocument.isFeatureSupported(PdfFeature.SEARCH)) {
+            setupSearchView(_pdfSearchView)
+        }
         // Start collection of view states like search, toolbox, etc. once document is loaded.
-        collectViewStates()
+        collectViewStates(uiState.pdfDocument)
     }
 
     private fun setAnnotationIntentResolvability(uri: Uri) {

@@ -21,7 +21,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.pdf.service.connect.FakePdfServiceConnection
 import androidx.pdf.utils.TestUtils
-import androidx.pdf.utils.arePdfContentFeaturesAvailable
+import androidx.pdf.utils.areCorePdfApisAvailableInSdk
 import androidx.pdf.utils.isLinearizationStatusAvailable
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -229,7 +229,7 @@ class SandboxedPdfLoaderTest {
 
     @Test
     fun openTwoDocumentsFd_sharedLoader() = runTest {
-        if (!arePdfContentFeaturesAvailable()) return@runTest
+        if (!areCorePdfApisAvailableInSdk()) return@runTest
         val context = ApplicationProvider.getApplicationContext<Context>()
         val pfd1 = TestUtils.openFileDescriptor(context, "sample.pdf")
         val pfd2 = TestUtils.openFileDescriptor(context, "alt_text.pdf")

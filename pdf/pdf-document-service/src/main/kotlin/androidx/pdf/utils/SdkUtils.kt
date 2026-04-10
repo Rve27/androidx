@@ -18,24 +18,19 @@ package androidx.pdf.utils
 
 import android.os.Build
 import android.os.ext.SdkExtensions
-import androidx.annotation.RestrictTo
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 private fun isRequiredSdkExtensionAvailable(extensionVersion: Int): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
         SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) >= extensionVersion
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun isAnnotationsFeatureAvailable(): Boolean = isRequiredSdkExtensionAvailable(18)
+internal fun isAnnotationsFeatureAvailable(): Boolean = isRequiredSdkExtensionAvailable(18)
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun isRenderFormContentModeAvailable(): Boolean = isRequiredSdkExtensionAvailable(19)
+internal fun isFormFillingAvailable(): Boolean = isRequiredSdkExtensionAvailable(13)
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun isGetTopObjectAvailable(): Boolean = isRequiredSdkExtensionAvailable(19)
+internal fun isRenderFormContentModeAvailable(): Boolean = isRequiredSdkExtensionAvailable(19)
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun arePdfContentFeaturesAvailable(): Boolean = isRequiredSdkExtensionAvailable(13)
+internal fun isGetTopObjectAvailable(): Boolean = isRequiredSdkExtensionAvailable(19)
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public fun isLinearizationStatusAvailable(): Boolean = isRequiredSdkExtensionAvailable(13)
+internal fun areCorePdfApisAvailableInSdk(): Boolean = isRequiredSdkExtensionAvailable(13)
+
+internal fun isLinearizationStatusAvailable(): Boolean = isRequiredSdkExtensionAvailable(13)

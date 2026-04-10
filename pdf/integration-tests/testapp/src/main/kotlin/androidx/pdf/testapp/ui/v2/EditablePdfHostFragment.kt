@@ -44,7 +44,7 @@ import androidx.pdf.ink.R
 import androidx.pdf.selection.Selection
 import androidx.pdf.selection.model.ImageSelection
 import androidx.pdf.testapp.R as testR
-import androidx.pdf.utils.isGetTopObjectAvailable
+import androidx.pdf.testapp.util.isGetTopObjectAvailable
 import androidx.pdf.view.PdfView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
