@@ -20,6 +20,7 @@ import androidx.xr.scenecore.ActivitySpace
 import androidx.xr.scenecore.AnchorEntity
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
+import androidx.xr.scenecore.PositionalAudioComponent
 import androidx.xr.scenecore.SoundEffectPool
 import androidx.xr.scenecore.SpatialWindow
 import androidx.xr.scenecore.testing.internal.FakeRenderingRuntime
@@ -82,6 +83,7 @@ public class SceneCoreTestRule : ExternalResource() {
     @PublishedApi
     internal fun resolveTesterInternal(component: Component): Any? {
         return when (component) {
+            is PositionalAudioComponent -> PositionalAudioComponentTester.create(component)
             else -> null
         }
     }
