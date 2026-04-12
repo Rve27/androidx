@@ -21,7 +21,9 @@ import android.content.ContentResolver.SCHEME_FILE
 import android.content.Context
 import android.content.res.Resources.ID_NULL
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.ext.SdkExtensions
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -757,6 +759,15 @@ public open class PdfViewerFragment constructor() : Fragment() {
     }
 
     private fun handlePasswordRequested(uiState: PasswordRequested) {
+        if (
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.R ||
+                SdkExtensions.getExtensionVersion(Build.VERSION_CODES.S) < 13
+        ) {
+            errorView.text =
+                context?.getString(androidx.pdf.R.string.error_cannot_open_password_protected_pdf)
+            setViewVisibility(pdfView = GONE, loadingView = GONE, errorView = VISIBLE)
+            return
+        }
         requestPassword(uiState.passwordFailed)
         setViewVisibility(pdfView = GONE, loadingView = GONE, errorView = GONE)
         onPasswordRequestedState()
