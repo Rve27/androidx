@@ -33,6 +33,12 @@ package androidx.xr.scenecore.testing {
     property public java.util.List<androidx.xr.runtime.math.Matrix4> boneTransforms;
   }
 
+  public final class PerceptionSpaceTester {
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.HitTestResult? getHitTestResult();
+    method @InaccessibleFromKotlin public void setHitTestResult(androidx.xr.scenecore.HitTestResult?);
+    property public androidx.xr.scenecore.HitTestResult? hitTestResult;
+  }
+
   public final class PositionalAudioComponentTester {
     method @InaccessibleFromKotlin public androidx.media3.exoplayer.audio.AudioOutputProvider getAudioOutputProvider();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.PointSourceParams getPointSourceParams();
@@ -49,11 +55,13 @@ package androidx.xr.scenecore.testing {
     method public androidx.xr.scenecore.testing.SoundEffectPoolTester createTester(androidx.xr.scenecore.SoundEffectPool soundEffectPool);
     method public androidx.xr.scenecore.testing.TextureTester createTester(androidx.xr.scenecore.Texture texture);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.ActivitySpaceTester getActivitySpaceTester();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.PerceptionSpaceTester getPerceptionSpaceTester();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.SpatialSoundPoolTester getSpatialSoundPoolTester();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.SpatialWindowTester getSpatialWindowTester();
     method @kotlin.PublishedApi internal Object? resolveTesterInternal(androidx.xr.scenecore.Component component);
     method @kotlin.PublishedApi internal Object? resolveTesterInternal(androidx.xr.scenecore.Entity entity);
     property public androidx.xr.scenecore.testing.ActivitySpaceTester activitySpaceTester;
+    property public androidx.xr.scenecore.testing.PerceptionSpaceTester perceptionSpaceTester;
     property public androidx.xr.scenecore.testing.SpatialSoundPoolTester spatialSoundPoolTester;
     property public androidx.xr.scenecore.testing.SpatialWindowTester spatialWindowTester;
   }
