@@ -22,7 +22,6 @@ import android.os.Build
 import android.os.LocaleList
 import android.view.textclassifier.TextClassificationManager
 import android.view.textclassifier.TextClassifier
-import androidx.annotation.RequiresApi
 import androidx.pdf.selection.model.TextSelection
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
@@ -32,25 +31,20 @@ internal class TextSelectionMenuProvider(private val context: Context) :
     private var textClassifier: TextClassifier? = null
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val textClassificationManager =
-                context.getSystemService(Context.TEXT_CLASSIFICATION_SERVICE)
-                    as? TextClassificationManager?
-            textClassifier = textClassificationManager?.textClassifier
-        }
+        val textClassificationManager =
+            context.getSystemService(Context.TEXT_CLASSIFICATION_SERVICE)
+                as? TextClassificationManager?
+        textClassifier = textClassificationManager?.textClassifier
     }
 
     override suspend fun getMenuItems(selection: TextSelection): List<ContextMenuComponent> {
         val menuItems: MutableList<ContextMenuComponent> = mutableListOf()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            menuItems += getSmartMenuItems(selection.text)
-        }
+        menuItems += getSmartMenuItems(selection.text)
         menuItems += DefaultSelectionMenuProvider.getMenuItems(context)
         return menuItems
     }
 
     // Text Classification actions are available on Android P+ (API Level 28 or above) devices
-    @RequiresApi(Build.VERSION_CODES.P)
     internal suspend fun getSmartMenuItems(text: CharSequence): List<ContextMenuComponent> =
         coroutineScope {
             val smartMenuItems: MutableList<ContextMenuComponent> = mutableListOf()

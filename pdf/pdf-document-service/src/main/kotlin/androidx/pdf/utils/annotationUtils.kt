@@ -17,7 +17,6 @@
 package androidx.pdf.utils
 
 import android.graphics.Path
-import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.models.PathPdfObject.PathInput
 
@@ -50,10 +49,6 @@ internal fun List<PathInput>.getPathFromPathInputs(): Path {
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public fun Path.getPathInputsFromPath(): List<PathInput> {
-    // Path.approximate is not available below sdk spi 26
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-        return emptyList()
-    }
 
     val pathInputs = mutableListOf<PathInput>()
 
