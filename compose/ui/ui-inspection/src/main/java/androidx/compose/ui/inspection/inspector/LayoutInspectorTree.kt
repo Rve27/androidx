@@ -192,11 +192,6 @@ class LayoutInspectorTree(anchorMap: AnchorMap) {
         }
     }
 
-    private fun sort(compositions: List<SubCompositionResult>): List<SubCompositionResult> {
-        val anyIndices = compositions.any { it.listIndex >= 0 }
-        return if (anyIndices) compositions.sortedBy { it.listIndex } else compositions
-    }
-
     private fun clear() {
         builderData.clear()
         resultByComposition.clear()
