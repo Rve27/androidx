@@ -27,6 +27,7 @@ import androidx.compose.runtime.tooling.CompositionObserverHandle
 import androidx.compose.runtime.tooling.CompositionRegistrationObserver
 import androidx.compose.runtime.tooling.IdentifiableRecomposeScope
 import androidx.compose.runtime.tooling.ObservableComposition
+import androidx.compose.ui.inspection.inspector.InlineClassConverter
 import androidx.compose.ui.inspection.util.AnchorMap
 import androidx.inspection.ArtTooling
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +42,11 @@ import layoutinspector.compose.inspection.LayoutInspectorComposeProtocol.StateRe
 class ObservedReadResult(val recomposition: Int, val reads: List<StateReadRecord>)
 
 /** An extension of [RecompositionHandler] that keeps track of state reads. */
-class StateReadHandler(artTooling: ArtTooling, anchorMap: AnchorMap) :
+internal class StateReadHandler(
+    artTooling: ArtTooling,
+    anchorMap: AnchorMap,
+    private val inlineClassConverter: InlineClassConverter,
+) :
     RecompositionHandler<RecompositionDataWithStateReads>(
         artTooling,
         anchorMap,

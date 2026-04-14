@@ -318,7 +318,7 @@ private fun StateReadRecord.convert(
     return builder.build()
 }
 
-fun ObservedReadResult.convert(
+internal fun ObservedReadResult.convert(
     stringTable: StringTable,
     layoutInspectorTree: LayoutInspectorTree,
 ): StateReadGroup {

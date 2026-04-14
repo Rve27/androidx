@@ -27,7 +27,7 @@ private const val START_RESTART_GROUP = "startRestartGroup(I)Landroidx/compose/r
 private const val SKIP_TO_GROUP_END = "skipToGroupEnd()V"
 
 /** Detection of recompose counts and skips from installing runtime hooks. */
-open class RecompositionHandler<T : RecompositionData>(
+internal open class RecompositionHandler<T : RecompositionData>(
     protected val artTooling: ArtTooling,
     protected val anchorMap: AnchorMap,
     protected val createRecompositionData: () -> T,
