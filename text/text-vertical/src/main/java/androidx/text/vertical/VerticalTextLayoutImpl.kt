@@ -25,6 +25,8 @@ import androidx.annotation.RequiresApi
 internal interface VerticalTextLayoutImpl {
     @get:Px val width: Float
 
+    val lineCount: Int
+
     fun draw(canvas: Canvas, @Px x: Float, @Px y: Float)
 
     fun isVerticalTextSupported(): Boolean
@@ -45,6 +47,9 @@ internal class VerticalTextLayoutApi36Impl(
     override val width: Float
         get() = result.width
 
+    override val lineCount: Int
+        get() = result.lineCount
+
     override fun draw(canvas: Canvas, @Px x: Float, @Px y: Float) {
         result.draw(canvas, x, y, paint)
     }
@@ -57,6 +62,9 @@ internal class VerticalTextLayoutApi36Impl(
 internal class VerticalTextLayoutNoOpImpl : VerticalTextLayoutImpl {
     override val width: Float
         get() = 0f
+
+    override val lineCount: Int
+        get() = 0
 
     override fun draw(canvas: Canvas, @Px x: Float, @Px y: Float) {
         // no-op, fallback
