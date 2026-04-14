@@ -114,6 +114,8 @@ internal constructor(
         return timeSource.markNow()
     }
 
+    @OptIn(androidx.xr.runtime.PreviewSpatialApi::class)
+    @SuppressWarnings("RestrictedApiAndroidX")
     override fun configure(config: Config) {
         val arConfig = _session.config
 
@@ -280,6 +282,7 @@ internal constructor(
     internal companion object {
         const private val ARCORE_PACKAGE_NAME = "com.google.ar.core"
 
+        @SuppressWarnings("RestrictedApiAndroidX")
         internal val SUPPORTED_CONFIG_MODES: Set<ConfigMode> =
             setOf(
                 CameraFacingDirection.WORLD,
