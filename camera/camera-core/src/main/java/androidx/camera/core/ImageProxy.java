@@ -82,6 +82,9 @@ public interface ImageProxy extends AutoCloseable {
     /**
      * Returns the array of planes.
      *
+     * <p>If the image format is {@link ImageFormat#PRIVATE}, the returned array may be empty
+     * because the image data is not CPU accessible.
+     *
      * @see android.media.Image#getPlanes()
      */
     @SuppressLint("ArrayReturn")
@@ -138,8 +141,10 @@ public interface ImageProxy extends AutoCloseable {
      *
      * <p>The supported {@link ImageProxy} format is {@link ImageFormat#YUV_420_888},
      * {@link ImageFormat#JPEG} or {@link PixelFormat#RGBA_8888}. If format is invalid, an
-     * {@link IllegalArgumentException} will be thrown. If the conversion to bimap failed, an
+     * {@link IllegalArgumentException} will be thrown. If the conversion to bitmap failed, an
      * {@link UnsupportedOperationException} will be thrown.
+     *
+     * <p>Note that this method does not support {@link ImageFormat#PRIVATE} format.
      *
      * @return {@link Bitmap} instance.
      */

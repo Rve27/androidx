@@ -26,6 +26,7 @@ import static org.junit.Assert.assertThrows;
 import static org.robolectric.Shadows.shadowOf;
 
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -56,6 +57,8 @@ import androidx.camera.testing.fakes.FakeCameraInfoInternal;
 import androidx.camera.testing.impl.CameraUtil;
 import androidx.camera.testing.impl.CameraXUtil;
 import androidx.camera.testing.impl.fakes.FakeCameraFactory;
+import androidx.camera.testing.impl.fakes.FakeImageInfo;
+import androidx.camera.testing.impl.fakes.FakeImageProxy;
 import androidx.camera.testing.impl.fakes.FakeImageReaderProxy;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -525,6 +528,34 @@ public class ImageAnalysisTest {
                 mImageAnalysis.getSessionConfig().getImplementationOptions().retrieveOption(
                         TEST_OPTION
                 )).isEqualTo(newImplementationOptionValue);
+    }
+
+    @Test
+    @Config(minSdk = 29)
+    public void throwException_whenSetOutputImageFormatToPrivateWithRotationEnabled() {
+        // format then rotation
+        assertThrows(IllegalArgumentException.class,
+                () -> new ImageAnalysis.Builder()
+                        .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_PRIVATE)
+                        .setOutputImageRotationEnabled(true)
+                        .build());
+
+        // rotation then format
+        assertThrows(IllegalArgumentException.class,
+                () -> new ImageAnalysis.Builder()
+                        .setOutputImageRotationEnabled(true)
+                        .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_PRIVATE)
+                        .build());
+    }
+
+    @Test
+    @Config(minSdk = 29)
+    public void toBitmapThrowsException_whenPrivateFormatIsUsed() {
+        FakeImageInfo imageInfo = new FakeImageInfo();
+        FakeImageProxy imageProxy = new FakeImageProxy(imageInfo);
+        imageProxy.setFormat(ImageFormat.PRIVATE);
+
+        assertThrows(IllegalArgumentException.class, imageProxy::toBitmap);
     }
 
     @SuppressWarnings("deprecation") // test for legacy resolution API

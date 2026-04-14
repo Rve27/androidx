@@ -46,6 +46,7 @@ public class FakeImageReaderProxy implements ImageReaderProxy {
     private int mHeight = 100;
     private int mImageFormat = ImageFormat.JPEG;
     private final int mMaxImages;
+    private long mUsage = 0;
 
     private @Nullable Surface mSurface;
 
@@ -96,6 +97,7 @@ public class FakeImageReaderProxy implements ImageReaderProxy {
         fakeImageReaderProxy.mWidth = width;
         fakeImageReaderProxy.mHeight = height;
         fakeImageReaderProxy.setImageFormat(format);
+        fakeImageReaderProxy.mUsage = usage;
         return fakeImageReaderProxy;
     }
 
@@ -204,6 +206,13 @@ public class FakeImageReaderProxy implements ImageReaderProxy {
 
     public void setImageFormat(int imageFormat) {
         mImageFormat = imageFormat;
+    }
+
+    /**
+     * Returns the usage flag of the reader.
+     */
+    public long getUsage() {
+        return mUsage;
     }
 
     public boolean isClosed() {
