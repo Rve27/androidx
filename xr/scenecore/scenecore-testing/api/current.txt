@@ -28,6 +28,11 @@ package androidx.xr.scenecore.testing {
     property public String assetPath;
   }
 
+  public final class MeshEntityTester {
+    method @InaccessibleFromKotlin public java.util.List<androidx.xr.runtime.math.Matrix4> getBoneTransforms();
+    property public java.util.List<androidx.xr.runtime.math.Matrix4> boneTransforms;
+  }
+
   public final class PositionalAudioComponentTester {
     method @InaccessibleFromKotlin public androidx.media3.exoplayer.audio.AudioOutputProvider getAudioOutputProvider();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.PointSourceParams getPointSourceParams();

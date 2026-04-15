@@ -21,6 +21,7 @@ import androidx.xr.scenecore.AnchorEntity
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.ImageBasedLightingAsset
+import androidx.xr.scenecore.MeshEntity
 import androidx.xr.scenecore.PositionalAudioComponent
 import androidx.xr.scenecore.SoundEffectPool
 import androidx.xr.scenecore.SpatialWindow
@@ -76,6 +77,7 @@ public class SceneCoreTestRule : ExternalResource() {
         } else {
             when (entity) {
                 is AnchorEntity -> AnchorEntityTester.create(entity)
+                is MeshEntity -> MeshEntityTester.create(entity)
                 else -> null
             }
         }
