@@ -90,4 +90,5 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2024"
     description = "Native dependencies for Ink"
+    usePlatformSpecificCacheForJvmTests = true
 }
