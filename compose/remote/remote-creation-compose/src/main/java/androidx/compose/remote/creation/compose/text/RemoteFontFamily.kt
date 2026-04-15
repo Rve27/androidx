@@ -16,6 +16,7 @@
 
 package androidx.compose.remote.creation.compose.text
 
+import androidx.annotation.RestrictTo
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.GenericFontFamily
 
@@ -71,6 +72,21 @@ public sealed class RemoteFontFamily(public val name: String, private val fontFa
                 is GenericFontFamily -> Named(fontFamily.name)
                 else -> null
             }
+        }
+    }
+}
+
+/** Converts this [RemoteFontFamily] into a [RemoteTypeface]. */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun RemoteFontFamily.toRemoteTypeface(): RemoteTypeface {
+    return when (this) {
+        RemoteFontFamily.Default -> RemoteTypeface.Default
+        RemoteFontFamily.SansSerif -> RemoteTypeface.SansSerif
+        RemoteFontFamily.Serif -> RemoteTypeface.Serif
+        RemoteFontFamily.Monospace -> RemoteTypeface.Monospace
+        RemoteFontFamily.Cursive -> RemoteTypeface.Named("cursive", weight = 400, isItalic = false)
+        is RemoteFontFamily.Named -> {
+            RemoteTypeface.Named(name, weight = 400, isItalic = false)
         }
     }
 }
