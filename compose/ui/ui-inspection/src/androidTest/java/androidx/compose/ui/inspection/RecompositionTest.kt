@@ -892,6 +892,54 @@ class RecompositionTest {
         }
     }
 
+    @Test
+    fun testUnchangedEmptyResponse(): Unit = runBlocking {
+        val rootId = WindowInspector.getGlobalWindowViews().map { it.uniqueDrawingId }.single()
+        val composables =
+            inspectorTester
+                .sendCommand(
+                    GetComposablesCommand(
+                        rootId,
+                        skipSystemComposables = false,
+                        allowEmptyIfUnchanged = true,
+                    )
+                )
+                .getComposablesResponse
+        assertThat(composables.unchanged).isFalse()
+        assertThat(composables.rootsCount).isEqualTo(1)
+        assertThat(composables.stringsCount).isGreaterThan(0)
+
+        val unchangedComposables =
+            inspectorTester
+                .sendCommand(
+                    GetComposablesCommand(
+                        rootId,
+                        skipSystemComposables = false,
+                        allowEmptyIfUnchanged = true,
+                    )
+                )
+                .getComposablesResponse
+        assertThat(unchangedComposables.unchanged).isTrue()
+        assertThat(unchangedComposables.rootsCount).isEqualTo(0)
+        assertThat(unchangedComposables.stringsCount).isEqualTo(0)
+
+        rule.onNodeWithText("Click row 1").performClick()
+
+        val changedComposables =
+            inspectorTester
+                .sendCommand(
+                    GetComposablesCommand(
+                        rootId,
+                        skipSystemComposables = false,
+                        allowEmptyIfUnchanged = true,
+                    )
+                )
+                .getComposablesResponse
+        assertThat(changedComposables.unchanged).isFalse()
+        assertThat(changedComposables.rootsCount).isEqualTo(1)
+        assertThat(changedComposables.stringsCount).isGreaterThan(0)
+    }
+
     private suspend fun InspectorTester.getStateReads(
         anchorHash: Int,
         recompositionNumberStart: Int,

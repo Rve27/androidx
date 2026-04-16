@@ -2,6 +2,23 @@
 
 ## Change Descriptions
 
+### Provide a quick return from GetComposablesCommand if no changes.
+
+#### Added:
+- `allow_empty_if_unchanged` to `GetComposablesCommand`
+- `unchanged` to `GetComposablesResponse`
+
+#### version: compose.ui:ui:1.12.0-alpha02
+
+#### Backwards compatibility:
+An older client will always send `false` for `allow_empty_if_unchanged`.
+This makes the inspector return the full `GetComposabledResponse`.
+
+#### Forwards compatibility:
+A client expecting this functionality can send `true` for `allow_empty_if_unchanged`,
+but an older inspector will never read this and always return `false` (the default value)
+for `unchanged` and a full `GetComposablesResponse`.
+
 ### Detect parameter changes for each recomposition
 
 #### Added:

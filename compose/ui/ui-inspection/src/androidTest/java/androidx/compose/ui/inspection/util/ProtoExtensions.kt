@@ -171,6 +171,7 @@ internal fun GetComposablesCommand(
     skipSystemComposables: Boolean = true,
     generation: Int = 1,
     extractAllParameters: Boolean = false,
+    allowEmptyIfUnchanged: Boolean = false,
 ): Command =
     Command.newBuilder()
         .apply {
@@ -181,6 +182,7 @@ internal fun GetComposablesCommand(
                         this.skipSystemComposables = skipSystemComposables
                         this.generation = generation
                         this.extractAllParameters = extractAllParameters
+                        this.allowEmptyIfUnchanged = allowEmptyIfUnchanged
                     }
                     .setRootViewId(rootViewId)
                     .setSkipSystemComposables(skipSystemComposables)

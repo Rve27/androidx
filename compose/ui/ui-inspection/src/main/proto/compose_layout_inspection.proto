@@ -315,12 +315,17 @@ message GetComposablesCommand {
   int32 generation = 3;
   // If true, extract all parameters even if `delayParameterExtractions` is off.
   bool extract_all_parameters = 4;
+  // If true, return an empty response if no changes were detected since the last request.
+  bool allow_empty_if_unchanged = 5;
 }
 
 message GetComposablesResponse {
     // A collection of all text referenced by other fields in this message
     repeated StringEntry strings = 1;
+    // A collection of all root notes found.
     repeated ComposableRoot roots = 2;
+    // If true, no changes were detected since the last request and the strings and roots are empty.
+    bool unchanged = 3;
 }
 
 message GetParametersCommand {

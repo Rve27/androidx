@@ -212,6 +212,16 @@ class ComposeLayoutInspector(
         getComposablesCommand: GetComposablesCommand,
         callback: CommandCallback,
     ) {
+        if (
+            getComposablesCommand.allowEmptyIfUnchanged &&
+                !recompositionHandler.hasNewRecompositions
+        ) {
+            callback.reply {
+                getComposablesResponse =
+                    GetComposablesResponse.newBuilder().apply { unchanged = true }.build()
+            }
+            return
+        }
         val data =
             getComposableNodes(
                 getComposablesCommand.rootViewId,
