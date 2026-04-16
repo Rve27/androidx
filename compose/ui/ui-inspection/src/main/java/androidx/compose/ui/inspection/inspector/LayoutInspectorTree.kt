@@ -174,13 +174,13 @@ internal class LayoutInspectorTree(
         )
     }
 
-    fun convertStateValue(value: Any?): NodeParameter? {
+    fun convertStateValue(name: String, value: Any?): NodeParameter? {
         return try {
             builderData.parameterFactory.create(
                 rootId = -1,
                 nodeId = -1,
                 anchorId = -1,
-                name = "value",
+                name = name,
                 value = value,
                 kind = ParameterKind.Normal,
                 parameterIndex = 0,

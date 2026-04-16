@@ -38,8 +38,8 @@ class RecompositionDataWithStateReads : RecompositionData() {
      * Expect state reads to be recorded for the last recorded recomposition. Add empty
      * observations.
      */
-    fun expectStateReads() {
-        addObservedStateReads(count)
+    fun expectStateReads(): ObservedStateReads {
+        return addObservedStateReads(count)
     }
 
     // Add an observed state read for the current recomposition:

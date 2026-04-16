@@ -248,6 +248,7 @@ internal fun GetUpdateSettingsCommand(
     reduceChildNesting: Boolean = false,
     stateReadKind: StateReadSettings.Kind = StateReadSettings.Kind.NONE,
     composableToObserve: List<Int> = emptyList(),
+    includeParameterChanges: Boolean = false,
     maxStateReads: Int = 0,
 ): Command =
     Command.newBuilder()
@@ -266,7 +267,11 @@ internal fun GetUpdateSettingsCommand(
                                         StateReadSettings.Kind.ALL ->
                                             all =
                                                 StateReadSettings.All.newBuilder()
-                                                    .apply { this.maxStateReads = maxStateReads }
+                                                    .apply {
+                                                        this.maxStateReads = maxStateReads
+                                                        this.includeParameterChanges =
+                                                            includeParameterChanges
+                                                    }
                                                     .build()
                                         StateReadSettings.Kind.BY_ID ->
                                             byId =
@@ -276,6 +281,8 @@ internal fun GetUpdateSettingsCommand(
                                                             composableToObserve
                                                         )
                                                         this.maxStateReads = maxStateReads
+                                                        this.includeParameterChanges =
+                                                            includeParameterChanges
                                                     }
                                                     .build()
                                         else -> none = StateReadSettings.None.getDefaultInstance()
