@@ -23,9 +23,11 @@ import androidx.annotation.RestrictTo
 import androidx.room3.concurrent.CloseBarrier
 import androidx.room3.migration.AutoMigrationSpec
 import androidx.room3.migration.Migration
+import androidx.room3.util.PlatformType
 import androidx.room3.util.containsCommon as containsCommon
 import androidx.room3.util.defaultQueryDispatcher
 import androidx.room3.util.findMigrationPathCommon
+import androidx.room3.util.platform
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import kotlin.coroutines.ContinuationInterceptor
@@ -51,6 +53,7 @@ import kotlinx.coroutines.cancel
  */
 public actual abstract class RoomDatabase actual constructor() {
 
+    private lateinit var configuration: DatabaseConfiguration
     private lateinit var connectionManager: RoomConnectionManager
     private lateinit var coroutineScope: CoroutineScope
 
@@ -84,6 +87,7 @@ public actual abstract class RoomDatabase actual constructor() {
      * @throws IllegalArgumentException if initialization fails.
      */
     internal actual fun init(configuration: DatabaseConfiguration) {
+        this.configuration = configuration
         val openDelegate = createOpenDelegate() as RoomOpenDelegate
         connectionManager = createConnectionManager(configuration, openDelegate)
         internalTracker = createInvalidationTracker()
@@ -136,6 +140,8 @@ public actual abstract class RoomDatabase actual constructor() {
             "This function should be implemented by Room's generated database implementation."
         )
     }
+
+    internal fun getConfiguration() = configuration
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual fun getCoroutineScope(): CoroutineScope {
@@ -596,7 +602,7 @@ public actual abstract class RoomDatabase actual constructor() {
                 } else if (connectionPoolConfiguration != null) {
                     checkNotNull(connectionPoolConfiguration)
                 } else {
-                    if (journalMode == JournalMode.TRUNCATE) {
+                    if (platform == PlatformType.WEB || journalMode == JournalMode.TRUNCATE) {
                         SingleConnection
                     } else {
                         MultipleConnection(
