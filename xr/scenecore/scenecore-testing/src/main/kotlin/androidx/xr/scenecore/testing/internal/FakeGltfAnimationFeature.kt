@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.GltfAnimationFeature
 import androidx.xr.scenecore.runtime.GltfEntity
 import java.util.concurrent.Executor
 import java.util.function.Consumer
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.GltfAnimationFeature] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeGltfAnimationFeature(
+internal class FakeGltfAnimationFeature(
     override val animationName: String? = "animation_name",
     override val animationIndex: Int = 0,
     override val animationDuration: Float = 1.0f,
@@ -51,13 +46,13 @@ public class FakeGltfAnimationFeature(
     override val animationState: Int
         get() = _animationState
 
-    public var isLooping: Boolean = false
+    var isLooping: Boolean = false
         private set
 
-    public var speed: Float = 1.0f
+    var speed: Float = 1.0f
         private set
 
-    public var seekStartTimeSeconds: Float = 0.0f
+    var seekStartTimeSeconds: Float = 0.0f
         private set
 
     override fun startAnimation(loop: Boolean, speed: Float?, seekStartTimeSeconds: Float?) {

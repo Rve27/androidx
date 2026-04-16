@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-@file:Suppress("BanConcurrentHashMap", "DEPRECATION")
+@file:Suppress("BanConcurrentHashMap")
 
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.scenecore.runtime.BoundsComponent
 import androidx.xr.scenecore.runtime.Entity
@@ -28,13 +27,11 @@ import java.util.concurrent.Executor
 import java.util.function.Consumer
 
 /** Test-only implementation of [BoundsComponent] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeBoundsComponent : FakeComponent(), BoundsComponent {
-    public var entity: GltfEntity? = null
+internal class FakeBoundsComponent : FakeComponent(), BoundsComponent {
+    var entity: GltfEntity? = null
         private set
 
-    public var listeners: ConcurrentHashMap<Consumer<BoundingBox>, Executor> =
+    var listeners: ConcurrentHashMap<Consumer<BoundingBox>, Executor> =
         ConcurrentHashMap<Consumer<BoundingBox>, Executor>()
         private set
 
@@ -66,7 +63,7 @@ public class FakeBoundsComponent : FakeComponent(), BoundsComponent {
      *
      * @param boundingBox The new [BoundingBox] to be sent in the simulated event.
      */
-    public fun onBoundsUpdate(boundingBox: BoundingBox) {
+    fun onBoundsUpdate(boundingBox: BoundingBox) {
         for (entry in listeners.entries) {
             val executor = entry.value
             val listener = entry.key

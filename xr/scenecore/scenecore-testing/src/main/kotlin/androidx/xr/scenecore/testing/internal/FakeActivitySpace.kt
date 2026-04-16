@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
@@ -35,19 +32,13 @@ import java.util.concurrent.atomic.AtomicReference
  * A test double for [androidx.xr.scenecore.runtime.ActivitySpace], designed for use in unit or
  * integration tests.
  */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeActivitySpace() : FakeSystemSpaceEntity(), ActivitySpace {
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
-    @Deprecated(
-        "unscaledGravityAlignedActivitySpace flag deprecated, scheduled for removal in future release."
-    )
-    public constructor(unscaledGravityAlignedActivitySpace: Boolean) : this()
+internal class FakeActivitySpace : FakeSystemSpaceEntity(), ActivitySpace {
 
     private val _bounds: AtomicReference<Dimensions> =
         AtomicReference<Dimensions>(
             Dimensions(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
         )
+
     private val _onBoundsChangedListeners: MutableSet<ActivitySpace.OnBoundsChangedListener> =
         Collections.synchronizedSet(
             mutableSetOf(
@@ -83,7 +74,7 @@ public class FakeActivitySpace() : FakeSystemSpaceEntity(), ActivitySpace {
      *
      * @param bounds The new bounds of the primary Activity in Meters
      */
-    public val onBoundsChangedListeners: Set<ActivitySpace.OnBoundsChangedListener>
+    val onBoundsChangedListeners: Set<ActivitySpace.OnBoundsChangedListener>
         get() = _onBoundsChangedListeners
 
     /**
@@ -94,7 +85,7 @@ public class FakeActivitySpace() : FakeSystemSpaceEntity(), ActivitySpace {
      *
      * @param bounds The new bounds to propagate to the listeners.
      */
-    public fun onBoundsChanged(bounds: Dimensions) {
+    fun onBoundsChanged(bounds: Dimensions) {
         val listeners =
             synchronized(_onBoundsChangedListeners) { _onBoundsChangedListeners.toSet() }
         listeners.forEach { it.onBoundsChanged(bounds) }
@@ -126,7 +117,7 @@ public class FakeActivitySpace() : FakeSystemSpaceEntity(), ActivitySpace {
      * [hitTestRelativeToActivityPose]. This can be modified in tests to simulate different hit test
      * outcomes.
      */
-    public var activitySpaceHitTestResult: HitTestResult =
+    var activitySpaceHitTestResult: HitTestResult =
         HitTestResult(
             hitPosition = null,
             surfaceNormal = null,

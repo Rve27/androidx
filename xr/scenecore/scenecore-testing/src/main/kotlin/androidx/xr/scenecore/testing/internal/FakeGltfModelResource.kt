@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.GltfModelResource
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.GltfModelResource] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeGltfModelResource(public val mToken: Long) : GltfModelResource {
+internal class FakeGltfModelResource(val mToken: Long) : GltfModelResource {
     /**
      * The asset name that was used to "load" this fake resource.
      *
@@ -32,7 +27,7 @@ public class FakeGltfModelResource(public val mToken: Long) : GltfModelResource 
      * [FakeRenderingRuntime.loadGltfByByteArray] method and can be inspected by tests to verify
      * that the correct asset path was used during the model loading process.
      */
-    public var assetName: String = ""
+    var assetName: String = ""
         internal set
 
     /**
@@ -42,7 +37,7 @@ public class FakeGltfModelResource(public val mToken: Long) : GltfModelResource 
      * [FakeRenderingRuntime.loadGltfByByteArray] method and can be inspected by tests to verify
      * that the correct asset data was used during the model loading process.
      */
-    public var assetData: ByteArray = ByteArray(0)
+    var assetData: ByteArray = ByteArray(0)
         internal set
 
     /**
@@ -52,6 +47,6 @@ public class FakeGltfModelResource(public val mToken: Long) : GltfModelResource 
      * [FakeRenderingRuntime.loadGltfByByteArray] method and can be inspected by tests to verify
      * that the correct asset key was used during the model loading process.
      */
-    public var assetKey: String = ""
+    var assetKey: String = ""
         internal set
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.InputEvent
 import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.PointerCaptureComponent
@@ -27,9 +24,7 @@ import androidx.xr.scenecore.runtime.PointerCaptureComponent.StateListener
 import java.util.concurrent.Executor
 
 /** Test-only implementation of [FakePointerCaptureComponent] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakePointerCaptureComponent(
+internal class FakePointerCaptureComponent(
     /**
      * The executor on which to invoke the
      * [androidx.xr.scenecore.runtime.PointerCaptureComponent.StateListener] callbacks.
@@ -55,7 +50,7 @@ public class FakePointerCaptureComponent(
      * method [FakeSceneRuntime.createPointerCaptureComponent]. Tests can inspect this value to
      * verify that the component was created with the correct configuration.
      */
-    public var inputListener: InputEventListener? = null
+    var inputListener: InputEventListener? = null
         internal set
 
     /**
@@ -69,7 +64,7 @@ public class FakePointerCaptureComponent(
      *   [androidx.xr.scenecore.runtime.PointerCaptureComponent.PointerCaptureState] to propagate to
      *   the listener.
      */
-    public fun onStateChanged(@PointerCaptureState newState: Int) {
+    fun onStateChanged(@PointerCaptureState newState: Int) {
         if (stateListener != null) {
             executor?.let { currentExecutor ->
                 currentExecutor.execute { stateListener.onStateChanged(newState) }
@@ -86,7 +81,7 @@ public class FakePointerCaptureComponent(
      *
      * @param event The new [InputEvent] to be sent in the simulated event.
      */
-    public fun onInputEvent(event: InputEvent) {
+    fun onInputEvent(event: InputEvent) {
         inputListener?.let {
             executor?.let { currentExecutor ->
                 currentExecutor.execute { inputListener!!.onInputEvent(event) }

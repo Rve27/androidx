@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.media.AudioTrack
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.PointSourceParams
@@ -27,9 +24,7 @@ import androidx.xr.scenecore.runtime.SoundFieldAttributes
 import androidx.xr.scenecore.runtime.SpatializerConstants
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
+internal class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
 
     /**
      * For test purposes only.
@@ -38,7 +33,7 @@ public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
      * [AudioTrack] via the [setPointSourceParams] method. It is also used by the fake
      * [getPointSourceParams] to return a value, allowing tests to control its behavior.
      */
-    public val pointSourceParamsMap: MutableMap<AudioTrack, PointSourceParams?> = mutableMapOf()
+    val pointSourceParamsMap: MutableMap<AudioTrack, PointSourceParams?> = mutableMapOf()
 
     /**
      * For test purposes only.
@@ -46,7 +41,7 @@ public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
      * This map allows tests to inspect the [Entity] that were set on a specific [AudioTrack] via
      * the [setPointSourceParams] method.
      */
-    public val entityMap: MutableMap<AudioTrack, Entity?> = mutableMapOf()
+    val entityMap: MutableMap<AudioTrack, Entity?> = mutableMapOf()
 
     /**
      * For test purposes only.
@@ -56,7 +51,7 @@ public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
      * verifying that the correct parameters were passed during the audio track configuration
      * process.
      */
-    public val pointSourceParamsBuilderMap: MutableMap<AudioTrack.Builder, PointSourceParams?> =
+    val pointSourceParamsBuilderMap: MutableMap<AudioTrack.Builder, PointSourceParams?> =
         mutableMapOf()
 
     /**
@@ -67,7 +62,7 @@ public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
      * verifying that the correct parameters were passed during the audio track configuration
      * process.
      */
-    public val entityBuilderMap: MutableMap<AudioTrack.Builder, Entity?> = mutableMapOf()
+    val entityBuilderMap: MutableMap<AudioTrack.Builder, Entity?> = mutableMapOf()
 
     override fun getPointSourceParams(track: AudioTrack): PointSourceParams? {
         return pointSourceParamsMap[track]
@@ -84,8 +79,7 @@ public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
      * verifying that the correct attributes were passed during the audio track configuration
      * process.
      */
-    public val soundFieldAttributesBuilderMap:
-        MutableMap<AudioTrack.Builder, SoundFieldAttributes?> =
+    val soundFieldAttributesBuilderMap: MutableMap<AudioTrack.Builder, SoundFieldAttributes?> =
         mutableMapOf()
 
     override fun getSoundFieldAttributes(track: AudioTrack): SoundFieldAttributes? {
@@ -114,7 +108,7 @@ public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
      * If an [AudioTrack] is not found as a key in this map, [getSpatialSourceType] will default to
      * returning [androidx.xr.scenecore.runtime.SpatializerConstants.Companion.SOURCE_TYPE_BYPASS].
      */
-    public var spatialSourceTypeMap: MutableMap<AudioTrack, Int>
+    var spatialSourceTypeMap: MutableMap<AudioTrack, Int>
         get() = _spatialSourceTypeMap
         set(newMap) {
             if (
@@ -144,7 +138,7 @@ public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
      * audio track extension layer. It can be set to any subclass of [Throwable], including specific
      * exceptions like [IllegalStateException] or even [Error]s to test edge cases.
      */
-    public var fakeExtensionException: Throwable? = null
+    var fakeExtensionException: Throwable? = null
 
     override fun setPointSourceParams(
         track: AudioTrack,
@@ -191,7 +185,7 @@ public class FakeAudioTrackExtensionsWrapper : AudioTrackExtensionsWrapper {
      * @param track The [AudioTrack] instance whose sound field attributes are to be set.
      * @param attributes The [SoundFieldAttributes] to associate with the `track`.
      */
-    public fun setSoundFieldAttributes(track: AudioTrack, attributes: SoundFieldAttributes) {
+    fun setSoundFieldAttributes(track: AudioTrack, attributes: SoundFieldAttributes) {
         soundFieldAttributesMap[track] = attributes
     }
 }

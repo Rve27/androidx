@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.graphics.ImageFormat
 import android.media.ImageReader
 import android.view.Surface
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.FieldOfView
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
@@ -42,9 +39,7 @@ import androidx.xr.scenecore.runtime.TextureResource
  * can render stereoscopic content into the Surface and specify how it is routed to the User's eyes
  * for stereo viewing using the [stereoMode] property.
  */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
+internal class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
     FakeEntity(), SurfaceEntity {
     private var _stereoMode = SurfaceEntity.StereoMode.SIDE_BY_SIDE
 
@@ -149,12 +144,12 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
      *
      * @param surface The new [Surface] to associate with this entity.
      */
-    public fun setSurface(surface: Surface) {
+    fun setSurface(surface: Surface) {
         _surface = surface
     }
 
     /** For test purposes only. Represents the result of [setPrimaryAlphaMaskTexture]. */
-    public var primaryAlphaMask: TextureResource? = null
+    var primaryAlphaMask: TextureResource? = null
         private set
 
     /**
@@ -169,7 +164,7 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
     }
 
     /** For test purposes only. Represents the result of [setAuxiliaryAlphaMaskTexture] */
-    public var auxiliaryAlphaMask: TextureResource? = null
+    var auxiliaryAlphaMask: TextureResource? = null
         private set
 
     /**
@@ -199,7 +194,7 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
      * Sets the [androidx.xr.scenecore.runtime.PerceivedResolutionResult] that will be returned by
      * [getPerceivedResolution].
      */
-    public fun setPerceivedResolution(perceivedResolution: PerceivedResolutionResult) {
+    fun setPerceivedResolution(perceivedResolution: PerceivedResolutionResult) {
         this.perceivedResolutionResult = perceivedResolution
     }
 
@@ -234,14 +229,14 @@ public class FakeSurfaceEntity(private val feature: SurfaceFeature? = null) :
     }
 
     /** For test purposes only. Specifies the value returned by [contentColorMetadataSet] */
-    public var mContentColorMetadataSet: Boolean = false
+    var mContentColorMetadataSet: Boolean = false
 
     /**
      * Indicates whether explicit color information has been set for the surface content. If
      * `false`, the runtime should signal the backend to use its best effort color correction and
-     * tonemapping. If `true`, the runtime should inform the backend to use the values specified in
+     * tone mapping. If `true`, the runtime should inform the backend to use the values specified in
      * [colorSpace], [colorTransfer], [colorRange], and [maxContentLightLevel] for color correction
-     * and tonemapping of the surface content.
+     * and tone mapping of the surface content.
      *
      * This property is typically managed by the `setContentColorMetadata` and
      * `resetContentColorMetadata` methods.

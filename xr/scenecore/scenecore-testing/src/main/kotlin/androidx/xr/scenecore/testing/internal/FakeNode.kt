@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.NodeHolder
 
 /** Test-only interface for XrExtensions Node. */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface FakeNode
+internal interface FakeNode
 
 /** Test-only interface for Impress SubspaceNode. */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface FakeSubspaceNode {
-    public val nodeHolder: NodeHolder<*>
+internal interface FakeSubspaceNode {
+    val nodeHolder: NodeHolder<*>
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.SubspaceNodeEntity
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.SubspaceNodeEntity]. */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSubspaceNodeEntity(
+internal class FakeSubspaceNodeEntity(
     /**
      * The size of the [androidx.xr.scenecore.runtime.SubspaceNodeEntity] in meters, in unscaled
      * local space.

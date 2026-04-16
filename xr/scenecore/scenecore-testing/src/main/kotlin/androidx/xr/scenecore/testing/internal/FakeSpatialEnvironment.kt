@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.SpatialEnvironment
 import androidx.xr.scenecore.runtime.SpatialEnvironment.Companion.NO_PASSTHROUGH_OPACITY_PREFERENCE
 import androidx.xr.scenecore.runtime.SpatialEnvironmentExt
@@ -33,9 +30,7 @@ import java.util.function.Consumer
  * visibility by enabling or disabling passthrough. The skybox and geometry will be remembered
  * across passthrough mode changes.
  */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSpatialEnvironment : SpatialEnvironment, SpatialEnvironmentExt {
+internal class FakeSpatialEnvironment : SpatialEnvironment, SpatialEnvironmentExt {
     private var _currentPassthroughOpacity: Float = 0.0f
     private var _isPreferredSpatialEnvironmentActive: Boolean = false
     private var renderingFeature: SpatialEnvironmentFeature? = null
@@ -52,7 +47,7 @@ public class FakeSpatialEnvironment : SpatialEnvironment, SpatialEnvironmentExt 
      * Note that because the `Executor` is used as the key, only one listener can be associated with
      * each unique `Executor` instance.
      */
-    public val passthroughOpacityChangedListenerMap: MutableMap<Consumer<Float>, Executor> =
+    val passthroughOpacityChangedListenerMap: MutableMap<Consumer<Float>, Executor> =
         mutableMapOf(
             Consumer<Float> { opacity -> _currentPassthroughOpacity = opacity } to
                 Executor { command -> command.run() }
@@ -70,7 +65,7 @@ public class FakeSpatialEnvironment : SpatialEnvironment, SpatialEnvironmentExt 
      * <p>Note that because the `Executor` is used as the key, only one listener can be associated
      * with each unique `Executor` instance.
      */
-    public val spatialEnvironmentChangedListenerMap: MutableMap<Consumer<Boolean>, Executor> =
+    val spatialEnvironmentChangedListenerMap: MutableMap<Consumer<Boolean>, Executor> =
         mutableMapOf(
             Consumer<Boolean> { active -> _isPreferredSpatialEnvironmentActive = active } to
                 Executor { command -> command.run() }

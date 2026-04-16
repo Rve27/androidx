@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.Component
@@ -40,9 +37,7 @@ import java.util.concurrent.Executor
  *
  * @see androidx.xr.scenecore.runtime.Entity
  */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class FakeEntity(public val name: String = "") : FakeScenePose(), Entity {
+internal open class FakeEntity(val name: String = "") : FakeScenePose(), Entity {
 
     private val _children = mutableSetOf<Entity>()
 
@@ -115,7 +110,7 @@ public open class FakeEntity(public val name: String = "") : FakeScenePose(), En
             )
         }
 
-        var parentPose = this.parent?.getPose(relativeTo)
+        val parentPose = this.parent?.getPose(relativeTo)
         return parentPose?.compose(pose) ?: pose
     }
 
@@ -211,7 +206,7 @@ public open class FakeEntity(public val name: String = "") : FakeScenePose(), En
      *
      * The map of input event listeners to their executors.
      */
-    public val inputEventListenerMap: MutableMap<InputEventListener, Executor> =
+    val inputEventListenerMap: MutableMap<InputEventListener, Executor> =
         Collections.synchronizedMap(mutableMapOf())
 
     /**
@@ -267,7 +262,7 @@ public open class FakeEntity(public val name: String = "") : FakeScenePose(), En
      * @param type The type of Component to retrieve.
      * @return List<Component> of the given type attached to this Entity.
      */
-    public override fun <T : Component> getComponentsOfType(type: Class<out T>): List<T> {
+    override fun <T : Component> getComponentsOfType(type: Class<out T>): List<T> {
         return componentList.filterIsInstance(type)
     }
 

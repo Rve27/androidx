@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.NodeHolder
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Matrix3
@@ -50,9 +47,7 @@ import java.nio.ByteBuffer
  *   [androidx.xr.scenecore.runtime.SceneRuntime] instance, which must also implement
  *   [androidx.xr.scenecore.runtime.RenderingEntityFactory].
  */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeRenderingRuntime(
+internal class FakeRenderingRuntime(
     private val sceneRuntime: SceneRuntime,
     private val entityFactory: RenderingEntityFactory = sceneRuntime as RenderingEntityFactory,
 ) : RenderingRuntime {
@@ -130,26 +125,25 @@ public class FakeRenderingRuntime(
      * water material within the test environment.
      *
      * <p>Instances of this class are created by [createWaterMaterial] and can be accessed for
-     * verification via the [createdWaterMaterials] list. Tests can inspect the public properties of
-     * this class (e.g., [reflectionMap], [normalTiling]) to confirm that the code under test
-     * correctly configures the material's attributes.
+     * verification via the [createdWaterMaterials] list. Tests can inspect the properties of this
+     * class (e.g., [reflectionMap], [normalTiling]) to confirm that the code under test correctly
+     * configures the material's attributes.
      *
      * @param isAlphaMapVersion The value provided during creation, indicating which version of the
      *   water material was requested.
      */
-    @Deprecated("Use SceneCoreTestRule instead.")
-    public class FakeWaterMaterial(public val isAlphaMapVersion: Boolean) : MaterialResource {
-        public var reflectionMap: TextureResource? = null
-        public var reflectionMapSampler: TextureSampler? = null
-        public var normalMap: TextureResource? = null
-        public var normalMapSampler: TextureSampler? = null
-        public var normalTiling: Float = 0.0f
-        public var normalSpeed: Float = 0.0f
-        public var alphaStepMultiplier: Float = 0.0f
-        public var alphaMap: TextureResource? = null
-        public var alphaMapSampler: TextureSampler? = null
-        public var normalZ: Float = 0.0f
-        public var normalBoundary: Float = 0.0f
+    class FakeWaterMaterial(val isAlphaMapVersion: Boolean) : MaterialResource {
+        var reflectionMap: TextureResource? = null
+        var reflectionMapSampler: TextureSampler? = null
+        var normalMap: TextureResource? = null
+        var normalMapSampler: TextureSampler? = null
+        var normalTiling: Float = 0.0f
+        var normalSpeed: Float = 0.0f
+        var alphaStepMultiplier: Float = 0.0f
+        var alphaMap: TextureResource? = null
+        var alphaMapSampler: TextureSampler? = null
+        var normalZ: Float = 0.0f
+        var normalBoundary: Float = 0.0f
     }
 
     /**
@@ -159,8 +153,7 @@ public class FakeRenderingRuntime(
      * inspect this list to verify the number of materials created and to access their properties
      * for further assertions.
      */
-    public val createdWaterMaterials: MutableList<FakeWaterMaterial> =
-        mutableListOf<FakeWaterMaterial>()
+    val createdWaterMaterials: MutableList<FakeWaterMaterial> = mutableListOf<FakeWaterMaterial>()
 
     /**
      * For test purposes only.
@@ -169,61 +162,59 @@ public class FakeRenderingRuntime(
      * Khronos PBR material within the test environment.
      *
      * <p>Instances of this class are created by [createKhronosPbrMaterial]. Tests can inspect the
-     * public properties of this class (e.g., [baseColorTexture], [metallicFactor]) to confirm that
-     * the code under test correctly configures the material's attributes according to the provided
+     * properties of this class (e.g., [baseColorTexture], [metallicFactor]) to confirm that the
+     * code under test correctly configures the material's attributes according to the provided
      * specification.
      *
      * @param spec The [androidx.xr.scenecore.runtime.KhronosPbrMaterialSpec] provided during
      *   creation, which defines the initial configuration of the material.
      */
-    @Deprecated("Use SceneCoreTestRule instead.")
-    public class FakeKhronosPbrMaterial(public val spec: KhronosPbrMaterialSpec) :
-        MaterialResource {
-        public var baseColorTexture: TextureResource? = null
-        public var baseColorTextureSampler: TextureSampler? = null
-        public var baseColorUvTransform: Matrix3? = null
-        public var baseColorFactors: Vector4? = null
-        public var metallicRoughnessTexture: TextureResource? = null
-        public var metallicRoughnessTextureSampler: TextureSampler? = null
-        public var metallicRoughnessUvTransform: Matrix3? = null
-        public var metallicFactor: Float? = null
-        public var roughnessFactor: Float? = null
-        public var normalTexture: TextureResource? = null
-        public var normalTextureSampler: TextureSampler? = null
-        public var normalUvTransform: Matrix3? = null
-        public var normalFactor: Float? = null
-        public var ambientOcclusionTexture: TextureResource? = null
-        public var ambientOcclusionTextureSampler: TextureSampler? = null
-        public var ambientOcclusionUvTransform: Matrix3? = null
-        public var ambientOcclusionFactor: Float? = null
-        public var emissiveTexture: TextureResource? = null
-        public var emissiveTextureSampler: TextureSampler? = null
-        public var emissiveUvTransform: Matrix3? = null
-        public var emissiveFactors: Vector3? = null
-        public var clearcoatTexture: TextureResource? = null
-        public var clearcoatTextureSampler: TextureSampler? = null
-        public var clearcoatNormalTexture: TextureResource? = null
-        public var clearcoatNormalTextureSampler: TextureSampler? = null
-        public var clearcoatRoughnessTexture: TextureResource? = null
-        public var clearcoatRoughnessTextureSampler: TextureSampler? = null
-        public var clearcoatIntensity: Float? = null
-        public var clearcoatRoughness: Float? = null
-        public var clearcoatNormalFactor: Float? = null
-        public var sheenColorTexture: TextureResource? = null
-        public var sheenColorTextureSampler: TextureSampler? = null
-        public var sheenColorFactors: Vector3? = null
-        public var sheenRoughnessTexture: TextureResource? = null
-        public var sheenRoughnessTextureSampler: TextureSampler? = null
-        public var sheenRoughnessFactor: Float? = null
-        public var transmissionTexture: TextureResource? = null
-        public var transmissionTextureSampler: TextureSampler? = null
-        public var transmissionUvTransform: Matrix3? = null
-        public var transmissionFactor: Float? = null
-        public var indexOfRefraction: Float? = null
-        public var alphaCutoff: Float? = null
+    class FakeKhronosPbrMaterial(val spec: KhronosPbrMaterialSpec) : MaterialResource {
+        var baseColorTexture: TextureResource? = null
+        var baseColorTextureSampler: TextureSampler? = null
+        var baseColorUvTransform: Matrix3? = null
+        var baseColorFactors: Vector4? = null
+        var metallicRoughnessTexture: TextureResource? = null
+        var metallicRoughnessTextureSampler: TextureSampler? = null
+        var metallicRoughnessUvTransform: Matrix3? = null
+        var metallicFactor: Float? = null
+        var roughnessFactor: Float? = null
+        var normalTexture: TextureResource? = null
+        var normalTextureSampler: TextureSampler? = null
+        var normalUvTransform: Matrix3? = null
+        var normalFactor: Float? = null
+        var ambientOcclusionTexture: TextureResource? = null
+        var ambientOcclusionTextureSampler: TextureSampler? = null
+        var ambientOcclusionUvTransform: Matrix3? = null
+        var ambientOcclusionFactor: Float? = null
+        var emissiveTexture: TextureResource? = null
+        var emissiveTextureSampler: TextureSampler? = null
+        var emissiveUvTransform: Matrix3? = null
+        var emissiveFactors: Vector3? = null
+        var clearcoatTexture: TextureResource? = null
+        var clearcoatTextureSampler: TextureSampler? = null
+        var clearcoatNormalTexture: TextureResource? = null
+        var clearcoatNormalTextureSampler: TextureSampler? = null
+        var clearcoatRoughnessTexture: TextureResource? = null
+        var clearcoatRoughnessTextureSampler: TextureSampler? = null
+        var clearcoatIntensity: Float? = null
+        var clearcoatRoughness: Float? = null
+        var clearcoatNormalFactor: Float? = null
+        var sheenColorTexture: TextureResource? = null
+        var sheenColorTextureSampler: TextureSampler? = null
+        var sheenColorFactors: Vector3? = null
+        var sheenRoughnessTexture: TextureResource? = null
+        var sheenRoughnessTextureSampler: TextureSampler? = null
+        var sheenRoughnessFactor: Float? = null
+        var transmissionTexture: TextureResource? = null
+        var transmissionTextureSampler: TextureSampler? = null
+        var transmissionUvTransform: Matrix3? = null
+        var transmissionFactor: Float? = null
+        var indexOfRefraction: Float? = null
+        var alphaCutoff: Float? = null
     }
 
-    public val createdKhronosPbrMaterials: MutableList<FakeKhronosPbrMaterial> =
+    val createdKhronosPbrMaterials: MutableList<FakeKhronosPbrMaterial> =
         mutableListOf<FakeKhronosPbrMaterial>()
 
     override suspend fun createWaterMaterial(isAlphaMapVersion: Boolean): MaterialResource {
@@ -596,7 +587,7 @@ public class FakeRenderingRuntime(
     }
 
     /* Tracks the current state of the adapter according to where it is in its lifecycle. */
-    public enum class State {
+    enum class State {
         CREATED,
         STARTED,
         PAUSED,
@@ -611,7 +602,7 @@ public class FakeRenderingRuntime(
      * When [pause] is called, it transitions to [State.PAUSED]. When [destroy] is called, it
      * transitions to [State.DESTROYED].
      */
-    public val state: Enum<State>
+    val state: Enum<State>
         get() = _state
 
     override fun resume() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.media.SoundPool
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.PointSourceParams
 import androidx.xr.scenecore.runtime.SoundFieldAttributes
@@ -27,9 +24,7 @@ import androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper
 import androidx.xr.scenecore.runtime.SpatializerConstants
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
+internal class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
 
     private var playAsPointSourceResult: Int = 0
 
@@ -43,7 +38,7 @@ public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
      *   successful playback, while `0` simulates a failure (e.g., because no more streams are
      *   available).
      */
-    public fun setPlayAsPointSourceResult(result: Int) {
+    fun setPlayAsPointSourceResult(result: Int) {
         playAsPointSourceResult = result
     }
 
@@ -84,7 +79,7 @@ public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
      *   successful playback, while `0` simulates a failure (e.g., because no more streams are
      *   available).
      */
-    public fun setPlayAsSoundFieldResult(result: Int) {
+    fun setPlayAsSoundFieldResult(result: Int) {
         playAsSoundFieldResult = result
     }
 
@@ -119,7 +114,7 @@ public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
      * [androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper.getSpatialSourceType] like the
      * setSourceType does in scenecore unit tests.
      */
-    @SpatializerConstants.SourceType public var sourceType: Int = 0
+    @SpatializerConstants.SourceType var sourceType: Int = 0
 
     /**
      * Returns the spatial source type of the sound.

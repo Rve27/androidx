@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.PointSourceParams
 import androidx.xr.scenecore.runtime.SoundEffect
@@ -26,22 +23,20 @@ import androidx.xr.scenecore.runtime.SoundEffectPoolComponent
 import androidx.xr.scenecore.runtime.Stream
 
 /** Test-only implementation of [SoundEffectPoolComponent]. */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSoundEffectPoolComponent : FakeComponent(), SoundEffectPoolComponent {
-    public var lastPlayedSoundEffect: SoundEffect? = null
-    public var lastPlayedParams: PointSourceParams? = null
-    public var lastPlayedEntity: Entity? = null
-    public var lastPlayedVolume: Float? = null
-    public var lastPlayedPriority: Int? = null
-    public var lastPlayedIsLooping: Boolean? = null
-    public var lastPausedStream: Stream? = null
-    public var lastResumedStream: Stream? = null
-    public var lastStoppedStream: Stream? = null
-    public var lastSetVolumeStream: Stream? = null
-    public var lastSetVolumeVolume: Float? = null
-    public var lastSetLoopingStream: Stream? = null
-    public var lastSetLoopingIsLooping: Boolean? = null
+internal class FakeSoundEffectPoolComponent : FakeComponent(), SoundEffectPoolComponent {
+    var lastPlayedSoundEffect: SoundEffect? = null
+    var lastPlayedParams: PointSourceParams? = null
+    var lastPlayedEntity: Entity? = null
+    var lastPlayedVolume: Float? = null
+    var lastPlayedPriority: Int? = null
+    var lastPlayedIsLooping: Boolean? = null
+    var lastPausedStream: Stream? = null
+    var lastResumedStream: Stream? = null
+    var lastStoppedStream: Stream? = null
+    var lastSetVolumeStream: Stream? = null
+    var lastSetVolumeVolume: Float? = null
+    var lastSetLoopingStream: Stream? = null
+    var lastSetLoopingIsLooping: Boolean? = null
 
     override fun play(
         soundEffect: SoundEffect,

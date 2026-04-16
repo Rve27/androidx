@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.GltfAnimationFeature
@@ -29,9 +26,7 @@ import java.util.concurrent.Executor
 import java.util.function.Consumer
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.GltfEntity] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class FakeGltfEntity(
+internal open class FakeGltfEntity(
     private val feature: GltfFeature? = null,
     private val executor: Executor? = null,
 ) : FakeEntity(), GltfEntity {
@@ -67,7 +62,7 @@ public open class FakeGltfEntity(
      *
      * @param animation The animation to add.
      */
-    public fun addAnimation(animation: GltfAnimationFeature) {
+    fun addAnimation(animation: GltfAnimationFeature) {
         _animations.add(animation)
     }
 }

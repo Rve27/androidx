@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.content.Context
 import android.content.res.AssetFileDescriptor
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.SoundEffect
 import androidx.xr.scenecore.runtime.SoundEffectPool
 import java.util.concurrent.Executor
 
 /** Test-only implementation of [SoundEffectPool]. */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSoundEffectPool : SoundEffectPool {
-    public var loadedResId: Int? = null
-    public var loadedAfd: AssetFileDescriptor? = null
-    public var unloadedSoundEffect: SoundEffect? = null
-    public var released: Boolean = false
-    public var loadCompleteListener: SoundEffectPool.LoadCompleteListener? = null
+internal class FakeSoundEffectPool : SoundEffectPool {
+    var loadedResId: Int? = null
+    var loadedAfd: AssetFileDescriptor? = null
+    var unloadedSoundEffect: SoundEffect? = null
+    var released: Boolean = false
+    var loadCompleteListener: SoundEffectPool.LoadCompleteListener? = null
 
     override fun setOnLoadCompleteListener(
         executor: Executor,
@@ -65,7 +60,7 @@ public class FakeSoundEffectPool : SoundEffectPool {
         released = true
     }
 
-    public fun notifyLoadComplete(soundEffect: SoundEffect, success: Boolean) {
+    fun notifyLoadComplete(soundEffect: SoundEffect, success: Boolean) {
         loadCompleteListener?.onLoadComplete(soundEffect, success)
     }
 }

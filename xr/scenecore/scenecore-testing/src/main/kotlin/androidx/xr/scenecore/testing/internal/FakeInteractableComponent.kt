@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.InputEvent
 import androidx.xr.scenecore.runtime.InputEventListener
 import androidx.xr.scenecore.runtime.InteractableComponent
 import java.util.concurrent.Executor
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.InteractableComponent] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeInteractableComponent() : FakeComponent(), InteractableComponent {
+internal class FakeInteractableComponent : FakeComponent(), InteractableComponent {
     internal val inputEventListenersMap: MutableMap<InputEventListener, Executor> = mutableMapOf()
 
     /**
@@ -39,7 +34,7 @@ public class FakeInteractableComponent() : FakeComponent(), InteractableComponen
      *
      * @param event The new [InputEvent] to be sent in the simulated event.
      */
-    public fun onInputEvent(event: InputEvent) {
+    fun onInputEvent(event: InputEvent) {
         for (entry in inputEventListenersMap.entries) {
             val executor = entry.value
             val listener = entry.key

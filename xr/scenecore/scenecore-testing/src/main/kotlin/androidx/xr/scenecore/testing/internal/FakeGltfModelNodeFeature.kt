@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.GltfModelNodeFeature
@@ -27,9 +24,7 @@ import androidx.xr.scenecore.runtime.MaterialResource
 /** Test-only implementation of [androidx.xr.scenecore.runtime.GltfModelNodeFeature] */
 // TODO(b/481429599): Audit usage of LIBRARY_GROUP_PREFIX in SceneCore and migrate it over to
 // LIBRARY_GROUP.
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeGltfModelNodeFeature(override val name: String? = "test_node") :
+internal class FakeGltfModelNodeFeature(override val name: String? = "test_node") :
     GltfModelNodeFeature {
 
     override var localPose: Pose = Pose.Identity
@@ -37,7 +32,7 @@ public class FakeGltfModelNodeFeature(override val name: String? = "test_node") 
     override var modelPose: Pose = Pose.Identity
     override var modelScale: Vector3 = Vector3(1f, 1f, 1f)
 
-    public val materialOverrides: MutableMap<Int, MaterialResource> = mutableMapOf()
+    val materialOverrides: MutableMap<Int, MaterialResource> = mutableMapOf()
 
     override fun setMaterialOverride(material: MaterialResource, primitiveIndex: Int) {
         materialOverrides[primitiveIndex] = material

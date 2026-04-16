@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.Dimensions
 import androidx.xr.scenecore.runtime.InputEvent
 import androidx.xr.scenecore.runtime.ResizableComponent
@@ -28,9 +25,7 @@ import java.util.concurrent.Executor
 import kotlin.collections.iterator
 
 /** Fake implementation of [androidx.xr.scenecore.runtime.ResizableComponent] for testing. */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeResizableComponent(
+internal class FakeResizableComponent(
     override var size: Dimensions = Dimensions(2.0f, 2.0f, 2.0f),
     override var minimumSize: Dimensions = Dimensions(1.0f, 1.0f, 1.0f),
     override var maximumSize: Dimensions = Dimensions(2.0f, 2.0f, 2.0f),
@@ -49,7 +44,7 @@ public class FakeResizableComponent(
      *
      * <p>Map of resize event listeners to their executors.
      */
-    public val resizeEventListenersMap: MutableMap<ResizeEventListener, Executor> = mutableMapOf()
+    val resizeEventListenersMap: MutableMap<ResizeEventListener, Executor> = mutableMapOf()
 
     /**
      * Adds the listener to the set of listeners that are invoked through the resize operation, such
@@ -91,7 +86,7 @@ public class FakeResizableComponent(
      *
      * @param event The new [InputEvent] to be sent in the simulated event.
      */
-    public fun onResizeEvent(event: ResizeEvent) {
+    fun onResizeEvent(event: ResizeEvent) {
         for ((listener, executor) in resizeEventListenersMap) {
             executor.execute { listener.onResizeEvent(event) }
         }

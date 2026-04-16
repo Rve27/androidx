@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.ActivityPanelEntity
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.ActivityPanelEntity] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeActivityPanelEntity(name: String = "") :
+internal class FakeActivityPanelEntity(name: String = "") :
     FakePanelEntity(name = name), ActivityPanelEntity {
 
     /** The intent that was last used to launch an activity. */
-    public var launchIntent: Intent = Intent()
+    var launchIntent: Intent = Intent()
         private set
 
     /** The bundle that was last used to launch an activity. */
-    public var launchBundle: Bundle? = null
+    var launchBundle: Bundle? = null
         private set
 
     /**
@@ -50,7 +45,7 @@ public class FakeActivityPanelEntity(name: String = "") :
     }
 
     /** The activity that was last moved into the panel. */
-    public var movedActivity: Activity = Activity()
+    var movedActivity: Activity = Activity()
         private set
 
     /**

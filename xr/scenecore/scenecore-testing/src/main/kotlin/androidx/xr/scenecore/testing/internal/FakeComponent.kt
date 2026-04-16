@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.Component
 import androidx.xr.scenecore.runtime.Entity
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.Component] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class FakeComponent : Component {
+internal open class FakeComponent : Component {
     /**
      * For test purposes only.
      *
@@ -33,7 +28,7 @@ public open class FakeComponent : Component {
      * to an entity or not. In tests, you can change this variable's value and verify that your code
      * responds correctly to [onAttach].
      */
-    public var canBeAttached: Boolean = true
+    var canBeAttached: Boolean = true
 
     /**
      * Lifecycle event, called when component is attached to an Entity.

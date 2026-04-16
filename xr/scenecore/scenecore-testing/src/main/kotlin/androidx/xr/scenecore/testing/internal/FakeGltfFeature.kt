@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.NodeHolder
 import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.FloatSize3d
@@ -31,9 +28,7 @@ import java.util.concurrent.Executor
 import java.util.function.Consumer
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.GltfFeature] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeGltfFeature(nodeHolder: NodeHolder<*>) :
+internal class FakeGltfFeature(nodeHolder: NodeHolder<*>) :
     FakeBaseRenderingFeature(nodeHolder), GltfFeature {
     private var mockGltfFeature: GltfFeature? = null
 
@@ -84,11 +79,8 @@ public class FakeGltfFeature(nodeHolder: NodeHolder<*>) :
         mockGltfFeature?.dispose()
     }
 
-    public companion object {
-        public fun createWithMockFeature(
-            feature: GltfFeature,
-            nodeHolder: NodeHolder<*>,
-        ): GltfFeature {
+    companion object {
+        fun createWithMockFeature(feature: GltfFeature, nodeHolder: NodeHolder<*>): GltfFeature {
             val fakeGltfFeature = FakeGltfFeature(nodeHolder)
             fakeGltfFeature.mockGltfFeature = feature
             return fakeGltfFeature

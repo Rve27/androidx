@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.app.Activity
 import android.content.Context
@@ -24,7 +22,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.NodeHolder
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.runtime.ActivityPanelEntity
@@ -69,13 +66,11 @@ import java.util.function.Consumer
  *
  * @param executor This used to input [executor] for tests.
  */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSceneRuntime(public val executor: Executor? = null) :
+internal class FakeSceneRuntime(val executor: Executor? = null) :
     SceneRuntime, RenderingEntityFactory {
 
     /* Tracks the current state of the adapter according to where it is in its lifecycle. */
-    public enum class State {
+    enum class State {
         CREATED,
         STARTED,
         PAUSED,
@@ -85,7 +80,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
     private var _state: Enum<State> = State.CREATED
 
     /** The last [FakeMovableComponent] created or injected via [createMovableComponent]. */
-    public var lastMovableComponent: FakeMovableComponent? = null
+    var lastMovableComponent: FakeMovableComponent? = null
         private set
 
     /**
@@ -94,7 +89,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
      * called. When stopRenderer is called, it transitions to [State.PAUSED]. When dispose is
      * called, it transitions to [State.DESTROYED].
      */
-    public val state: Enum<State>
+    val state: Enum<State>
         get() = _state
 
     override var spatialCapabilities: SpatialCapabilities =
@@ -133,7 +128,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
         return FakePerceptionSpaceScenePose()
     }
 
-    public var deviceDpPerMeter: Float = DEFAULT_DP_PER_METER
+    var deviceDpPerMeter: Float = DEFAULT_DP_PER_METER
 
     override fun createPanelEntity(
         context: Context,
@@ -254,7 +249,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
      * [removeSpatialCapabilitiesChangedListener]. Tests can inspect its contents to verify that the
      * correct listeners are registered with their intended executors.
      */
-    public val spatialCapabilitiesChangedMap: Map<Consumer<SpatialCapabilities>, Executor>
+    val spatialCapabilitiesChangedMap: Map<Consumer<SpatialCapabilities>, Executor>
         get() = _spatialCapabilitiesChangedMap
 
     private val _spatialCapabilitiesChangedMap:
@@ -283,7 +278,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
      * [clearSpatialVisibilityChangedListener]. Tests can inspect its contents to verify that the
      * correct listener is registered or that it has been successfully cleared.
      */
-    public val spatialVisibilityChangedMap: Map<Consumer<SpatialVisibility>, Executor>
+    val spatialVisibilityChangedMap: Map<Consumer<SpatialVisibility>, Executor>
         get() = _spatialVisibilityChangedMap
 
     private val _spatialVisibilityChangedMap: MutableMap<Consumer<SpatialVisibility>, Executor> =
@@ -311,7 +306,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
      * [removePerceivedResolutionChangedListener]. Tests can inspect its contents to verify that the
      * correct listeners are registered or that they have been successfully removed.
      */
-    public val perceivedResolutionChangedMap: Map<Consumer<PixelDimensions>, Executor>
+    val perceivedResolutionChangedMap: Map<Consumer<PixelDimensions>, Executor>
         get() = _perceivedResolutionChangedMap
 
     private val _perceivedResolutionChangedMap: MutableMap<Consumer<PixelDimensions>, Executor> =
@@ -334,7 +329,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
      * Stores the [Activity] that was last provided to the [setPreferredAspectRatio] method. Tests
      * can inspect this property to verify the correct activity was used.
      */
-    public var lastSetPreferredAspectRatioActivity: Activity? = null
+    var lastSetPreferredAspectRatioActivity: Activity? = null
 
     /**
      * For test purposes only.
@@ -342,7 +337,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
      * Stores the ratio that was last provided to the [setPreferredAspectRatio] method. Tests can
      * inspect this property to verify the correct ratio was set.
      */
-    public var lastSetPreferredAspectRatioRatio: Float = -1f
+    var lastSetPreferredAspectRatioRatio: Float = -1f
 
     override fun setPreferredAspectRatio(activity: Activity, preferredRatio: Float) {
         lastSetPreferredAspectRatioActivity = activity
@@ -366,7 +361,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
     override fun setFullSpaceModeWithEnvironmentInherited(bundle: Bundle): Bundle = bundle
 
     /** This value is used to verify the result of [enablePanelDepthTest] in tests. */
-    public var enabledPanelDepthTest: Boolean = false
+    var enabledPanelDepthTest: Boolean = false
         internal set
 
     override fun enablePanelDepthTest(enabled: Boolean) {
@@ -427,13 +422,13 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
     override fun createBoundsComponent(): BoundsComponent = FakeBoundsComponent()
 
     // Assuming the subspaceNodeHolder contains a valid FakeSubspaceNode and a valid FakeNode.
-    public fun createSubspaceNodeEntity(node: FakeNode, size: Dimensions): SubspaceNodeEntity =
+    fun createSubspaceNodeEntity(node: FakeNode, size: Dimensions): SubspaceNodeEntity =
         FakeSubspaceNodeEntity()
 
-    public companion object {
+    companion object {
         internal const val DEFAULT_DP_PER_METER: Float = 1151.856f
 
-        public const val ALL_SPATIAL_CAPABILITIES: Int =
+        const val ALL_SPATIAL_CAPABILITIES: Int =
             SpatialCapabilities.SPATIAL_CAPABILITY_UI or
                 SpatialCapabilities.SPATIAL_CAPABILITY_3D_CONTENT or
                 SpatialCapabilities.SPATIAL_CAPABILITY_SPATIAL_AUDIO or
@@ -456,7 +451,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
      * [removeOnBoundaryConsentChangedListener]. Tests can inspect its contents to verify that the
      * correct listeners are registered with their intended executors.
      */
-    public val boundaryConsentChangedMap: Map<Consumer<Boolean>, Executor>
+    val boundaryConsentChangedMap: Map<Consumer<Boolean>, Executor>
         get() = _boundaryConsentChangedMap
 
     private val _boundaryConsentChangedMap: MutableMap<Consumer<Boolean>, Executor> = mutableMapOf()
@@ -504,14 +499,13 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
      *
      * @param boundaryConsent The new value for boundary consent.
      */
-    public fun onBoundaryConsentChanged(boundaryConsent: Boolean) {
+    fun onBoundaryConsentChanged(boundaryConsent: Boolean) {
         val oldBoundaryConsent = _isBoundaryConsentGranted
-        val newBoundaryConsent = boundaryConsent
-        _isBoundaryConsentGranted = newBoundaryConsent
+        _isBoundaryConsentGranted = boundaryConsent
 
-        if (oldBoundaryConsent != newBoundaryConsent) {
+        if (oldBoundaryConsent != boundaryConsent) {
             _boundaryConsentChangedMap.forEach { (listener, executor) ->
-                executor.execute { listener.accept(newBoundaryConsent) }
+                executor.execute { listener.accept(boundaryConsent) }
             }
         }
     }

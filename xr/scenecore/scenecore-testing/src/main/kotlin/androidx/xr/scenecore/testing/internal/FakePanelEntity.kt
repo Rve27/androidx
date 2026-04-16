@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.content.Context
 import android.view.View
 import android.view.WindowManager
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.FieldOfView
 import androidx.xr.runtime.math.Vector2
 import androidx.xr.runtime.math.Vector3
@@ -33,9 +30,7 @@ import androidx.xr.scenecore.runtime.ScenePose
 import kotlin.math.roundToInt
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.PanelEntity] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class FakePanelEntity(public val view: View? = null, name: String = "") :
+internal open class FakePanelEntity(public val view: View? = null, name: String = "") :
     FakeEntity(name), PanelEntity {
 
     private val context = view?.context

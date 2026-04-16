@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.graphics.ImageFormat
 import android.media.ImageReader
 import android.view.Surface
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.NodeHolder
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
@@ -31,9 +28,7 @@ import androidx.xr.scenecore.runtime.SurfaceFeature
 import androidx.xr.scenecore.runtime.TextureResource
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.SurfaceFeature] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSurfaceFeature(nodeHolder: NodeHolder<*>) :
+internal class FakeSurfaceFeature(nodeHolder: NodeHolder<*>) :
     FakeBaseRenderingFeature(nodeHolder), SurfaceFeature {
 
     @SurfaceEntity.StereoMode override var stereoMode: Int = SurfaceEntity.StereoMode.MONO
@@ -53,7 +48,7 @@ public class FakeSurfaceFeature(nodeHolder: NodeHolder<*>) :
         private set
 
     /** For test purposes only. Caches the input of [setSurfacePixelDimensions]. */
-    public var surfacePixelDimensions: IntSize2d = IntSize2d(0, 0)
+    var surfacePixelDimensions: IntSize2d = IntSize2d(0, 0)
         private set
 
     override fun setSurfacePixelDimensions(width: Int, height: Int) {
@@ -66,7 +61,7 @@ public class FakeSurfaceFeature(nodeHolder: NodeHolder<*>) :
      * This allows tests to verify whether the collider for the surface's geometry was enabled or
      * disabled.
      */
-    public var colliderEnabled: Boolean = false
+    var colliderEnabled: Boolean = false
         private set
 
     override fun setColliderEnabled(enableCollider: Boolean) {
@@ -74,7 +69,7 @@ public class FakeSurfaceFeature(nodeHolder: NodeHolder<*>) :
     }
 
     /** For test purposes only. Represents the result of [setPrimaryAlphaMaskTexture]. */
-    public var primaryAlphaMask: TextureResource? = null
+    var primaryAlphaMask: TextureResource? = null
         private set
 
     override fun setPrimaryAlphaMaskTexture(alphaMask: TextureResource?) {
@@ -87,7 +82,7 @@ public class FakeSurfaceFeature(nodeHolder: NodeHolder<*>) :
      *
      * This allows tests to inspect the `TextureResource` that was set as the auxiliary alpha mask.
      */
-    public var auxiliaryAlphaMask: TextureResource? = null
+    var auxiliaryAlphaMask: TextureResource? = null
         private set
 
     override fun setAuxiliaryAlphaMaskTexture(alphaMask: TextureResource?) {
@@ -151,7 +146,7 @@ public class FakeSurfaceFeature(nodeHolder: NodeHolder<*>) :
      *
      * @param surface The new [Surface] to associate with this entity.
      */
-    public fun setSurface(surface: Surface) {
+    fun setSurface(surface: Surface) {
         internalImageReader?.close()
         internalImageReader = null
         this.surface = surface

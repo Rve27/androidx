@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.ExrImageResource
 import androidx.xr.scenecore.runtime.GltfModelResource
 import androidx.xr.scenecore.runtime.MaterialResource
@@ -26,7 +23,5 @@ import androidx.xr.scenecore.runtime.Resource
 import androidx.xr.scenecore.runtime.TextureResource
 
 /** Fake implementation of [androidx.xr.scenecore.runtime.Resource] for testing. */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public data class FakeResource(internal val token: Long = 0) :
+internal data class FakeResource(internal val token: Long = 0) :
     Resource, ExrImageResource, GltfModelResource, TextureResource, MaterialResource {}

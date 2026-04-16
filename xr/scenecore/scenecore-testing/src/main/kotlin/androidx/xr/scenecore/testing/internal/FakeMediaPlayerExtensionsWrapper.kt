@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.media.MediaPlayer
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper
 import androidx.xr.scenecore.runtime.PointSourceParams
 import androidx.xr.scenecore.runtime.SoundFieldAttributes
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeMediaPlayerExtensionsWrapper : MediaPlayerExtensionsWrapper {
+internal class FakeMediaPlayerExtensionsWrapper : MediaPlayerExtensionsWrapper {
     private var _paramsWithEntity: MutableMap<MediaPlayer, Pair<PointSourceParams, Entity>> =
         mutableMapOf()
 

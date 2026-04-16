@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
-package androidx.xr.scenecore.testing
+package androidx.xr.scenecore.testing.internal
 
 import android.content.Context
-import androidx.annotation.RestrictTo
 import androidx.media3.exoplayer.audio.AudioOutputProvider
 import androidx.media3.exoplayer.audio.AudioTrackAudioOutputProvider
 import androidx.xr.scenecore.runtime.PointSourceParams
 import androidx.xr.scenecore.runtime.PositionalAudioComponent
 
 /** Test-only implementation of [PositionalAudioComponent]. */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakePositionalAudioComponent(
+internal class FakePositionalAudioComponent(
     internal val context: Context,
-    public var params: PointSourceParams,
+    var params: PointSourceParams,
 ) : FakeComponent(), PositionalAudioComponent {
 
-    public var getAudioOutputProviderCount: Int = 0
+    var getAudioOutputProviderCount: Int = 0
 
     override fun getAudioOutputProvider(): AudioOutputProvider {
         getAudioOutputProviderCount++

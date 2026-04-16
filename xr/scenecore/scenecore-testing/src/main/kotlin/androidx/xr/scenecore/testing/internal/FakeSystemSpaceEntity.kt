@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Matrix4
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.runtime.SystemSpaceEntity
@@ -28,13 +25,11 @@ import java.util.concurrent.Executor
  * A test double for [androidx.xr.scenecore.runtime.SystemSpaceEntity], designed for use in unit or
  * integration tests.
  */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class FakeSystemSpaceEntity() : FakeEntity(), SystemSpaceEntity {
+internal open class FakeSystemSpaceEntity : FakeEntity(), SystemSpaceEntity {
 
     private var openXrReferenceSpaceTransform: Matrix4? = null
 
-    public var onOriginChangedListener: Runnable? = null
+    var onOriginChangedListener: Runnable? = null
         private set
 
     private var onOriginChangedExecutor: Executor? = null
@@ -59,13 +54,13 @@ public open class FakeSystemSpaceEntity() : FakeEntity(), SystemSpaceEntity {
      * registered listener. In tests, you can call this function to manually trigger the listener
      * and verify that your code responds correctly to space updates.
      */
-    public fun onOriginChanged() {
+    fun onOriginChanged() {
         onOriginChangedListener?.let { listener ->
             onOriginChangedExecutor?.execute(listener) ?: listener.run()
         }
     }
 
-    public fun setOpenXrReferenceSpaceTransform(fromTrs: Matrix4) {
+    fun setOpenXrReferenceSpaceTransform(fromTrs: Matrix4) {
         openXrReferenceSpaceTransform = fromTrs
         setScale(fromTrs.scale)
     }

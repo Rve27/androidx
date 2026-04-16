@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.XrExtensionsHolder
 import androidx.xr.scenecore.runtime.extensions.XrExtensionsHolderProvider
-import androidx.xr.scenecore.testing.FakeXrExtensionsHolderProvider.Companion.fakeHolder
-import androidx.xr.scenecore.testing.FakeXrExtensionsHolderProvider.Companion.fakeHolderLegacy
 
 /**
  * A fake implementation of [XrExtensionsHolderProvider] for use in tests.
@@ -30,9 +25,7 @@ import androidx.xr.scenecore.testing.FakeXrExtensionsHolderProvider.Companion.fa
  * This class allows tests to provide custom [XrExtensionsHolder] instances to simulate different XR
  * extension availability.
  */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeXrExtensionsHolderProvider : XrExtensionsHolderProvider {
+internal class FakeXrExtensionsHolderProvider : XrExtensionsHolderProvider {
     /** Returns the [fakeHolder] if both [fakeHolder] and [fakeHolderLegacy] is set. */
     override val holder: XrExtensionsHolder<*>?
         get() =
@@ -46,7 +39,7 @@ public class FakeXrExtensionsHolderProvider : XrExtensionsHolderProvider {
     override val holderLegacy: XrExtensionsHolder<*>?
         get() = fakeHolderLegacy
 
-    public companion object {
+    companion object {
         /**
          * The value to be returned by [holder].
          *
@@ -55,13 +48,13 @@ public class FakeXrExtensionsHolderProvider : XrExtensionsHolderProvider {
          *
          * To use this in tests, set the expected [XrExtensionsHolder] instance on this property.
          */
-        public var fakeHolder: XrExtensionsHolder<*>? = null
+        var fakeHolder: XrExtensionsHolder<*>? = null
 
         /**
          * The value to be returned by [holderLegacy].
          *
          * To use this in tests, set the expected [XrExtensionsHolder] instance on this property.
          */
-        public var fakeHolderLegacy: XrExtensionsHolder<*>? = null
+        var fakeHolderLegacy: XrExtensionsHolder<*>? = null
     }
 }

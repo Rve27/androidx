@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.arcore.Anchor
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.runtime.AnchorEntity
 import androidx.xr.scenecore.runtime.AnchorEntity.OnStateChangedListener
 
 /** Test-only implementation of [androidx.xr.scenecore.runtime.AnchorEntity] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeAnchorEntity : FakeSystemSpaceEntity(), AnchorEntity {
+internal class FakeAnchorEntity : FakeSystemSpaceEntity(), AnchorEntity {
     /**
      * The underlying [androidx.xr.arcore.runtime.Anchor] instance that this fake entity represents,
      * set when [setAnchor] is called.
@@ -79,7 +74,7 @@ public class FakeAnchorEntity : FakeSystemSpaceEntity(), AnchorEntity {
      * tests, you can call this function to manually trigger the listener and verify that your code
      * responds correctly to state updates.
      */
-    public fun onStateChanged(newState: @AnchorEntity.State Int) {
+    fun onStateChanged(newState: @AnchorEntity.State Int) {
         onStateChangedListener?.onStateChanged(newState)
     }
 }

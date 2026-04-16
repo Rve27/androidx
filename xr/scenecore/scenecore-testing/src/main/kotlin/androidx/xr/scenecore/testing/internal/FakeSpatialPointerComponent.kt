@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2026 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
+package androidx.xr.scenecore.testing.internal
 
-package androidx.xr.scenecore.testing
-
-import androidx.annotation.RestrictTo
 import androidx.xr.scenecore.runtime.Entity
 import androidx.xr.scenecore.runtime.SpatialPointerComponent
 import androidx.xr.scenecore.runtime.SpatialPointerIcon
 import androidx.xr.scenecore.runtime.SpatialPointerIconType
 
 /** Test-only implementation of [FakeSpatialPointerComponent] */
-@Deprecated("Use SceneCoreTestRule instead.")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class FakeSpatialPointerComponent : FakeComponent(), SpatialPointerComponent {
+internal class FakeSpatialPointerComponent : FakeComponent(), SpatialPointerComponent {
 
     @SpatialPointerIconType override var spatialPointerIcon: Int = SpatialPointerIcon.TYPE_NONE
 
