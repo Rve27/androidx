@@ -47,4 +47,6 @@ public actual class DatabaseConfiguration(
     public actual val sqliteDriver: SQLiteDriver,
     /* The Coroutine context for the database. */
     public actual val queryCoroutineContext: CoroutineContext,
+    /* The connection pool configuration. */
+    public actual val connectionPoolConfiguration: ConnectionPoolConfiguration,
 )

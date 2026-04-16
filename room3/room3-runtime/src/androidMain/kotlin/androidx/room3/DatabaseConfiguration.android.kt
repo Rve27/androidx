@@ -83,6 +83,9 @@ constructor(
 
     /* The Coroutine context for the database. */
     public actual val queryCoroutineContext: CoroutineContext,
+
+    /* The connection pool configuration. */
+    public actual val connectionPoolConfiguration: ConnectionPoolConfiguration,
 ) {
     /* Whether the invalidation tracker will use temp or real tables for invalidation tracking. */
     internal var useTempTrackingTable = true
@@ -119,6 +122,7 @@ constructor(
         allowDestructiveMigrationForAllTables: Boolean = this.allowDestructiveMigrationForAllTables,
         sqliteDriver: SQLiteDriver = this.sqliteDriver,
         queryCoroutineContext: CoroutineContext = this.queryCoroutineContext,
+        connectionPoolConfiguration: ConnectionPoolConfiguration = this.connectionPoolConfiguration,
     ): DatabaseConfiguration =
         DatabaseConfiguration(
                 context,
@@ -137,6 +141,7 @@ constructor(
                 allowDestructiveMigrationForAllTables,
                 sqliteDriver,
                 queryCoroutineContext,
+                connectionPoolConfiguration,
             )
             .also {
                 it.useTempTrackingTable = this.useTempTrackingTable

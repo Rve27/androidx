@@ -47,4 +47,6 @@ public expect class DatabaseConfiguration {
     public val sqliteDriver: SQLiteDriver
     /* The Coroutine context for the database. */
     public val queryCoroutineContext: CoroutineContext
+    /* The connection pool configuration. */
+    public val connectionPoolConfiguration: ConnectionPoolConfiguration
 }
