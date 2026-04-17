@@ -308,7 +308,7 @@ internal class CompositionBuilder(
         if (isHiddenSystemNode(node)) {
             return node.markUnwanted()
         }
-        node.anchorId = anchorMap[group.identity]
+        node.anchorId = anchorMap[group.identity, node.key]
         node.id = syntheticId(node.anchorId)
         if (includeAllParameters) {
             addParameters(context, node)
