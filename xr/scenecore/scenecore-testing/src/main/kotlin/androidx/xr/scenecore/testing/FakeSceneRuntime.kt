@@ -157,7 +157,8 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
             }
         }
 
-    override val spatialEnvironment: FakeSpatialEnvironment = FakeSpatialEnvironment()
+    override val spatialEnvironment: FakeSpatialEnvironment =
+        FakeSpatialEnvironment(internalRuntime.spatialEnvironment)
 
     override var spatialModeChangeListener: SpatialModeChangeListener?
         get() = internalRuntime.spatialModeChangeListener

@@ -64,7 +64,7 @@ public class FakeRenderingRuntime(
         InternalFakeRenderingRuntime(sceneRuntime)
 
     private var spatialEnvironmentFeature: FakeSpatialEnvironmentFeature =
-        FakeSpatialEnvironmentFeature()
+        FakeSpatialEnvironmentFeature(internalRuntime.spatialEnvironmentFeature)
 
     init {
         (sceneRuntime.spatialEnvironment as SpatialEnvironmentExt).onRenderingFeatureReady(
