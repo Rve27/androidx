@@ -770,6 +770,20 @@ class RemoteFloatTest {
     }
 
     @Test
+    fun namedRemoteFloatExpression_smokeTest() {
+        val namedExpr =
+            RemoteFloat.createNamedRemoteFloatExpression("testExpr") {
+                RemoteFloat(10f) + RemoteFloat(5f)
+            }
+        val result = namedExpr * RemoteFloat(2f)
+        val resultId = result.getIdForCreationState(creationState)
+
+        makeAndPaintCoreDocument()
+
+        assertThat(context.getFloat(resultId)).isEqualTo(30f)
+    }
+
+    @Test
     fun asRemoteDp_createsCorrectly() {
         val floatValue = 10.5f
         val remoteFloat = RemoteFloat(floatValue)
@@ -955,7 +969,7 @@ class RemoteFloatTest {
     fun animateRemoteFloat_smokeTest() {
         val rf1 = RemoteFloat(10f).createReference(forceRemote = true)
         val rf2 = RemoteFloat(5f).createReference(forceRemote = true)
-        val animated = animateRemoteFloat(duration = 2f, type = CUBIC_DECELERATE) { rf1 / rf2 }
+        val animated = animateRemoteFloat(rf1 / rf2, duration = 2f, type = CUBIC_DECELERATE)
 
         assertThat(animated).isInstanceOf(AnimatedRemoteFloat::class.java)
 
@@ -1265,7 +1279,7 @@ class RemoteFloatTest {
                 creationDisplayInfo = displayInfo,
                 context = applicationContext,
             ) {
-                val myFloatFromConstant = MutableRemoteFloat.createMutable(5f)
+                val myFloatFromConstant = MutableRemoteFloat(5f)
                 RemoteBox(modifier = RemoteModifier.size(myFloatFromConstant.asRemoteDp()))
             }
 
