@@ -572,7 +572,7 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     override val semanticsOwner: SemanticsOwner =
         SemanticsOwner(root, EmptySemanticsModifier(), layoutNodes)
     private val composeAccessibilityDelegate = AndroidComposeViewAccessibilityDelegateCompat(this)
-    internal var contentCaptureManager =
+    internal val contentCaptureManager =
         AndroidContentCaptureManager(
             view = this,
             onContentCaptureSession = ::getContentCaptureSessionCompat,
@@ -2271,11 +2271,6 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
         } else {
             onReadyForComposition = callback
         }
-    }
-
-    // TODO(mnuzen): combine both event loops into one larger one
-    suspend fun boundsUpdatesContentCaptureEventLoop() {
-        contentCaptureManager.boundsUpdatesEventLoop()
     }
 
     /** Walks the entire LayoutNode sub-hierarchy and marks all nodes as needing measurement. */
