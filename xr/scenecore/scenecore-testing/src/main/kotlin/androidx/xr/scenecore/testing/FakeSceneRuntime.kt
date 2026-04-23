@@ -69,6 +69,7 @@ import androidx.xr.scenecore.testing.internal.FakeEntity as InternalFakeEntity
 import androidx.xr.scenecore.testing.internal.FakeMeshEntity as InternalFakeMeshEntity
 import androidx.xr.scenecore.testing.internal.FakePerceptionSpaceScenePose as InternalFakePerceptionSpaceScenePose
 import androidx.xr.scenecore.testing.internal.FakeSceneRuntime as InternalFakeSceneRuntime
+import androidx.xr.scenecore.testing.internal.FakeSoundEffectPool as InternalFakeSoundEffectPool
 import androidx.xr.scenecore.testing.internal.FakeSoundEffectPoolComponent as InternalFakeSoundEffectPoolComponent
 import androidx.xr.scenecore.testing.internal.FakeSurfaceEntity as InternalFakeSurfaceEntity
 import java.util.concurrent.Executor
@@ -128,7 +129,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
         FakeSoundPoolExtensionsWrapper()
 
     override val audioTrackExtensionsWrapper: FakeAudioTrackExtensionsWrapper =
-        FakeAudioTrackExtensionsWrapper(requireNotNull(internalRuntime).audioTrackExtensionsWrapper)
+        FakeAudioTrackExtensionsWrapper(internalRuntime.audioTrackExtensionsWrapper)
 
     override val mediaPlayerExtensionsWrapper: FakeMediaPlayerExtensionsWrapper =
         FakeMediaPlayerExtensionsWrapper()
@@ -566,9 +567,10 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
         return FakeSoundFieldAudioComponent(context)
     }
 
-    override fun createSoundEffectPool(maxStreams: Int): SoundEffectPool {
-        return FakeSoundEffectPool()
-    }
+    override fun createSoundEffectPool(maxStreams: Int): SoundEffectPool =
+        FakeSoundEffectPool(
+            internalRuntime.createSoundEffectPool(maxStreams) as InternalFakeSoundEffectPool
+        )
 
     override fun createSoundEffectPoolComponent(
         soundEffectPool: SoundEffectPool
