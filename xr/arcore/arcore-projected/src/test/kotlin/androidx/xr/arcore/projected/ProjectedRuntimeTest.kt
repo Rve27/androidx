@@ -180,7 +180,7 @@ class ProjectedRuntimeTest {
 
         verify(mockPerceptionService).startWithConfiguration(projectedConfigCaptor.capture())
         assertThat(projectedConfigCaptor.value.geospatialMode)
-            .isEqualTo(ProjectedGeospatialMode.ENABLED)
+            .isEqualTo(ProjectedGeospatialMode.SPATIAL)
         assertThat(projectedConfigCaptor.value.trackingMode)
             .isEqualTo(ProjectedTrackingMode.PROJECTED_TRACKING_6DOF)
     }
@@ -242,7 +242,7 @@ class ProjectedRuntimeTest {
         verify(mockPerceptionService, times(1))
             .startWithConfiguration(projectedConfigCaptor.capture())
         assertThat(projectedConfigCaptor.value.geospatialMode)
-            .isEqualTo(ProjectedGeospatialMode.ENABLED)
+            .isEqualTo(ProjectedGeospatialMode.SPATIAL)
         // Geo is not compatible with 3DoF, so it forces 6DoF
         assertThat(projectedConfigCaptor.value.trackingMode)
             .isEqualTo(ProjectedTrackingMode.PROJECTED_TRACKING_6DOF)
