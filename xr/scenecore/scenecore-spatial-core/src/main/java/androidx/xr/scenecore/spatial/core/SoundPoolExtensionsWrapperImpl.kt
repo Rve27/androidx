@@ -13,65 +13,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.media.SoundPool
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.PointSourceParams
+import androidx.xr.scenecore.runtime.SoundFieldAttributes
+import androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper
+import com.android.extensions.xr.media.SoundPoolExtensions
 
-import android.media.SoundPool;
-
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.PointSourceParams;
-import androidx.xr.scenecore.runtime.SoundFieldAttributes;
-import androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper;
-
-import com.android.extensions.xr.media.SoundPoolExtensions;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-/** Implementation of {@link SoundPoolExtensionsWrapper}. */
-final class SoundPoolExtensionsWrapperImpl implements SoundPoolExtensionsWrapper {
-
-    private final SoundPoolExtensions mExtensions;
-
-    SoundPoolExtensionsWrapperImpl(SoundPoolExtensions extensions) {
-        mExtensions = extensions;
-    }
-
-    @Override
-    public int play(
-            @NonNull SoundPool soundPool,
-            int soundId,
-            @NonNull PointSourceParams params,
-            @Nullable Entity entity,
-            float volume,
-            int priority,
-            int loop,
-            float rate) {
-        com.android.extensions.xr.media.PointSourceParams extParams =
-                MediaUtils.convertPointSourceParamsToExtensions(params, entity);
+/** Implementation of [SoundPoolExtensionsWrapper]. */
+internal class SoundPoolExtensionsWrapperImpl(private val mExtensions: SoundPoolExtensions) :
+    SoundPoolExtensionsWrapper {
+    override fun play(
+        soundPool: SoundPool,
+        soundId: Int,
+        params: PointSourceParams,
+        entity: Entity?,
+        volume: Float,
+        priority: Int,
+        loop: Int,
+        rate: Float,
+    ): Int {
+        val extParams = MediaUtils.convertPointSourceParamsToExtensions(params, entity)
         return mExtensions.playAsPointSource(
-                soundPool, soundId, extParams, volume, priority, loop, rate);
+            soundPool,
+            soundId,
+            extParams,
+            volume,
+            priority,
+            loop,
+            rate,
+        )
     }
 
-    @Override
-    public int play(
-            @NonNull SoundPool soundPool,
-            int soundId,
-            @NonNull SoundFieldAttributes params,
-            float volume,
-            int priority,
-            int loop,
-            float rate) {
-        com.android.extensions.xr.media.SoundFieldAttributes extAttributes =
-                MediaUtils.convertSoundFieldAttributesToExtensions(params);
+    override fun play(
+        soundPool: SoundPool,
+        soundId: Int,
+        attributes: SoundFieldAttributes,
+        volume: Float,
+        priority: Int,
+        loop: Int,
+        rate: Float,
+    ): Int {
+        val extAttributes = MediaUtils.convertSoundFieldAttributesToExtensions(attributes)
 
         return mExtensions.playAsSoundField(
-                soundPool, soundId, extAttributes, volume, priority, loop, rate);
+            soundPool,
+            soundId,
+            extAttributes,
+            volume,
+            priority,
+            loop,
+            rate,
+        )
     }
 
-    @Override
-    public int getSpatialSourceType(@NonNull SoundPool soundPool, int streamId) {
+    override fun getSpatialSourceType(soundPool: SoundPool, streamId: Int): Int {
         return MediaUtils.convertExtensionsToSourceType(
-                mExtensions.getSpatialSourceType(soundPool, streamId));
+            mExtensions.getSpatialSourceType(soundPool, streamId)
+        )
     }
 }

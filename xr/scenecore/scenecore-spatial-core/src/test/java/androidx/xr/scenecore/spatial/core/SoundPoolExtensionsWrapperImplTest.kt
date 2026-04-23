@@ -13,117 +13,99 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.media.SoundPool
+import androidx.xr.scenecore.runtime.PointSourceParams
+import androidx.xr.scenecore.runtime.SoundFieldAttributes
+import androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper
+import androidx.xr.scenecore.runtime.SpatializerConstants
+import androidx.xr.scenecore.spatial.core.SpatialCoreXrExtensionsHolderProvider.Companion.extensionsLegacy
+import com.android.extensions.xr.media.ShadowSoundPoolExtensions
+import com.android.extensions.xr.media.SoundPoolExtensions
+import com.android.extensions.xr.media.XrSpatialAudioExtensions
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class SoundPoolExtensionsWrapperImplTest {
+    private val xrExtensions = extensionsLegacy
+    private val spatialAudioExtensions: XrSpatialAudioExtensions =
+        xrExtensions.xrSpatialAudioExtensions
+    private val soundPoolExtensions: SoundPoolExtensions =
+        spatialAudioExtensions.soundPoolExtensions
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+    @Test
+    fun playWithPointSource_callsExtensionsPlayWithPointSource() {
+        val expected = 123
+        val fakeNode = xrExtensions.createNode()
+        val entity = mock<AndroidXrEntity>()
+        whenever(entity.getNode()).thenReturn(fakeNode)
+        val rtParams = PointSourceParams()
+        val soundPool = SoundPool.Builder().build()
+        ShadowSoundPoolExtensions.extract(soundPoolExtensions).setPlayAsPointSourceResult(expected)
+        val wrapper: SoundPoolExtensionsWrapper =
+            SoundPoolExtensionsWrapperImpl(soundPoolExtensions)
+        val actual =
+            wrapper.play(
+                soundPool,
+                TEST_SOUND_ID,
+                rtParams,
+                entity,
+                TEST_VOLUME,
+                TEST_PRIORITY,
+                TEST_LOOP,
+                TEST_RATE,
+            )
 
-import android.media.SoundPool;
-
-import androidx.xr.scenecore.runtime.PointSourceParams;
-import androidx.xr.scenecore.runtime.SoundFieldAttributes;
-import androidx.xr.scenecore.runtime.SoundPoolExtensionsWrapper;
-import androidx.xr.scenecore.runtime.SpatializerConstants;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.media.ShadowSoundPoolExtensions;
-import com.android.extensions.xr.media.SoundPoolExtensions;
-import com.android.extensions.xr.media.XrSpatialAudioExtensions;
-import com.android.extensions.xr.node.Node;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public final class SoundPoolExtensionsWrapperImplTest {
-
-    private static final int TEST_SOUND_ID = 0;
-    private static final float TEST_VOLUME = 0F;
-    private static final int TEST_PRIORITY = 0;
-    private static final int TEST_LOOP = 0;
-    private static final float TEST_RATE = 0F;
-
-    XrExtensions mXrExtensions;
-    XrSpatialAudioExtensions mSpatialAudioExtensions;
-    SoundPoolExtensions mSoundPoolExtensions;
-
-    @Before
-    public void setUp() {
-        mXrExtensions = SpatialCoreXrExtensionsHolderProvider.Companion.getExtensionsLegacy();
-        mSpatialAudioExtensions = mXrExtensions.getXrSpatialAudioExtensions();
-        mSoundPoolExtensions = mSpatialAudioExtensions.getSoundPoolExtensions();
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
-    public void playWithPointSource_callsExtensionsPlayWithPointSource() {
-        int expected = 123;
+    fun playWithSoundField_callsExtensionsPlayWithSoundField() {
+        val expected = 312
+        val soundPool = SoundPool.Builder().build()
+        ShadowSoundPoolExtensions.extract(soundPoolExtensions).setPlayAsSoundFieldResult(expected)
+        val wrapper: SoundPoolExtensionsWrapper =
+            SoundPoolExtensionsWrapperImpl(soundPoolExtensions)
+        val attributes = SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER)
+        val actual =
+            wrapper.play(
+                soundPool,
+                TEST_SOUND_ID,
+                attributes,
+                TEST_VOLUME,
+                TEST_PRIORITY,
+                TEST_LOOP,
+                TEST_RATE,
+            )
 
-        Node fakeNode = mXrExtensions.createNode();
-        AndroidXrEntity entity = mock(AndroidXrEntity.class);
-        when(entity.getNode()).thenReturn(fakeNode);
-        PointSourceParams rtParams = new PointSourceParams();
-
-        SoundPool soundPool = new SoundPool.Builder().build();
-
-        ShadowSoundPoolExtensions.extract(mSoundPoolExtensions)
-                .setPlayAsPointSourceResult(expected);
-        SoundPoolExtensionsWrapper wrapper =
-                new SoundPoolExtensionsWrapperImpl(mSoundPoolExtensions);
-        int actual =
-                wrapper.play(
-                        soundPool,
-                        TEST_SOUND_ID,
-                        rtParams,
-                        entity,
-                        TEST_VOLUME,
-                        TEST_PRIORITY,
-                        TEST_LOOP,
-                        TEST_RATE);
-
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
-    public void playWithSoundField_callsExtensionsPlayWithSoundField() {
-        int expected = 312;
+    fun getSpatialSourceType_returnsFromExtensions() {
+        val expected = SpatializerConstants.SOURCE_TYPE_SOUND_FIELD
+        val soundPool = SoundPool.Builder().build()
+        ShadowSoundPoolExtensions.extract(soundPoolExtensions).setSourceType(expected)
+        val wrapper: SoundPoolExtensionsWrapper =
+            SoundPoolExtensionsWrapperImpl(soundPoolExtensions)
+        val actualSourceType = wrapper.getSpatialSourceType(soundPool, /* streamId= */ 0)
 
-        SoundPool soundPool = new SoundPool.Builder().build();
-
-        ShadowSoundPoolExtensions.extract(mSoundPoolExtensions).setPlayAsSoundFieldResult(expected);
-        SoundPoolExtensionsWrapper wrapper =
-                new SoundPoolExtensionsWrapperImpl(mSoundPoolExtensions);
-        SoundFieldAttributes attributes =
-                new SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER);
-
-        int actual =
-                wrapper.play(
-                        soundPool,
-                        TEST_SOUND_ID,
-                        attributes,
-                        TEST_VOLUME,
-                        TEST_PRIORITY,
-                        TEST_LOOP,
-                        TEST_RATE);
-
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actualSourceType).isEqualTo(SpatializerConstants.SOURCE_TYPE_SOUND_FIELD)
     }
 
-    @Test
-    public void getSpatialSourceType_returnsFromExtensions() {
-        int expected = SpatializerConstants.SOURCE_TYPE_SOUND_FIELD;
-        SoundPool soundPool = new SoundPool.Builder().build();
-
-        ShadowSoundPoolExtensions.extract(mSoundPoolExtensions).setSourceType(expected);
-        SoundPoolExtensionsWrapper wrapper =
-                new SoundPoolExtensionsWrapperImpl(mSoundPoolExtensions);
-        int actualSourceType = wrapper.getSpatialSourceType(soundPool, /* streamId= */ 0);
-        assertThat(actualSourceType).isEqualTo(SpatializerConstants.SOURCE_TYPE_SOUND_FIELD);
+    companion object {
+        private const val TEST_SOUND_ID = 0
+        private const val TEST_VOLUME = 0f
+        private const val TEST_PRIORITY = 0
+        private const val TEST_LOOP = 0
+        private const val TEST_RATE = 0f
     }
 }

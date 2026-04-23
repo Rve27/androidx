@@ -13,86 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.media.AudioTrack
+import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.PointSourceParams
+import androidx.xr.scenecore.runtime.SoundFieldAttributes
+import com.android.extensions.xr.media.AudioTrackExtensions
 
-import android.media.AudioTrack;
+/** Implementation of the [AudioTrackExtensionsWrapper] */
+internal class AudioTrackExtensionsWrapperImpl(
+    private val audioTrackExtensions: AudioTrackExtensions
+) : AudioTrackExtensionsWrapper {
+    override fun getPointSourceParams(track: AudioTrack): PointSourceParams? {
+        audioTrackExtensions.getPointSourceParams(track) ?: return null
 
-import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper;
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.PointSourceParams;
-import androidx.xr.scenecore.runtime.SoundFieldAttributes;
-
-import com.android.extensions.xr.media.AudioTrackExtensions;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-/** Implementation of the {@link AudioTrackExtensionsWrapper} */
-final class AudioTrackExtensionsWrapperImpl implements AudioTrackExtensionsWrapper {
-    private final AudioTrackExtensions mExtensions;
-
-    AudioTrackExtensionsWrapperImpl(AudioTrackExtensions extensions) {
-        mExtensions = extensions;
+        return PointSourceParams()
     }
 
-    @Override
-    public @Nullable PointSourceParams getPointSourceParams(@NonNull AudioTrack audioTrack) {
-        com.android.extensions.xr.media.PointSourceParams extParams =
-                mExtensions.getPointSourceParams(audioTrack);
+    override fun getSoundFieldAttributes(track: AudioTrack): SoundFieldAttributes? {
+        val extAttributes = audioTrackExtensions.getSoundFieldAttributes(track) ?: return null
 
-        if (extParams == null) {
-            return null;
-        }
-
-        return new PointSourceParams();
+        return SoundFieldAttributes(extAttributes.ambisonicsOrder)
     }
 
-    @Override
-    public @Nullable SoundFieldAttributes getSoundFieldAttributes(@NonNull AudioTrack audioTrack) {
-        com.android.extensions.xr.media.SoundFieldAttributes extAttributes =
-                mExtensions.getSoundFieldAttributes(audioTrack);
-
-        if (extAttributes == null) {
-            return null;
-        }
-
-        return new SoundFieldAttributes(extAttributes.getAmbisonicsOrder());
-    }
-
-    @Override
-    public int getSpatialSourceType(@NonNull AudioTrack audioTrack) {
+    override fun getSpatialSourceType(track: AudioTrack): Int {
         return MediaUtils.convertExtensionsToSourceType(
-                mExtensions.getSpatialSourceType(audioTrack));
+            audioTrackExtensions.getSpatialSourceType(track)
+        )
     }
 
-    @Override
-    public void setPointSourceParams(
-            @NonNull AudioTrack track, @NonNull PointSourceParams params, @Nullable Entity entity) {
-        com.android.extensions.xr.media.PointSourceParams extParams =
-                MediaUtils.convertPointSourceParamsToExtensions(params, entity);
-
-        mExtensions.setPointSourceParams(track, extParams);
-    }
-
-    @Override
-    public AudioTrack.@NonNull Builder setPointSourceParams(
-            AudioTrack.@NonNull Builder builder,
-            @NonNull PointSourceParams params,
-            @Nullable Entity entity
+    override fun setPointSourceParams(
+        track: AudioTrack,
+        params: PointSourceParams,
+        entity: Entity?,
     ) {
-        com.android.extensions.xr.media.PointSourceParams extParams =
-                MediaUtils.convertPointSourceParamsToExtensions(params, entity);
+        val extParams = MediaUtils.convertPointSourceParamsToExtensions(params, entity)
 
-        return mExtensions.setPointSourceParams(builder, extParams);
+        audioTrackExtensions.setPointSourceParams(track, extParams)
     }
 
-    @Override
-    public AudioTrack.@NonNull Builder setSoundFieldAttributes(
-            AudioTrack.@NonNull Builder builder, @NonNull SoundFieldAttributes attributes) {
-        com.android.extensions.xr.media.SoundFieldAttributes extAttributes =
-                MediaUtils.convertSoundFieldAttributesToExtensions(attributes);
+    override fun setPointSourceParams(
+        builder: AudioTrack.Builder,
+        params: PointSourceParams,
+        entity: Entity?,
+    ): AudioTrack.Builder {
+        val extParams = MediaUtils.convertPointSourceParamsToExtensions(params, entity)
 
-        return mExtensions.setSoundFieldAttributes(builder, extAttributes);
+        return audioTrackExtensions.setPointSourceParams(builder, extParams)
+    }
+
+    override fun setSoundFieldAttributes(
+        builder: AudioTrack.Builder,
+        attributes: SoundFieldAttributes,
+    ): AudioTrack.Builder {
+        val extAttributes = MediaUtils.convertSoundFieldAttributesToExtensions(attributes)
+
+        return audioTrackExtensions.setSoundFieldAttributes(builder, extAttributes)
     }
 }

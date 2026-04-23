@@ -13,200 +13,152 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.media.AudioTrack
+import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper
+import androidx.xr.scenecore.runtime.PointSourceParams
+import androidx.xr.scenecore.runtime.SoundFieldAttributes
+import androidx.xr.scenecore.runtime.SpatializerConstants
+import androidx.xr.scenecore.spatial.core.SpatialCoreXrExtensionsHolderProvider.Companion.extensionsLegacy
+import com.android.extensions.xr.media.AudioTrackExtensions
+import com.android.extensions.xr.media.ShadowAudioTrackExtensions
+import com.android.extensions.xr.media.SpatializerExtensions
+import com.android.extensions.xr.media.XrSpatialAudioExtensions
+import com.google.common.truth.Truth.assertThat
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import android.media.AudioTrack;
-
-import androidx.xr.scenecore.runtime.AudioTrackExtensionsWrapper;
-import androidx.xr.scenecore.runtime.PointSourceParams;
-import androidx.xr.scenecore.runtime.SoundFieldAttributes;
-import androidx.xr.scenecore.runtime.SpatializerConstants;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.media.AudioTrackExtensions;
-import com.android.extensions.xr.media.ShadowAudioTrackExtensions;
-import com.android.extensions.xr.media.SpatializerExtensions;
-import com.android.extensions.xr.media.XrSpatialAudioExtensions;
-import com.android.extensions.xr.node.Node;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public class AudioTrackExtensionsWrapperImplTest {
-
-    XrExtensions mXrExtensions;
-    XrSpatialAudioExtensions mSpatialAudioExtensions;
-    AudioTrackExtensions mAudioTrackExtensions;
-
-    private SceneNodeRegistry mSceneNodeRegistry;
-
-    private AudioTrack.Builder mBuilder;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class AudioTrackExtensionsWrapperImplTest {
+    private val xrExtensions = extensionsLegacy
+    private val spatialAudioExtensions: XrSpatialAudioExtensions =
+        xrExtensions.xrSpatialAudioExtensions
+    private val audioTrackExtensions: AudioTrackExtensions =
+        spatialAudioExtensions.audioTrackExtensions
+    private val sceneNodeRegistry = SceneNodeRegistry()
+    private val audioTrackBuilder = mock<AudioTrack.Builder>()
 
     @Before
-    public void setUp() {
-        mXrExtensions = SpatialCoreXrExtensionsHolderProvider.Companion.getExtensionsLegacy();
-        mSpatialAudioExtensions = mXrExtensions.getXrSpatialAudioExtensions();
-        mAudioTrackExtensions = mSpatialAudioExtensions.getAudioTrackExtensions();
-
+    fun setUp() {
         // Clear the sound fields before each test.
-        // Because the mAudioTrackExtensions are fetched from the XrExtensions singleton it is
+        // Because the audioTrackExtensions are fetched from the XrExtensions singleton it is
         // reused across tests.
         // TODO(b/401557718): Consider adding a reset method to the XrExtensions shadow.
-        ShadowAudioTrackExtensions.extract(mAudioTrackExtensions).setSoundFieldAttributes(null);
-
-        mSceneNodeRegistry = new SceneNodeRegistry();
-        mBuilder = mock(AudioTrack.Builder.class);
+        ShadowAudioTrackExtensions.extract(audioTrackExtensions).setSoundFieldAttributes(null)
     }
 
     @Test
-    public void setPointSourceParams_callsExtensionsSetPointSourceParams() {
-        AudioTrack track = mock(AudioTrack.class);
+    fun setPointSourceParams_callsExtensionsSetPointSourceParams() {
+        val track = mock<AudioTrack>()
+        val fakeNode = xrExtensions.createNode()
+        val entity = mock<AndroidXrEntity>()
+        whenever(entity.getNode()).thenReturn(fakeNode)
+        val expectedRtParams = PointSourceParams()
+        val wrapper: AudioTrackExtensionsWrapper =
+            AudioTrackExtensionsWrapperImpl(audioTrackExtensions)
+        wrapper.setPointSourceParams(track, expectedRtParams, entity)
 
-        Node fakeNode = mXrExtensions.createNode();
-        AndroidXrEntity entity = mock(AndroidXrEntity.class);
-        when(entity.getNode()).thenReturn(fakeNode);
-
-        PointSourceParams expectedRtParams = new PointSourceParams();
-
-        AudioTrackExtensionsWrapper wrapper =
-                new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions);
-        wrapper.setPointSourceParams(track, expectedRtParams, entity);
-
-        assertThat(mAudioTrackExtensions.getPointSourceParams(track).getNode()).isEqualTo(fakeNode);
+        assertThat(audioTrackExtensions.getPointSourceParams(track).node).isEqualTo(fakeNode)
     }
 
     @Test
-    public void setPointSourceParamsBuilder_callsExtensionsSetPointSourceParamsBuilder() {
-        AudioTrack track = mock(AudioTrack.class);
-        Node fakeNode = mXrExtensions.createNode();
-        AndroidXrEntity entity = mock(AndroidXrEntity.class);
-        when(entity.getNode()).thenReturn(fakeNode);
+    fun setPointSourceParamsBuilder_callsExtensionsSetPointSourceParamsBuilder() {
+        val track = mock<AudioTrack>()
+        val fakeNode = xrExtensions.createNode()
+        val entity = mock<AndroidXrEntity>()
+        whenever(entity.getNode()).thenReturn(fakeNode)
+        val expectedRtParams = PointSourceParams()
+        val wrapper: AudioTrackExtensionsWrapper =
+            AudioTrackExtensionsWrapperImpl(audioTrackExtensions)
+        val actual = wrapper.setPointSourceParams(audioTrackBuilder, expectedRtParams, entity)
 
-        PointSourceParams expectedRtParams = new PointSourceParams();
-
-        AudioTrackExtensionsWrapper wrapper =
-                new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions);
-        AudioTrack.Builder actual = wrapper.setPointSourceParams(
-                mBuilder, expectedRtParams, entity);
-
-        assertThat(actual).isEqualTo(mBuilder);
-        assertThat(mAudioTrackExtensions.getPointSourceParams(track).getNode()).isEqualTo(fakeNode);
+        assertThat(actual).isEqualTo(audioTrackBuilder)
+        assertThat(audioTrackExtensions.getPointSourceParams(track).node).isEqualTo(fakeNode)
     }
 
     @Test
-    public void setSoundFieldAttr_callsExtensionsSetSoundFieldAttr() {
-        int expectedAmbisonicOrder = SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER;
-        SoundFieldAttributes expectedRtAttr =
-                new SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER);
+    fun setSoundFieldAttr_callsExtensionsSetSoundFieldAttr() {
+        val expectedAmbisonicOrder = SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER
+        val expectedRtAttr = SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER)
+        val wrapper: AudioTrackExtensionsWrapper =
+            AudioTrackExtensionsWrapperImpl(audioTrackExtensions)
+        val actual = wrapper.setSoundFieldAttributes(audioTrackBuilder, expectedRtAttr)
 
-        AudioTrackExtensionsWrapper wrapper =
-                new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions);
-
-        AudioTrack.Builder actual = wrapper.setSoundFieldAttributes(mBuilder, expectedRtAttr);
-
-        assertThat(actual).isEqualTo(mBuilder);
-        assertThat(
-                        mAudioTrackExtensions
-                                .getSoundFieldAttributes(mock(AudioTrack.class))
-                                .getAmbisonicsOrder())
-                .isEqualTo(expectedAmbisonicOrder);
+        assertThat(actual).isEqualTo(audioTrackBuilder)
+        assertThat(audioTrackExtensions.getSoundFieldAttributes(mock<AudioTrack>()).ambisonicsOrder)
+            .isEqualTo(expectedAmbisonicOrder)
     }
 
     @Test
-    public void getPointSourceParams_callsExtensionsGetPointSourceParams() {
-        AudioTrack track = mock(AudioTrack.class);
+    fun getPointSourceParams_callsExtensionsGetPointSourceParams() {
+        val track = mock<AudioTrack>()
 
-        Node fakeNode = mXrExtensions.createNode();
-        AndroidXrEntity entity = mock(AndroidXrEntity.class);
-        when(entity.getNode()).thenReturn(fakeNode);
-        mSceneNodeRegistry.setEntityForNode(fakeNode, entity);
-
-        AudioTrack.Builder unused =
-                mAudioTrackExtensions.setPointSourceParams(
-                        new AudioTrack.Builder(),
-                        new com.android.extensions.xr.media.PointSourceParams.Builder()
-                                .setNode(fakeNode)
-                                .build());
-
-        PointSourceParams expectedRtParams = new PointSourceParams();
-        AudioTrackExtensionsWrapper wrapper =
-                new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions);
-
-        PointSourceParams actual = wrapper.getPointSourceParams(track);
+        val fakeNode = xrExtensions.createNode()
+        val entity = mock<AndroidXrEntity>()
+        whenever(entity.getNode()).thenReturn(fakeNode)
+        sceneNodeRegistry.setEntityForNode(fakeNode, entity)
+        val wrapper: AudioTrackExtensionsWrapper =
+            AudioTrackExtensionsWrapperImpl(audioTrackExtensions)
+        val actual = wrapper.getPointSourceParams(track)
 
         // TODO: Compare point source params once additional parameters are added.
-        assertThat(actual).isNotNull();
+        assertThat(actual).isNotNull()
     }
 
     @Test
-    public void getPointSourceParams_returnsNullIfNotInExtensions() {
-        AudioTrack track = mock(AudioTrack.class);
+    fun getPointSourceParams_returnsNullIfNotInExtensions() {
+        val track = mock<AudioTrack>()
+        val wrapper: AudioTrackExtensionsWrapper =
+            AudioTrackExtensionsWrapperImpl(audioTrackExtensions)
+        val actual = wrapper.getPointSourceParams(track)
 
-        AudioTrackExtensionsWrapper wrapper =
-                new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions);
-
-        PointSourceParams actual = wrapper.getPointSourceParams(track);
-
-        assertThat(actual).isNull();
+        assertThat(actual).isNull()
     }
 
     @Test
-    public void getSoundFieldAttributes_callsExtensionsGetSoundFieldAttributes() {
-        AudioTrack track = mock(AudioTrack.class);
+    fun getSoundFieldAttributes_callsExtensionsGetSoundFieldAttributes() {
+        val track = mock<AudioTrack>()
 
-        AudioTrack.Builder unused =
-                mAudioTrackExtensions.setSoundFieldAttributes(
-                        new AudioTrack.Builder(),
-                        new com.android.extensions.xr.media.SoundFieldAttributes.Builder()
-                                .setAmbisonicsOrder(
-                                        SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER)
-                                .build());
+        audioTrackExtensions.setSoundFieldAttributes(
+            AudioTrack.Builder(),
+            com.android.extensions.xr.media.SoundFieldAttributes.Builder()
+                .setAmbisonicsOrder(SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER)
+                .build(),
+        )
+        val expectedRtAttr = SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER)
+        val wrapper: AudioTrackExtensionsWrapper =
+            AudioTrackExtensionsWrapperImpl(audioTrackExtensions)
+        val actual = wrapper.getSoundFieldAttributes(track)
 
-        SoundFieldAttributes expectedRtAttr =
-                new SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER);
-        AudioTrackExtensionsWrapper wrapper =
-                new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions);
-
-        SoundFieldAttributes actual = wrapper.getSoundFieldAttributes(track);
-
-        assertThat(actual.getAmbisonicsOrder()).isEqualTo(expectedRtAttr.getAmbisonicsOrder());
+        assertThat(actual!!.ambisonicsOrder).isEqualTo(expectedRtAttr.ambisonicsOrder)
     }
 
     @Test
-    public void getSoundFieldAttributes_returnsNullIfNotInExtensions() {
-        AudioTrack track = mock(AudioTrack.class);
+    fun getSoundFieldAttributes_returnsNullIfNotInExtensions() {
+        val track = mock<AudioTrack>()
+        val wrapper: AudioTrackExtensionsWrapper =
+            AudioTrackExtensionsWrapperImpl(audioTrackExtensions)
+        val actual = wrapper.getSoundFieldAttributes(track)
 
-        AudioTrackExtensionsWrapper wrapper =
-                new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions);
-
-        SoundFieldAttributes actual = wrapper.getSoundFieldAttributes(track);
-
-        assertThat(actual).isNull();
+        assertThat(actual).isNull()
     }
 
     @Test
-    public void getSourceType_returnsFromExtensions() {
-        AudioTrack track = mock(AudioTrack.class);
+    fun getSourceType_returnsFromExtensions() {
+        val track = mock<AudioTrack>()
+        val expected = SpatializerConstants.SOURCE_TYPE_SOUND_FIELD
+        ShadowAudioTrackExtensions.extract(audioTrackExtensions).setSourceType(expected)
+        val wrapper: AudioTrackExtensionsWrapper =
+            AudioTrackExtensionsWrapperImpl(audioTrackExtensions)
+        val actualSourceType = wrapper.getSpatialSourceType(track)
 
-        int expected = SpatializerConstants.SOURCE_TYPE_SOUND_FIELD;
-        ShadowAudioTrackExtensions.extract(mAudioTrackExtensions).setSourceType(expected);
-
-        AudioTrackExtensionsWrapper wrapper =
-                new AudioTrackExtensionsWrapperImpl(mAudioTrackExtensions);
-
-        int actualSourceType = wrapper.getSpatialSourceType(track);
-
-        assertThat(actualSourceType).isEqualTo(expected);
+        assertThat(actualSourceType).isEqualTo(expected)
     }
 }

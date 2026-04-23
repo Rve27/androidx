@@ -13,67 +13,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
-
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.PointSourceParams;
-import androidx.xr.scenecore.runtime.SoundFieldAttributes;
-import androidx.xr.scenecore.runtime.SpatializerConstants;
-
-import com.android.extensions.xr.media.SpatializerExtensions;
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.SpatializerConstants
+import com.android.extensions.xr.media.PointSourceParams
+import com.android.extensions.xr.media.SoundFieldAttributes
+import com.android.extensions.xr.media.SpatializerExtensions
 
 /** Utils for the runtime media class conversions. */
-class MediaUtils {
-    private MediaUtils() {}
-
-    static com.android.extensions.xr.media.PointSourceParams convertPointSourceParamsToExtensions(
-            PointSourceParams params, Entity entity) {
-
-        com.android.extensions.xr.media.PointSourceParams.Builder builder =
-                new com.android.extensions.xr.media.PointSourceParams.Builder();
+internal object MediaUtils {
+    @JvmStatic
+    fun convertPointSourceParamsToExtensions(
+        params: androidx.xr.scenecore.runtime.PointSourceParams?,
+        entity: Entity?,
+    ): PointSourceParams {
+        val builder = PointSourceParams.Builder()
         if (entity != null) {
-            builder.setNode(((AndroidXrEntity) entity).getNode());
+            builder.setNode((entity as AndroidXrEntity).getNode())
         }
-        return builder.build();
+        return builder.build()
     }
 
-    static com.android.extensions.xr.media.SoundFieldAttributes
-            convertSoundFieldAttributesToExtensions(SoundFieldAttributes attributes) {
-
-        return new com.android.extensions.xr.media.SoundFieldAttributes.Builder()
-                .setAmbisonicsOrder(
-                        convertAmbisonicsOrderToExtensions(attributes.getAmbisonicsOrder()))
-                .build();
+    @JvmStatic
+    fun convertSoundFieldAttributesToExtensions(
+        attributes: androidx.xr.scenecore.runtime.SoundFieldAttributes
+    ): SoundFieldAttributes {
+        return SoundFieldAttributes.Builder()
+            .setAmbisonicsOrder(convertAmbisonicsOrderToExtensions(attributes.ambisonicsOrder))
+            .build()
     }
 
-    static int convertAmbisonicsOrderToExtensions(
-            @SpatializerConstants.AmbisonicsOrder int ambisonicsOrder) {
-        switch (ambisonicsOrder) {
-            case SpatializerConstants.AMBISONICS_ORDER_FIRST_ORDER:
-                return SpatializerExtensions.AMBISONICS_ORDER_FIRST_ORDER;
-            case SpatializerConstants.AMBISONICS_ORDER_SECOND_ORDER:
-                return SpatializerExtensions.AMBISONICS_ORDER_SECOND_ORDER;
-            case SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER:
-                return SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER;
-            default:
-                throw new IllegalArgumentException(
-                        "Invalid Sound Field ambisonics order: " + ambisonicsOrder);
+    @JvmStatic
+    fun convertAmbisonicsOrderToExtensions(
+        @SpatializerConstants.AmbisonicsOrder ambisonicsOrder: Int
+    ): Int {
+        return when (ambisonicsOrder) {
+            SpatializerConstants.AMBISONICS_ORDER_FIRST_ORDER ->
+                SpatializerExtensions.AMBISONICS_ORDER_FIRST_ORDER
+            SpatializerConstants.AMBISONICS_ORDER_SECOND_ORDER ->
+                SpatializerExtensions.AMBISONICS_ORDER_SECOND_ORDER
+            SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER ->
+                SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER
+            else ->
+                throw IllegalArgumentException(
+                    "Invalid Sound Field ambisonics order: $ambisonicsOrder"
+                )
         }
     }
 
+    @JvmStatic
     @SpatializerConstants.SourceType
-    static int convertExtensionsToSourceType(int extensionsSourceType) {
-        switch (extensionsSourceType) {
-            case SpatializerExtensions.SOURCE_TYPE_DEFAULT:
-                return SpatializerConstants.SOURCE_TYPE_BYPASS;
-            case SpatializerExtensions.SOURCE_TYPE_POINT_SOURCE:
-                return SpatializerConstants.SOURCE_TYPE_POINT_SOURCE;
-            case SpatializerExtensions.SOURCE_TYPE_SOUND_FIELD:
-                return SpatializerConstants.SOURCE_TYPE_SOUND_FIELD;
-            default:
-                throw new IllegalArgumentException(
-                        "Invalid Sound Spatializer source type: " + extensionsSourceType);
+    fun convertExtensionsToSourceType(extensionsSourceType: Int): Int {
+        return when (extensionsSourceType) {
+            SpatializerExtensions.SOURCE_TYPE_DEFAULT -> SpatializerConstants.SOURCE_TYPE_BYPASS
+            SpatializerExtensions.SOURCE_TYPE_POINT_SOURCE ->
+                SpatializerConstants.SOURCE_TYPE_POINT_SOURCE
+            SpatializerExtensions.SOURCE_TYPE_SOUND_FIELD ->
+                SpatializerConstants.SOURCE_TYPE_SOUND_FIELD
+            else ->
+                throw IllegalArgumentException(
+                    "Invalid Sound Spatializer source type: $extensionsSourceType"
+                )
         }
     }
 }

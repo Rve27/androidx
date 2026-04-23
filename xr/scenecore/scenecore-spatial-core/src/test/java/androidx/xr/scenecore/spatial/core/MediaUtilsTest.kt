@@ -13,114 +13,99 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import androidx.xr.scenecore.runtime.PointSourceParams
+import androidx.xr.scenecore.runtime.SoundFieldAttributes
+import androidx.xr.scenecore.runtime.SpatializerConstants
+import androidx.xr.scenecore.spatial.core.MediaUtils.convertAmbisonicsOrderToExtensions
+import androidx.xr.scenecore.spatial.core.MediaUtils.convertExtensionsToSourceType
+import androidx.xr.scenecore.spatial.core.MediaUtils.convertPointSourceParamsToExtensions
+import androidx.xr.scenecore.spatial.core.MediaUtils.convertSoundFieldAttributesToExtensions
+import androidx.xr.scenecore.spatial.core.SpatialCoreXrExtensionsHolderProvider.Companion.extensionsLegacy
+import com.android.extensions.xr.media.SpatializerExtensions
+import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertThrows
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import androidx.xr.scenecore.runtime.PointSourceParams;
-import androidx.xr.scenecore.runtime.SoundFieldAttributes;
-import androidx.xr.scenecore.runtime.SpatializerConstants;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.media.SpatializerExtensions;
-import com.android.extensions.xr.node.Node;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public final class MediaUtilsTest {
-
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class MediaUtilsTest {
     @Test
-    public void convertPointSourceParams_returnsExtensionsParams() {
-        XrExtensions xrExtensions =
-                SpatialCoreXrExtensionsHolderProvider.Companion.getExtensionsLegacy();
-        Node expected = xrExtensions.createNode();
+    fun convertPointSourceParams_returnsExtensionsParams() {
+        val xrExtensions = extensionsLegacy
+        val expected = xrExtensions.createNode()
+        val entity = mock<AndroidXrEntity>()
+        whenever(entity.getNode()).thenReturn(expected)
+        val rtParams = PointSourceParams()
+        val result = convertPointSourceParamsToExtensions(rtParams, entity)
 
-        AndroidXrEntity entity = mock(AndroidXrEntity.class);
-        when(entity.getNode()).thenReturn(expected);
-        PointSourceParams rtParams = new PointSourceParams();
-
-        com.android.extensions.xr.media.PointSourceParams result =
-                MediaUtils.convertPointSourceParamsToExtensions(rtParams, entity);
-
-        assertThat(result.getNode()).isEqualTo(entity.getNode());
+        assertThat(result.node).isEqualTo(entity.getNode())
     }
 
     @Test
-    public void convertPointSourceParams_withNullEntity_returnsExtensionsParamsWithDefaultNode() {
-        PointSourceParams rtParams = new PointSourceParams();
+    fun convertPointSourceParams_withNullEntity_returnsExtensionsParamsWithDefaultNode() {
+        val rtParams = PointSourceParams()
+        val result = convertPointSourceParamsToExtensions(rtParams, null)
 
-        com.android.extensions.xr.media.PointSourceParams result =
-                MediaUtils.convertPointSourceParamsToExtensions(rtParams, null);
-
-        assertThat(result.getNode()).isNotNull();
+        assertThat(result.node).isNotNull()
     }
 
     @Test
-    public void convertSoundFieldAttributes_returnsExtensionsAttributes() {
-        int extAmbisonicsOrder = SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER;
+    fun convertSoundFieldAttributes_returnsExtensionsAttributes() {
+        val extAmbisonicsOrder = SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER
+        val rtAttributes = SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER)
+        val result = convertSoundFieldAttributesToExtensions(rtAttributes)
 
-        SoundFieldAttributes rtAttributes =
-                new SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER);
-
-        com.android.extensions.xr.media.SoundFieldAttributes result =
-                MediaUtils.convertSoundFieldAttributesToExtensions(rtAttributes);
-
-        assertThat(result.getAmbisonicsOrder()).isEqualTo(extAmbisonicsOrder);
+        assertThat(result.ambisonicsOrder).isEqualTo(extAmbisonicsOrder)
     }
 
     @Test
-    public void convertAmbisonicsOrderToExtensions_returnsExtensionsAmbisonicsOrder() {
+    fun convertAmbisonicsOrderToExtensions_returnsExtensionsAmbisonicsOrder() {
         assertThat(
-                        MediaUtils.convertAmbisonicsOrderToExtensions(
-                                SpatializerConstants.AMBISONICS_ORDER_FIRST_ORDER))
-                .isEqualTo(SpatializerExtensions.AMBISONICS_ORDER_FIRST_ORDER);
+                convertAmbisonicsOrderToExtensions(
+                    SpatializerConstants.AMBISONICS_ORDER_FIRST_ORDER
+                )
+            )
+            .isEqualTo(SpatializerExtensions.AMBISONICS_ORDER_FIRST_ORDER)
         assertThat(
-                        MediaUtils.convertAmbisonicsOrderToExtensions(
-                                SpatializerConstants.AMBISONICS_ORDER_SECOND_ORDER))
-                .isEqualTo(SpatializerExtensions.AMBISONICS_ORDER_SECOND_ORDER);
+                convertAmbisonicsOrderToExtensions(
+                    SpatializerConstants.AMBISONICS_ORDER_SECOND_ORDER
+                )
+            )
+            .isEqualTo(SpatializerExtensions.AMBISONICS_ORDER_SECOND_ORDER)
         assertThat(
-                        MediaUtils.convertAmbisonicsOrderToExtensions(
-                                SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER))
-                .isEqualTo(SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER);
+                convertAmbisonicsOrderToExtensions(
+                    SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER
+                )
+            )
+            .isEqualTo(SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER)
     }
 
     @Test
-    public void convertAmbisonicsOrderToExtensions_throwsExceptionForInvalidValue() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> MediaUtils.convertAmbisonicsOrderToExtensions(100));
+    fun convertAmbisonicsOrderToExtensions_throwsExceptionForInvalidValue() {
+        assertThrows(IllegalArgumentException::class.java) {
+            convertAmbisonicsOrderToExtensions(100)
+        }
     }
 
     @Test
-    public void convertExtensionsToSourceType_returnsRtSourceType() {
-        assertThat(
-                        MediaUtils.convertExtensionsToSourceType(
-                                SpatializerExtensions.SOURCE_TYPE_DEFAULT))
-                .isEqualTo(SpatializerConstants.SOURCE_TYPE_BYPASS);
-        assertThat(
-                        MediaUtils.convertExtensionsToSourceType(
-                                SpatializerExtensions.SOURCE_TYPE_POINT_SOURCE))
-                .isEqualTo(SpatializerConstants.SOURCE_TYPE_POINT_SOURCE);
-        assertThat(
-                        MediaUtils.convertExtensionsToSourceType(
-                                SpatializerExtensions.SOURCE_TYPE_SOUND_FIELD))
-                .isEqualTo(SpatializerConstants.SOURCE_TYPE_SOUND_FIELD);
+    fun convertExtensionsToSourceType_returnsRtSourceType() {
+        assertThat(convertExtensionsToSourceType(SpatializerExtensions.SOURCE_TYPE_DEFAULT))
+            .isEqualTo(SpatializerConstants.SOURCE_TYPE_BYPASS)
+        assertThat(convertExtensionsToSourceType(SpatializerExtensions.SOURCE_TYPE_POINT_SOURCE))
+            .isEqualTo(SpatializerConstants.SOURCE_TYPE_POINT_SOURCE)
+        assertThat(convertExtensionsToSourceType(SpatializerExtensions.SOURCE_TYPE_SOUND_FIELD))
+            .isEqualTo(SpatializerConstants.SOURCE_TYPE_SOUND_FIELD)
     }
 
     @Test
-    public void convertExtensionsToSourceType_throwsExceptionForInvalidValue() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> MediaUtils.convertExtensionsToSourceType(100));
+    fun convertExtensionsToSourceType_throwsExceptionForInvalidValue() {
+        assertThrows(IllegalArgumentException::class.java) { convertExtensionsToSourceType(100) }
     }
 }

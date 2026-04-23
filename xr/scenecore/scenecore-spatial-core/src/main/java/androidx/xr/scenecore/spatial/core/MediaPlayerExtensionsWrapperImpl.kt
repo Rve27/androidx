@@ -13,46 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.media.MediaPlayer
+import androidx.xr.scenecore.runtime.Entity
+import androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper
+import androidx.xr.scenecore.runtime.PointSourceParams
+import androidx.xr.scenecore.runtime.SoundFieldAttributes
+import com.android.extensions.xr.media.MediaPlayerExtensions
 
-import android.media.MediaPlayer;
-
-import androidx.xr.scenecore.runtime.Entity;
-import androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper;
-import androidx.xr.scenecore.runtime.PointSourceParams;
-import androidx.xr.scenecore.runtime.SoundFieldAttributes;
-
-import com.android.extensions.xr.media.MediaPlayerExtensions;
-
-import org.jspecify.annotations.NonNull;
-
-/** Implementation of the {@link MediaPlayerExtensionsWrapper}. */
-final class MediaPlayerExtensionsWrapperImpl implements MediaPlayerExtensionsWrapper {
-
-    private final MediaPlayerExtensions mExtensions;
-
-    MediaPlayerExtensionsWrapperImpl(@NonNull MediaPlayerExtensions extensions) {
-        mExtensions = extensions;
+/** Implementation of the [MediaPlayerExtensionsWrapper]. */
+internal class MediaPlayerExtensionsWrapperImpl(
+    private val mediaPlayerExtensions: MediaPlayerExtensions
+) : MediaPlayerExtensionsWrapper {
+    override fun setPointSourceParams(
+        mediaPlayer: MediaPlayer,
+        params: PointSourceParams,
+        entity: Entity,
+    ) {
+        mediaPlayerExtensions.setPointSourceParams(
+            mediaPlayer,
+            MediaUtils.convertPointSourceParamsToExtensions(params, entity),
+        )
     }
 
-    @Override
-    public void setPointSourceParams(
-            @NonNull MediaPlayer mediaPlayer,
-            @NonNull PointSourceParams params,
-            @NonNull Entity entity) {
-        com.android.extensions.xr.media.PointSourceParams extParams =
-                MediaUtils.convertPointSourceParamsToExtensions(params, entity);
+    override fun setSoundFieldAttributes(
+        mediaPlayer: MediaPlayer,
+        attributes: SoundFieldAttributes,
+    ) {
+        val extAttributes = MediaUtils.convertSoundFieldAttributesToExtensions(attributes)
 
-        MediaPlayer unused = mExtensions.setPointSourceParams(mediaPlayer, extParams);
-    }
-
-    @Override
-    public void setSoundFieldAttributes(
-            @NonNull MediaPlayer mediaPlayer, @NonNull SoundFieldAttributes attributes) {
-        com.android.extensions.xr.media.SoundFieldAttributes extAttributes =
-                MediaUtils.convertSoundFieldAttributesToExtensions(attributes);
-
-        MediaPlayer unused = mExtensions.setSoundFieldAttributes(mediaPlayer, extAttributes);
+        mediaPlayerExtensions.setSoundFieldAttributes(mediaPlayer, extAttributes)
     }
 }

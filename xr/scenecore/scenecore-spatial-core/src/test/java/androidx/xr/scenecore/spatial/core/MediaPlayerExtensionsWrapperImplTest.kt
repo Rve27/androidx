@@ -13,85 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.spatial.core
 
-package androidx.xr.scenecore.spatial.core;
+import android.media.MediaPlayer
+import androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper
+import androidx.xr.scenecore.runtime.PointSourceParams
+import androidx.xr.scenecore.runtime.SoundFieldAttributes
+import androidx.xr.scenecore.runtime.SpatializerConstants
+import androidx.xr.scenecore.spatial.core.SpatialCoreXrExtensionsHolderProvider.Companion.extensionsLegacy
+import com.android.extensions.xr.media.MediaPlayerExtensions
+import com.android.extensions.xr.media.ShadowMediaPlayerExtensions
+import com.android.extensions.xr.media.SpatializerExtensions
+import com.android.extensions.xr.media.XrSpatialAudioExtensions
+import com.google.common.truth.Truth
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import static com.google.common.truth.Truth.assertThat;
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class MediaPlayerExtensionsWrapperImplTest {
+    private val xrExtensions = extensionsLegacy
+    private val spatialAudioExtensions: XrSpatialAudioExtensions =
+        xrExtensions.xrSpatialAudioExtensions
+    private val mediaPlayerExtensions: MediaPlayerExtensions =
+        spatialAudioExtensions.mediaPlayerExtensions
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+    @Test
+    fun setPointSourceParams_callsExtensionsSetPointSourceParams() {
+        val mediaPlayer = MediaPlayer()
+        val fakeNode = xrExtensions.createNode()
+        val entity = mock<AndroidXrEntity>()
+        whenever(entity.getNode()).thenReturn(fakeNode)
+        val expectedRtParams = PointSourceParams()
+        val wrapper: MediaPlayerExtensionsWrapper =
+            MediaPlayerExtensionsWrapperImpl(mediaPlayerExtensions)
+        wrapper.setPointSourceParams(mediaPlayer, expectedRtParams, entity)
 
-import android.media.MediaPlayer;
-
-import androidx.xr.scenecore.runtime.MediaPlayerExtensionsWrapper;
-import androidx.xr.scenecore.runtime.PointSourceParams;
-import androidx.xr.scenecore.runtime.SoundFieldAttributes;
-import androidx.xr.scenecore.runtime.SpatializerConstants;
-
-import com.android.extensions.xr.XrExtensions;
-import com.android.extensions.xr.media.MediaPlayerExtensions;
-import com.android.extensions.xr.media.ShadowMediaPlayerExtensions;
-import com.android.extensions.xr.media.SpatializerExtensions;
-import com.android.extensions.xr.media.XrSpatialAudioExtensions;
-import com.android.extensions.xr.node.Node;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public class MediaPlayerExtensionsWrapperImplTest {
-    XrExtensions mXrExtensions;
-    XrSpatialAudioExtensions mSpatialAudioExtensions;
-    MediaPlayerExtensions mMediaPlayerExtensions;
-
-    @Before
-    public void setUp() {
-        mXrExtensions = SpatialCoreXrExtensionsHolderProvider.Companion.getExtensionsLegacy();
-        mSpatialAudioExtensions = mXrExtensions.getXrSpatialAudioExtensions();
-        mMediaPlayerExtensions = mSpatialAudioExtensions.getMediaPlayerExtensions();
+        Truth.assertThat(
+                ShadowMediaPlayerExtensions.extract(mediaPlayerExtensions).pointSourceParams.node
+            )
+            .isEqualTo(fakeNode)
     }
 
     @Test
-    public void setPointSourceParams_callsExtensionsSetPointSourceParams() {
-        MediaPlayer mediaPlayer = new MediaPlayer();
+    fun setSoundFieldAttr_callsExtensionsSetSoundFieldAttr() {
+        val mediaPlayer = MediaPlayer()
+        val expectedAmbisonicOrder = SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER
+        val expectedRtAttr = SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER)
+        val wrapper: MediaPlayerExtensionsWrapper =
+            MediaPlayerExtensionsWrapperImpl(mediaPlayerExtensions)
+        wrapper.setSoundFieldAttributes(mediaPlayer, expectedRtAttr)
 
-        Node fakeNode = mXrExtensions.createNode();
-        AndroidXrEntity entity = mock(AndroidXrEntity.class);
-        when(entity.getNode()).thenReturn(fakeNode);
-
-        PointSourceParams expectedRtParams = new PointSourceParams();
-
-        MediaPlayerExtensionsWrapper wrapper =
-                new MediaPlayerExtensionsWrapperImpl(mMediaPlayerExtensions);
-        wrapper.setPointSourceParams(mediaPlayer, expectedRtParams, entity);
-
-        assertThat(
-                        ShadowMediaPlayerExtensions.extract(mMediaPlayerExtensions)
-                                .getPointSourceParams()
-                                .getNode())
-                .isEqualTo(fakeNode);
-    }
-
-    @Test
-    public void setSoundFieldAttr_callsExtensionsSetSoundFieldAttr() {
-        MediaPlayer mediaPlayer = new MediaPlayer();
-
-        int expectedAmbisonicOrder = SpatializerExtensions.AMBISONICS_ORDER_THIRD_ORDER;
-        SoundFieldAttributes expectedRtAttr =
-                new SoundFieldAttributes(SpatializerConstants.AMBISONICS_ORDER_THIRD_ORDER);
-
-        MediaPlayerExtensionsWrapper wrapper =
-                new MediaPlayerExtensionsWrapperImpl(mMediaPlayerExtensions);
-        wrapper.setSoundFieldAttributes(mediaPlayer, expectedRtAttr);
-
-        assertThat(
-                        ShadowMediaPlayerExtensions.extract(mMediaPlayerExtensions)
-                                .getSoundFieldAttributes()
-                                .getAmbisonicsOrder())
-                .isEqualTo(expectedAmbisonicOrder);
+        Truth.assertThat(
+                ShadowMediaPlayerExtensions.extract(mediaPlayerExtensions)
+                    .soundFieldAttributes
+                    .ambisonicsOrder
+            )
+            .isEqualTo(expectedAmbisonicOrder)
     }
 }
