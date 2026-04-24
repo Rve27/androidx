@@ -25,8 +25,10 @@ package androidx.xr.scenecore.testing {
     method @KotlinOnly public inline <reified T> T createTester(androidx.xr.scenecore.Entity entity);
     method public androidx.xr.scenecore.testing.SoundEffectPoolTester createTester(androidx.xr.scenecore.SoundEffectPool soundEffectPool);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.ActivitySpaceTester getActivitySpaceTester();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.SpatialSoundPoolTester getSpatialSoundPoolTester();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.SpatialWindowTester getSpatialWindowTester();
     property public androidx.xr.scenecore.testing.ActivitySpaceTester activitySpaceTester;
+    property public androidx.xr.scenecore.testing.SpatialSoundPoolTester spatialSoundPoolTester;
     property public androidx.xr.scenecore.testing.SpatialWindowTester spatialWindowTester;
   }
 
@@ -34,6 +36,18 @@ package androidx.xr.scenecore.testing {
     method public boolean isAssetLoaded(android.content.res.AssetFileDescriptor assetFileDescriptor);
     method public boolean isResourceLoaded(int resourceId);
     method public void triggerLoadCompleteListener(androidx.xr.scenecore.SoundEffect soundEffect, boolean success);
+  }
+
+  public final class SpatialSoundPoolTester {
+    method @InaccessibleFromKotlin public int getPlayAsPointSourceResult();
+    method @InaccessibleFromKotlin public int getPlayAsSoundFieldResult();
+    method @InaccessibleFromKotlin public androidx.xr.scenecore.SpatializerConstants.SourceType getSpatialSourceType();
+    method @InaccessibleFromKotlin public void setPlayAsPointSourceResult(int);
+    method @InaccessibleFromKotlin public void setPlayAsSoundFieldResult(int);
+    method @InaccessibleFromKotlin public void setSpatialSourceType(androidx.xr.scenecore.SpatializerConstants.SourceType);
+    property public int playAsPointSourceResult;
+    property public int playAsSoundFieldResult;
+    property public androidx.xr.scenecore.SpatializerConstants.SourceType spatialSourceType;
   }
 
   public final class SpatialWindowTester {

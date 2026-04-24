@@ -185,21 +185,38 @@ public class SceneCoreTestRule : ExternalResource() {
             return _activitySpaceTester!!
         }
 
-    // region Spatial Properties
-
     /** Provides the [SpatialWindowTester] test data accessor for the [SpatialWindow]. */
     public val spatialWindowTester: SpatialWindowTester
         get() = requireRuntimesReady { SpatialWindowTester.instance }
 
-    // endregion
+    private var _spatialSoundPoolTester: SpatialSoundPoolTester? = null
+
+    /**
+     * This provides a [SpatialSoundPoolTester] instance for accessing the SpatialSoundPool's
+     * underlying fake test data.
+     */
+    public val spatialSoundPoolTester: SpatialSoundPoolTester
+        get() {
+            if (_spatialSoundPoolTester != null) {
+                return _spatialSoundPoolTester!!
+            }
+
+            _spatialSoundPoolTester = requireRuntimesReady {
+                SpatialSoundPoolTester(requireNotNull(FakeSceneRuntime.instance))
+            }
+
+            return _spatialSoundPoolTester!!
+        }
 
     @Suppress("GenericException")
     @Throws(Throwable::class)
     override fun before() {
         _activitySpaceTester = null
+        _spatialSoundPoolTester = null
     }
 
     override fun after() {
         _activitySpaceTester = null
+        _spatialSoundPoolTester = null
     }
 }
