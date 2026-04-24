@@ -70,6 +70,7 @@ import androidx.xr.scenecore.testing.internal.FakeMeshEntity as InternalFakeMesh
 import androidx.xr.scenecore.testing.internal.FakePerceptionSpaceScenePose as InternalFakePerceptionSpaceScenePose
 import androidx.xr.scenecore.testing.internal.FakeSceneRuntime as InternalFakeSceneRuntime
 import androidx.xr.scenecore.testing.internal.FakeSoundEffectPoolComponent as InternalFakeSoundEffectPoolComponent
+import androidx.xr.scenecore.testing.internal.FakeSoundPoolExtensionsWrapper as InternalFakeSoundPoolExtensionsWrapper
 import androidx.xr.scenecore.testing.internal.FakeSurfaceEntity as InternalFakeSurfaceEntity
 import java.util.concurrent.Executor
 import java.util.function.Consumer
@@ -125,10 +126,12 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
         )
 
     override val soundPoolExtensionsWrapper: SoundPoolExtensionsWrapper =
-        FakeSoundPoolExtensionsWrapper()
+        FakeSoundPoolExtensionsWrapper(
+            internalRuntime.soundPoolExtensionsWrapper as InternalFakeSoundPoolExtensionsWrapper
+        )
 
     override val audioTrackExtensionsWrapper: FakeAudioTrackExtensionsWrapper =
-        FakeAudioTrackExtensionsWrapper(requireNotNull(internalRuntime).audioTrackExtensionsWrapper)
+        FakeAudioTrackExtensionsWrapper(internalRuntime.audioTrackExtensionsWrapper)
 
     override val mediaPlayerExtensionsWrapper: FakeMediaPlayerExtensionsWrapper =
         FakeMediaPlayerExtensionsWrapper()
