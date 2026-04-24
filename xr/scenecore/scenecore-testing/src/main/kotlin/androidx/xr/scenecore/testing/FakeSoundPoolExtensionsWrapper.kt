@@ -30,8 +30,34 @@ import androidx.xr.scenecore.runtime.SpatializerConstants
 @Deprecated("Use SceneCoreTestRule instead.")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
-
     private var playAsPointSourceResult: Int = 0
+
+    public var lastPlayedSoundPool: SoundPool? = null
+        private set
+
+    public var lastPlayedSoundId: Int? = null
+        private set
+
+    public var lastPlayedParams: PointSourceParams? = null
+        private set
+
+    public var lastPlayedEntity: Entity? = null
+        private set
+
+    public var lastPlayedVolume: Float? = null
+        private set
+
+    public var lastPlayedPriority: Int? = null
+        private set
+
+    public var lastPlayedLoop: Int? = null
+        private set
+
+    public var lastPlayedRate: Float? = null
+        private set
+
+    public var lastPlayedSoundFieldAttributes: SoundFieldAttributes? = null
+        private set
 
     /**
      * For test purposes only. Sets the value that will be returned by the [play] method for point
@@ -69,6 +95,16 @@ public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
         loop: Int,
         rate: Float,
     ): Int {
+        lastPlayedSoundFieldAttributes = null
+        lastPlayedSoundPool = soundPool
+        lastPlayedSoundId = soundId
+        lastPlayedParams = params
+        lastPlayedEntity = entity
+        lastPlayedVolume = volume
+        lastPlayedPriority = priority
+        lastPlayedLoop = loop
+        lastPlayedRate = rate
+
         return playAsPointSourceResult
     }
 
@@ -109,6 +145,15 @@ public class FakeSoundPoolExtensionsWrapper : SoundPoolExtensionsWrapper {
         loop: Int,
         rate: Float,
     ): Int {
+        lastPlayedParams = null
+        lastPlayedSoundPool = soundPool
+        lastPlayedSoundId = soundId
+        lastPlayedSoundFieldAttributes = attributes
+        lastPlayedVolume = volume
+        lastPlayedPriority = priority
+        lastPlayedLoop = loop
+        lastPlayedRate = rate
+
         return playAsSoundFieldResult
     }
 
