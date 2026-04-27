@@ -20,6 +20,7 @@ import androidx.xr.scenecore.ActivitySpace
 import androidx.xr.scenecore.AnchorEntity
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
+import androidx.xr.scenecore.ImageBasedLightingAsset
 import androidx.xr.scenecore.PositionalAudioComponent
 import androidx.xr.scenecore.SoundEffectPool
 import androidx.xr.scenecore.SpatialWindow
@@ -149,6 +150,21 @@ public class SceneCoreTestRule : ExternalResource() {
             ?: throw IllegalArgumentException(
                 "Expected tester of type ${T::class.simpleName}, but actual component created a ${tester::class.simpleName}"
             )
+    }
+
+    /**
+     * Creates a test data accessor for the given [ImageBasedLightingAsset].
+     *
+     * In the test environment, each asset created via [ImageBasedLightingAsset.createFromZip] has
+     * corresponding underlying fake data. This function provides access to that fake data, allowing
+     * for verification or manipulation in tests.
+     *
+     * @param asset The [ImageBasedLightingAsset] instance for which to retrieve test data.
+     * @return A [ImageBasedLightingAssetTester] instance used to inspect and manipulate the test
+     *   data.
+     */
+    public fun createTester(asset: ImageBasedLightingAsset): ImageBasedLightingAssetTester {
+        return ImageBasedLightingAssetTester.create(asset)
     }
 
     /**
