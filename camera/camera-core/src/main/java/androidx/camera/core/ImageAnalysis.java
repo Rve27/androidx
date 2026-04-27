@@ -248,7 +248,6 @@ public final class ImageAnalysis extends UseCase {
      *
      * @see Builder#setOutputImageFormat(int)
      */
-    @RestrictTo(Scope.LIBRARY_GROUP)
     public static final int OUTPUT_IMAGE_FORMAT_PRIVATE = 4;
 
     /**
@@ -276,7 +275,6 @@ public final class ImageAnalysis extends UseCase {
      * @param cameraInfo the {@link CameraInfo} to query.
      * @return {@link ImageAnalysisCapabilities}
      */
-    @RestrictTo(Scope.LIBRARY_GROUP)
     public static @NonNull ImageAnalysisCapabilities getImageAnalysisCapabilities(
             @NonNull CameraInfo cameraInfo) {
         return new ImageAnalysisCapabilitiesImpl(cameraInfo);

@@ -28,7 +28,6 @@ import android.media.Image;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
-import androidx.annotation.RestrictTo;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -159,7 +158,6 @@ public interface ImageProxy extends AutoCloseable {
      *
      * @return the hardware buffer, or {@code null} if it is not available.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @RequiresApi(Build.VERSION_CODES.P)
     default @Nullable HardwareBuffer getHardwareBuffer() {
         return null;

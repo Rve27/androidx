@@ -16,13 +16,10 @@
 
 package androidx.camera.core;
 
-import androidx.annotation.RestrictTo;
-
 /**
  * ImageAnalysisCapabilities is used to query {@link ImageAnalysis} use case capabilities on the
  * device.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public interface ImageAnalysisCapabilities {
     /**
      * Returns whether the given output image format is supported.
