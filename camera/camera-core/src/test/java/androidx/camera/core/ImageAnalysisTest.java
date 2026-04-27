@@ -23,10 +23,12 @@ import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED;
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.robolectric.Shadows.shadowOf;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.hardware.HardwareBuffer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -556,6 +558,39 @@ public class ImageAnalysisTest {
         imageProxy.setFormat(ImageFormat.PRIVATE);
 
         assertThrows(IllegalArgumentException.class, imageProxy::toBitmap);
+    }
+
+    @Test
+    @Config(minSdk = 28)
+    public void getHardwareBuffer_returnsCorrectHardwareBuffer() throws InterruptedException {
+        HardwareBuffer hardwareBuffer = mock(HardwareBuffer.class);
+        mImageAnalysis = new ImageAnalysis.Builder()
+                .setSessionOptionUnpacker((resolution, config, builder) -> { })
+                .setImageReaderProxyProvider(
+                        (width, height, format, queueDepth, usage) -> {
+                            mFakeImageReaderProxy = FakeImageReaderProxy.newInstance(width,
+                                    height, format, queueDepth, usage);
+                            mFakeImageReaderProxy.setHardwareBuffer(hardwareBuffer);
+                            return mFakeImageReaderProxy;
+                        })
+                .build();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        final HardwareBuffer[] receivedHardwareBuffer = new HardwareBuffer[1];
+        mImageAnalysis.setAnalyzer(CameraXExecutors.directExecutor(), image -> {
+            receivedHardwareBuffer[0] = image.getHardwareBuffer();
+            image.close();
+            latch.countDown();
+        });
+
+        mImageAnalysis.bindToCamera(new FakeCamera(), null, null, null);
+        mImageAnalysis.updateSuggestedStreamSpec(StreamSpec.builder(new Size(640, 480)).build(),
+                null);
+
+        triggerNextImage();
+
+        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
+        assertThat(receivedHardwareBuffer[0]).isEqualTo(hardwareBuffer);
     }
 
     @SuppressWarnings("deprecation") // test for legacy resolution API

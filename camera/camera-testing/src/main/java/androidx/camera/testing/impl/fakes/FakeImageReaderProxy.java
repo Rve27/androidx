@@ -17,9 +17,12 @@
 package androidx.camera.testing.impl.fakes;
 
 import android.graphics.ImageFormat;
+import android.hardware.HardwareBuffer;
 import android.media.ImageReader;
+import android.os.Build;
 import android.view.Surface;
 
+import androidx.annotation.RequiresApi;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.impl.ImageReaderProxy;
 import androidx.camera.core.impl.TagBundle;
@@ -47,6 +50,7 @@ public class FakeImageReaderProxy implements ImageReaderProxy {
     private int mImageFormat = ImageFormat.JPEG;
     private final int mMaxImages;
     private long mUsage = 0;
+    private @Nullable HardwareBuffer mHardwareBuffer;
 
     private @Nullable Surface mSurface;
 
@@ -208,6 +212,11 @@ public class FakeImageReaderProxy implements ImageReaderProxy {
         mImageFormat = imageFormat;
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
+    public void setHardwareBuffer(@Nullable HardwareBuffer hardwareBuffer) {
+        mHardwareBuffer = hardwareBuffer;
+    }
+
     /**
      * Returns the usage flag of the reader.
      */
@@ -254,6 +263,9 @@ public class FakeImageReaderProxy implements ImageReaderProxy {
         fakeImageProxy.setFormat(mImageFormat);
         fakeImageProxy.setHeight(mHeight);
         fakeImageProxy.setWidth(mWidth);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            fakeImageProxy.setHardwareBuffer(mHardwareBuffer);
+        }
 
         return fakeImageProxy;
     }

@@ -1439,10 +1439,11 @@ public final class ImageAnalysis extends UseCase {
          *
          *     imageAnalysis.setAnalyzer(executor, image -> {
          *         // Access the HardwareBuffer for GPU processing
-         *         Image androidImage = image.getImage();
-         *         if (androidImage != null && Build.VERSION.SDK_INT >= 28) {
-         *             HardwareBuffer hardwareBuffer = androidImage.getHardwareBuffer();
-         *             // Do GPU processing with hardwareBuffer
+         *         if (Build.VERSION.SDK_INT >= 28) {
+         *             HardwareBuffer hardwareBuffer = image.getHardwareBuffer();
+         *             if (hardwareBuffer != null) {
+         *                 // Do GPU processing with hardwareBuffer
+         *             }
          *         }
          *         image.close();
          *     });
