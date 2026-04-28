@@ -36,7 +36,10 @@ import androidx.webkit.BackForwardCacheSettings;
 import androidx.webkit.Navigation;
 import androidx.webkit.NavigationListener;
 import androidx.webkit.Page;
+import androidx.webkit.PrefetchCache;
+import androidx.webkit.PrefetchParameters;
 import androidx.webkit.PrerenderOperationCallback;
+import androidx.webkit.PrerenderParameters;
 import androidx.webkit.Profile;
 import androidx.webkit.ProfileStore;
 import androidx.webkit.ProxyConfig;
@@ -45,7 +48,6 @@ import androidx.webkit.SafeBrowsingResponseCompat;
 import androidx.webkit.ServiceWorkerClientCompat;
 import androidx.webkit.ServiceWorkerWebSettingsCompat;
 import androidx.webkit.SpeculativeLoadingConfig;
-import androidx.webkit.SpeculativeLoadingParameters;
 import androidx.webkit.TracingConfig;
 import androidx.webkit.TracingController;
 import androidx.webkit.WebMessageCompat;
@@ -718,8 +720,8 @@ public class WebViewFeatureInternal {
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
      * This feature covers
-     * {@link androidx.webkit.Profile#prefetchUrlAsync(String, CancellationSignal, Executor, SpeculativeLoadingParameters, WebViewOutcomeReceiver)}
-     * {@link androidx.webkit.Profile#prefetchUrlAsync(String, CancellationSignal, Executor, WebViewOutcomeReceiver)}
+     * {@link androidx.webkit.PrefetchCache#prefetchUrlAsync(String, CancellationSignal, Executor, PrefetchParameters, WebViewOutcomeReceiver)}
+     * {@link androidx.webkit.PrefetchCache#prefetchUrlAsync(String, CancellationSignal, Executor, WebViewOutcomeReceiver)}
      */
     public static final ApiFeature.NoFramework PROFILE_URL_PREFETCH =
             new ApiFeature.NoFramework(WebViewFeature.PROFILE_URL_PREFETCH,
@@ -771,7 +773,7 @@ public class WebViewFeatureInternal {
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
-     * This feature covers {@link androidx.webkit.WebViewCompat#setDefaultTrafficStatsTag(int)}}
+     * This feature covers {@link androidx.webkit.WebViewCompat#setDefaultTrafficStatsTag(int)}
      */
     public static final ApiFeature.NoFramework DEFAULT_TRAFFICSTATS_TAGGING =
             new ApiFeature.NoFramework(WebViewFeature.DEFAULT_TRAFFICSTATS_TAGGING,
@@ -780,8 +782,7 @@ public class WebViewFeatureInternal {
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
      * This feature covers
-     * {@link androidx.webkit.WebViewCompat#prerenderUrl(WebView, String, CancellationSignal, Executor,
-     * SpeculativeLoadingParameters, PrerenderOperationCallback)}}
+     * {@link androidx.webkit.WebViewCompat#prerenderUrlAsync(WebView, String, CancellationSignal, Executor, PrerenderParameters, PrerenderOperationCallback)}
      */
     public static final ApiFeature.NoFramework PRERENDER_WITH_URL =
             new ApiFeature.NoFramework(WebViewFeature.PRERENDER_WITH_URL,
@@ -789,16 +790,18 @@ public class WebViewFeatureInternal {
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
-     * This feature covers {@link Profile#setSpeculativeLoadingConfig(SpeculativeLoadingConfig)}
+     * This feature covers
+     * {@link Profile#setSpeculativeLoadingConfig(SpeculativeLoadingConfig)}
      */
+    @SuppressWarnings({"deprecation", "removal"})
     public static final ApiFeature.NoFramework SPECULATIVE_LOADING_CONFIG =
             new ApiFeature.NoFramework(WebViewFeature.SPECULATIVE_LOADING_CONFIG,
                     Features.SPECULATIVE_LOADING_CONFIG);
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
-     * This feature covers {@link Profile#setMaxPrefetches(Integer)},
-     * {@link Profile#setPrefetchTtlSeconds(Integer)}
+     * This feature covers {@link PrefetchCache#setMaxPrefetches(int)},
+     * {@link PrefetchCache#setPrefetchTtlSeconds(int)}
      */
     public static final ApiFeature.NoFramework PREFETCH_CACHE =
             new ApiFeature.NoFramework(WebViewFeature.PREFETCH_CACHE_V1,
@@ -807,7 +810,7 @@ public class WebViewFeatureInternal {
 
     /**
      * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
-     * This feature covers {@link Profile#setMaxPrerenders(Integer)}
+     * This feature covers {@link Profile#setMaxPrerenders(int)}
      */
     public static final ApiFeature.NoFramework SET_MAX_PRERENDERS =
             new ApiFeature.NoFramework(WebViewFeature.SET_MAX_PRERENDERS_V1,
@@ -1006,12 +1009,12 @@ public class WebViewFeatureInternal {
     /**
      * This feature covers {@link
      * androidx.webkit.WebViewCompat#addJavaScriptOnEvent(android.webkit.WebView, String, int, Set,
-     * androidx.webkit.WebViewCompat.JsExecutionWorld)} {@link
+     * androidx.webkit.JavaScriptExecutionWorld)} {@link
      * androidx.webkit.WebViewCompat#getExecutionWorld(android.webkit.WebView, String)} {@link
      * androidx.webkit.WebViewCompat#addWebMessageListener(android.webkit.WebView, String, Set,
-     * WebMessageListener, JsExecutionWorld)} {@link
+     * WebMessageListener, JavaScriptExecutionWorld)} {@link
      * androidx.webkit.WebViewCompat#removeWebMessageListener(android.webkit.WebView, String,
-     * JsExecutionWorld)}
+     * JavaScriptExecutionWorld)}
      */
     public static final ApiFeature.NoFramework JS_INJECTION_IN_FRAME_AND_WORLD =
             new ApiFeature.NoFramework(
