@@ -38,7 +38,7 @@ internal constructor(name: String = "", fakeInternal: InternalFakeActivityPanelE
         get() = fakeInternal as InternalFakeActivityPanelEntity
 
     /** The intent that was last used to launch an activity. */
-    public val launchIntent: Intent
+    public val launchIntent: Intent?
         get() = internalActivityPanelEntity.launchIntent
 
     /** The bundle that was last used to launch an activity. */
@@ -56,7 +56,7 @@ internal constructor(name: String = "", fakeInternal: InternalFakeActivityPanelE
     }
 
     /** The activity that was last moved into the panel. */
-    public val movedActivity: Activity
+    public val movedActivity: Activity?
         get() = internalActivityPanelEntity.movedActivity
 
     /**
