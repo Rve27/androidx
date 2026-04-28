@@ -13,198 +13,176 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.xr.scenecore.testing
 
-package androidx.xr.scenecore.testing;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
-import android.annotation.SuppressLint;
-
-import androidx.annotation.RestrictTo;
-
-import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.CheckReturnValue;
-
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
+import android.annotation.SuppressLint
+import androidx.annotation.RestrictTo
+import com.google.common.base.Preconditions
+import com.google.common.collect.Lists
+import com.google.errorprone.annotations.CheckReturnValue
+import java.lang.AutoCloseable
+import java.time.Duration
+import java.time.Instant
+import java.util.Queue
+import java.util.concurrent.AbstractExecutorService
+import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.Delayed
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.FutureTask
+import java.util.concurrent.PriorityBlockingQueue
+import java.util.concurrent.RejectedExecutionException
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.concurrent.Volatile
 
 /**
- * Fake implementation of {@link ScheduledExecutorService} that lets tests control when tasks are
+ * Fake implementation of [ScheduledExecutorService] that lets tests control when tasks are
  * executed.
  */
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
-@SuppressWarnings("NotCloseable")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeScheduledExecutorService extends AbstractExecutorService
-        implements ScheduledExecutorService, AutoCloseable {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public open class FakeScheduledExecutorService public constructor() :
+    AbstractExecutorService(), ScheduledExecutorService, AutoCloseable {
+    private val clock: Clock
+    private val executeQueue: Queue<Runnable> = ConcurrentLinkedQueue()
+    private val scheduledQueue = PriorityBlockingQueue<DelayedFuture<*>>()
+    private val nextSequenceId = AtomicLong(0)
 
-    private static final TimeUnit CLOCK_UNIT = MILLISECONDS;
-    private final Clock mClock;
-    private final Queue<Runnable> mExecuteQueue = new ConcurrentLinkedQueue<>();
-    private final PriorityBlockingQueue<DelayedFuture<?>> mScheduledQueue =
-            new PriorityBlockingQueue<>();
-    private final AtomicLong mNextSequenceId = new AtomicLong(0);
-    private volatile boolean mRunning = true;
+    @Volatile private var isRunning = true
 
-    public FakeScheduledExecutorService() {
-        mClock = new Clock();
+    init {
+        clock = Clock()
     }
 
-    private static long toClockUnit(Duration duration) {
-        return duration.toMillis();
+    override fun isShutdown(): Boolean {
+        return !isRunning
     }
 
-    private static Duration durationFromClockUnit(long durationClockUnit) {
-        return Duration.ofMillis(durationClockUnit);
+    override fun isTerminated(): Boolean {
+        return isShutdown && this.isEmpty()
     }
 
-    @Override
-    public boolean isShutdown() {
-        return !mRunning;
+    override fun shutdown() {
+        isRunning = false
     }
 
-    @Override
-    public boolean isTerminated() {
-        return isShutdown() && isEmpty();
+    override fun close() {
+        shutdown()
     }
 
-    @Override
-    public void shutdown() {
-        mRunning = false;
+    override fun shutdownNow(): MutableList<Runnable> {
+        isRunning = false
+        val commands: MutableList<Runnable> = Lists.newArrayList()
+        commands.addAll(executeQueue)
+        commands.addAll(scheduledQueue)
+        executeQueue.clear()
+        scheduledQueue.clear()
+        return commands
     }
 
-    @Override
-    public void close() {
-        shutdown();
-    }
-
-    @Override
-    public @NonNull List<Runnable> shutdownNow() {
-        mRunning = false;
-        List<Runnable> commands = Lists.newArrayList();
-        commands.addAll(mExecuteQueue);
-        commands.addAll(mScheduledQueue);
-        mExecuteQueue.clear();
-        mScheduledQueue.clear();
-        return commands;
-    }
-
-    @Override
-    public boolean awaitTermination(long timeout, @Nullable TimeUnit unit) {
-        checkState(!mRunning);
-        while (!mExecuteQueue.isEmpty()) {
-            runNext();
+    override fun awaitTermination(timeout: Long, unit: TimeUnit): Boolean {
+        Preconditions.checkState(!isRunning)
+        while (!executeQueue.isEmpty()) {
+            runNext()
         }
-        simulateSleepExecutingAllTasks(durationFromClockUnit(timeout));
-        return isEmpty();
+        simulateSleepExecutingAllTasks(durationFromClockUnit(timeout))
+        return this.isEmpty()
     }
 
-    @Override
-    public void execute(@Nullable Runnable command) {
-        assertRunning();
-        mExecuteQueue.add(command);
+    override fun execute(command: Runnable) {
+        assertRunning()
+        executeQueue.add(command)
     }
 
-    private void assertRunning() {
-        if (!mRunning) {
-            throw new RejectedExecutionException();
+    private fun assertRunning() {
+        if (!isRunning) {
+            throw RejectedExecutionException()
         }
     }
 
-    @Override
-    public @NonNull ScheduledFuture<?> schedule(
-            @Nullable Runnable command, long delay, @Nullable TimeUnit unit) {
-        assertRunning();
-        DelayedFuture<?> future = new DelayedFuture<>(command, delay, unit);
-        mScheduledQueue.add(future);
-        return future;
+    override fun schedule(command: Runnable, delay: Long, unit: TimeUnit): ScheduledFuture<*> {
+        assertRunning()
+        val future: DelayedFuture<*> = DelayedFuture<Any>(command, delay, unit)
+        scheduledQueue.add(future)
+        return future
     }
 
-    @Override
-    public <V> @NonNull ScheduledFuture<V> schedule(
-            @Nullable Callable<V> callable, long delay, @Nullable TimeUnit unit) {
-        assertRunning();
-        DelayedFuture<V> future = new DelayedCallable<V>(callable, delay, unit);
-        mScheduledQueue.add(future);
-        return future;
+    override fun <V> schedule(
+        callable: Callable<V>,
+        delay: Long,
+        unit: TimeUnit,
+    ): ScheduledFuture<V> {
+        assertRunning()
+        val future: DelayedFuture<V> = DelayedCallable(callable, delay, unit)
+        scheduledQueue.add(future)
+        return future
     }
 
-    @Override
-    public @NonNull ScheduledFuture<?> scheduleAtFixedRate(
-            @Nullable Runnable command, long initialDelay, long period, @Nullable TimeUnit unit) {
-        throw new UnsupportedOperationException("not implemented");
+    override fun scheduleAtFixedRate(
+        command: Runnable,
+        initialDelay: Long,
+        period: Long,
+        unit: TimeUnit,
+    ): ScheduledFuture<*> {
+        throw UnsupportedOperationException("not implemented")
     }
 
-    @Override
-    public @NonNull ScheduledFuture<?> scheduleWithFixedDelay(
-            @Nullable Runnable command, long initialDelay, long delay, @Nullable TimeUnit unit) {
-        throw new UnsupportedOperationException("not implemented");
+    override fun scheduleWithFixedDelay(
+        command: Runnable,
+        initialDelay: Long,
+        delay: Long,
+        unit: TimeUnit,
+    ): ScheduledFuture<*> {
+        throw UnsupportedOperationException("not implemented")
     }
 
-    /** Returns true if the {@link #execute} queue contains at least one runnable. */
-    public boolean hasNext() {
-        return !mExecuteQueue.isEmpty();
+    /** Returns true if the [.execute] queue contains at least one runnable. */
+    public fun hasNext(): Boolean {
+        return !executeQueue.isEmpty()
     }
 
-    /** Runs the next runnable in the {@link #execute} queue. */
-    public void runNext() {
-        checkState(!mExecuteQueue.isEmpty(), "execute queue must not be empty");
-        Runnable runnable = mExecuteQueue.remove();
-        runTaskWithInterruptIsolation(runnable);
+    /** Runs the next runnable in the [.execute] queue. */
+    public fun runNext() {
+        Preconditions.checkState(!executeQueue.isEmpty(), "execute queue must not be empty")
+        val runnable = executeQueue.remove()
+        runTaskWithInterruptIsolation(runnable)
     }
 
-    /** Runs all of the runnables that {@link #execute} enqueued. */
-    public void runAll() {
+    /** Runs all the runnable that [.execute] enqueued. */
+    public fun runAll() {
         while (hasNext()) {
-            runNext();
+            runNext()
         }
     }
 
-    /** Returns whether any runnable is in the {@link #execute} or {@link #schedule} queue. */
+    /** Returns whether any runnable is in the [.execute] or [.schedule] queue. */
     @CheckReturnValue
-    public boolean isEmpty() {
-        return mExecuteQueue.isEmpty() && mScheduledQueue.isEmpty();
+    public fun isEmpty(): Boolean {
+        return executeQueue.isEmpty() && scheduledQueue.isEmpty()
     }
 
     /**
-     * Executes tasks from the {@link #schedule} queue until the given amount of simulated time has
+     * Executes tasks from the [.schedule] queue until the given amount of simulated time has
      * passed.
      */
-    public void simulateSleepExecutingAllTasks(@NonNull Duration duration) {
-        long timeout = toClockUnit(duration);
-        checkArgument(timeout >= 0, "timeout (%s) cannot be negative", timeout);
+    public fun simulateSleepExecutingAllTasks(duration: Duration) {
+        val timeout: Long = toClockUnit(duration)
+        Preconditions.checkArgument(timeout >= 0, "timeout (%s) cannot be negative", timeout)
 
-        long stopTime = mClock.currentTimeMillis() + CLOCK_UNIT.toMillis(timeout);
-        boolean done = false;
+        val stopTime: Long = clock.currentTimeMillis() + CLOCK_UNIT.toMillis(timeout)
+        var done = false
 
         while (!done) {
-            long delay = (stopTime - mClock.currentTimeMillis());
+            val delay = (stopTime - clock.currentTimeMillis())
             if (delay >= 0 && simulateSleepExecutingAtMostOneTask(durationFromClockUnit(delay))) {
-                continue;
+                continue
             } else {
-                done = true;
+                done = true
             }
         }
     }
@@ -212,182 +190,183 @@ public class FakeScheduledExecutorService extends AbstractExecutorService
     /**
      * Simulates sleeping up to the given timeout before executing the next scheduled task, if any.
      */
-    @SuppressWarnings("FutureReturnValueIgnored")
-    public boolean simulateSleepExecutingAtMostOneTask(@NonNull Duration duration) {
-        long timeout = toClockUnit(duration);
-        checkArgument(timeout >= 0, "timeout (%s) cannot be negative", timeout);
-        if (mScheduledQueue.isEmpty()) {
-            mClock.advanceBy(duration);
-            return false;
+    public fun simulateSleepExecutingAtMostOneTask(duration: Duration): Boolean {
+        val timeout: Long = toClockUnit(duration)
+        Preconditions.checkArgument(timeout >= 0, "timeout (%s) cannot be negative", timeout)
+        if (scheduledQueue.isEmpty()) {
+            clock.advanceBy(duration)
+            return false
         }
 
-        DelayedFuture<?> future = mScheduledQueue.peek();
-        long delay = future.getDelay(CLOCK_UNIT);
+        val future = scheduledQueue.peek()
+        val delay = future!!.getDelay(CLOCK_UNIT)
         if (delay > timeout) {
             // Next event is too far in the future; delay the entire time
-            mClock.advanceBy(duration);
-            return false;
+            clock.advanceBy(duration)
+            return false
         }
 
-        mScheduledQueue.poll();
-        runTaskWithInterruptIsolation(future);
+        scheduledQueue.poll()
+        runTaskWithInterruptIsolation(future)
 
-        return true;
+        return true
     }
 
     /**
      * Simulates sleeping as long as necessary before executing the next scheduled task. Does
-     * nothing if the {@link #schedule} queue is empty.
+     * nothing if the [.schedule] queue is empty.
      */
-    public boolean simulateSleepExecutingAtMostOneTask() {
-        if (mScheduledQueue.isEmpty()) {
-            return false;
+    public fun simulateSleepExecutingAtMostOneTask(): Boolean {
+        if (scheduledQueue.isEmpty()) {
+            return false
         }
 
-        DelayedFuture<?> future = mScheduledQueue.poll();
-        runTaskWithInterruptIsolation(future);
-        return true;
+        val future = scheduledQueue.poll()
+        runTaskWithInterruptIsolation(future!!)
+        return true
     }
 
     /** Clears this thread's interrupt bit, runs the task, and restores any previous interrupt. */
-    private void runTaskWithInterruptIsolation(Runnable task) {
-        boolean interruptBitWasSet = Thread.interrupted();
+    private fun runTaskWithInterruptIsolation(task: Runnable) {
+        val interruptBitWasSet = Thread.interrupted()
         try {
-            task.run();
+            task.run()
         } finally {
             if (interruptBitWasSet) {
-                Thread.currentThread().interrupt();
+                Thread.currentThread().interrupt()
             }
         }
     }
 
-    private static class Clock {
-        private final AtomicReference<Instant> mNowReference = new AtomicReference<>();
+    private class Clock {
+        private val nowReference = AtomicReference(Instant.EPOCH)
 
-        Clock() {
-            setTo(Instant.EPOCH);
+        fun currentTimeMillis(): Long {
+            return nowReference.get()!!.toEpochMilli()
         }
 
-        public long currentTimeMillis() {
-            return mNowReference.get().toEpochMilli();
+        fun advanceBy(duration: Duration) {
+            nowReference.getAndUpdate { now: Instant -> now.plus(duration) }
         }
 
-        public void advanceBy(Duration duration) {
-            mNowReference.getAndUpdate(now -> now.plus(duration));
-        }
-
-        public void setTo(Instant instant) {
-            mNowReference.set(instant);
+        fun setTo(instant: Instant) {
+            nowReference.set(instant)
         }
     }
 
-    private class DelayedFuture<T> implements ScheduledFuture<T>, Runnable {
-        protected final long mTimeToRun;
-        private final long mSequenceId;
-        private final Runnable mCommand;
-        private boolean mCancelled;
-        private boolean mDone;
+    private open inner class DelayedFuture<T>(command: Runnable, delay: Long, unit: TimeUnit) :
+        ScheduledFuture<T>, Runnable {
+        protected val mTimeToRun: Long
+        private val mSequenceId: Long
+        private val mCommand: Runnable
+        private var mCancelled = false
+        private var mDone = false
 
-        DelayedFuture(Runnable command, long delay, TimeUnit unit) {
-            checkArgument(delay >= 0, "delay (%s) cannot be negative", delay);
+        init {
+            Preconditions.checkArgument(delay >= 0, "delay (%s) cannot be negative", delay)
 
-            mCommand = command;
-            mTimeToRun = mClock.currentTimeMillis() + unit.toMillis(delay);
-            mSequenceId = mNextSequenceId.getAndIncrement();
+            mCommand = command
+            mTimeToRun = clock.currentTimeMillis() + unit.toMillis(delay)
+            mSequenceId = nextSequenceId.getAndIncrement()
         }
 
-        @Override
-        public long getDelay(TimeUnit unit) {
-            return unit.convert(mTimeToRun - mClock.currentTimeMillis(), MILLISECONDS);
+        override fun getDelay(unit: TimeUnit): Long {
+            return unit.convert(mTimeToRun - clock.currentTimeMillis(), TimeUnit.MILLISECONDS)
         }
 
-        protected void maybeReschedule() {
-            mDone = true;
+        protected fun maybeReschedule() {
+            mDone = true
         }
 
-        @Override
-        public void run() {
-            if (mClock.currentTimeMillis() < mTimeToRun) {
-                mClock.advanceBy(durationFromClockUnit(mTimeToRun - mClock.currentTimeMillis()));
+        override fun run() {
+            if (clock.currentTimeMillis() < mTimeToRun) {
+                clock.advanceBy(durationFromClockUnit(mTimeToRun - clock.currentTimeMillis()))
             }
-            mCommand.run();
-            maybeReschedule();
+            mCommand.run()
+            maybeReschedule()
         }
 
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            mCancelled = true;
-            mDone = true;
-            return mScheduledQueue.remove(this);
+        override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
+            mCancelled = true
+            mDone = true
+            return scheduledQueue.remove(this)
         }
 
-        @Override
-        public boolean isCancelled() {
-            return mCancelled;
+        override fun isCancelled(): Boolean {
+            return mCancelled
         }
 
-        @Override
-        public boolean isDone() {
-            return mDone;
+        override fun isDone(): Boolean {
+            return mDone
         }
 
-        @Override
-        public T get() throws InterruptedException, ExecutionException {
-            return null;
+        @Suppress("UNCHECKED_CAST")
+        @Throws(InterruptedException::class, ExecutionException::class)
+        override fun get(): T {
+            return null as T
         }
 
-        @Override
-        public T get(long timeout, TimeUnit unit)
-                throws InterruptedException, ExecutionException, TimeoutException {
-            return null;
+        @Suppress("UNCHECKED_CAST")
+        @Throws(InterruptedException::class, ExecutionException::class, TimeoutException::class)
+        override fun get(timeout: Long, unit: TimeUnit): T {
+            return null as T
         }
 
-        @Override
-        public int compareTo(Delayed other) {
-            if (other == this) {
-                return 0;
+        override fun compareTo(other: Delayed): Int {
+            if (other === this) {
+                return 0
             }
-            DelayedFuture<?> that = (DelayedFuture<?>) other;
-            long diff = mTimeToRun - that.mTimeToRun;
-            if (diff < 0) {
-                return -1;
+            val that = other as DelayedFuture<*>
+            val diff = mTimeToRun - that.mTimeToRun
+            return if (diff < 0) {
+                -1
             } else if (diff > 0) {
-                return 1;
+                1
             } else if (mSequenceId < that.mSequenceId) {
-                return -1;
+                -1
             } else {
-                return 1;
+                1
             }
         }
     }
 
-    private class DelayedCallable<T> extends DelayedFuture<T> {
-        private final FutureTask<T> mTask;
+    private inner class DelayedCallable<T>(
+        private val mTask: FutureTask<T>,
+        delay: Long,
+        unit: TimeUnit,
+    ) : DelayedFuture<T>(mTask, delay, unit) {
 
-        private DelayedCallable(FutureTask<T> task, long delay, TimeUnit unit) {
-            super(task, delay, unit);
-            mTask = task;
+        constructor(
+            callable: Callable<T>,
+            delay: Long,
+            unit: TimeUnit,
+        ) : this(FutureTask<T>(callable), delay, unit)
+
+        override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
+            mTask.cancel(mayInterruptIfRunning)
+            return super.cancel(mayInterruptIfRunning)
         }
 
-        DelayedCallable(Callable<T> callable, long delay, TimeUnit unit) {
-            this(new FutureTask<T>(callable), delay, unit);
+        @Throws(InterruptedException::class, ExecutionException::class)
+        override fun get(): T {
+            return mTask.get()
         }
 
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            mTask.cancel(mayInterruptIfRunning);
-            return super.cancel(mayInterruptIfRunning);
+        @Throws(InterruptedException::class, ExecutionException::class, TimeoutException::class)
+        override fun get(timeout: Long, unit: TimeUnit): T {
+            return mTask.get(timeout, unit)
+        }
+    }
+
+    public companion object {
+        private val CLOCK_UNIT = TimeUnit.MILLISECONDS
+
+        private fun toClockUnit(duration: Duration): Long {
+            return duration.toMillis()
         }
 
-        @Override
-        public T get() throws InterruptedException, ExecutionException {
-            return mTask.get();
-        }
-
-        @Override
-        public T get(long timeout, TimeUnit unit)
-                throws InterruptedException, ExecutionException, TimeoutException {
-            return mTask.get(timeout, unit);
+        private fun durationFromClockUnit(durationClockUnit: Long): Duration {
+            return Duration.ofMillis(durationClockUnit)
         }
     }
 }

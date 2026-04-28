@@ -14,32 +14,28 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.spatial.core;
+package androidx.xr.scenecore.spatial.core
 
-import static com.google.common.truth.Truth.assertThat;
+import android.app.Activity
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-import android.app.Activity;
-
-import androidx.xr.scenecore.runtime.SceneRuntime;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-/** Tests for {@link SpatialSceneRuntimeFactory}. */
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {Config.TARGET_SDK})
-public class SpatialSceneRuntimeFactoryTest {
+/** Tests for [SpatialSceneRuntimeFactory]. */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Config.TARGET_SDK])
+class SpatialSceneRuntimeFactoryTest {
     @Test
-    public void createSceneRuntime_returnsNonNullInstance() {
-        Activity activity = Robolectric.buildActivity(Activity.class).create().start().get();
-        SpatialSceneRuntimeFactory factory = new SpatialSceneRuntimeFactory();
+    fun createSceneRuntime_returnsNonNullInstance() {
+        val activity = Robolectric.buildActivity(Activity::class.java).create().start().get()
+        val factory = SpatialSceneRuntimeFactory()
 
-        SceneRuntime sceneRuntime = factory.create(activity);
+        val sceneRuntime = factory.create(activity)
 
-        assertThat(sceneRuntime).isNotNull();
-        assertThat(sceneRuntime).isInstanceOf(SpatialSceneRuntime.class);
+        assertThat(sceneRuntime).isNotNull()
+        assertThat(sceneRuntime).isInstanceOf(SpatialSceneRuntime::class.java)
     }
 }
