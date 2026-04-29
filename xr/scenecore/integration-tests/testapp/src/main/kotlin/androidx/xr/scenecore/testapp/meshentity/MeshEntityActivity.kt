@@ -430,7 +430,7 @@ class MeshEntityActivity : AppCompatActivity() {
         putCubeIndices(sharedBuffer, 0)
 
         val cubeMesh =
-            CustomMesh.FromMeshDataBuilder(currentSession, vertexLayout)
+            CustomMesh.BuilderFromMeshData(currentSession, vertexLayout)
                 .addVertexData(ByteBufferRegion(sharedBuffer, 0, vertexSize))
                 .setIndexData(ByteBufferRegion(sharedBuffer, vertexSize, indexSize))
                 .setTopology(MeshSubsetTopology.TRIANGLES)
@@ -468,7 +468,7 @@ class MeshEntityActivity : AppCompatActivity() {
         putCubeIndices(indexBuffer, 24)
 
         val twoSubsetsMesh =
-            CustomMesh.FromMeshDataBuilder(currentSession, vertexLayout)
+            CustomMesh.BuilderFromMeshData(currentSession, vertexLayout)
                 .addVertexData(ByteBufferRegion(vertexBuffer, 0, vertexCount * stride))
                 .setIndexData(ByteBufferRegion(indexBuffer, 0, 72 * 4))
                 .addSubset(MeshSubset(MeshSubsetTopology.TRIANGLES, 0, 36))
@@ -513,7 +513,7 @@ class MeshEntityActivity : AppCompatActivity() {
             )
 
         val bottomCubeMesh =
-            CustomMesh.FromMeshBufferBuilder(currentSession, meshBuffer)
+            CustomMesh.BuilderFromMeshBuffer(currentSession, meshBuffer)
                 .addSubset(MeshSubset(MeshSubsetTopology.TRIANGLES, 0, 36))
                 .setBounds(
                     BoundingBox.fromCenterAndHalfExtents(
@@ -523,7 +523,7 @@ class MeshEntityActivity : AppCompatActivity() {
                 )
                 .build()
         val topCubeMesh =
-            CustomMesh.FromMeshBufferBuilder(currentSession, meshBuffer)
+            CustomMesh.BuilderFromMeshBuffer(currentSession, meshBuffer)
                 .addSubset(MeshSubset(MeshSubsetTopology.TRIANGLES, 36, 36))
                 .setBounds(
                     BoundingBox.fromCenterAndHalfExtents(
@@ -570,7 +570,7 @@ class MeshEntityActivity : AppCompatActivity() {
         putCubeIndicesStrip(indexBuffer, 0)
 
         val cubeMesh =
-            CustomMesh.FromMeshDataBuilder(currentSession, vertexLayout)
+            CustomMesh.BuilderFromMeshData(currentSession, vertexLayout)
                 .addVertexData(ByteBufferRegion(vertexBuffer, 0, vertexCount * stride))
                 .setIndexData(ByteBufferRegion(indexBuffer, 0, stripIndexCount * 4))
                 .setTopology(MeshSubsetTopology.TRIANGLE_STRIP)
@@ -751,7 +751,7 @@ class MeshEntityActivity : AppCompatActivity() {
             )
 
         val stickMesh =
-            CustomMesh.FromMeshBufferBuilder(currentSession, meshBuffer)
+            CustomMesh.BuilderFromMeshBuffer(currentSession, meshBuffer)
                 .addSubset(MeshSubset(MeshSubsetTopology.TRIANGLES, 0, indexCount * 3))
                 .setBounds(
                     BoundingBox.fromCenterAndHalfExtents(
@@ -830,7 +830,7 @@ class MeshEntityActivity : AppCompatActivity() {
         putCubeIndices(indexBuffer, 24)
 
         val cubeMesh =
-            CustomMesh.FromMeshDataBuilder(currentSession, vertexLayout)
+            CustomMesh.BuilderFromMeshData(currentSession, vertexLayout)
                 .addVertexData(ByteBufferRegion(vertexBuffer, 0, vertexCount * stride))
                 .setIndexData(ByteBufferRegion(indexBuffer, 0, 72 * 4))
                 .addSubset(MeshSubset(MeshSubsetTopology.TRIANGLES, 0, 36))
