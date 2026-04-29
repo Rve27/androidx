@@ -28,7 +28,6 @@ import androidx.compose.runtime.compositionLocalWithComputedDefaultOf
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.AndroidUiDispatcher
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.toOffset
@@ -55,8 +54,7 @@ import kotlinx.coroutines.launch
 internal val LocalGestureManager: ProvidableCompositionLocal<GestureManager> =
     compositionLocalWithComputedDefaultOf {
         if (cachedGestureManager == null) {
-            val haptic = LocalHapticFeedback.currentValue
-            cachedGestureManager = GestureManagerImpl(haptic)
+            cachedGestureManager = GestureManagerImpl()
         }
         cachedGestureManager!!
     }
@@ -66,12 +64,14 @@ internal interface GestureManager {
      * Registers a one-handed gesture.
      *
      * @param view The [View] containing the gesturable content.
+     * @param haptic: The haptic to trigger events
      * @param gesture The gesture to register
      * @param isActive Whether UI component that triggers the gesture, is active
      * @param size The size of the UI component that triggers the gesture.
      */
     fun registerGesture(
         view: View,
+        haptic: HapticFeedback,
         gesture: GestureConfig,
         isActive: () -> Boolean,
         size: () -> IntSize,
@@ -110,7 +110,6 @@ internal interface GestureManager {
 }
 
 internal class GestureManagerImpl(
-    val haptic: HapticFeedback,
     val scope: CoroutineScope = CoroutineScope(SupervisorJob() + AndroidUiDispatcher.Main),
     val gestureInputManager: SdkGestureInputManager = SdkGestureInputManagerImpl(),
 ) : GestureManager {
@@ -120,6 +119,7 @@ internal class GestureManagerImpl(
 
     override fun registerGesture(
         view: View,
+        haptic: HapticFeedback,
         gesture: GestureConfig,
         isActive: () -> Boolean,
         size: () -> IntSize,
