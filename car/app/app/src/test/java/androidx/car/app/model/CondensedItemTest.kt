@@ -125,6 +125,14 @@ class CondensedItemTest {
     }
 
     @Test
+    fun textAndProgressBarSet_throws() {
+        val bar = CarProgressBar.Builder(0.5f).build()
+        assertThrows(IllegalStateException::class.java) {
+            CondensedItem.Builder().setTitle("Title").setText("Text").setProgressBar(bar).build()
+        }
+    }
+
+    @Test
     fun equals() {
         val icon = CarIcon.BACK
         val itemStyle = CondensedItemStyle.Builder().setShape(Shape.NONE).build()

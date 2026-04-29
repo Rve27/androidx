@@ -257,6 +257,9 @@ public final class CondensedItem implements Item {
         /**
          * Sets the text of the item.
          *
+         * <p><strong>Note:</strong> This field is mutually exclusive with {@link #setProgressBar}.
+         * If both are set, {@link #build()} will throw an {@link IllegalStateException}.
+         *
          * @throws NullPointerException     if {@code text} is {@code null}
          * @throws IllegalArgumentException if {@code text} contains unsupported spans
          */
@@ -270,6 +273,9 @@ public final class CondensedItem implements Item {
 
         /**
          * Sets the text of the item.
+         *
+         * <p><strong>Note:</strong> This field is mutually exclusive with {@link #setProgressBar}.
+         * If both are set, {@link #build()} will throw an {@link IllegalStateException}.
          *
          * @throws NullPointerException     if {@code text} is {@code null}
          * @throws IllegalArgumentException if {@code text} contains unsupported spans
@@ -367,6 +373,9 @@ public final class CondensedItem implements Item {
         /**
          * Sets the {@link CarProgressBar} for the item.
          *
+         * <p><strong>Note:</strong> This field is mutually exclusive with {@link #setText}.
+         * If both are set, {@link #build()} will throw an {@link IllegalStateException}.
+         *
          * @throws NullPointerException if {@code progressBar} is {@code null}
          */
         @CanIgnoreReturnValue
@@ -380,12 +389,18 @@ public final class CondensedItem implements Item {
          *
          * @throws IllegalStateException if {@code mTitle}, {@code mText}, {@code mLeadingImage},
          *                               AND {@code mTrailingImage} are all {@code null}.
+         * @throws IllegalStateException if both {@code mText} and {@code mProgressBar} are set.
          */
         public @NonNull CondensedItem build() {
             if (mTitle == null && mText == null && mLeadingImage == null
                     && mTrailingImage == null) {
                 throw new IllegalStateException("At least one of title, text, leading image, or "
                         + "trailing image must be set");
+            }
+
+            if (mText != null && mProgressBar != null) {
+                throw new IllegalStateException(
+                        "Both text and progress bar cannot be set on CondensedItem");
             }
             return new CondensedItem(this);
         }

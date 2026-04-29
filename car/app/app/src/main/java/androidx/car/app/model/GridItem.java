@@ -17,13 +17,11 @@
 package androidx.car.app.model;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY;
-import static androidx.car.app.utils.LogTags.TAG;
 
 import static java.util.Objects.requireNonNull;
 
 import android.annotation.SuppressLint;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.OptIn;
@@ -326,7 +324,7 @@ public final class GridItem implements Item {
          * This text is truncated at the end to fit in a single line below the title
          *
          * <p><strong>Note:</strong> This field is mutually exclusive with {@link #setProgressBar}.
-         * If both are set, the progress bar will take precedence and this text will be ignored.
+         * If both are set, {@link #build()} will throw an {@link IllegalStateException}.
          *
          * @throws NullPointerException     if {@code text} is {@code null}
          * @throws IllegalArgumentException if {@code text} contains unsupported spans
@@ -350,7 +348,7 @@ public final class GridItem implements Item {
          * This text is truncated at the end to fit in a single line below the title
          *
          * <p><strong>Note:</strong> This field is mutually exclusive with {@link #setProgressBar}.
-         * If both are set, the progress bar will take precedence and this text will be ignored.
+         * If both are set, {@link #build()} will throw an {@link IllegalStateException}.
          *
          * @throws NullPointerException     if {@code text} is {@code null}
          * @throws IllegalArgumentException if {@code text} contains unsupported spans
@@ -482,7 +480,7 @@ public final class GridItem implements Item {
          * Sets the progress bar to display in the grid item.
          *
          * <p><strong>Note:</strong> This field is mutually exclusive with {@link #setText}.
-         * If both are set, the progress bar will take precedence and the text will be ignored.
+         * If both are set, {@link #build()} will throw an {@link IllegalStateException}.
          *
          * @throws NullPointerException if {@code progressBar} is {@code null}
          */
@@ -499,6 +497,7 @@ public final class GridItem implements Item {
          * @throws IllegalStateException if the grid item's image is set when it is loading or vice
          *                               versa, if the grid item is loading but the click listener
          *                               is set, or if a badge is set and an image is not set
+         * @throws IllegalStateException if both {@code mText} and {@code mProgressBar} are set
          */
         public @NonNull GridItem build() {
             if (mIsLoading == (mImage != null)) {
@@ -517,9 +516,8 @@ public final class GridItem implements Item {
             }
 
             if (mText != null && mProgressBar != null) {
-                Log.w(TAG, "Both text and progress bar were set on GridItem. The text will be "
-                        + "ignored.");
-                mText = null;
+                throw new IllegalStateException(
+                        "Both text and progress bar cannot be set on GridItem");
             }
 
             return new GridItem(this);
