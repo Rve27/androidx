@@ -133,6 +133,18 @@ class CondensedItemTest {
     }
 
     @Test
+    fun setIndexable() {
+        val item = CondensedItem.Builder().setTitle("Title").setIndexable(false).build()
+        assertThat(item.isIndexable).isFalse()
+    }
+
+    @Test
+    fun isIndexable_defaultIsTrue() {
+        val item = CondensedItem.Builder().setTitle("Title").build()
+        assertThat(item.isIndexable).isTrue()
+    }
+
+    @Test
     fun equals() {
         val icon = CarIcon.BACK
         val itemStyle = CondensedItemStyle.Builder().setShape(Shape.NONE).build()
