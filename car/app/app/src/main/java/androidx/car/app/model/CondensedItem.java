@@ -58,7 +58,10 @@ public final class CondensedItem implements Item {
     }
 
     /**
-     * Represents an icon-sized image. The host renders it within small, fixed bounds.
+     * Represents an icon to be displayed in the condensed item.
+     *
+     * <p>A tint color is expected to be provided via {@link CarIcon.Builder#setTint}. Otherwise, a
+     * default tint color as determined by the host will be applied.
      */
     public static final int IMAGE_TYPE_ICON = 1;
 
@@ -258,6 +261,8 @@ public final class CondensedItem implements Item {
         /**
          * Sets the title of the item.
          *
+         * <p>{@code title} must conform to {@link CarTextConstraints.TEXT_AND_ICON}.
+         *
          * @throws NullPointerException     if {@code title} is {@code null}
          * @throws IllegalArgumentException if {@code title} contains unsupported spans
          */
@@ -271,6 +276,8 @@ public final class CondensedItem implements Item {
         /**
          * Sets the text of the item.
          *
+         * <p>{@code text} must conform to {@link CarTextConstraints.TEXT_WITH_COLORS_AND_ICON}.
+         *
          * <p><strong>Note:</strong> This field is mutually exclusive with {@link #setProgressBar}.
          * If both are set, {@link #build()} will throw an {@link IllegalStateException}.
          *
@@ -279,14 +286,14 @@ public final class CondensedItem implements Item {
          */
         @CanIgnoreReturnValue
         public @NonNull Builder setText(@NonNull CharSequence text) {
-            CarText carText = CarText.create(requireNonNull(text));
-            CarTextConstraints.TEXT_WITH_COLORS_AND_ICON.validateOrThrow(carText);
-            mText = carText;
+            setText(CarText.create(requireNonNull(text)));
             return this;
         }
 
         /**
          * Sets the text of the item.
+         *
+         * <p>{@code text} must conform to {@link CarTextConstraints.TEXT_WITH_COLORS_AND_ICON}.
          *
          * <p><strong>Note:</strong> This field is mutually exclusive with {@link #setProgressBar}.
          * If both are set, {@link #build()} will throw an {@link IllegalStateException}.

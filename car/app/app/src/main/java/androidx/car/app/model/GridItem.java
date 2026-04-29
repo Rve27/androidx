@@ -330,8 +330,7 @@ public final class GridItem implements Item {
          * @throws IllegalArgumentException if {@code text} contains unsupported spans
          */
         public @NonNull Builder setText(@NonNull CharSequence text) {
-            mText = CarText.create(requireNonNull(text));
-            CarTextConstraints.TEXT_WITH_COLORS_AND_ICON.validateOrThrow(mText);
+            setText(CarText.create(requireNonNull(text)));
             return this;
         }
 
