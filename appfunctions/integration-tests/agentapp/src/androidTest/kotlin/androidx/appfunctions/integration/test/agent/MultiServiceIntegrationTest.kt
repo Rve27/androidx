@@ -51,7 +51,6 @@ import java.time.ZoneId
 import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = 37)
@@ -336,7 +335,6 @@ class MultiServiceIntegrationTest {
     }
 
     @Test
-    @Ignore("b/463909015 - Fix description indexing issue")
     fun observeAppFunctions_shouldGetCorrectDescription() = doBlocking {
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(TARGET_APP_PACKAGE))
         val appFunctions: List<AppFunctionMetadata> =
@@ -353,7 +351,7 @@ class MultiServiceIntegrationTest {
         assertThat(targetFunction.description).isEqualTo("Multiservice to create note.")
         assertThat(targetFunction.response.description).isEqualTo("The multiservice node.")
         assertThat(targetFunction.parameters.single { it.name == "createNoteParams" }.description)
-            .isEqualTo("Multi-service's createNoteParams")
+            .isEqualTo("Multi-service's createNoteParams.")
         val multiServiceCreateNoteParamDataType =
             targetFunction.components.dataTypes[
                     "androidx.appfunction.integration.test.sharedschema.MultiServiceCreateNoteParams"]
