@@ -29,7 +29,6 @@ import java.lang.annotation.RetentionPolicy;
  * <p>These states indicate whether the current environment conditions meet the criteria for Night
  * Mode.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public final class NightModeIndicator {
 
     /**

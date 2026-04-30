@@ -590,7 +590,6 @@ public interface CameraInfo {
      * otherwise false.
      * @see CaptureResult#EXTENSION_NIGHT_MODE_INDICATOR
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     default boolean isNightModeIndicatorSupported() {
         return false;
     }
@@ -612,7 +611,6 @@ public interface CameraInfo {
      * @return a {@link LiveData} of {@link Integer} type to observe the night mode indicator
      * changes.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     default @NonNull LiveData<Integer> getNightModeIndicator() {
         return new MutableLiveData<>(NightModeIndicator.UNKNOWN);
     }
