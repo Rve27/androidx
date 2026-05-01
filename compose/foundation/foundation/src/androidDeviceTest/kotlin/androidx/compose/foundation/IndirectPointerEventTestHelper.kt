@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalIndirectPointerApi::class)
-
 package androidx.compose.foundation
 
 import android.os.SystemClock
 import android.view.MotionEvent
-import androidx.compose.ui.ExperimentalIndirectPointerApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.indirect.IndirectPointerEvent
 import androidx.compose.ui.input.indirect.IndirectPointerEventPrimaryDirectionalMotionAxis
