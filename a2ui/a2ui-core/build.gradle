@@ -35,12 +35,12 @@ dependencies {
 }
 
 android {
-    namespace = "androidx.a2ui"
+    namespace = "androidx.a2ui.core"
     compileSdk { version = release(35) }
 }
 
 androidx {
-    name = "A2UI"
+    name = "A2UI Core"
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2026"
     description = "The A2UI core data layer"

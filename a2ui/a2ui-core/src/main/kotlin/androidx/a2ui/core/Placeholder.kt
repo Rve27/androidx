@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.a2ui
+package androidx.a2ui.core
 
 /**
  * Placeholder class for the A2UI library.
