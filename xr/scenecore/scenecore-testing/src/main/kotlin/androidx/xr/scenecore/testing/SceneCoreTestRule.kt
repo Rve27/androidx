@@ -20,6 +20,7 @@ import androidx.xr.scenecore.ActivitySpace
 import androidx.xr.scenecore.AnchorEntity
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
+import androidx.xr.scenecore.SoundEffectPool
 import androidx.xr.scenecore.SpatialWindow
 import androidx.xr.scenecore.testing.internal.FakeRenderingRuntime
 import androidx.xr.scenecore.testing.internal.FakeSceneRuntime
@@ -146,6 +147,19 @@ public class SceneCoreTestRule : ExternalResource() {
                 "Expected tester of type ${T::class.simpleName}, but actual component created a ${tester::class.simpleName}"
             )
     }
+
+    /**
+     * Retrieves a test data accessor for the given [SoundEffectPool].
+     *
+     * In the test environment, each [SoundEffectPool] created via [SoundEffectPool.create] has
+     * corresponding underlying fake data. This function provides access to that fake data, allowing
+     * for verification or manipulation in tests.
+     *
+     * @param soundEffectPool The [SoundEffectPool] instance for which to retrieve test data.
+     * @return A [SoundEffectPoolTester] instance used to inspect and manipulate the test data.
+     */
+    public fun createTester(soundEffectPool: SoundEffectPool): SoundEffectPoolTester =
+        SoundEffectPoolTester.create(soundEffectPool)
 
     private var _activitySpaceTester: ActivitySpaceTester? = null
 
