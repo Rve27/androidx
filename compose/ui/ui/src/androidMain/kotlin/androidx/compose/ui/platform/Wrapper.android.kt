@@ -64,7 +64,7 @@ internal fun AbstractComposeView.setContent(
             removeAllViews()
             null
         }
-            ?: AndroidComposeView(context, composeViewContext).also {
+            ?: createAndroidComposeView(context, composeViewContext).also {
                 addView(it.view, DefaultLayoutParams)
             }
     composeView.composeViewContext = composeViewContext
