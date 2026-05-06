@@ -45,6 +45,7 @@ import androidx.xr.scenecore.testing.internal.FakeExrImageResource as InternalFa
 import androidx.xr.scenecore.testing.internal.FakeGltfFeature as InternalFakeGltfFeature
 import androidx.xr.scenecore.testing.internal.FakeRenderingRuntime as InternalFakeRenderingRuntime
 import androidx.xr.scenecore.testing.internal.FakeSurfaceFeature as InternalFakeSurfaceFeature
+import androidx.xr.scenecore.testing.internal.FakeTexture as InternalFakeTexture
 import java.nio.ByteBuffer
 
 /**
@@ -112,7 +113,9 @@ public class FakeRenderingRuntime(
     override fun destroyExrImage(exrImage: ExrImageResource) {}
 
     override suspend fun loadTexture(assetName: String): TextureResource =
-        FakeTexture().apply { this.assetName = assetName }
+        FakeTexture(internalRuntime.loadTexture(assetName) as InternalFakeTexture).apply {
+            this.assetName = assetName
+        }
 
     /**
      * For test purposes only.
@@ -124,14 +127,22 @@ public class FakeRenderingRuntime(
      * reflection texture. This allows verification that the code under test correctly handles the
      * borrowed or retrieved texture.
      */
-    internal var reflectionTexture: FakeTexture? = null
+    internal var reflectionTexture: FakeTexture?
+        get() =
+            internalRuntime.reflectionTexture?.let {
+                FakeTexture.wrap(it as TextureResource) as FakeTexture
+            }
+        set(value) {
+            internalRuntime.reflectionTexture =
+                value?.let { FakeTexture.unwrap(it as TextureResource) as InternalFakeTexture }
+        }
 
     override fun borrowReflectionTexture(): TextureResource? {
         return reflectionTexture
     }
 
     override fun destroyTexture(texture: TextureResource) {
-        (texture as? FakeTexture)?.isDestroyed = true
+        internalRuntime.destroyTexture(FakeTexture.unwrap(texture))
     }
 
     override fun getReflectionTextureFromIbl(iblToken: ExrImageResource): TextureResource? {
