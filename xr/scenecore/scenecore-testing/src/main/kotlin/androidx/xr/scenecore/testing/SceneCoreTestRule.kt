@@ -23,6 +23,7 @@ import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.PositionalAudioComponent
 import androidx.xr.scenecore.SoundEffectPool
 import androidx.xr.scenecore.SpatialWindow
+import androidx.xr.scenecore.Texture
 import androidx.xr.scenecore.testing.internal.FakeRenderingRuntime
 import androidx.xr.scenecore.testing.internal.FakeSceneRuntime
 import org.junit.rules.ExternalResource
@@ -162,6 +163,18 @@ public class SceneCoreTestRule : ExternalResource() {
      */
     public fun createTester(soundEffectPool: SoundEffectPool): SoundEffectPoolTester =
         SoundEffectPoolTester.create(soundEffectPool)
+
+    /**
+     * Creates a test data accessor for the given [Texture].
+     *
+     * In the test environment, each texture created via [Texture.create] has corresponding
+     * underlying fake data. This function provides access to that fake data, allowing for
+     * verification or manipulation in tests.
+     *
+     * @param texture The [Texture] instance for which to retrieve test data.
+     * @return A [TextureTester] instance used to inspect and manipulate the test data.
+     */
+    public fun createTester(texture: Texture): TextureTester = TextureTester.create(texture)
 
     private var _activitySpaceTester: ActivitySpaceTester? = null
 

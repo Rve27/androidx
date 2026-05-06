@@ -32,6 +32,7 @@ package androidx.xr.scenecore.testing {
     method @KotlinOnly public inline <reified T> T createTester(androidx.xr.scenecore.Component component);
     method @KotlinOnly public inline <reified T> T createTester(androidx.xr.scenecore.Entity entity);
     method public androidx.xr.scenecore.testing.SoundEffectPoolTester createTester(androidx.xr.scenecore.SoundEffectPool soundEffectPool);
+    method public androidx.xr.scenecore.testing.TextureTester createTester(androidx.xr.scenecore.Texture texture);
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.ActivitySpaceTester getActivitySpaceTester();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.SpatialSoundPoolTester getSpatialSoundPoolTester();
     method @InaccessibleFromKotlin public androidx.xr.scenecore.testing.SpatialWindowTester getSpatialWindowTester();
@@ -61,6 +62,11 @@ package androidx.xr.scenecore.testing {
   public final class SpatialWindowTester {
     method @InaccessibleFromKotlin public float getPreferredAspectRatio();
     property public float preferredAspectRatio;
+  }
+
+  public final class TextureTester {
+    method @InaccessibleFromKotlin @RequiresApi(android.os.Build.VERSION_CODES.O) public java.nio.file.Path getPath();
+    property @RequiresApi(android.os.Build.VERSION_CODES.O) public java.nio.file.Path path;
   }
 
 }
