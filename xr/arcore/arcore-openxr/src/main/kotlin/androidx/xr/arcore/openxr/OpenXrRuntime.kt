@@ -35,7 +35,6 @@ import androidx.xr.runtime.GeospatialMode
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.XrDevice
-import androidx.xr.runtime.XrLog
 import androidx.xr.runtime.getNativeInstanceData
 import androidx.xr.runtime.internal.FaceTrackingNotCalibratedException
 import androidx.xr.runtime.manifest.HAND_TRACKING
@@ -398,12 +397,8 @@ internal class OpenXrRuntime(
         }
 
         if (apiKey == null) {
-            // TODO: b/498318910 - Replace logging with bespoke API to communicate this
-            XrLog.verbose("No API Key provided, using keyless authentication.")
             nativeSetKeylessAuth()
         } else {
-            // TODO: b/498318910 - Replace logging with bespoke API to communicate this
-            XrLog.verbose("Using provided API Key.")
             nativeSetApiKeyAuth(apiKey)
         }
     }
