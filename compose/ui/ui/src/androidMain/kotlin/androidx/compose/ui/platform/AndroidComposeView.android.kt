@@ -151,8 +151,6 @@ import androidx.compose.ui.input.pointer.ProcessResult
 import androidx.compose.ui.input.rotary.RotaryInputModifierNode
 import androidx.compose.ui.input.rotary.RotaryScrollEvent
 import androidx.compose.ui.internal.checkPreconditionNotNull
-import androidx.compose.ui.layout.AllWindowInsetsRulersLookup
-import androidx.compose.ui.layout.InsetsListener
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
@@ -164,6 +162,8 @@ import androidx.compose.ui.layout.Ruler
 import androidx.compose.ui.layout.RulerKey
 import androidx.compose.ui.layout.RulerScope
 import androidx.compose.ui.layout.WindowInsetsRulerProvider
+import androidx.compose.ui.layout.WindowInsetsRulersProvider
+import androidx.compose.ui.layout.WindowInsetsWatcher
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.modifier.ModifierLocalManager
@@ -525,7 +525,7 @@ internal open class AndroidComposeView(context: Context, composeViewContext: Com
     override val viewConfiguration: ViewConfiguration
         get() = composeViewContext.viewConfiguration
 
-    val insetsListener = InsetsListener(this)
+    val insetsWatcher = WindowInsetsWatcher(this)
 
     @OptIn(ExperimentalComposeUiApi::class)
     override val root =
@@ -2240,7 +2240,7 @@ internal open class AndroidComposeView(context: Context, composeViewContext: Com
             showLayoutBounds = getIsShowingLayoutBounds()
         }
         if (areWindowInsetsRulersEnabled) {
-            insetsListener.onViewAttachedToWindow(this)
+            insetsWatcher.onViewAttachedToWindow(this)
         }
         if (!composeViewContextIncrementedDuringInit) {
             composeViewContext.incrementViewCount()
@@ -2308,7 +2308,7 @@ internal open class AndroidComposeView(context: Context, composeViewContext: Com
         isAttached = false
 
         if (areWindowInsetsRulersEnabled) {
-            insetsListener.onViewDetachedFromWindow(this)
+            insetsWatcher.onViewDetachedFromWindow(this)
         }
         val frameRateCategoryView = frameRateCategoryView
         if (isArrEnabled && frameRateCategoryView != null) {
@@ -3354,12 +3354,17 @@ internal open class AndroidComposeView(context: Context, composeViewContext: Com
         LayoutModifierNode,
         TraversableNode,
         WindowInsetsRulerProvider {
-        override val insetsListener: InsetsListener
-            get() = this@AndroidComposeView.insetsListener
+        private var _insetsProvider: WindowInsetsRulersProvider? = null
+        override val insetsProvider: WindowInsetsRulersProvider
+            get() =
+                _insetsProvider
+                    ?: WindowInsetsRulersProvider(insetsWatcher).also { _insetsProvider = it }
 
-        val rulerLambda: RulerScope.(Ruler) -> Unit = { ruler ->
-            insetsListener.provideInset(this, ruler)
+        val rulerProvider: RulerScope.(Ruler) -> Unit = { ruler ->
+            insetsProvider.provideInset(this, ruler)
         }
+
+        val isRulerProvided: (Ruler) -> Boolean = { ruler -> insetsProvider.isRulerProvided(ruler) }
 
         override fun MeasureScope.measure(
             measurable: Measurable,
@@ -3371,8 +3376,8 @@ internal open class AndroidComposeView(context: Context, composeViewContext: Com
             return layout(
                 width,
                 height,
-                isRulerProvided = AllWindowInsetsRulersLookup,
-                rulerProvider = rulerLambda,
+                isRulerProvided = isRulerProvided,
+                rulerProvider = rulerProvider,
             ) {
                 placeable.place(0, 0)
             }
