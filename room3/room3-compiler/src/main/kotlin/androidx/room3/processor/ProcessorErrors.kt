@@ -1287,4 +1287,7 @@ object ProcessorErrors {
 
     const val INVALID_NULLABLE_DAO_CONSTRUCTOR_PARAM =
         "The database parameter of a DAO constructor must not be nullable."
+
+    fun mismatchPairTripleQueryColumns(required: Int, typeName: String) =
+        "Query returns less than $required columns but $typeName expects at least $required."
 }

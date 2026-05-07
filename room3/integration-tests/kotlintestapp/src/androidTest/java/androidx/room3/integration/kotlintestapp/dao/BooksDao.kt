@@ -530,4 +530,13 @@ interface BooksDao {
     suspend fun getPublisherEither(id: String): Either<Throwable, Publisher>
 
     @Insert suspend fun insertPublisherEither(p: Publisher): Either<Throwable, Long>
+
+    @Query("SELECT title, salesCnt FROM Book ORDER BY salesCnt DESC LIMIT 1")
+    fun getBookWithMostSales(): Pair<String, Int>
+
+    @Query("SELECT title, salesCnt FROM Book ORDER BY salesCnt DESC")
+    fun getTopSoldBooks(): List<Pair<String, Int>>
+
+    @Query("SELECT name, publisherId, 'static' FROM Publisher LIMIT 1")
+    fun getPublisherNameAndIdAndStatic(): Triple<String, String, String>
 }
