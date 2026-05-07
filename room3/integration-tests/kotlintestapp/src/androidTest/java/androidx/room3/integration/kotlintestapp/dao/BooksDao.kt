@@ -503,7 +503,7 @@ interface BooksDao {
     data class PublisherRelation(
         val publisherId: String,
         @ColumnInfo(defaultValue = "0") val name: String,
-        @Relation(parentColumn = "publisherId", entityColumn = "publisherId")
+        @Relation(parentColumns = ["publisherId"], entityColumns = ["publisherId"])
         val relationEntity: Publisher,
     )
 

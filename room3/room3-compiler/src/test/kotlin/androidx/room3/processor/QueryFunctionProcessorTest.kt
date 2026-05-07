@@ -704,7 +704,7 @@ class QueryFunctionProcessorTest(private val enableVerification: Boolean) {
         singleQueryMethod<ReadQueryFunction>(
             """
                 static class Merged extends User {
-                   @Relation(parentColumn = "name", entityColumn = "lastName",
+                   @Relation(parentColumns = {"name"}, entityColumns = {"lastName"},
                              entity = User.class)
                    java.util.List<? extends User> users;
                 }
