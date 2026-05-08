@@ -234,6 +234,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.get
 import java.lang.reflect.Method
+import java.util.concurrent.Executor
 import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.abs
@@ -727,7 +728,17 @@ internal class AndroidComposeView(context: Context, composeViewContext: ComposeV
     private val legacyTextInputServiceAndroid: TextInputServiceAndroid
         get() =
             _legacyTextInputServiceAndroid
-                ?: TextInputServiceAndroid(view, this).also { _legacyTextInputServiceAndroid = it }
+                ?: TextInputServiceAndroid(
+                        view,
+                        this,
+                        @OptIn(ExperimentalComposeUiApi::class)
+                        if (ComposeUiFlags.isOutOfFrameSchedulerForTextInputEventsEnabled) {
+                            Executor { outOfFrameExecutor?.schedule(it::run) }
+                        } else {
+                            Executor(::postOnAnimation)
+                        },
+                    )
+                    .also { _legacyTextInputServiceAndroid = it }
 
     private var _textInputService: TextInputService? = null
     /**
