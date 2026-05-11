@@ -116,7 +116,7 @@ public class FakeSceneRuntime(public val executor: Executor? = null) :
             }
         }
 
-    override val activitySpace: FakeActivitySpace = FakeActivitySpace()
+    override val activitySpace: FakeActivitySpace = FakeActivitySpace(internalRuntime.activitySpace)
 
     override val perceptionSpaceActivityPose: PerceptionSpaceScenePose =
         FakePerceptionSpaceScenePose()
