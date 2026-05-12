@@ -18,7 +18,6 @@ package androidx.compose.ui.text.font
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.text.ExperimentalTextApi
 
 /**
  * The interface of the font resource.
@@ -267,7 +266,6 @@ fun Font(
     loadingStrategy: FontLoadingStrategy = FontLoadingStrategy.Blocking,
 ): Font = ResourceFont(resId, weight, style, FontVariation.Settings(), loadingStrategy)
 
-@ExperimentalTextApi
 fun Font(
     resId: Int,
     weight: FontWeight = FontWeight.Normal,
