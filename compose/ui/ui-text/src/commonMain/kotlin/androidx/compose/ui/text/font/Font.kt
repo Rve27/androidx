@@ -150,7 +150,6 @@ internal interface PlatformFontLoader {
  * @param loadingStrategy Load strategy for this font
  * @see FontFamily
  */
-@OptIn(ExperimentalTextApi::class)
 class ResourceFont
 internal constructor(
     val resId: Int,
@@ -160,8 +159,6 @@ internal constructor(
     loadingStrategy: FontLoadingStrategy = FontLoadingStrategy.Async,
 ) : Font {
 
-    @Suppress("CanBePrimaryConstructorProperty")
-    @ExperimentalTextApi
     override val loadingStrategy: FontLoadingStrategy = loadingStrategy
 
     fun copy(
@@ -170,7 +167,6 @@ internal constructor(
         style: FontStyle = this.style,
     ): ResourceFont = copy(resId, weight, style, loadingStrategy = loadingStrategy)
 
-    @ExperimentalTextApi
     fun copy(
         resId: Int = this.resId,
         weight: FontWeight = this.weight,
