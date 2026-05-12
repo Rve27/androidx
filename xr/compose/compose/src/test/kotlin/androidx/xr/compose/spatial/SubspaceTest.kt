@@ -81,7 +81,6 @@ import androidx.xr.compose.testing.assertWidthIsNotEqualTo
 import androidx.xr.compose.testing.configureFakeSession
 import androidx.xr.compose.testing.onSubspaceNodeWithTag
 import androidx.xr.compose.testing.session
-import androidx.xr.compose.testing.toDp
 import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.Meter.Companion.meters
 import androidx.xr.compose.unit.VolumeConstraints
@@ -245,8 +244,8 @@ class SubspaceTest {
         composeTestRule
             .onSubspaceNodeWithTag("innerPanel")
             .assertPositionInRootIsEqualTo(0.dp, 0.dp, 0.dp)
-            .assertWidthIsEqualTo(100.toDp())
-            .assertHeightIsEqualTo(100.toDp())
+            .assertWidthIsEqualTo(100.dp)
+            .assertHeightIsEqualTo(100.dp)
     }
 
     @Test
@@ -349,9 +348,15 @@ class SubspaceTest {
         val expectedDepthPx = Meter(DefaultTestRecommendedBoxSize.DEPTH_METERS).roundToPx(density)
         composeTestRule
             .onSubspaceNodeWithTag("box")
-            .assertWidthIsEqualTo(expectedWidthPx.toDp())
-            .assertHeightIsEqualTo(expectedHeightPx.toDp())
-            .assertDepthIsEqualTo(expectedDepthPx.toDp())
+            .assertWidthIsEqualTo(
+                with(composeTestRule.density) { expectedWidthPx.toFloat().toDp() }
+            )
+            .assertHeightIsEqualTo(
+                with(composeTestRule.density) { expectedHeightPx.toFloat().toDp() }
+            )
+            .assertDepthIsEqualTo(
+                with(composeTestRule.density) { expectedDepthPx.toFloat().toDp() }
+            )
     }
 
     @Test
@@ -373,9 +378,15 @@ class SubspaceTest {
         composeTestRule
             .onSubspaceNodeWithTag("box")
             .assertPositionInRootIsEqualTo(0.dp, 0.dp, 0.dp)
-            .assertWidthIsEqualTo(expectedWidthPx.toDp())
-            .assertHeightIsEqualTo(expectedHeightPx.toDp())
-            .assertDepthIsEqualTo(expectedDepthPx.toDp())
+            .assertWidthIsEqualTo(
+                with(composeTestRule.density) { expectedWidthPx.toFloat().toDp() }
+            )
+            .assertHeightIsEqualTo(
+                with(composeTestRule.density) { expectedHeightPx.toFloat().toDp() }
+            )
+            .assertDepthIsEqualTo(
+                with(composeTestRule.density) { expectedDepthPx.toFloat().toDp() }
+            )
     }
 
     @Test
@@ -391,9 +402,15 @@ class SubspaceTest {
         composeTestRule
             .onSubspaceNodeWithTag("box")
             .assertPositionInRootIsEqualTo(0.dp, 0.dp, 0.dp)
-            .assertWidthIsNotEqualTo(VolumeConstraints().maxWidth.toDp())
-            .assertHeightIsNotEqualTo(VolumeConstraints().maxHeight.toDp())
-            .assertDepthIsNotEqualTo(VolumeConstraints().maxDepth.toDp())
+            .assertWidthIsNotEqualTo(
+                with(composeTestRule.density) { VolumeConstraints().maxWidth.toDp() }
+            )
+            .assertHeightIsNotEqualTo(
+                with(composeTestRule.density) { VolumeConstraints().maxHeight.toDp() }
+            )
+            .assertDepthIsNotEqualTo(
+                with(composeTestRule.density) { VolumeConstraints().maxDepth.toDp() }
+            )
     }
 
     @Test
@@ -407,8 +424,8 @@ class SubspaceTest {
         composeTestRule
             .onSubspaceNodeWithTag("box")
             .assertPositionInRootIsEqualTo(0.dp, 0.dp, 0.dp)
-            .assertWidthIsEqualTo(100.toDp())
-            .assertHeightIsEqualTo(100.toDp())
+            .assertWidthIsEqualTo(100.dp)
+            .assertHeightIsEqualTo(100.dp)
     }
 
     @Test
@@ -457,9 +474,15 @@ class SubspaceTest {
 
         composeTestRule
             .onSubspaceNodeWithTag("panel")
-            .assertWidthIsAtLeast(recommendedWidthPx.toDp())
-            .assertHeightIsAtLeast(recommendedHeightPx.toDp())
-            .assertDepthIsAtLeast(recommendedDepthPx.toDp())
+            .assertWidthIsAtLeast(
+                with(composeTestRule.density) { recommendedWidthPx.toFloat().toDp() }
+            )
+            .assertHeightIsAtLeast(
+                with(composeTestRule.density) { recommendedHeightPx.toFloat().toDp() }
+            )
+            .assertDepthIsAtLeast(
+                with(composeTestRule.density) { recommendedDepthPx.toFloat().toDp() }
+            )
     }
 
     @Test
@@ -526,15 +549,15 @@ class SubspaceTest {
 
         composeTestRule
             .onSubspaceNodeWithTag("testBox")
-            .assertWidthIsEqualTo(100.toDp())
-            .assertHeightIsEqualTo(100.toDp())
+            .assertWidthIsEqualTo(100.dp)
+            .assertHeightIsEqualTo(100.dp)
 
         constraintsState.value = updatedConstraints
 
         composeTestRule
             .onSubspaceNodeWithTag("testBox")
-            .assertWidthIsEqualTo(150.toDp())
-            .assertHeightIsEqualTo(150.toDp())
+            .assertWidthIsEqualTo(150.dp)
+            .assertHeightIsEqualTo(150.dp)
     }
 
     @Test
@@ -1958,9 +1981,15 @@ class SubspaceTest {
         val expectedDepthPx = Meter(DefaultTestRecommendedBoxSize.DEPTH_METERS).roundToPx(density)
         composeTestRule
             .onSubspaceNodeWithTag("box")
-            .assertWidthIsEqualTo(expectedWidthPx.toDp())
-            .assertHeightIsEqualTo(expectedHeightPx.toDp())
-            .assertDepthIsEqualTo(expectedDepthPx.toDp())
+            .assertWidthIsEqualTo(
+                with(composeTestRule.density) { expectedWidthPx.toFloat().toDp() }
+            )
+            .assertHeightIsEqualTo(
+                with(composeTestRule.density) { expectedHeightPx.toFloat().toDp() }
+            )
+            .assertDepthIsEqualTo(
+                with(composeTestRule.density) { expectedDepthPx.toFloat().toDp() }
+            )
     }
 
     @OptIn(ExperimentalFollowingSubspaceApi::class)
@@ -1988,9 +2017,15 @@ class SubspaceTest {
                 0.dp,
                 ArDeviceTarget.DEFAULT_OFFSET.translation.z.meters.toDp(),
             )
-            .assertWidthIsNotEqualTo(VolumeConstraints().maxWidth.toDp())
-            .assertHeightIsNotEqualTo(VolumeConstraints().maxHeight.toDp())
-            .assertDepthIsNotEqualTo(VolumeConstraints().maxDepth.toDp())
+            .assertWidthIsNotEqualTo(
+                with(composeTestRule.density) { VolumeConstraints().maxWidth.toDp() }
+            )
+            .assertHeightIsNotEqualTo(
+                with(composeTestRule.density) { VolumeConstraints().maxHeight.toDp() }
+            )
+            .assertDepthIsNotEqualTo(
+                with(composeTestRule.density) { VolumeConstraints().maxDepth.toDp() }
+            )
     }
 
     @OptIn(ExperimentalFollowingSubspaceApi::class)

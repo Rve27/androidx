@@ -17,7 +17,6 @@
 package androidx.xr.compose.testing
 
 import android.content.res.Resources
-import androidx.annotation.RestrictTo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.isUnspecified
 import androidx.xr.compose.unit.DpVolumeSize
@@ -553,13 +552,11 @@ private fun Dp.assertIsAtLeast(expected: Dp, subject: String, tolerance: Dp = Dp
 }
 
 /** Converts a float to a [Dp] value. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public fun Float.toDp(): Dp {
+private fun Float.toDp(): Dp {
     return Dp(this / Resources.getSystem().displayMetrics.density)
 }
 
 /** Converts an integer to a [Dp] value. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public fun Int.toDp(): Dp {
+private fun Int.toDp(): Dp {
     return Dp(this.toFloat() / Resources.getSystem().displayMetrics.density)
 }

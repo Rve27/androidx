@@ -56,10 +56,6 @@ package androidx.xr.compose.testing {
     method public static androidx.xr.runtime.math.Quaternion getRotation(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction);
     method public static androidx.xr.runtime.math.Quaternion getRotationInRoot(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction);
     method public static androidx.xr.compose.unit.DpVolumeSize getSize(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction);
-    method @KotlinOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public static androidx.compose.ui.unit.Dp toDp(float);
-    method @BytecodeOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public static float toDp(float);
-    method @KotlinOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public static androidx.compose.ui.unit.Dp toDp(int);
-    method @BytecodeOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public static float toDp(int);
   }
 
   public final class SubspaceFiltersKt {
