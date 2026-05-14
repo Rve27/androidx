@@ -49,7 +49,9 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.core.os.BundleCompat
@@ -67,10 +69,21 @@ class WearWidgetCaptureTest {
 
     companion object {
         val context: Context = ApplicationProvider.getApplicationContext()
-        val testPendingIntent0 =
-            PendingIntent.getActivity(context, 1234, Intent(), PendingIntent.FLAG_IMMUTABLE)
-        val testPendingIntent1 =
-            PendingIntent.getActivity(context, 5678, Intent(), PendingIntent.FLAG_IMMUTABLE)
+        val requestCode0 = 1234
+        val requestCode1 = 5678
+
+        // Helper to create PendingIntents consistently for layout and assertions
+        private fun createTestPendingIntent(
+            localContext: Context,
+            requestCode: Int,
+        ): PendingIntent {
+            return PendingIntent.getActivity(
+                localContext,
+                requestCode,
+                Intent(),
+                PendingIntent.FLAG_IMMUTABLE,
+            )
+        }
 
         @Composable
         @RemoteComposable
@@ -79,11 +92,21 @@ class WearWidgetCaptureTest {
                 RemoteBox(modifier = RemoteModifier.size(100.rdp))
                 RemoteText(
                     text = "text-0",
-                    modifier = RemoteModifier.clickable(pendingIntentAction(testPendingIntent0)),
+                    modifier =
+                        RemoteModifier.clickable(
+                            pendingIntentAction { localContext ->
+                                createTestPendingIntent(localContext, requestCode0)
+                            }
+                        ),
                 )
                 RemoteText(
                     text = "text-1",
-                    modifier = RemoteModifier.clickable(pendingIntentAction(testPendingIntent1)),
+                    modifier =
+                        RemoteModifier.clickable(
+                            pendingIntentAction { localContext ->
+                                createTestPendingIntent(localContext, requestCode1)
+                            }
+                        ),
                 )
             }
         }
@@ -134,6 +157,27 @@ class WearWidgetCaptureTest {
             assertThat(text!!.normalizeWhiteSpace()).isEqualTo(expected.normalizeWhiteSpace())
         }
 
+        /**
+         * Asserts that the node's text matches the provided PendingIntent, ignoring the unstable
+         * identity hash code but matching the system token.
+         */
+        private fun SemanticsNodeInteraction.assertPendingIntentMatch(
+            expected: PendingIntent
+        ): SemanticsNodeInteraction {
+            // Extract "android.os.BinderProxy@..." from "PendingIntent{hash:
+            // android.os.BinderProxy@...}"
+            val stableToken = expected.toString().substringAfter(": ")
+            val pattern = Regex("PendingIntent\\{.*: ${Regex.escape(stableToken)}")
+
+            return this.assert(
+                SemanticsMatcher("matches PendingIntent with token $stableToken") { node ->
+                    node.config.getOrNull(SemanticsProperties.Text)?.any {
+                        pattern.containsMatchIn(it.text)
+                    } ?: false
+                }
+            )
+        }
+
         // Replace all sequences of whitespace (including newlines, tabs) with a single space. Then
         // trim leading/trailing spaces from the whole string
         private fun String.normalizeWhiteSpace() = this.replace(Regex("``s+"), " ").trim()
@@ -170,8 +214,8 @@ class WearWidgetCaptureTest {
         val pendingIntents = result.pendingIntents
 
         assertThat(pendingIntents.size).isEqualTo(2)
-        assertThat(pendingIntents[0]).isEqualTo(testPendingIntent0)
-        assertThat(pendingIntents[1]).isEqualTo(testPendingIntent1)
+        assertThat(pendingIntents[0]).isEqualTo(createTestPendingIntent(context, requestCode0))
+        assertThat(pendingIntents[1]).isEqualTo(createTestPendingIntent(context, requestCode1))
     }
 
     @Test
@@ -204,9 +248,9 @@ ROOT [-2:-1] = [0.0, 0.0, 0.0, 0.0] VISIBLE
         composeTestRule.onNodeWithContentDescription("Document").assertTextMatches(result)
         composeTestRule
             .onNodeWithContentDescription("PendingIntent 0")
-            .assertTextMatches(testPendingIntent0.toString())
+            .assertPendingIntentMatch(createTestPendingIntent(context, requestCode0))
         composeTestRule
             .onNodeWithContentDescription("PendingIntent 1")
-            .assertTextMatches(testPendingIntent1.toString())
+            .assertPendingIntentMatch(createTestPendingIntent(context, requestCode1))
     }
 }
