@@ -29,7 +29,6 @@ import androidx.xr.arcore.testing.internal.FakeRuntimeHand
 import androidx.xr.arcore.testing.internal.FakeRuntimeRenderViewpoint
 import androidx.xr.runtime.AnchorPersistenceMode
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.ExperimentalSceneSignalApi
 import androidx.xr.runtime.PreviewSpatialApi
 import androidx.xr.runtime.math.Pose
 import java.util.UUID
@@ -199,7 +198,8 @@ public class ArCoreTestRule : ExternalResource() {
     }
 
     /** A test representation of the device's Conversation Scene Signal. */
-    @ExperimentalSceneSignalApi
+    @get:android.annotation.SuppressLint("ExperimentalPropertyAnnotation")
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @PreviewSpatialApi
     public val conversationSceneSignal: ConversationSceneSignalTester by lazy {
         ConversationSceneSignalTester(
