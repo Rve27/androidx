@@ -138,7 +138,7 @@ private constructor(rtActivitySpace: RtActivitySpace, entityRegistry: EntityRegi
      * due to an internal system event.
      *
      * When this event occurs, any [ScenePose] that is not a child of ActivitySpace, such as
-     * [AnchorEntity], will have a different position relative to the [ActivitySpace]. Therefore,
+     * [AnchorSpace], will have a different position relative to the [ActivitySpace]. Therefore,
      * this listener can be used to indicate when to invalidate any cached information about the
      * relative difference in Pose between ActivitySpace's children and children of
      * non-ActivitySpace ScenePoses.
@@ -160,7 +160,7 @@ private constructor(rtActivitySpace: RtActivitySpace, entityRegistry: EntityRegi
      * due to an internal system event.
      *
      * When this event occurs, any [ScenePose] that is not a child of ActivitySpace, such as
-     * [AnchorEntity], will have a different position relative to the [ActivitySpace]. Therefore,
+     * [AnchorSpace], will have a different position relative to the [ActivitySpace]. Therefore,
      * this listener can be used to indicate when to invalidate any cached information about the
      * relative difference in Pose between ActivitySpace's children and children of
      * non-ActivitySpace ScenePoses.

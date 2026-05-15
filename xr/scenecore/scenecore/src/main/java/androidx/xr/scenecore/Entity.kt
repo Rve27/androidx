@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicReference
  * additional behaviors.
  *
  * There are several subtypes of Entities. These include Entities with special positions, (e.g.
- * [ActivitySpace] and [AnchorEntity]) as well as those which are used to render different types of
+ * [ActivitySpace] and [AnchorSpace]) as well as those which are used to render different types of
  * content (e.g. [PanelEntity] and [GltfModelEntity]).
  */
 public open class Entity

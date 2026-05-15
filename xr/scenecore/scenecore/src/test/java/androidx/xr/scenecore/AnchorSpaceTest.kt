@@ -34,7 +34,7 @@ import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.testing.AnchorEntityTester
+import androidx.xr.scenecore.testing.AnchorSpaceTester
 import androidx.xr.scenecore.testing.MemoryUtils
 import androidx.xr.scenecore.testing.SceneCoreTestRule
 import com.google.common.truth.Truth.assertThat
@@ -65,7 +65,7 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
 
 @RunWith(AndroidJUnit4::class)
-class AnchorEntityTest {
+class AnchorSpaceTest {
 
     @Rule @JvmField val scenecoreTestRule = SceneCoreTestRule()
 
@@ -111,22 +111,22 @@ class AnchorEntityTest {
 
     @Test
     fun createViaAnchor_returnsAnchoredEntity() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
 
-        assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.ANCHORED)
+        assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.ANCHORED)
     }
 
     @Test
     fun createViaAnchor_anchor_returnsProvidedAnchor() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
 
-        assertThat(anchorEntity.anchor).isEqualTo(anchor)
+        assertThat(anchorSpace.anchor).isEqualTo(anchor)
     }
 
     @Test
     fun createViaSemantic_noPlanes_returnsUnanchoredEntity() {
-        val anchorEntity =
-            AnchorEntity.create(
+        val anchorSpace =
+            AnchorSpace.create(
                 session,
                 FloatSize2d(1.0f, 1.0f),
                 PlaneOrientation.ALL,
@@ -134,7 +134,7 @@ class AnchorEntityTest {
                 timeout = 0.toDuration(DurationUnit.SECONDS).toJavaDuration(),
             )
 
-        assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.UNANCHORED)
+        assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.UNANCHORED)
     }
 
     @Test
@@ -147,8 +147,8 @@ class AnchorEntityTest {
                 label = Plane.Label.WALL,
             )
         mFakePerceptionManager.addTrackable(plane)
-        val anchorEntity =
-            AnchorEntity.create(
+        val anchorSpace =
+            AnchorSpace.create(
                 session,
                 FloatSize2d(1.0f, 1.0f),
                 setOf(PlaneOrientation.HORIZONTAL),
@@ -156,7 +156,7 @@ class AnchorEntityTest {
                 timeout = 0.toDuration(DurationUnit.SECONDS).toJavaDuration(),
             )
 
-        assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.UNANCHORED)
+        assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.UNANCHORED)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -173,8 +173,8 @@ class AnchorEntityTest {
                     extents = FloatSize2d(1.0f, 1.0f),
                 )
             mFakePerceptionManager.addTrackable(plane)
-            val anchorEntity =
-                AnchorEntity.create(
+            val anchorSpace =
+                AnchorSpace.create(
                     session,
                     FloatSize2d(1.0f, 1.0f),
                     setOf(PlaneOrientation.HORIZONTAL),
@@ -183,7 +183,7 @@ class AnchorEntityTest {
                 )
             advanceUntilIdle()
 
-            assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.ANCHORED)
+            assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.ANCHORED)
         }
     }
 
@@ -202,8 +202,8 @@ class AnchorEntityTest {
                 )
             mFakePerceptionManager.addTrackable(plane1)
 
-            val anchorEntity =
-                AnchorEntity.create(
+            val anchorSpace =
+                AnchorSpace.create(
                     session,
                     FloatSize2d(1.0f, 1.0f),
                     setOf(PlaneOrientation.HORIZONTAL),
@@ -212,8 +212,8 @@ class AnchorEntityTest {
                 )
             advanceUntilIdle()
 
-            assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.ANCHORED)
-            val anchor1 = anchorEntity.anchor
+            assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.ANCHORED)
+            val anchor1 = anchorSpace.anchor
             assertThat(anchor1).isNotNull()
 
             // Add another matching plane
@@ -227,8 +227,8 @@ class AnchorEntityTest {
             advanceUntilIdle()
 
             // Should still be anchored to the first one
-            assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.ANCHORED)
-            assertThat(anchorEntity.anchor).isEqualTo(anchor1)
+            assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.ANCHORED)
+            assertThat(anchorSpace.anchor).isEqualTo(anchor1)
         }
     }
 
@@ -236,7 +236,7 @@ class AnchorEntityTest {
     @Test
     @Suppress("DEPRECATION")
     // TODO: b/494308962 Remove references to arcore-testing Fakes
-    fun createViaSemantic_pastTimeout_returnsTimedOutAnchorEntity() {
+    fun createViaSemantic_pastTimeout_returnsTimedOutAnchorSpace() {
         runTest(testDispatcher) {
             activityController.create().start().resume()
             val plane =
@@ -246,8 +246,8 @@ class AnchorEntityTest {
                     extents = FloatSize2d(1.0f, 1.0f),
                 )
 
-            val anchorEntity =
-                AnchorEntity.create(
+            val anchorSpace =
+                AnchorSpace.create(
                     session,
                     FloatSize2d(1.0f, 1.0f),
                     setOf(PlaneOrientation.HORIZONTAL),
@@ -256,14 +256,14 @@ class AnchorEntityTest {
                 )
             advanceUntilIdle()
 
-            assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.UNANCHORED)
+            assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.UNANCHORED)
             advanceClock(6.seconds)
             mFakePerceptionManager.addTrackable(plane)
 
             mFakeRuntime.allowOneMoreCallToUpdate()
             advanceUntilIdle()
 
-            assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.TIMED_OUT)
+            assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.TIMED_OUT)
         }
     }
 
@@ -274,8 +274,8 @@ class AnchorEntityTest {
         runTest(testDispatcher) {
             val anchorAttempts = 100
             activityController.create().start().resume()
-            val anchorEntity =
-                AnchorEntity.create(
+            val anchorSpace =
+                AnchorSpace.create(
                     session,
                     FloatSize2d(1.0f, 1.0f),
                     setOf(PlaneOrientation.HORIZONTAL),
@@ -289,31 +289,31 @@ class AnchorEntityTest {
                 advanceClock(5.seconds)
                 mFakeRuntime.allowOneMoreCallToUpdate()
                 advanceUntilIdle()
-                assertThat(anchorEntity.state).isEqualTo(AnchorEntity.State.UNANCHORED)
+                assertThat(anchorSpace.state).isEqualTo(AnchorSpace.State.UNANCHORED)
             }
         }
     }
 
     @Test
     fun addStateChangedListener_receivesStateChangedCallback() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
         var callbackInvoked = false
         val stateChangedListener =
-            Consumer<AnchorEntity.State> { newState ->
+            Consumer<AnchorSpace.State> { newState ->
                 callbackInvoked = true
-                assertThat(newState).isEqualTo(AnchorEntity.State.ANCHORED)
+                assertThat(newState).isEqualTo(AnchorSpace.State.ANCHORED)
             }
 
-        anchorEntity.addStateChangedListener(directExecutor(), stateChangedListener)
+        anchorSpace.addStateChangedListener(directExecutor(), stateChangedListener)
         assertThat(callbackInvoked).isTrue()
     }
 
     @Test
     fun addOriginChangedListener_receivesOnOriginChangedListenerCallbacks() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
-        val tester = scenecoreTestRule.createTester<AnchorEntityTester>(anchorEntity)
+        val anchorSpace = AnchorSpace.create(session, anchor)
+        val tester = scenecoreTestRule.createTester<AnchorSpaceTester>(anchorSpace)
         var listenerCalled = false
-        anchorEntity.addOriginChangedListener(directExecutor()) { listenerCalled = true }
+        anchorSpace.addOriginChangedListener(directExecutor()) { listenerCalled = true }
 
         assertThat(listenerCalled).isFalse()
 
@@ -325,103 +325,103 @@ class AnchorEntityTest {
 
     @Test
     fun getParentSpacePose_throwsIllegalArgumentException() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
-        assertThrows(IllegalArgumentException::class.java) { anchorEntity.getPose(Space.PARENT) }
+        val anchorSpace = AnchorSpace.create(session, anchor)
+        assertThrows(IllegalArgumentException::class.java) { anchorSpace.getPose(Space.PARENT) }
     }
 
     @Test
     fun getActivitySpacePose_returnsIdentity() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
-        val pose = anchorEntity.getPose(Space.ACTIVITY)
+        val anchorSpace = AnchorSpace.create(session, anchor)
+        val pose = anchorSpace.getPose(Space.ACTIVITY)
         assertThat(pose.translation).isEqualTo(anchor.runtimeAnchor.pose.translation)
         assertThat(pose.rotation).isEqualTo(anchor.runtimeAnchor.pose.rotation)
     }
 
     @Test
     fun getRealWorldSpacePose_returnsPerceptionSpacePose() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
         @Suppress("DEPRECATION") // TODO - b/415320653: Space.REAL_WORLD
-        val pose = anchorEntity.getPose(Space.REAL_WORLD)
+        val pose = anchorSpace.getPose(Space.REAL_WORLD)
         assertThat(pose.translation).isEqualTo(anchor.runtimeAnchor.pose.translation)
         assertThat(pose.rotation).isEqualTo(anchor.runtimeAnchor.pose.rotation)
     }
 
     @Test
     fun setPose_throwsUnsupportedOperationException() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
         assertThrows(UnsupportedOperationException::class.java) {
-            anchorEntity.setPose(Pose(Vector3.Zero, Quaternion.Identity))
+            anchorSpace.setPose(Pose(Vector3.Zero, Quaternion.Identity))
         }
     }
 
     @Test
     fun getParentNonUniformSpaceScale_throwsIllegalArgumentException() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
         assertThrows(IllegalArgumentException::class.java) {
-            anchorEntity.getNonUniformScale(Space.PARENT)
+            anchorSpace.getNonUniformScale(Space.PARENT)
         }
     }
 
     @Test
     fun getActivityNonUniformSpaceScale_returnsIdentity() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
-        val scale = anchorEntity.getNonUniformScale(Space.ACTIVITY)
+        val anchorSpace = AnchorSpace.create(session, anchor)
+        val scale = anchorSpace.getNonUniformScale(Space.ACTIVITY)
         assertThat(scale).isEqualTo(Vector3.One)
     }
 
     @Test
     fun getParentSpaceScale_throwsIllegalArgumentException() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
-        assertThrows(IllegalArgumentException::class.java) { anchorEntity.getScale(Space.PARENT) }
+        val anchorSpace = AnchorSpace.create(session, anchor)
+        assertThrows(IllegalArgumentException::class.java) { anchorSpace.getScale(Space.PARENT) }
     }
 
     @Test
     fun getActivitySpaceScale_returnsIdentity() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
-        val scale = anchorEntity.getScale(Space.ACTIVITY)
+        val anchorSpace = AnchorSpace.create(session, anchor)
+        val scale = anchorSpace.getScale(Space.ACTIVITY)
         assertThat(scale).isEqualTo(1f)
     }
 
     @Test
     fun getRealWorldSpaceScale_returnsIdentity() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
         @Suppress("DEPRECATION") // TODO - b/415320653: Space.REAL_WORLD
-        val scale = anchorEntity.getScale(Space.REAL_WORLD)
+        val scale = anchorSpace.getScale(Space.REAL_WORLD)
         assertThat(scale).isEqualTo(1f)
     }
 
     @Test
     fun getRealWorldSpaceNonUniformScale_returnsIdentity() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
         @Suppress("DEPRECATION") // TODO - b/415320653: Space.REAL_WORLD
-        val scale = anchorEntity.getNonUniformScale(Space.REAL_WORLD)
+        val scale = anchorSpace.getNonUniformScale(Space.REAL_WORLD)
         assertThat(scale).isEqualTo(Vector3.One)
     }
 
     @Test
     fun setScale_float_throwsUnsupportedOperationException() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
         assertThrows(UnsupportedOperationException::class.java) {
-            anchorEntity.setScale(1f, Space.PARENT)
+            anchorSpace.setScale(1f, Space.PARENT)
         }
     }
 
     @Test
     fun setScale_vector_throwsUnsupportedOperationException() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
+        val anchorSpace = AnchorSpace.create(session, anchor)
         assertThrows(UnsupportedOperationException::class.java) {
-            anchorEntity.setScale(Vector3.One, Space.PARENT)
+            anchorSpace.setScale(Vector3.One, Space.PARENT)
         }
     }
 
     @Test
     fun disposeInternal_clearsListeners() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
-        val tester = scenecoreTestRule.createTester<AnchorEntityTester>(anchorEntity)
+        val anchorSpace = AnchorSpace.create(session, anchor)
+        val tester = scenecoreTestRule.createTester<AnchorSpaceTester>(anchorSpace)
         var listenerCalledCount = 0
-        anchorEntity.addOriginChangedListener(directExecutor()) { listenerCalledCount++ }
+        anchorSpace.addOriginChangedListener(directExecutor()) { listenerCalledCount++ }
 
-        anchorEntity.disposeInternal()
+        anchorSpace.disposeInternal()
 
         // After dispose, triggering via tester should not increment the count.
         tester.triggerOnOriginChanged()
@@ -432,22 +432,22 @@ class AnchorEntityTest {
 
     @Test
     fun disposeInternal_callingTwiceDoesNotCrash() {
-        val anchorEntity = AnchorEntity.create(session, anchor)
-        anchorEntity.disposeInternal()
-        anchorEntity.disposeInternal()
+        val anchorSpace = AnchorSpace.create(session, anchor)
+        anchorSpace.disposeInternal()
+        anchorSpace.disposeInternal()
     }
 
     @Test
     fun garbageCollection_disposesEntity() {
-        fun createAnchorEntity(): WeakReference<AnchorEntity> {
-            val localAnchorEntity = AnchorEntity.create(session, anchor)
-            return WeakReference(localAnchorEntity)
+        fun createAnchorSpace(): WeakReference<AnchorSpace> {
+            val localAnchorSpace = AnchorSpace.create(session, anchor)
+            return WeakReference(localAnchorSpace)
         }
 
-        val anchorEntityRef = createAnchorEntity()
-        assertThat(anchorEntityRef.get()).isNotNull()
+        val anchorSpaceRef = createAnchorSpace()
+        assertThat(anchorSpaceRef.get()).isNotNull()
 
-        MemoryUtils.assertGarbageCollected(anchorEntityRef)
+        MemoryUtils.assertGarbageCollected(anchorSpaceRef)
     }
 
     private fun createSession(coroutineDispatcher: CoroutineDispatcher = testDispatcher) {

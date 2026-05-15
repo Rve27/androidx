@@ -7,7 +7,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/AnchorEntityTest.kt"/>
+            file="src/main/java/androidx/xr/scenecore/AnchorSpace.kt"/>
     </issue>
 
     <issue
@@ -16,7 +16,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/AnchorEntityTest.kt"/>
+            file="src/main/java/androidx/xr/scenecore/AnchorSpace.kt"/>
     </issue>
 
     <issue
@@ -25,7 +25,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/AnchorEntityTest.kt"/>
+            file="src/main/java/androidx/xr/scenecore/AnchorSpace.kt"/>
     </issue>
 
     <issue
@@ -34,7 +34,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/AnchorEntityTest.kt"/>
+            file="src/main/java/androidx/xr/scenecore/AnchorSpace.kt"/>
     </issue>
 
     <issue
