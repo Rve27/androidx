@@ -27,6 +27,7 @@ import androidx.build.PlatformIdentifier
 plugins {
     id("AndroidXPlugin")
     id("AndroidXComposePlugin")
+    alias(libs.plugins.kotlinSerialization)
 }
 
 androidXMultiplatform {
@@ -39,16 +40,21 @@ androidXMultiplatform {
 
     sourceSets {
         commonMain.dependencies {
+            api(libs.kotlinSerializationCore)
+            api("androidx.compose.runtime:runtime:1.11.1")
         }
 
         commonTest.dependencies {
+            implementation(libs.kotlinTest)
+            implementation(libs.kotlinCoroutinesTest)
+            implementation(project(":kruth:kruth"))
         }
     }
 }
 
 androidx {
     name = "AndroidX AppState"
-    type = SoftwareType.PUBLISHED_LIBRARY
+    type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2026"
     description = "Provides a class that can be used to hoist Compose state into a process."
 }
