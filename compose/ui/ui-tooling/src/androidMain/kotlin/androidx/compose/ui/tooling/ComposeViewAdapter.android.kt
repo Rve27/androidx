@@ -33,6 +33,8 @@ import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.VisibleForTesting
+import androidx.compose.animation.ExperimentalLookaheadAnimationVisualDebugApi
+import androidx.compose.animation.LookaheadAnimationVisualDebugging
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionLocalProvider
@@ -179,6 +181,12 @@ internal class ComposeViewAdapter : FrameLayout {
 
     /** Callback invoked when onDraw has been called. */
     private var onDraw = {}
+
+    /** Boolean specifying whether to enable animation debugging. */
+    private var lookaheadAnimationVisualDebuggingEnabled: Boolean = false
+
+    /** Boolean specifying whether to print animated element keys */
+    private var lookaheadAnimationVisualDebuggingKeyLabelEnabled: Boolean = false
 
     private val debugBoundsPaint =
         Paint().apply {
@@ -408,6 +416,7 @@ internal class ComposeViewAdapter : FrameLayout {
         get() = this::clock.isInitialized
 
     /** Wraps a given [Preview] method an does any necessary setup. */
+    @OptIn(ExperimentalLookaheadAnimationVisualDebugApi::class)
     @Composable
     private fun WrapPreview(content: @Composable () -> Unit) {
         // We need to replace the FontResourceLoader to avoid using ResourcesCompat.
@@ -420,7 +429,14 @@ internal class ComposeViewAdapter : FrameLayout {
             LocalOnBackPressedDispatcherOwner provides FakeOnBackPressedDispatcherOwner,
             LocalActivityResultRegistryOwner provides FakeActivityResultRegistryOwner,
         ) {
-            Inspectable(slotTableRecord, content)
+            if (lookaheadAnimationVisualDebuggingEnabled) {
+                LookaheadAnimationVisualDebugging(
+                    isEnabled = true,
+                    isShowKeyLabelEnabled = lookaheadAnimationVisualDebuggingKeyLabelEnabled,
+                ) {
+                    Inspectable(slotTableRecord, content)
+                }
+            } else Inspectable(slotTableRecord, content)
         }
     }
 
@@ -496,6 +512,10 @@ internal class ComposeViewAdapter : FrameLayout {
      * @param debugViewInfos if true, it will generate the [ViewInfo] structures and will log it.
      * @param animationClockStartTime if positive, [clock] will be defined and will control the
      *   animations defined in the context of the `@Composable` being previewed.
+     * @param lookaheadAnimationVisualDebuggingEnabled Boolean specifying whether to enable
+     *   animation debugging.
+     * @param lookaheadAnimationVisualDebuggingKeyLabelEnabled Boolean specifying whether to print
+     *   animated element keys
      * @param lookForDesignInfoProviders if true, it will try to populate [designInfoList].
      * @param designInfoProvidersArgument String to use as an argument when populating
      *   [designInfoList].
@@ -514,6 +534,8 @@ internal class ComposeViewAdapter : FrameLayout {
         debugPaintBounds: Boolean = false,
         debugViewInfos: Boolean = false,
         animationClockStartTime: Long = -1,
+        lookaheadAnimationVisualDebuggingEnabled: Boolean = false,
+        lookaheadAnimationVisualDebuggingKeyLabelEnabled: Boolean = false,
         lookForDesignInfoProviders: Boolean = false,
         designInfoProvidersArgument: String? = null,
         onCommit: () -> Unit = {},
@@ -524,6 +546,9 @@ internal class ComposeViewAdapter : FrameLayout {
         this.composableName = methodName
         this.lookForDesignInfoProviders = lookForDesignInfoProviders
         this.designInfoProvidersArgument = designInfoProvidersArgument ?: ""
+        this.lookaheadAnimationVisualDebuggingEnabled = lookaheadAnimationVisualDebuggingEnabled
+        this.lookaheadAnimationVisualDebuggingKeyLabelEnabled =
+            lookaheadAnimationVisualDebuggingKeyLabelEnabled
         this.onDraw = onDraw
         previewComposition =
             @Composable {
@@ -602,6 +627,27 @@ internal class ComposeViewAdapter : FrameLayout {
                 -1L
             }
 
+        val lookaheadAnimationVisualDebuggingEnabled =
+            try {
+                attrs
+                    .getAttributeValue(TOOLS_NS_URI, "lookaheadAnimationVisualDebuggingEnabled")
+                    .toBoolean()
+            } catch (e: Exception) {
+                false
+            }
+
+        val lookaheadAnimationVisualDebuggingKeyLabelEnabled =
+            try {
+                attrs
+                    .getAttributeValue(
+                        TOOLS_NS_URI,
+                        "lookaheadAnimationVisualDebuggingKeyLabelEnabled",
+                    )
+                    .toBoolean()
+            } catch (e: Exception) {
+                false
+            }
+
         init(
             className = className,
             methodName = methodName,
@@ -613,6 +659,9 @@ internal class ComposeViewAdapter : FrameLayout {
             debugViewInfos =
                 attrs.getAttributeBooleanValue(TOOLS_NS_URI, "printViewInfos", debugViewInfos),
             animationClockStartTime = animationClockStartTime,
+            lookaheadAnimationVisualDebuggingEnabled = lookaheadAnimationVisualDebuggingEnabled,
+            lookaheadAnimationVisualDebuggingKeyLabelEnabled =
+                lookaheadAnimationVisualDebuggingKeyLabelEnabled,
             lookForDesignInfoProviders =
                 attrs.getAttributeBooleanValue(
                     TOOLS_NS_URI,
