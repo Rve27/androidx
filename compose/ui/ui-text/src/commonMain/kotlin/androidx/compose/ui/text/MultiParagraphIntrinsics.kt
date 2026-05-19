@@ -73,7 +73,7 @@ class MultiParagraphIntrinsics(
         replaceWith =
             ReplaceWith(
                 "MultiParagraphIntrinsics(annotatedString, style, " +
-                    "placeholders, density, fontFamilyResolver)"
+                    "placeholders, density, fontFamilyResolver, true)"
             ),
     )
     constructor(

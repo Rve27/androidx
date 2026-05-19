@@ -226,7 +226,7 @@ actual fun ParagraphIntrinsics(
 @Deprecated(
     "Use an override with `softWrap`",
     ReplaceWith(
-        "ParagraphIntrinsics(text, style, annotations, density, fontFamilyResolver, true, listOf())"
+        "ParagraphIntrinsics(text, style, annotations, density, fontFamilyResolver, listOf(), true)"
     ),
 )
 actual fun ParagraphIntrinsics(
