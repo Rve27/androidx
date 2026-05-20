@@ -40,6 +40,18 @@ package androidx.a2ui.core.protocol {
     property public java.util.Map<java.lang.String,java.lang.Object?> theme;
   }
 
+  public final class A2uiDataPath {
+    ctor public A2uiDataPath(String path);
+    method @InaccessibleFromKotlin public String getNormalizedPath();
+    method @InaccessibleFromKotlin public String getPath();
+    method @InaccessibleFromKotlin public java.util.List<java.lang.String> getSegments();
+    method @InaccessibleFromKotlin public boolean isAbsolute();
+    property public boolean isAbsolute;
+    property public String normalizedPath;
+    property public String path;
+    property public java.util.List<java.lang.String> segments;
+  }
+
   public final class A2uiDeleteSurfaceMessage implements androidx.a2ui.core.protocol.A2uiServerToClientMessage {
     ctor public A2uiDeleteSurfaceMessage(String surfaceId);
     method @InaccessibleFromKotlin public String getSurfaceId();
