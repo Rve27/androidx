@@ -1,4 +1,20 @@
 // Signature format: 4.0
+package androidx.a2ui.core.platform {
+
+  public interface A2uiComponentRegistry {
+    method public void dispose();
+    method public void reportError(String id, androidx.a2ui.core.protocol.A2uiException exception);
+    method public void update(java.util.List<androidx.a2ui.core.protocol.A2uiComponentPayload> components);
+  }
+
+  public interface A2uiDataModel {
+    method public void dispose();
+    method public operator Object? get(androidx.a2ui.core.protocol.A2uiDataPath path);
+    method public void update(androidx.a2ui.core.protocol.A2uiDataPath path, Object? value);
+  }
+
+}
+
 package androidx.a2ui.core.protocol {
 
   public final class A2uiClientError implements androidx.a2ui.core.protocol.A2uiClientToServerMessage {
