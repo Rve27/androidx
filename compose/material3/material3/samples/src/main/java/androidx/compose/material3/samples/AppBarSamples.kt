@@ -171,7 +171,7 @@ fun SimpleTopAppBar() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -294,7 +294,7 @@ fun SimpleTopAppBarWithAdaptiveActions() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -391,7 +391,7 @@ fun SimpleTopAppBarWithSubtitle() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -483,7 +483,7 @@ fun SimpleCenterAlignedTopAppBar() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -581,7 +581,7 @@ fun SimpleCenterAlignedTopAppBarWithSubtitle() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -701,7 +701,7 @@ fun PinnedTopAppBar() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -769,7 +769,7 @@ fun PinnedTopAppBarWithPreScrolledLazyColumn() {
         content = { innerPadding ->
             LazyColumn(
                 state = lazyListState,
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -851,7 +851,7 @@ fun PinnedTopAppBarWithReversedLazyGrid() {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 100.dp),
                 reverseLayout = true,
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 state = lazyGridState,
             ) {
                 val list = (0..75).map { it.toString() }
@@ -947,7 +947,7 @@ fun EnterAlwaysTopAppBar() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -1111,7 +1111,7 @@ fun ExitUntilCollapsedMediumTopAppBar() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -1208,7 +1208,7 @@ fun ExitUntilCollapsedCenterAlignedMediumFlexibleTopAppBar() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -1300,7 +1300,7 @@ fun ExitUntilCollapsedLargeTopAppBar() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
@@ -1395,7 +1395,7 @@ fun ExitUntilCollapsedCenterAlignedLargeFlexibleTopAppBar() {
         },
         content = { innerPadding ->
             LazyColumn(
-                contentPadding = innerPadding,
+                modifier = Modifier.padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 val list = (0..75).map { it.toString() }
