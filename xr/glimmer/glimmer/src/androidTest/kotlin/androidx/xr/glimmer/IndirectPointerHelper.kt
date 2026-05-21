@@ -40,7 +40,6 @@ import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.IntSize
-import kotlin.math.absoluteValue
 
 // Horizontal external indirect pointer input device
 internal val horizontalExternalInputDeviceSize = IntSize(3082, 616)
@@ -59,17 +58,29 @@ internal const val defaultDelayForMoveToVelocityTrigger: Long = 10
 
 internal const val defaultDelayForIncrementedMove: Long = 200L
 
+// Provides standard glimmer defaults to simplify calls
+fun SemanticsNodeInteractionsProvider.sendIndirectPointerInput(
+    indirectPointerEventPrimaryDirectionalMotionAxis:
+        IndirectPointerEventPrimaryDirectionalMotionAxis =
+        IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+    inputDeviceSize: IntSize = horizontalExternalInputDeviceSize,
+    block: IndirectPointerInjectionScope.() -> Unit,
+) {
+    sendIndirectPointerInput(
+        indirectPointerEventPrimaryDirectionalMotionAxis =
+            indirectPointerEventPrimaryDirectionalMotionAxis,
+        inputDeviceSize = inputDeviceSize,
+        block = block,
+    )
+}
+
 // Swipe along the x-axis with only one move.
 internal fun SemanticsNodeInteractionsProvider.oneMoveSwipeAlongXAxis(
     xDistance: Float,
     moveDuration: Long = defaultDelayForIncrementedMove,
     inputDeviceSize: IntSize = horizontalExternalInputDeviceSize,
 ) {
-    sendIndirectPointerInput(
-        indirectPointerEventPrimaryDirectionalMotionAxis =
-            IndirectPointerEventPrimaryDirectionalMotionAxis.X,
-        inputDeviceSize = inputDeviceSize,
-    ) {
+    sendIndirectPointerInput(inputDeviceSize = inputDeviceSize) {
         val start =
             if (xDistance >= 0f) {
                 inputDeviceTopLeft
@@ -88,37 +99,8 @@ internal fun SemanticsNodeInteractionsProvider.oneMoveSwipeAlongXAxis(
     }
 }
 
-// Swipe where each move is evenly distributed across the distance
-internal fun IndirectPointerInjectionScope.uniformSwipe(xDistance: Float) {
-    val start =
-        if (xDistance >= 0f) {
-            inputDeviceTopLeft
-        } else {
-            inputDeviceTopRight
-        }
-
-    val end =
-        if (xDistance >= 0f) {
-            if (xDistance.absoluteValue < inputDeviceTopRight.x) {
-                xDistance
-            } else {
-                inputDeviceTopRight.x
-            }
-        } else {
-            if (xDistance.absoluteValue < inputDeviceTopRight.x) {
-                xDistance
-            } else {
-                -inputDeviceTopRight.x
-            }
-        }
-
-    down(start)
-    incrementedMoveX(end)
-    up()
-}
-
 // Moves the distance over a number of steps (evenly divided per step).
-internal fun IndirectPointerInjectionScope.incrementedMoveX(
+internal fun IndirectPointerInjectionScope.evenlyDividedMoveX(
     distance: Float,
     steps: Int = defaultStepCountForMoveToVelocityTrigger,
     duration: Long = defaultDelayForIncrementedMove,
