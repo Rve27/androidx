@@ -73,6 +73,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.indirect.IndirectPointerEventPrimaryDirectionalMotionAxis
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
@@ -117,6 +118,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.performTrackpadInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
+import androidx.compose.ui.test.sendIndirectPointerInput
 import androidx.compose.ui.test.swipe
 import androidx.compose.ui.test.swipeDown
 import androidx.compose.ui.test.swipeLeft
@@ -248,7 +250,14 @@ class ScrollableTest {
         setScrollableContent(enableInitialFocus = true) {
             Modifier.scrollable(state = scrollableState, orientation = Orientation.Horizontal)
         }
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeForward(rule)
+        // Swipe forward
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(start = startOffsetForXAxisMovement, end = endOffsetForXAxisMovement)
+        }
         rule.runOnIdle {
             assertThat(total).isNonZero()
             // Swipe forward has a negative sign because indirect pointer events are inverted in
@@ -256,7 +265,14 @@ class ScrollableTest {
             assertThat(total.sign).isEqualTo(-1f)
         }
 
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeBackward(rule)
+        // Swipe backward
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(start = endOffsetForXAxisMovement, end = startOffsetForXAxisMovement)
+        }
         rule.runOnIdle { assertThat(total).isWithin(0.5f).of(0.0f) }
     }
 
@@ -618,7 +634,14 @@ class ScrollableTest {
                 orientation = Orientation.Horizontal,
             )
         }
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeForward(rule)
+        // Swipe forward
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(start = startOffsetForXAxisMovement, end = endOffsetForXAxisMovement)
+        }
 
         rule.runOnIdle {
             assertThat(total).isNonZero()
@@ -628,7 +651,14 @@ class ScrollableTest {
             assertThat(total.sign).isEqualTo(1f)
         }
 
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeBackward(rule)
+        // Swipe backward
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(start = endOffsetForXAxisMovement, end = startOffsetForXAxisMovement)
+        }
         rule.runOnIdle { assertThat(total).isWithin(0.5f).of(0.0f) }
     }
 
@@ -1502,8 +1532,18 @@ class ScrollableTest {
 
         rule.runOnIdle { assertThat(focusRequester.requestFocus()).isTrue() }
 
-        // make the swipe really slow so it won't generate velocities
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeEvent(rule, delayTimeMills = 64L)
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(
+                start = startOffsetForXAxisMovement,
+                end = endOffsetForXAxisMovement,
+                durationMillis = 64L * defaultStepCount,
+            )
+        }
+
         val lastEqualDrag =
             rule.runOnIdle {
                 assertThat(innerDrag).isNonZero()
@@ -1806,7 +1846,17 @@ class ScrollableTest {
         }
         rule.runOnIdle { assertThat(focusRequester.requestFocus()).isTrue() }
 
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeEvent(rule, delayTimeMills = 64L)
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(
+                start = startOffsetForXAxisMovement,
+                end = endOffsetForXAxisMovement,
+                durationMillis = 64L * defaultStepCount,
+            )
+        }
 
         rule.runOnIdle {
             assertThat(innerDrag).isNonZero()
@@ -1959,7 +2009,13 @@ class ScrollableTest {
         rule.runOnIdle { assertThat(focusRequester.requestFocus()).isTrue() }
 
         // swipe again with velocity
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeForward(rule)
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(start = startOffsetForXAxisMovement, end = endOffsetForXAxisMovement)
+        }
 
         assertThat(innerDrag).isNonZero()
         assertThat(outerDrag).isNonZero()
@@ -2090,7 +2146,17 @@ class ScrollableTest {
 
         rule.runOnIdle { assertThat(focusRequester.requestFocus()).isTrue() }
 
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeEvent(rule, delayTimeMills = 300)
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(
+                start = startOffsetForXAxisMovement,
+                end = endOffsetForXAxisMovement,
+                durationMillis = 300L * defaultStepCount,
+            )
+        }
 
         val preFlingValue = rule.runOnIdle { value }
         rule.runOnIdle {
@@ -2996,7 +3062,13 @@ class ScrollableTest {
                 orientation = Orientation.Horizontal,
             )
         }
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeForward(rule)
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(start = startOffsetForXAxisMovement, end = endOffsetForXAxisMovement)
+        }
         rule.waitForIdle()
         assertThat(flingCalled).isEqualTo(1)
         assertThat(flingVelocity).isNonZero()
@@ -3007,7 +3079,14 @@ class ScrollableTest {
         flingCalled = 0
         flingVelocity = 0.0f
 
-        rule.onNodeWithTag(scrollableBoxTag).sendIndirectSwipeBackward(rule)
+        // Swipe back
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(start = endOffsetForXAxisMovement, end = startOffsetForXAxisMovement)
+        }
         rule.waitForIdle()
         assertThat(flingCalled).isEqualTo(1)
         assertThat(flingVelocity).isNonZero()
@@ -3534,7 +3613,14 @@ class ScrollableTest {
 
         rule.runOnIdle { assertThat(focusRequester.requestFocus()).isTrue() }
 
-        rule.onRoot().sendIndirectSwipeForward(rule)
+        // Swipe forward
+        rule.sendIndirectPointerInput(
+            indirectPointerEventPrimaryDirectionalMotionAxis =
+                IndirectPointerEventPrimaryDirectionalMotionAxis.X,
+            inputDeviceSize = horizontalExternalInputDeviceSize,
+        ) {
+            swipe(start = startOffsetForXAxisMovement, end = endOffsetForXAxisMovement)
+        }
 
         rule.runOnIdle {
             assertThat(consumedOuter).isEqualTo(consumedInner)
