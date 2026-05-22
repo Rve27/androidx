@@ -44,6 +44,9 @@ import androidx.camera.viewfinder.core.TransformationInfo
 import androidx.camera.viewfinder.core.TransformationMode
 import androidx.camera.viewfinder.core.ViewfinderSurfaceRequest
 import androidx.camera.viewfinder.core.ViewfinderSurfaceSessionScope
+import androidx.camera.viewfinder.core.ZoomGestureDetector
+import androidx.camera.viewfinder.core.ZoomGestureDetector.ZoomEvent
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -52,6 +55,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -64,6 +68,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.util.fastAny
+import androidx.compose.ui.util.fastForEach
 import androidx.lifecycle.Observer
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -144,8 +151,10 @@ public fun CameraXViewfinder(
         contentScale = contentScale,
         onStreamStateChanged = {},
         isTapToFocusEnabled = false,
+        isPinchToZoomEnabled = false,
         autoCancelDurationMillis = 5000L,
         onTapToFocus = { _, _ -> },
+        onZoomRatioChanged = {},
     )
 }
 
@@ -162,7 +171,7 @@ public fun CameraXViewfinder(
  * implementation will be providing a new surface.
  *
  * This specific overload provides full control over advanced viewfinder features such as
- * tap-to-focus gestures.
+ * pinch-to-zoom and tap-to-focus gestures.
  *
  * Example usage:
  *
@@ -188,11 +197,15 @@ public fun CameraXViewfinder(
  * @param onStreamStateChanged Callback invoked when the preview stream state changes. Provides the
  *   current [Preview.StreamState].
  * @param isTapToFocusEnabled Whether the tap-to-focus gesture is enabled.
+ * @param isPinchToZoomEnabled Whether the pinch-to-zoom gesture is enabled.
  * @param autoCancelDurationMillis The auto-cancel duration of focus/metering in milliseconds.
  *   Defaults to 5000L.
  * @param onTapToFocus A callback invoked when a tap-to-focus action is triggered. It provides the
  *   tap [Offset] and an integer representing the current focus state. See [FocusState] for possible
  *   values.
+ * @param onZoomRatioChanged A callback invoked when the [CameraXViewfinder]'s pinch-to-zoom gesture
+ *   scales the zoom ratio, providing the updated zoom ratio. This callback is only invoked during
+ *   the active zooming state.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
@@ -206,8 +219,10 @@ public fun CameraXViewfinder(
     contentScale: ContentScale = ContentScale.Crop,
     onStreamStateChanged: (@Preview.StreamState Int) -> Unit = {},
     isTapToFocusEnabled: Boolean = false,
+    isPinchToZoomEnabled: Boolean = false,
     autoCancelDurationMillis: Long = 5000L,
     onTapToFocus: (Offset, Int) -> Unit = { _, _ -> },
+    onZoomRatioChanged: (Float) -> Unit = {},
 ) {
     val currentImplementationMode by rememberUpdatedState(implementationMode)
     val currentOnStreamStateChanged = rememberUpdatedState(onStreamStateChanged)
@@ -331,14 +346,19 @@ public fun CameraXViewfinder(
 
         val gestureModifier =
             Modifier.tapToFocusGesture(
-                camera = surfaceRequest.camera,
-                isTapToFocusEnabled = isTapToFocusEnabled,
-                autoCancelDurationMillis = autoCancelDurationMillis,
-                sensorToBufferTransform = sensorToBufferTransform,
-                coordinateTransformer = internalCoordinateTransformer,
-                meteringPointFactory = passthroughMeteringPointFactory,
-                onTapToFocus = currentOnTapToFocus,
-            )
+                    camera = surfaceRequest.camera,
+                    isTapToFocusEnabled = isTapToFocusEnabled,
+                    autoCancelDurationMillis = autoCancelDurationMillis,
+                    sensorToBufferTransform = sensorToBufferTransform,
+                    coordinateTransformer = internalCoordinateTransformer,
+                    meteringPointFactory = passthroughMeteringPointFactory,
+                    onTapToFocus = currentOnTapToFocus,
+                )
+                .pinchToZoomGesture(
+                    camera = surfaceRequest.camera,
+                    isPinchToZoomEnabled = isPinchToZoomEnabled,
+                    onZoomRatioChanged = onZoomRatioChanged,
+                )
 
         surfaceRequestScope?.let { scope ->
             DisposableEffect(scope) { onDispose { scope.complete() } }
@@ -660,4 +680,70 @@ private fun Modifier.tapToFocusGesture(
             }
         }
     }
+}
+
+@Composable
+private fun Modifier.pinchToZoomGesture(
+    camera: Camera,
+    isPinchToZoomEnabled: Boolean,
+    onZoomRatioChanged: (Float) -> Unit,
+): Modifier {
+    if (!isPinchToZoomEnabled) return this
+    val context = LocalContext.current
+    val isZooming = remember { mutableStateOf(false) }
+    val currentOnZoomRatioChanged by rememberUpdatedState(onZoomRatioChanged)
+
+    var currentRatio by remember {
+        mutableFloatStateOf(camera.cameraInfo.zoomState.value?.zoomRatio ?: 1f)
+    }
+    val zoomGestureDetector =
+        remember(camera, context) {
+            ZoomGestureDetector(context) { zoomEvent ->
+                val zoomState = camera.cameraInfo.zoomState.value
+                if (zoomState != null) {
+                    when (zoomEvent) {
+                        is ZoomEvent.Begin -> {
+                            isZooming.value = true
+                            currentRatio = zoomState.zoomRatio
+                        }
+                        is ZoomEvent.Move -> {
+                            val incremental = zoomEvent.incrementalScaleFactor
+                            val speedUp = speedUpZoomBy2X(incremental)
+                            val targetRatio =
+                                (currentRatio * speedUp).coerceIn(
+                                    zoomState.minZoomRatio,
+                                    zoomState.maxZoomRatio,
+                                )
+                            currentRatio = targetRatio
+                            camera.cameraControl.setZoomRatio(targetRatio)
+                            currentOnZoomRatioChanged(targetRatio)
+                        }
+                        is ZoomEvent.End -> {
+                            isZooming.value = false
+                        }
+                    }
+                }
+                true
+            }
+        }
+
+    return this.pointerInput(zoomGestureDetector) {
+        awaitEachGesture {
+            while (true) {
+                val event = awaitPointerEvent()
+                val motionEvent = event.motionEvent
+                if (motionEvent != null) {
+                    zoomGestureDetector.onTouchEvent(motionEvent)
+                    if (isZooming.value) {
+                        event.changes.fastForEach { it.consume() }
+                    }
+                }
+                if (!event.changes.fastAny { it.pressed }) break
+            }
+        }
+    }
+}
+
+private fun speedUpZoomBy2X(scaleFactor: Float): Float {
+    return (2 * scaleFactor - 1.0f).coerceAtLeast(0.01f)
 }
