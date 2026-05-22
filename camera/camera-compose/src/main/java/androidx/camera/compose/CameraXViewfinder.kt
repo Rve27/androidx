@@ -16,9 +16,16 @@
 
 package androidx.camera.compose
 
+import android.annotation.SuppressLint
+import android.graphics.Matrix
+import android.graphics.PointF
 import android.view.Surface
 import androidx.annotation.RestrictTo
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraState
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.MeteringPointFactory
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.core.SurfaceRequest.Result.RESULT_SURFACE_ALREADY_PROVIDED
@@ -29,12 +36,15 @@ import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.CameraSessionLifecycleCallback
 import androidx.camera.viewfinder.compose.MutableCoordinateTransformer
 import androidx.camera.viewfinder.compose.Viewfinder
+import androidx.camera.viewfinder.core.FocusState
+import androidx.camera.viewfinder.core.FocusStateValue
 import androidx.camera.viewfinder.core.FrameRenderedListener
 import androidx.camera.viewfinder.core.ImplementationMode
 import androidx.camera.viewfinder.core.TransformationInfo
 import androidx.camera.viewfinder.core.TransformationMode
 import androidx.camera.viewfinder.core.ViewfinderSurfaceRequest
 import androidx.camera.viewfinder.core.ViewfinderSurfaceSessionScope
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -42,13 +52,20 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.lifecycle.Observer
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
@@ -68,6 +85,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -125,6 +143,9 @@ public fun CameraXViewfinder(
         alignment = alignment,
         contentScale = contentScale,
         onStreamStateChanged = {},
+        isTapToFocusEnabled = false,
+        autoCancelDurationMillis = 5000L,
+        onTapToFocus = { _, _ -> },
     )
 }
 
@@ -139,6 +160,9 @@ public fun CameraXViewfinder(
  * surface request will be invalidated as if [SurfaceRequest.invalidate] has been called. This will
  * allow CameraX to know that a new surface request is required since the underlying viewfinder
  * implementation will be providing a new surface.
+ *
+ * This specific overload provides full control over advanced viewfinder features such as
+ * tap-to-focus gestures.
  *
  * Example usage:
  *
@@ -163,6 +187,12 @@ public fun CameraXViewfinder(
  *   [ContentScale.Crop].
  * @param onStreamStateChanged Callback invoked when the preview stream state changes. Provides the
  *   current [Preview.StreamState].
+ * @param isTapToFocusEnabled Whether the tap-to-focus gesture is enabled.
+ * @param autoCancelDurationMillis The auto-cancel duration of focus/metering in milliseconds.
+ *   Defaults to 5000L.
+ * @param onTapToFocus A callback invoked when a tap-to-focus action is triggered. It provides the
+ *   tap [Offset] and an integer representing the current focus state. See [FocusState] for possible
+ *   values.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
@@ -175,14 +205,18 @@ public fun CameraXViewfinder(
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Crop,
     onStreamStateChanged: (@Preview.StreamState Int) -> Unit = {},
+    isTapToFocusEnabled: Boolean = false,
+    autoCancelDurationMillis: Long = 5000L,
+    onTapToFocus: (Offset, Int) -> Unit = { _, _ -> },
 ) {
-
     val currentImplementationMode by rememberUpdatedState(implementationMode)
-
     val currentOnStreamStateChanged = rememberUpdatedState(onStreamStateChanged)
+    var sensorToBufferTransform by remember { mutableStateOf<Matrix?>(null) }
 
     val viewfinderArgs by
         produceState<ViewfinderArgs?>(initialValue = null, surfaceRequest) {
+            sensorToBufferTransform = null
+
             // Cancel this produceScope in case we haven't yet produced a complete
             // ViewfinderArgs.
             surfaceRequest.addRequestCancellationListener(Runnable::run) {
@@ -198,6 +232,7 @@ public fun CameraXViewfinder(
                             ->
                             // Set the next value of the flow
                             stateFlow.value = transformInfo
+                            sensorToBufferTransform = transformInfo.sensorToBufferTransform
                         }
                     }
                     .asStateFlow()
@@ -281,13 +316,37 @@ public fun CameraXViewfinder(
                     }
             }
 
+        val currentOnTapToFocus by rememberUpdatedState(onTapToFocus)
+
+        val internalCoordinateTransformer =
+            coordinateTransformer ?: remember { MutableCoordinateTransformer() }
+
+        val passthroughMeteringPointFactory = remember {
+            object : MeteringPointFactory() {
+                override fun convertPoint(x: Float, y: Float): PointF {
+                    return PointF(x, y)
+                }
+            }
+        }
+
+        val gestureModifier =
+            Modifier.tapToFocusGesture(
+                camera = surfaceRequest.camera,
+                isTapToFocusEnabled = isTapToFocusEnabled,
+                autoCancelDurationMillis = autoCancelDurationMillis,
+                sensorToBufferTransform = sensorToBufferTransform,
+                coordinateTransformer = internalCoordinateTransformer,
+                meteringPointFactory = passthroughMeteringPointFactory,
+                onTapToFocus = currentOnTapToFocus,
+            )
+
         surfaceRequestScope?.let { scope ->
             DisposableEffect(scope) { onDispose { scope.complete() } }
             Viewfinder(
                 surfaceRequest = scope.viewfinderSurfaceRequest,
                 transformationInfo = args.transformationInfo,
-                modifier = modifier.fillMaxSize(),
-                coordinateTransformer = coordinateTransformer,
+                modifier = modifier.fillMaxSize().then(gestureModifier),
+                coordinateTransformer = internalCoordinateTransformer,
                 alignment = alignment,
                 contentScale = contentScale,
             ) {
@@ -311,8 +370,8 @@ public fun CameraXViewfinder(
                                     null
                                 }
                             // Since we provide the surface in a NonCancellable context, we want
-                            // to add a job outside that context to check if the surface is being
-                            // replaced.
+                            // to add a job outside that context to check if the surface is
+                            // being replaced.
                             val cancellationWatcherJob = launch {
                                 try {
                                     awaitCancellation()
@@ -338,7 +397,8 @@ public fun CameraXViewfinder(
 
                                 when (result.resultCode) {
                                     // If the surface request is already fulfilled, we need to
-                                    // invalidate it so that a new surface request will be produced
+                                    // invalidate it so that a new surface request will be
+                                    // produced
                                     RESULT_SURFACE_ALREADY_PROVIDED -> surfaceRequest.invalidate()
                                     else -> {
                                         // The surface is no longer in use. It can be reused for
@@ -531,3 +591,73 @@ private data class ViewfinderArgs(
     val implementationMode: ImplementationMode,
     val transformationInfo: TransformationInfo,
 )
+
+@SuppressLint("RestrictedApiAndroidX")
+@Composable
+private fun Modifier.tapToFocusGesture(
+    camera: Camera,
+    isTapToFocusEnabled: Boolean,
+    autoCancelDurationMillis: Long,
+    sensorToBufferTransform: Matrix?,
+    coordinateTransformer: MutableCoordinateTransformer,
+    meteringPointFactory: MeteringPointFactory,
+    onTapToFocus: (Offset, Int) -> Unit,
+): Modifier {
+    if (!isTapToFocusEnabled) return this
+    val coroutineScope = rememberCoroutineScope()
+    val currentSensorToBufferTransform by rememberUpdatedState(sensorToBufferTransform)
+    val currentCoordinateTransformer by rememberUpdatedState(coordinateTransformer)
+    val currentOnTapToFocus by rememberUpdatedState(onTapToFocus)
+    val currentAutoCancelDurationMillis by rememberUpdatedState(autoCancelDurationMillis)
+
+    return this.pointerInput(camera) {
+        detectTapGestures { localOffset ->
+            val sensorMatrix = currentSensorToBufferTransform ?: return@detectTapGestures
+            val sensorRect =
+                (camera.cameraInfo as? CameraInfoInternal)?.sensorRect ?: return@detectTapGestures
+
+            coroutineScope.launch {
+                val surfaceOffset = with(currentCoordinateTransformer) { localOffset.transform() }
+
+                val bufferToSensor = Matrix().apply { sensorMatrix.invert(this) }
+
+                val sensorPoint = floatArrayOf(surfaceOffset.x, surfaceOffset.y)
+                bufferToSensor.mapPoints(sensorPoint)
+
+                val normalizedX = sensorPoint[0] / sensorRect.width().toFloat()
+                val normalizedY = sensorPoint[1] / sensorRect.height().toFloat()
+
+                if (normalizedX !in 0f..1f || normalizedY !in 0f..1f) return@launch
+
+                val meteringPoint = meteringPointFactory.createPoint(normalizedX, normalizedY)
+                val focusMeteringAction =
+                    FocusMeteringAction.Builder(meteringPoint)
+                        .setAutoCancelDuration(
+                            currentAutoCancelDurationMillis,
+                            TimeUnit.MILLISECONDS,
+                        )
+                        .build()
+
+                fun notifyTapToFocus(@FocusStateValue status: Int) {
+                    currentOnTapToFocus(localOffset, status)
+                }
+
+                notifyTapToFocus(FocusState.STARTED)
+
+                try {
+                    val result =
+                        camera.cameraControl.startFocusAndMetering(focusMeteringAction).await()
+                    if (result.isFocusSuccessful) {
+                        notifyTapToFocus(FocusState.FOCUSED)
+                    } else {
+                        notifyTapToFocus(FocusState.NOT_FOCUSED)
+                    }
+                } catch (e: Exception) {
+                    if (e !is CameraControl.OperationCanceledException) {
+                        notifyTapToFocus(FocusState.FAILED)
+                    }
+                }
+            }
+        }
+    }
+}
