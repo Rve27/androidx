@@ -188,7 +188,7 @@ public fun CameraXViewfinder(
  *
  * Example usage:
  *
- * @sample androidx.camera.compose.samples.CameraXViewfinderSample
+ * @sample androidx.camera.compose.samples.CameraXViewfinderAdvancedSample
  * @param surfaceRequest The surface request from CameraX
  * @param modifier The [Modifier] to be applied to this viewfinder
  * @param implementationMode The [ImplementationMode] to be used by this viewfinder. By default,
