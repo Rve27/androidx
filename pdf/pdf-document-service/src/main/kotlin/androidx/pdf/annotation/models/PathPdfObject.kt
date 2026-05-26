@@ -19,9 +19,7 @@ package androidx.pdf.annotation.models
 import android.annotation.SuppressLint
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.annotation.IntDef
-import androidx.pdf.annotation.models.PathPdfObject.PathInput.Companion.LINE_TO
-import androidx.pdf.annotation.models.PathPdfObject.PathInput.Companion.MOVE_TO
+import androidx.pdf.constants.PathOp
 
 internal class PathPdfObject(
     val brushColor: Int,
@@ -118,14 +116,12 @@ internal class PathPdfObject(
 
         override fun describeContents(): Int = 0
 
-        @Retention(AnnotationRetention.SOURCE) @IntDef(MOVE_TO, LINE_TO) annotation class PathOp
-
         companion object {
             /** Starts a new sub-path from the given coordinate. */
-            const val MOVE_TO: Int = 0
+            const val MOVE_TO: Int = androidx.pdf.constants.PathOps.MOVE_TO
 
             /** Draws a line from the previous point to the given coordinate. */
-            const val LINE_TO: Int = 1
+            const val LINE_TO: Int = androidx.pdf.constants.PathOps.LINE_TO
 
             @JvmField
             val CREATOR: Parcelable.Creator<PathInput> =
