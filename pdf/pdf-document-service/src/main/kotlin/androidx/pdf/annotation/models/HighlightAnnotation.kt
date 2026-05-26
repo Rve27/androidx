@@ -19,7 +19,6 @@ package androidx.pdf.annotation.models
 import android.graphics.RectF
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.annotation.RestrictTo
 
 /**
  * Represents a Highlight Annotation in a PDF document.
@@ -29,14 +28,10 @@ import androidx.annotation.RestrictTo
  *   are highlighted.
  * @property color The color of the highlight.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public class HighlightAnnotation(
-    pageNum: Int,
-    public val bounds: List<RectF>,
-    public val color: Int,
-) : PdfAnnotation(pageNum) {
+internal class HighlightAnnotation(pageNum: Int, val bounds: List<RectF>, val color: Int) :
+    PdfAnnotation(pageNum) {
 
-    private constructor(
+    internal constructor(
         parcel: Parcel
     ) : this(
         pageNum = parcel.readInt(),
@@ -59,17 +54,22 @@ public class HighlightAnnotation(
 
     override fun describeContents(): Int = 0
 
-    public fun writeHighlightAnnotationToParcel(dest: Parcel, flags: Int) {
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(TYPE)
         dest.writeInt(pageNum)
         dest.writeTypedList(bounds)
         dest.writeInt(color)
     }
 
-    internal companion object {
+    companion object {
+        /** The type identifier for [HighlightAnnotation]. */
+        internal const val TYPE: Int = 2
+
         @JvmField
         val CREATOR: Parcelable.Creator<HighlightAnnotation> =
             object : Parcelable.Creator<HighlightAnnotation> {
                 override fun createFromParcel(source: Parcel): HighlightAnnotation {
+                    val type = source.readInt()
                     return HighlightAnnotation(source)
                 }
 
