@@ -35,6 +35,7 @@ import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormEditInfo
 import androidx.pdf.models.FormWidgetInfo
+import androidx.pdf.models.PdfModelMapper.toParcelable
 import androidx.pdf.service.connect.FakePdfServiceConnection
 import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.TestUtils
