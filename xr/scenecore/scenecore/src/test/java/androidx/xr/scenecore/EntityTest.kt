@@ -378,15 +378,12 @@ class EntityTest {
     fun allEntitySetParent_callsRuntimeEntityImplSetParent() {
         panelEntity.parent = activitySpace
         gltfModelEntity.parent = activitySpace
-        anchorSpace.parent = activitySpace
         activityPanelEntity.parent = activitySpace
 
         assertThat(panelEntity.parent).isEqualTo(activitySpace)
         assertThat(panelEntity.rtEntity.parent).isEqualTo(activitySpace.rtEntity)
         assertThat(gltfModelEntity.parent).isEqualTo(activitySpace)
         assertThat(gltfModelEntity.rtEntity.parent).isEqualTo(activitySpace.rtEntity)
-        assertThat(anchorSpace.parent).isEqualTo(activitySpace)
-        assertThat(anchorSpace.rtEntity.parent).isEqualTo(activitySpace.rtEntity)
         assertThat(activityPanelEntity.parent).isEqualTo(activitySpace)
         assertThat(activityPanelEntity.rtEntity.parent).isEqualTo(activitySpace.rtEntity)
     }
@@ -396,7 +393,6 @@ class EntityTest {
         panelEntity.parent = activityPanelEntity
         gltfModelEntity.parent = panelEntity
         entity.parent = gltfModelEntity
-        anchorSpace.parent = entity
 
         assertThat(activityPanelEntity.parent).isEqualTo(activitySpace)
         assertThat(activityPanelEntity.rtEntity.parent).isEqualTo(activitySpace.rtEntity)
@@ -406,8 +402,6 @@ class EntityTest {
         assertThat(gltfModelEntity.rtEntity.parent).isEqualTo(panelEntity.rtEntity)
         assertThat(entity.parent).isEqualTo(gltfModelEntity)
         assertThat(entity.rtEntity.parent).isEqualTo(gltfModelEntity.rtEntity)
-        assertThat(anchorSpace.parent).isEqualTo(entity)
-        assertThat(anchorSpace.rtEntity.parent).isEqualTo(entity.rtEntity)
     }
 
     @Test
@@ -416,7 +410,6 @@ class EntityTest {
         panelEntity.parent = null
         gltfModelEntity.parent = null
         entity.parent = null
-        anchorSpace.parent = null
 
         assertThat(activityPanelEntity.parent).isNull()
         assertThat(activityPanelEntity.rtEntity.parent).isNull()
@@ -426,8 +419,6 @@ class EntityTest {
         assertThat(gltfModelEntity.rtEntity.parent).isNull()
         assertThat(entity.parent).isNull()
         assertThat(entity.rtEntity.parent).isNull()
-        assertThat(anchorSpace.parent).isNull()
-        assertThat(anchorSpace.rtEntity.parent).isNull()
     }
 
     @Test

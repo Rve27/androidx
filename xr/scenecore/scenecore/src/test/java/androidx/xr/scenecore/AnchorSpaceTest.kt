@@ -164,7 +164,7 @@ class AnchorSpaceTest {
     @Suppress("DEPRECATION")
     // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun createViaSemantic_withinTimeout_returnAnchoredEntity() {
-        runTest(testDispatcher) {
+        return runTest(testDispatcher) {
             activityController.create().start().resume()
             val plane =
                 androidx.xr.arcore.testing.FakeRuntimePlane(
@@ -192,7 +192,7 @@ class AnchorSpaceTest {
     @Suppress("DEPRECATION")
     // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun createViaSemantic_twice_doesNotReanchor() {
-        runTest(testDispatcher) {
+        return runTest(testDispatcher) {
             activityController.create().start().resume()
             val plane1 =
                 androidx.xr.arcore.testing.FakeRuntimePlane(
@@ -237,7 +237,7 @@ class AnchorSpaceTest {
     @Suppress("DEPRECATION")
     // TODO: b/494308962 Remove references to arcore-testing Fakes
     fun createViaSemantic_pastTimeout_returnsTimedOutAnchorSpace() {
-        runTest(testDispatcher) {
+        return runTest(testDispatcher) {
             activityController.create().start().resume()
             val plane =
                 androidx.xr.arcore.testing.FakeRuntimePlane(
@@ -271,7 +271,7 @@ class AnchorSpaceTest {
     @Test
     @Suppress("DEPRECATION")
     fun createViaSemantic_zeroTimeout_keepsSearching() {
-        runTest(testDispatcher) {
+        return runTest(testDispatcher) {
             val anchorAttempts = 100
             activityController.create().start().resume()
             val anchorSpace =

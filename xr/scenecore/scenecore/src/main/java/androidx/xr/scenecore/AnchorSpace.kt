@@ -27,7 +27,6 @@ import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.Pose
-import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.AnchorEntity as RtAnchorEntity
 import androidx.xr.scenecore.runtime.HandlerExecutor
 import java.lang.ref.WeakReference
@@ -39,13 +38,13 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 /**
- * An AnchorSpace is an [Entity] tracks a [Pose] relative to some position or surface in the "Real
- * World." Children of this [Entity] will remain positioned relative to that location in the real
- * world.
+ * An AnchorSpace is a [SpaceEntity] tracks a [Pose] relative to some position or surface in the
+ * "Real World." Children of this [SpaceEntity] will remain positioned relative to that location in
+ * the real world.
  *
- * Note that, as a Space, the AnchorSpace's position is independent of the [ActivitySpace]. It is
- * parentless and its position and scale is controlled by the system. Calling [setPose], [setScale],
- * or setting the [Entity.parent] property on the AnchorSpace will result in an
+ * Note that, as a SpaceEntity, the AnchorSpace's position is independent of the [ActivitySpace]. It
+ * is parentless and its position and scale is controlled by the system. Calling [setPose],
+ * [setScale], or setting the [Entity.parent] property on the AnchorSpace will result in an
  * [UnsupportedOperationException].
  *
  * AnchorSpace users must maintain a strong reference while the instance is in use. If there's no
@@ -55,7 +54,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
 public class AnchorSpace
 private constructor(rtAnchorEntity: RtAnchorEntity, entityRegistry: EntityRegistry) :
-    Entity(rtAnchorEntity, entityRegistry) {
+    SpaceEntity(rtAnchorEntity, entityRegistry) {
 
     private val rtAnchorEntity: RtAnchorEntity
         get() = rtEntity as RtAnchorEntity
@@ -470,124 +469,6 @@ private constructor(rtAnchorEntity: RtAnchorEntity, entityRegistry: EntityRegist
     public fun removeOriginChangedListener(listener: Runnable) {
         checkNotDisposed()
         onOriginChangedListeners.remove(listener)
-    }
-
-    /**
-     * Throws [UnsupportedOperationException] if called.
-     *
-     * **Note:** The pose of the `AnchorSpace` is managed by the system. Applications should not
-     * call this method, as any changes may be overwritten by the system.
-     *
-     * @param pose The new pose to set.
-     * @param relativeTo The space in which the pose is defined.
-     * @throws UnsupportedOperationException if called.
-     */
-    @RestrictTo(Scope.LIBRARY_GROUP)
-    override fun setPose(pose: Pose, relativeTo: Space) {
-        checkNotDisposed()
-        throw UnsupportedOperationException("Cannot set 'pose' on an AnchorSpace.")
-    }
-
-    /**
-     * Returns the pose of the `AnchorSpace` relative to the specified coordinate space.
-     *
-     * @param relativeTo The coordinate space to get the pose relative to. Defaults to
-     *   [Space.PARENT].
-     * @return The current pose of the `AnchorSpace`.
-     * @throws IllegalArgumentException if called with Space.PARENT since AnchorSpace has no
-     *   parents.
-     */
-    override fun getPose(relativeTo: Space): Pose {
-        checkNotDisposed()
-        return when (relativeTo) {
-            Space.PARENT ->
-                throw IllegalArgumentException(
-                    "AnchorSpace is a root space and it does not have a parent."
-                )
-            Space.ACTIVITY,
-            @Suppress("DEPRECATION") // TODO - b/415320653
-            Space.REAL_WORLD -> super.getPose(relativeTo)
-            else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
-        }
-    }
-
-    /**
-     * Throws [UnsupportedOperationException] if called.
-     *
-     * **Note:** The scale of the `AnchorSpace` is managed by the system. Applications should not
-     * call this method, as any changes may be overwritten by the system.
-     *
-     * @param scale The new scale to set.
-     * @param relativeTo The space in which the scale is defined.
-     * @throws UnsupportedOperationException if called.
-     */
-    @RestrictTo(Scope.LIBRARY_GROUP)
-    override fun setScale(scale: Float, relativeTo: Space) {
-        checkNotDisposed()
-        throw UnsupportedOperationException("Cannot set 'scale' on an AnchorSpace.")
-    }
-
-    /**
-     * Throws [UnsupportedOperationException] if called.
-     *
-     * **Note:** The scale of the `AnchorSpace` is managed by the system. Applications should not
-     * call this method, as any changes may be overwritten by the system.
-     *
-     * @param scale The new scale to set.
-     * @param relativeTo The space in which the scale is defined.
-     * @throws UnsupportedOperationException if called.
-     */
-    @RestrictTo(Scope.LIBRARY_GROUP)
-    override fun setScale(scale: Vector3, relativeTo: Space) {
-        throw UnsupportedOperationException("Cannot set 'scale' on an AnchorSpace.")
-    }
-
-    /**
-     * Returns the scale of the `AnchorSpace` along each axis, relative to the specified coordinate
-     * space.
-     *
-     * @param relativeTo The coordinate space to get the scale relative to. Defaults to
-     *   [Space.PARENT].
-     * @return The current scale of the `AnchorSpace` along each axis.
-     * @throws IllegalArgumentException if called with Space.PARENT since AnchorSpace has no
-     *   parents.
-     */
-    @RestrictTo(Scope.LIBRARY_GROUP)
-    override fun getNonUniformScale(relativeTo: Space): Vector3 {
-        checkNotDisposed()
-        return when (relativeTo) {
-            Space.PARENT ->
-                throw IllegalArgumentException(
-                    "AnchorSpace is a root space and it does not have a parent."
-                )
-            Space.ACTIVITY,
-            @Suppress("DEPRECATION") // TODO - b/415320653
-            Space.REAL_WORLD -> super.getNonUniformScale(relativeTo)
-            else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
-        }
-    }
-
-    /**
-     * Returns the scale of the `AnchorSpace` relative to the specified coordinate space.
-     *
-     * @param relativeTo The coordinate space to get the scale relative to. Defaults to
-     *   [Space.PARENT].
-     * @return The current scale of the `AnchorSpace`.
-     * @throws IllegalArgumentException if called with Space.PARENT since AnchorSpace has no
-     *   parents.
-     */
-    override fun getScale(relativeTo: Space): Float {
-        checkNotDisposed()
-        return when (relativeTo) {
-            Space.PARENT ->
-                throw IllegalArgumentException(
-                    "AnchorSpace is a root space and it does not have a parent."
-                )
-            Space.ACTIVITY,
-            @Suppress("DEPRECATION") // TODO - b/415320653: Space.REAL_WORLD
-            Space.REAL_WORLD -> super.getScale(relativeTo)
-            else -> throw IllegalArgumentException("Unsupported relativeTo value: $relativeTo")
-        }
     }
 
     override fun disposeInternal() {
