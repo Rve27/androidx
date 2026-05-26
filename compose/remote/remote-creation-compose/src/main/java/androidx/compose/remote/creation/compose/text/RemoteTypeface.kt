@@ -18,7 +18,6 @@ package androidx.compose.remote.creation.compose.text
 
 import android.graphics.Typeface
 import android.os.Build
-import androidx.annotation.RestrictTo
 
 /**
  * A sealed interface that represent the concept of a Typeface in Remote Compose.
@@ -26,7 +25,6 @@ import androidx.annotation.RestrictTo
  * Custom or named system fonts are represented by [Named] type and are registered in the document
  * as Strings to be referenced.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public sealed interface RemoteTypeface {
     /** The name used to identify the font in the document and player */
     public val name: String
