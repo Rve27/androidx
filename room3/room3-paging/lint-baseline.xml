@@ -4,19 +4,19 @@
     <issue
         id="KotlinRunTestResultUnused"
         message="Result of runTest is ignored."
-        errorLine1="        runTest(testDispatcher) {"
+        errorLine1="        runTest {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/kotlin/androidx/xr/scenecore/testing/ActivitySpaceTesterTest.kt"/>
+            file="src/androidDeviceTest/kotlin/androidx/room3/paging/LimitOffsetPagingSourceTest.kt"/>
     </issue>
 
     <issue
         id="KotlinRunTestResultUnused"
         message="Result of runTest is ignored."
-        errorLine1="        runTest(testDispatcher) {"
+        errorLine1="        runTest {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/kotlin/androidx/xr/scenecore/testing/ActivitySpaceTesterTest.kt"/>
+            file="src/androidDeviceTest/kotlin/androidx/room3/paging/LimitOffsetPagingSourceTest.kt"/>
     </issue>
 
 </issues>

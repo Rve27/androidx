@@ -4,10 +4,10 @@
     <issue
         id="KotlinRunTestResultUnused"
         message="Result of runTest is ignored."
-        errorLine1="        runTest(testDispatcher) {"
+        errorLine1="        runTest(testDispatcher) { assertFailsWith&lt;IllegalStateException> { underTest.persist() } }"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/AnchorEntityTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/AnchorTest.kt"/>
     </issue>
 
     <issue
@@ -16,7 +16,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/AnchorEntityTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/ArDeviceTest.kt"/>
     </issue>
 
     <issue
@@ -25,7 +25,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/AnchorEntityTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/ArDeviceTest.kt"/>
     </issue>
 
     <issue
@@ -34,7 +34,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/AnchorEntityTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/ArDeviceTest.kt"/>
     </issue>
 
     <issue
@@ -43,7 +43,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -52,7 +52,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -61,7 +61,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -70,7 +70,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -79,7 +79,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -88,7 +88,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -97,7 +97,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -106,7 +106,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -115,7 +115,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/DepthTest.kt"/>
     </issue>
 
     <issue
@@ -124,7 +124,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -133,7 +133,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -142,7 +142,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -151,7 +151,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -160,7 +160,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -169,7 +169,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -178,7 +178,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -187,7 +187,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -196,7 +196,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -205,7 +205,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -214,7 +214,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/MovableComponentTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/FaceTest.kt"/>
     </issue>
 
     <issue
@@ -223,7 +223,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/testrule/TestRuleScenePoseTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/InteractionTest.kt"/>
     </issue>
 
     <issue
@@ -232,7 +232,7 @@
         errorLine1="        runTest(testDispatcher) {"
         errorLine2="        ~~~~~~~">
         <location
-            file="src/test/java/androidx/xr/scenecore/testrule/TestRuleScenePoseTest.kt"/>
+            file="src/test/kotlin/androidx/xr/arcore/PerceptionStateExtenderTest.kt"/>
     </issue>
 
 </issues>
