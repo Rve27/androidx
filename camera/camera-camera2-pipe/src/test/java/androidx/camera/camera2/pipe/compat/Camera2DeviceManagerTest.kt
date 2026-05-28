@@ -32,6 +32,7 @@ import androidx.camera.camera2.pipe.internal.CriticalCameraErrorListener
 import androidx.camera.camera2.pipe.testing.FakeCamera2MetadataProvider
 import androidx.camera.camera2.pipe.testing.FakeCameraMetadata
 import androidx.camera.camera2.pipe.testing.FakeThreads
+import androidx.camera.camera2.pipe.testing.HighEndDeviceTemplate
 import androidx.camera.camera2.pipe.testing.RobolectricCameraPipeTestRunner
 import com.google.common.truth.Truth.assertThat
 import javax.inject.Provider
@@ -81,7 +82,11 @@ internal class PruningCamera2DeviceManagerImplTest {
                 camera2DeviceCloser: Camera2DeviceCloser,
                 isForegroundObserver: (Unit) -> Boolean,
             ): OpenCameraResult {
-                val fakeCameraMetadata = FakeCameraMetadata(cameraId = cameraId)
+                val fakeCameraMetadata =
+                    FakeCameraMetadata.fromTemplate(
+                        template = HighEndDeviceTemplate,
+                        cameraId = cameraId,
+                    )
                 val fakeCamera2MetadataProvider =
                     FakeCamera2MetadataProvider(mapOf(cameraId to fakeCameraMetadata))
                 val fakeCamera2Quirks =
@@ -929,7 +934,8 @@ internal class PruningCamera2DeviceManagerImplTest {
         cameraId: CameraId,
         allCameraIds: Set<CameraId> = setOf(cameraId),
     ): RequestClose {
-        val fakeCameraMetadata = FakeCameraMetadata(cameraId = cameraId)
+        val fakeCameraMetadata =
+            FakeCameraMetadata.fromTemplate(template = HighEndDeviceTemplate, cameraId = cameraId)
         val fakeCamera2MetadataProvider =
             FakeCamera2MetadataProvider(mapOf(cameraId to fakeCameraMetadata))
         val fakeCamera2Quirks = Camera2Quirks(fakeCamera2MetadataProvider, StrictMode(false))

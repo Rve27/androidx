@@ -42,6 +42,7 @@ import androidx.camera.camera2.pipe.testing.FakeCamera2DeviceCloser
 import androidx.camera.camera2.pipe.testing.FakeCameraMetadata
 import androidx.camera.camera2.pipe.testing.FakeThreads
 import androidx.camera.camera2.pipe.testing.FakeTimeSource
+import androidx.camera.camera2.pipe.testing.HighEndDeviceTemplate
 import androidx.camera.camera2.pipe.testing.RobolectricCameraPipeTestRunner
 import com.google.common.truth.Truth.assertThat
 import kotlin.time.Duration
@@ -70,10 +71,16 @@ class RetryingCameraStateOpenerTest {
     private val camera2MetadataProvider =
         object : Camera2MetadataProvider {
             override suspend fun getCameraMetadata(cameraId: CameraId): CameraMetadata =
-                FakeCameraMetadata(cameraId = cameraId)
+                FakeCameraMetadata.fromTemplate(
+                    template = HighEndDeviceTemplate,
+                    cameraId = cameraId,
+                )
 
             override fun awaitCameraMetadata(cameraId: CameraId): CameraMetadata =
-                FakeCameraMetadata(cameraId = cameraId)
+                FakeCameraMetadata.fromTemplate(
+                    template = HighEndDeviceTemplate,
+                    cameraId = cameraId,
+                )
 
             override suspend fun getCameraExtensionMetadata(
                 cameraId: CameraId,
