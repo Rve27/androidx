@@ -129,15 +129,11 @@ public constructor(
 
         /**
          * Creates a new [Session].
-         *
-         * The thread on which this method should be called depends on the features being used:
-         * - If you are using SceneCore rendering APIs, this method must be called on the **Main
-         *   Thread**.
          * > **Thread Safety Warning:** This method performs significant disk I/O, including loading
          * > native libraries. If StrictMode is enabled, calling this on the **Main Thread** (UI
          * > Thread) will trigger a [android.os.StrictMode] `DiskReadViolation`.
          *
-         * **Example for calling on a WorkerThread for Projected devices:**
+         * **Example for calling on a worker thread:**
          *
          * ```kotlin
          * lifecycleScope.launch {
@@ -160,7 +156,7 @@ public constructor(
          */
         @JvmOverloads
         @JvmStatic
-        public fun create(
+        public suspend fun create(
             context: Context,
             coroutineContext: CoroutineContext = EmptyCoroutineContext,
             lifecycleOwner: LifecycleOwner = context as LifecycleOwner,
@@ -179,15 +175,16 @@ public constructor(
             activity: Activity,
             coroutineContext: CoroutineContext = EmptyCoroutineContext,
             unscaledGravityAlignedActivitySpace: Boolean = true,
-        ): SessionCreateResult =
+        ): SessionCreateResult = runBlocking {
             createInternal(
                 activity,
                 coroutineContext,
                 activity as LifecycleOwner,
                 unscaledGravityAlignedActivitySpace,
             )
+        }
 
-        private fun createInternal(
+        private suspend fun createInternal(
             context: Context,
             coroutineContext: CoroutineContext,
             lifecycleOwner: LifecycleOwner,
