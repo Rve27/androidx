@@ -48,21 +48,21 @@ public class SubspaceSemanticsMatcher(
             expectedValue: T,
         ): SubspaceSemanticsMatcher {
             return SubspaceSemanticsMatcher("${key.name} = '$expectedValue'") {
-                it.semanticsConfiguration.getOrElseNullable(key) { null } == expectedValue
+                it.semanticsConfiguration?.getOrElseNullable(key) { null } == expectedValue
             }
         }
 
         /** Builds a predicate that tests whether the given [key] is defined in semantics. */
         internal fun <T> keyIsDefined(key: SemanticsPropertyKey<T>): SubspaceSemanticsMatcher {
             return SubspaceSemanticsMatcher("${key.name} is defined") {
-                key in it.semanticsConfiguration
+                it.semanticsConfiguration?.contains(key) ?: false
             }
         }
 
         /** Builds a predicate that tests whether the given [key] is NOT defined in semantics. */
         internal fun <T> keyNotDefined(key: SemanticsPropertyKey<T>): SubspaceSemanticsMatcher {
             return SubspaceSemanticsMatcher("${key.name} is NOT defined") {
-                key !in it.semanticsConfiguration
+                it.semanticsConfiguration?.let { key !in it } ?: true
             }
         }
     }
