@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.IntrinsicMeasureScope
 import androidx.compose.ui.layout.Layout
@@ -50,7 +51,9 @@ import androidx.compose.ui.node.Owner
 import androidx.compose.ui.platform.AndroidComposeView
 import androidx.compose.ui.platform.ComposeViewContext
 import androidx.compose.ui.test.TestActivity
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
@@ -392,11 +395,6 @@ fun AndroidComposeTestRule<*, *>.findAndroidComposeView(): ViewGroup {
 
 @Suppress("DEPRECATION")
 @RequiresApi(Build.VERSION_CODES.O)
-fun AndroidComposeTestRule<*, *>.waitAndScreenShot(forceInvalidate: Boolean = true): Bitmap =
-    waitAndScreenShot(findAndroidComposeView(), forceInvalidate)
-
-@Suppress("DEPRECATION")
-@RequiresApi(Build.VERSION_CODES.O)
 fun AndroidComposeTestRule<*, *>.waitAndScreenShot(
     view: View,
     forceInvalidate: Boolean = true,
@@ -522,39 +520,7 @@ fun AndroidComposeTestRule<*, *>.validateSquareColors(
     totalSize: Int = size * 3,
 ) {
     waitForIdle()
-    val bitmap = waitAndScreenShot()
-    assertEquals(totalSize, bitmap.width)
-    assertEquals(totalSize, bitmap.height)
-    val squareStart = (totalSize - size) / 2 + offset
-    val squareEnd = totalSize - ((totalSize - size) / 2) + offset
-    for (x in 0 until totalSize) {
-        for (y in 0 until totalSize) {
-            val pixel = Color(bitmap.getPixel(x, y))
-            val expected =
-                if (!(x !in squareStart..<squareEnd || y < squareStart || y >= squareEnd)) {
-                    innerColor
-                } else {
-                    outerColor
-                }
-            assertColorsEqual(expected, pixel) {
-                "Pixel within drawn rect[$x, $y] is $expected, but was $pixel"
-            }
-        }
-    }
-}
-
-@Suppress("DEPRECATION")
-@RequiresApi(Build.VERSION_CODES.O)
-fun androidx.test.rule.ActivityTestRule<*>.validateSquareColors(
-    drawLatch: CountDownLatch,
-    outerColor: Color,
-    innerColor: Color,
-    size: Int,
-    offset: Int = 0,
-    totalSize: Int = size * 3,
-) {
-    assertTrue("drawLatch timed out", drawLatch.await(1, TimeUnit.SECONDS))
-    val bitmap = waitAndScreenShot()
+    val bitmap = onRoot().captureToImage().asAndroidBitmap()
     assertEquals(totalSize, bitmap.width)
     assertEquals(totalSize, bitmap.height)
     val squareStart = (totalSize - size) / 2 + offset
