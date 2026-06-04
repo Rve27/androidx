@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+
 import androidx.build.AndroidXConfig
-import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
-import androidx.build.ProjectLayoutType
+import androidx.build.SoftwareType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
@@ -100,7 +100,6 @@ wire {
     prune 'perfetto.protos.AndroidRtRuntimeMetric'
     prune 'perfetto.protos.AndroidSimpleperfMetric'
     prune 'perfetto.protos.AndroidSurfaceflingerMetric'
-    prune 'perfetto.protos.AndroidTaskNames'
     prune 'perfetto.protos.AndroidTraceQualityMetric'
     prune 'perfetto.protos.G2dMetrics'
     prune 'perfetto.protos.JavaHeapHistogram'
