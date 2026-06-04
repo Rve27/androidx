@@ -132,6 +132,7 @@ public actual abstract class RoomDatabase actual constructor() {
         ThreadLocal<CoroutineContext>()
 
     private val typeConverters: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val daoReturnTypeConverters: MutableMap<KClass<*>, Any> = mutableMapOf()
 
     internal var useTempTrackingTable: Boolean = true
 
@@ -148,6 +149,21 @@ public actual abstract class RoomDatabase actual constructor() {
     @Suppress("UNCHECKED_CAST")
     public actual fun <T : Any> getTypeConverter(klass: KClass<T>): T {
         return typeConverters[klass] as T
+    }
+
+    /**
+     * Gets the instance of the given DAO return type converter class.
+     *
+     * This method should only be called by the generated DAO implementations.
+     *
+     * @param klass The DAO Return Type Converter class.
+     * @param T The type of the expected DAO Return Type Converter subclass.
+     * @return An instance of T.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
+    @Suppress("UNCHECKED_CAST")
+    public actual fun <T : Any> getDaoReturnTypeConverter(klass: KClass<T>): T {
+        return daoReturnTypeConverters[klass] as T
     }
 
     /**
@@ -339,6 +355,12 @@ public actual abstract class RoomDatabase actual constructor() {
         get() = getRequiredTypeConverterClasses()
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
+    protected actual open fun getRequiredDaoReturnTypeConverterClasses():
+        Map<KClass<*>, List<KClass<*>>> {
+        return emptyMap()
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
     public actual open fun getRequiredAutoMigrationSpecClasses():
         Set<KClass<out AutoMigrationSpec>> {
         return emptySet()
@@ -505,6 +527,7 @@ public actual abstract class RoomDatabase actual constructor() {
         private val callbacks: MutableList<Callback> = mutableListOf()
         private var prepackagedDatabaseCallback: PrepackagedDatabaseCallback? = null
         private val typeConverters: MutableList<Any> = mutableListOf()
+        private val daoReturnTypeConverters: MutableList<Any> = mutableListOf()
 
         private var allowMainThreadQueries = false
         private var journalMode: JournalMode = JournalMode.AUTOMATIC
@@ -967,6 +990,19 @@ public actual abstract class RoomDatabase actual constructor() {
         public actual fun addTypeConverter(typeConverter: Any): Builder<T> = apply {
             this.typeConverters.add(typeConverter)
         }
+
+        /**
+         * Adds a DAO return type converter instance to the builder.
+         *
+         * @param daoReturnTypeConverter The converter instance that is annotated with
+         *   [ProvidedDaoReturnTypeConverter].
+         * @return This builder instance.
+         */
+        @Suppress("MissingGetterMatchingBuilder")
+        public actual fun addDaoReturnTypeConverter(daoReturnTypeConverter: Any): Builder<T> =
+            apply {
+                this.daoReturnTypeConverters.add(daoReturnTypeConverter)
+            }
 
         /**
          * Enables auto-closing for the database to free up unused resources. The underlying
