@@ -16,4 +16,4 @@
 
 package androidx.appstate.transform
 
-class Test {}
+internal actual typealias AtomicBoolean = java.util.concurrent.atomic.AtomicBoolean

@@ -26,6 +26,7 @@ import androidx.build.PlatformIdentifier
 
 plugins {
     id("AndroidXPlugin")
+    id("AndroidXComposePlugin")
 }
 
 androidXMultiplatform {
@@ -37,10 +38,28 @@ androidXMultiplatform {
     defaultPlatform(PlatformIdentifier.ANDROID)
 
     sourceSets {
-        commonMain.dependencies {
+        commonMain {
+            dependencies {
+                api(libs.kotlinStdlib)
+                api(libs.kotlinCoroutinesCore)
+                api("androidx.compose.runtime:runtime:1.11.2")
+            }
         }
 
-        commonTest.dependencies {
+        commonTest {
+            dependencies {
+                implementation(libs.kotlinTest)
+                implementation(libs.kotlinCoroutinesTest)
+                implementation(project(":kruth:kruth"))
+            }
+        }
+
+        androidDeviceTest {
+            dependencies {
+                implementation(libs.junit)
+                implementation(project(":compose:ui:ui-test-junit4"))
+                implementation(project(":compose:ui:ui-test-manifest"))
+            }
         }
     }
 }
