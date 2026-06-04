@@ -21,8 +21,8 @@ import androidx.compose.remote.core.operations.paint.PaintBundle
 import androidx.compose.remote.creation.Rc
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.layout.RemoteSize
-import androidx.compose.remote.creation.compose.state.RemoteBitmap
 import androidx.compose.remote.creation.compose.state.RemoteFloat
+import androidx.compose.remote.creation.compose.state.RemoteImageBitmap
 import androidx.compose.remote.creation.compose.state.RemoteMatrix3x3
 import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.remote.creation.compose.state.rf
@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.toAndroidTileMode
 import androidx.compose.ui.layout.ContentScale
 
 internal class RemoteImageShader(
-    public val bitmap: RemoteBitmap,
+    public val bitmap: RemoteImageBitmap,
     public val tileModeX: ComposeTileMode,
     public val tileModeY: ComposeTileMode,
 ) : RemoteShader() {
@@ -52,7 +52,7 @@ internal class RemoteImageShader(
 
 @Immutable
 internal data class RemoteImageBrush(
-    public val bitmap: RemoteBitmap,
+    public val bitmap: RemoteImageBitmap,
     public val tileModeX: ComposeTileMode = ComposeTileMode.Clamp,
     public val tileModeY: ComposeTileMode = ComposeTileMode.Clamp,
     public val contentScale: ContentScale = ContentScale.None,
@@ -121,7 +121,7 @@ internal data class RemoteImageBrush(
 /**
  * Creates a texture brush with a specified [image].
  *
- * @param image The [RemoteBitmap] to use
+ * @param image The [RemoteImageBitmap] to use
  * @param tileModeX The [ComposeTileMode] to use for the bitmap in the x-axis. Defaults to
  *   [ComposeTileMode.Clamp] to repeat the edge pixels
  * @param tileModeY The [ComposeTileMode] to use for the bitmap in the y-axis. Defaults to
@@ -130,7 +130,7 @@ internal data class RemoteImageBrush(
  */
 @Stable
 public fun RemoteBrush.Companion.image(
-    image: RemoteBitmap,
+    image: RemoteImageBitmap,
     tileModeX: ComposeTileMode = ComposeTileMode.Clamp,
     tileModeY: ComposeTileMode = ComposeTileMode.Clamp,
     contentScale: ContentScale = ContentScale.None,

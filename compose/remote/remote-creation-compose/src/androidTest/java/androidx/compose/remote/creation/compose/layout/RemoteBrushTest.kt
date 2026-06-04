@@ -45,7 +45,7 @@ import androidx.compose.remote.creation.compose.state.RemotePaint
 import androidx.compose.remote.creation.compose.state.RemoteState
 import androidx.compose.remote.creation.compose.state.rc
 import androidx.compose.remote.creation.compose.state.rdp
-import androidx.compose.remote.creation.compose.state.rememberNamedRemoteBitmap
+import androidx.compose.remote.creation.compose.state.rememberNamedRemoteImageBitmap
 import androidx.compose.remote.creation.compose.state.rf
 import androidx.compose.remote.player.compose.test.utils.RemoteScreenshotTestRule
 import androidx.compose.runtime.Composable
@@ -212,7 +212,10 @@ class RemoteBrushTest {
     fun bitmapBrushTest() {
         remoteComposeTestRule.runScreenshotTest {
             val image =
-                rememberNamedRemoteBitmap(name = "background", domain = RemoteState.Domain.User) {
+                rememberNamedRemoteImageBitmap(
+                    name = "background",
+                    domain = RemoteState.Domain.User,
+                ) {
                     createImage(400, 400).asImageBitmap()
                 }
             val imageSize = RemoteSize(image.width, image.height)
@@ -288,7 +291,9 @@ class RemoteBrushTest {
     @RemoteComposable
     private fun BitmapBrushBox(contentScale: ContentScale) {
         val backgroundImage =
-            rememberNamedRemoteBitmap(name = "background") { createImage(300, 400).asImageBitmap() }
+            rememberNamedRemoteImageBitmap(name = "background") {
+                createImage(300, 400).asImageBitmap()
+            }
         val backgroundBrush =
             RemoteBrush.image(
                 image = backgroundImage,
