@@ -41,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -492,6 +493,29 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
 
         composeTest.awaitIdle()
         assertThat(latestZoomRatio).isGreaterThan(1f)
+    }
+
+    @Test
+    fun cameraxViewfinder_screenFlashReady_triggersCallback() = runViewfinderTest {
+        var isScreenFlashReady = false
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            val context = LocalContext.current
+            val window = (context as? android.app.Activity)?.window
+            currentSurfaceRequest?.let { surfaceRequest ->
+                CameraXViewfinder(
+                    surfaceRequest = surfaceRequest,
+                    onScreenFlashReady = { isScreenFlashReady = true },
+                    modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                )
+            }
+        }
+
+        startCamera()
+        surfaceRequests.filterNotNull().first()
+        composeTest.awaitIdle()
+
+        assertThat(isScreenFlashReady).isTrue()
     }
 
     companion object {
