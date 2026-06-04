@@ -15,66 +15,63 @@
  */
 package androidx.navigation
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.get
+import androidx.lifecycle.viewmodel.ViewModelStoreProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.navigation.internal.identityHashCode
 
 /**
  * NavControllerViewModel is the always up to date view of the NavController's non configuration
  * state
  */
-internal class NavControllerViewModel : ViewModel(), NavViewModelStoreProvider {
-    private val viewModelStores = mutableMapOf<String, ViewModelStore>()
+// TODO(mgalhardo): Delete `NavControllerViewModel` and use `ViewModelStoreProvider` directly.
+internal class NavControllerViewModel
+private constructor(private val provider: ViewModelStoreProvider) :
+    ViewModel(), NavViewModelStoreProvider {
 
     fun clear(backStackEntryId: String) {
-        // Clear and remove the NavGraph's ViewModelStore
-        val viewModelStore = viewModelStores.remove(backStackEntryId)
-        viewModelStore?.clear()
+        provider.clearKey(backStackEntryId)
     }
 
     override fun onCleared() {
-        for (store in viewModelStores.values) {
-            store.clear()
-        }
-        viewModelStores.clear()
+        provider.clearAllKeys()
     }
 
     override fun getViewModelStore(backStackEntryId: String): ViewModelStore {
-        var viewModelStore = viewModelStores[backStackEntryId]
-        if (viewModelStore == null) {
-            viewModelStore = ViewModelStore()
-            viewModelStores[backStackEntryId] = viewModelStore
-        }
-        return viewModelStore
+        return provider.getOrCreate(backStackEntryId)
     }
 
-    override fun toString(): String {
-        val sb = StringBuilder("NavControllerViewModel{")
-        sb.append(identityHashCode(this).toUInt().toString(16))
-        sb.append("} ViewModelStores (")
-        val viewModelStoreIterator: Iterator<String> = viewModelStores.keys.iterator()
-        while (viewModelStoreIterator.hasNext()) {
-            sb.append(viewModelStoreIterator.next())
-            if (viewModelStoreIterator.hasNext()) {
-                sb.append(", ")
-            }
-        }
-        sb.append(')')
-        return sb.toString()
-    }
+    override fun toString(): String = "NavControllerViewModel(provider=$provider)"
 
     companion object {
+
+        @VisibleForTesting
+        fun create(): NavControllerViewModel {
+            val provider =
+                ViewModelStoreProvider(
+                    parentStore = null,
+                    parentKey = "androidx.navigation.NavControllerViewModel",
+                )
+            return NavControllerViewModel(provider)
+        }
+
         fun getInstance(viewModelStore: ViewModelStore): NavControllerViewModel {
-            val viewModelProvider = ViewModelProvider.create(viewModelStore, FACTORY)
+            val factory = viewModelFactory {
+                initializer {
+                    val provider =
+                        ViewModelStoreProvider(
+                            parentStore = viewModelStore,
+                            parentKey = "androidx.navigation.NavControllerViewModel",
+                        )
+                    NavControllerViewModel(provider)
+                }
+            }
+            val viewModelProvider = ViewModelProvider.create(viewModelStore, factory)
             return viewModelProvider.get()
         }
     }
-}
-
-private val FACTORY: ViewModelProvider.Factory = viewModelFactory {
-    initializer { NavControllerViewModel() }
 }
