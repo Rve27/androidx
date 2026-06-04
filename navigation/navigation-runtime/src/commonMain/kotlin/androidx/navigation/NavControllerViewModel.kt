@@ -33,16 +33,16 @@ internal class NavControllerViewModel
 private constructor(private val provider: ViewModelStoreProvider) :
     ViewModel(), NavViewModelStoreProvider {
 
-    fun clear(backStackEntryId: String) {
-        provider.clearKey(backStackEntryId)
-    }
-
     override fun onCleared() {
         provider.clearAllKeys()
     }
 
-    override fun getViewModelStore(backStackEntryId: String): ViewModelStore {
-        return provider.getOrCreate(backStackEntryId)
+    override fun get(key: String): ViewModelStore {
+        return provider.getOrCreate(key)
+    }
+
+    override fun clear(key: String) {
+        provider.clearKey(key)
     }
 
     override fun toString(): String = "NavControllerViewModel(provider=$provider)"
@@ -50,7 +50,7 @@ private constructor(private val provider: ViewModelStoreProvider) :
     companion object {
 
         @VisibleForTesting
-        fun create(): NavControllerViewModel {
+        fun create(): NavViewModelStoreProvider {
             val provider =
                 ViewModelStoreProvider(
                     parentStore = null,
@@ -59,7 +59,7 @@ private constructor(private val provider: ViewModelStoreProvider) :
             return NavControllerViewModel(provider)
         }
 
-        fun getInstance(viewModelStore: ViewModelStore): NavControllerViewModel {
+        fun getInstance(viewModelStore: ViewModelStore): NavViewModelStoreProvider {
             val factory = viewModelFactory {
                 initializer {
                     val provider =
@@ -71,7 +71,7 @@ private constructor(private val provider: ViewModelStoreProvider) :
                 }
             }
             val viewModelProvider = ViewModelProvider.create(viewModelStore, factory)
-            return viewModelProvider.get()
+            return viewModelProvider.get<NavControllerViewModel>()
         }
     }
 }
