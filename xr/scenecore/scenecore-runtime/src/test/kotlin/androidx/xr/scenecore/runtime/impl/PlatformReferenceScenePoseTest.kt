@@ -29,7 +29,6 @@ import androidx.xr.scenecore.runtime.ScenePose
 import androidx.xr.scenecore.testing.FakeActivitySpace
 import androidx.xr.scenecore.testing.FakeEntity
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService
-import kotlin.test.assertNotNull
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
