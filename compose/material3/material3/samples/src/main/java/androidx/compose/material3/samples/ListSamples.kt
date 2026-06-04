@@ -22,9 +22,11 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
@@ -55,53 +57,110 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Preview
-@Sampled
 @Composable
-fun OneLineListItem() {
+fun LegacyOneLineListItem() {
+    val legacyContentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+    val legacyExtraPaddingForLeadingTrailing = 4.dp
     Column {
         HorizontalDivider()
         ListItem(
-            headlineContent = { Text("One line list item with 24x24 icon") },
+            content = { Text("One line list item with 24x24 icon") },
             leadingContent = {
-                Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
+                Icon(
+                    Icons.Filled.Favorite,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.padding(end = legacyExtraPaddingForLeadingTrailing),
+                )
             },
+            contentPadding = legacyContentPadding,
         )
         HorizontalDivider()
     }
 }
 
 @Preview
-@Sampled
 @Composable
-fun TwoLineListItem() {
+fun LegacyTwoLineListItem() {
+    val legacyPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+    val legacyExtraPaddingForLeadingTrailing = 4.dp
     Column {
         HorizontalDivider()
         ListItem(
-            headlineContent = { Text("Two line list item with trailing") },
+            content = { Text("Two line list item with trailing") },
             supportingContent = { Text("Secondary text") },
-            trailingContent = { Text("meta") },
-            leadingContent = {
-                Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
+            trailingContent = {
+                Text(
+                    "meta",
+                    modifier = Modifier.padding(start = legacyExtraPaddingForLeadingTrailing),
+                )
             },
+            leadingContent = {
+                Icon(
+                    Icons.Filled.Favorite,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.padding(end = legacyExtraPaddingForLeadingTrailing),
+                )
+            },
+            contentPadding = legacyPadding,
         )
         HorizontalDivider()
     }
 }
 
 @Preview
-@Sampled
 @Composable
-fun ThreeLineListItemWithOverlineAndSupporting() {
+fun LegacyThreeLineListItemWithOverlineAndSupporting() {
+    val legacyPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+    val legacyExtraPaddingForLeadingTrailing = 4.dp
     Column {
         HorizontalDivider()
         ListItem(
-            headlineContent = { Text("Three line list item") },
+            content = { Text("Three line list item") },
             overlineContent = { Text("OVERLINE") },
             supportingContent = { Text("Secondary text") },
             leadingContent = {
-                Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
+                Icon(
+                    Icons.Filled.Favorite,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.padding(end = legacyExtraPaddingForLeadingTrailing),
+                )
             },
-            trailingContent = { Text("meta") },
+            trailingContent = {
+                Text(
+                    "meta",
+                    modifier = Modifier.padding(start = legacyExtraPaddingForLeadingTrailing),
+                )
+            },
+            contentPadding = legacyPadding,
+        )
+        HorizontalDivider()
+    }
+}
+
+@Preview
+@Composable
+fun LegacyThreeLineListItemWithExtendedSupporting() {
+    val legacyPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+    val legacyExtraPaddingForLeadingTrailing = 4.dp
+    Column {
+        HorizontalDivider()
+        ListItem(
+            content = { Text("Three line list item") },
+            supportingContent = { Text("Secondary text that\nspans multiple lines") },
+            leadingContent = {
+                Icon(
+                    Icons.Filled.Favorite,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.padding(end = legacyExtraPaddingForLeadingTrailing),
+                )
+            },
+            trailingContent = {
+                Text(
+                    "meta",
+                    modifier = Modifier.padding(start = legacyExtraPaddingForLeadingTrailing),
+                )
+            },
+            contentPadding = legacyPadding,
         )
         HorizontalDivider()
     }
@@ -110,18 +169,83 @@ fun ThreeLineListItemWithOverlineAndSupporting() {
 @Preview
 @Sampled
 @Composable
-fun ThreeLineListItemWithExtendedSupporting() {
+fun StandardListItems() {
     Column {
         HorizontalDivider()
+
         ListItem(
-            headlineContent = { Text("Three line list item") },
-            supportingContent = { Text("Secondary text that\nspans multiple lines") },
-            leadingContent = {
-                Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
-            },
-            trailingContent = { Text("meta") },
+            leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            content = { Text("One line list item") },
         )
+
         HorizontalDivider()
+
+        ListItem(
+            leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            supportingContent = { Text("Supporting text") },
+            content = { Text("Two line list item") },
+        )
+
+        HorizontalDivider()
+
+        ListItem(
+            leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            overlineContent = { Text("Overline text") },
+            supportingContent = { Text("Supporting text") },
+            content = { Text("Three line list item") },
+        )
+
+        HorizontalDivider()
+
+        ListItem(
+            leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            supportingContent = { Text("Supporting text\nthat is multiple lines") },
+            content = { Text("Another three line list item") },
+        )
+
+        HorizontalDivider()
+    }
+}
+
+@Preview
+@Sampled
+@Composable
+fun SegmentedListItems() {
+    val count = 4
+    val colors =
+        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+    Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+        SegmentedListItem(
+            shapes = ListItemDefaults.segmentedShapes(index = 0, count = count),
+            colors = colors,
+            leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            content = { Text("One line list item") },
+        )
+
+        SegmentedListItem(
+            shapes = ListItemDefaults.segmentedShapes(index = 1, count = count),
+            colors = colors,
+            leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            supportingContent = { Text("Supporting text") },
+            content = { Text("Two line list item") },
+        )
+
+        SegmentedListItem(
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = count),
+            colors = colors,
+            leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            overlineContent = { Text("Overline text") },
+            supportingContent = { Text("Supporting text") },
+            content = { Text("Three line list item") },
+        )
+
+        SegmentedListItem(
+            shapes = ListItemDefaults.segmentedShapes(index = 3, count = count),
+            colors = colors,
+            leadingContent = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            supportingContent = { Text("Supporting text\nthat is multiple lines") },
+            content = { Text("Another three line list item") },
+        )
     }
 }
 

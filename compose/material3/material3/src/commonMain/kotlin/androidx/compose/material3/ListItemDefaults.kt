@@ -65,9 +65,17 @@ object ListItemDefaults {
             }
 
     /** The default elevation of a list item */
+    @Deprecated(
+        "Use `ListItemDefaults.elevation` instead",
+        replaceWith = ReplaceWith("ListItemDefaults.elevation()"),
+    )
     val Elevation: Dp = ListTokens.ItemContainerElevation
 
     /** The default shape of a list item */
+    @Deprecated(
+        "Use `ListItemDefaults.shapes` instead",
+        replaceWith = ReplaceWith("ListItemDefaults.shapes()"),
+    )
     val shape: Shape
         @Composable @ReadOnlyComposable get() = ListTokens.ItemContainerShape.value
 
@@ -642,6 +650,7 @@ class ListItemColors(
     val draggedOverlineContentColor: Color,
     val draggedSupportingContentColor: Color,
 ) {
+    @Deprecated("Use overload with parameters for selected and dragged colors")
     constructor(
         containerColor: Color,
         headlineColor: Color,
