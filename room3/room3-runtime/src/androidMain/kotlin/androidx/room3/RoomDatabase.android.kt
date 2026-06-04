@@ -177,6 +177,16 @@ public actual abstract class RoomDatabase actual constructor() {
     }
 
     /**
+     * Adds a provided DAO return type converter to be used in the database DAOs.
+     *
+     * @param kclass the class of the DAO return type converter
+     * @param converter an instance of the DAO return type converter
+     */
+    internal actual fun addDaoReturnTypeConverter(kclass: KClass<*>, converter: Any) {
+        daoReturnTypeConverters[kclass] = converter
+    }
+
+    /**
      * Called by Room when it is initialized.
      *
      * @param configuration The database configuration.
@@ -197,6 +207,7 @@ public actual abstract class RoomDatabase actual constructor() {
         }
         validateAutoMigrations(configuration)
         validateTypeConverters(configuration)
+        validateDaoReturnTypeConverters(configuration)
 
         // For Room's coroutine scope, we use the provided context but add a SupervisorJob that
         // is tied to the given Job (if any).
@@ -359,6 +370,12 @@ public actual abstract class RoomDatabase actual constructor() {
         Map<KClass<*>, List<KClass<*>>> {
         return emptyMap()
     }
+
+    /**
+     * Property delegate of [getRequiredDaoReturnTypeConverterClasses] for common ext functionality.
+     */
+    internal actual val requiredDaoReturnTypeConverterClassesMap: Map<KClass<*>, List<KClass<*>>>
+        get() = getRequiredDaoReturnTypeConverterClasses()
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
     public actual open fun getRequiredAutoMigrationSpecClasses():
@@ -1233,6 +1250,7 @@ public actual abstract class RoomDatabase actual constructor() {
                         migrationNotRequiredFrom = migrationsNotRequiredFrom,
                         prepackagedDatabaseCallback = prepackagedDatabaseCallback,
                         typeConverters = typeConverters,
+                        daoReturnTypeConverters = daoReturnTypeConverters,
                         autoMigrationSpecs = autoMigrationSpecs,
                         allowDestructiveMigrationForAllTables =
                             allowDestructiveMigrationForAllTables,

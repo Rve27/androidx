@@ -97,6 +97,7 @@ public actual abstract class RoomDatabase actual constructor() {
             CoroutineScope(configuration.queryCoroutineContext + SupervisorJob(parentJob))
         validateAutoMigrations(configuration)
         validateTypeConverters(configuration)
+        validateDaoReturnTypeConverters(configuration)
     }
 
     /**
@@ -223,6 +224,16 @@ public actual abstract class RoomDatabase actual constructor() {
     }
 
     /**
+     * Adds a provided DAO return type converter to be used in the database DAOs.
+     *
+     * @param kclass the class of the DAO return type converter
+     * @param converter an instance of the DAO return type converter
+     */
+    internal actual fun addDaoReturnTypeConverter(kclass: KClass<*>, converter: Any) {
+        daoReturnTypeConverters[kclass] = converter
+    }
+
+    /**
      * Returns a Map of String -> List&lt;KClass&gt; where each entry has the `key` as the DAO name
      * and `value` as the list of type converter classes that are necessary for the database to
      * function.
@@ -246,6 +257,12 @@ public actual abstract class RoomDatabase actual constructor() {
         Map<KClass<*>, List<KClass<*>>> {
         return emptyMap()
     }
+
+    /**
+     * Property delegate of [getRequiredDaoReturnTypeConverterClasses] for common ext functionality.
+     */
+    internal actual val requiredDaoReturnTypeConverterClassesMap: Map<KClass<*>, List<KClass<*>>>
+        get() = getRequiredDaoReturnTypeConverterClasses()
 
     /**
      * Initialize invalidation tracker. Note that this function is called when the [RoomDatabase] is
@@ -657,6 +674,7 @@ public actual abstract class RoomDatabase actual constructor() {
                     allowDestructiveMigrationOnDowngrade = allowDestructiveMigrationOnDowngrade,
                     migrationNotRequiredFrom = migrationsNotRequiredFrom,
                     typeConverters = typeConverters,
+                    daoReturnTypeConverters = daoReturnTypeConverters,
                     autoMigrationSpecs = autoMigrationSpecs,
                     allowDestructiveMigrationForAllTables = allowDestructiveMigrationForAllTables,
                     sqliteDriver = driver,
