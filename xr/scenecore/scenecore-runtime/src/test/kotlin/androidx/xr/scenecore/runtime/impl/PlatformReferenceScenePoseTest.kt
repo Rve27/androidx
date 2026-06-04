@@ -39,31 +39,39 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.robolectric.ParameterizedRobolectricTestRunner
 
-/** Test for common behavior for ScenePoses whose world position is retrieved from OpenXr. */
+/**
+ * Test for common behavior for ScenePoses whose world position is retrieved from the underlying
+ * platform reference space.
+ */
 @RunWith(ParameterizedRobolectricTestRunner::class)
-class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
+class PlatformReferenceScenePoseTest(
+    private val testScenePoseType: PlatformReferenceScenePoseType
+) {
 
     private val executor = FakeScheduledExecutorService()
     private val activitySpace = FakeActivitySpace()
 
     private var testScenePose: BaseScenePose? = null
 
-    enum class OpenXrScenePoseType {
+    enum class PlatformReferenceScenePoseType {
         PERCEPTION_POSE_ACTIVITY_POSE
     }
 
     companion object {
-        /** Creates and return list of OpenXrScenePoseType values. */
+        /** Creates and return list of PlatformReferenceScenePoseType values. */
         @JvmStatic
         @ParameterizedRobolectricTestRunner.Parameters
         fun data(): List<Any> {
-            return listOf(OpenXrScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE)
+            return listOf(PlatformReferenceScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE)
         }
     }
 
-    /** Creates an OpenXrActivityPose instance. */
-    private fun createOpenXrScenePose(activitySpace: ActivitySpace, pose: Pose): OpenXrScenePose {
-        return OpenXrScenePose(activitySpace, pose)
+    /** Creates a PlatformReferenceScenePose instance. */
+    private fun createPlatformReferenceScenePose(
+        activitySpace: ActivitySpace,
+        pose: Pose,
+    ): PlatformReferenceScenePose {
+        return PlatformReferenceScenePose(activitySpace, pose)
     }
 
     private fun createTestScenePose(
@@ -71,8 +79,8 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
         testActivitySpace: ActivitySpace = this.activitySpace,
     ): BaseScenePose {
         when (testScenePoseType) {
-            OpenXrScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE ->
-                return createOpenXrScenePose(testActivitySpace, pose)
+            PlatformReferenceScenePoseType.PERCEPTION_POSE_ACTIVITY_POSE ->
+                return createPlatformReferenceScenePose(testActivitySpace, pose)
         }
     }
 
@@ -82,7 +90,7 @@ class OpenXrScenePoseTest(private val testScenePoseType: OpenXrScenePoseType) {
     }
 
     @Test
-    fun getActivitySpacePose_noActivitySpaceOpenXrReferenceSpacePose_returnsIdentityPose() {
+    fun getActivitySpacePose_noActivitySpaceReferenceSpacePose_returnsIdentityPose() {
         val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
         testScenePose = createTestScenePose(pose)
 

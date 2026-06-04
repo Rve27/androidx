@@ -21,17 +21,15 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.runtime.ActivitySpace
 
-// TODO: b/496641320 - Rename the class to something more generic like "ReferenceScenePoseHelper"
 /**
- * A helper class for converting poses from an OpenXR pose to a pose in the activity space or world
- * space.
+ * A helper class for converting poses from the underlying platform reference space pose to a pose
+ * in the activity space or world space.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class OpenXrScenePoseHelper(private val activitySpace: ActivitySpace) {
+public class PlatformReferenceScenePoseHelper(private val activitySpace: ActivitySpace) {
     /**
-     * Returns the pose relative to the activity space by transforming with the OpenXR reference
-     * space. If there is an error retrieving the openXR reference space, this will return the
-     * identity pose.
+     * Returns the pose relative to the activity space by transforming with the reference space. If
+     * there is an error retrieving the reference space, this will return the identity pose.
      */
     public fun getActivitySpacePose(openXrToPose: Pose?): Pose {
         // The ScenePose should have unit scale (1.0f, 1.0f, 1.0f) and it should have no
