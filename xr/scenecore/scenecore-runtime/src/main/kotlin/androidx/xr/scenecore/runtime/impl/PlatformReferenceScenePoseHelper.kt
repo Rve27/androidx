@@ -31,35 +31,37 @@ public class PlatformReferenceScenePoseHelper(private val activitySpace: Activit
      * Returns the pose relative to the activity space by transforming with the reference space. If
      * there is an error retrieving the reference space, this will return the identity pose.
      */
-    public fun getActivitySpacePose(openXrToPose: Pose?): Pose {
+    public fun getActivitySpacePose(platformReferenceToPose: Pose?): Pose {
         // The ScenePose should have unit scale (1.0f, 1.0f, 1.0f) and it should have no
         // direct parent, but the activity space can have a non-unit scale.
-        // However, openXrToActivitySpace does not have the scale applied to it so we need to apply
-        // the scale from ActivitySpace to the OpenXR pose to properly compute values in scaled
-        // space.
-        val openXrToActivitySpace = activitySpace.poseInOpenXrReferenceSpace
+        // However, platformReferenceToActivitySpace does not have the scale applied to it so we
+        // need to apply  the scale from ActivitySpace to the platform reference pose to properly
+        // compute values in scaled  space.
+        val platformReferenceToActivitySpace = activitySpace.poseInPlatformReferenceSpace
         // TODO: b/353575470 throw an exception here instead of returning identity pose.
-        if (openXrToActivitySpace == null || openXrToPose == null) {
+        if (platformReferenceToActivitySpace == null || platformReferenceToPose == null) {
             // TODO: b/437878722 Only remove log. Should throw exception, but need update unit tests
             return Pose()
         }
 
-        val activitySpaceToOpenXr = openXrToActivitySpace.inverse
-        val scaledActivitySpaceToOpenXr =
-            activitySpaceToOpenXr.copy(
-                activitySpaceToOpenXr.translation.scale(activitySpace.worldSpaceScale.inverse())
+        val activitySpaceToPlatformReference = platformReferenceToActivitySpace.inverse
+        val scaledActivitySpaceToPlatformReference =
+            activitySpaceToPlatformReference.copy(
+                activitySpaceToPlatformReference.translation.scale(
+                    activitySpace.worldSpaceScale.inverse()
+                )
             )
-        // Apply the inverse of the ActivitySpace scale to the OpenXR pose.
-        val scaledOpenXrToPose =
+        // Apply the inverse of the ActivitySpace scale to the platform reference pose.
+        val scaledPlatformReferenceToPose =
             Pose(
-                openXrToPose.translation.scale(activitySpace.worldSpaceScale.inverse()),
-                openXrToPose.rotation,
+                platformReferenceToPose.translation.scale(activitySpace.worldSpaceScale.inverse()),
+                platformReferenceToPose.rotation,
             )
-        return scaledActivitySpaceToOpenXr.compose(scaledOpenXrToPose)
+        return scaledActivitySpaceToPlatformReference.compose(scaledPlatformReferenceToPose)
     }
 
     /** Returns the scale of the WorldPose with respect to the activity space. */
-    public fun getActivitySpaceScale(openXrScale: Vector3): Vector3 {
-        return openXrScale.scale(activitySpace.worldSpaceScale.inverse())
+    public fun getActivitySpaceScale(platformReferenceScale: Vector3): Vector3 {
+        return platformReferenceScale.scale(activitySpace.worldSpaceScale.inverse())
     }
 }

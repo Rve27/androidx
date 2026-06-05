@@ -102,7 +102,7 @@ class PlatformReferenceScenePoseTest(
     fun getActivitySpacePose_whenAtSamePose_returnsIdentityPose() {
         val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
         testScenePose = createTestScenePose(pose)
-        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Companion.fromPose(pose))
+        activitySpace.setPlatformReferenceSpaceTransform(Matrix4.Companion.fromPose(pose))
 
         assertPose(testScenePose!!.activitySpacePose, Pose())
     }
@@ -111,7 +111,7 @@ class PlatformReferenceScenePoseTest(
     fun getActivitySpacePose_returnsDifferencePose() {
         val pose = Pose(Vector3(1f, 1f, 1f), Quaternion(0f, 1f, 0f, 1f))
         testScenePose = createTestScenePose(pose)
-        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Companion.Identity)
+        activitySpace.setPlatformReferenceSpaceTransform(Matrix4.Companion.Identity)
 
         Assert.assertNotNull(testScenePose)
         assertPose(testScenePose!!.activitySpacePose, pose)
@@ -122,7 +122,7 @@ class PlatformReferenceScenePoseTest(
         val perceptionQuaternion = Quaternion.Companion.fromEulerAngles(Vector3(0f, 0f, 90f))
         val pose = Pose(Vector3(0f, 0f, 0f), perceptionQuaternion)
         testScenePose = createTestScenePose(pose)
-        activitySpace.setOpenXrReferenceSpaceTransform(
+        activitySpace.setPlatformReferenceSpaceTransform(
             Matrix4.Companion.fromTrs(
                 Vector3(0f, 0f, 0f),
                 Quaternion.Companion.Identity,
@@ -141,7 +141,7 @@ class PlatformReferenceScenePoseTest(
         val activitySpaceQuaternion = Quaternion.Companion.fromEulerAngles(Vector3(0f, 0f, 90f))
         val pose = Pose(Vector3(0f, 0f, 0f), Quaternion.Companion.Identity)
         testScenePose = createTestScenePose(pose)
-        activitySpace.setOpenXrReferenceSpaceTransform(
+        activitySpace.setPlatformReferenceSpaceTransform(
             Matrix4.Companion.fromTrs(
                 Vector3(0f, 0f, 0f),
                 activitySpaceQuaternion,
@@ -162,7 +162,7 @@ class PlatformReferenceScenePoseTest(
     fun transformPoseTo_withActivitySpace_returnsTransformedPose() {
         val pose = Pose(Vector3(1f, 2f, 3f), Quaternion.Companion.Identity)
         testScenePose = createTestScenePose(pose)
-        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Companion.Identity)
+        activitySpace.setPlatformReferenceSpaceTransform(Matrix4.Companion.Identity)
 
         val userHeadSpaceOffset =
             Pose(Vector3(10f, 0f, 0f), Quaternion.Companion.fromEulerAngles(Vector3(0f, 0f, 90f)))

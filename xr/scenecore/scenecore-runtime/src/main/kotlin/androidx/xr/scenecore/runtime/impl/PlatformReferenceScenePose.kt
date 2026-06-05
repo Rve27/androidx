@@ -33,7 +33,7 @@ public class PlatformReferenceScenePose(
         PlatformReferenceScenePoseHelper(activitySpace)
 
     override val activitySpacePose: Pose
-        get() = platformReferenceScenePoseHelper.getActivitySpacePose(poseInOpenXrReferenceSpace)
+        get() = platformReferenceScenePoseHelper.getActivitySpacePose(poseInPlatformReferenceSpace)
 
     // This WorldPose is assumed to always have a scale of 1.0f in the reference space.
     override val activitySpaceScale: Vector3
@@ -47,6 +47,6 @@ public class PlatformReferenceScenePose(
         activitySpace.hitTestRelativeToActivityPose(origin, direction, hitTestFilter, this)
 
     /** Returns the pose relative to the reference space (may be null if not ready). */
-    public val poseInOpenXrReferenceSpace: Pose?
+    public val poseInPlatformReferenceSpace: Pose?
         get() = perceptionPose
 }

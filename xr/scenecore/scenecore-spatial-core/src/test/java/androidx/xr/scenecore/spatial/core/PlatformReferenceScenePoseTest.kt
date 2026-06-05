@@ -97,7 +97,7 @@ class PlatformReferenceScenePoseTest {
         val childEntity1 = createGltfEntity()
         val childPose = Pose(Vector3(-1f, -2f, -3f), Quaternion.Identity)
 
-        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        activitySpace.setPlatformReferenceSpaceTransform(Matrix4.Identity)
         activitySpace.addChild(childEntity1)
         childEntity1.setPose(childPose)
 
@@ -115,7 +115,7 @@ class PlatformReferenceScenePoseTest {
     fun hitTest_returnsTransformedHitTest() = runBlocking {
         val pose = Pose(Vector3(1f, 1f, 1f), Quaternion.fromEulerAngles(Vector3(90f, 0f, 0f)))
         testScenePose = PlatformReferenceScenePose(activitySpace, pose)
-        activitySpace.setOpenXrReferenceSpaceTransform(Matrix4.Identity)
+        activitySpace.setPlatformReferenceSpaceTransform(Matrix4.Identity)
         val distance = 2.0f
         val hitPosition = Vec3(1.0f, 2.0f, 3.0f)
         val surfaceNormal = Vec3(0.0f, 1.0f, 0.0f)

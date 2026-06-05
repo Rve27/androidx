@@ -153,7 +153,7 @@ internal class AnchorEntityImpl(
                     return Pose()
                 }
                 return platformReferenceScenePoseHelper.getActivitySpacePose(
-                    poseInOpenXrReferenceSpace
+                    poseInPlatformReferenceSpace
                 )
             }
         }
