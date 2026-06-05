@@ -93,6 +93,7 @@ class HelloArAugmentedImageActivity : ComponentActivity() {
                     .build(),
                 onSessionAvailable = { session ->
                     this.session = session
+                    augmentedImageRenderer.startRendering(session, lifecycleScope)
 
                     setContent {
                         Subspace {
