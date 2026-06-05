@@ -66,6 +66,7 @@ class PdfViewAccessibilityManagerTest {
                 requireNotNull(pdfView) { "PdfView must not be null." }
                 pdfView.isAccessibilityEnabled = true
                 pdfView.pdfDocument = pdfDocument
+                pdfView.fastScrollVisibility = PdfView.FastScrollVisibility.ALWAYS_HIDE
             }
     }
 
@@ -378,6 +379,20 @@ class PdfViewAccessibilityManagerTest {
                     null,
                 )
             assertThat(result).isTrue()
+        }
+    }
+
+    @Test
+    fun isAccessibilityEnabled_updatesFastScrollVisibility() {
+        activityScenario.onActivity {
+            pdfView.isAccessibilityEnabled = false
+            assertThat(pdfView.fastScrollVisibility)
+                .isEqualTo(PdfView.FastScrollVisibility.AUTO_HIDE)
+
+            pdfView.isAccessibilityEnabled = true
+            assertThat(pdfView.fastScrollVisibility)
+                .isEqualTo(PdfView.FastScrollVisibility.ALWAYS_SHOW)
+            assertThat(pdfView.lastFastScrollerVisibility).isTrue()
         }
     }
 }
