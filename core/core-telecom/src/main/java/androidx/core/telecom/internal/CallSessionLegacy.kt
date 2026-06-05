@@ -81,7 +81,7 @@ internal class CallSessionLegacy(
     private var mPreviousCallEndpoint: CallEndpointCompat? = null
     private var mCurrentCallEndpoint: CallEndpointCompat? = null
     private var mAvailableCallEndpoints: MutableList<CallEndpointCompat> = mutableListOf()
-    private var mLastClientRequestedEndpoint: CallEndpointCompat? = null
+    @VisibleForTesting internal var mLastClientRequestedEndpoint: CallEndpointCompat? = null
     private var mIsMuted: Boolean? = null
     private val mCallSessionLegacyId: Int = CallEndpointUuidTracker.startSession()
     private var mGlobalMuteStateReceiver: MuteStateReceiver? = null
@@ -441,7 +441,7 @@ internal class CallSessionLegacy(
         try {
             if (
                 mVideoCallSpeakerManager.shouldSwitchToSpeaker(
-                    isVideoCall = attributes.isVideoCall(),
+                    isVideoCall = (mCallType == CallAttributesCompat.CALL_TYPE_VIDEO_CALL),
                     currentEndpoint = currentEndpoint,
                     availableEndpoints = availableEndpoints,
                 )
@@ -469,7 +469,7 @@ internal class CallSessionLegacy(
     ) {
         try {
             if (
-                attributes.isVideoCall() &&
+                (mCallType == CallAttributesCompat.CALL_TYPE_VIDEO_CALL) &&
                     /* Only switch if the users headset disconnects & earpiece is defaulted */
                     isEarpieceEndpoint(newEndpoint) &&
                     isWiredHeadsetOrBtEndpoint(previousEndpoint) &&
