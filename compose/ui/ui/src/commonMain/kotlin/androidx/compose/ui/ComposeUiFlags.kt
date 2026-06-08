@@ -165,5 +165,5 @@ object ComposeUiFlags {
     // TODO: b/519714278 - Cleanup feature flag
     @field:Suppress("MutableBareField")
     @JvmField
-    var isTrackpadPinchReinterpretationEnabled: Boolean = false
+    var isTrackpadPinchReinterpretationEnabled: Boolean = true
 }
