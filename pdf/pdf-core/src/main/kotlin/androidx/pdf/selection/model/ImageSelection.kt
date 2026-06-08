@@ -25,9 +25,9 @@ import androidx.pdf.selection.Selection
 /**
  * Represents a specific image object selected from a PDF document.
  *
- * The [ImageSelection] is delivered to the application if [PdfView.isImageSelectionEnabled] is
- * enabled, via the [PdfView.OnSelectionChangedListener]. It can then be used to implement features
- * like image sharing or copying. The [bounds] can be passed to [PdfView.setHighlights] to visually
+ * The [ImageSelection] is delivered to the application if `PdfView.isImageSelectionEnabled` is
+ * enabled, via the `PdfView.OnSelectionChangedListener`. It can then be used to implement features
+ * like image sharing or copying. The [bounds] can be passed to `PdfView.setHighlight` to visually
  * highlight the selected image, while the [bitmap] can be used for copying or sharing.
  *
  * ##### Memory Management
