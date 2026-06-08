@@ -118,11 +118,6 @@ public fun Rect.toPdfRect(pageNum: Int, imageRect: RectF, bitmapSize: Point): Pd
     )
 }
 
-/**
- * Writes a [androidx.pdf.PdfRect] to [dest].
- *
- * Not part of the public API because public APIs cannot be [android.os.Parcelable]
- */
 internal fun PdfRect.writeToParcel(dest: Parcel) {
     dest.writeInt(pageNum)
     dest.writeFloat(left)
@@ -131,11 +126,6 @@ internal fun PdfRect.writeToParcel(dest: Parcel) {
     dest.writeFloat(bottom)
 }
 
-/**
- * Reads a [PdfRect] from [source].
- *
- * Not part of the public API because public APIs cannot be [android.os.Parcelable]
- */
 internal fun pdfRectFromParcel(source: Parcel): PdfRect {
     val pageNum = source.readInt()
     val left = source.readFloat()

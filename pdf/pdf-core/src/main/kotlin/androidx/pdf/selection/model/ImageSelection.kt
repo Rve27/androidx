@@ -31,18 +31,18 @@ import androidx.pdf.selection.Selection
  * highlight the selected image, while the [bitmap] can be used for copying or sharing.
  *
  * ##### Memory Management
- * As this class holds a [Bitmap], it implements [AutoCloseable]. It is **mandatory** to call
- * [close] when the object is no longer needed to recycle the bitmap and avoid memory leaks. Using a
- * `try-with-resources` statement (or the `use` extension function in Kotlin) is recommended for
- * safe handling.
+ * As this class holds a [android.graphics.Bitmap], it implements [AutoCloseable]. It is
+ * **mandatory** to call [close] when the object is no longer needed to recycle the bitmap and avoid
+ * memory leaks. Using a `try-with-resources` statement (or the `use` extension function in Kotlin)
+ * is recommended for safe handling.
  *
- * @property bitmap This object captures the entire [Bitmap] of image located at the top of the
- *   Z-axis (the visually topmost image) at the interaction point. This is the raw image data and
- *   not a "flattened" screenshot; the [bitmap] contains only the data for that specific image
- *   object and excludes overlapping text, vector graphics, or background content.
- * @property bounds A list containing a single [PdfRect] that defines the page number and the
- *   bounding box of the image in PDF points. These bounds represent the image's layout position and
- *   scale on the page.
+ * @property bitmap This object captures the entire [android.graphics.Bitmap] of image located at
+ *   the top of the Z-axis (the visually topmost image) at the interaction point. This is the raw
+ *   image data and not a "flattened" screenshot; the [bitmap] contains only the data for that
+ *   specific image object and excludes overlapping text, vector graphics, or background content.
+ * @property bounds A list containing a single [androidx.pdf.PdfRect] that defines the page number
+ *   and the bounding box of the image in PDF points. These bounds represent the image's layout
+ *   position and scale on the page.
  */
 public class ImageSelection
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -91,10 +91,5 @@ constructor(public val bitmap: Bitmap, imageBounds: PdfRect) : Selection, AutoCl
         }
         // We do not write the bitmap to the parcel due to its large size.
         // It will be re-fetched on restoration.
-    }
-
-    internal companion object {
-        /** Tiny placeholder bitmap used when restoring ImageSelection from a parcel. */
-        val PLACEHOLDER_BITMAP: Bitmap by lazy { Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8) }
     }
 }

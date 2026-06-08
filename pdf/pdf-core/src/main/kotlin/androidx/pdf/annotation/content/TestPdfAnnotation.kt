@@ -16,7 +16,12 @@
 
 package androidx.pdf.annotation.content
 
-class TestPdfAnnotation(override val pageNum: Int) : PdfAnnotation(pageNum) {
+import androidx.annotation.RestrictTo
+import androidx.annotation.VisibleForTesting
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@VisibleForTesting
+public class TestPdfAnnotation(override val pageNum: Int) : PdfAnnotation(pageNum) {
     override fun equals(other: Any?): Boolean {
         if (!super.equals(other)) return false
         if (other == null || other !is TestPdfAnnotation) return false
