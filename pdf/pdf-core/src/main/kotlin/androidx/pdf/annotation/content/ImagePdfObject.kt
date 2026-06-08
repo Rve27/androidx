@@ -18,9 +18,6 @@ package androidx.pdf.annotation.content
 
 import android.graphics.Bitmap
 import android.graphics.RectF
-import androidx.pdf.Dimension
-import androidx.pdf.PdfRect
-import androidx.pdf.selection.model.ImageSelection
 
 /**
  * Represents an image object within a PDF document.
@@ -41,9 +38,3 @@ public class ImagePdfObject(public val bitmap: Bitmap, public val bounds: RectF)
         return result
     }
 }
-
-internal fun ImagePdfObject.toImageSelection(pageNum: Int): ImageSelection =
-    ImageSelection(bitmap, PdfRect(pageNum, bounds.left, bounds.top, bounds.right, bounds.bottom))
-
-internal val ImagePdfObject.bitmapSize: Dimension
-    get() = Dimension(bitmap.width, bitmap.height)
