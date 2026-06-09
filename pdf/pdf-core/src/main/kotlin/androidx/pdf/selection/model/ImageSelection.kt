@@ -18,9 +18,9 @@ package androidx.pdf.selection.model
 
 import android.graphics.Bitmap
 import android.os.Parcel
+import androidx.annotation.RestrictTo
 import androidx.pdf.PdfRect
 import androidx.pdf.selection.Selection
-import androidx.pdf.view.PdfView
 
 /**
  * Represents a specific image object selected from a PDF document.
@@ -44,15 +44,16 @@ import androidx.pdf.view.PdfView
  *   bounding box of the image in PDF points. These bounds represent the image's layout position and
  *   scale on the page.
  */
-public class ImageSelection internal constructor(public val bitmap: Bitmap, imageBounds: PdfRect) :
-    Selection, AutoCloseable {
+public class ImageSelection
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+constructor(public val bitmap: Bitmap, imageBounds: PdfRect) : Selection, AutoCloseable {
 
     public override val bounds: List<PdfRect> = listOf(imageBounds)
 
     /**
      * Internal flag to indicate if this selection was restored from a parcel without its bitmap.
      */
-    internal var isPlaceholder: Boolean = false
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public var isPlaceholder: Boolean = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -78,7 +79,8 @@ public class ImageSelection internal constructor(public val bitmap: Bitmap, imag
     }
 
     /** Writes a [ImageSelection] to [dest]. */
-    internal fun writeToParcel(dest: Parcel, flags: Int) {
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeInt(bounds.size)
         for (bound in bounds) {
             dest.writeInt(bound.pageNum)
@@ -94,29 +96,5 @@ public class ImageSelection internal constructor(public val bitmap: Bitmap, imag
     internal companion object {
         /** Tiny placeholder bitmap used when restoring ImageSelection from a parcel. */
         val PLACEHOLDER_BITMAP: Bitmap by lazy { Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8) }
-    }
-}
-
-/**
- * Reads an [ImageSelection] from [source].
- *
- * Not part of the public API because public APIs cannot be [android.os.Parcelable]
- */
-internal fun imageSelectionFromParcel(source: Parcel): ImageSelection {
-    val bounds = mutableListOf<PdfRect>()
-    val boundsSize = source.readInt()
-    for (i in 0 until boundsSize) {
-        val pageNum = source.readInt()
-        val left = source.readFloat()
-        val top = source.readFloat()
-        val right = source.readFloat()
-        val bottom = source.readFloat()
-        bounds.add(PdfRect(pageNum, left, top, right, bottom))
-    }
-
-    // Return an ImageSelection with a placeholder bitmap.
-    // The SelectionStateManager is responsible for re-fetching the actual bitmap.
-    return ImageSelection(ImageSelection.PLACEHOLDER_BITMAP, bounds.first()).apply {
-        isPlaceholder = true
     }
 }
