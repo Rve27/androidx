@@ -2680,6 +2680,9 @@ private constructor(
                     e,
                 )
                 null
+            } catch (e: RuntimeException) {
+                Log.w(TAG, "RuntimeException unparceling ComplicationData field: $key", e)
+                null
             }
 
         public fun isFieldValidForType(field: String, @ComplicationType type: Int): Boolean {
