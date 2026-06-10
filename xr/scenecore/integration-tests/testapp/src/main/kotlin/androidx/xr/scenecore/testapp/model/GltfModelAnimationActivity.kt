@@ -93,12 +93,6 @@ class GltfModelAnimationActivity : AppCompatActivity() {
 
     private lateinit var session: Session
 
-    private companion object {
-        const val STATE_PLAYING = "PLAYING"
-        const val STATE_STOPPED = "STOPPED"
-        const val STATE_PAUSED = "PAUSED"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -299,12 +293,8 @@ class GltfModelAnimationActivity : AppCompatActivity() {
                 selectedIndexAtAnimationList = position
 
                 animationStateText.text =
-                    when (animationStateMap[position]) {
-                        GltfAnimation.AnimationState.PLAYING -> STATE_PLAYING
-                        GltfAnimation.AnimationState.STOPPED -> STATE_STOPPED
-                        GltfAnimation.AnimationState.PAUSED -> STATE_PAUSED
-                        else -> STATE_STOPPED
-                    }
+                    animationStateMap[position]?.toString()
+                        ?: GltfAnimation.AnimationState.STOPPED.toString()
 
                 loopToggleButton.isChecked = false
 
@@ -318,7 +308,7 @@ class GltfModelAnimationActivity : AppCompatActivity() {
                 speedSlider.value = 1f
             }
 
-            animationStateText.text = STATE_STOPPED
+            animationStateText.text = GltfAnimation.AnimationState.STOPPED.toString()
         }
     }
 
@@ -333,24 +323,18 @@ class GltfModelAnimationActivity : AppCompatActivity() {
             when (state) {
                 GltfAnimation.AnimationState.PLAYING -> {
                     Log.d(TAG, "${animation.name} animation is now playing!!")
-                    if (animation.index == selectedIndexAtAnimationList) {
-                        animationStateText.text = STATE_PLAYING
-                    }
                 }
 
                 GltfAnimation.AnimationState.STOPPED -> {
                     Log.d(TAG, "${animation.name} animation is now stopped!!")
-                    if (animation.index == selectedIndexAtAnimationList) {
-                        animationStateText.text = STATE_STOPPED
-                    }
                 }
 
                 GltfAnimation.AnimationState.PAUSED -> {
                     Log.d(TAG, "${animation.name} animation is now paused!!")
-                    if (animation.index == selectedIndexAtAnimationList) {
-                        animationStateText.text = STATE_PAUSED
-                    }
                 }
+            }
+            if (animation.index == selectedIndexAtAnimationList) {
+                animationStateText.text = state.toString()
             }
 
             animationStateMap[animation.index] = state
@@ -365,7 +349,7 @@ class GltfModelAnimationActivity : AppCompatActivity() {
         animations = emptyList()
         animationStateMap.clear()
         animationList.setText("Choose glTF Animations")
-        animationStateText.text = STATE_STOPPED
+        animationStateText.text = GltfAnimation.AnimationState.STOPPED.toString()
 
         selectedIndexAtAnimationList = -1
     }
