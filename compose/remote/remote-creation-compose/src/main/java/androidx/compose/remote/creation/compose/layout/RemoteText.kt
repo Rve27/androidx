@@ -24,6 +24,7 @@ import androidx.annotation.RestrictTo
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
 import androidx.compose.remote.creation.compose.capture.RemoteDensity
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.modifier.toRecordingModifier
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteFloat
 import androidx.compose.remote.creation.compose.state.RemoteString
@@ -330,8 +331,9 @@ internal class RemoteTextNode : RemoteComposeNode() {
                     )
             }
 
+        val scope = overriddenScope(creationState)
         creationState.document.startTextComponent(
-            with(modifier) { creationState.toRecordingModifier() },
+            scope.toRecordingModifier(modifier),
             textIdValue,
             -1,
             colorInt,

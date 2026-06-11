@@ -23,6 +23,7 @@ import androidx.compose.remote.creation.compose.capture.RemoteDensity
 import androidx.compose.remote.creation.compose.modifier.DrawWithContentModifier
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.find
+import androidx.compose.remote.creation.compose.state.RemoteStateScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposeNode
 import androidx.compose.runtime.DisallowComposableCalls
@@ -35,6 +36,10 @@ internal abstract class RemoteComposeNode {
     val children = mutableListOf<RemoteComposeNode>()
     var modifier: RemoteModifier = RemoteModifier
     var remoteDensity: RemoteDensity = RemoteDensity.Host
+
+    fun overriddenScope(creationState: RemoteComposeCreationState): RemoteStateScope {
+        return OverriddenScope(creationState, remoteDensity, creationState.layoutDirection)
+    }
 
     abstract fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas)
 
@@ -114,3 +119,9 @@ internal fun shouldReverse(
     } else {
         false
     }
+
+internal class OverriddenScope(
+    override val parentScope: RemoteStateScope,
+    override val remoteDensity: RemoteDensity,
+    override val layoutDirection: LayoutDirection,
+) : RemoteStateScope

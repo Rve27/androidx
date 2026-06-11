@@ -41,6 +41,7 @@ import androidx.compose.remote.creation.compose.layout.RemoteText
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.background
 import androidx.compose.remote.creation.compose.modifier.clickable
+import androidx.compose.remote.creation.compose.modifier.clip
 import androidx.compose.remote.creation.compose.modifier.drawWithContent
 import androidx.compose.remote.creation.compose.modifier.fillMaxHeight
 import androidx.compose.remote.creation.compose.modifier.fillMaxSize
@@ -56,6 +57,7 @@ import androidx.compose.remote.creation.compose.modifier.verticalScroll
 import androidx.compose.remote.creation.compose.modifier.width
 import androidx.compose.remote.creation.compose.shaders.RemoteBrush
 import androidx.compose.remote.creation.compose.shaders.radialGradient
+import androidx.compose.remote.creation.compose.shapes.RemoteRoundedCornerShape
 import androidx.compose.remote.creation.compose.state.RemoteColor
 import androidx.compose.remote.creation.compose.state.RemoteDp
 import androidx.compose.remote.creation.compose.state.RemoteEnum
@@ -79,9 +81,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
@@ -1089,6 +1093,90 @@ list:
                     contentAlignment = RemoteAlignment.Center,
                 ) {
                     RemoteText("XYZ")
+                }
+            }
+        }
+    }
+    @Test
+    fun testClipRoundedCornerDynamicDensity() {
+        val expectedLayout =
+            """
+ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
+  ComponentValue value 42 set to WIDTH of Component -2
+  ComponentValue value 43 set to HEIGHT of Component -2
+  BOX [-3:-1] = [0.0, 0.0, 275.0, 275.0] VISIBLE
+    MODIFIERS
+      WIDTH = 100.0 dp
+      HEIGHT = 100.0 dp
+      ROUNDED_CLIP_RECT = [275.0, 275.0, 27.5, 27.5, 27.5, 27.5]
+      BACKGROUND = [0.0, 0.0, 275.0, 275.0] color [1.0, 0.0, 0.0, 1.0] shape [0]
+"""
+        testLayout(expectedLayout) {
+            CompositionLocalProvider(LocalRemoteDensity provides RemoteDensity.Host) {
+                RemoteBox(
+                    modifier =
+                        RemoteModifier.size(100.rdp)
+                            .clip(RemoteRoundedCornerShape(10.rdp))
+                            .background(Color.Red)
+                )
+            }
+        }
+    }
+
+    @Test
+    fun testTextClipRoundedCornerOverriddenDensity() {
+        val expectedLayout =
+            """
+ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
+  DATA_TEXT<42> = "Test"
+  ComponentValue value 43 set to WIDTH of Component -2
+  ComponentValue value 44 set to HEIGHT of Component -2
+  CORE_TEXT [-3:-1] = [0.0, 0.0, 275.0, 275.0] VISIBLE (42:"Test")
+    MODIFIERS
+      WIDTH = 100.0 dp
+      HEIGHT = 100.0 dp
+      ROUNDED_CLIP_RECT = [275.0, 275.0, 10.0, 10.0, 10.0, 10.0]
+"""
+        testLayout(expectedLayout) {
+            CompositionLocalProvider(LocalRemoteDensity provides RemoteDensity(1f.rf, 1f.rf)) {
+                RemoteText(
+                    text = "Test",
+                    modifier = RemoteModifier.size(100.rdp).clip(RemoteRoundedCornerShape(10.rdp)),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun testRowRtl() {
+        val result =
+            """
+ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
+  ROW [-3:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
+    MODIFIERS
+    BOX [-5:-1] = [165.0, 0.0, 275.0, 825.0] VISIBLE
+      MODIFIERS
+        WIDTH = 100.0 dp
+        BACKGROUND = [0.0, 0.0, 275.0, 825.0] color [0.0, 0.0, 1.0, 1.0] shape [0]
+    BOX [-7:-1] = [440.0, 0.0, 275.0, 825.0] VISIBLE
+      MODIFIERS
+        WIDTH = 100.0 dp
+        BACKGROUND = [0.0, 0.0, 275.0, 825.0] color [1.0, 0.0, 0.0, 1.0] shape [0]
+"""
+        testLayout(result) {
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                RemoteRow(
+                    modifier = RemoteModifier.fillMaxSize(),
+                    horizontalArrangement = RemoteArrangement.Start,
+                ) {
+                    RemoteBox(
+                        modifier =
+                            RemoteModifier.width(100.rdp).fillMaxHeight().background(Color.Red)
+                    )
+                    RemoteBox(
+                        modifier =
+                            RemoteModifier.width(100.rdp).fillMaxHeight().background(Color.Blue)
+                    )
                 }
             }
         }
