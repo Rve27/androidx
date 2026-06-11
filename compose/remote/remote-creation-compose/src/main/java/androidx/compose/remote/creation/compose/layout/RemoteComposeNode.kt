@@ -17,7 +17,9 @@
 package androidx.compose.remote.creation.compose.layout
 
 import androidx.annotation.RestrictTo
+import androidx.compose.remote.creation.compose.capture.LocalRemoteDensity
 import androidx.compose.remote.creation.compose.capture.RemoteComposeCreationState
+import androidx.compose.remote.creation.compose.capture.RemoteDensity
 import androidx.compose.remote.creation.compose.modifier.DrawWithContentModifier
 import androidx.compose.remote.creation.compose.modifier.RemoteModifier
 import androidx.compose.remote.creation.compose.modifier.find
@@ -32,6 +34,7 @@ import androidx.compose.ui.util.fastForEachReversed
 internal abstract class RemoteComposeNode {
     val children = mutableListOf<RemoteComposeNode>()
     var modifier: RemoteModifier = RemoteModifier
+    var remoteDensity: RemoteDensity = RemoteDensity.Host
 
     abstract fun render(creationState: RemoteComposeCreationState, remoteCanvas: RemoteCanvas)
 
@@ -71,7 +74,11 @@ internal inline fun <T : RemoteComposeNode> RemoteComposeNode(
     noinline factory: () -> T,
     update: @DisallowComposableCalls Updater<T>.() -> Unit,
 ) {
-    ComposeNode<T, RemoteComposeApplier>(factory, update)
+    val remoteDensity = LocalRemoteDensity.current
+    ComposeNode<T, RemoteComposeApplier>(factory) {
+        update()
+        set(remoteDensity) { this.remoteDensity = it }
+    }
 }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -81,7 +88,15 @@ internal inline fun <T : RemoteComposeNode> RemoteComposeNode(
     update: @DisallowComposableCalls Updater<T>.() -> Unit,
     content: @Composable @RemoteComposable () -> Unit,
 ) {
-    ComposeNode<T, RemoteComposeApplier>(factory, update, content)
+    val remoteDensity = LocalRemoteDensity.current
+    ComposeNode<T, RemoteComposeApplier>(
+        factory,
+        {
+            update()
+            set(remoteDensity) { this.remoteDensity = it }
+        },
+        content,
+    )
 }
 
 internal fun shouldReverse(
