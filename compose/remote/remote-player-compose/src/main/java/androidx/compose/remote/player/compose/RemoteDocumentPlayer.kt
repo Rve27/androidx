@@ -46,6 +46,7 @@ import androidx.core.view.doOnPreDraw
 /** A player of a [CoreDocument] */
 @OptIn(ExperimentalRemotePlayerApi::class)
 @Composable
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RemoteDocumentPlayer(
     document: CoreDocument,
     documentWidth: Int,
