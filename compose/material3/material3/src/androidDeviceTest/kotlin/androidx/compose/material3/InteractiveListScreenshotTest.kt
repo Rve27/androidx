@@ -41,7 +41,6 @@ import org.junit.runners.Parameterized
 @LargeTest
 @RunWith(Parameterized::class)
 @SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 class InteractiveListScreenshotTest(private val scheme: ColorSchemeWrapper) {
     private val ListTestTag = "List"
 

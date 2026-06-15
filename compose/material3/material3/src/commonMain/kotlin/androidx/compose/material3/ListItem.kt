@@ -260,7 +260,6 @@ fun ListItem(
  *   interactions will still happen internally.
  * @param content the main content of this list item. Also known as the headline or label.
  */
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun ListItem(
     onClick: () -> Unit,
@@ -339,7 +338,6 @@ fun ListItem(
  *   interactions will still happen internally.
  * @param content the main content of this list item. Also known as the headline or label.
  */
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun ListItem(
     selected: Boolean,
@@ -424,7 +422,6 @@ fun ListItem(
  *   interactions will still happen internally.
  * @param content the main content of this list item. Also known as the headline or label.
  */
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun ListItem(
     checked: Boolean,
@@ -508,7 +505,6 @@ fun ListItem(
  *   interactions will still happen internally.
  * @param content the main content of this list item. Also known as the headline or label.
  */
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun SegmentedListItem(
     onClick: () -> Unit,
@@ -589,7 +585,6 @@ fun SegmentedListItem(
  *   interactions will still happen internally.
  * @param content the main content of this list item. Also known as the headline or label.
  */
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun SegmentedListItem(
     selected: Boolean,
@@ -674,7 +669,6 @@ fun SegmentedListItem(
  *   interactions will still happen internally.
  * @param content the main content of this list item. Also known as the headline or label.
  */
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun SegmentedListItem(
     checked: Boolean,
@@ -1247,7 +1241,6 @@ private fun ContentDecorator(
  * [LaunchedEffect]. The [MutableState] parameters, if provided, will be set to the corresponding
  * state value.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun InteractionSource.CollectInteractionsAsState(
     pressedState: MutableState<Boolean>? = null,
@@ -1300,7 +1293,6 @@ private data class InteractiveListColorState(
     val dragged: Boolean,
 )
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 @Suppress("ComposableLambdaParameterPosition")
 private fun InteractiveListItem(
