@@ -1215,8 +1215,7 @@ private fun Transition<EnterExitState>.createGraphicsLayerBlock(
                 when (it) {
                     EnterExitState.Visible -> 1f
                     EnterExitState.PreEnter -> enter.data.fade?.alpha ?: 1f
-                    EnterExitState.PostExit ->
-                        exit.data.fade?.alpha ?: mutableTransformState.lastAlpha
+                    EnterExitState.PostExit -> exit.data.fade?.alpha ?: 1f
                 }
             }
 
@@ -1237,8 +1236,7 @@ private fun Transition<EnterExitState>.createGraphicsLayerBlock(
                 when (it) {
                     EnterExitState.Visible -> 1f
                     EnterExitState.PreEnter -> enter.data.scale?.scale ?: 1f
-                    EnterExitState.PostExit ->
-                        exit.data.scale?.scale ?: mutableTransformState.lastScale
+                    EnterExitState.PostExit -> exit.data.scale?.scale ?: 1f
                 }
             }
         val transformOriginWhenVisible =
@@ -1259,8 +1257,7 @@ private fun Transition<EnterExitState>.createGraphicsLayerBlock(
                     EnterExitState.PreEnter ->
                         enter.data.scale?.transformOrigin ?: exit.data.scale?.transformOrigin
                     EnterExitState.PostExit ->
-                        exit.data.scale?.transformOrigin
-                            ?: mutableTransformState.lastTransformOrigin
+                        exit.data.scale?.transformOrigin ?: TransformOrigin.Center
                 } ?: TransformOrigin.Center
             }
 
@@ -1420,11 +1417,7 @@ private class EnterExitTransitionModifierNode(
                     forcedInitialValue = mutableTransformState.slideHandoffValue,
                     forcedInitialVelocity = mutableTransformState.slideHandoffVelocity,
                 ) {
-                    if (it == EnterExitState.PostExit && exit.data.slide == null) {
-                        mutableTransformState.lastSlide
-                    } else {
-                        slideTargetValueByState(it, target)
-                    }
+                    slideTargetValueByState(it, target)
                 }
 
             return layout(currentSize.width, currentSize.height) {
