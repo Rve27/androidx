@@ -1073,7 +1073,7 @@ internal fun Transition<EnterExitState>.trackActiveMutableState(
     sharedMutableTransformState: SharedMutableTransformState?
 ): SharedMutableTransformState {
     val shared = sharedMutableTransformState ?: remember(this) { SharedMutableTransformState() }
-    val isMutating = pendingTargetState != null
+    val isMutating = pendingTargetState != null && shared.mutableData != null
     shared.isMutating = isMutating
     DeferredTransitionCleanupEffect { shared.clear() }
     return shared
