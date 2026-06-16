@@ -27,7 +27,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.MainThread
-import androidx.annotation.RestrictTo
 import androidx.pdf.annotation.AnnotationsView.AnnotationMode.Highlight
 import androidx.pdf.annotation.AnnotationsView.AnnotationMode.Select
 import androidx.pdf.annotation.content.KeyedPdfAnnotation
@@ -47,7 +46,6 @@ import androidx.pdf.annotation.highlights.InProgressHighlightsView
  * This inherits [ViewGroup] but does not support adding arbitrary children via [addView] or in a
  * layout.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class AnnotationsView
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
