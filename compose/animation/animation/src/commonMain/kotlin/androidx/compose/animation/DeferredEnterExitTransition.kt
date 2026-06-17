@@ -410,7 +410,6 @@ internal class SharedMutableTransformState {
  *
  * Targets the last manual values of all properties animated during the deferred phase.
  */
-@OptIn(ExperimentalAnimationApi::class)
 internal fun SharedMutableTransformState.getHandoffExit(): ExitTransition {
     var newExit = ExitTransition.None
     if (this.isHandoffActive) {
@@ -438,7 +437,6 @@ internal fun SharedMutableTransformState.getHandoffExit(): ExitTransition {
  * Captures the last manual values of all properties animated during the deferred phase to use as
  * the starting point for the enter transition.
  */
-@OptIn(ExperimentalAnimationApi::class)
 internal fun SharedMutableTransformState.getHandoffEnter(): EnterTransition {
     var newEnter = EnterTransition.None
     if (this.isHandoffActive) {
