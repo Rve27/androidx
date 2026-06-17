@@ -1606,8 +1606,7 @@ private class VeilModifierNode(
                             ?: exit.data.veil?.initialColor
                             ?: Color.Transparent
                     EnterExitState.PreEnter -> enter.data.veil?.initialColor ?: Color.Transparent
-                    EnterExitState.PostExit ->
-                        exit.data.veil?.targetColor ?: mutableTransformState.lastVeil
+                    EnterExitState.PostExit -> exit.data.veil?.targetColor ?: Color.Transparent
                 }
             }
 
