@@ -29,9 +29,14 @@ public abstract class Tracer {
     /**
      * Creates a [PropagationToken] that can be used for manual context propagation in
      * [androidx.tracing.Tracer].
+     *
+     * @param flowIds An optional list of `ids` that can be used to connect slices on different
+     *   tracks.
      */
     @ExperimentalContextPropagation
-    public abstract fun tokenForManualPropagation(): PropagationToken
+    public abstract fun tokenForManualPropagation(
+        flowIds: List<Long> = listOf(monotonicId())
+    ): PropagationToken
 
     /**
      * This gives the ability to control how context propagation works for a

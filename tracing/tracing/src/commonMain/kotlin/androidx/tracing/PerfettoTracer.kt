@@ -49,8 +49,13 @@ public class PerfettoTracer(
     }
 
     @ExperimentalContextPropagation
-    override fun tokenForManualPropagation(): PropagationToken {
-        return inheritedPropagationToken(parent = null, tracer = this)
+    override fun tokenForManualPropagation(flowIds: List<Long>): PropagationToken {
+        return buildPropagationElement(
+            tracer = this,
+            category = DEFAULT_STRING,
+            name = DEFAULT_STRING,
+            flowIds = flowIds,
+        )
     }
 
     @DelicateTracingApi

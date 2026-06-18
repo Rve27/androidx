@@ -225,7 +225,8 @@ package androidx.tracing {
     method @BytecodeOnly public static void instant$default(androidx.tracing.Tracer!, String!, String!, kotlin.jvm.functions.Function1!, int, Object!);
     method public abstract boolean isCategoryEnabled(String category);
     method @SuppressCompatibility @androidx.tracing.DelicateTracingApi public static final void setGlobalTracer(androidx.tracing.Tracer tracer);
-    method @SuppressCompatibility @androidx.tracing.ExperimentalContextPropagation public abstract androidx.tracing.PropagationToken tokenForManualPropagation();
+    method @SuppressCompatibility @androidx.tracing.ExperimentalContextPropagation public abstract androidx.tracing.PropagationToken tokenForManualPropagation(optional java.util.List<java.lang.Long> flowIds);
+    method @BytecodeOnly @SuppressCompatibility @androidx.tracing.ExperimentalContextPropagation public static androidx.tracing.PropagationToken! tokenForManualPropagation$default(androidx.tracing.Tracer!, java.util.List!, int, Object!);
     method @SuppressCompatibility @androidx.tracing.DelicateTracingApi public abstract suspend Object? tokenFromCoroutineContext(kotlin.coroutines.Continuation<? super androidx.tracing.PropagationToken>);
     method @SuppressCompatibility @androidx.tracing.DelicateTracingApi public abstract androidx.tracing.PropagationToken tokenFromThreadContext();
     method public final inline <T> T trace(String category, String name, optional androidx.tracing.PropagationToken? token, optional boolean isRoot, kotlin.jvm.functions.Function0<? extends T> block);
