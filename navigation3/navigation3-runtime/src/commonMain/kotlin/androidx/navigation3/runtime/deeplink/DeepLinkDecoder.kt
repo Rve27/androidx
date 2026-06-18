@@ -209,4 +209,4 @@ internal class ListDecoder(private val values: List<String>) : AbstractDecoder()
     }
 }
 
-internal class DeepLinkDecoderException(msg: String? = null) : Exception(msg, null)
+internal class DeepLinkDecoderException(msg: String? = null) : SerializationException(msg, null)
