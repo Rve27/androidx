@@ -166,7 +166,6 @@ public class GenericDocument {
      *
      * @param dest The {@link Parcel} to write to.
      * @param flags The flags to use for parceling.
-     * @exportToFramework:hide
      */
     // GenericDocument is an open class that can be extended, whereas parcelable classes must be
     // final in those methods. Thus, we make this a system api to avoid 3p apps depending on it
@@ -183,7 +182,6 @@ public class GenericDocument {
      * Creates a {@link GenericDocument} from a {@link Parcel}.
      *
      * @param parcel The {@link Parcel} to read from.
-     * @exportToFramework:hide
      */
     // GenericDocument is an open class that can be extended, whereas parcelable classes must be
     // final in those methods. Thus, we make this a system api to avoid 3p apps depending on it
