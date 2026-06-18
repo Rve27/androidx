@@ -141,8 +141,21 @@ public class PerfettoTracer(
     }
 
     @DelicateTracingApi
-    override fun instant(category: String, name: String): EventMetadataCloseable {
+    override fun instant(
+        category: String,
+        name: String,
+        token: PropagationToken?,
+    ): EventMetadataCloseable {
+        val flowIds =
+            if (token == null || token == PropagationUnsupportedToken) {
+                emptyList()
+            } else {
+                val tokenElement =
+                    token as? PlatformThreadContextElement
+                        ?: throw IllegalArgumentException("Unsupported token type $token")
+                tokenElement.flowIds
+            }
         val track = process.currentThreadTrack()
-        return track.instant(category = category, name = name)
+        return track.instant(category = category, name = name, flowIds = flowIds)
     }
 }
