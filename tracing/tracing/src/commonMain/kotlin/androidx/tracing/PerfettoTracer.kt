@@ -141,7 +141,7 @@ public class PerfettoTracer(
     }
 
     @DelicateTracingApi
-    override fun instant(
+    override fun writeInstant(
         category: String,
         name: String,
         token: PropagationToken?,

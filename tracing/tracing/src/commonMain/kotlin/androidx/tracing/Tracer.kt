@@ -139,7 +139,7 @@ public abstract class Tracer {
     public abstract fun counter(category: String, name: String): Counter
 
     /**
-     * Emits a zero duration section to the Trace.
+     * Writes a zero duration section to the Trace.
      *
      * @param category The category that the trace section belongs to. Apps can potentially filter
      *   sections to the categories that they are interested in looking into.
@@ -147,7 +147,7 @@ public abstract class Tracer {
      * @param token The optional [PropagationToken] instance to use for context propagation.
      */
     @DelicateTracingApi
-    public abstract fun instant(
+    public abstract fun writeInstant(
         category: String,
         name: String,
         token: PropagationToken?,
@@ -378,7 +378,7 @@ public abstract class Tracer {
         token: PropagationToken? = null,
         crossinline metadataBlock: EventMetadata.() -> Unit = {},
     ) {
-        val result = instant(category = category, name = name, token = token)
+        val result = writeInstant(category = category, name = name, token = token)
         metadataBlock(result.metadata)
         result.metadata.dispatchToTraceSink()
     }
