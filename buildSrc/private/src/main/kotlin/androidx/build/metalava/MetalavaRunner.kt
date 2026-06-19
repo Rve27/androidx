@@ -263,6 +263,7 @@ internal fun generateApi(
     pathToManifest: String? = null,
     multiplatform: Boolean,
     hasJvmOrAndroidTarget: Boolean,
+    configFile: File? = null,
 ) {
     val generateApiConfigs: MutableList<Pair<GenerateApiMode, ApiLintMode>> =
         mutableListOf(GenerateApiMode.PublicApi to apiLintMode)
@@ -296,6 +297,7 @@ internal fun generateApi(
             pathToManifest,
             multiplatform,
             hasJvmOrAndroidTarget,
+            configFile,
         )
     }
 }
@@ -318,6 +320,7 @@ private fun generateApi(
     pathToManifest: String? = null,
     multiplatform: Boolean,
     hasJvmOrAndroidTarget: Boolean,
+    configFile: File? = null,
 ) {
     val args =
         getGenerateApiArgs(
@@ -332,7 +335,14 @@ private fun generateApi(
             multiplatform,
             hasJvmOrAndroidTarget,
         )
-    runMetalavaWithArgs(metalavaClasspath, args, kotlinSourceLevel, workerExecutor)
+    val allArgs = buildList {
+        addAll(args)
+        if (configFile != null) {
+            add("--config-file")
+            add(configFile.absolutePath)
+        }
+    }
+    runMetalavaWithArgs(metalavaClasspath, allArgs, kotlinSourceLevel, workerExecutor)
 }
 
 /**
