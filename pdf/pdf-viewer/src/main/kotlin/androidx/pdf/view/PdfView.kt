@@ -2651,6 +2651,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         override fun onLongPress(e: MotionEvent) {
             super.onLongPress(e)
+            this@PdfView.requestFocus()
             val localPageLayoutManager = pageLayoutManager ?: return super.onLongPress(e)
             val touchPoint =
                 localPageLayoutManager.getPdfPointAt(
@@ -2725,6 +2726,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
 
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            this@PdfView.requestFocus()
             commitFormFillingEditText()
             selectionStateManager?.clearCurrentSelection()
             val localPageLayoutManager = pageLayoutManager ?: return super.onSingleTapConfirmed(e)
