@@ -1145,7 +1145,7 @@ internal fun Transition<EnterExitState>.trackActiveExit(
                 activeExit
             } else {
                 ExitTransitionImpl(
-                    TransitionData(
+                    activeExit.data.copy(
                         fade = activeExit.data.fade?.copy(alpha = 1f),
                         scale = activeExit.data.scale?.copy(scale = 1f),
                         slide = activeExit.data.slide?.copy(slideOffset = NeutralSlideOffset),
