@@ -49,10 +49,10 @@ import androidx.compose.material3.SuggestionChipDefaults.defaultElevatedSuggesti
 import androidx.compose.material3.internal.animateElevation
 import androidx.compose.material3.internal.rememberAnimatedShape
 import androidx.compose.material3.tokens.AssistChipTokens
+import androidx.compose.material3.tokens.ChipsTokens
 import androidx.compose.material3.tokens.FilterChipTokens
 import androidx.compose.material3.tokens.InputChipTokens
 import androidx.compose.material3.tokens.MotionSchemeKeyTokens
-import androidx.compose.material3.tokens.ShapeTokens
 import androidx.compose.material3.tokens.SuggestionChipTokens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -2364,9 +2364,9 @@ object FilterChipDefaults {
     internal val ColorScheme.defaultTonalFilterChipColors: SelectableChipColors
         get() {
             return defaultTonalFilterChipColorsCached
-                ?: defaultFilterChipColors.copy(leadingIconColor = onSurfaceVariant).also {
-                    defaultTonalFilterChipColorsCached = it
-                }
+                ?: defaultFilterChipColors
+                    .copy(leadingIconColor = fromToken(ChipsTokens.UnselectedLeadingIconColor))
+                    .also { defaultTonalFilterChipColorsCached = it }
         }
 
     /**
@@ -2539,9 +2539,9 @@ object FilterChipDefaults {
     internal val ColorScheme.defaultTonalElevatedFilterChipColors: SelectableChipColors
         get() {
             return defaultTonalElevatedFilterChipColorsCached
-                ?: defaultElevatedFilterChipColors.copy(leadingIconColor = onSurfaceVariant).also {
-                    defaultTonalElevatedFilterChipColorsCached = it
-                }
+                ?: defaultElevatedFilterChipColors
+                    .copy(leadingIconColor = fromToken(ChipsTokens.UnselectedLeadingIconColor))
+                    .also { defaultTonalElevatedFilterChipColorsCached = it }
         }
 
     /**
@@ -2608,10 +2608,9 @@ object FilterChipDefaults {
         get() {
             return defaultChipShapesCached
                 ?: ChipShapes(
-                        // TODO: Update with chip shape tokens
-                        shape = ShapeTokens.CornerMedium,
-                        selectedShape = ShapeTokens.CornerFull,
-                        pressedShape = ShapeTokens.CornerSmall,
+                        shape = fromToken(ChipsTokens.UnselectedShape),
+                        selectedShape = fromToken(ChipsTokens.SelectedShape),
+                        pressedShape = fromToken(ChipsTokens.PressedShape),
                     )
                     .also { defaultChipShapesCached = it }
         }
@@ -2781,9 +2780,9 @@ object InputChipDefaults {
     internal val ColorScheme.defaultTonalInputChipColors: SelectableChipColors
         get() {
             return defaultTonalInputChipColorsCached
-                ?: defaultInputChipColors.copy(leadingIconColor = onSurfaceVariant).also {
-                    defaultTonalInputChipColorsCached = it
-                }
+                ?: defaultInputChipColors
+                    .copy(leadingIconColor = fromToken(ChipsTokens.UnselectedLeadingIconColor))
+                    .also { defaultTonalInputChipColorsCached = it }
         }
 
     /**
@@ -2888,10 +2887,9 @@ object InputChipDefaults {
         get() {
             return defaultChipShapesCached
                 ?: ChipShapes(
-                        // TODO: Update with chip shape tokens
-                        shape = ShapeTokens.CornerMedium,
-                        selectedShape = ShapeTokens.CornerFull,
-                        pressedShape = ShapeTokens.CornerSmall,
+                        shape = fromToken(ChipsTokens.UnselectedShape),
+                        selectedShape = fromToken(ChipsTokens.SelectedShape),
+                        pressedShape = fromToken(ChipsTokens.PressedShape),
                     )
                     .also { defaultChipShapesCached = it }
         }
