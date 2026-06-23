@@ -22,11 +22,15 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.view.View
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.remote.core.operations.layout.LayoutComponent
+import androidx.compose.remote.core.operations.layout.managers.CoreText
 import androidx.compose.remote.creation.compose.ExperimentalRemoteCreationComposeApi
 import androidx.compose.remote.creation.compose.RemoteComposeCreationComposeFlags
 import androidx.compose.remote.creation.compose.action.hostAction
 import androidx.compose.remote.creation.compose.action.valueChange
+import androidx.compose.remote.creation.compose.capture.LocalRemoteDensity
 import androidx.compose.remote.creation.compose.capture.RemoteCreationDisplayInfo
+import androidx.compose.remote.creation.compose.capture.RemoteDensity
 import androidx.compose.remote.creation.compose.capture.captureSingleRemoteDocument
 import androidx.compose.remote.creation.compose.layout.RemoteAlignment
 import androidx.compose.remote.creation.compose.layout.RemoteArrangement
@@ -78,6 +82,7 @@ import androidx.compose.remote.player.view.RemoteComposePlayer
 import androidx.compose.remote.serialization.yaml.YAMLSerializer
 import androidx.compose.remote.testing.RemoteCaptureTestRule
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -1097,6 +1102,7 @@ list:
             }
         }
     }
+
     @Test
     fun testClipRoundedCornerDynamicDensity() {
         val expectedLayout =
@@ -1180,6 +1186,77 @@ ROOT [-2:-1] = [0.0, 0.0, 715.0, 825.0] VISIBLE
                 }
             }
         }
+    }
+
+    @Test
+    fun testLocalRemoteDensityOverride() {
+        // Host density is 2.75.
+        // Default text size: 12sp -> 12 * 2.75 = 33.0 pixels.
+        // Overridden text size: 12sp * 1.0 = 12.0 pixels.
+        assertDensityOverrideFontSizes(33.0f, 12.0f) {
+            RemoteColumn {
+                RemoteText("Default", fontSize = 12.rsp)
+                CompositionLocalProvider(LocalRemoteDensity provides RemoteDensity(1f.rf, 1f.rf)) {
+                    RemoteText("Overridden", fontSize = 12.rsp)
+                }
+            }
+        }
+    }
+
+    private fun assertDensityOverrideFontSizes(
+        expectedDefaultPx: Float,
+        expectedOverriddenPx: Float,
+        contentUnderTest: @Composable @RemoteComposable () -> Unit,
+    ) {
+        val documentBytes = runBlocking {
+            captureSingleRemoteDocument(
+                    context = context,
+                    creationDisplayInfo = creationDisplayInfo,
+                    content = contentUnderTest,
+                )
+                .bytes
+        }
+
+        val remoteDocument = RemoteDocument(documentBytes)
+        val configuration =
+            Configuration(context.resources.configuration).apply {
+                densityDpi = (2.75 * 160).toInt()
+            }
+        val fixedContext = context.createConfigurationContext(configuration)
+        val player = RemoteComposePlayer(fixedContext)
+        player.setDocument(remoteDocument)
+
+        val width = creationDisplayInfo.size.width.toInt()
+        val height = creationDisplayInfo.size.height.toInt()
+        player.measure(
+            View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
+        )
+        player.layout(0, 0, width, height)
+
+        // Force draw to resolve variables
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+        player.draw(canvas)
+
+        val root = player.document.document.rootLayoutComponent!!
+        val column = root.list.first { it is LayoutComponent } as LayoutComponent
+        val defaultText = column.childrenComponents[0] as CoreText
+        val overriddenText = column.childrenComponents[1] as CoreText
+
+        fun getFontSize(text: CoreText): Float? {
+            val serializer = YAMLSerializer()
+            text.serialize(serializer.serializeMap())
+            val map = serializer.toObject() as? Map<*, *> ?: return null
+            val fontSizeMap = map["fontSize"] as? Map<*, *> ?: return null
+            return (fontSizeMap["value"] as? Number)?.toFloat()
+        }
+
+        val defaultFontSize: Float? = getFontSize(defaultText)
+        val overriddenFontSize: Float? = getFontSize(overriddenText)
+
+        assertThat(defaultFontSize).isEqualTo(expectedDefaultPx)
+        assertThat(overriddenFontSize).isEqualTo(expectedOverriddenPx)
     }
 }
 
