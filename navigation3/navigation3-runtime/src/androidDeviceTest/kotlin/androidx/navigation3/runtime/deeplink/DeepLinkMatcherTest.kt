@@ -105,7 +105,6 @@ class DeepLinkMatcherTest {
         val request =
             DeepLinkRequest(
                 uri = DeepLinkUri("https://example.com"),
-                "",
                 extras = DeepLinkRequest.mimeTypeExtra("image/TEST"),
             )
         val result = matcher.match(request)
@@ -114,7 +113,6 @@ class DeepLinkMatcherTest {
         val request2 =
             DeepLinkRequest(
                 uri = DeepLinkUri("https://example.com"),
-                "",
                 extras = DeepLinkRequest.mimeTypeExtra("image/wrongMimeType"),
             )
         val result2 = matcher.match(request2)
@@ -125,11 +123,19 @@ class DeepLinkMatcherTest {
     fun match_actionFilter() {
         val matcher =
             TestDeepLinkMatcher(filters = listOf(DeepLinkMatcher.actionFilter("ACTION.TEST")))
-        val request = DeepLinkRequest.fromUriString("https://example.com", action = "ACTION.test")
+        val request =
+            DeepLinkRequest(
+                uri = DeepLinkUri("https://example.com"),
+                extras = DeepLinkRequest.actionExtra("ACTION.test"),
+            )
         val result = matcher.match(request)
         assertThat(result).isNotNull()
 
-        val request2 = DeepLinkRequest.fromUriString("https://example.com", action = "wrongAction")
+        val request2 =
+            DeepLinkRequest(
+                uri = DeepLinkUri("https://example.com"),
+                extras = DeepLinkRequest.actionExtra("wrongAction"),
+            )
         val result2 = matcher.match(request2)
         assertThat(result2).isNull()
     }
@@ -165,7 +171,7 @@ class DeepLinkMatcherTest {
     private object Second : NavKey
 
     private fun DeepLinkRequest.Companion.withStringExtra(uri: String, extra: String) =
-        DeepLinkRequest(uri = DeepLinkUri(uri), "", extras = mapOf(stringExtraKey to extra))
+        DeepLinkRequest(uri = DeepLinkUri(uri), extras = mapOf(stringExtraKey to extra))
 }
 
 interface BaseKey : NavKey

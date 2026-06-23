@@ -22,13 +22,11 @@ import kotlin.jvm.JvmStatic
  * Represents a requested deep link.
  *
  * @param uri The URI for the deep link.
- * @param action The action for the deep link.
  * @param extras The map of additional information for the request.
  */
 public class DeepLinkRequest
 internal constructor(
     public val uri: DeepLinkUri?,
-    public val action: String?,
     public val extras: Map<String, Any> = emptyMap(),
 ) {
     public override fun toString(): String {
@@ -38,10 +36,6 @@ internal constructor(
             if (uri != null) {
                 append(" uri=")
                 append(uri.toString())
-            }
-            if (action != null) {
-                append(" action=")
-                append(action)
             }
             if (extras.isNotEmpty()) {
                 append(" extras=")
@@ -61,7 +55,7 @@ internal constructor(
          */
         @JvmStatic
         public fun fromUri(uri: DeepLinkUri, action: String? = null): DeepLinkRequest =
-            DeepLinkRequest(uri, action)
+            DeepLinkRequest(uri)
 
         /**
          * Creates a [DeepLinkRequest] with a string uri.
@@ -72,21 +66,7 @@ internal constructor(
          */
         @JvmStatic
         public fun fromUriString(uri: String, action: String? = null): DeepLinkRequest =
-            DeepLinkRequest(DeepLinkUri(uri), action)
-
-        /**
-         * Creates a [DeepLinkRequest] with an action.
-         *
-         * @param uri The URI for the deep link.
-         * @param action The action for the deep link.
-         * @return a [DeepLinkRequest] instance
-         * @throws IllegalArgumentException if the action is empty.
-         */
-        @JvmStatic
-        public fun fromAction(action: String, uri: DeepLinkUri? = null): DeepLinkRequest {
-            require(action.isNotEmpty()) { "Cannot create DeepLinkRequest from an empty action." }
-            return DeepLinkRequest(uri, action)
-        }
+            DeepLinkRequest(DeepLinkUri(uri))
 
         /** The key of the mimeType stored inside the map returned by [mimeTypeExtra]. */
         public object MimeTypeExtrasKey : RequestExtrasKey<String>
