@@ -156,7 +156,7 @@ class DeepLinkMatcherTest {
             }
         val matchers: List<DeepLinkMatcher<BaseKey>> = listOf(matcher1, matcher2)
 
-        val request = DeepLinkRequest.fromUriString("www.testuri.com")
+        val request = DeepLinkRequest(DeepLinkUri("www.testuri.com"))
 
         val results: List<DeepLinkMatcher.MatchResult<BaseKey>> = buildList {
             matchers.forEach { add(it.match(request)!!) }

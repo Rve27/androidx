@@ -16,8 +16,6 @@
 
 package androidx.navigation3.runtime.deeplink
 
-import kotlin.jvm.JvmStatic
-
 /**
  * Represents a requested deep link.
  *
@@ -46,28 +44,6 @@ internal constructor(
     }
 
     public companion object {
-        /**
-         * Creates a [DeepLinkRequest] with a [DeepLinkUri].
-         *
-         * @param uri The URI for the deep link.
-         * @param action The action for the deep link.
-         * @return a [DeepLinkRequest] instance
-         */
-        @JvmStatic
-        public fun fromUri(uri: DeepLinkUri, action: String? = null): DeepLinkRequest =
-            DeepLinkRequest(uri)
-
-        /**
-         * Creates a [DeepLinkRequest] with a string uri.
-         *
-         * @param uri The URI for the deep link.
-         * @param action The action for the deep link.
-         * @return a [DeepLinkRequest] instance
-         */
-        @JvmStatic
-        public fun fromUriString(uri: String, action: String? = null): DeepLinkRequest =
-            DeepLinkRequest(DeepLinkUri(uri))
-
         /** The key of the mimeType stored inside the map returned by [mimeTypeExtra]. */
         public object MimeTypeExtrasKey : RequestExtrasKey<String>
 

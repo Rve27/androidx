@@ -24,15 +24,6 @@ import kotlin.test.Test
 class DeepLinkRequestTest {
 
     @Test
-    fun fromUri() {
-        val string = "navigation3.test.com/test"
-        val uri = DeepLinkUri(string)
-        val request = DeepLinkRequest.fromUri(uri)
-
-        assertThat(request.uri).isEqualTo(uri)
-    }
-
-    @Test
     fun testExtra() {
         val testKey = "TestKey"
         val request = DeepLinkRequest(null, mapOf(testKey to 1))

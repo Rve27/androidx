@@ -164,8 +164,6 @@ package androidx.navigation3.runtime.deeplink {
   }
 
   public final class DeepLinkRequest {
-    method public static androidx.navigation3.runtime.deeplink.DeepLinkRequest fromUri(android.net.Uri uri, optional String? action);
-    method public static androidx.navigation3.runtime.deeplink.DeepLinkRequest fromUriString(String uri, optional String? action);
     method @InaccessibleFromKotlin public java.util.Map<java.lang.String,java.lang.Object> getExtras();
     method @InaccessibleFromKotlin public android.net.Uri? getUri();
     property public java.util.Map<java.lang.String,java.lang.Object> extras;
@@ -174,10 +172,6 @@ package androidx.navigation3.runtime.deeplink {
   }
 
   public static final class DeepLinkRequest.Companion {
-    method public androidx.navigation3.runtime.deeplink.DeepLinkRequest fromUri(android.net.Uri uri, optional String? action);
-    method @BytecodeOnly public static androidx.navigation3.runtime.deeplink.DeepLinkRequest! fromUri$default(androidx.navigation3.runtime.deeplink.DeepLinkRequest.Companion!, android.net.Uri!, String!, int, Object!);
-    method public androidx.navigation3.runtime.deeplink.DeepLinkRequest fromUriString(String uri, optional String? action);
-    method @BytecodeOnly public static androidx.navigation3.runtime.deeplink.DeepLinkRequest! fromUriString$default(androidx.navigation3.runtime.deeplink.DeepLinkRequest.Companion!, String!, String!, int, Object!);
     method public java.util.Map<java.lang.String,java.lang.Object> mimeTypeExtra(String mimeType);
   }
 
