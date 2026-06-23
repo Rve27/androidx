@@ -32,4 +32,22 @@ class DeepLinkRequestTest {
         assertThat(request.extras[testKey]).isNotNull()
         assertThat(request.extras[testKey]).isEqualTo(1)
     }
+
+    @Test
+    fun fromExtraDsl() {
+        val testKey = object : RequestExtrasKey<Boolean> {}
+        val request = DeepLinkRequest(null, requestExtras { put(testKey, true) })
+
+        assertThat(request.uri).isNull()
+        assertThat(request.extras[testKey]).isNotNull()
+        assertThat(request.extras[testKey]).isEqualTo(true)
+    }
+
+    @Test
+    fun testExtraWrongKey() {
+        val request = DeepLinkRequest(null, mapOf("TestKey" to 1))
+
+        assertThat(request.uri).isNull()
+        assertThat(request.extras["wrongKey"]).isNull()
+    }
 }

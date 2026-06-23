@@ -22,11 +22,22 @@ package androidx.navigation3.runtime.deeplink
  * @param uri The URI for the deep link.
  * @param extras The map of additional information for the request.
  */
-public class DeepLinkRequest
-internal constructor(
+public class DeepLinkRequest(
     public val uri: DeepLinkUri?,
     public val extras: Map<String, Any> = emptyMap(),
 ) {
+    /**
+     * Constructs a [DeepLinkRequest] with a string uri.
+     *
+     * @param uriString the string uri of the requested deep link
+     * @param extras The map holding pairs of [String] to [Any] to provide extra information to the
+     *   [DeepLinkRequest], such a mimeType.
+     */
+    public constructor(
+        uriString: String,
+        extras: Map<String, Any> = emptyMap(),
+    ) : this(DeepLinkUri(uriString), extras)
+
     public override fun toString(): String {
         return buildString {
             append("DeepLinkRequest")
