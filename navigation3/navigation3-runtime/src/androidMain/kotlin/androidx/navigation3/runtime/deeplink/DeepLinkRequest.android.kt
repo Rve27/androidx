@@ -25,7 +25,7 @@ import android.content.Intent
  * @return a [DeepLinkRequest] instance
  */
 public fun DeepLinkRequest.Companion.fromIntent(intent: Intent): DeepLinkRequest =
-    DeepLinkRequest(uri = intent.data, mimeType = intent.type, action = intent.action)
+    DeepLinkRequest(uri = intent.data, action = intent.action)
 
 /**
  * Creates a [DeepLinkMatcher.Filter] that filters a [DeepLinkRequest] with the action defined on

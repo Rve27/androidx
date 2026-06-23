@@ -30,17 +30,6 @@ class DeepLinkRequestTest {
         val request = DeepLinkRequest.fromUri(uri)
 
         assertThat(request.uri).isEqualTo(uri)
-        assertThat(request.mimeType).isNull()
-        assertThat(request.action).isNull()
-    }
-
-    @Test
-    fun fromMimeType() {
-        val mimeType = "image/png"
-        val request = DeepLinkRequest.fromMimeType(mimeType)
-
-        assertThat(request.uri).isNull()
-        assertThat(request.mimeType).isEqualTo(mimeType)
         assertThat(request.action).isNull()
     }
 
@@ -50,14 +39,13 @@ class DeepLinkRequestTest {
         val request = DeepLinkRequest.fromAction(action)
 
         assertThat(request.uri).isNull()
-        assertThat(request.mimeType).isNull()
         assertThat(request.action).isEqualTo(action)
     }
 
     @Test
     fun testExtra() {
         val testKey = "TestKey"
-        val request = DeepLinkRequest(null, null, null, mapOf(testKey to 1))
+        val request = DeepLinkRequest(null, null, mapOf(testKey to 1))
 
         assertThat(request.uri).isNull()
         assertThat(request.extras[testKey]).isNotNull()
