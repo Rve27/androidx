@@ -634,7 +634,7 @@ fun XSmallFilledSplitButtonSample() {
                     contentDescription = "Localized description",
                 )
                 Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(size)))
-                Text("My Button", style = ButtonDefaults.textStyleFor(size))
+                Text("Label", style = ButtonDefaults.textStyleFor(size))
             }
         },
         trailingButton = {
@@ -708,7 +708,7 @@ fun MediumFilledSplitButtonSample() {
                     contentDescription = "Localized description",
                 )
                 Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(size)))
-                Text("My Button", style = ButtonDefaults.textStyleFor(size))
+                Text("Label", style = ButtonDefaults.textStyleFor(size))
             }
         },
         trailingButton = {
@@ -782,7 +782,7 @@ fun LargeFilledSplitButtonSample() {
                     contentDescription = "Localized description",
                 )
                 Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(size)))
-                Text("My Button", style = ButtonDefaults.textStyleFor(size))
+                Text("Label", style = ButtonDefaults.textStyleFor(size))
             }
         },
         trailingButton = {
@@ -856,7 +856,7 @@ fun ExtraLargeFilledSplitButtonSample() {
                     contentDescription = "Localized description",
                 )
                 Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(size)))
-                Text("Button", style = ButtonDefaults.textStyleFor(size))
+                Text("Label", style = ButtonDefaults.textStyleFor(size))
             }
         },
         trailingButton = {
