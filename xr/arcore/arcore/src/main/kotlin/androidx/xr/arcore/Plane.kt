@@ -137,6 +137,17 @@ internal constructor(
             result = 31 * result + owner.hashCode()
             return result
         }
+
+        /**
+         * Returns a string representation of [Plane.State] for debugging.
+         *
+         * Note: Not intended for production use.
+         */
+        override fun toString(): String {
+            val subsumedById =
+                if (subsumedBy != null) System.identityHashCode(subsumedBy) else "null"
+            return "State(trackingState=$trackingState, label=$label, centerPose=$centerPose, extents=$extents, vertices=$vertices, subsumedBy=$subsumedById)"
+        }
     }
 
     private val _state =
@@ -216,4 +227,11 @@ internal constructor(
 
     private fun subsumedByFromRuntimePlane(): Plane? =
         runtimePlane.subsumedBy?.let { xrResourceManager.trackablesMap[it] as Plane? }
+
+    /**
+     * Returns a string representation of [Plane] for debugging.
+     *
+     * Note: Not intended for production use.
+     */
+    override fun toString(): String = "Plane(state=${state.value})"
 }
