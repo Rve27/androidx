@@ -305,7 +305,6 @@ dependencies {
     docs("androidx.paging:paging-rxjava3:3.5.0")
     kmpDocs("androidx.paging:paging-testing:3.5.0")
     docs("androidx.palette:palette:1.1.0-alpha01")
-    docs("androidx.palette:palette-ktx:1.0.0")
     docs("androidx.pdf:pdf-compose:1.0.0-alpha19")
     docs("androidx.pdf:pdf-core:1.0.0-alpha19")
     docs("androidx.pdf:pdf-document-service:1.0.0-alpha19")
